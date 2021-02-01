@@ -1,5 +1,52 @@
 2021-02-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272054. rdar://problem/73838900
+
+    [css-flexbox] REGRESSION(r266695): content inside a `<button>` inside a flex container has a height of `0` without a declared `min-height`
+    https://bugs.webkit.org/show_bug.cgi?id=220946
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: css3/flexbox/percentage-descendants-of-skipped-flex-item.html
+    
+    r252620 added an optimization which saves layouts for flexbox containers' descendants with percentage heights.
+    That optimization relies on a hash map of percentage height descendants that is filled in with calls to
+    addPercentHeightDescendant().
+    
+    FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
+    skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
+    addPercentHeightDescendant() is never called for them. This means that hasPercentageHeightDescendants() would
+    always wrongly return false for a child of a <button> with a percentage height.
+    
+    * rendering/RenderFlexibleBox.cpp:
+    (WebCore::RenderFlexibleBox::childHasPercentHeightDescendants const): Renamed from hasPercentHeightDescendants in
+    order not to clash with RenderBlock method. It now also checks whether flex items skipped from percentage
+    height calculations are the containing blocks of any percentage height descendant of the flex container
+    (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+    (WebCore::RenderFlexibleBox::hasPercentHeightDescendants const): Deleted.
+    * rendering/RenderFlexibleBox.h:
+    
+    LayoutTests:
+    
+    * css3/flexbox/percentage-descendants-of-skipped-flex-item-expected.html: Added.
+    * css3/flexbox/percentage-descendants-of-skipped-flex-item.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272054 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-28  Sergio Villar Senin  <svillar@igalia.com>
+
+            [css-flexbox] REGRESSION(r266695): content inside a `<button>` inside a flex container has a height of `0` without a declared `min-height`
+            https://bugs.webkit.org/show_bug.cgi?id=220946
+
+            Reviewed by Zalan Bujtas.
+
+            * css3/flexbox/percentage-descendants-of-skipped-flex-item-expected.html: Added.
+            * css3/flexbox/percentage-descendants-of-skipped-flex-item.html: Added.
+
+2021-02-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272043. rdar://problem/73838798
 
     [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing

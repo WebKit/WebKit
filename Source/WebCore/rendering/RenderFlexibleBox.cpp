@@ -1623,12 +1623,26 @@ Overflow RenderFlexibleBox::crossAxisOverflowForChild(const RenderBox& child) co
     return child.style().overflowX();
 }
 
-bool RenderFlexibleBox::hasPercentHeightDescendants(const RenderBox& renderer) const
+bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& renderer) const
 {
-    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. 
+    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. Evaluate whether the
+    // skipContainingBlockForPercentHeightCalculation() check below should be moved to the caller in that case.
     if (!is<RenderBlock>(renderer))
         return false;
     auto& renderBlock = downcast<RenderBlock>(renderer);
+
+    // FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
+    // skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
+    // addPercentHeightDescendant() is never called for them. This means that this method would always wrongly
+    // return false for a child of a <button> with a percentage height.
+    if (hasPercentHeightDescendants() && skipContainingBlockForPercentHeightCalculation(renderer, isHorizontalWritingMode() != renderer.isHorizontalWritingMode())) {
+        auto& descendants = *percentHeightDescendants();
+        for (auto* descendant : descendants) {
+            if (renderBlock.isContainingBlockAncestorFor(*descendant))
+                return true;
+        }
+    }
+
     if (!renderBlock.hasPercentHeightDescendants())
         return false;
 
@@ -1686,7 +1700,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         // We may have already forced relayout for orthogonal flowing children in
         // computeInnerFlexBaseSizeForChild.
         bool forceChildRelayout = relayoutChildren && !m_relaidOutChildren.contains(&child);
-        if (!forceChildRelayout && hasPercentHeightDescendants(child)) {
+        if (!forceChildRelayout && childHasPercentHeightDescendants(child)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.
