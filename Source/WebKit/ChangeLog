@@ -1,5 +1,28 @@
 2021-02-01  Per Arne  <pvollan@apple.com>
 
+        [macOS] Observe color preference changes in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=221096
+        <rdar://problem/73721275>
+
+        Reviewed by Brent Fulgham.
+
+        As a step towards blocking the distributed notifications daemon in the WebContent process, color preference changes should be observed in the UI process.
+        The UI process should notify the WebContent process about color preference changes. In order to be able to notify the AppKit observer in the WebContent
+        process about changes with a local notification, a specific key/value needs to added to the Info.plist of the WebContent process.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::colorPreferencesDidChangeCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::colorPreferencesDidChange):
+
+2021-02-01  Per Arne  <pvollan@apple.com>
+
         [macOS] Remove write access to some IOKit properties
         https://bugs.webkit.org/show_bug.cgi?id=221137
         <rdar://problem/73473658>

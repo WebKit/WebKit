@@ -1016,6 +1016,13 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
 }
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+void WebProcess::colorPreferencesDidChange()
+{
+    CFNotificationCenterPostNotification(CFNotificationCenterGetLocalCenter(), CFSTR("NSColorLocalPreferencesChangedNotification"), nullptr, nullptr, true);
+}
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 void WebProcess::enableRemoteWebInspector()
 {

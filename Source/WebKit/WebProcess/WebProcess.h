@@ -535,6 +535,10 @@ private:
     void backlightLevelDidChange(float backlightLevel);
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    void colorPreferencesDidChange();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     void userInterfaceIdiomDidChange(bool);
 

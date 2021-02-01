@@ -128,6 +128,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     BacklightLevelDidChange(float backlightLevel)
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    ColorPreferencesDidChange()
+#endif
+
     IsJITEnabled() -> (bool enabled) Async
 
 #if PLATFORM(COCOA)
