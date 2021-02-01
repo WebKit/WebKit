@@ -427,6 +427,10 @@ void RenderInline::absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<Fl
 #if PLATFORM(IOS_FAMILY)
 void RenderInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 }
@@ -434,6 +438,10 @@ void RenderInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
 
 LayoutUnit RenderInline::offsetLeft() const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     LayoutPoint topLeft;
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
@@ -442,6 +450,10 @@ LayoutUnit RenderInline::offsetLeft() const
 
 LayoutUnit RenderInline::offsetTop() const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     LayoutPoint topLeft;
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
@@ -516,6 +528,10 @@ const char* RenderInline::renderName() const
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
                                 const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
