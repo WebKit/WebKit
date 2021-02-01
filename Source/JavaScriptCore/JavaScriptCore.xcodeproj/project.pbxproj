@@ -1848,6 +1848,8 @@
 		E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35E89FD25C50F870071EE1E /* BigInt64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E89FB25C50F860071EE1E /* BigInt64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35E89FE25C50F870071EE1E /* BigUint64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E89FC25C50F870071EE1E /* BigUint64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33924AA621200C991B2 /* IntlDisplayNamesConstructor.lut.h */; };
 		E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */; };
@@ -5061,6 +5063,8 @@
 		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
 		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
 		E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHeapRange.h; sourceTree = "<group>"; };
+		E35E89FB25C50F860071EE1E /* BigInt64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigInt64Array.h; sourceTree = "<group>"; };
+		E35E89FC25C50F870071EE1E /* BigUint64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigUint64Array.h; sourceTree = "<group>"; };
 		E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkTimeConstant.h; sourceTree = "<group>"; };
 		E3637EE8236E56B00096BD0A /* LinkTimeConstant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkTimeConstant.cpp; sourceTree = "<group>"; };
 		E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNamesPrototype.lut.h; sourceTree = "<group>"; };
@@ -7136,6 +7140,7 @@
 				52678F8C1A031009006A306D /* BasicBlockLocation.cpp */,
 				52678F8D1A031009006A306D /* BasicBlockLocation.h */,
 				147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */,
+				E35E89FB25C50F860071EE1E /* BigInt64Array.h */,
 				86976E581FA3756D00E7C4E1 /* BigIntConstructor.cpp */,
 				86976E571FA3754000E7C4E1 /* BigIntConstructor.h */,
 				866739D013BFDE710023D87C /* BigInteger.h */,
@@ -7143,6 +7148,7 @@
 				861816761FB7922F00ECC4EC /* BigIntObject.h */,
 				86976E5B1FA375A800E7C4E1 /* BigIntPrototype.cpp */,
 				86976E5A1FA3758A00E7C4E1 /* BigIntPrototype.h */,
+				E35E89FC25C50F870071EE1E /* BigUint64Array.h */,
 				BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */,
 				BC7952330E15EB5600A898AB /* BooleanConstructor.h */,
 				F692A8500255597D01FF60F7 /* BooleanObject.cpp */,
@@ -9255,10 +9261,12 @@
 				0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */,
 				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
+				E35E89FD25C50F870071EE1E /* BigInt64Array.h in Headers */,
 				86976E5F1FA3E8BC00E7C4E1 /* BigIntConstructor.h in Headers */,
 				866739D213BFDE710023D87C /* BigInteger.h in Headers */,
 				861816771FB7924200ECC4EC /* BigIntObject.h in Headers */,
 				86976E5E1FA3E8B600E7C4E1 /* BigIntPrototype.h in Headers */,
+				E35E89FE25C50F870071EE1E /* BigUint64Array.h in Headers */,
 				0F64B2721A784BAF006E4E66 /* BinarySwitch.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* BlockDirectory.h in Headers */,
 				E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */,

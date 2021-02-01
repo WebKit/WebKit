@@ -823,6 +823,12 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-detachbuffer.js:
+  default: 'TypeError: Invalid argument type in ToBigInt operation (Testing with BigInt64Array.)'
+  strict mode: 'TypeError: Invalid argument type in ToBigInt operation (Testing with BigInt64Array.)'
+test/built-ins/TypedArray/prototype/findIndex/BigInt/predicate-may-detach-buffer.js:
+  default: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: throws a TypeError getting a value from the detached buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -865,9 +871,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
 test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js:
   default: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
   strict mode: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
-test/intl402/Locale/constructor-non-iana-canon.js:
-  default: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
 test/intl402/Locale/constructor-options-region-valid.js:
   default: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
   strict mode: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"

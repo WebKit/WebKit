@@ -14381,6 +14381,8 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node, S_JITOperation_GCZ sl
         break;
     }
     default: {
+        // FIXME: Optimize TypedArrays in HasIndexedProperty IC
+        // https://bugs.webkit.org/show_bug.cgi?id=221183
         slowCases.append(m_jit.jump());
         break;
     }

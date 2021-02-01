@@ -243,7 +243,7 @@ FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
 static inline size_t elementSize(JSType type)
 {
     ASSERT(type >= Int8ArrayType && type <= DataViewType);
-    static_assert(Float64ArrayType + 1 == DataViewType);
+    static_assert(BigUint64ArrayType + 1 == DataViewType);
     return ElementSizeData[type - Int8ArrayType];
 }
 
@@ -338,6 +338,30 @@ RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
+}
+
+JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!typedArrayValue.isCell()) {
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        return nullptr;
+    }
+
+    JSCell* typedArrayCell = typedArrayValue.asCell();
+    if (!isTypedView(typedArrayCell->classInfo(vm)->typedArrayStorageType)) {
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        return nullptr;
+    }
+
+    JSArrayBufferView* typedArray = jsCast<JSArrayBufferView*>(typedArrayCell);
+    if (typedArray->isDetached()) {
+        throwTypeError(globalObject, scope, "Argument typed array is detached."_s);
+        return nullptr;
+    }
+    return typedArray;
 }
 
 } // namespace JSC

@@ -272,11 +272,19 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     unsigned length = thisObject->length();
     auto joinWithSeparator = [&] (StringView separator) -> EncodedJSValue {
         JSStringJoiner joiner(globalObject, separator, length);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         if (!thisObject->isDetached()) {
             for (unsigned i = 0; i < length; i++) {
-                joiner.append(globalObject, thisObject->getIndexQuickly(i));
-                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+                JSValue value;
+                if constexpr (ViewClass::Adaptor::canConvertToJSQuickly)
+                    value = thisObject->getIndexQuickly(i);
+                else {
+                    auto nativeValue = thisObject->getIndexQuicklyAsNativeValue(i);
+                    value = ViewClass::Adaptor::toJSValue(globalObject, nativeValue);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+                joiner.append(globalObject, value);
+                RETURN_IF_EXCEPTION(scope, { });
             }
         } else {
             for (unsigned i = 0; i < length; i++)
@@ -292,10 +300,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     }
 
     JSString* separatorString = separatorValue.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto viewWithString = separatorString->viewWithUnderlyingString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     return joinWithSeparator(viewWithString.view);
 }
 
@@ -454,6 +462,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(!result->isDetached());
 
+    // https://tc39.es/ecma262/#typedarray-species-create
+    // If result.[[ContentType]] ≠ exemplar.[[ContentType]], throw a TypeError exception.
+    if (contentType(result->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType)
+        return throwVMTypeError(globalObject, scope, "Content types of source and created typed arrays are different"_s);
+
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
     if (!length)
         return JSValue::encode(result);
@@ -502,6 +515,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
         scope.release();
         jsCast<JSFloat64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
+    case TypeBigInt64:
+        scope.release();
+        jsCast<JSBigInt64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
+        return JSValue::encode(result);
+    case TypeBigUint64:
+        scope.release();
+        jsCast<JSBigUint64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
+        return JSValue::encode(result);
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -543,7 +564,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     RefPtr<ArrayBuffer> arrayBuffer = thisObject->possiblySharedBuffer();
     if (UNLIKELY(!arrayBuffer)) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
     }
     RELEASE_ASSERT(thisLength == thisObject->length());
 
@@ -567,13 +588,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     ASSERT(!args.hasOverflowed());
 
     JSObject* result = construct(globalObject, species, args, "species is not a constructor");
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
-    if (jsDynamicCast<JSArrayBufferView*>(vm, result))
-        return JSValue::encode(result);
+    JSArrayBufferView* validated = validateTypedArray(globalObject, result);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (contentType(validated->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType)
+        return throwVMTypeError(globalObject, scope, "TypedArray.prototype.subarray constructed typed array of different content type from |this|"_s);
 
-    throwTypeError(globalObject, scope, "species constructor did not return a TypedArray View"_s);
-    return JSValue::encode(JSValue());
+    return JSValue::encode(validated);
 }
 
 } // namespace JSC

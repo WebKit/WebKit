@@ -1,3 +1,51 @@
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement BigInt64Array and BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=190800
+
+        Reviewed by Ross Kirsling.
+
+        Through this patch, we encounter two test262 failures and found that these tests have issues.
+
+        * stress/bigint-typed-array-array-modes-profile.js: Added.
+        (foo):
+        * stress/bigint-typed-array-byte-offset.js: Added.
+        (foo):
+        * stress/bigint-typed-array-canonical-numeric-index-string.js: Added.
+        (makeTest.assert):
+        (makeTest):
+        (const.testInvalidIndices.makeTest.set assert):
+        (const.testInvalidIndices.makeTest):
+        (const.testValidIndices.makeTest.set assert):
+        (const.testValidIndices.makeTest):
+        * stress/bigint-typed-array-constructor-undefined.js: Added.
+        * stress/bigint-typed-array-get-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+        * stress/bigint-typed-array-lastIndexOf-exception-check.js: Added.
+        * stress/bigint-typed-array-put-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+        * stress/bigint-typedarray-getownproperty.js: Added.
+        (assert):
+        (foo):
+        * stress/bigint64array-bytelength.js: Added.
+        (test1):
+        (test2):
+        (shouldBe):
+        * stress/bigint64array-get-by-val.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        * stress/bigint64array-put-by-val.js: Added.
+        (shouldBe):
+        (test11):
+        (test12):
+        (test21):
+        (test22):
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add @ in Error.stack if URL exists

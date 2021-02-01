@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,26 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSGenericTypedArrayViewPrototype.h"
-#include "JSTypedArrays.h"
+#include "TypedArrays.h"
 
-namespace JSC {
-
-typedef JSGenericTypedArrayViewPrototype<JSInt8Array> JSInt8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt16Array> JSInt16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt32Array> JSInt32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8Array> JSUint8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8ClampedArray> JSUint8ClampedArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint16Array> JSUint16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint32Array> JSUint32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat32Array> JSFloat32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat64Array> JSFloat64ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSBigInt64Array> JSBigInt64ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSBigUint64Array> JSBigUint64ArrayPrototype;
-
-} // namespace JSC
+using JSC::BigInt64Array;

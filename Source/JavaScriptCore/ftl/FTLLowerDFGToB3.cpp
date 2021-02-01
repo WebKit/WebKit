@@ -5063,6 +5063,8 @@ private:
             return;
         }
             
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
@@ -5358,6 +5360,8 @@ private:
         
         ArrayMode arrayMode = m_node->arrayMode().modeForPut();
         switch (arrayMode.type()) {
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (child1.useKind() == CellUse) {
                 V_JITOperation_GCCJ operation = nullptr;
@@ -5647,6 +5651,8 @@ private:
         case Array::SelectUsingPredictions:
         case Array::Undecided:
         case Array::Unprofiled:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
         }

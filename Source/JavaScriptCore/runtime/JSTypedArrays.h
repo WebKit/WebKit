@@ -39,6 +39,8 @@ using JSUint16Array = JSGenericTypedArrayView<Uint16Adaptor>;
 using JSUint32Array = JSGenericTypedArrayView<Uint32Adaptor>;
 using JSFloat32Array = JSGenericTypedArrayView<Float32Adaptor>;
 using JSFloat64Array = JSGenericTypedArrayView<Float64Adaptor>;
+using JSBigInt64Array = JSGenericTypedArrayView<BigInt64Adaptor>;
+using JSBigUint64Array = JSGenericTypedArrayView<BigUint64Adaptor>;
 
 JS_EXPORT_PRIVATE JSUint8Array* createUint8TypedArray(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 

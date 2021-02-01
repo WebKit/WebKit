@@ -64,6 +64,10 @@ inline JSTypedArrayType toJSTypedArrayType(TypedArrayType type)
         return kJSTypedArrayTypeFloat32Array;
     case TypeFloat64:
         return kJSTypedArrayTypeFloat64Array;
+    case TypeBigInt64:
+        return kJSTypedArrayTypeBigInt64Array;
+    case TypeBigUint64:
+        return kJSTypedArrayTypeBigUint64Array;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -92,6 +96,10 @@ inline TypedArrayType toTypedArrayType(JSTypedArrayType type)
         return TypeFloat32;
     case kJSTypedArrayTypeFloat64Array:
         return TypeFloat64;
+    case kJSTypedArrayTypeBigInt64Array:
+        return TypeBigInt64;
+    case kJSTypedArrayTypeBigUint64Array:
+        return TypeBigUint64;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -123,6 +131,10 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
         return JSFloat32Array::create(globalObject, globalObject->typedArrayStructure(TypeFloat32), WTFMove(buffer), offset, length);
     case kJSTypedArrayTypeFloat64Array:
         return JSFloat64Array::create(globalObject, globalObject->typedArrayStructure(TypeFloat64), WTFMove(buffer), offset, length);
+    case kJSTypedArrayTypeBigInt64Array:
+        return JSBigInt64Array::create(globalObject, globalObject->typedArrayStructure(TypeBigInt64), WTFMove(buffer), offset, length);
+    case kJSTypedArrayTypeBigUint64Array:
+        return JSBigUint64Array::create(globalObject, globalObject->typedArrayStructure(TypeBigUint64), WTFMove(buffer), offset, length);
     case kJSTypedArrayTypeArrayBuffer:
     case kJSTypedArrayTypeNone:
         RELEASE_ASSERT_NOT_REACHED();

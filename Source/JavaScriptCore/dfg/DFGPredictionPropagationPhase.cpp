@@ -515,6 +515,10 @@ private:
             case Array::Int32Array:
                 changed |= mergePrediction(SpecInt32Only);
                 break;
+            case Array::BigInt64Array:
+            case Array::BigUint64Array:
+                changed |= mergePrediction(SpecBigInt);
+                break;
             default:
                 changed |= mergePrediction(node->getHeapPrediction());
                 break;

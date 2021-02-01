@@ -87,6 +87,8 @@ enum JSType : uint8_t {
     Uint32ArrayType,
     Float32ArrayType,
     Float64ArrayType,
+    BigInt64ArrayType,
+    BigUint64ArrayType,
     DataViewType,
     // End JSArrayBufferView types.
 
@@ -141,6 +143,7 @@ static constexpr uint32_t LastObjectType = MaxJSType;
 
 static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;
+static constexpr uint32_t NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView = NumberOfTypedArrayTypes - 3;
 
 static_assert(sizeof(JSType) == sizeof(uint8_t), "sizeof(JSType) is one byte.");
 static_assert(LastJSCObjectType < 0b11100000, "Embedder can use 0b11100000 or upper.");

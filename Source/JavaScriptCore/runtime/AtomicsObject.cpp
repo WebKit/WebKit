@@ -127,30 +127,6 @@ static unsigned validateAtomicAccess(VM& vm, JSGlobalObject* globalObject, JSArr
     return accessIndex;
 }
 
-static JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!typedArrayValue.isCell()) {
-        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
-        return nullptr;
-    }
-
-    JSCell* typedArrayCell = typedArrayValue.asCell();
-    if (!isTypedView(typedArrayCell->classInfo(vm)->typedArrayStorageType)) {
-        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
-        return nullptr;
-    }
-
-    JSArrayBufferView* typedArray = jsCast<JSArrayBufferView*>(typedArrayCell);
-    if (typedArray->isDetached()) {
-        throwTypeError(globalObject, scope, "Argument typed array is detached."_s);
-        return nullptr;
-    }
-    return typedArray;
-}
-
 enum class TypedArrayOperationMode { Read, Write };
 template<TypedArrayOperationMode mode>
 inline JSArrayBufferView* validateIntegerTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)

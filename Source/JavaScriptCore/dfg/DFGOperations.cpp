@@ -1942,6 +1942,38 @@ JSC_DEFINE_JIT_OPERATION(operationNewFloat64ArrayWithOneArgument, char*, (JSGlob
     return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSBigInt64Array>(globalObject, vm, structure, length, vector);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithOneArgument, char*, (JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigInt64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSBigUint64Array>(globalObject, vm, structure, length, vector);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithOneArgument, char*, (JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigUint64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM* vmPointer, Structure* structure))
 {
     VM& vm = *vmPointer;

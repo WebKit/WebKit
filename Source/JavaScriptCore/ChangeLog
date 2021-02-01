@@ -1,3 +1,175 @@
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement BigInt64Array and BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=190800
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements BigInt64Array and BigUint64Array.
+
+            1. In this patch, we do not support BigInt64Array/BigUint64Array + Atomics yet.
+            2. We make canGetIndexQuickly false for BigInt64Array and BigUint64Array. And we
+               use generic path for getting values from BigInt64Array and BigUint64Array. We
+               will optimize it in [1] and [2]. But possibly, this does not have super large
+               impact on performance since getting value from BigInt64Array and BigUint64Array
+               are already costly since we always need to allocate BigInt for results.
+            3. DFG / FTL GetByVal etc. are using Array::Generic for BigInt64Array and BigUint64Array.
+            4. But GetArrayLength, CheckArray, byteLength getter etc. are using Array::BigInt64Array / Array::BigUint64Array
+               for optimization.
+            5. Extend ArrayProfile's ArrayMode for BigInt64Array and BigUint64Array so that ArrayProfile
+               can record BigInt64Array and BigUint64Array information.
+            6. Implement DataView#{setBigInt64,setBigUint64,getBigInt64,getBigUint64}.
+            7. Extend JSC APIs to support BigInt64Array and BigUint64Array.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=221181
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=221183
+
+        * API/JSTypedArray.cpp:
+        (toJSTypedArrayType):
+        (toTypedArrayType):
+        (createTypedArray):
+        * API/JSValueRef.h:
+        * API/tests/TypedArrayCTest.cpp:
+        (forEachTypedArrayType):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (fill):
+        (map):
+        (filter):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        * bytecode/ArrayProfile.h:
+        * bytecode/ByValInfo.h:
+        (JSC::jitArrayModeForClassInfo):
+        (JSC::jitArrayModePermitsPut):
+        (JSC::typedArrayTypeForJITArrayMode):
+        * bytecode/LinkTimeConstant.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromTypedArrayType):
+        (JSC::typedArrayTypeFromSpeculation):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        (JSC::isBigInt64ArraySpeculation):
+        (JSC::isBigUint64ArraySpeculation):
+        (JSC::isDirectArgumentsSpeculation):
+        (JSC::isScopedArgumentsSpeculation):
+        (JSC::isActionableIntMutableArraySpeculation): Deleted.
+        (JSC::isActionableFloatMutableArraySpeculation): Deleted.
+        (JSC::isActionableTypedMutableArraySpeculation): Deleted.
+        (JSC::isActionableMutableArraySpeculation): Deleted.
+        (JSC::isActionableArraySpeculation): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine const):
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+        (JSC::DFG::arrayTypeToString):
+        (JSC::DFG::toTypedArrayType):
+        (JSC::DFG::toArrayType):
+        (JSC::DFG::permitsBoundsCheckLowering):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::supportsSelfLength const):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        (JSC::DFG::operationNewTypedArrayWithOneArgumentForType):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheArrayGetByVal):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/AtomicsObject.cpp:
+        * runtime/AtomicsObject.h:
+        * runtime/BigInt64Array.h: Copied from Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp.
+        * runtime/BigUint64Array.h: Copied from Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp.
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::elementSize):
+        (JSC::validateTypedArray):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSBigInt.h:
+        * runtime/JSCell.h:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/JSTypedArrayConstructors.cpp:
+        * runtime/JSTypedArrayConstructors.h:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrayPrototypes.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/JSTypedArrays.cpp:
+        * runtime/JSTypedArrays.h:
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValue):
+        (JSC::toNativeFromValueWithoutCoercion):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        (JSC::FloatTypedArrayAdaptor::toJSValue):
+        (JSC::BigIntTypedArrayAdaptor::toJSValue):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromInt32):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromUint32):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromDouble):
+        (JSC::BigIntTypedArrayAdaptor::convertTo):
+        (JSC::Uint8ClampedAdaptor::toJSValue):
+        (JSC::IntegralTypedArrayAdaptor::toDouble): Deleted.
+        (JSC::FloatTypedArrayAdaptor::toDouble): Deleted.
+        (JSC::Uint8ClampedAdaptor::toDouble): Deleted.
+        * runtime/TypedArrayType.cpp:
+        (JSC::constructorClassInfoForType):
+        (WTF::printInternal):
+        * runtime/TypedArrayType.h:
+        (JSC::isBigIntTypedView):
+        (JSC::logElementSize):
+        (JSC::isBigInt):
+        (JSC::isSigned):
+        (JSC::contentType):
+        * runtime/TypedArrays.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add @ in Error.stack if URL exists

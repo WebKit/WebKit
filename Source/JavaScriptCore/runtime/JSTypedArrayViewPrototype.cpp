@@ -72,6 +72,10 @@ static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag);
         return functionName<JSInt16Array>(vm, globalObject, callFrame);                         \
     case TypeUint16:                                                                            \
         return functionName<JSUint16Array>(vm, globalObject, callFrame);                        \
+    case TypeBigInt64:                                                                          \
+        return functionName<JSBigInt64Array>(vm, globalObject, callFrame);                      \
+    case TypeBigUint64:                                                                         \
+        return functionName<JSBigUint64Array>(vm, globalObject, callFrame);                     \
     case NotTypedArray:                                                                         \
     case TypeDataView:                                                                          \
         return throwVMTypeError(globalObject, scope,                                            \
@@ -84,6 +88,12 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObj
 {
     JSValue value = callFrame->uncheckedArgument(0);
     return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType)));
+}
+
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsBigIntTypedArrayView, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    JSValue value = callFrame->uncheckedArgument(0);
+    return JSValue::encode(jsBoolean(value.isCell() && isBigIntTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -169,6 +179,16 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globa
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(jsNumber(thisObject->length()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncContentType, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue argument = callFrame->argument(0);
+    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo(vm)->typedArrayStorageType))
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
+    return JSValue::encode(jsNumber(static_cast<int32_t>(contentType(argument.asCell()->classInfo(vm)->typedArrayStorageType))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncGetOriginalConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -388,6 +408,10 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag, (JSGlobalObje
         return JSValue::encode(jsNontrivialString(vm, "Int16Array"_s));
     case TypeUint16:
         return JSValue::encode(jsNontrivialString(vm, "Uint16Array"_s));
+    case TypeBigInt64:
+        return JSValue::encode(jsNontrivialString(vm, "BigInt64Array"_s));
+    case TypeBigUint64:
+        return JSValue::encode(jsNontrivialString(vm, "BigUint64Array"_s));
     case NotTypedArray:
     case TypeDataView:
         return JSValue::encode(jsUndefined());

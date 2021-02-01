@@ -42,7 +42,9 @@ struct ClassInfo;
     macro(Int32) \
     macro(Uint32) \
     macro(Float32) \
-    macro(Float64)
+    macro(Float64) \
+    macro(BigInt64) \
+    macro(BigUint64)
 
 #define FOR_EACH_TYPED_ARRAY_TYPE(macro) \
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
@@ -53,6 +55,12 @@ enum TypedArrayType {
 #define DECLARE_TYPED_ARRAY_TYPE(name) Type ## name,
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE)
 #undef DECLARE_TYPED_ARRAY_TYPE
+};
+
+enum class TypedArrayContentType : uint8_t {
+    None,
+    Number,
+    BigInt,
 };
 
 #define ASSERT_TYPED_ARRAY_TYPE(name) \
@@ -85,6 +93,17 @@ inline bool isTypedView(TypedArrayType type)
     }
 }
 
+inline bool isBigIntTypedView(TypedArrayType type)
+{
+    switch (type) {
+    case TypeBigInt64:
+    case TypeBigUint64:
+        return true;
+    default:
+        return false;
+    }
+}
+
 inline unsigned logElementSize(TypedArrayType type)
 {
     switch (type) {
@@ -103,6 +122,8 @@ inline unsigned logElementSize(TypedArrayType type)
     case TypeFloat32:
         return 2;
     case TypeFloat64:
+    case TypeBigInt64:
+    case TypeBigUint64:
         return 3;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -159,6 +180,17 @@ inline bool isFloat(TypedArrayType type)
     }
 }
 
+inline bool isBigInt(TypedArrayType type)
+{
+    switch (type) {
+    case TypeBigInt64:
+    case TypeBigUint64:
+        return true;
+    default:
+        return false;
+    }
+}
+
 inline bool isSigned(TypedArrayType type)
 {
     switch (type) {
@@ -167,6 +199,7 @@ inline bool isSigned(TypedArrayType type)
     case TypeInt32:
     case TypeFloat32:
     case TypeFloat64:
+    case TypeBigInt64:
         return true;
     default:
         return false;
@@ -176,6 +209,29 @@ inline bool isSigned(TypedArrayType type)
 inline bool isClamped(TypedArrayType type)
 {
     return type == TypeUint8Clamped;
+}
+
+inline constexpr TypedArrayContentType contentType(TypedArrayType type)
+{
+    switch (type) {
+    case TypeBigInt64:
+    case TypeBigUint64:
+        return TypedArrayContentType::BigInt;
+    case TypeInt8:
+    case TypeInt16:
+    case TypeInt32:
+    case TypeUint8:
+    case TypeUint16:
+    case TypeUint32:
+    case TypeFloat32:
+    case TypeFloat64:
+    case TypeUint8Clamped:
+        return TypedArrayContentType::Number;
+    case NotTypedArray:
+    case TypeDataView:
+        return TypedArrayContentType::None;
+    }
+    return TypedArrayContentType::None;
 }
 
 } // namespace JSC

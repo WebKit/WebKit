@@ -56,7 +56,9 @@ enum JITArrayMode : uint8_t {
     JITUint16Array,
     JITUint32Array,
     JITFloat32Array,
-    JITFloat64Array
+    JITFloat64Array,
+    JITBigInt64Array,
+    JITBigUint64Array,
 };
 
 inline bool isOptimizableIndexingType(IndexingType indexingType)
@@ -146,6 +148,10 @@ inline JITArrayMode jitArrayModeForClassInfo(const ClassInfo* classInfo)
         return JITFloat32Array;
     case TypeFloat64:
         return JITFloat64Array;
+    case TypeBigInt64:
+        return JITBigInt64Array;
+    case TypeBigUint64:
+        return JITBigUint64Array;
     default:
         CRASH();
         return JITContiguous;
@@ -157,6 +163,10 @@ inline bool jitArrayModePermitsPut(JITArrayMode mode)
     switch (mode) {
     case JITDirectArguments:
     case JITScopedArguments:
+    // FIXME: Optimize BigInt64Array / BigUint64Array in IC
+    // https://bugs.webkit.org/show_bug.cgi?id=221183
+    case JITBigInt64Array:
+    case JITBigUint64Array:
         // We could support put_by_val on these at some point, but it's just not that profitable
         // at the moment.
         return false;
@@ -206,6 +216,10 @@ inline TypedArrayType typedArrayTypeForJITArrayMode(JITArrayMode mode)
         return TypeFloat32;
     case JITFloat64Array:
         return TypeFloat64;
+    case JITBigInt64Array:
+        return TypeBigInt64;
+    case JITBigUint64Array:
+        return TypeBigUint64;
     default:
         CRASH();
         return NotTypedArray;

@@ -3647,6 +3647,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Float64Array:
             filter(node->child1(), SpecFloat64Array | admittedTypes);
             break;
+        case Array::BigInt64Array:
+            filter(node->child1(), SpecBigInt64Array | admittedTypes);
+            break;
+        case Array::BigUint64Array:
+            filter(node->child1(), SpecBigUint64Array | admittedTypes);
+            break;
         case Array::AnyTypedArray:
             filter(node->child1(), SpecTypedArrayView | admittedTypes);
             break;

@@ -50,6 +50,7 @@ class JSGlobalObject;
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
+    v(typedArrayContentType, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
     v(typedArraySort, nullptr) \
     v(isTypedArrayView, nullptr) \
@@ -110,6 +111,8 @@ class JSGlobalObject;
     v(callFunction, nullptr) \
     v(hasOwnPropertyFunction, nullptr) \
     v(createPrivateSymbol, nullptr) \
+    v(toBigInt, nullptr) \
+    v(isBigIntTypedArrayView, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

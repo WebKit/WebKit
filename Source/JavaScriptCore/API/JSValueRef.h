@@ -66,6 +66,8 @@ typedef enum {
  @constant     kJSTypedArrayTypeUint32Array          Uint32Array
  @constant     kJSTypedArrayTypeFloat32Array         Float32Array
  @constant     kJSTypedArrayTypeFloat64Array         Float64Array
+ @constant     kJSTypedArrayTypeBigInt64Array        BigInt64Array
+ @constant     kJSTypedArrayTypeBigUint64Array       BigUint64Array
  @constant     kJSTypedArrayTypeArrayBuffer          ArrayBuffer
  @constant     kJSTypedArrayTypeNone                 Not a Typed Array
 
@@ -82,6 +84,8 @@ typedef enum {
     kJSTypedArrayTypeFloat64Array,
     kJSTypedArrayTypeArrayBuffer,
     kJSTypedArrayTypeNone,
+    kJSTypedArrayTypeBigInt64Array,
+    kJSTypedArrayTypeBigUint64Array,
 } JSTypedArrayType JSC_API_AVAILABLE(macos(10.12), ios(10.0));
 
 #ifdef __cplusplus

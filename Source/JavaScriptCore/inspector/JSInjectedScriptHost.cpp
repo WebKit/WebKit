@@ -228,7 +228,9 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
             || object->inherits<JSUint16Array>(vm)
             || object->inherits<JSUint32Array>(vm)
             || object->inherits<JSFloat32Array>(vm)
-            || object->inherits<JSFloat64Array>(vm))
+            || object->inherits<JSFloat64Array>(vm)
+            || object->inherits<JSBigInt64Array>(vm)
+            || object->inherits<JSBigUint64Array>(vm))
             return jsNontrivialString(vm, "array"_s);
     }
 

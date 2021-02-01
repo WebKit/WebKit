@@ -2648,6 +2648,8 @@ void SpeculativeJIT::compile(Node* node)
             jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
             break;
         }
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(node)) {
                 if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
@@ -2980,6 +2982,8 @@ void SpeculativeJIT::compile(Node* node)
         case Array::ForceExit:
             DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal || node->op() == PutByValDirect, node->op());
 
@@ -3210,6 +3214,8 @@ void SpeculativeJIT::compile(Node* node)
         case Array::SelectUsingPredictions:
         case Array::Undecided:
         case Array::Unprofiled:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             RELEASE_ASSERT_NOT_REACHED();
         }
         break;

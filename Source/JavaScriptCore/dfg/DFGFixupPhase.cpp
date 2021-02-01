@@ -1052,7 +1052,19 @@ private:
                     m_graph.varArgChild(node, 0)->prediction(),
                     m_graph.varArgChild(node, 1)->prediction(),
                     SpecNone));
-            
+
+            switch (node->arrayMode().type()) {
+            case Array::BigInt64Array:
+            case Array::BigUint64Array:
+                // Make it Array::Generic.
+                // FIXME: Add BigInt64Array / BigUint64Array support.
+                // https://bugs.webkit.org/show_bug.cgi?id=221172
+                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                break;
+            default:
+                break;
+            }
+
             blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
             
             ArrayMode arrayMode = node->arrayMode();
@@ -1223,6 +1235,18 @@ private:
                     child1->prediction(),
                     child2->prediction(),
                     child3->prediction()));
+
+            switch (node->arrayMode().type()) {
+            case Array::BigInt64Array:
+            case Array::BigUint64Array:
+                // Make it Array::Generic.
+                // FIXME: Add BigInt64Array / BigUint64Array support.
+                // https://bugs.webkit.org/show_bug.cgi?id=221172
+                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                break;
+            default:
+                break;
+            }
             
             blessArrayOperation(child1, child2, m_graph.varArgChild(node, 3));
             
@@ -1371,6 +1395,8 @@ private:
             }
             default: {
                 // Make it Array::Generic.
+                // FIXME: Add BigInt64Array / BigUint64Array support.
+                // https://bugs.webkit.org/show_bug.cgi?id=221172
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
             }

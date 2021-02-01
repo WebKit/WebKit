@@ -47,15 +47,17 @@ const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << CopyOnWriteArrayWithI
 const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << CopyOnWriteArrayWithDouble;
 const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << CopyOnWriteArrayWithContiguous;
 
-const ArrayModes Int8ArrayMode = 1 << 16;
-const ArrayModes Int16ArrayMode = 1 << 17;
-const ArrayModes Int32ArrayMode = 1 << 18;
-const ArrayModes Uint8ArrayMode = 1 << 19;
-const ArrayModes Uint8ClampedArrayMode = 1 << 20; // 21 - 25 are used for CoW arrays.
-const ArrayModes Uint16ArrayMode = 1 << 26;
-const ArrayModes Uint32ArrayMode = 1 << 27;
-const ArrayModes Float32ArrayMode = 1 << 28;
-const ArrayModes Float64ArrayMode = 1 << 29;
+const ArrayModes Int8ArrayMode = 1U << 16;
+const ArrayModes Int16ArrayMode = 1U << 17;
+const ArrayModes Int32ArrayMode = 1U << 18;
+const ArrayModes Uint8ArrayMode = 1U << 19;
+const ArrayModes Uint8ClampedArrayMode = 1U << 20; // 21 - 25 are used for CoW arrays.
+const ArrayModes Uint16ArrayMode = 1U << 26;
+const ArrayModes Uint32ArrayMode = 1U << 27;
+const ArrayModes Float32ArrayMode = 1U << 28;
+const ArrayModes Float64ArrayMode = 1U << 29;
+const ArrayModes BigInt64ArrayMode = 1U << 30;
+const ArrayModes BigUint64ArrayMode = 1U << 31;
 
 JS_EXPORT_PRIVATE extern const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView];
 
@@ -74,6 +76,8 @@ constexpr ArrayModes asArrayModesIgnoringTypedArrays(IndexingType indexingMode)
     | Uint32ArrayMode         \
     | Float32ArrayMode        \
     | Float64ArrayMode        \
+    | BigInt64ArrayMode       \
+    | BigUint64ArrayMode      \
     )
 
 #define ALL_NON_ARRAY_ARRAY_MODES                       \

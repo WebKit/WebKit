@@ -130,6 +130,10 @@ JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithSize, char*, (JSGlobalObje
 JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithOneArgument, char*, (JSGlobalObject*, Structure*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat64ArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat64ArrayWithOneArgument, char*, (JSGlobalObject*, Structure*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationNewBigInt64ArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, char*));
+JSC_DECLARE_JIT_OPERATION(operationNewBigInt64ArrayWithOneArgument, char*, (JSGlobalObject*, Structure*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationNewBigUint64ArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, char*));
+JSC_DECLARE_JIT_OPERATION(operationNewBigUint64ArrayWithOneArgument, char*, (JSGlobalObject*, Structure*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewMapIterator, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewSetIterator, JSCell*, (VM*, Structure*));
@@ -361,6 +365,10 @@ inline auto operationNewTypedArrayWithSizeForType(TypedArrayType type) -> declty
         return operationNewFloat32ArrayWithSize;
     case TypeFloat64:
         return operationNewFloat64ArrayWithSize;
+    case TypeBigInt64:
+        return operationNewBigInt64ArrayWithSize;
+    case TypeBigUint64:
+        return operationNewBigUint64ArrayWithSize;
     case NotTypedArray:
     case TypeDataView:
         break;
@@ -390,6 +398,10 @@ inline auto operationNewTypedArrayWithOneArgumentForType(TypedArrayType type) ->
         return operationNewFloat32ArrayWithOneArgument;
     case TypeFloat64:
         return operationNewFloat64ArrayWithOneArgument;
+    case TypeBigInt64:
+        return operationNewBigInt64ArrayWithOneArgument;
+    case TypeBigUint64:
+        return operationNewBigUint64ArrayWithOneArgument;
     case NotTypedArray:
     case TypeDataView:
         break;

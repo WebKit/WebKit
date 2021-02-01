@@ -91,7 +91,10 @@ function fill(value /* [, start [, end]] */)
 
     var length = @typedArrayLength(this);
 
-    var number = @toNumber(value);
+    if (@isBigIntTypedArrayView(this))
+        var number = @toBigInt(value);
+    else
+        var number = @toNumber(value);
 
     var start = @typedArrayClampArgumentToStartOrEnd(@argument(1), length, 0);
     var end = @typedArrayClampArgumentToStartOrEnd(@argument(2), length, length);
@@ -335,6 +338,8 @@ function map(callback /*, thisArg */)
     var result = new constructor(length);
     if (@typedArrayLength(result) < length)
         @throwTypeError("TypedArray.prototype.map constructed typed array of insufficient length");
+    if (@typedArrayContentType(this) !== @typedArrayContentType(result))
+        @throwTypeError("TypedArray.prototype.map constructed typed array of different content type from |this|");
 
     for (var i = 0; i < length; i++) {
         var mappedValue = callback.@call(thisArg, this[i], i, this);
@@ -366,6 +371,8 @@ function filter(callback /*, thisArg */)
     var result = new constructor(length);
     if (@typedArrayLength(result) < length)
         @throwTypeError("TypedArray.prototype.filter constructed typed array of insufficient length");
+    if (@typedArrayContentType(this) !== @typedArrayContentType(result))
+        @throwTypeError("TypedArray.prototype.filter constructed typed array of different content type from |this|");
 
     for (var i = 0; i < length; i++)
         result[i] = kept[i];

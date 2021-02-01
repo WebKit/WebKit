@@ -37,6 +37,8 @@ public:
 
     static constexpr unsigned elementSize = 1;
 
+    static constexpr TypedArrayContentType contentType = TypedArrayContentType::None;
+
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
@@ -64,7 +66,7 @@ public:
     RefPtr<DataView> possiblySharedTypedImpl();
     RefPtr<DataView> unsharedTypedImpl();
     
-    static const TypedArrayType TypedArrayStorageType = TypeDataView;
+    static constexpr TypedArrayType TypedArrayStorageType = TypeDataView;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     

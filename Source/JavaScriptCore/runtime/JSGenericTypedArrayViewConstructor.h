@@ -38,6 +38,8 @@ JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callUint16Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callUint32Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callFloat32Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callFloat64Array);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callBigInt64Array);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callBigUint64Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callDataView);
 
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructInt8Array);
@@ -49,6 +51,8 @@ JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructUint16Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructUint32Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructFloat32Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructFloat64Array);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructBigInt64Array);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructBigUint64Array);
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(constructDataView);
 
 template<typename ViewClass>
@@ -87,6 +91,10 @@ public:
             return callFloat32Array;
         case TypeFloat64:
             return callFloat64Array;
+        case TypeBigInt64:
+            return callBigInt64Array;
+        case TypeBigUint64:
+            return callBigUint64Array;
         case TypeDataView:
             return callDataView;
         default:
@@ -116,6 +124,10 @@ public:
             return constructFloat32Array;
         case TypeFloat64:
             return constructFloat64Array;
+        case TypeBigInt64:
+            return constructBigInt64Array;
+        case TypeBigUint64:
+            return constructBigUint64Array;
         case TypeDataView:
             return constructDataView;
         default:

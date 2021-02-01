@@ -556,6 +556,7 @@ const Float64ArrayType = constexpr Float64ArrayType
 
 const FirstTypedArrayType = constexpr FirstTypedArrayType
 const NumberOfTypedArrayTypesExcludingDataView = constexpr NumberOfTypedArrayTypesExcludingDataView
+const NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView = constexpr NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView
 
 # Type flags constants.
 const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined
@@ -1233,7 +1234,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     # First lets check if we even have a typed array. This lets us do some boilerplate up front.
     loadb JSCell::m_type[base], t2
     subi FirstTypedArrayType, t2
-    biaeq t2, NumberOfTypedArrayTypesExcludingDataView, slowPath
+    biaeq t2, NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView, slowPath
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
 
@@ -1260,6 +1261,8 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     #    Uint32ArrayType,
     #    Float32ArrayType,
     #    Float64ArrayType,
+    #
+    # Yet, we are not supporting BitInt64Array and BigUint64Array.
 
     bia t2, Uint16ArrayType - FirstTypedArrayType, .opGetByValAboveUint16Array
 
