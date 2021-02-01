@@ -674,21 +674,6 @@ bool ArgumentCoder<FloatRoundedRect>::decode(Decoder& decoder, FloatRoundedRect&
     return SimpleArgumentCoder<FloatRoundedRect>::decode(decoder, roundedRect);
 }
 
-#if PLATFORM(IOS_FAMILY)
-void ArgumentCoder<FloatQuad>::encode(Encoder& encoder, const FloatQuad& floatQuad)
-{
-    SimpleArgumentCoder<FloatQuad>::encode(encoder, floatQuad);
-}
-
-Optional<FloatQuad> ArgumentCoder<FloatQuad>::decode(Decoder& decoder)
-{
-    FloatQuad floatQuad;
-    if (!SimpleArgumentCoder<FloatQuad>::decode(decoder, floatQuad))
-        return WTF::nullopt;
-    return floatQuad;
-}
-#endif // PLATFORM(IOS_FAMILY)
-
 #if ENABLE(META_VIEWPORT)
 void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
 {

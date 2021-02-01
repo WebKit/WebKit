@@ -1,3 +1,15 @@
+2021-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some new data structures to represent image extraction results
+        https://bugs.webkit.org/show_bug.cgi?id=221214
+
+        Reviewed by Sam Weinig.
+
+        See WebCore ChangeLog for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+
 2021-02-01  Per Arne  <pvollan@apple.com>
 
         [macOS] Observe color preference changes in the UI process

@@ -325,13 +325,6 @@ template<> struct ArgumentCoder<WebCore::FloatRoundedRect> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatRoundedRect&);
 };
 
-#if PLATFORM(IOS_FAMILY)
-template<> struct ArgumentCoder<WebCore::FloatQuad> {
-    static void encode(Encoder&, const WebCore::FloatQuad&);
-    static Optional<WebCore::FloatQuad> decode(Decoder&);
-};
-#endif // PLATFORM(IOS_FAMILY)
-
 #if ENABLE(META_VIEWPORT)
 template<> struct ArgumentCoder<WebCore::ViewportArguments> {
     static void encode(Encoder&, const WebCore::ViewportArguments&);
