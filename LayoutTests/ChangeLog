@@ -1,5 +1,47 @@
 2021-02-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272043. rdar://problem/73838798
+
+    [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing
+    https://bugs.webkit.org/show_bug.cgi?id=220552
+    <rdar://problem/73048070>
+    
+    Patch by Jean-Yves Avenard <jya@apple.com> on 2021-01-28
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    No new tests - fixes an existing test.
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::supportedAudioCodecs): Don't make the webm supported codec
+    conditional.
+    This change makes the webm audio support consistent with video support. supportedAudioCodecs
+    is used by the libwebm parser to determine which codec IDs are to be rejected outright.
+    If a codec id that isn't supported is encountered a parsing error will be thrown, which
+    ultimately causes a HTML audio or video error.
+    
+    If webkit is compiled without opus or vorbis support, in this particular case we do not want
+    an error to be produced but instead ignore the track.
+    
+    LayoutTests:
+    
+    * platform/mac/TestExpectations: unskip test
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272043 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-28  Jean-Yves Avenard  <jya@apple.com>
+
+            [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=220552
+            <rdar://problem/73048070>
+
+            Reviewed by Jer Noble.
+
+            * platform/mac/TestExpectations: unskip test
+
+2021-02-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271939. rdar://problem/73838846
 
     [Mac] MediaSampleCursor::stepInOrderedMap can hang when stepping to the end of a track that hasn't been fully parsed
