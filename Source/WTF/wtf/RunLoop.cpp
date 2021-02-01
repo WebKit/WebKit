@@ -46,6 +46,11 @@ public:
     {
     }
 
+    ~Holder()
+    {
+        m_runLoop->threadWillExit();
+    }
+
     RunLoop& runLoop() { return m_runLoop; }
 
 private:
@@ -160,6 +165,12 @@ void RunLoop::suspendFunctionDispatchForCurrentCycle()
     m_isFunctionDispatchSuspended = true;
     // Wake up (even if there is nothing to do) to disable suspension.
     wakeUp();
+}
+
+void RunLoop::threadWillExit()
+{
+    m_currentIteration.clear();
+    m_nextIteration.clear();
 }
 
 } // namespace WTF

@@ -215,4 +215,21 @@ TEST(WTF_RunLoop, ManyTimes)
     })->waitForCompletion();
 }
 
+TEST(WTF_RunLoop, ThreadTerminationSelfReferenceCleanup)
+{
+    RefPtr<RunLoop> runLoop;
+
+    Thread::create("RunLoopThreadTerminationSelfReferenceCleanup", [&] {
+        runLoop = makeRefPtr(RunLoop::current());
+
+        // This stores a RunLoop reference in the dispatch queue that will not be released
+        // via the usual dispatch, but should still be released upon thread termination.
+        // After that, the observing RefPtr should be the only one holding a reference
+        // to the RunLoop object.
+        runLoop->dispatch([ref = runLoop.copyRef()] { });
+    })->waitForCompletion();
+
+    EXPECT_TRUE(runLoop->hasOneRef());
+}
+
 } // namespace TestWebKitAPI

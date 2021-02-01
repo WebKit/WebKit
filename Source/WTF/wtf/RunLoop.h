@@ -96,6 +96,8 @@ public:
     enum class CycleResult { Continue, Stop };
     WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode);
 
+    WTF_EXPORT_PRIVATE void threadWillExit();
+
 #if USE(GLIB_EVENT_LOOP)
     WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
     enum class Event { WillDispatch, DidDispatch };
