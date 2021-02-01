@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+enum class WhitePoint { D50, D65 };
+
 template<typename> struct A98RGB;
 template<typename> struct DisplayP3;
 template<typename> struct ExtendedSRGBA;
@@ -46,7 +48,7 @@ template<typename> struct LinearSRGBA;
 template<typename> struct ProPhotoRGB;
 template<typename> struct Rec2020;
 template<typename> struct SRGBA;
-template<typename> struct XYZA;
+template<typename, WhitePoint> struct XYZA;
 
 // MARK: Make functions.
 
@@ -225,6 +227,7 @@ template<template<typename> class ColorType, typename T, typename M> constexpr C
 template<typename T> struct A98RGB : RGBAType<A98RGB, T, RGBModel<T>> {
     using RGBAType<A98RGB, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearA98RGB<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
     static constexpr auto colorSpace = ColorSpace::A98RGB;
 };
 template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
@@ -232,6 +235,7 @@ template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
 template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
     using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearDisplayP3<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
     static constexpr auto colorSpace = ColorSpace::DisplayP3;
 };
 template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
@@ -239,42 +243,49 @@ template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 template<typename T> struct ExtendedSRGBA : RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>> {
     using RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearExtendedSRGBA<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 };
 template<typename T> ExtendedSRGBA(T, T, T, T) -> ExtendedSRGBA<T>;
 
 template<typename T> struct LinearA98RGB : RGBAType<LinearA98RGB, T, RGBModel<T>> {
     using RGBAType<LinearA98RGB, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = A98RGB<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 };
 template<typename T> LinearA98RGB(T, T, T, T) -> LinearA98RGB<T>;
 
 template<typename T> struct LinearDisplayP3 : RGBAType<LinearDisplayP3, T, RGBModel<T>> {
     using RGBAType<LinearDisplayP3, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = DisplayP3<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 };
 template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
 
 template<typename T> struct LinearExtendedSRGBA : RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>> {
     using RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = ExtendedSRGBA<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 };
 template<typename T> LinearExtendedSRGBA(T, T, T, T) -> LinearExtendedSRGBA<T>;
 
 template<typename T> struct LinearProPhotoRGB : RGBAType<LinearProPhotoRGB, T, RGBModel<T>> {
     using RGBAType<LinearProPhotoRGB, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = ProPhotoRGB<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
 };
 template<typename T> LinearProPhotoRGB(T, T, T, T) -> LinearProPhotoRGB<T>;
 
 template<typename T> struct LinearRec2020 : RGBAType<LinearRec2020, T, RGBModel<T>> {
     using RGBAType<LinearRec2020, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = Rec2020<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 };
 template<typename T> LinearRec2020(T, T, T, T) -> LinearRec2020<T>;
 
 template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> {
     using RGBAType<LinearSRGBA, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = SRGBA<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
     static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
 template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
@@ -282,6 +293,7 @@ template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
 template<typename T> struct ProPhotoRGB : RGBAType<ProPhotoRGB, T, RGBModel<T>> {
     using RGBAType<ProPhotoRGB, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearProPhotoRGB<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
     static constexpr auto colorSpace = ColorSpace::ProPhotoRGB;
 };
 template<typename T> ProPhotoRGB(T, T, T, T) -> ProPhotoRGB<T>;
@@ -289,6 +301,7 @@ template<typename T> ProPhotoRGB(T, T, T, T) -> ProPhotoRGB<T>;
 template<typename T> struct Rec2020 : RGBAType<Rec2020, T, RGBModel<T>> {
     using RGBAType<Rec2020, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearRec2020<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
     static constexpr auto colorSpace { ColorSpace::Rec2020 };
 };
 template<typename T> Rec2020(T, T, T, T) -> Rec2020<T>;
@@ -296,6 +309,7 @@ template<typename T> Rec2020(T, T, T, T) -> Rec2020<T>;
 template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
     using RGBAType<SRGBA, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearSRGBA<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
     static constexpr auto colorSpace { ColorSpace::SRGB };
 };
 template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
@@ -305,6 +319,7 @@ template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
 template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
     using Model = LabModel<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
     static constexpr auto colorSpace = ColorSpace::Lab;
 
     constexpr Lab(T lightness, T a, T b, T alpha = AlphaTraits<T>::opaque)
@@ -337,6 +352,7 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const Lab<T>
 template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
     using ComponentType = T;
     using Model = LCHModel<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
 
     constexpr LCHA(T lightness, T chroma, T hue, T alpha = AlphaTraits<T>::opaque)
         : lightness { lightness }
@@ -369,6 +385,7 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const LCHA<T
 template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     using ComponentType = T;
     using Model = HSLModel<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
 
     constexpr HSLA(T hue, T saturation, T lightness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }
@@ -397,9 +414,11 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T
 
 // MARK: - XYZ Color Type.
 
-template<typename T> struct XYZA : ColorWithAlphaHelper<XYZA<T>> {
+template<typename T, WhitePoint W> struct XYZA : ColorWithAlphaHelper<XYZA<T, W>> {
     using ComponentType = T;
     using Model = XYZModel<T>;
+    using ReferenceXYZ = XYZA<T, W>;
+    static constexpr WhitePoint whitePoint = W;
 
     constexpr XYZA(T x, T y, T z, T alpha = AlphaTraits<T>::opaque)
         : x { x }
@@ -421,7 +440,7 @@ template<typename T> struct XYZA : ColorWithAlphaHelper<XYZA<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const XYZA<T>& c)
+template<typename T, WhitePoint W> constexpr ColorComponents<T> asColorComponents(const XYZA<T, W>& c)
 {
     return { c.x, c.y, c.z, c.alpha };
 }

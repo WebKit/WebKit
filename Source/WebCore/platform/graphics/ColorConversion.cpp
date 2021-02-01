@@ -133,14 +133,14 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
 
 // MARK: Chromatic Adaptation conversions.
 
-static XYZA<float> convertFromD50WhitePointToD65WhitePoint(const XYZA<float>& color)
+XYZA<float, WhitePoint::D65> convertFromD50WhitePointToD65WhitePoint(const XYZA<float, WhitePoint::D50>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float, WhitePoint::D65>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static XYZA<float> convertFromD65WhitePointToD50WhitePoint(const XYZA<float>& color)
+XYZA<float, WhitePoint::D50> convertFromD65WhitePointToD50WhitePoint(const XYZA<float, WhitePoint::D65>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float, WhitePoint::D50>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // MARK: Gamma conversions.
@@ -233,83 +233,74 @@ SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 
 // - LinearA98RGB matrix conversions.
 
-LinearA98RGB<float> toLinearA98RGB(const XYZA<float>& color)
+LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>>(xyzToLinearA98RGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearA98RGB<float>& color)
+LinearA98RGB<float>::ReferenceXYZ toXYZA(const LinearA98RGB<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearA98RGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>::ReferenceXYZ>(linearA98RGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearDisplayP3 matrix conversions.
 
-LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
+LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearDisplayP3<float>>(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearDisplayP3<float>& color)
+LinearDisplayP3<float>::ReferenceXYZ toXYZA(const LinearDisplayP3<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearDisplayP3<float>::ReferenceXYZ>(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearExtendedSRGBA matrix conversions.
 
-LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>& color)
+LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
+LinearExtendedSRGBA<float>::ReferenceXYZ toXYZA(const LinearExtendedSRGBA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>::ReferenceXYZ>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearProPhotoRGB matrix conversions.
 
-LinearProPhotoRGB<float> toLinearProPhotoRGB(const XYZA<float>& color)
+LinearProPhotoRGB<float> toLinearProPhotoRGB(const LinearProPhotoRGB<float>::ReferenceXYZ& color)
 {
-    // We expect XYZA colors to be using the D65 white point, unlike ProPhotoRGB, which
-    // uses a D50 white point, so as a first step, use the Bradford transform to convert
-    // the incoming XYZA color to D50 white point.
-    auto xyzWithD50WhitePoint = convertFromD65WhitePointToD50WhitePoint(color);
-    return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>>(xyzToLinearProPhotoRGBMatrix.transformedColorComponents(asColorComponents(xyzWithD50WhitePoint)));
+    return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>>(xyzToLinearProPhotoRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearProPhotoRGB<float>& color)
+LinearProPhotoRGB<float>::ReferenceXYZ toXYZA(const LinearProPhotoRGB<float>& color)
 {
-    auto xyzWithD50WhitePoint = makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearProPhotoRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
-
-    // We expect XYZA colors to be using the D65 white point, unlike ProPhotoRGB, which
-    // uses a D50 white point, so as a final step, use the Bradford transform to convert
-    // the resulting XYZA color to a D65 white point.
-    return convertFromD50WhitePointToD65WhitePoint(xyzWithD50WhitePoint);
+    return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>::ReferenceXYZ>(linearProPhotoRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearRec2020 matrix conversions.
 
-LinearRec2020<float> toLinearRec2020(const XYZA<float>& color)
+LinearRec2020<float> toLinearRec2020(const LinearRec2020<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearRec2020<float>>(xyzToLinearRec2020Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearRec2020<float>& color)
+LinearRec2020<float>::ReferenceXYZ toXYZA(const LinearRec2020<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearRec2020ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearRec2020<float>::ReferenceXYZ>(linearRec2020ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearSRGBA matrix conversions.
 
-LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
+LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearSRGBA<float>& color)
+LinearSRGBA<float>::ReferenceXYZ toXYZA(const LinearSRGBA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>::ReferenceXYZ>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // MARK: HSL conversions.
@@ -405,7 +396,7 @@ static constexpr float LABe = 216.0f / 24389.0f;
 static constexpr float LABk = 24389.0f / 27.0f;
 static constexpr float D50WhiteValues[] = { 0.96422f, 1.0f, 0.82521f };
 
-XYZA<float> toXYZA(const Lab<float>& color)
+Lab<float>::ReferenceXYZ toXYZA(const Lab<float>& color)
 {
     float f1 = (color.lightness + 16.0f) / 116.0f;
     float f0 = f1 + (color.a / 500.0f);
@@ -432,24 +423,14 @@ XYZA<float> toXYZA(const Lab<float>& color)
     float y = D50WhiteValues[1] * computeY(color.lightness);
     float z = D50WhiteValues[2] * computeXAndZ(f2);
 
-    XYZA<float> result { x, y, z, color.alpha };
-
-    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
-    // D50 white point, so as a final step, use the Bradford transform to convert the
-    // resulting XYZA color to a D65 white point.
-    return convertFromD50WhitePointToD65WhitePoint(result);
+    return { x, y, z, color.alpha };
 }
 
-Lab<float> toLab(const XYZA<float>& color)
+Lab<float> toLab(const Lab<float>::ReferenceXYZ& color)
 {
-    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
-    // D50 white point, so as a first step, use the Bradford transform to convert the
-    // incoming XYZA color to D50 white point.
-    auto colorWithD50WhitePoint = convertFromD65WhitePointToD50WhitePoint(color);
-
-    float x = colorWithD50WhitePoint.x / D50WhiteValues[0];
-    float y = colorWithD50WhitePoint.y / D50WhiteValues[1];
-    float z = colorWithD50WhitePoint.z / D50WhiteValues[2];
+    float x = color.x / D50WhiteValues[0];
+    float y = color.y / D50WhiteValues[1];
+    float z = color.z / D50WhiteValues[2];
 
     auto fTransform = [](float value) {
         return value > LABe ? std::cbrt(value) : (LABk * value + 16.0f) / 116.0f;
@@ -463,7 +444,7 @@ Lab<float> toLab(const XYZA<float>& color)
     float a = 500.0f * (f0 - f1);
     float b = 200.0f * (f1 - f2);
 
-    return { lightness, a, b, colorWithD50WhitePoint.alpha };
+    return { lightness, a, b, color.alpha };
 }
 
 
@@ -499,96 +480,96 @@ Lab<float> toLab(const LCHA<float>& color)
 
 // - A98RGB combination functions.
 
-XYZA<float> toXYZA(const A98RGB<float>& color)
+A98RGB<float>::ReferenceXYZ toXYZA(const A98RGB<float>& color)
 {
     return toXYZA(toLinearA98RGB(color));
 }
 
-A98RGB<float> toA98RGB(const XYZA<float>& color)
+A98RGB<float> toA98RGB(const A98RGB<float>::ReferenceXYZ& color)
 {
     return toA98RGB(toLinearA98RGB(color));
 }
 
 // - DisplayP3 combination functions.
 
-XYZA<float> toXYZA(const DisplayP3<float>& color)
+DisplayP3<float>::ReferenceXYZ toXYZA(const DisplayP3<float>& color)
 {
     return toXYZA(toLinearDisplayP3(color));
 }
 
-DisplayP3<float> toDisplayP3(const XYZA<float>& color)
+DisplayP3<float> toDisplayP3(const DisplayP3<float>::ReferenceXYZ& color)
 {
     return toDisplayP3(toLinearDisplayP3(color));
 }
 
 // - ExtendedSRGB combination functions.
 
-XYZA<float> toXYZA(const ExtendedSRGBA<float>& color)
+ExtendedSRGBA<float>::ReferenceXYZ toXYZA(const ExtendedSRGBA<float>& color)
 {
     return toXYZA(toLinearExtendedSRGBA(color));
 }
 
-ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>& color)
+ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>::ReferenceXYZ& color)
 {
     return toExtendedSRGBA(toLinearExtendedSRGBA(color));
 }
 
 // - HSLA combination functions.
 
-XYZA<float> toXYZA(const HSLA<float>& color)
+HSLA<float>::ReferenceXYZ toXYZA(const HSLA<float>& color)
 {
     return toXYZA(toSRGBA(color));
 }
 
-HSLA<float> toHSLA(const XYZA<float>& color)
+HSLA<float> toHSLA(const HSLA<float>::ReferenceXYZ& color)
 {
     return toHSLA(toSRGBA(color));
 }
 
 // - LCHA combination functions.
 
-XYZA<float> toXYZA(const LCHA<float>& color)
+LCHA<float>::ReferenceXYZ toXYZA(const LCHA<float>& color)
 {
     return toXYZA(toLab(color));
 }
 
-LCHA<float> toLCHA(const XYZA<float>& color)
+LCHA<float> toLCHA(const LCHA<float>::ReferenceXYZ& color)
 {
     return toLCHA(toLab(color));
 }
 
 // - ProPhotoRGB combination functions.
 
-XYZA<float> toXYZA(const ProPhotoRGB<float>& color)
+ProPhotoRGB<float>::ReferenceXYZ toXYZA(const ProPhotoRGB<float>& color)
 {
     return toXYZA(toLinearProPhotoRGB(color));
 }
 
-ProPhotoRGB<float> toProPhotoRGB(const XYZA<float>& color)
+ProPhotoRGB<float> toProPhotoRGB(const ProPhotoRGB<float>::ReferenceXYZ& color)
 {
     return toProPhotoRGB(toLinearProPhotoRGB(color));
 }
 
 // - Rec2020 combination functions.
 
-XYZA<float> toXYZA(const Rec2020<float>& color)
+Rec2020<float>::ReferenceXYZ toXYZA(const Rec2020<float>& color)
 {
     return toXYZA(toLinearRec2020(color));
 }
 
-Rec2020<float> toRec2020(const XYZA<float>& color)
+Rec2020<float> toRec2020(const Rec2020<float>::ReferenceXYZ& color)
 {
     return toRec2020(toLinearRec2020(color));
 }
 
 // - SRGB combination functions.
 
-XYZA<float> toXYZA(const SRGBA<float>& color)
+SRGBA<float>::ReferenceXYZ toXYZA(const SRGBA<float>& color)
 {
     return toXYZA(toLinearSRGBA(color));
 }
 
-SRGBA<float> toSRGBA(const XYZA<float>& color)
+SRGBA<float> toSRGBA(const SRGBA<float>::ReferenceXYZ& color)
 {
     return toSRGBA(toLinearSRGBA(color));
 }

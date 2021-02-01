@@ -29,16 +29,17 @@
 
 namespace WebCore {
 
-// All color types must at least implement the following conversions to and from the XYZA color space
+// All color types must at least implement the following conversions to and from their reference XYZ color space
 //
-//    XYZA<float> toXYZA(const `ColorType`<float>&);
-//    `ColorType`<float> to`ColorType`(const XYZA<float>&);
+//    `ColorType`<float>::ReferenceXYZ toXYZA(const `ColorType`<float>&);
+//    `ColorType`<float> to`ColorType`(const `ColorType`<float>::ReferenceXYZ&);
 //
 // as well as an identity conversion
 //
 //    constexpr `ColorType`<float> to`ColorType`(const `ColorType`<float>& color) { return color; }
 //
-// and a generic conversion utilizing a conversion the XYZ color space
+// and a generic conversion utilizing a conversion to the reference XYZ color space and a chromatic
+// adapatation if the white points differ
 //
 //    template<typename T> `ColorType`<float> to`ColorType`(const T& color)
 //
@@ -47,95 +48,112 @@ namespace WebCore {
 
 
 // A98RGB
-WEBCORE_EXPORT XYZA<float> toXYZA(const A98RGB<float>&);
-WEBCORE_EXPORT A98RGB<float> toA98RGB(const XYZA<float>&);
+WEBCORE_EXPORT A98RGB<float>::ReferenceXYZ toXYZA(const A98RGB<float>&);
+WEBCORE_EXPORT A98RGB<float> toA98RGB(const A98RGB<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>&);
 
 // DisplayP3
-WEBCORE_EXPORT XYZA<float> toXYZA(const DisplayP3<float>&);
-WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const XYZA<float>&);
+WEBCORE_EXPORT DisplayP3<float>::ReferenceXYZ toXYZA(const DisplayP3<float>&);
+WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const DisplayP3<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
 
 // ExtendedSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const ExtendedSRGBA<float>&);
-WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>&);
+WEBCORE_EXPORT ExtendedSRGBA<float>::ReferenceXYZ toXYZA(const ExtendedSRGBA<float>&);
+WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>&);
 
 // HSLA
-WEBCORE_EXPORT XYZA<float> toXYZA(const HSLA<float>&);
-WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
+WEBCORE_EXPORT HSLA<float>::ReferenceXYZ toXYZA(const HSLA<float>&);
+WEBCORE_EXPORT HSLA<float> toHSLA(const HSLA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
 // LCHA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LCHA<float>&);
-WEBCORE_EXPORT LCHA<float> toLCHA(const XYZA<float>&);
+WEBCORE_EXPORT LCHA<float>::ReferenceXYZ toXYZA(const LCHA<float>&);
+WEBCORE_EXPORT LCHA<float> toLCHA(const LCHA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT Lab<float> toLab(const LCHA<float>&);
 
 // Lab
-WEBCORE_EXPORT XYZA<float> toXYZA(const Lab<float>&);
-WEBCORE_EXPORT Lab<float> toLab(const XYZA<float>&);
+WEBCORE_EXPORT Lab<float>::ReferenceXYZ toXYZA(const Lab<float>&);
+WEBCORE_EXPORT Lab<float> toLab(const Lab<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LCHA<float> toLCHA(const Lab<float>&);
 
 // LinearA98RGB
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearA98RGB<float>&);
-WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const XYZA<float>&);
+WEBCORE_EXPORT LinearA98RGB<float>::ReferenceXYZ toXYZA(const LinearA98RGB<float>&);
+WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT A98RGB<float> toA98RGB(const LinearA98RGB<float>& color);
 
 // LinearDisplayP3
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearDisplayP3<float>&);
-WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
+WEBCORE_EXPORT LinearDisplayP3<float>::ReferenceXYZ toXYZA(const LinearDisplayP3<float>&);
+WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
 // LinearExtendedSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearExtendedSRGBA<float>&);
-WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>&);
+WEBCORE_EXPORT LinearExtendedSRGBA<float>::ReferenceXYZ toXYZA(const LinearExtendedSRGBA<float>&);
+WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
 
 // LinearProPhotoRGB
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearProPhotoRGB<float>&);
-WEBCORE_EXPORT LinearProPhotoRGB<float> toLinearProPhotoRGB(const XYZA<float>&);
+WEBCORE_EXPORT LinearProPhotoRGB<float>::ReferenceXYZ toXYZA(const LinearProPhotoRGB<float>&);
+WEBCORE_EXPORT LinearProPhotoRGB<float> toLinearProPhotoRGB(const LinearProPhotoRGB<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT ProPhotoRGB<float> toProPhotoRGB(const LinearProPhotoRGB<float>&);
 
 // LinearRec2020
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearRec2020<float>&);
-WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const XYZA<float>&);
+WEBCORE_EXPORT LinearRec2020<float>::ReferenceXYZ toXYZA(const LinearRec2020<float>&);
+WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const LinearRec2020<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT Rec2020<float> toRec2020(const LinearRec2020<float>&);
 
 // LinearSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
-WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
+WEBCORE_EXPORT LinearSRGBA<float>::ReferenceXYZ toXYZA(const LinearSRGBA<float>&);
+WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
 
 // ProPhotoRGB
-WEBCORE_EXPORT XYZA<float> toXYZA(const ProPhotoRGB<float>&);
-WEBCORE_EXPORT ProPhotoRGB<float> toProPhotoRGB(const XYZA<float>&);
+WEBCORE_EXPORT ProPhotoRGB<float>::ReferenceXYZ toXYZA(const ProPhotoRGB<float>&);
+WEBCORE_EXPORT ProPhotoRGB<float> toProPhotoRGB(const ProPhotoRGB<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearProPhotoRGB<float> toLinearProPhotoRGB(const ProPhotoRGB<float>&);
 
 // Rec2020
-WEBCORE_EXPORT XYZA<float> toXYZA(const Rec2020<float>&);
-WEBCORE_EXPORT Rec2020<float> toRec2020(const XYZA<float>&);
+WEBCORE_EXPORT Rec2020<float>::ReferenceXYZ toXYZA(const Rec2020<float>&);
+WEBCORE_EXPORT Rec2020<float> toRec2020(const Rec2020<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const Rec2020<float>&);
 
 // SRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const SRGBA<float>&);
-WEBCORE_EXPORT SRGBA<float> toSRGBA(const XYZA<float>&);
+WEBCORE_EXPORT SRGBA<float>::ReferenceXYZ toXYZA(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const SRGBA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+
+
+// Chromatic Adaptation conversions.
+WEBCORE_EXPORT XYZA<float, WhitePoint::D65> convertFromD50WhitePointToD65WhitePoint(const XYZA<float, WhitePoint::D50>&);
+WEBCORE_EXPORT XYZA<float, WhitePoint::D50> convertFromD65WhitePointToD50WhitePoint(const XYZA<float, WhitePoint::D65>&);
+
+template<typename T, WhitePoint inputWhitePoint> constexpr typename T::ReferenceXYZ performChomaticAdapatation(const XYZA<float, inputWhitePoint>& color)
+{
+    constexpr WhitePoint outputWhitePoint = T::ReferenceXYZ::whitePoint;
+
+    if constexpr (outputWhitePoint == inputWhitePoint)
+        return color;
+    else if constexpr (outputWhitePoint == WhitePoint::D50)
+        return convertFromD65WhitePointToD50WhitePoint(color);
+    else if constexpr (outputWhitePoint == WhitePoint::D65)
+        return convertFromD50WhitePointToD65WhitePoint(color);
+}
 
 
 // Identity conversions (useful for generic contexts).
@@ -155,87 +173,87 @@ constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { re
 constexpr ProPhotoRGB<float> toProPhotoRGB(const ProPhotoRGB<float>& color) { return color; }
 constexpr Rec2020<float> toRec2020(const Rec2020<float>& color) { return color; }
 constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
-constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
+template<WhitePoint W> constexpr XYZA<float, W> toXYZA(const XYZA<float, W>& color) { return color; }
 
 
 // Fallback conversions.
 
-// All types are required to have a conversion to XYZA, so these are guaranteed to work if
-// another overload is not already provided.
+// All types are required to have a conversion to their reference XYZ space, so these are guaranteed
+// to work if another overload is not already provided.
 
 template<typename T> A98RGB<float> toA98RGB(const T& color)
 {
-    return toA98RGB(toXYZA(color));
+    return toA98RGB(performChomaticAdapatation<A98RGB<float>>(toXYZA(color)));
 }
 
 template<typename T> DisplayP3<float> toDisplayP3(const T& color)
 {
-    return toDisplayP3(toXYZA(color));
+    return toDisplayP3(performChomaticAdapatation<DisplayP3<float>>(toXYZA(color)));
 }
 
 template<typename T> ExtendedSRGBA<float> toExtendedSRGBA(const T& color)
 {
-    return toExtendedSRGBA(toXYZA(color));
+    return toExtendedSRGBA(performChomaticAdapatation<ExtendedSRGBA<float>>(toXYZA(color)));
 }
 
 template<typename T> HSLA<float> toHSLA(const T& color)
 {
-    return toHSLA(toXYZA(color));
+    return toHSLA(performChomaticAdapatation<HSLA<float>>(toXYZA(color)));
 }
 
 template<typename T> LCHA<float> toLCHA(const T& color)
 {
-    return toLCHA(toXYZA(color));
+    return toLCHA(performChomaticAdapatation<LCHA<float>>(toXYZA(color)));
 }
 
 template<typename T> Lab<float> toLab(const T& color)
 {
-    return toLab(toXYZA(color));
+    return toLab(performChomaticAdapatation<Lab<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearA98RGB<float> toLinearA98RGB(const T& color)
 {
-    return toLinearA98RGB(toXYZA(color));
+    return toLinearA98RGB(performChomaticAdapatation<LinearA98RGB<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
 {
-    return toLinearDisplayP3(toXYZA(color));
+    return toLinearDisplayP3(performChomaticAdapatation<LinearDisplayP3<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
 {
-    return toLinearExtendedSRGBA(toXYZA(color));
+    return toLinearExtendedSRGBA(performChomaticAdapatation<LinearExtendedSRGBA<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearProPhotoRGB<float> toLinearProPhotoRGB(const T& color)
 {
-    return toLinearProPhotoRGB(toXYZA(color));
+    return toLinearProPhotoRGB(performChomaticAdapatation<LinearProPhotoRGB<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearRec2020<float> toLinearRec2020(const T& color)
 {
-    return toLinearRec2020(toXYZA(color));
+    return toLinearRec2020(performChomaticAdapatation<LinearRec2020<float>>(toXYZA(color)));
 }
 
 template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
 {
-    return toLinearSRGBA(toXYZA(color));
+    return toLinearSRGBA(performChomaticAdapatation<LinearSRGBA<float>>(toXYZA(color)));
 }
 
 template<typename T> ProPhotoRGB<float> toProPhotoRGB(const T& color)
 {
-    return toProPhotoRGB(toXYZA(color));
+    return toProPhotoRGB(performChomaticAdapatation<ProPhotoRGB<float>>(toXYZA(color)));
 }
 
 template<typename T> Rec2020<float> toRec2020(const T& color)
 {
-    return toRec2020(toXYZA(color));
+    return toRec2020(performChomaticAdapatation<Rec2020<float>>(toXYZA(color)));
 }
 
 template<typename T> SRGBA<float> toSRGBA(const T& color)
 {
-    return toSRGBA(toXYZA(color));
+    return toSRGBA(performChomaticAdapatation<SRGBA<float>>(toXYZA(color)));
 }
 
 
