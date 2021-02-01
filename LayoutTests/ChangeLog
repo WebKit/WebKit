@@ -1,3 +1,13 @@
+2021-02-01  Rini Patel  <rini_patel@apple.com>
+
+        [GPU Process] Layout tests TestExpectation file rewriting
+        https://bugs.webkit.org/show_bug.cgi?id=221101
+
+        Populate TestExpectations from clean state, remove all skipped dirs, add back failing tests. 
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2021-02-01  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html is flaky failure
