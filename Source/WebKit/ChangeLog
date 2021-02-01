@@ -1,3 +1,25 @@
+2021-02-01  Antoine Quint  <graouts@webkit.org>
+
+        Allow support for CAAnimationGroup
+        https://bugs.webkit.org/show_bug.cgi?id=221209
+
+        Reviewed by Dean Jackson, Sam Weinig and Simon Fraser.
+
+        In order to fix bug 219894, we need to use Core Animation's CAAnimationGroup and its
+        setAnimations() method. Add support for the new "Group" PlatformCAAnimation type for
+        the remote animations.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+        (WebKit::PlatformCAAnimationRemote::copy const):
+        (WebKit::PlatformCAAnimationRemote::setAnimations):
+        (WebKit::PlatformCAAnimationRemote::copyAnimationsFrom):
+        (WebKit::createAnimation):
+        (WebKit::addAnimationToLayer):
+        (WebKit::operator<<):
+
 2021-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a cross-platform helper method to generate shareable bitmaps from rendered images

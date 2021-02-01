@@ -35,7 +35,7 @@ OBJC_CLASS CAAnimation;
 OBJC_CLASS CAPropertyAnimation;
 OBJC_CLASS NSString;
 
-typedef CAPropertyAnimation* PlatformAnimationRef;
+typedef CAAnimation* PlatformAnimationRef;
 
 namespace WebCore {
 
@@ -123,11 +123,15 @@ public:
     void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) override;
     void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
+    // Animation group properties.
+    void setAnimations(const Vector<RefPtr<PlatformCAAnimation>>&) final;
+    void copyAnimationsFrom(const PlatformCAAnimation&) final;
+
 private:
     PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
     PlatformCAAnimationCocoa(PlatformAnimationRef);
 
-    RetainPtr<CAPropertyAnimation> m_animation;
+    RetainPtr<CAAnimation> m_animation;
 };
 
 } // namespace WebCore

@@ -241,6 +241,8 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << static_cast<uint64_t>(timingFunctions.size());
     for (const auto& timingFunction : timingFunctions)
         encodeTimingFunction(encoder, timingFunction.get());
+
+    encoder << animations;
 }
 
 Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
@@ -320,6 +322,9 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
         }
     }
 
+    if (!decoder.decode(properties.animations))
+        return WTF::nullopt;
+
     return WTFMove(properties);
 }
     
@@ -355,7 +360,9 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
         animation->copyFromValueFrom(*this);
         animation->copyToValueFrom(*this);
     }
-    
+
+    animation->copyAnimationsFrom(*this);
+
     return animation;
 }
 
@@ -711,6 +718,19 @@ void PlatformCAAnimationRemote::copyTimingFunctionsFrom(const PlatformCAAnimatio
     m_properties.reverseTimingFunctions = other.m_properties.reverseTimingFunctions;
 }
 
+void PlatformCAAnimationRemote::setAnimations(const Vector<RefPtr<PlatformCAAnimation>>& values)
+{
+    m_properties.animations = values.map([](auto& value) {
+        return downcast<PlatformCAAnimationRemote>(value.get())->properties();
+    });
+}
+
+void PlatformCAAnimationRemote::copyAnimationsFrom(const PlatformCAAnimation& value)
+{
+    const PlatformCAAnimationRemote& other = downcast<PlatformCAAnimationRemote>(value);
+    m_properties.animations = other.m_properties.animations;
+}
+
 static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote::KeyframeValue& keyframeValue)
 {
     switch (keyframeValue.keyframeType()) {
@@ -734,13 +754,13 @@ static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote
     }
 }
 
-static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const String& key, const PlatformCAAnimationRemote::Properties& properties)
+static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const PlatformCAAnimationRemote::Properties& properties)
 {
-    RetainPtr<CAPropertyAnimation> caAnimation;
+    RetainPtr<CAAnimation> caAnimation;
     switch (properties.animationType) {
     case PlatformCAAnimation::Basic: {
         auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
-        
+
         if (properties.keyValues.size() > 1) {
             [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
             [basicAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1])];
@@ -750,6 +770,18 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
             [basicAnimation setTimingFunction:toCAMediaTimingFunction(properties.timingFunctions[0].get(), properties.reverseTimingFunctions)];
 
         caAnimation = basicAnimation;
+        break;
+    }
+    case PlatformCAAnimation::Group: {
+        auto animationGroup = [CAAnimationGroup animation];
+
+        if (properties.animations.size()) {
+            [animationGroup setAnimations:createNSArray(properties.animations, [&] (auto& animationProperties) {
+                return createAnimation(layer, layerTreeHost, animationProperties).get();
+            }).get()];
+        }
+
+        caAnimation = animationGroup;
         break;
     }
     case PlatformCAAnimation::Keyframe: {
@@ -775,18 +807,18 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
                 return toCAMediaTimingFunction(function.get(), properties.reverseTimingFunctions);
             }).get()];
         }
-        
+
         caAnimation = keyframeAnimation;
         break;
     }
     case PlatformCAAnimation::Spring: {
         auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
-        
+
         if (properties.keyValues.size() > 1) {
             [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
             [springAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1])];
         }
-        
+
         if (properties.timingFunctions.size()) {
             auto& timingFunction = properties.timingFunctions[0];
             if (timingFunction->isSpringTimingFunction()) {
@@ -801,7 +833,7 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
         break;
     }
     }
-    
+
     [caAnimation setBeginTime:properties.beginTime];
     [caAnimation setDuration:properties.duration];
     [caAnimation setTimeOffset:properties.timeOffset];
@@ -809,28 +841,35 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
     [caAnimation setSpeed:properties.speed];
     [caAnimation setAutoreverses:properties.autoReverses];
     [caAnimation setRemovedOnCompletion:properties.removedOnCompletion];
-    [caAnimation setAdditive:properties.additive];
-    
+
+    if ([caAnimation isKindOfClass:[CAPropertyAnimation class]]) {
+        [(CAPropertyAnimation *)caAnimation setAdditive:properties.additive];
+        if (properties.valueFunction != PlatformCAAnimation::NoValueFunction)
+            [(CAPropertyAnimation *)caAnimation setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(properties.valueFunction)]];
+    }
+
     if (properties.fillMode != PlatformCAAnimation::NoFillMode)
         [caAnimation setFillMode:toCAFillModeType(properties.fillMode)];
 
-    if (properties.valueFunction != PlatformCAAnimation::NoValueFunction)
-        [caAnimation setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(properties.valueFunction)]];
-    
     if (properties.hasExplicitBeginTime)
         [caAnimation setValue:@YES forKey:WKExplicitBeginTimeFlag];
-    
+
     if (layerTreeHost) {
         GraphicsLayer::PlatformLayerID layerID = RemoteLayerTreeNode::layerID(layer);
-    
+
         RetainPtr<WKAnimationDelegate>& delegate = layerTreeHost->animationDelegates().add(layerID, nullptr).iterator->value;
         if (!delegate)
             delegate = adoptNS([[WKAnimationDelegate alloc] initWithLayerID:layerID layerTreeHost:layerTreeHost]);
 
         [caAnimation setDelegate:delegate.get()];
     }
-    
-    [layer addAnimation:caAnimation.get() forKey:key];
+
+    return caAnimation;
+}
+
+static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const String& key, const PlatformCAAnimationRemote::Properties& properties)
+{
+    [layer addAnimation:createAnimation(layer, layerTreeHost, properties).get() forKey:key];
 }
 
 void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove)
@@ -942,6 +981,24 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
 
     ts.decreaseIndent();
     ts.decreaseIndent();
+
+    if (!animation.animations.isEmpty()) {
+        ts << "\n";
+        ts.increaseIndent();
+        ts.writeIndent();
+        ts << "(" << "animations";
+        ts.increaseIndent();
+
+        for (auto& childAnimation : animation.animations) {
+            ts << "\n";
+            ts.writeIndent();
+            ts << "(animation " << childAnimation;
+            ts << ")";
+        }
+
+        ts.decreaseIndent();
+        ts.decreaseIndent();
+    }
 
     return ts;
 }
