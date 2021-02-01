@@ -312,16 +312,47 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
         ++index;
     }
     // We did not manage to break the run that actually overflows the line.
-    // Let's try to find the last breakable position starting from the overflowing run and wrap it at the content boundary (as it surely fits).
-    while (index--) {
-        auto& run = runs[index];
-        accumulatedRunWidth -= run.logicalWidth;
+    // Let's try to find the a previous breaking position starting from the overflowing run. It surely fits.
+    auto previousRunIndex = index;
+    auto previousAccumulatedContentWidth = accumulatedRunWidth;
+    while (previousRunIndex--) {
+        auto& run = runs[previousRunIndex];
+        previousAccumulatedContentWidth -= run.logicalWidth;
         if (isBreakableRun(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, { })) {
-                // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
+            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + previousAccumulatedContentWidth, { })) {
+                // We know this run fits, so if breaking is allowed on the run, it should return a non-empty left-side
+                // since it's either at hypen position or the entire run is returned.
                 ASSERT(partialRun->length);
-                return TrailingTextContent { index, false, partialRun };
+                auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
+                return TrailingTextContent { previousRunIndex, false, runIsFullyAccommodated ? WTF::nullopt : partialRun };
+            }
+        }
+    }
+    // At this point we know that there's no breakable run all the way to the overflowing run.
+    // Now we need to check if any run after the overflowing content can break.
+    // e.g. <span>this_content_overflows_but_not_breakable<span><span style="word-break: break-all">but_this_is_breakable</span>
+    auto nextRunIndex = index;
+    auto nextAccumulatedContentWidth = accumulatedRunWidth;
+    while (++nextRunIndex < runs.size()) {
+        auto& run = runs[nextRunIndex];
+        nextAccumulatedContentWidth += run.logicalWidth;
+        if (isBreakableRun(run)) {
+            ASSERT(run.inlineItem.isText());
+            // We know that this run does not fit the available space. If we can break at any position, let's just use the start of the run.
+            if (wordBreakBehavior(run.inlineItem.style()) == WordBreakRule::AtArbitraryPosition) {
+                // We must be on an inline box boundary. Let's go back to the run in front of the inline box start run.
+                // e.g. <span>unbreakable_and_overflow<span style="word-break: break-all">breakable</span>
+                // We are at "breakable", <span> is at nextRunIndex - 1 and the trailing run is at nextRunIndex - 2.
+                ASSERT(runs[nextRunIndex - 1].inlineItem.isInlineBoxStart());
+                // At worst we are back to the overflowing run, like in the example above.
+                ASSERT(nextRunIndex - 2 >= index);
+                return TrailingTextContent { nextRunIndex - 2, true, { } };
+            }
+            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + nextAccumulatedContentWidth, { })) {
+                ASSERT(partialRun->length);
+                // We managed to break this text run mid content. It has to be a hyphen break.
+                return TrailingTextContent { nextRunIndex, true, partialRun };
             }
         }
     }
