@@ -1,3 +1,38 @@
+2020-11-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Use Internet Explorer quirk for Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=219278
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since r266584, we've suffered from an annoying unsupported browser warning when using Google
+        Docs. We don't have many options to avoid it. I'm afraid that Firefox or Chrome quirks are
+        too risky, since these seem to tempt Google into using web platform features that WebKit
+        does not support. The safest quirk is the macOS platform quirk, but that doesn't work well
+        here because it breaks various keyboard shortcuts like Ctrl+A and Ctrl+Z. So an Internet
+        Explorer quirk is really the last card we have left.
+
+        I think this is the safest Google quirk we've ever had, in that it's pretty unlikely that
+        Google will try to send Internet Explorer anything that doesn't work in WebKit. However, it
+        will break eventually, whenever Google decides that Internet Explorer is no longer
+        supported. I guess that date is probably at least five years away, so we can only hope that
+        Google drops this anticompetitive nonsense before then.
+
+        P.S. Let's also switch Google Drive to this new quirk. The unsupported browser warning on
+        Google Drive seems to be completely independent, but the IE quirk seems safer that the
+        existing Firefox quirk, so why not?
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::isGoogle):
+        (WebCore::urlRequiresInternetExplorerBrowser):
+        (WebCore::urlRequiresWindowsPlatform):
+        (WebCore::urlRequiresLinuxDesktopPlatform):
+        (WebCore::UserAgentQuirks::quirksForURL):
+        (WebCore::UserAgentQuirks::stringForQuirk):
+        * platform/UserAgentQuirks.h:
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::buildUserAgentString):
+
 2020-12-11  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r268923): [WPE] Nothing renders on the rpi3 using the proprietary video driver
