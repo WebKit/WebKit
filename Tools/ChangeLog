@@ -1,3 +1,12 @@
+2021-02-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] is_test_mode_enabled should default to True
+        https://bugs.webkit.org/show_bug.cgi?id=221208
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/master_buildbot2.cfg:
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add @ in Error.stack if URL exists
