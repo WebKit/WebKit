@@ -49,6 +49,10 @@
 #include <sys/syscall.h>
 #endif
 
+#if PLATFORM(PLAYSTATION)
+#include "ArgumentCoders.h"
+#endif
+
 namespace WebKit {
 
 SharedMemory::Handle::Handle()
