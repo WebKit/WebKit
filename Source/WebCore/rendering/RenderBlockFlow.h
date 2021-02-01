@@ -368,6 +368,7 @@ public:
     void generateLineBoxTree();
 
 #if ENABLE(TREE_DEBUGGING)
+    void outputFloatingObjects(WTF::TextStream&, int depth) const;
     void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
 #endif
 

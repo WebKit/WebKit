@@ -181,9 +181,9 @@ private:
 
     FloatingObjectSet m_set;
     std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;
-    unsigned m_leftObjectsCount;
-    unsigned m_rightObjectsCount;
-    bool m_horizontalWritingMode;
+    unsigned m_leftObjectsCount { 0 };
+    unsigned m_rightObjectsCount { 0 };
+    bool m_horizontalWritingMode { false };
     WeakPtr<const RenderBlockFlow> m_renderer;
 };
 
