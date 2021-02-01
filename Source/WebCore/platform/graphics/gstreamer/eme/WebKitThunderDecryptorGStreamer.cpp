@@ -47,6 +47,7 @@ GST_DEBUG_CATEGORY(webkitMediaThunderDecryptDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory
 
 static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "audio/mpeg", nullptr };
+static const char** cbcsEncryptionMediaTypes = cencEncryptionMediaTypes;
 static const char* webmEncryptionMediaTypes[] = { "video/webm", "audio/webm", "video/x-vp9", "audio/x-opus", nullptr };
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
@@ -83,6 +84,11 @@ static GRefPtr<GstCaps> createSinkPadTemplateCaps()
             gst_caps_append_structure(caps.get(), gst_structure_new("application/x-cenc", "original-media-type", G_TYPE_STRING,
                 cencEncryptionMediaTypes[i], "protection-system", G_TYPE_STRING, GStreamerEMEUtilities::keySystemToUuid(keySystem), nullptr));
         }
+    }
+
+    for (int i = 0; cbcsEncryptionMediaTypes[i]; ++i) {
+        gst_caps_append_structure(caps.get(), gst_structure_new("application/x-cbcs", "original-media-type", G_TYPE_STRING,
+            cbcsEncryptionMediaTypes[i], nullptr));
     }
 
     if (CDMFactoryThunder::singleton().supportsKeySystem(GStreamerEMEUtilities::s_WidevineKeySystem)) {
