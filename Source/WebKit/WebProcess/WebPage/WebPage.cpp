@@ -178,6 +178,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/HTMLAttachmentElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
@@ -216,6 +217,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteDOMWindow.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -7202,6 +7204,40 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 {
 }
 #endif
+
+RefPtr<ShareableBitmap> WebPage::shareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels) const
+{
+    auto* cachedImage = renderImage.cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return nullptr;
+
+    auto* image = cachedImage->imageForRenderer(&renderImage);
+    if (!image || image->width() <= 1 || image->height() <= 1)
+        return nullptr;
+
+    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
+    if (screenSizeInPixels) {
+        auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *screenSizeInPixels }).size();
+        bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
+    }
+
+    // FIXME: Only select ExtendedColor on images known to need wide gamut.
+    ShareableBitmap::Configuration bitmapConfiguration;
+#if USE(CG)
+    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(corePage()->mainFrame().view());
+#endif
+
+    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
+    if (!sharedBitmap)
+        return nullptr;
+
+    auto graphicsContext = sharedBitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
+    return sharedBitmap;
+}
 
 } // namespace WebKit
 

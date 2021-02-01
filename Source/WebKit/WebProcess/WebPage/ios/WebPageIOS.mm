@@ -2680,30 +2680,8 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
     info.isAnimatedImage = image->isAnimated();
 
-    if (!request.includeSnapshot && !request.includeImageData)
-        return;
-
-    FloatSize screenSizeInPixels = screenSize();
-    FloatSize imageSize = renderImage.cachedImage()->imageSizeForRenderer(&renderImage);
-    
-    screenSizeInPixels.scale(page.corePage()->deviceScaleFactor());
-    FloatSize scaledSize = largestRectWithAspectRatioInsideRect(imageSize.width() / imageSize.height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
-    FloatSize bitmapSize = scaledSize.width() < imageSize.width() ? scaledSize : imageSize;
-    
-    // FIXME: Only select ExtendedColor on images known to need wide gamut
-    ShareableBitmap::Configuration bitmapConfiguration;
-    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(page.corePage()->mainFrame().view());
-
-    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
-    if (!sharedBitmap)
-        return;
-
-    auto graphicsContext = sharedBitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return;
-
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
-    info.image = sharedBitmap;
+    if (request.includeSnapshot || request.includeImageData)
+        info.image = page.shareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)

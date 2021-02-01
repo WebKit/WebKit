@@ -192,6 +192,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 class Page;
 class PrintContext;
 class Range;
+class RenderImage;
 class ResourceRequest;
 class ResourceResponse;
 class SelectionData;
@@ -1388,6 +1389,8 @@ public:
 #if ENABLE(PDFKIT_PLUGIN)
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
+
+    RefPtr<ShareableBitmap> shareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt) const;
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
