@@ -31,7 +31,11 @@
 ;;;
 
 ;;; Allow registration of per-pid services.
-(allow mach-register (local-name-prefix ""))
+(allow mach-register (local-name-prefix "")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry-backtrace)
+#endif
+)
 
 ;;; Allow read access to standard system paths.
 (allow file-read*

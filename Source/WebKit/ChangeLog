@@ -1,3 +1,15 @@
+2021-02-01  Per Arne  <pvollan@apple.com>
+
+        [macOS] Add reporting to mach-register sandbox rule
+        https://bugs.webkit.org/show_bug.cgi?id=221139
+        <rdar://problem/70350150>
+
+        Reviewed by Brent Fulgham.
+
+        Add reporting to mach-register rule in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for data URLs in the network process
