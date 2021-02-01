@@ -1,3 +1,18 @@
+2021-02-01  Saam Barati  <sbarati@apple.com>
+
+        Lazily create m_windowCloseWatchpoints so we don't mistakenly think we have a frame when re-associating a document to a given cached frame
+        https://bugs.webkit.org/show_bug.cgi?id=221098
+        <rdar://72894454>
+
+        Reviewed by Ryosuke Niwa and Mark Lam.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::commit):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::isStillValidOnJSThread const):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setWatchpointSet):
+
 2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement BigInt64Array and BigUint64Array

@@ -94,7 +94,7 @@ protected:
     JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
     void finishCreation(JSC::VM&, JSWindowProxy*);
 
-    Ref<JSC::WatchpointSet> m_windowCloseWatchpoints;
+    RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
 
 private:
     using ResponseCallback = WTF::Function<void(const char*, size_t)>;

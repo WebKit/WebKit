@@ -95,7 +95,6 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
     : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
-    , m_windowCloseWatchpoints(WatchpointSet::create((window && window->frame()) ? IsWatched : IsInvalidated))
     , m_wrapped(WTFMove(window))
 {
     m_proxy.set(vm, this, proxy);

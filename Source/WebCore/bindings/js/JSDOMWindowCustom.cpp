@@ -243,9 +243,12 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage))
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, thisObject->wrapped(), *lexicalGlobalObject, propertyName, slot, errorMessage);
 
-    // FIXME: this needs more explanation.
-    // (Particularly, is it correct that this exists here but not in getOwnPropertySlotByIndex?)
-    slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints.get());
+    if (UNLIKELY(!thisObject->m_windowCloseWatchpoints))
+        thisObject->m_windowCloseWatchpoints = WatchpointSet::create(thisObject->wrapped().frame() ? IsWatched : IsInvalidated);
+    // We use m_windowCloseWatchpoints to clear any inline caches once the frame is cleared.
+    // This is sound because DOMWindow can be associated with at most one frame in its lifetime.
+    if (thisObject->m_windowCloseWatchpoints->isStillValidOnJSThread())
+        slot.setWatchpointSet(*thisObject->m_windowCloseWatchpoints);
 
     // (2) Regular own properties.
     PropertySlot slotCopy = slot;
