@@ -52,6 +52,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "ShareableResource.h"
+#include "SpeechRecognitionPermissionRequest.h"
 #include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "SystemPreviewController.h"
@@ -1816,8 +1817,9 @@ public:
     void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
     size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
-    void requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&&);
+    void requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin&, WebCore::FrameIdentifier, SpeechRecognitionPermissionRequestCallback&&);
     void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+    void requestUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 
     void syncIfMockDevicesEnabledChanged();
 

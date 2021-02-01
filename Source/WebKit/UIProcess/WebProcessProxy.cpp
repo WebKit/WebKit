@@ -1722,13 +1722,13 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
     ASSERT(!m_speechRecognitionServerMap.contains(identifier));
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
-    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& lang, auto& origin, auto&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& lang, auto& origin, auto frameIdentifier, auto&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
         }
 
-        weakPage->requestSpeechRecognitionPermission(lang, origin, WTFMove(completionHandler));
+        weakPage->requestSpeechRecognitionPermission(lang, origin, frameIdentifier, WTFMove(completionHandler));
     };
     auto checkIfMockCaptureDevicesEnabled = [weakPage = makeWeakPtr(targetPage)]() {
         return weakPage && weakPage->preferences().mockCaptureDevicesEnabled();

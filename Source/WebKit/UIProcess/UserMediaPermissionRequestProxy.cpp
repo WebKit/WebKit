@@ -31,7 +31,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
     : m_manager(&manager)
     , m_userMediaID(userMediaID)
     , m_mainFrameID(mainFrameID)
@@ -41,6 +41,7 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
     , m_eligibleVideoDevices(WTFMove(videoDevices))
     , m_eligibleAudioDevices(WTFMove(audioDevices))
     , m_request(WTFMove(request))
+    , m_decisionCompletionHandler(WTFMove(decisionCompletionHandler))
 {
 }
 
@@ -99,6 +100,8 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
+    if (m_decisionCompletionHandler)
+        m_decisionCompletionHandler(false);
 }
 
 Vector<String> UserMediaPermissionRequestProxy::videoDeviceUIDs() const

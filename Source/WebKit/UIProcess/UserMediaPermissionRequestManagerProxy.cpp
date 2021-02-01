@@ -213,6 +213,11 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequ
     if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied)
         m_deniedRequests.append(DeniedRequest { request.mainFrameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture() });
 
+    if (auto callback = request.decisionCompletionHandler()) {
+        callback(false);
+        return;
+    }
+
 #if ENABLE(MEDIA_STREAM)
     if (m_pregrantedRequests.isEmpty() && request.userRequest().audioConstraints.isValid)
         RealtimeMediaSourceCenter::singleton().audioCaptureFactory().removeExtensiveObserver(*this);
@@ -233,6 +238,12 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 
 #if ENABLE(MEDIA_STREAM)
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID(), ", video: ", request.videoDevice().label(), ", audio: ", request.audioDevice().label());
+
+    if (auto callback = request.decisionCompletionHandler()) {
+        m_grantedRequests.append(makeRef(request));
+        callback(true);
+        return;
+    }
 
     auto& userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
@@ -601,6 +612,33 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
     auto topLevelOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->topLevelDocumentSecurityOrigin());
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *m_currentUserMediaRequest);
 }
+
+void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, const WebCore::CaptureDevice& device, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* frame = m_page.process().webFrame(frameIdentifier);
+    if (!frame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topOrigin)) {
+        completionHandler(false);
+        return;
+    }
+
+    auto request = UserMediaPermissionRequestProxy::create(*this, 0, frameIdentifier, frameIdentifier, requestingOrigin.isolatedCopy(), topOrigin.isolatedCopy(), Vector<WebCore::CaptureDevice> { device }, { }, { }, WTFMove(completionHandler));
+
+    auto action = getRequestAction(request.get());
+    if (action == RequestAction::Deny) {
+        completionHandler(false);
+        return;
+    }
+    
+    if (action == RequestAction::Grant) {
+        completionHandler(true);
+        return;
+    }
+
+    auto apiRequestingOrigin = API::SecurityOrigin::create(requestingOrigin);
+    auto apiTopOrigin = API::SecurityOrigin::create(topOrigin);
+    m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *frame, WTFMove(apiRequestingOrigin), WTFMove(apiTopOrigin), request.get());
+}
+
 
 #if !PLATFORM(COCOA)
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&& callback)

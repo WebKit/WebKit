@@ -10397,12 +10397,12 @@ void WebPageProxy::dispatchActivityStateUpdateForTesting()
     });
 }
 
-void WebPageProxy::requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(Optional<SpeechRecognitionError>&&)>&& completionHandler)
+void WebPageProxy::requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin& clientOrigin, WebCore::FrameIdentifier frameIdentifier, CompletionHandler<void(Optional<SpeechRecognitionError>&&)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager)
         m_speechRecognitionPermissionManager = makeUnique<SpeechRecognitionPermissionManager>(*this);
 
-    m_speechRecognitionPermissionManager->request(lang, clientOrigin, WTFMove(completionHandler));
+    m_speechRecognitionPermissionManager->request(lang, clientOrigin, frameIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
@@ -10413,6 +10413,19 @@ void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCo
     }
 
     m_speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
+}
+
+void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(MEDIA_STREAM)
+    auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
+    if (!captureDevice)
+        completionHandler(false);
+
+    userMediaPermissionRequestManager().checkUserMediaPermissionForSpeechRecognition(frameIdentifier, requestingOrigin, topOrigin, *captureDevice, WTFMove(completionHandler));
+#else
+    completionHandler(false);
+#endif
 }
 
 #if ENABLE(MEDIA_STREAM)

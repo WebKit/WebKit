@@ -1,3 +1,48 @@
+2021-02-01  Sihui Liu  <sihui_liu@appe.com>
+
+        Use user media permission prompt for speech recognition
+        https://bugs.webkit.org/show_bug.cgi?id=221082
+        rdar://problem/73372499
+
+        Reviewed by Youenn Fablet.
+
+        Make SpeechRecognitionPermissionManager ask UserMediaPermissionRequestManagerProxy for user permission on 
+        microphone.
+
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::request):
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+        * UIProcess/SpeechRecognitionPermissionManager.h:
+        * UIProcess/SpeechRecognitionPermissionRequest.h:
+        (WebKit::SpeechRecognitionPermissionRequest::create):
+        (WebKit::SpeechRecognitionPermissionRequest::frameIdentifier const):
+        (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::start):
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/SpeechRecognitionServer.messages.in:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::decisionCompletionHandler):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+        (WebKit::WebPageProxy::requestUserMediaPermissionForSpeechRecognition):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+        (WebKit::WebSpeechRecognitionConnection::start):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h:
+
 2021-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some new data structures to represent image extraction results

@@ -1,3 +1,15 @@
+2021-02-01  Sihui Liu  <sihui_liu@appe.com>
+
+        Use user media permission prompt for speech recognition
+        https://bugs.webkit.org/show_bug.cgi?id=221082
+        rdar://problem/73372499
+
+        Reviewed by Youenn Fablet.
+
+        * fast/speechrecognition/permission-error.html:
+        * fast/speechrecognition/start-recognition-in-removed-iframe-expected.txt:
+        * fast/speechrecognition/start-recognition-in-removed-iframe.html:
+
 2021-02-01  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Layout tests TestExpectation file rewriting

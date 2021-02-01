@@ -75,9 +75,9 @@ SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager()
         request->complete(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Permission manager has exited"_s });
 }
     
-void SpeechRecognitionPermissionManager::request(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&& completiontHandler)
+void SpeechRecognitionPermissionManager::request(const String& lang, const WebCore::ClientOrigin& origin, WebCore::FrameIdentifier frameIdentifier, SpeechRecognitionPermissionRequestCallback&& completiontHandler)
 {
-    m_requests.append(SpeechRecognitionPermissionRequest::create(lang, origin, WTFMove(completiontHandler)));
+    m_requests.append(SpeechRecognitionPermissionRequest::create(lang, origin, frameIdentifier, WTFMove(completiontHandler)));
     if (m_requests.size() == 1)
         startNextRequest();
 }
@@ -123,15 +123,6 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
             return;
         }
 #endif
-    }
-
-    // We currently don't allow third-party access.
-    if (m_userPermissionCheck == CheckResult::Unknown) {
-        auto clientOrigin = m_requests.first()->origin();
-        auto requestingOrigin = clientOrigin.clientOrigin.securityOrigin();
-        auto topOrigin = clientOrigin.topOrigin.securityOrigin();
-        if (!requestingOrigin->isSameOriginAs(topOrigin))
-            m_userPermissionCheck = CheckResult::Denied;
     }
 
     if (m_userPermissionCheck == CheckResult::Denied) {
@@ -225,6 +216,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission()
 
     auto& currentRequest = m_requests.first();
     auto clientOrigin = currentRequest->origin();
+    auto requestingOrigin = clientOrigin.clientOrigin.securityOrigin();
     auto topOrigin = clientOrigin.topOrigin.securityOrigin();
     auto decisionHandler = [this, weakThis = makeWeakPtr(*this)](bool granted) {
         if (!weakThis)
@@ -238,7 +230,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission()
 
         continueProcessingRequest();
     };
-    m_page.uiClient().decidePolicyForSpeechRecognitionPermissionRequest(m_page, API::SecurityOrigin::create(topOrigin.get()).get(), WTFMove(decisionHandler));
+    m_page.requestUserMediaPermissionForSpeechRecognition(currentRequest->frameIdentifier(), requestingOrigin, topOrigin, WTFMove(decisionHandler));
 }
 
 void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
