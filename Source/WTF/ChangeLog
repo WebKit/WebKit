@@ -1,3 +1,23 @@
+2021-02-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        clang Linux build cannot link because of __builtin_mul_overflow
+        https://bugs.webkit.org/show_bug.cgi?id=190208
+
+        Since r183319, __builtin_mul_overflow is used with gcc or clang in WTF/wtf/CheckedArithmetic.h
+
+        This leads to a link failure when WebKit is built on Linux with clang and the libgcc runtime,
+        because of an undefined reference to the __mulodi4 symbol.
+
+        This is because clang generates code using the __mulodi4 symbol for __builtin_mul_overflow.
+        But this symbol is available only in compiler-rt, and not in the libgcc runtime used by most
+        Linux distributions of clang.
+
+        See also this upstream clang bug: https://bugs.llvm.org/show_bug.cgi?id=28629
+
+        Reviewed by Mark Lam.
+
+        * wtf/CheckedArithmetic.h: Do not use __builtin_mul_overflow with clang on Linux for ARM
+
 2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Date.parse returns non-integral time value
