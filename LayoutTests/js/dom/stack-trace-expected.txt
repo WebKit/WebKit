@@ -10,7 +10,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 --> Stack Trace:
     0   inner at stack-trace.js:81:44
-    1    at eval code
+    1   eval code at
     2   eval at [native code]
     3   evaler at stack-trace.js:82:29
     4   global code at stack-trace.js:92:13
@@ -18,7 +18,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 --> Stack Trace:
     0   inner at stack-trace.js:81:44
     1   outer at stack-trace.js:80:34
-    2    at eval code
+    2   eval code at
     3   eval at [native code]
     4   evaler at stack-trace.js:82:29
     5   global code at stack-trace.js:93:13
@@ -253,7 +253,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     99   selfRecursive2 at stack-trace.js:115:27
 
 --> Stack Trace matches pattern:
-    0    at eval code
+    0   eval code at
     1   eval at [native code]
     2   selfRecursive3 at stack-trace.js
 

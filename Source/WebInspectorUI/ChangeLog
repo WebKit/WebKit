@@ -1,3 +1,13 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        * UserInterface/Models/StackTrace.js:
+        (WI.StackTrace.isLikelyStackTrace):
+
 2021-01-27  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: REGRESSION(r269166): not enough space around up/down arrows in execution context picker

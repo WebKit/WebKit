@@ -1,3 +1,24 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        * ChakraCore/test/Error/NativeErrors_v4.baseline-jsc:
+        * ChakraCore/test/Error/validate_line_column.baseline-jsc:
+        * ChakraCore/test/StackTrace/FunctionName.js.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist6.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist6b.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist7.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_negzero.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_undefined_global.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_unreachable.baseline-jsc:
+        * stress/error-stack-at.js: Added.
+        (shouldBe):
+        (catch):
+        (try.eval):
+
 2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Date.parse returns non-integral time value

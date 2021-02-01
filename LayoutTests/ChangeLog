@@ -1,3 +1,20 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        * inspector/model/remote-object/error-expected.txt:
+        * inspector/unit-tests/globals-unhandled-rejection-in-timer-callback-expected.txt:
+        * js/dom/line-column-numbers-expected.txt:
+        * js/dom/script-tests/stack-trace.js:
+        (catch):
+        * js/dom/stack-trace-expected.txt:
+        * js/script-tests/stack-trace.js:
+        (catch):
+        * js/stack-trace-expected.txt:
+
 2021-01-31  Sam Weinig  <weinig@apple.com>
 
         Add support for color(prophoto-rgb ...) as part of CSS Color 4

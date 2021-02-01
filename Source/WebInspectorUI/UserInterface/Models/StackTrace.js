@@ -77,7 +77,7 @@ WI.StackTrace = class StackTrace
         if (stack.length > approximateStackLengthOf50Items)
             return false;
 
-        if (/^[^a-z$_]/i.test(stack[0]))
+        if (/^[^a-z$_@]/i.test(stack[0]))
             return false;
 
         if (!WI.StackTrace._likelyStackTraceRegex) {

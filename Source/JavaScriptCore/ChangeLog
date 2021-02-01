@@ -1,3 +1,16 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        Append '@' if URL exists even if function name does not exist to make the
+        format simple for parsing in JS (splitting with '@' to extract URL and function name).
+
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::toString const):
+
 2021-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix after r272071
