@@ -1346,8 +1346,18 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 
 bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 {
-    return drawsContent() && contentsAreVisible() && !m_size.isEmpty()
-        && (!!opacity() || m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity));
+    // If the CSS opacity value is 0 and there's no animation over the opacity property, the layer is invisible.
+    bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity);
+
+    // Check if there's a filter that sets the opacity to zero.
+    bool hasOpacityZeroFilter = notFound != filters().operations().findMatching([&](const auto& operation) {
+        return operation->type() == FilterOperation::OperationType::OPACITY && !downcast<BasicComponentTransferFilterOperation>(*operation).amount();
+    });
+
+    // If there's a filter that sets opacity to 0 and the filters are not being animated, the layer is invisible.
+    isInvisibleBecauseOpacityZero |= hasOpacityZeroFilter && !m_animations.hasActiveAnimationsOfType(AnimatedPropertyFilter);
+
+    return drawsContent() && contentsAreVisible() && !m_size.isEmpty() && !isInvisibleBecauseOpacityZero;
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
