@@ -38,13 +38,43 @@ from collections import defaultdict
 from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
-from xml.dom import minidom
 
 if sys.version_info > (3, 0):
     from urllib.request import urlopen
     from urllib.error import URLError
+    from html.parser import HTMLParser
 else:
     from urllib2 import urlopen, URLError
+    from HTMLParser import HTMLParser
+
+
+class SimplyPypiIndexPageParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.packages = []
+        self.current_package = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            attrs_dict = dict(attrs)
+            if "href" not in attrs_dict:
+                return
+            self.current_package = attrs_dict
+
+    def handle_data(self, data):
+        if self.current_package is not None:
+            self.current_package["name"] = data
+
+    def handle_endtag(self, tag):
+        if tag == "a" and self.current_package is not None:
+            self.packages.append(self.current_package)
+            self.current_package = None
+
+    @staticmethod
+    def parse(html_text):
+        parser = SimplyPypiIndexPageParser()
+        parser.feed(html_text)
+        return parser.packages
 
 
 class Package(object):
@@ -126,27 +156,12 @@ class Package(object):
             if response.code != 200:
                 raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
 
-            # In some cases, pypi serves invalid html
-            content = response.read()
-            content = re.sub(b'\s+<meta [^\n]+>\n', b'', content)
-
-            page = minidom.parseString(content)
+            packages = SimplyPypiIndexPageParser.parse(response.read().decode("UTF-8"))
             cached_tags = None
 
-            for element in reversed(page.getElementsByTagName("a")):
-                if not len(element.childNodes):
-                    continue
-                if element.childNodes[0].nodeType != minidom.Node.TEXT_NODE:
-                    continue
-
-                attributes = {}
-                for index in range(element.attributes.length):
-                    attributes[element.attributes.item(index).name] = element.attributes.item(index).value
-                if not attributes.get('href', None):
-                    continue
-
+            for package in reversed(packages):
                 if self.wheel:
-                    match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', element.childNodes[0].data)
+                    match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
                     if not match:
                         continue
 
@@ -161,25 +176,25 @@ class Package(object):
                     extension = 'whl'
 
                 else:
-                    if element.childNodes[0].data.endswith(('.tar.gz', '.tar.bz2')):
+                    if package['name'].endswith(('.tar.gz', '.tar.bz2')):
                         extension = 'tar.gz'
-                    elif element.childNodes[0].data.endswith('.zip'):
+                    elif package['name'].endswith('.zip'):
                         extension = 'zip'
                     else:
                         continue
 
-                requires = attributes.get('data-requires-python')
+                requires = package.get('data-requires-python')
                 if requires and not AutoInstall.version.matches(requires):
                     continue
 
-                version_candidate = re.search(r'\d+\.\d+(\.\d+)?', element.childNodes[0].data)
+                version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
                 if not version_candidate:
                     continue
                 version = Version(*version_candidate.group().split('.'))
                 if self.version and version not in self.version:
                     continue
 
-                link = attributes['href'].split('#')[0]
+                link = package['href'].split('#')[0]
                 if '://' not in link:
                     depth = 0
                     while link.startswith('../'):
