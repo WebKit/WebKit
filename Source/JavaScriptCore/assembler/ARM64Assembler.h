@@ -2571,7 +2571,7 @@ public:
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
-#if USE(JUMP_ISLANDS)
+#if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             to = ExecutableAllocator::singleton().getJumpIslandTo(where, to);
             offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(where)) >> 2;
@@ -2769,7 +2769,7 @@ public:
         cacheFlush(reinterpret_cast<int*>(from) - 1, sizeof(int));
     }
 
-#if USE(JUMP_ISLANDS)
+#if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
         intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
@@ -3019,7 +3019,7 @@ protected:
         intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
-#if USE(JUMP_ISLANDS)
+#if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             to = ExecutableAllocator::singleton().getJumpIslandTo(bitwise_cast<void*>(fromInstruction), to);
             offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;

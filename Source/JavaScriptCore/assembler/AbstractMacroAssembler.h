@@ -916,7 +916,7 @@ public:
     template<PtrTag callTag, PtrTag destTag>
     static CodeLocationLabel<destTag> prepareForAtomicRepatchNearCallConcurrently(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
     {
-#if USE(JUMP_ISLANDS)
+#if ENABLE(JUMP_ISLANDS)
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
             return CodeLocationLabel<destTag>(tagCodePtr<destTag>(AssemblerType::prepareForAtomicRelinkJumpConcurrently(nearCall.dataLocation(), destination.dataLocation())));
