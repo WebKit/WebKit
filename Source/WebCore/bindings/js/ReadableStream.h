@@ -44,7 +44,7 @@ public:
 
     WEBCORE_EXPORT static bool isDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
 
-    std::pair<Ref<ReadableStream>, Ref<ReadableStream>> tee();
+    Optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> tee();
 
     void lock();
     void pipeTo(ReadableStreamSink&);
