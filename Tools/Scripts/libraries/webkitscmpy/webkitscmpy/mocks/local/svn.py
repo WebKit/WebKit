@@ -65,12 +65,6 @@ class Svn(mocks.Subprocess):
 
         super(Svn, self).__init__(
             mocks.Subprocess.Route(
-                '/usr/bin/which', 'svn',
-                completion=mocks.ProcessCompletion(
-                    returncode=0,
-                    stdout='{}\n'.format(self.executable),
-                ),
-            ), mocks.Subprocess.Route(
                 self.executable, 'info',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._info(cwd=kwargs.get('cwd', ''))

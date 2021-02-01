@@ -46,12 +46,13 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 9, 6)
+version = Version(0, 9, 7)
 
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('keyring', Version(7, 3, 1)))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
+AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
 
 # This is needed for python-keyring.

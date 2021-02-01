@@ -59,7 +59,7 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['fasteners', 'monotonic', 'webkitcorepy', 'xmltodict'],
+    install_requires=['fasteners', 'monotonic', 'webkitcorepy', 'whichcraft', 'xmltodict'],
     include_package_data=True,
     zip_safe=False,
 )

@@ -1,3 +1,25 @@
+2021-02-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [webkitscmpy] Use shutil to find scm executable paths
+        https://bugs.webkit.org/show_bug.cgi?id=221220
+
+        Reviewed by Jonathan Bedard.
+
+        Using /usr/bin/which is not a cross platform way to determine the path to an executable.
+        In Python 3 shutil gailed a which function which provides the same functionality as the
+        which executable and works on Windows.
+
+        Added the whichcraft library which is a backport of shutil.which to Python 2.7. If
+        Python 3 is available it just uses shutil directly. The library can be dropped once Python
+        2.7 support is jettisoned.
+
+        * Scripts/libraries/webkitscmpy/setup.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.executable):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+
 2021-02-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Support machines without Unix signal handling
