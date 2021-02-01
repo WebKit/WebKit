@@ -46,6 +46,7 @@ MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSour
     , m_byteSource(byteSource)
 {
     ASSERT(!isMainThread());
+    ASSERT(m_decodeTime == m_presentationTime || m_decodeTime == MediaTime::invalidTime());
     auto platformSample = sample.platformSample();
     switch (platformSample.type) {
     case PlatformSample::CMSampleBufferType:

@@ -59,13 +59,16 @@ public:
     static RefPtr<MediaTrackReader> create(Allocator&&, const MediaFormatReader&, CMMediaType, uint64_t, Optional<bool>);
 
     uint64_t trackID() const { return m_trackID; }
-    void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);
-    void waitForSample(Function<bool(WebCore::SampleMap&, bool)>&&) const;
+    CMMediaType mediaType() const { return m_mediaType; }
+    const MediaTime& duration() const { return m_duration; }
 
     void setEnabled(bool enabled) { m_isEnabled = enabled ? Enabled::True : Enabled::False; }
-    CMMediaType mediaType() const { return m_mediaType; }
-
+    void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);
+    void waitForSample(Function<bool(WebCore::SampleMap&, bool)>&&) const;
     void finishParsing();
+
+    const WTF::Logger& logger() const { return m_logger; }
+    const void* nextSampleCursorLogIdentifier(uint64_t cursorID) const;
 
 private:
     using CoreMediaWrapped<MediaTrackReader>::unwrap;
@@ -91,7 +94,6 @@ private:
     };
 
     const char* mediaTypeString() const;
-    const WTF::Logger& logger() const { return m_logger; }
     const char* logClassName() const { return "MediaTrackReader"; }
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
