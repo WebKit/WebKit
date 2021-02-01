@@ -530,7 +530,11 @@ void CurlHandle::enableAcceptEncoding()
 
 void CurlHandle::enableAllowedProtocols()
 {
-    static const long allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
+    static const long allowedProtocols = CURLPROTO_FILE |
+#if ENABLE(FTPDIR)
+        CURLPROTO_FTP | CURLPROTO_FTPS |
+#endif
+        CURLPROTO_HTTP | CURLPROTO_HTTPS;
 
     curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
 }
