@@ -364,15 +364,7 @@
     ;; GPU bundles
     (allow file-read*
         (subpath "/Library/GPUBundles"))
-    ;; DisplayServices
-    (allow iokit-set-properties
-        (require-all (iokit-connection "IODisplay")
-        (require-any (iokit-property "brightness")
-        (iokit-property "linear-brightness")
-        (iokit-property "commit")
-        (iokit-property "rgcs")
-        (iokit-property "ggcs")
-        (iokit-property "bgcs")))))
+)
 
 ;;;
 ;;; End rules originally copied from 'system.sb'

@@ -1,5 +1,17 @@
 2021-02-01  Per Arne  <pvollan@apple.com>
 
+        [macOS] Remove write access to some IOKit properties
+        https://bugs.webkit.org/show_bug.cgi?id=221137
+        <rdar://problem/73473658>
+
+        Reviewed by Brent Fulgham.
+
+        Remove write access to some IOKit properties in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-02-01  Per Arne  <pvollan@apple.com>
+
         [macOS] Add reporting to mach-register sandbox rule
         https://bugs.webkit.org/show_bug.cgi?id=221139
         <rdar://problem/70350150>
