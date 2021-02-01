@@ -1,3 +1,32 @@
+2021-02-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271916. rdar://problem/73834276
+
+    IPC::Decoder constructor should mark the Decoder as invalid if header decoding fails
+    https://bugs.webkit.org/show_bug.cgi?id=220990
+    <rdar://problem/64984186>
+    
+    Reviewed by Darin Adler.
+    
+    Mark the decoder as invalid if any of the decode operations fail, not just the first one.
+    
+    * Platform/IPC/Decoder.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271916 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+            IPC::Decoder constructor should mark the Decoder as invalid if header decoding fails
+            https://bugs.webkit.org/show_bug.cgi?id=220990
+            <rdar://problem/64984186>
+
+            Reviewed by Darin Adler.
+
+            Mark the decoder as invalid if any of the decode operations fail, not just the first one.
+
+            * Platform/IPC/Decoder.cpp:
+
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271503. rdar://problem/73473503
