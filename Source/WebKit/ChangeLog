@@ -1,3 +1,23 @@
+2021-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for data URLs in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=221127
+
+        Reviewed by Adrian Perez de Castro.
+
+        In r271879 I removed the support for data URLs in the network process for soup, assuming data URLs were always
+        loaded from the web process, but that's not the case for downloads. I think we should not go to the network
+        process for downloads either, but for now it's easier to fix this regression by supporting data URLs in the
+        network process again. Fixes http/tests/security/anchor-download-allow-data.html.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Return early if it's a data URL.
+        (WebKit::NetworkDataTaskSoup::clearRequest): Clear the pending data URL result.
+        (WebKit::NetworkDataTaskSoup::resume): Start a data URL decode task if it's a new data URL request, or complete
+        the pending one.
+        (WebKit::NetworkDataTaskSoup::didReadDataURL): Complete the data URL request.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2021-01-29  Darin Adler  <darin@apple.com>
 
         Check activeDocumentLoader() for null consistently everywhere
