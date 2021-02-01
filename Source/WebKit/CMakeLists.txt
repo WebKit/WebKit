@@ -577,4 +577,8 @@ else ()
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
     )
+
+    if (ENABLE_PLUGIN_PROCESS)
+        install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+    endif ()
 endif ()
