@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(UI_EVENT_ATTRIBUTION)
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
@@ -38,23 +38,23 @@
 @interface MockEventAttribution : NSObject
 
 @property (nonatomic, assign, readonly) uint8_t sourceIdentifier;
-@property (nonatomic, copy, readonly) NSURL *attributeOn;
+@property (nonatomic, copy, readonly) NSURL *destinationURL;
 @property (nonatomic, copy, readonly) NSURL *reportEndpoint;
 @property (nonatomic, copy, readonly) NSString *sourceDescription;
 @property (nonatomic, copy, readonly) NSString *purchaser;
-- (instancetype)initWithReportEndpoint:(NSURL *)reportEndpoint attributeOn:(NSURL *)attributeOn;
+- (instancetype)initWithReportEndpoint:(NSURL *)reportEndpoint destinationURL:(NSURL *)destinationURL;
 
 @end
 
 @implementation MockEventAttribution
 
-- (instancetype)initWithReportEndpoint:(NSURL *)reportEndpoint attributeOn:(NSURL *)attributeOn
+- (instancetype)initWithReportEndpoint:(NSURL *)reportEndpoint destinationURL:(NSURL *)destinationURL
 {
     if (!(self = [super init]))
         return nil;
 
     _sourceIdentifier = 42;
-    _attributeOn = attributeOn;
+    _destinationURL = destinationURL;
     _reportEndpoint = reportEndpoint;
     _sourceDescription = @"test source description";
     _purchaser = @"test purchaser";
@@ -101,9 +101,9 @@ TEST(EventAttribution, Basic)
     NSURL *serverURL = server.request().URL;
 
     auto exampleURL = [NSURL URLWithString:@"https://example.com/"];
-    auto attribution = [[[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL attributeOn:exampleURL] autorelease];
+    auto attribution = [[[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL] autorelease];
     auto webView = [[WKWebView new] autorelease];
-    webView._eventAttribution = (_UIEventAttribution *)attribution;
+    webView._uiEventAttribution = (UIEventAttribution *)attribution;
     [webView.configuration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [webView.configuration.websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
     [webView _setPrivateClickMeasurementConversionURLForTesting:serverURL completionHandler:^{

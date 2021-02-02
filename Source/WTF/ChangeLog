@@ -1,3 +1,12 @@
+2021-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt UIEventAttribution instead of _UIEventAttribution
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+
+        Reviewed by John Wilander.
+
+        * wtf/PlatformHave.h:
+
 2021-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Migrate WebKitTestServer to libsoup 2.48 API

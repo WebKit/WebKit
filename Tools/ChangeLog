@@ -1,3 +1,15 @@
+2021-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt UIEventAttribution instead of _UIEventAttribution
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (-[MockEventAttribution initWithReportEndpoint:destinationURL:]):
+        (TestWebKitAPI::TEST):
+        (-[MockEventAttribution initWithReportEndpoint:attributeOn:]): Deleted.
+
 2021-02-02  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] unzip layout-test-results in background

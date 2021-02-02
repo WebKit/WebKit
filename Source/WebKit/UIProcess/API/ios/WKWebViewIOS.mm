@@ -65,6 +65,10 @@
 #import "WKDataDetectorTypesInternal.h"
 #endif
 
+#if HAVE(UI_EVENT_ATTRIBUTION)
+#import <UIKit/UIEventAttribution.h>
+#endif
+
 #include "UIKitSoftLink.h"
 
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
@@ -2521,6 +2525,37 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 @end
 
 @implementation WKWebView (WKPrivateIOS)
+
+- (void)_setUIEventAttribution:(UIEventAttribution *)attribution
+{
+#if HAVE(UI_EVENT_ATTRIBUTION)
+    if (attribution) {
+        WebCore::PrivateClickMeasurement measurement(
+            WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
+            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
+            WebCore::PrivateClickMeasurement::AttributeOnSite(attribution.destinationURL),
+            attribution.sourceDescription,
+            attribution.purchaser
+        );
+        _page->setPrivateClickMeasurement(WTFMove(measurement));
+    } else
+        _page->setPrivateClickMeasurement(WTF::nullopt);
+#endif
+}
+
+- (UIEventAttribution *)_uiEventAttribution
+{
+#if HAVE(UI_EVENT_ATTRIBUTION)
+    auto& measurement = _page->privateClickMeasurement();
+    if (!measurement || !measurement->sourceID().isValid())
+        return nil;
+
+    auto attributeOnURL = URL(URL(), makeString("https://", measurement->attributeOnSite().registrableDomain.string()));
+    return [[[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:attributeOnURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()] autorelease];
+#else
+    return nil;
+#endif
+}
 
 - (void)_setEventAttribution:(_UIEventAttribution *)attribution
 {
