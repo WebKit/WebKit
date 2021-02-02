@@ -17,6 +17,7 @@ The following assertion is expected to fail.
 FAIL: Should produce an exception.
     Expected: not null
     Actual: null
+PASS: Exception-producing work should not return a value
 PASS: Rejected value should be the returned value.
 
 -- Running test case: expectException.AsyncWorkThatRejects
@@ -30,6 +31,9 @@ The following assertion is expected to fail.
 FAIL: Should produce an exception.
     Expected: not null
     Actual: null
+FAIL: Exception-producing work should not return a value
+    Expected: undefined
+    Actual: 42
 PASS: Rejected value should be the returned value.
 
 -- Running test case: expectException.AsyncWorkThatResolvesImplicitly
@@ -37,5 +41,6 @@ The following assertion is expected to fail.
 FAIL: Should produce an exception.
     Expected: not null
     Actual: null
+PASS: Exception-producing work should not return a value
 PASS: Implicitly resolved value should be undefined.
 

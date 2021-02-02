@@ -494,6 +494,28 @@
             "description": "Highlights owner element of the frame with given id."
         },
         {
+            "name": "showGridOverlay",
+            "description": "Shows a grid overlay for a node that begins a 'grid' layout context. The command has no effect if <code>nodeId</code> is invalid or the associated node does not begin a 'grid' layout context. A node can only have one grid overlay at a time; subsequent calls with the same <code>nodeId</code> will override earlier calls.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a grid overlay should be shown." },
+                { "name": "gridColor", "$ref": "RGBAColor", "description": "The primary color to use for the grid overlay." },
+                { "name": "showLineNames", "type": "boolean", "optional": true, "description": "Show labels for grid line names. If not specified, the default value is false." },
+                { "name": "showLineNumbers", "type": "boolean", "optional": true, "description": "Show labels for grid line numbers. If not specified, the default value is false." },
+                { "name": "showExtendedGridlines", "type": "boolean", "optional": true, "description": "Show grid lines that extend beyond the bounds of the grid. If not specified, the default value is false." },
+                { "name": "showTrackSizes", "type": "boolean", "optional": true, "description": "Show grid track size information. If not specified, the default value is false." },
+                { "name": "showAreaNames", "type": "boolean", "optional": true, "description": "Show labels for grid area names. If not specified, the default value is false." }
+            ]
+        },
+        {
+            "name": "hideGridOverlay",
+            "description": "Hides a grid overlay for a node that begins a 'grid' layout context. The command has no effect if <code>nodeId</code> is specified and invalid, or if there is not currently an overlay set for the <code>nodeId</code>.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "The node for which a grid overlay should be hidden. If a <code>nodeId</code> is not specified, all grid overlays will be hidden." }
+            ]
+        },
+        {
             "name": "pushNodeByPathToFrontend",
             "description": "Requests that the node is sent to the caller given its path.",
             "targetTypes": ["page"],

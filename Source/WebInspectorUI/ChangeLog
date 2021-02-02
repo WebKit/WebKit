@@ -1,3 +1,54 @@
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: implement the basics for showing/hiding grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221062
+
+        Reviewed by Devin Rousso.
+
+        Expose new DOM.showGridOverlay and DOM.hideGridOverlay commands
+        via WI.DOMNode. Add initial engineering UI to toggle grid overlays.
+
+        New methods are covered by a new test:
+
+            inspector/dom/showGridOverlay.html
+
+        Additions to WI.DOMManager.prototype.requestDocument are covered
+        by existing tests (callback case) and a new test (promise case).
+
+        Additions to WI.Color are covered by a new test case in:
+
+            inspector/model/color.html
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.requestDocument):
+        (WI.DOMManager.prototype._requestDocumentWithPromise):
+        Drive-by: upgrade requestDocument() to return a promise if
+        no callback argument was passed. This is used by a new test.
+
+        * UserInterface/Models/Color.js:
+        (WI.Color.prototype.toProtocol): Added. The protocol object is
+        DOM.RGBAColor, which is the same thing as WI.Color.Format.RGBA.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.showGridOverlay):
+        (WI.DOMNode.prototype.hideGridOverlay):
+        Added. These are the methods that the rest of WebInspectorUI uses
+        to interact with grid overlays for a particular node. Note that
+        these methods return either an unsettled promise (from the agent call)
+        or a rejected promise (in the case that the node is destroyed).
+        This allows test cases to `await` before checking the grid overlay count.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectException): Improve logging output
+        when InspectorTest.expectException does not catch an exception.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        Add some engineering-only context menu items for showing/hiding
+        grid overlays to DOMTreeElements in the Elements Tab.
+
+        These are in place for development purposes and should eventually
+        be removed when no longer needed.
+
 2021-02-01  Patrick Angle  <pangle@apple.com>
 
         REGRESSION(r270637): Web Inspector: Filtering field no longer shows in Computed panel

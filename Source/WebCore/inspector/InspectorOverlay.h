@@ -39,7 +39,15 @@
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
+namespace Inspector {
+using ErrorString = String;
+
+template <typename T>
+using ErrorStringOr = Expected<T, ErrorString>;
+}
 
 namespace WebCore {
 
@@ -98,6 +106,24 @@ public:
         using Bounds = FloatRect;
     };
 
+    struct Grid {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        struct Config {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+            Color gridColor;
+            bool showLineNames;
+            bool showLineNumbers;
+            bool showExtendedGridlines;
+            bool showTrackSizes;
+            bool showAreaNames;
+        };
+
+        WeakPtr<Node> gridNode;
+        Config config;
+    };
+
     enum class CoordinateSystem {
         View, // Adjusts for the main frame's scroll offset.
         Document, // Does not adjust for the main frame's scroll offset.
@@ -120,10 +146,17 @@ public:
     void setShowRulersDuringElementSelection(bool enabled) { m_showRulersDuringElementSelection = enabled; }
 
     Node* highlightedNode() const;
+    unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
 
     void didSetSearchingForNode(bool enabled);
 
     void setIndicating(bool indicating);
+
+    // Multiple grid overlays can be active at the same time. These methods
+    // will fail if the node is not a grid or if the node has been GC'd.
+    Inspector::ErrorStringOr<void> setGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
+    Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
+    void clearAllGridOverlays();
 
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
@@ -141,7 +174,11 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
 
+    void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Grid&);
+
     void updatePaintRectsTimerFired();
+
+    bool removeGridOverlayForNode(Node&);
 
     Page& m_page;
     InspectorClient* m_client;
@@ -155,6 +192,8 @@ private:
 
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
+
+    Vector<InspectorOverlay::Grid> m_activeGridOverlays;
 
     bool m_indicating { false };
     bool m_showPaintRects { false };

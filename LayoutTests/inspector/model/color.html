@@ -672,6 +672,25 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "WI.Color.toProtocol",
+        description: "Test serialization of WI.Color into DOM.RGBAColor.",
+        test() {
+            function testInput(input, expected) {
+                let color = WI.Color.fromString(input);
+                let actual = color.toProtocol();
+                InspectorTest.expectShallowEqual(actual, expected, `Should convert ${input} to ${JSON.stringify(expected)}.`);
+            }
+
+            testInput("rgba(10,20,30,40)", {r: 10, g: 20, b: 30, a: 1});
+            testInput("rgb(10 20 30 / 40%)", {r: 10, g: 20, b: 30, a: 0.4});
+            testInput("#a0Aa0A", {r: 160, g: 170, b: 10, a: 1});
+            testInput("rgb(10% 20% 30% / 40%)", {r: 25.5, g: 51, b: 76.5, a: 0.4});
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

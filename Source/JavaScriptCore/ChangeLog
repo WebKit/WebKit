@@ -1,3 +1,17 @@
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: implement the basics for showing/hiding grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221062
+
+        Reviewed by Devin Rousso.
+
+        Add new commands to show and hide CSS grid overlays:
+
+            - DOM.showGridOverlay
+            - DOM.hideGridOverlay
+
+        * inspector/protocol/DOM.json:
+
 2021-02-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late January 2021 edition

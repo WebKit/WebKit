@@ -1,3 +1,25 @@
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: implement the basics for showing/hiding grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221062
+
+        Reviewed by Devin Rousso.
+
+        * inspector/dom/showGridOverlay-expected.txt: Added.
+        * inspector/dom/showGridOverlay.html: Added.
+        This test does not cover the actual drawing code. The drawing method
+        will change a lot and is not easy to test currently. The new test
+        covers the behavior of showGridOverlay/hideGridOverlay by querying
+        how many grid overlays are active according to InspectorOverlay.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+        Add a test case to exercise WI.Color.prototype.toProtocol().
+
+        * inspector/unit-tests/test-harness-expect-functions-async-expected.txt:
+        Rebaseline results after adding more state dumping in the failure case
+        for InspectorTest.expectException().
+
 2021-02-01  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening crashes common to both glib ports

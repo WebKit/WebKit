@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "GridPositionsResolver.h"
 #include "InspectorClient.h"
 #include "IntPoint.h"
 #include "IntRect.h"
@@ -53,6 +54,7 @@
 #include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
+#include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "Settings.h"
@@ -409,6 +411,9 @@ void InspectorOverlay::paint(GraphicsContext& context)
         rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
     }
 
+    for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays)
+        drawGridOverlay(context, gridOverlay);
+
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
@@ -495,7 +500,7 @@ bool InspectorOverlay::shouldShowOverlay() const
 {
     // Don't show the overlay when m_showRulersDuringElementSelection is true, as it's only supposed
     // to have an effect when element selection is active (e.g. a node is hovered).
-    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers;
+    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers || m_activeGridOverlays.size();
 }
 
 void InspectorOverlay::update()
@@ -555,6 +560,46 @@ void InspectorOverlay::setShowRulers(bool showRulers)
     update();
 }
 
+bool InspectorOverlay::removeGridOverlayForNode(Node& node)
+{
+    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node> has been cleared.
+    return m_activeGridOverlays.removeAllMatching([&] (const InspectorOverlay::Grid& gridOverlay) {
+        return !gridOverlay.gridNode || gridOverlay.gridNode.get() == &node;
+    });
+}
+
+ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const InspectorOverlay::Grid::Config& gridOverlayConfig)
+{
+    RenderObject* renderer = node.renderer();
+    if (!is<RenderGrid>(renderer))
+        return makeUnexpected("Node does not initiate a grid context");
+
+    removeGridOverlayForNode(node);
+
+    m_activeGridOverlays.append({ makeWeakPtr(node), gridOverlayConfig });
+
+    update();
+
+    return { };
+}
+
+ErrorStringOr<void> InspectorOverlay::clearGridOverlayForNode(Node& node)
+{
+    if (!removeGridOverlayForNode(node))
+        return makeUnexpected("No grid overlay exists for the node, so cannot clear.");
+
+    update();
+
+    return { };
+}
+
+void InspectorOverlay::clearAllGridOverlays()
+{
+    m_activeGridOverlays.clear();
+
+    update();
+}
+
 void InspectorOverlay::updatePaintRectsTimerFired()
 {
     MonotonicTime now = MonotonicTime::now();
@@ -587,6 +632,9 @@ InspectorOverlay::RulerExclusion InspectorOverlay::drawNodeHighlight(GraphicsCon
     if (m_nodeHighlightConfig.showInfo)
         rulerExclusion.titlePath = drawElementTitle(context, node, rulerExclusion.bounds);
 
+    // Note: since grid overlays may cover the entire viewport with little lines, grid overlay bounds
+    // are not considered as part of the combined bounds used as the ruler exclusion area.
+    
     return rulerExclusion;
 }
 
@@ -1090,6 +1138,84 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     }
 
     return path;
+}
+
+void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Grid& gridOverlay)
+{
+    // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
+    if (!gridOverlay.gridNode) {
+        m_activeGridOverlays.removeAllMatching([&] (const InspectorOverlay::Grid& gridOverlay) {
+            return !gridOverlay.gridNode;
+        });
+        return;
+    }
+    
+    // Always re-check because the node's renderer may have changed since being added.
+    // If renderer is no longer a grid, then remove the grid overlay for the node.
+    Node* node = gridOverlay.gridNode.get();
+    auto renderer = node->renderer();
+    if (!is<RenderGrid>(renderer)) {
+        removeGridOverlayForNode(*node);
+        return;
+    }
+
+    auto* renderGrid = downcast<RenderGrid>(renderer);
+    LayoutRect paddingBox = renderGrid->clientBoxRect();
+    LayoutRect contentBox = LayoutRect(paddingBox.x() + renderGrid->paddingLeft(), paddingBox.y() + renderGrid->paddingTop(),
+        paddingBox.width() - renderGrid->paddingLeft() - renderGrid->paddingRight(), paddingBox.height() - renderGrid->paddingTop() - renderGrid->paddingBottom());
+    FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
+    FloatRect gridBoundingBox = absContentQuad.boundingBox();
+    FrameView* pageView = m_page.mainFrame().view();
+    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+
+    GraphicsContextStateSaver saver(context);
+
+    // Drawing code is relative to the visible viewport area.
+    context.translate(0, contentInset.height());
+    
+    // FIXME: if showExtendedGridlines is false, set the clip path to the gridBoundingBox (maybe inflated?)
+
+    // Draw columns and rows.
+    context.setStrokeThickness(1);
+    context.setStrokeColor(gridOverlay.config.gridColor);
+
+    auto columnPositions = renderGrid->columnPositions();
+    auto columnWidths = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
+    for (unsigned i = 0; i < columnPositions.size(); ++i) {
+        // Column positions are (apparently) relative to the element's content area.
+        auto position = columnPositions[i] + gridBoundingBox.x();
+
+        Path columnPaths;
+        columnPaths.moveTo({ position, 0 });
+        columnPaths.addLineTo({ position, viewportSize.height() });
+
+        if (i < columnWidths.size()) {
+            auto width = columnWidths[i];
+            columnPaths.moveTo({ position + width, 0 });
+            columnPaths.addLineTo({ position + width, viewportSize.height() });
+        }
+
+        context.strokePath(columnPaths);
+    }
+
+    auto rowPositions = renderGrid->rowPositions();
+    auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
+    for (unsigned i = 0; i < rowPositions.size(); ++i) {
+        auto position = rowPositions[i] + gridBoundingBox.y();
+
+        Path rowPaths;
+        rowPaths.moveTo({ 0, position });
+        rowPaths.addLineTo({ viewportSize.width(), position });
+
+        if (i < rowHeights.size()) {
+            auto height = rowHeights[i];
+            rowPaths.moveTo({ 0, position + height });
+            rowPaths.addLineTo({ viewportSize.width(), position + height });
+        }
+
+        context.strokePath(rowPaths);
+    }
 }
 
 } // namespace WebCore

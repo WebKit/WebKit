@@ -361,6 +361,11 @@ void InspectorController::getHighlight(InspectorOverlay::Highlight& highlight, I
     m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
+unsigned InspectorController::gridOverlayCount() const
+{
+    return m_overlay->gridOverlayCount();
+}
+
 bool InspectorController::shouldShowOverlay() const
 {
     return m_overlay->shouldShowOverlay();

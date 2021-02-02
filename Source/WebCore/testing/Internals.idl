@@ -329,6 +329,7 @@ enum TreeType {
 
     DOMRect boundingBox(Element element);
 
+    [MayThrowException] unsigned long inspectorGridOverlayCount();
     [MayThrowException] DOMRectList inspectorHighlightRects();
 
     [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);

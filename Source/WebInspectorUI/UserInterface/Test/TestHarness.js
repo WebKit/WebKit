@@ -257,10 +257,12 @@ TestHarness = class TestHarness extends WI.Object
         if (typeof work !== "function")
             throw new Error("Invalid argument to catchException: work must be a function.");
 
-        let expectAndDumpError = (e) => {
+        let expectAndDumpError = (e, resolvedValue) => {
             this.expectNotNull(e, "Should produce an exception.");
-            if (!e)
+            if (!e) {
+                this.expectEqual(resolvedValue, undefined, "Exception-producing work should not return a value");
                 return;
+            }
 
             if (e instanceof Error || !(e instanceof Object))
                 this.log(e.toString());
@@ -284,7 +286,7 @@ TestHarness = class TestHarness extends WI.Object
             // Invert the promise's settled state to match the expectation of the caller.
             if (result instanceof Promise) {
                 return result.then((resolvedValue) => {
-                    expectAndDumpError(null);
+                    expectAndDumpError(null, resolvedValue);
                     return Promise.reject(resolvedValue);
                 }, (e) => { // Don't chain the .catch as it will log the value we just rejected.
                     expectAndDumpError(e);

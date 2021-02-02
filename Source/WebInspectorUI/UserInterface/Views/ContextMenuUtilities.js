@@ -386,6 +386,28 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         }
 
         contextMenu.appendSeparator();
+
+        // FIXME: <https://webkit.org/b/221246> remove these engineering-only menu items when removing the feature flag.
+        if (WI.isEngineeringBuild && WI.settings.experimentalEnableLayoutPanel.value) {
+            if (InspectorBackend.hasCommand("DOM.showGridOverlay") && attached) {
+                contextMenu.appendItem(WI.unlocalizedString("Add Grid Overlay with Random Color"), () => {
+                    let randomComponent = () => Math.floor(Math.random() * 255);
+                    let color = new WI.Color(WI.Color.Format.RGB, [randomComponent(), randomComponent(), randomComponent()]);
+                    domNode.showGridOverlay(color).catch(console.error);
+                });
+
+                contextMenu.appendItem(WI.unlocalizedString("Remove Grid Overlay for this Node"), () => {
+                    domNode.hideGridOverlay();
+                });
+
+                contextMenu.appendItem(WI.unlocalizedString("Remove All Grid Overlays"), () => {
+                    let target = WI.assumingMainTarget();
+                    target.DOMAgent.hideGridOverlay();
+                });
+            }
+        }
+
+        contextMenu.appendSeparator();
     }
 };
 
