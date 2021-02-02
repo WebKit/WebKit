@@ -111,8 +111,6 @@ class JSGlobalObject;
     v(callFunction, nullptr) \
     v(hasOwnPropertyFunction, nullptr) \
     v(createPrivateSymbol, nullptr) \
-    v(toBigInt, nullptr) \
-    v(isBigIntTypedArrayView, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

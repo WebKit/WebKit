@@ -52,7 +52,6 @@ private:
 };
 
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView);
-JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsBigIntTypedArrayView);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncDefaultComparator);

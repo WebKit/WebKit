@@ -358,7 +358,7 @@ JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue type
 
     JSArrayBufferView* typedArray = jsCast<JSArrayBufferView*>(typedArrayCell);
     if (typedArray->isDetached()) {
-        throwTypeError(globalObject, scope, "Argument typed array is detached."_s);
+        throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
         return nullptr;
     }
     return typedArray;

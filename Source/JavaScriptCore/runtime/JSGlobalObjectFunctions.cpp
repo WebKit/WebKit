@@ -967,9 +967,4 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncDateTimeFormat, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->format(globalObject, value)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(globalFuncToBigInt, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return JSValue::encode(callFrame->argument(0).toBigInt(globalObject));
-}
-
 } // namespace JSC

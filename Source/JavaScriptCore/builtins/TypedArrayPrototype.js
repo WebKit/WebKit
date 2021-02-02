@@ -52,22 +52,6 @@ function typedArraySpeciesConstructor(value)
     return constructor;
 }
 
-@globalPrivate
-function typedArrayClampArgumentToStartOrEnd(value, length, undefinedValue)
-{
-    "use strict";
-
-    if (value === @undefined)
-        return undefinedValue;
-
-    var int = @toInteger(value);
-    if (int < 0) {
-        int += length;
-        return int < 0 ? 0 : int;
-    }
-    return int > length ? length : int;
-}
-
 function every(callback /*, thisArg */)
 {
     "use strict";
@@ -83,28 +67,6 @@ function every(callback /*, thisArg */)
     }
 
     return true;
-}
-
-function fill(value /* [, start [, end]] */)
-{
-    "use strict";
-
-    var length = @typedArrayLength(this);
-
-    if (@isBigIntTypedArrayView(this))
-        var number = @toBigInt(value);
-    else
-        var number = @toNumber(value);
-
-    var start = @typedArrayClampArgumentToStartOrEnd(@argument(1), length, 0);
-    var end = @typedArrayClampArgumentToStartOrEnd(@argument(2), length, length);
-
-    if (@isDetached(this))
-        @throwTypeError("Underlying ArrayBuffer has been detached from the view");
-
-    for (var i = start; i < end; i++)
-        this[i] = number;
-    return this;
 }
 
 function find(callback /* [, thisArg] */)

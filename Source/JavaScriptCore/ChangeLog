@@ -1,3 +1,32 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray#fill should be implemented in C++
+        https://bugs.webkit.org/show_bug.cgi?id=221182
+
+        Reviewed by Ross Kirsling.
+
+        Since TypedArray#fill does not invoke callbacks, implementing it in C++ is better.
+        This removes several utility functions exposed in JS for TypedArray#fill implementation,
+        and makes TypedArray#fill simple.
+
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArrayClampArgumentToStartOrEnd): Deleted.
+        (fill): Deleted.
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::validateTypedArray):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.h:
+
 2021-02-01  Saam Barati  <sbarati@apple.com>
 
         Lazily create m_windowCloseWatchpoints so we don't mistakenly think we have a frame when re-associating a document to a given cached frame

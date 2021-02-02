@@ -308,6 +308,34 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
 }
 
 template<typename ViewClass>
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFill(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    // https://tc39.es/ecma262/#sec-%typedarray%.prototype.fill
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
+    if (thisObject->isDetached())
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    unsigned length = thisObject->length();
+    auto nativeValue = ViewClass::toAdaptorNativeFromValue(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned start = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), length, 0);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned end = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(2), length, length);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (thisObject->isDetached())
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    for (unsigned index = start; index < end; ++index)
+        thisObject->setIndexQuicklyToNativeValue(index, nativeValue);
+
+    return JSValue::encode(thisObject);
+}
+
+template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
