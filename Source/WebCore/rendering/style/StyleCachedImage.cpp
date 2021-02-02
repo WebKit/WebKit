@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005-2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -156,23 +156,20 @@ void StyleCachedImage::setContainerContextForRenderer(const RenderElement& rende
     m_cachedImage->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, imageURL());
 }
 
-void StyleCachedImage::addClient(RenderElement* renderer)
+void StyleCachedImage::addClient(RenderElement& renderer)
 {
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    ASSERT(renderer);
-    m_cachedImage->addClient(*renderer);
+    m_cachedImage->addClient(renderer);
 }
 
-void StyleCachedImage::removeClient(RenderElement* renderer)
+void StyleCachedImage::removeClient(RenderElement& renderer)
 {
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    ASSERT(renderer);
-
-    m_cachedImage->removeClient(*renderer);
+    m_cachedImage->removeClient(renderer);
 }
 
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const

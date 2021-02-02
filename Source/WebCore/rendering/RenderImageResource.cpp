@@ -4,7 +4,7 @@
  * Copyright (C) 2000 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Allan Sandfeld Jensen <kde@carewolf.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
@@ -39,9 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImageResource);
 
-RenderImageResource::RenderImageResource()
-{
-}
+RenderImageResource::RenderImageResource() = default;
 
 void RenderImageResource::initialize(RenderElement& renderer, CachedImage* styleCachedImage)
 {
@@ -63,9 +61,8 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
     if (m_cachedImage == newImage)
         return;
 
-    ASSERT(m_renderer);
-    if (m_cachedImage && m_cachedImageRemoveClientIsNeeded)
-        m_cachedImage->removeClient(*renderer());
+    if (m_cachedImage && m_renderer && m_cachedImageRemoveClientIsNeeded)
+        m_cachedImage->removeClient(*m_renderer);
     m_cachedImage = newImage;
     m_cachedImageRemoveClientIsNeeded = true;
     if (!m_cachedImage)
@@ -81,37 +78,35 @@ void RenderImageResource::resetAnimation()
     if (!m_cachedImage)
         return;
 
-    ASSERT(m_renderer);
     image()->resetAnimation();
 
-    if (!renderer()->needsLayout())
-        renderer()->repaint();
+    if (m_renderer && !m_renderer->needsLayout())
+        m_renderer->repaint();
 }
 
 RefPtr<Image> RenderImageResource::image(const IntSize&) const
 {
     if (!m_cachedImage)
         return &Image::nullImage();
-    if (auto image = m_cachedImage->imageForRenderer(renderer()))
+    if (auto image = m_cachedImage->imageForRenderer(m_renderer.get()))
         return image;
     return &Image::nullImage();
 }
 
 void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& imageURL)
 {
-    if (!m_cachedImage)
+    if (!m_cachedImage || !m_renderer)
         return;
-    ASSERT(m_renderer);
-    m_cachedImage->setContainerContextForClient(*renderer(), imageContainerSize, renderer()->style().effectiveZoom(), imageURL);
+    m_cachedImage->setContainerContextForClient(*m_renderer, imageContainerSize, m_renderer->style().effectiveZoom(), imageURL);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const
 {
     if (!m_cachedImage)
         return LayoutSize();
-    LayoutSize size = m_cachedImage->imageSizeForRenderer(renderer(), multiplier, type);
-    if (is<RenderImage>(renderer()))
-        size.scale(downcast<RenderImage>(*renderer()).imageDevicePixelRatio());
+    LayoutSize size = m_cachedImage->imageSizeForRenderer(m_renderer.get(), multiplier, type);
+    if (is<RenderImage>(m_renderer.get()))
+        size.scale(downcast<RenderImage>(*m_renderer).imageDevicePixelRatio());
     return size;
 }
 

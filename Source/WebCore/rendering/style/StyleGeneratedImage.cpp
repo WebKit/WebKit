@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,8 +54,10 @@ void StyleGeneratedImage::load(CachedResourceLoader& loader, const ResourceLoade
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
-    ASSERT(renderer);
     if (m_fixedSize) {
+        if (!renderer)
+            return { };
+
         FloatSize fixedSize = m_imageGeneratorValue->fixedSize(*renderer);
         if (multiplier == 1.0f)
             return fixedSize;
@@ -86,28 +88,24 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* render
     intrinsicRatio = size;
 }
 
-void StyleGeneratedImage::addClient(RenderElement* renderer)
+void StyleGeneratedImage::addClient(RenderElement& renderer)
 {
-    ASSERT(renderer);
-    m_imageGeneratorValue->addClient(*renderer);
+    m_imageGeneratorValue->addClient(renderer);
 }
 
-void StyleGeneratedImage::removeClient(RenderElement* renderer)
+void StyleGeneratedImage::removeClient(RenderElement& renderer)
 {
-    ASSERT(renderer);
-    m_imageGeneratorValue->removeClient(*renderer);
+    m_imageGeneratorValue->removeClient(renderer);
 }
 
 RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
 {
-    ASSERT(renderer);
-    return m_imageGeneratorValue->image(*renderer, size);
+    return renderer ? m_imageGeneratorValue->image(*renderer, size) : &Image::nullImage();
 }
 
 bool StyleGeneratedImage::knownToBeOpaque(const RenderElement* renderer) const
 {
-    ASSERT(renderer);
-    return m_imageGeneratorValue->knownToBeOpaque(*renderer);
+    return renderer && m_imageGeneratorValue->knownToBeOpaque(*renderer);
 }
 
 }
