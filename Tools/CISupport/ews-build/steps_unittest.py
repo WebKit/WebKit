@@ -3738,6 +3738,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -3747,10 +3748,14 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://trac.webkit.org/changeset/256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        return rc
 
     def test_failure(self):
         self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '2345')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -3760,7 +3765,10 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
+        return rc
 
 
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):

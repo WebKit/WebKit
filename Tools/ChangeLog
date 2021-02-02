@@ -1,3 +1,14 @@
+2021-02-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Commit queue failure message should indicate that cq+ flag can be set again
+        https://bugs.webkit.org/show_bug.cgi?id=221269
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo.comment_text_for_bug):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-02-02  Don Olmstead  <don.olmstead@sony.com>
 
         [webkitpy] WinPort.delete_sem_locks is cygwin specific

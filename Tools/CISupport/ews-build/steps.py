@@ -3111,7 +3111,9 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     def comment_text_for_bug(self, svn_revision=None):
         patch_id = self.getProperty('patch_id', '')
         if not svn_revision:
-            return 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
+            comment = 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
+            comment += ' To retry, please set cq+ flag again.'
+            return comment
         comment = 'Committed r{}: <{}>'.format(svn_revision, self.url_for_revision(svn_revision))
         comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
         return comment
