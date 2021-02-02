@@ -716,7 +716,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     gchar* header_str = g_strdup_printf("%s=%s; Max-Age=60", kCookieName, kCookieValue);
 
     if (g_str_equal(path, "/index.html")) {
-        char* indexHtml = g_strdup_printf(kIndexHtmlFormat, soup_server_get_port(server));
+        char* indexHtml = g_strdup_printf(kIndexHtmlFormat, kServer->port());
         soup_message_headers_replace(message->response_headers, "Set-Cookie", header_str);
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
     } else if (g_str_equal(path, "/image.png"))

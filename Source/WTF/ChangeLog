@@ -1,3 +1,13 @@
+2021-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Migrate WebKitTestServer to libsoup 2.48 API
+        https://bugs.webkit.org/show_bug.cgi?id=219160
+        <rdar://problem/71620310>
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h: Bump libsoup minimum required version to 2.54.
+
 2021-02-01  Mark Lam  <mark.lam@apple.com>
 
         ConcurrentPtrHashSet::contains() should be const.

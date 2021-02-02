@@ -38,6 +38,7 @@ public:
     virtual ~WebKitTestServer();
 
     SoupURI* baseURI() const { return m_baseURI; }
+    unsigned port() const;
     CString getURIForPath(const char* path) const;
     void run(SoupServerCallback);
 
