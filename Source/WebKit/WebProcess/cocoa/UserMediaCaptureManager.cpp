@@ -88,7 +88,7 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
 void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeMediaSource>&& source)
 {
     if (source->type() == RealtimeMediaSource::Type::Audio)
-        m_remoteCaptureSampleManager.addSource(source.copyRef());
+        m_remoteAudioCaptureSampleManager.addSource(source.copyRef());
 
     auto identifier = source->identifier();
     ASSERT(!m_sources.contains(identifier));
@@ -196,7 +196,8 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
 
 void UserMediaCaptureManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
 {
-    m_remoteCaptureSampleManager.didUpdateSourceConnection(source);
+    if (source.type() == RealtimeMediaSource::Type::Audio)
+        m_remoteAudioCaptureSampleManager.didUpdateSourceConnection(source);
 }
 
 }

@@ -137,7 +137,7 @@ private:
     AudioFactory m_audioFactory;
     VideoFactory m_videoFactory;
     DisplayFactory m_displayFactory;
-    RemoteCaptureSampleManager m_remoteCaptureSampleManager;
+    RemoteCaptureSampleManager m_remoteAudioCaptureSampleManager;
 };
 
 } // namespace WebKit

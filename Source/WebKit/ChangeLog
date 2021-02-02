@@ -1,3 +1,17 @@
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Only update IPC connection of RemoteCaptureSampleManager for audio sources
+        https://bugs.webkit.org/show_bug.cgi?id=221200
+
+        Reviewed by Eric Carlson.
+
+        There is no need to update the connection for sources that are not added to the RemoteCaptureSampleManager.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::addSource):
+        (WebKit::UserMediaCaptureManager::didUpdateSourceConnection):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2021-02-02  Antoine Quint  <graouts@webkit.org>
 
         WKASCAuthorizationPresenterDelegate needs to import RunLoop.h and BlockPtr.h
