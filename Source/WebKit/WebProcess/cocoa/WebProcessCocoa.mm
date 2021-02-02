@@ -64,6 +64,7 @@
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
+#import <WebCore/MainThreadSharedTimer.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
@@ -632,6 +633,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
+    MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
@@ -1203,6 +1205,13 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
         }
     }
 }
+
+#if PLATFORM(MAC)
+void WebProcess::systemWillPowerOn()
+{
+    MainThreadSharedTimer::restartSharedTimer();
+}
+#endif
 
 } // namespace WebKit
 

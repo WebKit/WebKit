@@ -195,4 +195,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     DisplayWasRefreshed(uint32_t displayID)
 #endif
+
+#if PLATFORM(MAC)
+    SystemWillPowerOn()
+#endif
 }

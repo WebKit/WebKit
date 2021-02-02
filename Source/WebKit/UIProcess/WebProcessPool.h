@@ -69,8 +69,11 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
+#import <WebCore/PowerObserverMac.h>
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include "DisplayLink.h"
+#endif
 #endif
 
 namespace API {
@@ -771,6 +774,10 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
     HashMap<TopFrameDomain, SubResourceDomain> m_domainsWithCrossPageStorageAccessQuirk;
+#endif
+    
+#if PLATFORM(MAC)
+    std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
 #endif
 };
 

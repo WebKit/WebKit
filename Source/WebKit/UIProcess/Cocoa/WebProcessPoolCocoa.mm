@@ -624,6 +624,10 @@ void WebProcessPool::startObservingPreferenceChanges()
 void WebProcessPool::registerNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
+    m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = makeWeakPtr(this)] {
+        if (weakThis)
+            weakThis->sendToAllProcesses(Messages::WebProcess::SystemWillPowerOn());
+    });
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
@@ -721,6 +725,7 @@ void WebProcessPool::registerNotificationObservers()
 void WebProcessPool::unregisterNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
+    m_powerObserver = nullptr;
     [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticTextReplacementNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];

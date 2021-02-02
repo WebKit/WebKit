@@ -511,6 +511,10 @@ private:
     void displayWasRefreshed(uint32_t displayID);
 #endif
 
+#if PLATFORM(MAC)
+    void systemWillPowerOn();
+#endif
+    
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client

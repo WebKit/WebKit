@@ -39,25 +39,32 @@ namespace WebCore {
 
 static CFRunLoopTimerRef sharedTimer;
 static void timerFired(CFRunLoopTimerRef, void*);
-static void restartSharedTimer();
 
 static const CFTimeInterval kCFTimeIntervalDistantFuture = std::numeric_limits<CFTimeInterval>::max();
+
+bool& MainThreadSharedTimer::shouldSetupPowerObserver()
+{
+    static bool setup = true;
+    return setup;
+}
 
 #if PLATFORM(IOS_FAMILY)
 static void applicationDidBecomeActive(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     WebThreadRun(^{
-        restartSharedTimer();
+        MainThreadSharedTimer::restartSharedTimer();
     });
 }
 #endif
 
 static void setupPowerObserver()
 {
+    if (!MainThreadSharedTimer::shouldSetupPowerObserver())
+        return;
 #if PLATFORM(MAC)
     static PowerObserver* powerObserver;
     if (!powerObserver)
-        powerObserver = makeUnique<PowerObserver>(restartSharedTimer).release();
+        powerObserver = makeUnique<PowerObserver>(MainThreadSharedTimer::restartSharedTimer).release();
 #elif PLATFORM(IOS_FAMILY)
     static bool registeredForApplicationNotification = false;
     if (!registeredForApplicationNotification) {
@@ -74,7 +81,7 @@ static void timerFired(CFRunLoopTimerRef, void*)
     MainThreadSharedTimer::singleton().fired();
 }
 
-static void restartSharedTimer()
+void MainThreadSharedTimer::restartSharedTimer()
 {
     if (!sharedTimer)
         return;

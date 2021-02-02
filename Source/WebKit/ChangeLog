@@ -1,3 +1,23 @@
+2021-02-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Register for power notifications in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=221258
+
+        Reviewed by Brent Fulgham.
+
+        Create a PowerObserver object when the Web process pool is registering notification observers. Notify all WebContent processes
+        When a power on notification is received.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::systemWillPowerOn):
+
 2021-02-02  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Indicate if network load data is user identifiable
