@@ -1,5 +1,15 @@
 2021-02-02  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] unzip layout-test-results in background
+        https://bugs.webkit.org/show_bug.cgi?id=221263
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (ExtractTestResults.__init__):
+
+2021-02-02  Aakash Jain  <aakash_jain@apple.com>
+
         ews isn't retrying builds when kill-old-processes fails
         https://bugs.webkit.org/show_bug.cgi?id=221235
 

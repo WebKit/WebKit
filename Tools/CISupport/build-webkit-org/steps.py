@@ -1294,7 +1294,7 @@ class ExtractTestResults(master.MasterShellCommand):
             kwargs['logEnviron'] = False
             self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s).zip')
             self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s)')
-            kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
+            kwargs['command'] = ['echo', 'Unzipping in background, it might take a while.']
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def resultDirectoryURL(self):
