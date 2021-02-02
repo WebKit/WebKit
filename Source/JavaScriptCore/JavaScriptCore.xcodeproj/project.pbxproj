@@ -4335,6 +4335,7 @@
 		996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.lut.h; sourceTree = "<group>"; };
 		998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteControllableTarget.cpp; sourceTree = "<group>"; };
 		998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteControllableTarget.h; sourceTree = "<group>"; };
+		99A3273825C9CBEE00DA8CAF /* SourcesCocoa.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
 		99DA00991BD5992700F4575C /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		99DA009A1BD5992700F4575C /* builtins_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generator.py; sourceTree = "<group>"; };
 		99DA009B1BD5992700F4575C /* builtins_model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_model.py; sourceTree = "<group>"; };
@@ -8781,6 +8782,7 @@
 				995566851E4E8B0700AAE13C /* RemoteInspector.cpp */,
 				A5BA15E1182340B300A82E69 /* RemoteInspector.h */,
 				A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */,
+				99A3273825C9CBEE00DA8CAF /* SourcesCocoa.txt */,
 			);
 			path = remote;
 			sourceTree = "<group>";
@@ -11156,6 +11158,7 @@
 				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
 				"$(SRCROOT)/Sources.txt",
 				"$(SRCROOT)/SourcesCocoa.txt",
+				"$(SRCROOT)/inspector/remote/SourcesCocoa.txt",
 			);
 			name = "Generate Unified Sources";
 			outputFileListPaths = (

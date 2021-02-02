@@ -1,3 +1,19 @@
+2021-02-02  Don Olmstead <don.olmstead@sony.com>
+
+        REGRESSION(r269309): [Cocoa] RemoteInspectorCocoa files are being compiled twice
+        https://bugs.webkit.org/show_bug.cgi?id=220951
+        <rdar://problem/73848263>
+
+        Reviewed by BJ Burg.
+
+        Refactor our SourcesCocoa files in JavaScriptCore to avoid double-listing
+        or double-building remote inspection-related files. Properly track
+        inspector/remote/SourcesCocoa.txt as a build dependency.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generate-unified-sources.sh:
+        * SourcesCocoa.txt:
+
 2021-02-02  Xan Lopez  <xan@igalia.com>
 
         [JSC] Small cleanup in StackVisitor::readNonInlinedFrame
