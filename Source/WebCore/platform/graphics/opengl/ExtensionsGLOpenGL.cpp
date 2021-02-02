@@ -48,22 +48,6 @@ ExtensionsGLOpenGL::ExtensionsGLOpenGL(GraphicsContextGLOpenGL* context, bool us
 ExtensionsGLOpenGL::~ExtensionsGLOpenGL() = default;
 
 
-void ExtensionsGLOpenGL::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-}
-
-void ExtensionsGLOpenGL::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
-}
-
 PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
 {
     if (!m_context->makeContextCurrent())
@@ -125,24 +109,6 @@ void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 #else
     UNUSED_PARAM(array);
 #endif
-}
-
-void ExtensionsGLOpenGL::insertEventMarkerEXT(const String&)
-{
-    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
-    return;
-}
-
-void ExtensionsGLOpenGL::pushGroupMarkerEXT(const String&)
-{
-    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
-    return;
-}
-
-void ExtensionsGLOpenGL::popGroupMarkerEXT(void)
-{
-    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
-    return;
 }
 
 bool ExtensionsGLOpenGL::supportsExtension(const String& name)

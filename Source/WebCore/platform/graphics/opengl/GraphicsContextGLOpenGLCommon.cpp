@@ -118,7 +118,7 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
 {
     auto attrs = contextAttributes();
 
-    ExtensionsGL& extensions = getExtensions();
+    ExtensionsGLOpenGLCommon& extensions = getExtensions();
     if (attrs.stencil) {
         if (extensions.supports(packedDepthStencilExtension)) {
             extensions.ensureEnabled(packedDepthStencilExtension);

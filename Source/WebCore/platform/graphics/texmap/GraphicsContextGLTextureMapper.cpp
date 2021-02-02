@@ -443,7 +443,7 @@ GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
 #endif
 
 #if PLATFORM(GTK) && !USE(ANGLE)
-ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions) {
 #if USE(OPENGL_ES)

@@ -155,41 +155,6 @@ void RemoteGraphicsContextGLProxyBase::getnUniformfvEXT(GCGLuint, GCGLint, GCGLs
 void RemoteGraphicsContextGLProxyBase::getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*)
 {
 }
-
-bool RemoteGraphicsContextGLProxyBase::isNVIDIA()
-{
-    return false;
-}
-
-bool RemoteGraphicsContextGLProxyBase::isAMD()
-{
-    return false;
-}
-
-bool RemoteGraphicsContextGLProxyBase::isIntel()
-{
-    return false;
-}
-
-bool RemoteGraphicsContextGLProxyBase::isImagination()
-{
-    return false;
-}
-
-String RemoteGraphicsContextGLProxyBase::vendor()
-{
-    return { };
-}
-
-bool RemoteGraphicsContextGLProxyBase::requiresBuiltInFunctionEmulation()
-{
-    return false;
-}
-
-bool RemoteGraphicsContextGLProxyBase::requiresRestrictedMaximumTextureSize()
-{
-    return false;
-}
 #endif
 }
 #endif

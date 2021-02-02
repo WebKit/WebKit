@@ -45,6 +45,7 @@
 
 #if !USE(ANGLE)
 #include "ANGLEWebKitBridge.h"
+#include "ExtensionsGLOpenGLCommon.h"
 #endif
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
@@ -493,7 +494,12 @@ public:
     // all methods it contains may necessarily be supported on the
     // current hardware. Must call ExtensionsGL::supports() to
     // determine this.
+#if !USE(ANGLE)
+    // Use covariant return type for OPENGL/OPENGL_ES
+    ExtensionsGLOpenGLCommon& getExtensions() final;
+#else
     ExtensionsGL& getExtensions() final;
+#endif
 
     void setFailNextGPUStatusCheck() final { m_failNextStatusCheck = true; }
 

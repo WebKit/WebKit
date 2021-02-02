@@ -100,11 +100,6 @@ void ExtensionsGLOpenGLES::renderbufferStorageMultisampleIMG(unsigned long targe
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::blitFramebufferANGLE(GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLbitfield, GCGLenum)
-{
-    notImplemented();
-}
-
 void ExtensionsGLOpenGLES::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (!m_context->makeContextCurrent())
@@ -113,21 +108,6 @@ void ExtensionsGLOpenGLES::renderbufferStorageMultisampleANGLE(GCGLenum target, 
         renderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
     else
         notImplemented();
-}
-
-void ExtensionsGLOpenGLES::insertEventMarkerEXT(const String&)
-{
-    notImplemented();
-}
-
-void ExtensionsGLOpenGLES::pushGroupMarkerEXT(const String&)
-{
-    notImplemented();
-}
-
-void ExtensionsGLOpenGLES::popGroupMarkerEXT(void)
-{
-    notImplemented();
 }
 
 PlatformGLObject ExtensionsGLOpenGLES::createVertexArrayOES()

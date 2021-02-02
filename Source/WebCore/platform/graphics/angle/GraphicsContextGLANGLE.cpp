@@ -32,6 +32,7 @@
 #include "ANGLEHeaders.h"
 #include "ExtensionsGLANGLE.h"
 #include "GraphicsContextGLANGLEUtilities.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
