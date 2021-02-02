@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1921,12 +1921,13 @@ class KillOldProcesses(shell.Compile):
     command = ['python', 'Tools/CISupport/kill-old-processes', 'buildbot']
 
     def __init__(self, **kwargs):
-        super(KillOldProcesses, self).__init__(timeout=60, logEnviron=False, **kwargs)
+        super(KillOldProcesses, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
     def evaluateCommand(self, cmd):
-        if self.results in [FAILURE, EXCEPTION]:
+        rc = shell.Compile.evaluateCommand(self, cmd)
+        if rc in [FAILURE, EXCEPTION]:
             self.build.buildFinished(['Failed to kill old processes, retrying build'], RETRY)
-        return shell.Compile.evaluateCommand(self, cmd)
+        return rc
 
     def getResultSummary(self):
         if self.results in [FAILURE, EXCEPTION]:

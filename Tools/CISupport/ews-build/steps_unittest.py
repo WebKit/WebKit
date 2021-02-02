@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -773,7 +773,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
-                        timeout=60,
+                        timeout=120,
                         )
             + 0,
         )
@@ -786,7 +786,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
-                        timeout=60,
+                        timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
