@@ -1,3 +1,16 @@
+2021-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Assertion failure when calling matchMedia('a'.repeat(2 ** 30)) in JS
+        https://bugs.webkit.org/show_bug.cgi?id=221272
+        <rdar://66323284>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/css/window-watch-media-large-query-expected.txt: Added.
+        * fast/css/window-watch-media-large-query.html: Added.
+
 2021-02-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur wk1] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html is consistently failing

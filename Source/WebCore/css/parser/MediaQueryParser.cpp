@@ -39,7 +39,10 @@ namespace WebCore {
 
 RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& queryString, MediaQueryParserContext context)
 {
-    return parseMediaQuerySet(CSSTokenizer(queryString).tokenRange(), context);
+    auto tokenizer = CSSTokenizer::tryCreate(queryString);
+    if (UNLIKELY(!tokenizer))
+        return nullptr;
+    return parseMediaQuerySet(tokenizer->tokenRange(), context);
 }
 
 RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range, MediaQueryParserContext context)
