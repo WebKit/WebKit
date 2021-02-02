@@ -84,7 +84,6 @@ Platform/foundation/LoggingFoundation.mm
 
 Platform/ios/AccessibilityIOS.mm
 Platform/ios/PaymentAuthorizationController.mm
-Platform/ios/UIKitSoftLink.mm
 
 Platform/IPC/cocoa/ConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp

@@ -1368,17 +1368,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
 @end
 
-@interface _UIEventAttribution : NSObject <NSCopying>
-@property (nonatomic, assign, readonly) uint8_t sourceIdentifier;
-@property (nonatomic, copy, readonly) NSURL *attributeOn;
-@property (nonatomic, /*nullable,*/ copy, readonly) NSURL *reportEndpoint;
-@property (nonatomic, copy, readonly) NSString *sourceDescription;
-@property (nonatomic, copy, readonly) NSString *purchaser;
-- (instancetype)initWithSourceIdentifier:(uint8_t)sourceIdentifier attributeOn:(NSURL *)attributeOn sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser;
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
-@end
-
 @interface _UINavigationInteractiveTransitionBase ()
 - (void)_stopInteractiveTransition;
 @end

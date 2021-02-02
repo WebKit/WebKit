@@ -69,8 +69,6 @@
 #import <UIKit/UIEventAttribution.h>
 #endif
 
-#include "UIKitSoftLink.h"
-
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
 - (void)_action:(id)sender \
 { \
@@ -2555,31 +2553,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #else
     return nil;
 #endif
-}
-
-- (void)_setEventAttribution:(_UIEventAttribution *)attribution
-{
-    if (attribution) {
-        WebCore::PrivateClickMeasurement measurement(
-            WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
-            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
-            WebCore::PrivateClickMeasurement::AttributeOnSite(attribution.attributeOn),
-            attribution.sourceDescription,
-            attribution.purchaser
-        );
-        _page->setPrivateClickMeasurement(WTFMove(measurement));
-    } else
-        _page->setPrivateClickMeasurement(WTF::nullopt);
-}
-
-- (_UIEventAttribution *)_eventAttribution
-{
-    auto& measurement = _page->privateClickMeasurement();
-    if (!measurement || !measurement->sourceID().isValid())
-        return nil;
-
-    auto attributeOnURL = URL(URL(), makeString("https://", measurement->attributeOnSite().registrableDomain.string()));
-    return [[WebKit::alloc_UIEventAttributionInstance() initWithSourceIdentifier:measurement->sourceID().id attributeOn:attributeOnURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()] autorelease];
 }
 
 - (CGRect)_contentVisibleRect

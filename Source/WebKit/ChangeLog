@@ -1,3 +1,23 @@
+2021-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove all use of _UIEventAttribution
+        https://bugs.webkit.org/show_bug.cgi?id=221289
+        <rdar://problem/73629041>
+
+        Reviewed by John Wilander.
+
+        It has been replaced by UIEventAttribution API.
+
+        * Platform/ios/UIKitSoftLink.h: Removed.
+        * Platform/ios/UIKitSoftLink.mm: Removed.
+        * Platform/spi/ios/UIKitSPI.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setEventAttribution:]): Deleted.
+        (-[WKWebView _eventAttribution]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add scaffolding to request image extraction after a delay when hovering over images
