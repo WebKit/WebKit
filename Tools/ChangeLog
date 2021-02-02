@@ -1,3 +1,16 @@
+2021-02-02  Don Olmstead  <don.olmstead@sony.com>
+
+        [webkitpy] WinPort.delete_sem_locks is cygwin specific
+        https://bugs.webkit.org/show_bug.cgi?id=221277
+
+        Reviewed by Jonathan Bedard.
+
+        WinPort.delete_sem_locks does `rm -rf /dev/shm/sem.*` which is only relavent when
+        running cygwin. Just put a test for cygwin around the command invocation.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.delete_sem_locks):
+
 2021-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Adopt UIEventAttribution instead of _UIEventAttribution
