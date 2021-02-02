@@ -1,3 +1,42 @@
+2021-02-02  Jon Lee  <jonlee@apple.com>
+
+        Update WebGL2 TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=221282
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios/TestExpectations: fast/canvas/webgl/program-test.html and webgl/1.0.3/conformance/programs/program-test.html always pass.
+        * platform/mac/TestExpectations:
+
+        These tests now fully pass.
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_02-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_04-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_08-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_10-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_11-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_12-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_13-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_18-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/framebufferblit/conversion_25-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/pixelbufferobject-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage2d_pbo_2d_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage2d_pbo_2d_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_2d_array_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_2d_array_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_3d_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_3d_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_2d_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_2d_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_cube_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_cube_03-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage3d_pbo_3d_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texsubimage3d_pbo_3d_01-expected.txt:
+
+        This test progressed from 13 to 2 sub-test failures.
+        * webgl/2.0.0/deqp/functional/gles3/negativestateapi-expected.txt:
+
 2021-02-02  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Repopulate the TestExpectations file
