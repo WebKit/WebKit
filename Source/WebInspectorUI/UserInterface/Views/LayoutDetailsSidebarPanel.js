@@ -29,10 +29,46 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super("layout-details", WI.UIString("Layout", "Layout @ Styles Sidebar", "Title of the CSS style panel."));
 
+        this._nodeStyles = null;
         this.element.classList.add("layout-panel");
     }
 
     // Public
+
+    get minimumWidth()
+    {
+        return this._boxModelDiagramRow?.minimumWidth ?? 0;
+    }
+
+    inspect(objects)
+    {
+        // Layout panel doesn't show when hasDOMNode is false.
+        let hasDOMNode = super.inspect(objects);
+        if (!hasDOMNode)
+            return false;
+
+        let stylesForNode = WI.cssManager.stylesForNode(this.domNode);
+        stylesForNode.refreshIfNeeded().then((nodeStyles) => {
+            if (nodeStyles === this._nodeStyles)
+                return;
+
+            if (this._nodeStyles) {
+                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
+            }
+
+            this._nodeStyles = nodeStyles;
+
+            if (this._nodeStyles) {
+                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
+            }
+
+            this.needsLayout();
+        });
+
+        return hasDOMNode;
+    }
 
     supportsDOMNode(nodeToInspect)
     {
@@ -57,12 +93,18 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     initialLayout()
     {
-        // FIXME: Move the Box Model section here from the Computed panel.
+        this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
+        let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
+        let boxModelSection = new WI.DetailsSection("layout-box-model", WI.UIString("Box Model"), [boxModelGroup]);
+        this.contentView.element.appendChild(boxModelSection.element);
     }
 
     layout()
     {
         super.layout();
+
+        if (this._boxModelDiagramRow.nodeStyles !== this._nodeStyles)
+            this._boxModelDiagramRow.nodeStyles = this._nodeStyles;
     }
 
     // Private
@@ -73,5 +115,17 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
             return;
 
         this.needsLayout();
+    }
+
+    _nodeStylesRefreshed()
+    {
+        if (this.isAttached)
+            this.needsLayout();
+    }
+
+    _nodeStylesNeedsRefreshed()
+    {
+        if (this.isAttached)
+            this._nodeStyles?.refresh();
     }
 };

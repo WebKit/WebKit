@@ -1,3 +1,21 @@
+2021-02-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: add Box Model into Layout panel
+        https://bugs.webkit.org/show_bug.cgi?id=220987
+
+        Reviewed by BJ Burg.
+
+        Add Box Model section to the experimental Layout panel.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.get minimumWidth):
+        (WI.LayoutDetailsSidebarPanel.prototype.inspect):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._nodeStylesRefreshed):
+        (WI.LayoutDetailsSidebarPanel.prototype._nodeStylesNeedsRefreshed):
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add @ in Error.stack if URL exists
