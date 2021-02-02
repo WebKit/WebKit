@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WTF {
@@ -62,6 +63,8 @@ public:
     using RendererCreator = std::unique_ptr<AudioMediaStreamTrackRenderer> (*)();
     static void setCreator(RendererCreator);
 
+    void setCrashCallback(Function<void()>&& callback) { m_crashCallback = WTFMove(callback); }
+
 protected:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -71,11 +74,14 @@ protected:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    void crashed();
+
 private:
     static RendererCreator m_rendererCreator;
 
     // Main thread writable members
     float m_volume { 1 };
+    Function<void()> m_crashCallback;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
@@ -91,6 +97,12 @@ inline void AudioMediaStreamTrackRenderer::setVolume(float volume)
 inline float AudioMediaStreamTrackRenderer::volume() const
 {
     return m_volume;
+}
+
+inline void AudioMediaStreamTrackRenderer::crashed()
+{
+    if (m_crashCallback)
+        m_crashCallback();
 }
 
 #if !RELEASE_LOG_DISABLED

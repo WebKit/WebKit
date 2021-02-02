@@ -48,12 +48,19 @@ AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Ref<IPC::Connection
     , m_identifier(AudioMediaStreamTrackRendererIdentifier::generate())
     , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRenderer::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))))
 {
-    m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer { m_identifier }, 0);
+    initialize();
 }
 
 AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer()
 {
+    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::ReleaseRenderer { m_identifier }, 0);
+}
+
+void AudioMediaStreamTrackRenderer::initialize()
+{
+    WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer { m_identifier }, 0);
 }
 
 void AudioMediaStreamTrackRenderer::start()
@@ -111,6 +118,11 @@ void AudioMediaStreamTrackRenderer::storageChanged(SharedMemory* storage, const 
     uint64_t dataSize = 0;
 #endif
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::AudioSamplesStorageChanged { SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, m_identifier);
+}
+
+void AudioMediaStreamTrackRenderer::gpuProcessConnectionDidClose(GPUProcessConnection&)
+{
+    crashed();
 }
 
 }

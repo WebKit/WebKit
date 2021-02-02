@@ -38,7 +38,7 @@ AudioTrackPrivateMediaStream::AudioTrackPrivateMediaStream(MediaStreamTrackPriva
     , m_audioSource(track.source())
     , m_id(track.id())
     , m_label(track.label())
-    , m_renderer { AudioMediaStreamTrackRenderer::create() }
+    , m_renderer(createRenderer(*this))
 {
     track.addObserver(*this);
 }
@@ -46,6 +46,16 @@ AudioTrackPrivateMediaStream::AudioTrackPrivateMediaStream(MediaStreamTrackPriva
 AudioTrackPrivateMediaStream::~AudioTrackPrivateMediaStream()
 {
     clear();
+}
+
+std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::createRenderer(AudioTrackPrivateMediaStream& stream)
+{
+    auto renderer = AudioMediaStreamTrackRenderer::create();
+    renderer->setCrashCallback([stream = makeWeakPtr(stream)] {
+        if (stream)
+            stream->createNewRenderer();
+    });
+    return renderer;
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -157,6 +167,19 @@ void AudioTrackPrivateMediaStream::stopRenderer()
     m_isPlaying = false;
     m_audioSource->removeAudioSampleObserver(*this);
     m_renderer->stop();
+}
+
+void AudioTrackPrivateMediaStream::createNewRenderer()
+{
+    bool isPlaying = m_isPlaying;
+    stopRenderer();
+
+    float volume = this->volume();
+    m_renderer = createRenderer(*this);
+    m_renderer->setVolume(volume);
+
+    if (isPlaying)
+        startRenderer();
 }
 
 } // namespace WebCore
