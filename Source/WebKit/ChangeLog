@@ -1,3 +1,9 @@
+2021-02-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix after 272154.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+
 2021-02-02  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Regression(r271897) Prewarmed WebProcesses no longer get a user-friendly process name in Activity Monitor

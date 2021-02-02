@@ -589,7 +589,7 @@ void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef cen
 }
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
 void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     auto* pool = reinterpret_cast<WebProcessPool*>(observer);
