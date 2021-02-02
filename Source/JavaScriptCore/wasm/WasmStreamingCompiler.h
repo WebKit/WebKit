@@ -29,10 +29,15 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValue.h"
+
 namespace JSC {
 
 class CallLinkInfo;
+class JSGlobalObject;
+class JSObject;
 class JSPromise;
+class VM;
 
 namespace Wasm {
 

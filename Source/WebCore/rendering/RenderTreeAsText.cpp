@@ -54,6 +54,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderQuote.h"
 #include "RenderRuby.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"

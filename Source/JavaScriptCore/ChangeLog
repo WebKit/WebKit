@@ -1,3 +1,17 @@
+2021-02-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=221044
+
+        Unreviewed non-unified build fixes.
+
+        * wasm/WasmStreamingCompiler.cpp: Add missing WasmWorklist.h header.
+        * wasm/WasmStreamingCompiler.h: Add missing JSCJSValue.h header and forwars declarations
+        for JSGlobalObject, JSObject, and VM.
+        * wasm/WasmStreamingPlan.cpp: Add missing WasmLLIntPlan.h header.
+        * wasm/js/WebAssemblyGlobalConstructor.cpp: Add missing JSWebAssemblyHelpers.h and
+        JSWebAssemblyRuntimeError.h headers.
+
 2021-02-01  Saam Barati  <sbarati@apple.com>
 
         Sign m_offset in AssemblerLabel

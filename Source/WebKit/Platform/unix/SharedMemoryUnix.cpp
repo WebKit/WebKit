@@ -29,6 +29,7 @@
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include <errno.h>

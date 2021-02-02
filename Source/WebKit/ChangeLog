@@ -1,3 +1,20 @@
+2021-02-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=221044
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/NetworkLoadScheduler.cpp: Add missing wtf/ListHashSet.h header inclusion.
+        (WebKit::NetworkLoadScheduler::HostContext::schedule): Add missing WebCore:: namespace in
+        usage of WebCore::ResourceLoadPriority enum.
+        * Platform/unix/SharedMemoryUnix.cpp: Add missing ArgumentCoders.h header inclusion.
+        * Shared/API/APIFrameHandle.cpp: Ditto.
+        * Shared/API/APIGeometry.cpp: Ditto.
+        * Shared/API/APIPageGroupHandle.cpp: Ditto.
+        * Shared/API/APIPageHandle.cpp: Ditto.
+        * Shared/LayerTreeContext.cpp: Ditto.
+
 2021-02-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Optimize _WKWebAuthenticationPanelDelegate for native API

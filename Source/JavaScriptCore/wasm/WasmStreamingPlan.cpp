@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallee.h"
+#include "WasmLLIntPlan.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/DataLog.h>

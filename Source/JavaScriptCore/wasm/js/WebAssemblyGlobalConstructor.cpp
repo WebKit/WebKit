@@ -30,6 +30,8 @@
 
 #include "JSCInlines.h"
 #include "JSWebAssemblyGlobal.h"
+#include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyRuntimeError.h"
 #include "WasmFormat.h"
 #include "WebAssemblyGlobalPrototype.h"
 

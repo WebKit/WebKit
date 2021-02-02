@@ -27,6 +27,7 @@
 #include "NetworkLoadScheduler.h"
 
 #include "NetworkLoad.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebKit {
 
@@ -55,7 +56,7 @@ void NetworkLoadScheduler::HostContext::schedule(NetworkLoad& load)
 {
     auto startImmediately = [&] {
         auto priority = load.parameters().request.priority();
-        if (priority > ResourceLoadPriority::Low)
+        if (priority > WebCore::ResourceLoadPriority::Low)
             return true;
 
         if (m_activeLoads.size() < maximumActiveCountForLowPriority)

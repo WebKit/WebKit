@@ -97,6 +97,7 @@
 #include "WebGLDrawBuffers.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
+#include "WebGLMultiDraw.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"

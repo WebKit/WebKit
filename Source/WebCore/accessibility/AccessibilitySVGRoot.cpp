@@ -30,6 +30,9 @@
 #include "AccessibilitySVGRoot.h"
 
 #include "RenderObject.h"
+#include "SVGDescElement.h"
+#include "SVGTitleElement.h"
+#include "TypedElementDescendantIterator.h"
 
 namespace WebCore {
 
@@ -89,8 +92,8 @@ bool AccessibilitySVGRoot::hasAccessibleContent() const
             return true;
 
         // If the role or aria-label attributes are specified, this is accessible.
-        if (!element.attributeWithoutSynchronization(roleAttr).isEmpty()
-            || !element.attributeWithoutSynchronization(aria_labelAttr).isEmpty())
+        if (!element.attributeWithoutSynchronization(HTMLNames::roleAttr).isEmpty()
+            || !element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr).isEmpty())
             return true;
 
         return false;

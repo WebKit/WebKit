@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APIFrameHandle.h"
 
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 

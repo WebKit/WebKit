@@ -35,6 +35,7 @@
 #include "StrongInlines.h"
 #include "WasmLLIntPlan.h"
 #include "WasmStreamingPlan.h"
+#include "WasmWorklist.h"
 
 #if ENABLE(WEBASSEMBLY)
 
