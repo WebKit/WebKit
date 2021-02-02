@@ -182,20 +182,21 @@ void MediaControlTextTrackContainerElement::updateDisplay()
 
     updateTextTrackRepresentationIfNeeded();
     updateTextTrackStyle();
-    m_needsGenerateTextTrackRepresentation = true;
 }
 
 void MediaControlTextTrackContainerElement::updateTextTrackRepresentationImageIfNeeded()
 {
-    if (!m_needsGenerateTextTrackRepresentation)
+    if (!m_needsToGenerateTextTrackRepresentation)
         return;
 
-    m_needsGenerateTextTrackRepresentation = false;
+    m_needsToGenerateTextTrackRepresentation = false;
 
     // We should call m_textTrackRepresentation->update() to paint the subtree of
     // the RenderTextTrackContainerElement after the layout is clean.
-    if (m_textTrackRepresentation)
+    if (m_textTrackRepresentation) {
         m_textTrackRepresentation->update();
+        m_textTrackRepresentation->setHidden(false);
+    }
 }
 
 void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
@@ -298,7 +299,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeede
         m_mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
     }
 
-    m_textTrackRepresentation->setHidden(false);
+    m_needsToGenerateTextTrackRepresentation = true;
 }
 
 void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
