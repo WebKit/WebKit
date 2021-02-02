@@ -1070,6 +1070,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch())];
 
+#if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    if ([m_avPlayerItem respondsToSelector:@selector(setAutomaticallyHandlesInterstitialEvents:)])
+        [m_avPlayerItem setAutomaticallyHandlesInterstitialEvents:NO];
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+#endif
+
     if (m_avPlayer)
         setAVPlayerItem(m_avPlayerItem.get());
 

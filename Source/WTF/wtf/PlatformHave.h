@@ -856,3 +856,9 @@
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 140000)
 #define HAVE_LEVEL_2_SYSTEM_FONT_WIDTH_VALUES 1
 #endif
+
+#if __has_include(<AVFoundation/AVPlayerInterstitialEventController.h>)
+#if !defined(HAVE_AVFOUNDATION_INTERSTITIAL_EVENTS)
+#define HAVE_AVFOUNDATION_INTERSTITIAL_EVENTS 1
+#endif
+#endif

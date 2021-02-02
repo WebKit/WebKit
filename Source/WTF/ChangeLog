@@ -1,3 +1,12 @@
+2021-02-01  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Disable interstitial events on AVPlayerItem.
+        https://bugs.webkit.org/show_bug.cgi?id=221215
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
 2021-02-01  Olivier Blin  <olivier.blin@softathome.com>
 
         clang Linux build cannot link because of __builtin_mul_overflow
