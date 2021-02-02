@@ -1,3 +1,14 @@
+2021-02-02  Rob Buis  <rbuis@igalia.com>
+
+        Support aspect-ratio on <body> in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=219489
+
+        Reviewed by Simon Fraser.
+
+        Update test expectation.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/quirks-mode-001-expected.txt:
+
 2021-01-31  Sam Weinig  <weinig@apple.com>
 
         Add support for color(prophoto-rgb ...) as part of CSS Color 4
