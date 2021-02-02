@@ -78,6 +78,7 @@ static String testES256PrivateKeyBase64 =
     "RQ==";
 static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVkSm9obg=="; // { "id": h'00010203040506070809', "name": "John" }
 static String webAuthenticationPanelSelectedCredentialName;
+static bool laContextRequested = false;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -150,15 +151,23 @@ static String webAuthenticationPanelSelectedCredentialName;
 - (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses source:(_WKWebAuthenticationSource)source completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler
 {
     if (responses.count == 1) {
-        completionHandler(responses[0]);
+        auto laContext = adoptNS([[LAContext alloc] init]);
+        [responses.firstObject setLAContext:laContext.get()];
+
+        completionHandler(responses.firstObject);
         return;
     }
 
     // Responses returned from LocalAuthenticator is in the order of LRU. Therefore, we use the last item to populate it to
     // the first to test its correctness.
     if (source == _WKWebAuthenticationSourceLocal) {
-        webAuthenticationPanelSelectedCredentialName = responses.lastObject.name;
-        completionHandler(responses.lastObject);
+        auto *object = responses.lastObject;
+
+        auto laContext = adoptNS([[LAContext alloc] init]);
+        [object setLAContext:laContext.get()];
+
+        webAuthenticationPanelSelectedCredentialName = object.name;
+        completionHandler(object);
         return;
     }
 
@@ -178,6 +187,12 @@ static String webAuthenticationPanelSelectedCredentialName;
 - (void)panel:(_WKWebAuthenticationPanel *)panel decidePolicyForLocalAuthenticatorWithCompletionHandler:(void (^)(_WKLocalAuthenticatorPolicy policy))completionHandler
 {
     completionHandler(localAuthenticatorPolicy);
+}
+
+- (void)panel:(_WKWebAuthenticationPanel *)panel requestLAContextForUserVerificationWithCompletionHandler:(void (^)(LAContext *context))completionHandler
+{
+    laContextRequested = true;
+    completionHandler(nil);
 }
 
 @end
@@ -323,6 +338,7 @@ static void reset()
     webAuthenticationPanelNullUserHandle = NO;
     localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
     webAuthenticationPanelSelectedCredentialName = emptyString();
+    laContextRequested = false;
 }
 
 static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
@@ -1760,7 +1776,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
     auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
-    [options setTimeout:@120];
+    [options setTimeout:@10];
 
     auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
     [panel makeCredentialWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
@@ -1772,6 +1788,46 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
     }];
     Util::run(&webAuthenticationPanelRan);
 }
+
+// For macOS, only internal builds can sign keychain entitlemnets
+// which are required to run local authenticator tests.
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+TEST(WebAuthenticationPanel, MakeCredentialLA)
+{
+    reset();
+
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    [rp setIdentifier:@"example.com"];
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ @"privateKeyBase64": testES256PrivateKeyBase64 }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel makeCredentialWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("example.com");
+
+        EXPECT_TRUE(laContextRequested);
+        EXPECT_NULL(error);
+
+        EXPECT_NOT_NULL(response);
+        EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+        EXPECT_NULL(response.extensions);
+        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+#endif
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
 {
@@ -1869,6 +1925,43 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
     }];
     Util::run(&webAuthenticationPanelRan);
 }
+
+// For macOS, only internal builds can sign keychain entitlemnets
+// which are required to run local authenticator tests.
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+TEST(WebAuthenticationPanel, GetAssertionLA)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserEntityBundleBase64));
+
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setRelyingPartyIdentifier:@""];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel getAssertionWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("");
+
+        EXPECT_NULL(error);
+
+        EXPECT_NOT_NULL(response);
+        EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+        EXPECT_NULL(response.extensions);
+        EXPECT_WK_STREQ([response.authenticatorData base64EncodedStringWithOptions:0], "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFUFAAAAAA==");
+        EXPECT_NOT_NULL(response.signature);
+        EXPECT_WK_STREQ([response.userHandle base64EncodedStringWithOptions:0], "AAECAwQFBgcICQ==");
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+#endif
 
 } // namespace TestWebKitAPI
 

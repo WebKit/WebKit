@@ -54,6 +54,16 @@
     return wrapper(_response->userHandle());
 }
 
+#endif // ENABLE(WEB_AUTHN)
+
+- (void)setLAContext:(LAContext *)context
+{
+#if ENABLE(WEB_AUTHN)
+    _response->setLAContext(context);
+#endif
+}
+
+#if ENABLE(WEB_AUTHN)
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

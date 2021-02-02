@@ -67,6 +67,27 @@ void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessCon
     });
 }
 
+void MockLocalConnection::verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&& callback)
+{
+    // Mock async operations.
+    RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
+        ASSERT(configuration.local);
+
+        UserVerification userVerification = UserVerification::No;
+        switch (configuration.local->userVerification) {
+        case MockWebAuthenticationConfiguration::UserVerification::No:
+            break;
+        case MockWebAuthenticationConfiguration::UserVerification::Yes:
+            userVerification = UserVerification::Yes;
+            break;
+        case MockWebAuthenticationConfiguration::UserVerification::Cancel:
+            userVerification = UserVerification::Cancel;
+        }
+
+        callback(userVerification);
+    });
+}
+
 RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
 {
     ASSERT(m_configuration.local);

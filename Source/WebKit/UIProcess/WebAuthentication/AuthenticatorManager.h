@@ -71,6 +71,7 @@ public:
     virtual bool isMock() const { return false; }
 
     void enableModernWebAuthentication();
+    void enableNativeSupport();
 
 protected:
     RunLoop::Timer<AuthenticatorManager>& requestTimeOutTimer() { return m_requestTimeOutTimer; }
@@ -79,6 +80,12 @@ protected:
     void invokePendingCompletionHandler(Respond&&);
 
 private:
+    enum class Mode {
+        Compatible,
+        Modern,
+        Native,
+    };
+
     // AuthenticatorTransportService::Observer
     void authenticatorAdded(Ref<Authenticator>&&) final;
     void serviceStatusUpdated(WebAuthenticationStatus) final;
@@ -117,7 +124,7 @@ private:
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
 
-    bool m_webAuthenticationModernEnabled { false };
+    Mode m_mode { Mode::Compatible };
 };
 
 } // namespace WebKit

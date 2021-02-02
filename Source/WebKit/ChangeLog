@@ -1,3 +1,70 @@
+2021-02-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Optimize _WKWebAuthenticationPanelDelegate for native API
+        https://bugs.webkit.org/show_bug.cgi?id=221125
+        <rdar://problem/71509141>
+
+        Reviewed by Brent Fulgham.
+
+        This patch mainly does the following few things:
+        1. It connects the new SPI with the existing mock testing infrastructure such that we can mock test it.
+        2. It adds a new mode in AuthenticatorManager to connect it to the new _WKWebAuthenticationPanelDelegate object.
+        3. It adss a new SPI to _WKWebAuthenticationPanelDelegate: -[panel:requestLAContextForUserVerificationWithCompletionHandler:],
+        and adds a new method within _WKWebAuthenticationAssertionResponse to accept an LAContext from the caller to unlock
+        the keychain.
+        4. It enables -[_WKWebAuthenticationPanel cancel] to use the new cancel method.
+
+        Covered by API tests.
+
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.h:
+        Accepts a LAContext object.
+
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        (API::WebAuthenticationPanel::handleRequest):
+        (API::WebAuthenticationPanel::cancel const):
+        (API::WebAuthenticationPanel::setMockConfiguration):
+        * UIProcess/API/APIWebAuthenticationPanel.h:
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::requestLAContextForUserVerification const):
+        Adds new SPI and mocking.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm:
+        (-[_WKWebAuthenticationAssertionResponse setLAContext:]):
+        Accepts a LAContext object.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel setMockConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h:
+        Adds new SPI and mocking.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::handleRequest):
+        (WebKit::AuthenticatorManager::enableModernWebAuthentication):
+        (WebKit::AuthenticatorManager::enableNativeSupport):
+        (WebKit::AuthenticatorManager::authenticatorAdded):
+        (WebKit::AuthenticatorManager::requestLAContextForUserVerification):
+        (WebKit::AuthenticatorManager::runPresenter):
+        (WebKit::AuthenticatorManager::dispatchPanelClientCall const):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        Adds a new mode to power the native API.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::WebAuthenticationPanelClient::requestLAContextForUserVerification const):
+        Accepts a LAContext object.
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::verifyUser):
+        Adds new mocking functions.
+
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        Adds the new weak panel.
+
 2021-02-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] flatpak-spawn subsandbox clears environment variables, breaks EphyPermissionsManager

@@ -39,6 +39,7 @@ enum class ClientDataType : bool;
 class AuthenticatorResponse;
 
 struct ExceptionData;
+struct MockWebAuthenticationConfiguration;
 }
 
 namespace WebKit {
@@ -61,6 +62,7 @@ public:
 
     void handleRequest(WebKit::WebAuthenticationRequestData&&, Callback&&);
     void cancel() const;
+    void setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 
     const WebAuthenticationPanelClient& client() const { return m_client.get(); }
     void setClient(UniqueRef<WebAuthenticationPanelClient>&&);

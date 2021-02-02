@@ -43,6 +43,8 @@ public:
     const WTF::String& displayName() const { return m_response->displayName(); }
     RefPtr<Data> userHandle() const;
 
+    void setLAContext(LAContext *context) { m_response->setLAContext(context); }
+
     WebCore::AuthenticatorAssertionResponse* response() { return m_response.ptr(); }
 
 private:
