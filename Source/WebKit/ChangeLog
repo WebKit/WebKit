@@ -1,3 +1,20 @@
+2021-02-01  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] flatpak-spawn subsandbox clears environment variables, breaks EphyPermissionsManager
+        https://bugs.webkit.org/show_bug.cgi?id=219325
+
+        Reviewed by Adrian Perez de Castro.
+
+        Manually forward all environment variables from the web process to the UI process.
+        EphyPermissionsManager is breaking because XDG directories are not set in the web process,
+        because flatpak-spawn launches subprocesses with the environment of the host system rather
+        than the environment of the parent process. But also, we really need to forward the entire
+        environment, because otherwise basic expected features like GST_DEBUG, G_MESSAGES_DEBUG, and
+        such will be broken.
+
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp:
+        (WebKit::flatpakSpawn):
+
 2021-02-01  Antoine Quint  <graouts@webkit.org>
 
         Allow support for CAAnimationGroup
