@@ -1,3 +1,23 @@
+2021-02-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Indicate if network load data is user identifiable
+        https://bugs.webkit.org/show_bug.cgi?id=221113
+        <rdar://problem/71348187>
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+
 2021-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove all use of _UIEventAttribution

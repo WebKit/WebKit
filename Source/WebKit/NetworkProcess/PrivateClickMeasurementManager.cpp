@@ -163,6 +163,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     loadParameters.options = options;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
     loadParameters.shouldRestrictHTTPResponseAccess = false;
+    loadParameters.pcmDataCarried = WebCore::PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);

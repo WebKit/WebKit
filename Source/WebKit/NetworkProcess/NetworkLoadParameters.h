@@ -66,6 +66,7 @@ public:
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     Optional<NetworkActivityTracker> networkActivityTracker;
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    Optional<WebCore::PrivateClickMeasurement::PcmDataCarried> pcmDataCarried;
 };
 
 } // namespace WebKit
