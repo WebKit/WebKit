@@ -1,3 +1,41 @@
+2021-02-02  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Regression(r271897) Prewarmed WebProcesses no longer get a user-friendly process name in Activity Monitor
+        https://bugs.webkit.org/show_bug.cgi?id=221094
+        <rdar://73658122>
+
+        Reviewed by Per Arne Vollan.
+
+        Prewarmed WebProcesses currently do not have a network process connection because they do not have a sessionID yet
+        and initiating a connection to the network process currently requires a sessionID. r271897 made it so that
+        WebProcess::updateProcessName() early returns when there is no network process connection, which means that our
+        prewarmed WebProcesses no longer get the "Safari Web Content (prewarmed)" user-friendly name in activity monitor.
+
+        This patch relies on the fact that we are allowed to talk to launchservices when WebProcess::updateProcessName()
+        gets called during process initialization (The sandbox extension gets revoked during process initialization right
+        after calling updateProcessName). As a result, if updateProcessName() gets called during process initialization,
+        we now set the process name directly within the process instead of messaging the network process. This fixes the
+        issue with prewarmed WebProcesses.
+
+        This patch also gets rid of the early returns when the network connection is not present and calls
+        ensureNetworkProcessConnection() instead. We want to make sure to set the process name even if the process does
+        not have a network process connection yet (either because none has been initiated yet or because the network
+        process crashed).
+
+        Finally, this patch replaces some WTFLogAlways() for error cases with RELEASE_LOG_ERROR() so that the errors
+        stand out in the logs.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setIsInProcessCache):
+        (WebKit::WebProcess::markIsNoLongerPrewarmed):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::updateActivePages):
+
 2021-02-02  Frédéric Wang  <fwang@igalia.com>
 
         [GTK] Initialize PrintInfo::PrintMode

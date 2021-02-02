@@ -325,7 +325,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     [NSApplication _accessibilityInitialize];
 
     // Update process name while holding the Launch Services sandbox extension
-    updateProcessName();
+    updateProcessName(IsInProcessInitialization::Yes);
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
     auto method = class_getInstanceMethod([NSApplication class], @selector(_updateCanQuitQuietlyAndSafely));
@@ -444,7 +444,7 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
-void WebProcess::updateProcessName()
+void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitialization)
 {
 #if PLATFORM(MAC)
     RetainPtr<NSString> applicationName;
@@ -467,35 +467,37 @@ void WebProcess::updateProcessName()
     }
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    if (!m_networkProcessConnection) {
-        WTFLogAlways("Unable to update process name since there is no Network process connection.");
-        return;
-    }
-    audit_token_t auditToken = { 0 };
-    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
-        return;
-    }
-    String displayName = applicationName.get();
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
-#else
-    RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
-        // Note that it is important for _RegisterApplication() to have been called before setting the display name.
-        auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
-        ASSERT(!error);
-        if (error) {
-            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+    // During WebProcess initialization, we are still able to talk to LaunchServices to set the process name so there is no need to go
+    // via the NetworkProcess. Prewarmed WebProcesses also do not have a network process connection until they are actually used by
+    // a page.
+    if (isInProcessInitialization == IsInProcessInitialization::No) {
+        audit_token_t auditToken = { 0 };
+        mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+        kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+        if (kr != KERN_SUCCESS) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
             return;
         }
-#if ASSERT_ENABLED
-        // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
-        String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
-        ASSERT(!actualApplicationName.isEmpty());
-#endif
-    });
+        String displayName = applicationName.get();
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+        return;
+    }
 #endif // ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+
+    // Note that it is important for _RegisterApplication() to have been called before setting the display name.
+    auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
+    ASSERT(!error);
+    if (error) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+        return;
+    }
+#if ASSERT_ENABLED
+    // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
+    String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
+    ASSERT(!actualApplicationName.isEmpty());
+#endif
+#else
+    UNUSED_PARAM(isInProcessInitialization);
 #endif // PLATFORM(MAC)
 }
 
@@ -756,19 +758,15 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 #if PLATFORM(MAC)
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    if (!m_networkProcessConnection) {
-        WTFLogAlways("Unable to update active pages since there is no Network process connection.");
-        return;
-    }
     audit_token_t auditToken = { 0 };
     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateActivePages: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
         return;
     }
 
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
 #else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {

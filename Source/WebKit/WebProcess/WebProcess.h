@@ -528,7 +528,9 @@ private:
 
 #if PLATFORM(COCOA)
     void setScreenProperties(const WebCore::ScreenProperties&);
-    void updateProcessName();
+
+    enum class IsInProcessInitialization : bool { No, Yes };
+    void updateProcessName(IsInProcessInitialization);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

@@ -672,8 +672,8 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 #endif
 
     ASSERT(m_prewarmedProcess->isPrewarmed());
-    m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
     m_prewarmedProcess->setWebsiteDataStore(websiteDataStore);
+    m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
 
     return std::exchange(m_prewarmedProcess, nullptr);
 }
