@@ -1,3 +1,22 @@
+2021-02-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION(r271744): Broke Microsoft live login in internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=221271
+        <rdar://problem/73848416>
+
+        Reviewed by Alex Christensen.
+
+        If a user goes straight to login.live.com without first visiting
+        microsoft.com, we crash when checking for storage access because
+        we assume the user has interacted with the page. Since this is a
+        quirked flow, we should not assume that, and should insert the
+        domain into the database.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2021-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Adopt UIEventAttribution instead of _UIEventAttribution

@@ -193,7 +193,7 @@ private:
     Vector<DomainData> domains() const;
     bool hasHadUnexpiredRecentUserInteraction(const DomainData&, OperatingDatesWindow);
     void clearGrandfathering(Vector<unsigned>&&);
-    WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&) const;
+    WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&);
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
 
     void reclassifyResources();
