@@ -1,3 +1,19 @@
+2021-02-02  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Small cleanup in StackVisitor::readNonInlinedFrame
+        https://bugs.webkit.org/show_bug.cgi?id=221259
+
+        Reviewed by Yusuke Suzuki.
+
+        isAnyWasmCallee() will never be true if WebAssembly is disabled at
+        compile time, so we can move a good chunk of code inside the
+        USE(WEBASSEMBLY) check. Also move all constant initializations at
+        the beginning of the method, and remove an unnecessary extra
+        variable.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+
 2021-02-02  BJ Burg  <bburg@apple.com>
 
         Web Inspector: implement the basics for showing/hiding grid overlays
