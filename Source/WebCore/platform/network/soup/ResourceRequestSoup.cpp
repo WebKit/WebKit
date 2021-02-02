@@ -66,9 +66,10 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     GRefPtr<GInputStream> stream = webkitFormDataInputStreamNew(WTFMove(resolvedFormData));
     if (GBytes* data = webkitFormDataInputStreamReadAll(WEBKIT_FORM_DATA_INPUT_STREAM(stream.get()))) {
         soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
-        GUniquePtr<SoupBuffer> soupBuffer(soup_buffer_new_with_owner(g_bytes_get_data(data, nullptr),
-            g_bytes_get_size(data), data, reinterpret_cast<GDestroyNotify>(g_bytes_unref)));
-        soup_message_body_append_buffer(soupMessage->request_body, soupBuffer.get());
+        auto* soupBuffer = soup_buffer_new_with_owner(g_bytes_get_data(data, nullptr),
+            g_bytes_get_size(data), data, reinterpret_cast<GDestroyNotify>(g_bytes_unref));
+        soup_message_body_append_buffer(soupMessage->request_body, soupBuffer);
+        soup_buffer_free(soupBuffer);
     }
 
     ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));

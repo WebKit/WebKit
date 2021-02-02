@@ -236,9 +236,6 @@ const char* SharedBuffer::DataSegment::data() const
 #if USE(CF)
         [](const RetainPtr<CFDataRef>& data) { return reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())); },
 #endif
-#if USE(SOUP)
-        [](const GUniquePtr<SoupBuffer>& data) { return data->data; },
-#endif
 #if USE(GLIB)
         [](const GRefPtr<GBytes>& data) { return reinterpret_cast<const char*>(g_bytes_get_data(data.get(), nullptr)); },
 #endif
@@ -316,9 +313,6 @@ size_t SharedBuffer::DataSegment::size() const
         [](const Vector<char>& data) { return data.size(); },
 #if USE(CF)
         [](const RetainPtr<CFDataRef>& data) { return CFDataGetLength(data.get()); },
-#endif
-#if USE(SOUP)
-        [](const GUniquePtr<SoupBuffer>& data) { return static_cast<size_t>(data->length); },
 #endif
 #if USE(GLIB)
         [](const GRefPtr<GBytes>& data) { return g_bytes_get_size(data.get()); },
