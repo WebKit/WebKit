@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 361895 2020-06-07 14:39:20Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -105,7 +105,7 @@ void
 in6_sin_2_v4mapsin6(const struct sockaddr_in *sin, struct sockaddr_in6 *sin6)
 {
 	memset(sin6, 0, sizeof(struct sockaddr_in6));
- 	sin6->sin6_family = AF_INET6;
+	sin6->sin6_family = AF_INET6;
 #ifdef HAVE_SIN6_LEN
 	sin6->sin6_len = sizeof(struct sockaddr_in6);
 #endif
@@ -116,9 +116,9 @@ in6_sin_2_v4mapsin6(const struct sockaddr_in *sin, struct sockaddr_in6 *sin6)
 	((uint32_t *)&sin6->sin6_addr)[2] = htonl(0xffff);
 	((uint32_t *)&sin6->sin6_addr)[3] = sin->sin_addr.s_addr;
 #else
- 	sin6->sin6_addr.s6_addr32[0] = 0;
+	sin6->sin6_addr.s6_addr32[0] = 0;
 	sin6->sin6_addr.s6_addr32[1] = 0;
- 	sin6->sin6_addr.s6_addr32[2] = htonl(0xffff);
+	sin6->sin6_addr.s6_addr32[2] = htonl(0xffff);
 	sin6->sin6_addr.s6_addr32[3] = sin->sin_addr.s_addr;
 #endif
 }
@@ -299,7 +299,6 @@ sctp6_input(struct mbuf **i_pak, int *offp)
 	return (sctp6_input_with_port(i_pak, offp, 0));
 }
 #endif
-
 #if defined(__FreeBSD__)
 int
 sctp6_input(struct mbuf **i_pak, int *offp, int proto SCTP_UNUSED)
@@ -658,7 +657,6 @@ out:
 SYSCTL_PROC(_net_inet6_sctp6, OID_AUTO, getcred, CTLTYPE_OPAQUE | CTLFLAG_RW,
     0, 0,
     sctp6_getcred, "S,ucred", "Get the ucred of a SCTP6 connection");
-
 #endif
 
 /* This is the same as the sctp_abort() could be made common */
@@ -911,7 +909,6 @@ out:
 	return (error);
 }
 
-
 #if defined(__FreeBSD__) || defined(_WIN32) || defined(__Userspace__)
 #if !defined(__Userspace__)
 static void
@@ -949,16 +946,13 @@ sctp6_disconnect(struct socket *so)
 	return (sctp_disconnect(so));
 }
 
-
 int
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 sctp_sendm(struct socket *so, int flags, struct mbuf *m, struct sockaddr *addr,
     struct mbuf *control, struct thread *p);
-
 #else
 sctp_sendm(struct socket *so, int flags, struct mbuf *m, struct sockaddr *addr,
     struct mbuf *control, struct proc *p);
-
 #endif
 
 #if !defined(_WIN32) && !defined(__Userspace__)
@@ -1560,7 +1554,6 @@ sctp6_in6getaddr(struct socket *so, struct mbuf *nam)
 	return (error);
 }
 
-
 #if !defined(__Userspace__)
 static int
 sctp6_getpeeraddr(struct socket *so, struct sockaddr **nam)
@@ -1710,7 +1703,7 @@ sctp6_usrreq(so, req, m, nam, control, p)
 		switch (family) {
 		case PF_INET:
 			error = in_control(so, (long)m, (caddr_t)nam,
-			    (struct ifnet *)control );
+			    (struct ifnet *)control);
 			break;
 #ifdef INET6
 		case PF_INET6:

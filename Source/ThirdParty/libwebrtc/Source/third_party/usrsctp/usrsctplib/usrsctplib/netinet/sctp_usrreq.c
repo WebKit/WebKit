@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_usrreq.c 364353 2020-08-18 19:25:03Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_usrreq.c 366750 2020-10-16 10:44:48Z tuexen $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -64,7 +64,6 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_usrreq.c 364353 2020-08-18 19:25:03Z t
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/eventhandler.h>
 #endif
-
 #if defined(HAVE_SCTP_PEELOFF_SOCKOPT)
 #include <netinet/sctp_peeloff.h>
 #endif				/* HAVE_SCTP_PEELOFF_SOCKOPT */
@@ -191,6 +190,9 @@ sctp_finish(void)
 	sctp_pcb_finish();
 #if defined(_WIN32) && !defined(__Userspace__)
 	sctp_finish_sysctls();
+#endif
+#if defined(__Userspace__)
+	finish_random();
 #endif
 }
 #endif
@@ -571,7 +573,6 @@ SYSCTL_PROC(_net_inet_sctp, OID_AUTO, getcred,
     "Get the ucred of a SCTP connection");
 #endif
 
-
 #ifdef INET
 #if defined(_WIN32) || defined(__Userspace__)
 int
@@ -863,10 +864,7 @@ sctp_close(struct socket *so)
 #endif
 	return;
 }
-
 #else
-
-
 int
 sctp_detach(struct socket *so)
 {
@@ -948,7 +946,6 @@ sctp_sendm(struct socket *so, int flags, struct mbuf *m, struct sockaddr *addr,
     struct mbuf *control, struct proc *p);
 
 #endif
-
 int
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 sctp_sendm(struct socket *so, int flags, struct mbuf *m, struct sockaddr *addr,
@@ -1257,7 +1254,6 @@ sctp_flush(struct socket *so, int how)
 		so->so_snd.sb_cc = 0;
 		so->so_snd.sb_mbcnt = 0;
 		so->so_snd.sb_mb = NULL;
-
 	}
 	return (0);
 }
@@ -1438,8 +1434,6 @@ sctp_fill_user_address(struct sockaddr *dst, struct sockaddr *src)
 #endif
 	return (0);
 }
-
-
 
 static size_t
 sctp_fill_up_addresses_vrf(struct sctp_inpcb *inp,
@@ -1993,7 +1987,6 @@ sctp_do_connect_x(struct socket *so, struct sctp_inpcb *inp, void *optval,
 	/* FIX ME: do we want to pass in a vrf on the connect call? */
 	vrf_id = inp->def_vrf_id;
 
-
 	/* We are GOOD to go */
 	stcb = sctp_aloc_assoc(inp, sa, &error, 0, vrf_id,
 	                       inp->sctp_ep.pre_open_stream_count,
@@ -2078,7 +2071,6 @@ sctp_do_connect_x(struct socket *so, struct sctp_inpcb *inp, void *optval,
 		stcb = NULL; \
 	} \
 }
-
 
 #define SCTP_CHECK_AND_CAST(destp, srcp, type, size) {\
 	if (size < sizeof(type)) { \
@@ -3243,8 +3235,6 @@ sctp_getopt(struct socket *so, int optname, void *optval, size_t *optsize,
 		 */
 		sstat->sstat_penddata = (stcb->asoc.cnt_on_reasm_queue +
 					 stcb->asoc.cnt_on_all_streams);
-
-
 		sstat->sstat_instrms = stcb->asoc.streamincnt;
 		sstat->sstat_outstrms = stcb->asoc.streamoutcnt;
 		sstat->sstat_fragmentation_point = sctp_get_frag_point(stcb, &stcb->asoc);
@@ -3753,43 +3743,27 @@ sctp_getopt(struct socket *so, int optname, void *optval, size_t *optsize,
 		break;
 	}
 	case SCTP_RECVRCVINFO:
-	{
-		int onoff;
-
 		if (*optsize < sizeof(int)) {
 			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
 			error = EINVAL;
 		} else {
 			SCTP_INP_RLOCK(inp);
-			onoff = sctp_is_feature_on(inp, SCTP_PCB_FLAGS_RECVRCVINFO);
+			*(int *)optval = sctp_is_feature_on(inp, SCTP_PCB_FLAGS_RECVRCVINFO);
 			SCTP_INP_RUNLOCK(inp);
-		}
-		if (error == 0) {
-			/* return the option value */
-			*(int *)optval = onoff;
 			*optsize = sizeof(int);
 		}
 		break;
-	}
 	case SCTP_RECVNXTINFO:
-	{
-		int onoff;
-
 		if (*optsize < sizeof(int)) {
 			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
 			error = EINVAL;
 		} else {
 			SCTP_INP_RLOCK(inp);
-			onoff = sctp_is_feature_on(inp, SCTP_PCB_FLAGS_RECVNXTINFO);
+			*(int *)optval = sctp_is_feature_on(inp, SCTP_PCB_FLAGS_RECVNXTINFO);
 			SCTP_INP_RUNLOCK(inp);
-		}
-		if (error == 0) {
-			/* return the option value */
-			*(int *)optval = onoff;
 			*optsize = sizeof(int);
 		}
 		break;
-	}
 	case SCTP_DEFAULT_SNDINFO:
 	{
 		struct sctp_sndinfo *info;
@@ -5432,7 +5406,6 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 				}
 				SCTP_INP_RUNLOCK(inp);
 			}
-
 		}
 		break;
 	}
@@ -5671,7 +5644,7 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 			break;
 		}
 		/* Do any streams have data queued? */
-		for ( i = 0; i< stcb->asoc.streamoutcnt; i++) {
+		for (i = 0; i < stcb->asoc.streamoutcnt; i++) {
 			if (!TAILQ_EMPTY(&stcb->asoc.strmout[i].outqueue)) {
 				goto busy_out;
 			}
@@ -6080,8 +6053,8 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 		if ((stcb != NULL) && (net == NULL)) {
 #ifdef INET
 			if (addr->sa_family == AF_INET) {
-
 				struct sockaddr_in *sin;
+
 				sin = (struct sockaddr_in *)addr;
 				if (sin->sin_addr.s_addr != INADDR_ANY) {
 					SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
@@ -6520,18 +6493,20 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 
 		SCTP_CHECK_AND_CAST(sasoc, optval, struct sctp_assocparams, optsize);
 		SCTP_FIND_STCB(inp, stcb, sasoc->sasoc_assoc_id);
-		if (sasoc->sasoc_cookie_life) {
+		if (sasoc->sasoc_cookie_life > 0) {
 			/* boundary check the cookie life */
-			if (sasoc->sasoc_cookie_life < 1000)
-				sasoc->sasoc_cookie_life = 1000;
+			if (sasoc->sasoc_cookie_life < SCTP_MIN_COOKIE_LIFE) {
+				sasoc->sasoc_cookie_life = SCTP_MIN_COOKIE_LIFE;
+			}
 			if (sasoc->sasoc_cookie_life > SCTP_MAX_COOKIE_LIFE) {
 				sasoc->sasoc_cookie_life = SCTP_MAX_COOKIE_LIFE;
 			}
 		}
 		if (stcb) {
-			if (sasoc->sasoc_asocmaxrxt)
+			if (sasoc->sasoc_asocmaxrxt > 0) {
 				stcb->asoc.max_send_times = sasoc->sasoc_asocmaxrxt;
-			if (sasoc->sasoc_cookie_life) {
+			}
+			if (sasoc->sasoc_cookie_life > 0) {
 				stcb->asoc.cookie_life = sctp_msecs_to_ticks(sasoc->sasoc_cookie_life);
 			}
 			SCTP_TCB_UNLOCK(stcb);
@@ -6541,9 +6516,10 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 			    ((inp->sctp_flags & SCTP_PCB_FLAGS_UDPTYPE) &&
 			     (sasoc->sasoc_assoc_id == SCTP_FUTURE_ASSOC))) {
 				SCTP_INP_WLOCK(inp);
-				if (sasoc->sasoc_asocmaxrxt)
+				if (sasoc->sasoc_asocmaxrxt > 0) {
 					inp->sctp_ep.max_send_times = sasoc->sasoc_asocmaxrxt;
-				if (sasoc->sasoc_cookie_life) {
+				}
+				if (sasoc->sasoc_cookie_life > 0) {
 					inp->sctp_ep.def_cookie_life = sctp_msecs_to_ticks(sasoc->sasoc_cookie_life);
 				}
 				SCTP_INP_WUNLOCK(inp);
@@ -7223,8 +7199,8 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 		if ((stcb != NULL) && (net == NULL)) {
 #ifdef INET
 			if (addr->sa_family == AF_INET) {
-
 				struct sockaddr_in *sin;
+
 				sin = (struct sockaddr_in *)addr;
 				if (sin->sin_addr.s_addr != INADDR_ANY) {
 					SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
@@ -7404,8 +7380,8 @@ sctp_setopt(struct socket *so, int optname, void *optval, size_t optsize,
 		if ((stcb != NULL) && (net == NULL)) {
 #ifdef INET
 			if (addr->sa_family == AF_INET) {
-
 				struct sockaddr_in *sin;
+
 				sin = (struct sockaddr_in *)addr;
 				if (sin->sin_addr.s_addr != INADDR_ANY) {
 					SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
@@ -7887,7 +7863,7 @@ sctp_connect(struct socket *so, struct mbuf *nam, struct proc *p)
 #if defined(__Userspace__)
 	/* TODO __Userspace__ falls into this code for IPv6 stuff at the moment... */
 #endif
-#if !defined(_WIN32) && !defined(__linux__)
+#if !defined(_WIN32) && !defined(__linux__) && !defined(__EMSCRIPTEN__)
 	switch (addr->sa_family) {
 #ifdef INET6
 	case AF_INET6:

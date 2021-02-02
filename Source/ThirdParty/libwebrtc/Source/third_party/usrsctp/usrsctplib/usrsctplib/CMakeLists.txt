@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2015-2015 Oleg Alexeenkov
-# Copyright (C) 2015-2019 Felix Weinrank
+# Copyright (C) 2015-2020 Felix Weinrank
 #
 # All rights reserved.
 #
@@ -36,10 +36,12 @@
 
 set(VERSION "1.0.0")
 
+include(GNUInstallDirs)
 set(prefix 					${CMAKE_INSTALL_PREFIX})
 set(exec_prefix 			${prefix})
-set(libdir 					${exec_prefix}/lib)
-set(includedir 				${prefix}/include/usrsctp)
+set(libdir 					${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir 				${prefix}/${CMAKE_INSTALL_INCLUDEDIR}/usrsctp)
+
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MACOSX_RPATH 		1)
 
@@ -76,7 +78,9 @@ endif ()
 # MISC
 #################################################
 
-
+if (sctp_build_shared_lib)
+	set(BUILD_SHARED_LIBS 1)
+endif ()
 
 #################################################
 # LIBRARY FILES
@@ -163,30 +167,28 @@ list(APPEND usrsctp_sources
 	user_socket.c
 )
 
-add_library(usrsctp SHARED ${usrsctp_sources} ${usrsctp_headers})
-add_library(usrsctp-static STATIC ${usrsctp_sources} ${usrsctp_headers})
+add_library(usrsctp ${usrsctp_sources} ${usrsctp_headers})
 
 target_include_directories(usrsctp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(usrsctp-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (WIN32)
 	message(STATUS "link library: ws2_32")
-	target_link_libraries(usrsctp ws2_32 iphlpapi.lib)
-	target_link_libraries(usrsctp-static ws2_32 iphlpapi.lib)
+	target_link_libraries(usrsctp ws2_32 iphlpapi)
 endif ()
 
-set_target_properties(usrsctp-static PROPERTIES OUTPUT_NAME "usrsctp")
 set_target_properties(usrsctp PROPERTIES IMPORT_SUFFIX "_import.lib")
 set_target_properties(usrsctp PROPERTIES SOVERSION 1 VERSION 1.0.0)
-
-if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-	SET(CMAKE_INSTALL_LIBDIR lib)
-endif ()
-
 
 #################################################
 # INSTALL LIBRARY AND HEADER
 #################################################
 
-install(TARGETS usrsctp usrsctp-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES usrsctp.h DESTINATION include)
+install(TARGETS usrsctp DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES usrsctp.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+#################################################
+# GENERATE AND INSTALL PKG-CONFIG FILE
+#################################################
+
+configure_file("${PROJECT_SOURCE_DIR}/usrsctp.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/usrsctp.pc" @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/usrsctp.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")

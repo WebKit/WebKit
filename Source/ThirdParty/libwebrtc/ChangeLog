@@ -1,3 +1,116 @@
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Update WebRTC usrsctp to M88
+        https://bugs.webkit.org/show_bug.cgi?id=221205
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/usrsctp/usrsctplib/.github/workflows/build-with-cmake.yml: Removed.
+        * Source/third_party/usrsctp/usrsctplib/CMakeLists.txt:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c:
+        (sctp_process_asconf_set_primary):
+        (sctp_handle_asconf):
+        (sctp_handle_asconf_ack):
+        (sctp_asconf_iterator_ep_end):
+        (sctp_asconf_iterator_stcb):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c:
+        (sctp_enforce_cwnd_limit):
+        (sctp_cwnd_update_after_fr):
+        (cc_bw_same):
+        (cc_bw_decrease):
+        (sctp_cwnd_update_after_sack_common):
+        (sctp_cwnd_update_after_ecn_echo_common):
+        (sctp_cwnd_update_after_output):
+        (sctp_cwnd_update_after_sack):
+        (sctp_cwnd_update_after_ecn_echo):
+        (sctp_cwnd_update_rtcc_after_ecn_echo):
+        (sctp_cwnd_update_rtcc_tsn_acknowledged):
+        (sctp_cwnd_prepare_rtcc_net_for_sack):
+        (sctp_cwnd_new_rtcc_transmission_begins):
+        (sctp_set_rtcc_initial_cc_param):
+        (sctp_cwnd_rtcc_socket_option):
+        (sctp_cwnd_update_rtcc_after_sack):
+        (sctp_hs_cwnd_update_after_sack):
+        (htcp_alpha_update):
+        (htcp_cong_avoid):
+        (sctp_htcp_cwnd_update_after_sack):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c:
+        (sctp_mark_non_revokable):
+        (sctp_place_control_in_stream):
+        (sctp_queue_data_to_stream):
+        (sctp_inject_old_unordered_data):
+        (sctp_deliver_reasm_check):
+        (sctp_process_a_data_chunk):
+        (sctp_sack_check):
+        (sctp_process_segment_range):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_init):
+        (sctp_handle_heartbeat_ack):
+        (sctp_handle_error):
+        (sctp_process_cookie_existing):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c:
+        (sctp_choose_boundspecific_stcb):
+        (sctp_select_nth_preferred_addr_from_ifn_boundall):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c:
+        (sctp_ss_prio_clear):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c:
+        (sctp_init_sysctls):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c:
+        (sctp_finish):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c:
+        (sctp_auditing):
+        (sctp_timeout_handler):
+        (sctp_timer_start):
+        (sctp_notify_remote_error):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c:
+        (in6_sin_2_v4mapsin6):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c:
+        (init_random):
+        (read_random):
+        (finish_random):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c:
+        (mbuf_initialize):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c:
+        (recv_function_raw):
+        (recv_function_raw6):
+        (recv_function_udp):
+        (recv_function_udp6):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c:
+        (usrsctp_init_nothreads):
+        (usrsctp_socket):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h:
+
 2021-01-25  Youenn Fablet  <youenn@apple.com>
 
         Resync libwebrtc with M87 latest branch

@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_asconf.h 362377 2020-06-19 12:35:29Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_asconf.h 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #ifndef _NETINET_SCTP_ASCONF_H_
@@ -61,14 +61,12 @@ extern uint32_t
 sctp_addr_mgmt_ep_sa(struct sctp_inpcb *, struct sockaddr *, uint32_t,
                      uint32_t);
 
-
 extern int sctp_asconf_iterator_ep(struct sctp_inpcb *inp, void *ptr,
 				   uint32_t val);
 extern void sctp_asconf_iterator_stcb(struct sctp_inpcb *inp,
 				      struct sctp_tcb *stcb,
 				      void *ptr, uint32_t type);
 extern void sctp_asconf_iterator_end(void *ptr, uint32_t val);
-
 
 extern int32_t
 sctp_set_primary_ip_address_sa(struct sctp_tcb *,
