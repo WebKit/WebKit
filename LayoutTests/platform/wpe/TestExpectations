@@ -995,9 +995,6 @@ webkit.org/b/201983 accessibility/w3c-svg-name-calculation.html [ Missing ]
 webkit.org/b/201983 accessibility/w3c-svg-presentational-role.html [ Missing ]
 webkit.org/b/201983 accessibility/w3c-svg-roles.html [ Missing ]
 
-# WPT: cors
-# =========
-webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Skip ]
 
 # WPT: css
 # ========
