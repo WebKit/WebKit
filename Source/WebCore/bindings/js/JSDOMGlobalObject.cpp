@@ -339,6 +339,15 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
+    // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
+    if (inputResponse->isBlobBody()) {
+        auto streamOrException = inputResponse->readableStream(*globalObject);
+        if (UNLIKELY(streamOrException.hasException())) {
+            deferred->reject(streamOrException.releaseException());
+            return jsCast<JSC::JSPromise*>(deferred->promise());
+        }
+    }
+
     auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, jsCast<JSC::JSPromise*>(deferred->promise()), importObject);
 
     if (inputResponse->isBodyReceivedByChunk()) {
@@ -387,8 +396,9 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
             compiler->finalize(globalObject);
             return;
         }
-        // FIXME: http://webkit.org/b/184886> Implement loading for the Blob type
-        compiler->fail(globalObject, createTypeError(globalObject, "Blob is not supported"_s));
+        // FIXME: Support FormData loading.
+        // https://bugs.webkit.org/show_bug.cgi?id=221248
+        compiler->fail(globalObject, createDOMException(*globalObject, Exception { NotSupportedError, "Not implemented"_s  }));
     }, [&](Ref<SharedBuffer>& buffer) {
         compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
         compiler->finalize(globalObject);

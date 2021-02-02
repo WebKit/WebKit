@@ -9,4 +9,8 @@ PASS instantiateStreaming check CORS
 PASS instantiateStreaming raise error if no-cors
 PASS instantiateStreaming receive promise with response created from ArrayBuffer
 PASS instantiateStreaming receive response that deliver data by chunks as bufferArray
+PASS instantiateStreaming using blob
+FAIL instantiateStreaming using FormData promise_rejects_js: function "function () { throw e }" threw object "TypeError: FormData is not supported" ("TypeError") expected instance of function "function CompileError() {
+    [native code]
+}" ("CompileError")
 

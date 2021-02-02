@@ -1,3 +1,15 @@
+2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs - JavaScript API: Implement loading for the Blob type
+        https://bugs.webkit.org/show_bug.cgi?id=184886
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_compile_test.html:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test.html:
+
 2021-02-02  Rob Buis  <rbuis@igalia.com>
 
         Support aspect-ratio on <body> in quirks mode
