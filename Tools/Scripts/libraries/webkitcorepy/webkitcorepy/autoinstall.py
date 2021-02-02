@@ -116,6 +116,9 @@ class Package(object):
 
             if self.extension == 'tar.gz':
                 file = tarfile.open(self.path)
+                # Prevent write-protected files which can't be overwritten by manually setting permissions
+                for tarred in file:
+                    tarred.mode = 0o777 if tarred.isdir() else 0o644
                 try:
                     file.extractall(target)
                 finally:

@@ -1,3 +1,23 @@
+2021-02-02  Don Olmstead  <don.olmstead@sony.com>
+
+        [webkitcorepy] Autoinstaller can fail on packages containing write protected files
+        https://bugs.webkit.org/show_bug.cgi?id=221266
+
+        Reviewed by Jonathan Bedard.
+
+        The autoinstaller extracts an archive containing the package to a temporary directory and
+        then installs it from there. If the autoinstaller attempts to extract the archive again into
+        the same temporary directory it can fail if there was a write protected file. The extraction
+        will fail and the installer cannot continue until the temporary directory is cleared.
+
+        To prevent this the permissions for each file/directory in the tarball is manually set.
+
+        This was originally observed with the logilab-common package which ships with a test containing
+        a write protected file.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.Archive.unpack):
+
 2021-02-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Commit queue failure message should indicate that cq+ flag can be set again
