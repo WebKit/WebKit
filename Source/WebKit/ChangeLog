@@ -1,3 +1,12 @@
+2021-02-02  Antoine Quint  <graouts@webkit.org>
+
+        WKASCAuthorizationPresenterDelegate needs to import RunLoop.h and BlockPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=221250
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+
 2021-02-02  Youenn Fablet  <youenn@apple.com>
 
         Recover WebRTC codecs in case of GPUProcess crash
