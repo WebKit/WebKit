@@ -1,3 +1,12 @@
+2021-02-02  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur wk1] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=221230
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support BigInt64Array/BigUint64Array in structured-cloning
