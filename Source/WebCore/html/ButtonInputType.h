@@ -41,7 +41,6 @@ public:
 
 private:
     const AtomString& formControlType() const override;
-    bool supportsValidation() const override;
 };
 
 } // namespace WebCore

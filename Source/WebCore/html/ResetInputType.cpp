@@ -45,11 +45,6 @@ const AtomString& ResetInputType::formControlType() const
     return InputTypeNames::reset();
 }
 
-bool ResetInputType::supportsValidation() const
-{
-    return false;
-}
-
 void ResetInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());

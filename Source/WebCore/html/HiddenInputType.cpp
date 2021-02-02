@@ -62,11 +62,6 @@ void HiddenInputType::restoreFormControlState(const FormControlState& state)
     element()->setAttributeWithoutSynchronization(valueAttr, state[0]);
 }
 
-bool HiddenInputType::supportsValidation() const
-{
-    return false;
-}
-
 RenderPtr<RenderElement> HiddenInputType::createInputRenderer(RenderStyle&&)
 {
     ASSERT_NOT_REACHED();

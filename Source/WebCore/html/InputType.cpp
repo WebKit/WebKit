@@ -226,11 +226,6 @@ ExceptionOr<void> InputType::setValueAsDecimal(const Decimal&, TextFieldEventBeh
     return Exception { InvalidStateError };
 }
 
-bool InputType::supportsValidation() const
-{
-    return true;
-}
-
 bool InputType::typeMismatchFor(const String&) const
 {
     return false;

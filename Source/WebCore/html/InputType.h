@@ -137,6 +137,13 @@ public:
         Type::Range,
     };
 
+    static constexpr OptionSet<Type> nonValidatingTypes = {
+        Type::Button,
+        Type::Hidden,
+        Type::Image,
+        Type::Reset,
+    };
+
     static Ref<InputType> create(HTMLInputElement&, const AtomString&);
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
@@ -182,6 +189,7 @@ public:
 
     bool isCheckable() const { return checkableTypes.contains(m_type); }
     bool isSteppable() const { return steppableTypes.contains(m_type); }
+    bool supportsValidation() const { return !nonValidatingTypes.contains(m_type); }
 
     bool isInteractiveContent() const;
     bool supportLabels() const;
@@ -209,7 +217,6 @@ public:
     // Validation functions.
 
     virtual String validationMessage() const;
-    virtual bool supportsValidation() const;
     virtual bool typeMismatchFor(const String&) const;
     virtual bool supportsRequired() const;
     virtual bool valueMissing(const String&) const;

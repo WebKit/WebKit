@@ -77,11 +77,6 @@ bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
     return true;
 }
 
-bool ImageInputType::supportsValidation() const
-{
-    return false;
-}
-
 void ImageInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());

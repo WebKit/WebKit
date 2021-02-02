@@ -43,7 +43,6 @@ private:
     const AtomString& formControlType() const override;
     FormControlState saveFormControlState() const override;
     void restoreFormControlState(const FormControlState&) override;
-    bool supportsValidation() const override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     bool accessKeyAction(bool sendMouseEvents) override;
     bool rendererIsNeeded() override;
