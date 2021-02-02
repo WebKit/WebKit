@@ -1985,9 +1985,6 @@ test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-atte
 test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/try/completion-values.js:
-  default: 'Test262Error: Expected SameValue(«39», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«39», «42») to be true'
 test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'
   strict mode: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'

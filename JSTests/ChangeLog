@@ -1,3 +1,16 @@
+2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Completion value of a finally block should not be ignored if completion is abrupt
+        https://bugs.webkit.org/show_bug.cgi?id=221238
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/completion-value.js:
+        Correct tests to match spec.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] TypedArray#fill should be implemented in C++

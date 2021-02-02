@@ -206,8 +206,8 @@ shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { break; }; } while (false
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; break; }; } while (false);`), 42);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { break; } finally {-2}; } while (false);`), undefined);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; break; } finally {-2}; } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; break; -3 }; } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; break; -3 }; } while (false);`), 42);
+shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; break; -3 }; } while (false);`), -2);
+shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; break; -3 }; } while (false);`), -2);
 
 // Break Statement where it is not normally available with other surrounding statements.
 shouldBe(eval(`99; do { -99; if (true) { break; }; -77 } while (false);`), undefined);
@@ -224,8 +224,8 @@ shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { break; }; -77 } while (f
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; break; }; -77 } while (false);`), 42);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { break; } finally {-2}; -77 } while (false);`), undefined);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; break; } finally {-2}; -77 } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; break; -3 }; -77 } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; break; -3 }; -77 } while (false);`), 42);
+shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; break; -3 }; -77 } while (false);`), -2);
+shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; break; -3 }; -77 } while (false);`), -2);
 
 // Continue Statement where it is not normally available.
 shouldBe(eval(`99; do { -99; if (true) { continue; }; } while (false);`), undefined);
@@ -242,8 +242,8 @@ shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { continue; }; } while (fa
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; continue; }; } while (false);`), 42);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { continue; } finally {-2}; } while (false);`), undefined);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; continue; } finally {-2}; } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; continue; -3 }; } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; continue; -3 }; } while (false);`), 42);
+shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; continue; -3 }; } while (false);`), -2);
+shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; continue; -3 }; } while (false);`), -2);
 
 // Continue Statement where it is not normally available with other surrounding statements.
 shouldBe(eval(`99; do { -99; if (true) { continue; }; -77 } while (false);`), undefined);
@@ -260,8 +260,8 @@ shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { continue; }; -77 } while
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; continue; }; -77 } while (false);`), 42);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { continue; } finally {-2}; -77 } while (false);`), undefined);
 shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; continue; } finally {-2}; -77 } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; continue; -3 }; -77 } while (false);`), 42);
-shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; continue; -3 }; -77 } while (false);`), 42);
+shouldBe(eval(`99; do { -99; try { 42 } catch (e) { -1 } finally { -2; continue; -3 }; -77 } while (false);`), -2);
+shouldBe(eval(`99; do { -99; try { [].x.x } catch (e) { 42; } finally { -2; continue; -3 }; -77 } while (false);`), -2);
 
 // Early break to a label.
 shouldBe(eval(`99; label: do { 1; if (true) { break label; 2; }; } while (false);`), undefined);

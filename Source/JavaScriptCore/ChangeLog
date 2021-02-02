@@ -1,3 +1,25 @@
+2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Completion value of a finally block should not be ignored if completion is abrupt
+        https://bugs.webkit.org/show_bug.cgi?id=221238
+
+        Reviewed by Yusuke Suzuki.
+
+        Per https://tc39.es/ecma262/#sec-try-statement-runtime-semantics-evaluation,
+        the completion value of a finally block is ignored *just* when it is a normal completion,
+        but we've been ignoring it in all cases.
+
+        This patch ensures that when a finally block is exited with a break or continue statement,
+        its completion value is used as the completion value for the entire TryStatement.
+
+        (Note: This behavior will be important for the upcoming "do expressions" proposal,
+        as it is effectively a reification of completion values.)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        1. Don't throw away the result of evaluating the finally block.
+        2. Only use the try or catch block result if we make it all the way to the end of the finally block.
+
 2021-02-02  Don Olmstead <don.olmstead@sony.com>
 
         REGRESSION(r269309): [Cocoa] RemoteInspectorCocoa files are being compiled twice
