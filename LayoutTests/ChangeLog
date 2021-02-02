@@ -1,3 +1,22 @@
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Use WebRTC GPU process flag for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=220967
+
+        Reviewed by Eric Carlson.
+
+        Update test to use feature flag instead of internals API.
+        Removing webrtc/video-gpuProcess.html since it is now equivalent to webrtc/video.html.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html:
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+        * http/wpt/mediarecorder/MediaRecorder-requestData.html:
+        * http/wpt/mediarecorder/mute-tracks.html:
+        * http/wpt/mediarecorder/pause-recording.html:
+        * platform/glib/TestExpectations:
+        * webrtc/video-gpuProcess-expected.txt: Deleted.
+        * webrtc/video-gpuProcess.html: Deleted.
+
 2021-02-01  Antoine Quint  <graouts@webkit.org>
 
         Animation of "rotate" or "scale" property does not correctly account for static "translate" property

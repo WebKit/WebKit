@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ WebRTCPlatformCodecsInGPUProcessEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,9 +10,6 @@
 <body>
     <video id="video1" controls></video>
     <script>
-if (window.internals)
-    window.internals.setUseGPUProcessForWebRTC(false);
-
 function waitFor(duration)
 {
     return new Promise((resolve) => setTimeout(resolve, duration));
