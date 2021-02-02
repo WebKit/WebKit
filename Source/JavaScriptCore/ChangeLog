@@ -1,3 +1,60 @@
+2021-02-01  Saam Barati  <sbarati@apple.com>
+
+        Sign m_offset in AssemblerLabel
+        https://bugs.webkit.org/show_bug.cgi?id=221237
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::labelForWatchpoint):
+        (JSC::ARM64Assembler::label):
+        (JSC::ARM64Assembler::getRelocatedAddress):
+        (JSC::ARM64Assembler::getDifferenceBetweenLabels):
+        (JSC::ARM64Assembler::getCallReturnOffset):
+        (JSC::ARM64Assembler::linkJump):
+        (JSC::ARM64Assembler::addressOf):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::labelForWatchpoint):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::getRelocatedAddress):
+        (JSC::ARMv7Assembler::getDifferenceBetweenLabels):
+        (JSC::ARMv7Assembler::getCallReturnOffset):
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::linkCall):
+        (JSC::ARMv7Assembler::linkPointer):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::link const):
+        (JSC::AbstractMacroAssembler::Jump::linkTo const):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerLabel::AssemblerLabel):
+        (JSC::AssemblerLabel::operator=):
+        (JSC::AssemblerLabel::isSet const):
+        (JSC::AssemblerLabel::labelAtOffset const):
+        (JSC::AssemblerLabel::operator== const):
+        (JSC::AssemblerLabel::offset const):
+        (JSC::AssemblerLabel::setOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::offsetOf):
+        (JSC::LinkBuffer::applyOffset):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::labelForWatchpoint):
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::getRelocatedAddress):
+        (JSC::MIPSAssembler::getDifferenceBetweenLabels):
+        (JSC::MIPSAssembler::getCallReturnOffset):
+        (JSC::MIPSAssembler::linkJump):
+        (JSC::MIPSAssembler::linkCall):
+        (JSC::MIPSAssembler::linkPointer):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::labelForWatchpoint):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::linkCall):
+        (JSC::X86Assembler::linkPointer):
+        (JSC::X86Assembler::getCallReturnOffset):
+        (JSC::X86Assembler::getRelocatedAddress):
+        (JSC::X86Assembler::getDifferenceBetweenLabels):
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] TypedArray#fill should be implemented in C++

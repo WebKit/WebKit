@@ -637,7 +637,7 @@ public:
             masm->invalidateAllTempRegisters();
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-            masm->checkRegisterAllocationAgainstBranchRange(m_label.m_offset, masm->debugOffset());
+            masm->checkRegisterAllocationAgainstBranchRange(m_label.offset(), masm->debugOffset());
 #endif
 
 #if CPU(ARM_THUMB2)
@@ -657,7 +657,7 @@ public:
         void linkTo(Label label, AbstractMacroAssemblerType* masm) const
         {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-            masm->checkRegisterAllocationAgainstBranchRange(label.m_label.m_offset, m_label.m_offset);
+            masm->checkRegisterAllocationAgainstBranchRange(label.m_label.offset(), m_label.offset());
 #endif
 
 #if CPU(ARM_THUMB2)
