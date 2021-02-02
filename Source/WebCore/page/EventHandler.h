@@ -387,6 +387,10 @@ private:
 
     void hoverTimerFired();
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void imageExtractionTimerFired();
+#endif
+
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
     bool shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const;
@@ -530,6 +534,9 @@ private:
     Frame& m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
+#if ENABLE(IMAGE_EXTRACTION)
+    DeferrableOneShotTimer m_imageExtractionTimer;
+#endif
     std::unique_ptr<AutoscrollController> m_autoscrollController;
     RenderLayer* m_resizeLayer { nullptr };
 

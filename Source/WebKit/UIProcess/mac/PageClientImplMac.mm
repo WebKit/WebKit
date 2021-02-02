@@ -481,6 +481,15 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     m_impl->doneWithKeyEvent(event.nativeEvent(), eventWasHandled);
 }
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+void PageClientImpl::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
+{
+    m_impl->requestImageExtraction(imageData, WTFMove(completion));
+}
+
+#endif
+
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
     return WebPopupMenuProxyMac::create(m_view, page);

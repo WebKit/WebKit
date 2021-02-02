@@ -239,6 +239,10 @@ messages -> WebPageProxy {
     CompositionWasCanceled()
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
+#if ENABLE(IMAGE_EXTRACTION)
+    RequestImageExtraction(WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
+#endif
+
 #if HAVE(TOUCH_BAR)
     SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
     SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)

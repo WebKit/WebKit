@@ -554,6 +554,10 @@ public:
     virtual void changeUniversalAccessZoomFocus(const IntRect&, const IntRect&) { }
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    virtual void requestImageExtraction(Element&) { }
+#endif
+
 protected:
     virtual ~ChromeClient() = default;
 };

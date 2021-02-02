@@ -1367,6 +1367,10 @@ public:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(WebCore::Element&);
+#endif
+
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
@@ -2211,6 +2215,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
 #endif
 };
 

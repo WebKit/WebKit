@@ -271,6 +271,10 @@ struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
+
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 }
@@ -1609,6 +1613,10 @@ public:
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
 #endif
 
     static WebPageProxy* nonEphemeralWebPageProxy();

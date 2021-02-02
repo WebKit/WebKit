@@ -8301,6 +8301,15 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 }
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+void WebPageProxy::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
+{
+    pageClient().requestImageExtraction(imageData, WTFMove(completionHandler));
+}
+
+#endif
+
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
 {
     if (!isRequestIDValid(requestID))

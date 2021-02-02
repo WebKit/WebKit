@@ -130,6 +130,10 @@ private:
 
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) override;
+#endif
+
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 #if ENABLE(CONTEXT_MENUS)
     Ref<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&) override;

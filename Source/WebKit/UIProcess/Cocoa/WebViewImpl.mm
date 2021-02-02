@@ -134,6 +134,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenate.h>
 
+#if ENABLE(IMAGE_EXTRACTION)
+#import <WebCore/ImageExtractionResult.h>
+#endif
+
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
@@ -5581,6 +5585,16 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
 {
     return false;
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+void WebViewImpl::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
+{
+    UNUSED_PARAM(imageData);
+    completion({ });
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 } // namespace WebKit
 

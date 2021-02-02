@@ -1431,4 +1431,13 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 }
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+void WebChromeClient::requestImageExtraction(Element& element)
+{
+    m_page.requestImageExtraction(element);
+}
+
+#endif
+
 } // namespace WebKit

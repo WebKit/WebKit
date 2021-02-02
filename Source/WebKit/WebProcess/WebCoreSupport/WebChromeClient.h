@@ -414,6 +414,10 @@ private:
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&) final;
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(WebCore::Element&) final;
+#endif
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

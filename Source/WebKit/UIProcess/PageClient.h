@@ -59,6 +59,10 @@
 #include <WebCore/InspectorOverlay.h>
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+#include <WebCore/ImageExtractionResult.h>
+#endif
+
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
@@ -507,6 +511,10 @@ public:
     virtual bool hasSafeBrowsingWarning() const { return false; }
 
     virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
+
+#if ENABLE(IMAGE_EXTRACTION)
+    virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
+#endif
     
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;

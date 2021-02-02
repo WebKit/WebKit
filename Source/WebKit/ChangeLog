@@ -1,3 +1,43 @@
+2021-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add scaffolding to request image extraction after a delay when hovering over images
+        https://bugs.webkit.org/show_bug.cgi?id=221226
+
+        Reviewed by Devin Rousso.
+
+        Work towards allowing clients to extract image data when hovering over rendered image elements, for new
+        accessibility-related features. See changes below for more details.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestImageExtraction):
+
+        Leave this method stub unimplemented for the time being.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::requestImageExtraction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestImageExtraction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestImageExtraction):
+
+        Add plumbing to allow the web process to asynchronously request image extraction data from the UI process.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestImageExtraction):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::requestImageExtraction):
+        * WebProcess/WebPage/WebPage.h:
+
+        Add a weak set of elements that we've attempted to extract, so that we won't end up extracting elements more
+        than once. Although this set this currently only cleared upon navigation, this should eventually be updated when
+        (for instance) an element's image source changes, such that we can re-extract the new image data if needed.
+
 2021-02-02  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION(r271744): Broke Microsoft live login in internal builds

@@ -89,6 +89,10 @@ class PageConfiguration;
 
 namespace WebCore {
 struct ShareDataWithParsedURL;
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
 }
 
 @protocol WebViewImplDelegate
@@ -574,6 +578,10 @@ public:
 
     void forceRequestCandidatesForTesting();
     bool shouldRequestCandidates() const;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+#endif
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 

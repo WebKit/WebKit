@@ -347,6 +347,10 @@
 #endif
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+#include <WebCore/ImageExtractionResult.h>
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -6062,6 +6066,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     ASSERT(!frame->coreFrame()->loader().stateMachine().creatingInitialEmptyDocument());
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
+#if ENABLE(IMAGE_EXTRACTION)
+    m_elementsWithExtractedImages.clear();
+#endif
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     clearLoadedSubresourceDomains();
 #endif
@@ -7118,6 +7126,36 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
     send(Messages::WebPageProxy::RemoveMediaUsageManagerSession(identifier));
 }
 #endif // ENABLE(MEDIA_USAGE)
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+void WebPage::requestImageExtraction(WebCore::Element& element)
+{
+    if (m_elementsWithExtractedImages.contains(element))
+        return;
+
+    auto* renderImage = element.renderer();
+    if (!is<RenderImage>(renderImage))
+        return;
+
+    m_elementsWithExtractedImages.add(element);
+
+    auto bitmap = shareableBitmap(downcast<RenderImage>(*renderImage));
+    if (!bitmap)
+        return;
+
+    ShareableBitmap::Handle bitmapHandle;
+    bitmap->createHandle(bitmapHandle);
+    if (bitmapHandle.isNull())
+        return;
+
+    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
+        UNUSED_PARAM(result);
+        UNUSED_PARAM(weakElement);
+    });
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #if !PLATFORM(IOS_FAMILY)
 

@@ -321,6 +321,9 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
+#if ENABLE(IMAGE_EXTRACTION)
+    , m_imageExtractionTimer(*this, &EventHandler::imageExtractionTimerFired, 250_ms)
+#endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
@@ -360,6 +363,9 @@ void EventHandler::clear()
 #endif
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
+#endif
+#if ENABLE(IMAGE_EXTRACTION)
+    m_imageExtractionTimer.stop();
 #endif
     m_resizeLayer = nullptr;
     m_elementUnderMouse = nullptr;
@@ -1872,6 +1878,12 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 
     hitTestResult.setToNonUserAgentShadowAncestor();
     page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifierFlags());
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (event.syntheticClickType() == NoTap && m_imageExtractionTimer.isActive())
+        m_imageExtractionTimer.restart();
+#endif
+
     return result;
 }
 
@@ -2499,6 +2511,15 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 
     m_elementUnderMouse = targetElement;
 
+#if ENABLE(IMAGE_EXTRACTION)
+    if (platformMouseEvent.syntheticClickType() == NoTap) {
+        if (m_elementUnderMouse && is<RenderImage>(m_elementUnderMouse->renderer()))
+            m_imageExtractionTimer.restart();
+        else
+            m_imageExtractionTimer.stop();
+    }
+#endif
+
     ASSERT_IMPLIES(m_elementUnderMouse, &m_elementUnderMouse->document() == m_frame.document());
     ASSERT_IMPLIES(m_lastElementUnderMouse, &m_lastElementUnderMouse->document() == m_frame.document());
 
@@ -2554,8 +2575,12 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
         }
 
         // Event handling may have moved the element to a different document.
-        if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document())
+        if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document()) {
+#if ENABLE(IMAGE_EXTRACTION)
+            m_imageExtractionTimer.stop();
+#endif
             m_elementUnderMouse = nullptr;
+        }
 
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
@@ -3321,6 +3346,19 @@ void EventHandler::hoverTimerFired()
         }
     }
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+void EventHandler::imageExtractionTimerFired()
+{
+    if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
+        return;
+
+    if (auto* page = m_frame.page())
+        page->chrome().client().requestImageExtraction(*m_elementUnderMouse);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& event)
 {
