@@ -99,7 +99,7 @@ private:
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
     
-    void stopRecordingInternal();
+        void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder { No, Yes };

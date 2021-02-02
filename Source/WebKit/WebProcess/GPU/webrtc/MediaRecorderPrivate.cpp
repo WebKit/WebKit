@@ -132,10 +132,10 @@ void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::Shar
     }, m_identifier);
 }
 
-void MediaRecorderPrivate::stopRecording()
+void MediaRecorderPrivate::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
     m_isStopped = true;
-    m_connection->send(Messages::RemoteMediaRecorder::StopRecording { }, m_identifier);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::StopRecording { }, WTFMove(completionHandler), m_identifier);
 }
 
 void MediaRecorderPrivate::pauseRecording(CompletionHandler<void()>&& completionHandler)

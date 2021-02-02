@@ -63,7 +63,7 @@ public:
     virtual void fetchData(FetchDataCallback&&) = 0;
     virtual const String& mimeType() const = 0;
 
-    void stop();
+    void stop(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
 
@@ -85,7 +85,7 @@ protected:
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
 
 private:
-    virtual void stopRecording() = 0;
+    virtual void stopRecording(CompletionHandler<void()>&&) = 0;
     virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
     virtual void resumeRecording(CompletionHandler<void()>&&) = 0;
 

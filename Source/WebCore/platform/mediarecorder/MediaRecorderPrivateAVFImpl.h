@@ -55,7 +55,7 @@ private:
     void startRecording(StartRecordingCallback&&) final;
     const String& mimeType() const final;
 
-    void stopRecording() final;
+    void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 

@@ -139,9 +139,10 @@ void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const WTF::MediaTime& me
     m_writer->appendAudioSampleBuffer(data, description, mediaTime, sampleCount);
 }
 
-void MediaRecorderPrivateAVFImpl::stopRecording()
+void MediaRecorderPrivateAVFImpl::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
     m_writer->stopRecording();
+    completionHandler();
 }
 
 void MediaRecorderPrivateAVFImpl::pauseRecording(CompletionHandler<void()>&& completionHandler)
