@@ -1,3 +1,15 @@
+2021-02-02  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS] Force loading the HEIF reader symbols before transcoding any HEIF image
+        https://bugs.webkit.org/show_bug.cgi?id=221191
+        <rdar://problem/70942158>
+
+        Reviewed by Tim Horton.
+
+        Add a HAVE macro for the fix of <rdar://problem/59589723>.
+
+        * wtf/PlatformHave.h:
+
 2021-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Adopt UIEventAttribution instead of _UIEventAttribution

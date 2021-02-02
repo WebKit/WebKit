@@ -51,6 +51,18 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     if (sourceUTI == destinationUTI)
         return nullString();
 
+#if !HAVE(IMAGEIO_FIX_FOR_RADAR_59589723)
+    auto sourceMIMEType = MIMETypeFromUTI(sourceUTI);
+    if (sourceMIMEType == "image/heif"_s || sourceMIMEType == "image/heic"_s) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] {
+            // This call will force ImageIO to load the symbols of the HEIF reader. This
+            // bug is already fixed in ImageIO of macOS Big Sur <rdar://problem/59589723>.
+            CGImageSourceGetCount(source.get());
+        });
+    }
+#endif
+
     // It is important to add the appropriate file extension to the temporary file path.
     // The File object depends solely on the extension to know the MIME type of the file.
     auto suffix = makeString('.', destinationExtension);
