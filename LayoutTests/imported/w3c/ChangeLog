@@ -1,5 +1,13 @@
 2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, update expect files for wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=221281
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+
+2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         WebAssembly: add support for stream APIs - JavaScript API: Implement loading for the Blob type
         https://bugs.webkit.org/show_bug.cgi?id=184886
 

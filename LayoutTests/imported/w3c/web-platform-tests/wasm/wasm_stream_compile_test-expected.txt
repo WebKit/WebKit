@@ -10,7 +10,7 @@ PASS compileStreaming raise error if no-cors
 PASS compileStreaming receive promise with response created from ArrayBuffer
 PASS compileStreaming receive response that deliver data by chunks as bufferArray
 PASS compileStreaming using blob
-FAIL compileStreaming using FormData promise_rejects_js: function "function () { throw e }" threw object "TypeError: FormData is not supported" ("TypeError") expected instance of function "function CompileError() {
+FAIL compileStreaming using FormData promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function CompileError() {
     [native code]
 }" ("CompileError")
 
