@@ -1,3 +1,18 @@
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Make sure NetworkRTCProvider stays valid for all NetworkRTCSocketCocoa callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=221249
+        <rdar://problem/72671547>
+
+        Reviewed by Eric Carlson.
+
+        Make the connection callback take a ref of the NetworkRTCProvider.
+        The ref cycle will break at NetworkConnectionToWebProcess destruction since it will call NetworkRTCProvider::close
+        which deletes all sockets owning the connection.
+
+        * NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm:
+        (WebKit::NetworkRTCSocketCocoa::NetworkRTCSocketCocoa):
+
 2021-02-02  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix after 272154.
