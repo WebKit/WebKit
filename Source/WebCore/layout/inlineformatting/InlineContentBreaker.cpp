@@ -159,10 +159,19 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
     return result;
 }
 
-struct TrailingTextContent {
-    Optional<size_t> runIndex; // In some cases when the first run is breakable but it does not fit, there's not trailing run index.
-    bool hasOverflow { false }; // Trailing content overflows the available space.
-    Optional<InlineContentBreaker::PartialRun> partialRun;
+struct OverflowingTextContent {
+    size_t runIndex { 0 }; // Overflowing run index. There's always an overflowing run.
+    struct BreakingPosition {
+        size_t runIndex { 0 };
+        struct TrailingContent {
+            // Trailing content is either the run's left side (when we break the run somewhere in the middle) or the previous run.
+            // Sometimes the breaking position is at the very beginning of the first run, so there's no trailing run at all.
+            bool overflows { false };
+            Optional<InlineContentBreaker::PartialRun> partialRun { };
+        };
+        Optional<TrailingContent> trailingContent { };
+    };
+    Optional<BreakingPosition> breakingPosition { }; // Where we actually break this overflowing content.
 };
 
 InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(const ContinuousContent& overflowContent, const LineStatus& lineStatus) const
@@ -194,29 +203,41 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     }
 
     if (isTextContent(continuousContent)) {
-        if (auto trailingContent = processOverflowingTextContent(continuousContent, lineStatus)) {
-            if (trailingContent->hasOverflow) {
-                if (!trailingContent->runIndex.hasValue()) {
-                    // We tried to break the content but the available space can't even accommodate the first character.
-                    // 1. Wrap the content over to the next line when we've got content on the line already.
-                    // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
-                    if (lineStatus.hasContent)
-                        return { Result::Action::Wrap, IsEndOfLine::Yes };
-                    auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
-                    auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
-                    if (inlineTextItem.length() <= 1)
-                        return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                    auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
-                    auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
-                    return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
-                }
-                // We managed to break a run with overflow. Should not keep this on the line unless it's the only content.
+        auto tryBreakingTextContent = [&]() -> Optional<Result> {
+            // 1. This text content is not breakable.
+            // 2. This breakable text content does not fit at all. Not even the first glyph. This is a very special case.
+            // 3. We can break the content but it still overflows.
+            // 4. Managed to break the content before the overflow point.
+            auto overflowingContent = processOverflowingTextContent(continuousContent, lineStatus);
+            if (!overflowingContent.breakingPosition)
+                return { };
+            auto trailingContent = overflowingContent.breakingPosition->trailingContent;
+            if (!trailingContent) {
+                // We tried to break the content but the available space can't even accommodate the first glyph.
+                // 1. Wrap the content over to the next line when we've got content on the line already.
+                // 2. Keep the first glyph on the empty line (or keep the whole run if it has only one glyph/completely empty).
                 if (lineStatus.hasContent)
-                    return { Result::Action::Wrap, IsEndOfLine::Yes };
+                    return Result { Result::Action::Wrap, IsEndOfLine::Yes };
+                auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
+                auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
+                if (inlineTextItem.length() <= 1)
+                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
+                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
+                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
+                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
             }
-            auto trailingPartialContent = Result::PartialTrailingContent { *trailingContent->runIndex, trailingContent->partialRun };
-            return { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };        }
+            if (trailingContent->overflows && lineStatus.hasContent) {
+                // We managed to break a run with overflow but the line already has content. Let's wrap it to the next line.
+                return Result { Result::Action::Wrap, IsEndOfLine::Yes };
+            }
+            // Either we managed to break with no overflow or the line is empty.
+            auto trailingPartialContent = Result::PartialTrailingContent { overflowingContent.breakingPosition->runIndex, trailingContent->partialRun };
+            return Result { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
+        };
+        if (auto result = tryBreakingTextContent())
+            return *result;
     }
+
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or wrap it to the next line.
     if (!lineStatus.hasContent) {
         ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
@@ -256,7 +277,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
+OverflowingTextContent InlineContentBreaker::processOverflowingTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
     auto& runs = continuousContent.runs();
     ASSERT(!runs.isEmpty());
@@ -302,27 +323,27 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
     // We have to have an overflowing run.
     RELEASE_ASSERT(overflowingRunIndex < runs.size());
 
-    auto tryBreakingOverflowingRun = [&]() -> Optional<TrailingTextContent> {
+    auto tryBreakingOverflowingRun = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
         auto overflowingRun = runs[overflowingRunIndex];
         if (!isBreakableRun(overflowingRun))
             return { };
         if (auto partialRun = tryBreakingTextRun(overflowingRun, lineStatus.contentLogicalRight + accumulatedContentWidth, std::max(0.0f, lineStatus.availableWidth - accumulatedContentWidth))) {
             if (partialRun->length)
-                return TrailingTextContent { overflowingRunIndex, false, partialRun };
+                return OverflowingTextContent::BreakingPosition { overflowingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialRun } };
             // When the breaking position is at the beginning of the run, the trailing run is the previous one.
             if (auto trailingRunIndex = findTrailingRunIndex(overflowingRunIndex))
-                return TrailingTextContent { *trailingRunIndex, false, { } };
+                return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { } };
             // Sometimes we can't accommodate even the very first character. 
             // Note that this is different from when there's no breakable run in this set.
-            return TrailingTextContent { { }, true, { } };
+            return OverflowingTextContent::BreakingPosition { };
         }
         return { };
     };
     // Check if we actually break this run.
-    if (auto trailingContent = tryBreakingOverflowingRun())
-        return trailingContent;
+    if (auto breakingPosition = tryBreakingOverflowingRun())
+        return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingPreviousNonOverflowingRuns = [&]() -> Optional<TrailingTextContent> {
+    auto tryBreakingPreviousNonOverflowingRuns = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
         auto previousContentWidth = accumulatedContentWidth;
         for (auto index = overflowingRunIndex; index--;) {
             auto& run = runs[index];
@@ -332,20 +353,20 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
             ASSERT(run.inlineItem.isText());
             if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + previousContentWidth, { })) {
                 // We know this run fits, so if breaking is allowed on the run, it should return a non-empty left-side
-                // since it's either at hypen position or the entire run is returned.
+                // since it's either at hyphen position or the entire run is returned.
                 ASSERT(partialRun->length);
                 auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
-                return TrailingTextContent { index, false, runIsFullyAccommodated ? WTF::nullopt : partialRun };
+                return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? WTF::nullopt : partialRun } };
             }
         }
         return { };
     };
     // We did not manage to break the run that actually overflows the line.
     // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.
-    if (auto trailingContent = tryBreakingPreviousNonOverflowingRuns())
-        return trailingContent;
+    if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns())
+        return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingNextOverflowingRuns = [&]() -> Optional<TrailingTextContent> {
+    auto tryBreakingNextOverflowingRuns = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
         auto nextContentWidth = accumulatedContentWidth + runs[overflowingRunIndex].logicalWidth;
         for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
             auto& run = runs[index];
@@ -361,12 +382,12 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
                     ASSERT(trailingRunIndex);
                     // At worst we are back to the overflowing run, like in the example above.
                     ASSERT(*trailingRunIndex >= overflowingRunIndex);
-                    return TrailingTextContent { *trailingRunIndex, true, { } };
+                    return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
                 }
                 if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + nextContentWidth, { })) {
                     ASSERT(partialRun->length);
                     // We managed to break this text run mid content. It has to be a hyphen break.
-                    return TrailingTextContent { index, true, partialRun };
+                    return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { true, partialRun } };
                 }
             }
             nextContentWidth += run.logicalWidth;
@@ -376,11 +397,11 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
     // At this point we know that there's no breakable run all the way to the overflowing run.
     // Now we need to check if any run after the overflowing content can break.
     // e.g. <span>this_content_overflows_but_not_breakable<span><span style="word-break: break-all">but_this_is_breakable</span>
-    if (auto trailingContent = tryBreakingNextOverflowingRuns())
-        return trailingContent;
+    if (auto breakingPosition = tryBreakingNextOverflowingRuns())
+        return { overflowingRunIndex, breakingPosition };
 
     // Give up, there's no breakable run in here.
-    return { };
+    return { overflowingRunIndex };
 }
 
 InlineContentBreaker::WordBreakRule InlineContentBreaker::wordBreakBehavior(const RenderStyle& style) const
