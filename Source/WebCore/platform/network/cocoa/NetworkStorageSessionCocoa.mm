@@ -266,7 +266,7 @@ static RetainPtr<NSArray> cookiesForURL(NSHTTPCookieStorage *storage, NSURL *url
     [storage _getCookiesForURL:url mainDocumentURL:mainDocumentURL partition:partition completionHandler:completionHandler];
     UNUSED_PARAM(sameSiteInfo);
 #endif
-    ASSERT(!!cookiesPtr);
+    RELEASE_ASSERT(!!cookiesPtr);
     return WTFMove(*cookiesPtr);
 }
 
