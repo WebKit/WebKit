@@ -1,0 +1,22 @@
+<style>
+
+    div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100px;
+        width: 100px;
+        background-color: black;
+
+        translate: 100px 100px;
+        animation: scale calc(24 * 60 * 60 * 1s);
+    }
+
+    @keyframes scale {
+        0% { scale: 0.5; }
+        100% { scale: 0.5; }
+    }
+
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>

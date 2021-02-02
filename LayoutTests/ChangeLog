@@ -1,3 +1,18 @@
+2021-02-01  Antoine Quint  <graouts@webkit.org>
+
+        Animation of "rotate" or "scale" property does not correctly account for static "translate" property
+        https://bugs.webkit.org/show_bug.cgi?id=219894
+        <rdar://problem/72342798>
+
+        Reviewed by Dean Jackson.
+
+        Add two new tests that ensure that translate is indeed applied before rotate and scale.
+
+        * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated-expected.html: Added.
+        * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html: Added.
+        * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated-expected.html: Added.
+        * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html: Added.
+
 2021-02-02  Rob Buis  <rbuis@igalia.com>
 
         Provide mock dtmf sender
