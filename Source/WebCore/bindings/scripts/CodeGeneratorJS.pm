@@ -3660,12 +3660,23 @@ sub GenerateOverloadDispatcher
     my %allSets = ComputeEffectiveOverloadSet($operation->{overloads});
 
     my $generateOverloadCallIfNecessary = sub {
-        my ($overload, $condition, $include) = @_;
+        my ($overload, $condition, $conditionCanThrow, $include) = @_;
         return unless $overload;
         my $conditionalString = $codeGenerator->GenerateConditionalString($overload);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "        if ($condition)\n    ") if $condition;
-        push(@implContent, "        RELEASE_AND_RETURN(throwScope, (" . $overloadFunctionPrefix . $overload->{overloadIndex} . $overloadFunctionSuffix . "(${parametersToForward})));\n");
+        if ($condition && $conditionCanThrow) {
+            push(@implContent, "        {\n");
+            push(@implContent, "            bool success = $condition;\n");
+            push(@implContent, "            RETURN_IF_EXCEPTION(throwScope, { });\n");
+            push(@implContent, "            if (success)\n");
+            push(@implContent, "                RELEASE_AND_RETURN(throwScope, (" . $overloadFunctionPrefix . $overload->{overloadIndex} . $overloadFunctionSuffix . "(${parametersToForward})));\n");
+            push(@implContent, "        }\n");
+        } elsif ($condition) {
+            push(@implContent, "        if ($condition)\n");
+            push(@implContent, "            RELEASE_AND_RETURN(throwScope, (" . $overloadFunctionPrefix . $overload->{overloadIndex} . $overloadFunctionSuffix . "(${parametersToForward})));\n");
+        } else {
+            push(@implContent, "        RELEASE_AND_RETURN(throwScope, (" . $overloadFunctionPrefix . $overload->{overloadIndex} . $overloadFunctionSuffix . "(${parametersToForward})));\n");
+        }
         push(@implContent, "#endif\n") if $conditionalString;
         AddToImplIncludes($include, $overload->extendedAttributes->{Conditional}) if $include;
     };
@@ -3779,7 +3790,7 @@ sub GenerateOverloadDispatcher
 
             # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in convert<IDLSequence<T>>(...).
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
-            &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(lexicalGlobalObject, distinguishingArg)", "<JavaScriptCore/IteratorOperations.h>");
+            &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(lexicalGlobalObject, distinguishingArg)", 1, "<JavaScriptCore/IteratorOperations.h>");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrRecordOrObjectOrCallbackInterfaceParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject()");
