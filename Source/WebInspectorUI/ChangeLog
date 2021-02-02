@@ -1,3 +1,17 @@
+2021-02-01  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION(r270637): Web Inspector: Filtering field no longer shows in Computed panel
+        https://bugs.webkit.org/show_bug.cgi?id=221001
+
+        Reviewed by Devin Rousso.
+
+        The filter bar keeps separate filters for the Rules and Computed panes. It is therefor incorrect to hide the
+        entire filter bar when showing multiple sidebars, instead hide the controls that have a common state between the
+        two panels (the Classes list).
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,):
+
 2021-02-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: add Box Model into Layout panel
