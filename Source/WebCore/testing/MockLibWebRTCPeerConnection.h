@@ -167,6 +167,18 @@ private:
     int m_id { -1 };
 };
 
+class MockDtmfSender : public webrtc::DtmfSenderInterface {
+private:
+    void RegisterObserver(webrtc::DtmfSenderObserverInterface*) final { }
+    void UnregisterObserver() final { }
+
+    bool CanInsertDtmf() final { return false; }
+
+    std::string tones() const final { return ""; }
+    int duration() const final { return 0; }
+    int inter_tone_gap() const final { return 50; }
+};
+
 class MockRtpSender : public webrtc::RtpSenderInterface {
 public:
     explicit MockRtpSender(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>&& track) : m_track(WTFMove(track)) { }
@@ -185,10 +197,16 @@ private:
     std::vector<std::string> stream_ids() const { return { }; }
     webrtc::RtpParameters GetParameters() const final { return { }; }
     webrtc::RTCError SetParameters(const webrtc::RtpParameters&) final { return { }; }
-    rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const final { return nullptr; }
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const final
+    {
+        if (!m_dtmfSender)
+            m_dtmfSender = new rtc::RefCountedObject<MockDtmfSender>();
+        return m_dtmfSender;
+    }
 
 private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
+    mutable rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_dtmfSender;
 };
 
 class MockRtpReceiver : public webrtc::RtpReceiverInterface {
