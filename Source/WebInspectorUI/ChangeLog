@@ -1,5 +1,16 @@
 2021-02-02  BJ Burg  <bburg@apple.com>
 
+        Web Inspector: Add another Protocol Version (iOS 14.5)
+        https://bugs.webkit.org/show_bug.cgi?id=221288
+        <rdar://66351870>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/Legacy/14.5/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-14.5.json: Added.
+
+2021-02-02  BJ Burg  <bburg@apple.com>
+
         Web Inspector: implement the basics for showing/hiding grid overlays
         https://bugs.webkit.org/show_bug.cgi?id=221062
 
