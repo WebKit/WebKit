@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
@@ -58,7 +59,7 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebKit {
 
-class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted {
+class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCCodecs();
@@ -83,11 +84,21 @@ public:
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t, uint16_t width, uint16_t height);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
 
+    struct EncoderInitializationData {
+        uint16_t width;
+        uint16_t height;
+        unsigned startBitRate;
+        unsigned maxBitRate;
+        unsigned minBitRate;
+        uint32_t maxFrameRate;
+    };
     struct Encoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         RTCEncoderIdentifier identifier;
         webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
+        Vector<std::pair<String, String>> parameters;
+        Optional<EncoderInitializationData> initializationData;
         void* encodedImageCallback { nullptr };
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
@@ -113,10 +124,11 @@ private:
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
-    void setConnection(IPC::Connection&);
-
     // IPC::Connection::ThreadMessageReceiver
     void dispatchToThread(Function<void()>&&) final;
+
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&);
 
 private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
@@ -124,6 +136,7 @@ private:
 
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
 
+    Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;

@@ -52,6 +52,9 @@ private:
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
+    LibWebRTCCodecs::setCallbacks(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled());
+#endif
     return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
 }
 
@@ -140,26 +143,6 @@ std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::
 {
     return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
 }
-
-#if PLATFORM(COCOA)
-
-std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
-{
-#if ENABLE(GPU_PROCESS) && !PLATFORM(MACCATALYST)
-    LibWebRTCCodecs::setCallbacks(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled());
-#endif
-    return LibWebRTCProviderCocoa::createDecoderFactory();
-}
-
-std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProvider::createEncoderFactory()
-{
-#if ENABLE(GPU_PROCESS) && !PLATFORM(MACCATALYST)
-    LibWebRTCCodecs::setCallbacks(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled());
-#endif
-    return LibWebRTCProviderCocoa::createEncoderFactory();
-}
-
-#endif
 
 } // namespace WebKit
 

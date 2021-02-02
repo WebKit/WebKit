@@ -1,5 +1,49 @@
 2021-02-02  Youenn Fablet  <youenn@apple.com>
 
+        Recover WebRTC codecs in case of GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=221138
+
+        Reviewed by Eric Carlson.
+
+        Make LibWebRTCCodecs listen to GPUProcess crash on creation of LibWebRTCCodec.
+        Set the connection also at the same time.
+        This allows to remove the hop to main thread when creating/releasing encoders and decoders.
+        Everything now happens in the dedicated queue, in particular updating of m_connection, encoder and decoder connections,
+        as well as encoders and decoders maps.
+        When using encoder/decoder connection outside of the dedicated queue, a lock is needed.
+
+        Update LibWebRTCCodecs use of gpu process when creating a peer connection so that this happens in main thread.
+
+        In case of process crash, we do some setup in main thread (listening to IPC messages for instance).
+        But most of the work is done in a task run in the dedicated queue.
+        In this task, we set the new IPC connection of all running decoders and encoders.
+        We also send IPC message to recreate encoders and decoders.
+        For that purpose, we store some states in encoders and decoders.
+
+        Covered by API test.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::formatNameFromWebRTCCodecType):
+        (WebKit::createRemoteDecoder):
+        (WebKit::LibWebRTCCodecs::LibWebRTCCodecs):
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        (WebKit::LibWebRTCCodecs::decodeFrame):
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        (WebKit::LibWebRTCCodecs::releaseEncoder):
+        (WebKit::LibWebRTCCodecs::initializeEncoder):
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        (WebKit::LibWebRTCCodecs::setEncodeRates):
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        (WebKit::LibWebRTCCodecs::setConnection): Deleted.
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        (WebKit::LibWebRTCProvider::createDecoderFactory):
+        (WebKit::LibWebRTCProvider::createEncoderFactory):
+
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
         imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html is flaky when GPUProcess is enabled
         https://bugs.webkit.org/show_bug.cgi?id=221197
 

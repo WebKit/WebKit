@@ -93,7 +93,7 @@
             }
 
             function checkGetCapabilities() {
-                window.webkit.messageHandlers.gum.postMessage(RTCRtpSender.getCapabilities('video') != null ? "PASS" : "FAIL");
+                window.webkit.messageHandlers.gum.postMessage(RTCRtpSender.getCapabilities('video') != null ? "PASS" : "FAIL checkGetCapabilities");
             }
 
             function getStats(connection, type, kind)
@@ -134,7 +134,7 @@
                 if (!counter)
                     counter = 0;
                 else if (counter > 100) {
-                    window.webkit.messageHandlers.gum.postMessage("FAIL");
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkVideoStatus");
                     return;
                 }
                 getStats(pc1, "outbound-rtp", "video").then((stats) => {
@@ -146,11 +146,43 @@
                 });
             }
 
+            function checkDecodingVideoCounterIncreases(counter, framesDecoded) {
+                if (!counter)
+                    counter = 0;
+                getStats(pc2, "inbound-rtp", "video").then((stats) => {
+                    if (stats && stats.framesDecoded > framesDecoded) {
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                        return;
+                    }
+                    if (counter > 100) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideoCounterIncreases " + framesDecoded + " " + JSON.stringify(stats));
+                        return;
+                    }
+                    setTimeout(() => checkDecodingVideoCounterIncreases(++counter, framesDecoded), 50);
+                });
+            }
+
+            function checkDecodingVideo(counter) {
+                if (!counter)
+                    counter = 0;
+                getStats(pc2, "inbound-rtp", "video").then((stats) => {
+                    if (stats && stats.framesDecoded > 0) {
+                        checkDecodingVideoCounterIncreases(counter, stats.framesDecoded);
+                        return;
+                    }
+                    if (counter > 100) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideo " + JSON.stringify(stats));
+                        return;
+                    }
+                    setTimeout(() => checkDecodingVideo(++counter), 50);
+                });
+            }
+
             function checkAudioStatus(counter) {
                 if (!counter)
                     counter = 0;
                 else if (counter > 100) {
-                    window.webkit.messageHandlers.gum.postMessage("FAIL");
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkAudioStatus");
                     return;
                 }
                 getStats(pc2, "inbound-rtp", "audio").then((stats) => {
