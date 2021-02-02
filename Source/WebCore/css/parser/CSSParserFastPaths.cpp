@@ -250,7 +250,7 @@ static int parseDouble(const CharacterType* string, const CharacterType* end, co
 }
 
 template <typename CharacterType>
-static bool parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSUnitType& expect, int& value)
+static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSUnitType& expect)
 {
     const CharacterType* current = string;
     double localValue = 0;
@@ -262,7 +262,7 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
         current++;
     }
     if (current == end || !isASCIIDigit(*current))
-        return false;
+        return WTF::nullopt;
     while (current != end && isASCIIDigit(*current)) {
         double newValue = localValue * 10 + *current++ - '0';
         if (newValue >= 255) {
@@ -276,10 +276,10 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
     }
 
     if (current == end)
-        return false;
+        return WTF::nullopt;
 
     if (expect == CSSUnitType::CSS_NUMBER && (*current == '.' || *current == '%'))
-        return false;
+        return WTF::nullopt;
 
     if (*current == '.') {
         // We already parsed the integral part, try to parse
@@ -287,15 +287,15 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
         double percentage = 0;
         int numCharactersParsed = parseDouble(current, end, '%', percentage);
         if (!numCharactersParsed)
-            return false;
+            return WTF::nullopt;
         current += numCharactersParsed;
         if (*current != '%')
-            return false;
+            return WTF::nullopt;
         localValue += percentage;
     }
 
     if (expect == CSSUnitType::CSS_PERCENTAGE && *current != '%')
-        return false;
+        return WTF::nullopt;
 
     if (*current == '%') {
         expect = CSSUnitType::CSS_PERCENTAGE;
@@ -304,18 +304,18 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
         if (localValue > 255)
             localValue = 255;
         current++;
-    } else {
+    } else
         expect = CSSUnitType::CSS_NUMBER;
-    }
 
     while (current != end && isHTMLSpace<CharacterType>(*current))
         current++;
     if (current == end || *current++ != terminator)
-        return false;
-    // Clamp negative values at zero.
-    value = negative ? 0 : static_cast<int>(localValue);
+        return WTF::nullopt;
     string = current;
-    return true;
+
+    // Clamp negative values at zero.
+    ASSERT(localValue <= 255);
+    return negative ? 0 : static_cast<uint8_t>(localValue);
 }
 
 template <typename CharacterType>
@@ -333,7 +333,7 @@ static inline bool isTenthAlpha(const CharacterType* string, const int length)
 }
 
 template <typename CharacterType>
-static inline bool parseAlphaValue(const CharacterType*& string, const CharacterType* end, const char terminator, int& value)
+static inline Optional<uint8_t> parseAlphaValue(const CharacterType*& string, const CharacterType* end, const char terminator)
 {
     while (string != end && isHTMLSpace<CharacterType>(*string))
         string++;
@@ -345,45 +345,40 @@ static inline bool parseAlphaValue(const CharacterType*& string, const Character
         string++;
     }
 
-    value = 0;
-
     int length = end - string;
     if (length < 2)
-        return false;
+        return WTF::nullopt;
 
     if (string[length - 1] != terminator || !isASCIIDigit(string[length - 2]))
-        return false;
+        return WTF::nullopt;
 
     if (string[0] != '0' && string[0] != '1' && string[0] != '.') {
         if (checkForValidDouble(string, end, terminator)) {
-            value = negative ? 0 : 255;
             string = end;
-            return true;
+            return negative ? 0 : 255;
         }
-        return false;
+        return WTF::nullopt;
     }
 
     if (length == 2 && string[0] != '.') {
-        value = !negative && string[0] == '1' ? 255 : 0;
+        uint8_t result = !negative && string[0] == '1' ? 255 : 0;
         string = end;
-        return true;
+        return result;
     }
 
     if (isTenthAlpha(string, length - 1)) {
-        static const int tenthAlphaValues[] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230 };
-        value = negative ? 0 : tenthAlphaValues[string[length - 2] - '0'];
+        static constexpr uint8_t tenthAlphaValues[] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230 };
+        uint8_t result = negative ? 0 : tenthAlphaValues[string[length - 2] - '0'];
         string = end;
-        return true;
+        return result;
     }
 
     double alpha = 0;
     if (!parseDouble(string, end, terminator, alpha))
-        return false;
+        return WTF::nullopt;
 
-    // W3 standard stipulates a 2.55 alpha value multiplication factor.
-    value = negative ? 0 : static_cast<int>(lroundf(clampTo<double>(alpha, 0.0, 1.0) * 255.0f));
     string = end;
-    return true;
+    return negative ? 0 : convertFloatAlphaTo<uint8_t>(alpha);
 }
 
 template <typename CharacterType>
@@ -473,39 +468,39 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
     if (mightBeRGBA(characters, length)) {
         auto current = characters + 5;
         auto end = characters + length;
-        int red;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, red))
+        auto red = parseColorIntOrPercentage(current, end, ',', expect);
+        if (!red)
             return WTF::nullopt;
-        int green;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, green))
+        auto green = parseColorIntOrPercentage(current, end, ',', expect);
+        if (!green)
             return WTF::nullopt;
-        int blue;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, blue))
+        auto blue = parseColorIntOrPercentage(current, end, ',', expect);
+        if (!blue)
             return WTF::nullopt;
-        int alpha;
-        if (!parseAlphaValue(current, end, ')', alpha))
+        auto alpha = parseAlphaValue(current, end, ')');
+        if (!alpha)
             return WTF::nullopt;
         if (current != end)
             return WTF::nullopt;
-        return makeFromComponentsClamping<SRGBA<uint8_t>>(red, green, blue, alpha); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to makeFromComponentsClamping<SRGBA<uint8_t>> with direct construction of SRGBA<uint8_t>.
+        return SRGBA<uint8_t> { *red, *green, *blue, *alpha };
     }
 
     // Try rgb() syntax.
     if (mightBeRGB(characters, length)) {
         auto current = characters + 4;
         auto end = characters + length;
-        int red;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, red))
+        auto red = parseColorIntOrPercentage(current, end, ',', expect);
+        if (!red)
             return WTF::nullopt;
-        int green;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, green))
+        auto green = parseColorIntOrPercentage(current, end, ',', expect);
+        if (!green)
             return WTF::nullopt;
-        int blue;
-        if (!parseColorIntOrPercentage(current, end, ')', expect, blue))
+        auto blue = parseColorIntOrPercentage(current, end, ')', expect);
+        if (!blue)
             return WTF::nullopt;
         if (current != end)
             return WTF::nullopt;
-        return makeFromComponentsClamping<SRGBA<uint8_t>>(red, green, blue); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to makeFromComponentsClamping<SRGBA<uint8_t>> with direct construction of SRGBA<uint8_t>.
+        return SRGBA<uint8_t> { *red, *green, *blue };
     }
 
     return WTF::nullopt;
