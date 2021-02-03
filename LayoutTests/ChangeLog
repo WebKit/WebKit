@@ -1,5 +1,80 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271651. rdar://problem/73889797
+
+    REGRESSION (Big Sur): position:absolute elements inside nested overflow:scroll don't track scrolling
+    https://bugs.webkit.org/show_bug.cgi?id=220761
+    <rdar://problem/69075263>
+    
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    When a position:absolute element is inside nested overflow scroll, and its containing block is the outer
+    scroller, then we failed to make a positioning scrolling tree node for it, so it would fail
+    to track during async scrolling.
+    
+    The bug was that RenderLayerCompositor::layerScrollBehahaviorRelativeToCompositedAncestor() failed
+    to deal with nested scrollers. The correct question to ask when determining if we need a "Moves" node
+    is "is there an overflow scroll layer between this layer and its composited ancestor". Previously,
+    we would just find the enclosing scroller (with the same scrolling scope) and assume we didn't need
+    a node.
+    
+    We can also simplify the "Stationary" code path to just ask about scrolling scopes.
+    
+    Tests: scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2.html
+           scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking.html
+           scrollingcoordinator/ios/absolute-in-nested-overflow-scroll.html
+           scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::layerScrollBehahaviorRelativeToCompositedAncestor):
+    (WebCore::isScrolledByOverflowScrollLayer): Deleted.
+    (WebCore::enclosingCompositedScrollingLayer): Deleted.
+    
+    LayoutTests:
+    
+    Add a scrolling tree dump test, and three iOS interactive tests, since testing scrolling-tree-only
+    behaviors is easier on iOS than macOS. absolute-in-nested-overflow-scroll.html is the basic test.
+    The two "stacking" variants have an opacity layer below and above the inner scroller to test some
+    more layer configurations.
+    
+    * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-expected.html: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2-expected.html: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2.html: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-expected.html: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking.html: Added.
+    * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll.html: Added.
+    * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+    * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271651 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (Big Sur): position:absolute elements inside nested overflow:scroll don't track scrolling
+            https://bugs.webkit.org/show_bug.cgi?id=220761
+            <rdar://problem/69075263>
+
+            Reviewed by Antti Koivisto.
+
+            Add a scrolling tree dump test, and three iOS interactive tests, since testing scrolling-tree-only
+            behaviors is easier on iOS than macOS. absolute-in-nested-overflow-scroll.html is the basic test.
+            The two "stacking" variants have an opacity layer below and above the inner scroller to test some
+            more layer configurations.
+
+            * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-expected.html: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2-expected.html: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2.html: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-expected.html: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking.html: Added.
+            * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll.html: Added.
+            * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+            * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272030. rdar://problem/73890478
 
     REGRESSION(r271119) Check for nullness of preamble.caller
