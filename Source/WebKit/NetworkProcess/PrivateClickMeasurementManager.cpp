@@ -189,17 +189,6 @@ void PrivateClickMeasurementManager::clearSentAttributions(Vector<PrivateClickMe
 #endif
 }
 
-void PrivateClickMeasurementManager::updateTimerLastFired()
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (!featureEnabled())
-        return;
-
-    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->updateTimerLastFired();
-#endif
-}
-
 void PrivateClickMeasurementManager::firePendingAttributionRequests()
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -233,7 +222,6 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
         }
         
         clearSentAttributions(WTFMove(sentAttributions));
-        updateTimerLastFired();
 
         if (nextTimeToFire < Seconds::infinity())
             startTimer(nextTimeToFire);

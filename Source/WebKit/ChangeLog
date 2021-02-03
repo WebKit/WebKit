@@ -1,3 +1,45 @@
+2021-02-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: earliestTimeToSend should be treated as an independent time value, not relative to timeOfAdClick
+        https://bugs.webkit.org/show_bug.cgi?id=221303
+        <rdar://problem/73902668>
+
+        Reviewed by John Wilander.
+
+        r270136 assumed that PCM's earliestTimeToSend attribute was the
+        difference between timeOfAdClick and when the attribution should be
+        sent. As a result, it began each new browser session by adjusting
+        this value based on the amount of time the session was closed. 
+        In reality, earliestTimeToSend is a raw secondsSinceEpoch() value, so we don't
+        need any adjustment after a new session.
+
+        No new tests, this is covered by 
+        http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html
+        now that the corresponding test SPI has been updated.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::createTableQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        Update the testing SPI to insert an expired time of now minus one
+        hour as the earliestTimeToSend.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateTimerLastFired): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::timerLastFired): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updatePrivateClickMeasurementAttributionTimes): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::updateTimerLastFired): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::updateTimerLastFired): Deleted.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+
 2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Allow one user gesture free prompt for each navigation

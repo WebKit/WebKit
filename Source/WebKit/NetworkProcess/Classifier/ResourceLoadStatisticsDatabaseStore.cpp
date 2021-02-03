@@ -85,7 +85,6 @@ constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLA
     "sourceID, timeOfAdClick) VALUES (?, ?, ?, ?)"_s;
 constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, attributeOnSiteDomainID, "
     "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSend) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
-constexpr auto updateTimerLastFiredQuery = "INSERT OR REPLACE INTO TimerLastFired (key, timeLastFiredSeconds) VALUES (1, ?)"_s;
 
 // INSERT OR REPLACE Queries
 constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR REPLACE into SubframeUnderTopFrameDomains (subFrameDomainID, lastUpdated, topFrameDomainID) SELECT ?, ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
@@ -143,7 +142,6 @@ constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT
 constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement"_s;
 constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
 constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
-constexpr auto timerLastFiredQuery = "SELECT timeLastFiredSeconds FROM TimerLastFired WHERE key = 1"_s;
 
 // EXISTS for testing queries
 constexpr auto linkDecorationExistsQuery = "SELECT EXISTS (SELECT * FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? OR fromDomainID = ?)"_s;
@@ -250,9 +248,6 @@ constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE Attribute
     "FOREIGN KEY(sourceSiteDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(attributeOnSiteDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
-constexpr auto createTimerLastFired = "CREATE TABLE TimerLastFired ( key INTEGER PRIMARY KEY, "
-    " timeLastFiredSeconds REAL NOT NULL )"_s;
-
 // CREATE UNIQUE INDEX Queries.
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
@@ -300,8 +295,7 @@ static const HashMap<String, String>& createTableQueries()
         { "SubresourceUniqueRedirectsFrom"_s, createSubresourceUniqueRedirectsFrom},
         { "OperatingDates"_s, createOperatingDates},
         { "UnattributedPrivateClickMeasurement"_s, createUnattributedPrivateClickMeasurement},
-        { "AttributedPrivateClickMeasurement"_s, createAttributedPrivateClickMeasurement},
-        { "TimerLastFired"_s, createTimerLastFired}
+        { "AttributedPrivateClickMeasurement"_s, createAttributedPrivateClickMeasurement}
     });
     
     return createTableQueries;
@@ -332,7 +326,6 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::turnOnIncrementalAutoVacuum failed, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
 
     includeTodayAsOperatingDateIfNecessary();
-    updatePrivateClickMeasurementAttributionTimes();
     allStores().add(this);
 }
 
@@ -681,11 +674,6 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
         LOG_ERROR("Could not create AttributedPrivateClickMeasurement table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
     }
-    
-    if (!m_database.executeCommand(createTimerLastFired)) {
-        LOG_ERROR("Could not create TimerLastFired table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
-        return false;
-    }
 
     if (!createUniqueIndices())
         return false;
@@ -744,8 +732,6 @@ void ResourceLoadStatisticsDatabaseStore::destroyStatements()
     m_allAttributedPrivateClickMeasurementStatement = nullptr;
     m_findUnattributedStatement = nullptr;
     m_findAttributedStatement = nullptr;
-    m_updateTimerLastFiredStatement = nullptr;
-    m_timerLastFiredStatement = nullptr;
     m_updateAttributionsEarliestTimeToSendStatement = nullptr;
     m_removeUnattributedStatement = nullptr;
 }
@@ -2890,54 +2876,6 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::updateTimerLastFired()
-{
-    auto scopedStatement = this->scopedStatement(m_updateTimerLastFiredStatement, updateTimerLastFiredQuery, "updateTimerLastFired"_s);
-
-    auto now = WallTime::now().secondsSinceEpoch().value();
-
-    if (!scopedStatement
-        || scopedStatement->bindDouble(1, now) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::updateTimerLastFired failed, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-    }
-}
-
-WallTime ResourceLoadStatisticsDatabaseStore::timerLastFired()
-{
-    auto scopedStatement = this->scopedStatement(m_timerLastFiredStatement, timerLastFiredQuery, "timerLastFired"_s);
-
-    if (!scopedStatement) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::timerLastFired, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-    }
-
-    if (scopedStatement->step() == SQLITE_ROW)
-        return WallTime::fromRawSeconds(scopedStatement->getColumnDouble(0));
-    
-    return WallTime::now();
-}
-
-void ResourceLoadStatisticsDatabaseStore::updatePrivateClickMeasurementAttributionTimes()
-{
-    // We should update attributions on session-start to account for the time
-    // that passed while the session was closed. If the amount of time since the last
-    // timer fire is greater than the earliestTimeToSend, we should set earliestTimeToSend
-    // to be immediately.
-    auto lastFired = timerLastFired();
-    auto timePassed = WallTime::now() - lastFired;
-
-    auto scopedStatement = this->scopedStatement(m_updateAttributionsEarliestTimeToSendStatement, updateAttributionsEarliestTimeToSendQuery, "updatePrivateClickMeasurementAttributionTimes"_s);
-
-    if (!scopedStatement
-        || scopedStatement->bindDouble(1, timePassed.value()) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updatePrivateClickMeasurementAttributionTimes, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-    }
-}
-
 PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
 {
     auto sourceSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(0));
@@ -3315,21 +3253,11 @@ void ResourceLoadStatisticsDatabaseStore::clearSentAttributions(Vector<WebCore::
 
 void ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
 {
-    // Update the last timer fired time to be one day ago.
-    auto yesterday = (WallTime::now() - 24_h).secondsSinceEpoch().value();
-    auto scopedStatement = this->scopedStatement(m_updateTimerLastFiredStatement, updateTimerLastFiredQuery, "insertExpiredAttributionTesting"_s);
-    if (!scopedStatement
-        || scopedStatement->bindDouble(1, yesterday) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::insertExpiredAttributionTesting failed, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-    }
-
-    auto expiredTimeToSend = 1_h; // Must be less than 1 day.
+    auto expiredTimeToSend = WallTime::now() - 1_h;
     
     auto statement = SQLiteStatement(m_database, "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSend = ?");
     if (statement.prepare() != SQLITE_OK
-        || statement.bindInt(1, expiredTimeToSend.value()) != SQLITE_OK
+        || statement.bindInt(1, expiredTimeToSend.secondsSinceEpoch().value()) != SQLITE_OK
         || statement.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();

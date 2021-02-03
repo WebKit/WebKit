@@ -213,7 +213,6 @@ public:
     virtual String privateClickMeasurementToString() = 0;
     virtual void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) = 0;
     virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting() = 0;
-    virtual void updateTimerLastFired() = 0;
 
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);

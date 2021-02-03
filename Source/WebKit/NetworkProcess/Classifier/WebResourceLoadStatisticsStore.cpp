@@ -1475,21 +1475,6 @@ void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Regi
     });
 }
 
-void WebResourceLoadStatisticsStore::updateTimerLastFired()
-{
-    ASSERT(RunLoop::isMain());
-
-    if (isEphemeral())
-        return;
-
-    postTask([this]() mutable {
-        if (!m_statisticsStore)
-            return;
-
-        m_statisticsStore->updateTimerLastFired();
-    });
-}
-
 void WebResourceLoadStatisticsStore::insertPrivateClickMeasurement(PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
 {
     ASSERT(RunLoop::isMain());
