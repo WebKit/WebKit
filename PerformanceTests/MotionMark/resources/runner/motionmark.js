@@ -465,7 +465,9 @@ window.benchmarkController = {
         "kalman-process-error": 1,
         "kalman-measurement-error": 4,
         "time-measurement": "performance",
-        "warmup-length": 1000
+        "warmup-length": 2000,
+        "warmup-frame-count": 30,
+        "first-frame-minimum-length": 0
     },
 
     initialize: function()
