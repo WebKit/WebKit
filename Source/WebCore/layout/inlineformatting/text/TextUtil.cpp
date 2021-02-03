@@ -160,8 +160,16 @@ unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIte
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
 {
+    // https://www.w3.org/TR/css-text-3/#white-space-property
     auto whitespace = layoutBox.style().whiteSpace();
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+}
+
+bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
+{
+    auto whitespace = layoutBox.style().whiteSpace();
+    // https://www.w3.org/TR/css-text-3/#white-space-property
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces || whitespace == WhiteSpace::PreLine; 
 }
 
 }
