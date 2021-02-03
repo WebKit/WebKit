@@ -67,7 +67,7 @@ public:
 
 private:
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
-    void handleRequest(WebCore::SpeechRecognitionRequest&);
+    void handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, Optional<WebCore::SpeechRecognitionError> = WTF::nullopt, Optional<Vector<WebCore::SpeechRecognitionResultData>> = WTF::nullopt);
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
 

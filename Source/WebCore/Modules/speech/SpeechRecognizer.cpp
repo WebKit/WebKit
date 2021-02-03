@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeechRecognizer.h"
 
+#include "SpeechRecognitionRequest.h"
 #include "SpeechRecognitionUpdate.h"
 #include <wtf/MediaTime.h>
 
@@ -35,49 +36,58 @@
 
 namespace WebCore {
 
-SpeechRecognizer::SpeechRecognizer(DelegateCallback&& callback)
-    : m_delegateCallback(WTFMove(callback))
+SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRef<SpeechRecognitionRequest>&& request)
+    : m_delegateCallback(WTFMove(delegateCallback))
+    , m_request(WTFMove(request))
 {
 }
 
-void SpeechRecognizer::reset()
+SpeechRecognizer::~SpeechRecognizer()
 {
-    if (!m_clientIdentifier)
+    if (m_state == State::Aborting || m_state == State::Stopping || m_state == State::Running)
+        m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::End));
+}
+
+void SpeechRecognizer::abort(Optional<SpeechRecognitionError>&& error)
+{
+    if (m_state == State::Aborting || m_state == State::Inactive)
         return;
+    m_state = State::Aborting;
 
-    stopCapture();
-    resetRecognition();
-    m_clientIdentifier = WTF::nullopt;
-}
+    if (error)
+        m_delegateCallback(SpeechRecognitionUpdate::createError(clientIdentifier(), *error));
 
-void SpeechRecognizer::abort()
-{
-    ASSERT(m_clientIdentifier);
     stopCapture();
     abortRecognition();
 }
 
 void SpeechRecognizer::stop()
 {
-    ASSERT(m_clientIdentifier);
+    if (m_state == State::Aborting || m_state == State::Inactive)
+        return;
+    m_state = State::Stopping;
+
     stopCapture();
     stopRecognition();
 }
 
+SpeechRecognitionConnectionClientIdentifier SpeechRecognizer::clientIdentifier() const
+{
+    return m_request->clientIdentifier();
+}
+
 #if ENABLE(MEDIA_STREAM)
 
-void SpeechRecognizer::start(SpeechRecognitionConnectionClientIdentifier clientIdentifier, Ref<RealtimeMediaSource>&& source, bool mockSpeechRecognitionEnabled, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t maxAlternatives)
+void SpeechRecognizer::start(Ref<RealtimeMediaSource>&& source, bool mockSpeechRecognitionEnabled)
 {
-    ASSERT(!m_clientIdentifier);
-    m_clientIdentifier = clientIdentifier;
-    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::Start));
-
-    if (!startRecognition(mockSpeechRecognitionEnabled, clientIdentifier, localeIdentifier, continuous, interimResults, maxAlternatives)) {
-        auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::ServiceNotAllowed, "Failed to start recognition"_s };
-        m_delegateCallback(WebCore::SpeechRecognitionUpdate::createError(clientIdentifier, WTFMove(error)));
+    if (!startRecognition(mockSpeechRecognitionEnabled, clientIdentifier(), m_request->lang(), m_request->continuous(), m_request->interimResults(), m_request->maxAlternatives())) {
+        auto error = SpeechRecognitionError { SpeechRecognitionErrorType::ServiceNotAllowed, "Failed to start recognition"_s };
+        m_delegateCallback(SpeechRecognitionUpdate::createError(clientIdentifier(), WTFMove(error)));
         return;
     }
 
+    m_state = State::Running;
+    m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::Start));
     startCapture(WTFMove(source));
 }
 
@@ -88,15 +98,12 @@ void SpeechRecognizer::startCapture(Ref<RealtimeMediaSource>&& source)
             weakThis->dataCaptured(time, data, description, sampleCount);
     };
 
-    auto stateUpdateCallback = [this, weakThis = makeWeakPtr(this)](const auto& update) {
-        if (!weakThis)
-            return;
-
-        ASSERT(m_clientIdentifier && m_clientIdentifier.value() == update.clientIdentifier());
-        m_delegateCallback(update);
+    auto stateUpdateCallback = [weakThis = makeWeakPtr(this)](const auto& update) {
+        if (weakThis)
+            weakThis->m_delegateCallback(update);
     };
 
-    m_source = makeUnique<SpeechRecognitionCaptureSource>(*m_clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));
+    m_source = makeUnique<SpeechRecognitionCaptureSource>(clientIdentifier(), WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));
 }
 
 #endif
@@ -107,7 +114,7 @@ void SpeechRecognizer::stopCapture()
         return;
 
     m_source = nullptr;
-    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::AudioEnd));
+    m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::AudioEnd));
 }
 
 #if !HAVE(SPEECHRECOGNIZER)
@@ -118,27 +125,17 @@ void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData&, 
 
 bool SpeechRecognizer::startRecognition(bool, SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t)
 {
-    m_isRecognizing = true;
     return true;
 }
 
 void SpeechRecognizer::abortRecognition()
 {
-    m_isRecognizing = false;
-    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
+    m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::End));
 }
 
 void SpeechRecognizer::stopRecognition()
 {
-    m_isRecognizing = false;
-    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
-}
-
-void SpeechRecognizer::resetRecognition()
-{
-    if (!m_isRecognizing)
-        return;
-    abortRecognition();
+    m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::End));
 }
 
 #endif

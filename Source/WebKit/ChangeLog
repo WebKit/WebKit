@@ -1,3 +1,23 @@
+2021-02-03  Sihui Liu  <sihui_liu@appe.com>
+
+        Create a SpeechRecognizer for each SpeechRecognitionRequest
+        https://bugs.webkit.org/show_bug.cgi?id=219699
+        <rdar://problem/72392097>
+
+        Reviewed by Youenn Fablet.
+
+        We used the same SpeechRecognizer for multiple requests, so we had to reset SpeechRecognizer state between
+        requests, which makes things complicated and hard to debug (like nested reset calls). Now we have one dedicated
+        SpeechRecognizer for each request.
+
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::handleRequest):
+        (WebKit::SpeechRecognitionServer::stop):
+        (WebKit::SpeechRecognitionServer::abort):
+        (WebKit::SpeechRecognitionServer::invalidate):
+        * UIProcess/SpeechRecognitionServer.h:
+
 2021-02-03  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r270392): Launch time regression under IOSurface::maximumSize()
