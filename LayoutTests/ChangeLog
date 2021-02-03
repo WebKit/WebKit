@@ -1,3 +1,18 @@
+2021-02-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new picker for select elements
+        https://bugs.webkit.org/show_bug.cgi?id=221153
+        <rdar://problem/73770389>
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/ios/form-control-refresh/select/choose-select-option-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/choose-select-option.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForContextMenuToShow):
+
+        Added a new UIHelper method to wait until a context menu is displayed.
+
 2021-02-03  Youenn Fablet  <youenn@apple.com>
 
         Make sure GPUProcess MediaRecorder handles correctly muted tracks

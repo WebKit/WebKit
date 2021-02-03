@@ -1258,7 +1258,14 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
+
+@interface UIAction (IPI)
+- (void)_performActionWithSender:(id)sender;
+@end
+
+#if HAVE(LINK_PREVIEW)
+
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
@@ -1281,7 +1288,9 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
 @end
 
-#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#endif // HAVE(LINK_PREVIEW)
+
+#endif // USE(UICONTEXTMENU)
 
 @interface UIPhysicalKeyboardEvent : UIPressesEvent
 @end

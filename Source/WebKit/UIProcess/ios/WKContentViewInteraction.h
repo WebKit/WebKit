@@ -107,6 +107,7 @@ class WebPageProxy;
 @class WKDateTimeInputControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
+@class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
@@ -671,6 +672,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
 
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+- (BOOL)_formControlRefreshEnabled;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
@@ -692,6 +697,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
+@property (nonatomic, readonly) WKFormSelectControl *selectControl;
 
 @end
 

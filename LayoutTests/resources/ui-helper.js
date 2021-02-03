@@ -668,6 +668,22 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static waitForContextMenuToShow()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (!uiController.isShowingContextMenu)
+                        uiController.didShowContextMenuCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
     static waitForContextMenuToHide()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

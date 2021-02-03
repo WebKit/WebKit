@@ -1,3 +1,72 @@
+2021-02-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new picker for select elements
+        https://bugs.webkit.org/show_bug.cgi?id=221153
+        <rdar://problem/73770389>
+
+        Reviewed by Tim Horton.
+
+        Tapping on a select element should display an context menu that allows
+        users to choose one of the specified options. Rather than presenting a
+        UIPickerView, tapping on select elements now create UIContextMenuInteractions,
+        similar to date and file inputs.
+
+        Test: fast/forms/ios/form-control-refresh/select/choose-select-option.html
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+
+        The new picker does not bring up the keyboard view on all devices.
+
+        (-[WKContentView _elementTypeRequiresAccessoryView:]):
+
+        Changed from a static method to an instance method, as the returned
+        value depends on a flag which is only accessible through the instance.
+
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView _formControlRefreshEnabled]):
+        (-[WKContentView _shouldShowKeyboardForElement:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _removeContextMenuViewIfPossible]):
+
+        Do not remove the context menu if an select element is actively being
+        interacted with.
+
+        (-[WKContentView selectControl]):
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.h:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker initWithView:]):
+        (-[WKSelectPicker controlView]):
+        (-[WKSelectPicker controlBeginEditing]):
+
+        Ensure the position information is up-to-date prior to presenting the
+        context menu.
+
+        (-[WKSelectPicker controlEndEditing]):
+        (-[WKSelectPicker dealloc]):
+        (-[WKSelectPicker didSelectOptionIndex:]):
+        (-[WKSelectPicker createMenu]):
+
+        Build the menu using UIActions and UIMenus. Since optgroup elements
+        cannot be nested, only the root UIMenu can contain UIMenus. Submenus
+        can only contain UIActions.
+
+        (-[WKSelectPicker actionForOptionItem:withIndex:]):
+        (-[WKSelectPicker contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKSelectPicker _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        (-[WKSelectPicker contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKSelectPicker contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKSelectPicker contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKSelectPicker removeContextMenuInteraction]):
+        (-[WKSelectPicker ensureContextMenuInteraction]):
+        (-[WKSelectPicker showSelectPicker]):
+        (-[WKSelectPicker selectRow:inComponent:extendingSelection:]):
+
+        Implement method for testing select pickers.
+
 2021-02-03  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove access to graphics related user clients

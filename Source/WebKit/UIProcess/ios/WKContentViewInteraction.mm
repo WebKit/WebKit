@@ -2025,7 +2025,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
         return NO;
-    case WebKit::InputType::Select:
+    case WebKit::InputType::Select: {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if ([self _formControlRefreshEnabled])
+            return NO;
+#endif
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+    }
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
@@ -3068,7 +3074,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #endif
 }
 
-static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
+- (bool)_elementTypeRequiresAccessoryView:(WebKit::InputType)type
 {
     switch (type) {
     case WebKit::InputType::None:
@@ -3078,6 +3084,13 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
         return false;
+    case WebKit::InputType::Select: {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if ([self _formControlRefreshEnabled])
+            return NO;
+#endif
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+    }
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
     case WebKit::InputType::Search:
@@ -3088,7 +3101,6 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     case WebKit::InputType::NumberPad:
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
-    case WebKit::InputType::Select:
     case WebKit::InputType::Week:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
@@ -3105,7 +3117,7 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     if ([_formInputSession customInputAccessoryView])
         return YES;
 
-    return elementTypeRequiresAccessoryView(_focusedElementInformation.elementType);
+    return [self _elementTypeRequiresAccessoryView:_focusedElementInformation.elementType];
 }
 
 - (UITextInputAssistantItem *)inputAssistantItem
@@ -5926,6 +5938,18 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [self _updateAccessory];
 }
 
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+
+- (BOOL)_formControlRefreshEnabled
+{
+    if (!_page)
+        return NO;
+
+    return _page->preferences().iOSFormControlRefreshEnabled();
+}
+
+#endif
+
 - (const WebKit::FocusedElementInformation&)focusedElementInformation
 {
     return _focusedElementInformation;
@@ -5968,7 +5992,7 @@ static bool mayContainSelectableText(WebKit::InputType type)
     }
 }
 
-static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation& information)
+- (bool)_shouldShowKeyboardForElement:(const WebKit::FocusedElementInformation&)information
 {
     if (information.inputMode == WebCore::InputMode::None)
         return false;
@@ -5976,7 +6000,7 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
     if (mayContainSelectableText(information.elementType))
         return true;
 
-    return elementTypeRequiresAccessoryView(information.elementType);
+    return [self _elementTypeRequiresAccessoryView:information.elementType];
 }
 
 static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)
@@ -6007,7 +6031,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
-    SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, shouldShowKeyboardForElement(information) };
+    SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, [self _shouldShowKeyboardForElement:information] };
 
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
@@ -8012,6 +8036,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     // and for the date/time picker.
     if ([self dateTimeInputControl])
         return;
+
+    if ([self selectControl])
+        return;
     
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
 }
@@ -9188,6 +9215,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     if ([_inputPeripheral isKindOfClass:WKDateTimeInputControl.class])
         return (WKDateTimeInputControl *)_inputPeripheral.get();
+    return nil;
+}
+
+- (WKFormSelectControl *)selectControl
+{
+    if ([_inputPeripheral isKindOfClass:WKFormSelectControl.class])
+        return (WKFormSelectControl *)_inputPeripheral.get();
     return nil;
 }
 
