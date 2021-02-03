@@ -1,3 +1,23 @@
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [AppleWin 32bit][LLInt] LLIntData.h(104) : warning C4172: returning address of local variable or temporary: id
+        https://bugs.webkit.org/show_bug.cgi?id=220714
+
+        Reviewed by Mark Lam.
+
+        This patch fixes LLInt build when ENABLE(COMPUTED_GOTO_OPCODES) is false.
+
+        * llint/LLIntData.h:
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getOpcodeWide16):
+        (JSC::LLInt::getOpcodeWide32):
+        (JSC::LLInt::getOpcodeAddress):
+        (JSC::LLInt::getOpcodeWide16Address):
+        (JSC::LLInt::getOpcodeWide32Address):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+
 2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         Completion value of a finally block should not be ignored if completion is abrupt
