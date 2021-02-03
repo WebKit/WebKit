@@ -34,14 +34,11 @@
 #include "MessageSender.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
+#include "Semaphore.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
-
-#if PLATFORM(COCOA)
-#include <wtf/cocoa/MachSemaphore.h>
-#endif
 
 namespace WebCore {
 namespace DisplayList {
@@ -126,9 +123,7 @@ private:
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
-#if PLATFORM(COCOA)
-    MachSemaphore m_resumeDisplayListSemaphore;
-#endif
+    IPC::Semaphore m_resumeDisplayListSemaphore;
 };
 
 } // namespace WebKit

@@ -33,16 +33,13 @@
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "Semaphore.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/cocoa/MachSemaphore.h>
-#endif
 
 #define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
     RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
@@ -65,18 +62,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(parameters)));
+    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
     : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_renderingBackendIdentifier(parameters.identifier)
-#if PLATFORM(COCOA)
-    , m_resumeDisplayListSemaphore(makeUnique<MachSemaphore>(WTFMove(parameters.sendRightForResumeDisplayListSemaphore)))
-#endif
+    , m_renderingBackendIdentifier(identifier)
+    , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
     gpuConnectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
@@ -231,7 +226,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
             handle.startWaiting();
 #if PLATFORM(COCOA)
-            m_resumeDisplayListSemaphore->waitFor(30_us);
+            m_resumeDisplayListSemaphore.waitFor(30_us);
 #else
             sleep(30_us);
 #endif

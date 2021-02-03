@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Semaphore.h"
 
-#include <mach/semaphore.h>
-#include <wtf/MachSendRight.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Seconds.h>
+#if !OS(DARWIN)
 
-namespace WTF {
+namespace IPC {
 
-class MachSemaphore {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(MachSemaphore);
-public:
-    WTF_EXPORT_PRIVATE MachSemaphore();
-    WTF_EXPORT_PRIVATE explicit MachSemaphore(MachSendRight&&);
-    WTF_EXPORT_PRIVATE ~MachSemaphore();
+Semaphore::Semaphore() = default;
 
-    WTF_EXPORT_PRIVATE void signal();
-    WTF_EXPORT_PRIVATE void wait();
-    WTF_EXPORT_PRIVATE void waitFor(Seconds);
+Semaphore::Semaphore(Semaphore&&) = default;
 
-    WTF_EXPORT_PRIVATE MachSendRight createSendRight();
+Semaphore::~Semaphore() = default;
 
-private:
-    MachSendRight m_sendRight;
-    semaphore_t m_semaphore { SEMAPHORE_NULL };
-};
+Semaphore& Semaphore::operator=(Semaphore&&) = default;
 
-} // namespace WTF
+void Semaphore::encode(Encoder&) const { }
 
-using WTF::MachSemaphore;
+Optional<Semaphore> Semaphore::decode(Decoder&)
+{
+    return Semaphore { };
+}
+
+}
+
+#endif

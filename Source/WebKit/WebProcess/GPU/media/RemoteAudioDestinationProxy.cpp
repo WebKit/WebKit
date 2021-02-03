@@ -40,7 +40,6 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
-#include <wtf/cocoa/MachSemaphore.h>
 #endif
 
 namespace WebKit {
@@ -80,7 +79,7 @@ void RemoteAudioDestinationProxy::startRenderingThread()
 
     auto offThreadRendering = [this]() mutable {
         do {
-            m_renderSemaphore->wait();
+            m_renderSemaphore.wait();
             if (m_shouldStopThread)
                 break;
 
@@ -98,8 +97,7 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
         return;
 
     m_shouldStopThread = true;
-    if (m_renderSemaphore)
-        m_renderSemaphore->signal();
+    m_renderSemaphore.signal();
     m_renderThread->waitForCompletion();
     m_renderThread = nullptr;
 #endif
@@ -107,20 +105,10 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
 
 void RemoteAudioDestinationProxy::connectToGPUProcess()
 {
-    RemoteAudioDestinationIdentifier destinationID;
-#if PLATFORM(COCOA)
-    MachSendRight renderSemaphoreSendRight;
-#endif
-
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
     auto didSucceed = connection.connection().sendSync(
-        Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, numberOfOutputChannels(), sampleRate(), hardwareSampleRate()),
-        Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID
-#if PLATFORM(COCOA)
-            , renderSemaphoreSendRight
-#endif
-        ), 0);
+        Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, numberOfOutputChannels(), sampleRate(), hardwareSampleRate(), m_renderSemaphore), Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(m_destinationID), 0);
 
     if (!didSucceed) {
         // The GPUProcess likely crashed during this synchronous IPC. gpuProcessConnectionDidClose() will get called to reconnect to the GPUProcess.
@@ -128,7 +116,6 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
         return;
     }
 
-    m_destinationID = destinationID;
 
 #if PLATFORM(COCOA)
     m_currentFrame = 0;
@@ -136,7 +123,6 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
     getAudioStreamBasicDescription(streamFormat);
     m_ringBuffer->allocate(streamFormat, m_numberOfFrames);
     m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
-    m_renderSemaphore = makeUnique<MachSemaphore>(WTFMove(renderSemaphoreSendRight));
 #endif
 
     startRenderingThread();
@@ -205,9 +191,7 @@ void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     oldConnection.removeClient(*this);
 
     stopRenderingThread();
-#if PLATFORM(COCOA)
-    m_renderSemaphore = nullptr;
-#endif
+
     connectToGPUProcess();
 
     if (isPlaying())

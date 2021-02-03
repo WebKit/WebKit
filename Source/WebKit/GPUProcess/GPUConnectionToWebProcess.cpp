@@ -48,7 +48,6 @@
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "RemoteRenderingBackend.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
@@ -291,10 +290,10 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& parameters)
+void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    auto addResult = m_remoteRenderingBackendMap.ensure(parameters.identifier, [&]() {
-        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, WTFMove(parameters)));
+    auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, identifier, WTFMove(resumeDisplayListSemaphore)));
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

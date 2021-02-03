@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MachSemaphore.h"
+#pragma once
 
-#include <mach/mach.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
+#include <wtf/Seconds.h>
 
-namespace WTF {
+#if OS(DARWIN)
+#include <mach/semaphore.h>
+#include <wtf/MachSendRight.h>
+#endif
 
-MachSemaphore::MachSemaphore()
-{
-    auto ret = semaphore_create(mach_task_self(), &m_semaphore, SYNC_POLICY_FIFO, 0);
-    ASSERT_UNUSED(ret, ret == KERN_SUCCESS);
-}
+namespace IPC {
 
-MachSemaphore::MachSemaphore(MachSendRight&& sendRight)
-    : m_sendRight(WTFMove(sendRight))
-    , m_semaphore(m_sendRight.sendRight())
-{
-    ASSERT(m_sendRight);
-}
+class Decoder;
+class Encoder;
 
-MachSemaphore::~MachSemaphore()
-{
-    if (!m_sendRight)
-        semaphore_destroy(mach_task_self(), m_semaphore);
-}
+class Semaphore {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Semaphore);
+public:
+    Semaphore();
+    Semaphore(Semaphore&&);
+    ~Semaphore();
+    Semaphore& operator=(Semaphore&&);
 
-void MachSemaphore::signal()
-{
-    semaphore_signal(m_semaphore);
-}
+    void encode(Encoder&) const;
+    static Optional<Semaphore> decode(Decoder&);
 
-void MachSemaphore::wait()
-{
-    semaphore_wait(m_semaphore);
-}
+#if OS(DARWIN)
+    explicit Semaphore(MachSendRight&&);
 
-void MachSemaphore::waitFor(Seconds timeout)
-{
-    auto seconds = timeout.secondsAs<unsigned>();
-    semaphore_timedwait(m_semaphore, { seconds, static_cast<clock_res_t>(timeout.nanosecondsAs<uint64_t>() - seconds * NSEC_PER_SEC) });
-}
+    void signal();
+    void wait();
+    void waitFor(Seconds);
+    MachSendRight createSendRight() const;
+    explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
+#else
+    explicit operator bool() const { return true; }
+#endif
 
-MachSendRight MachSemaphore::createSendRight()
-{
-    return MachSendRight::create(m_semaphore);
-}
+private:
+#if OS(DARWIN)
+    void destroy();
+    MachSendRight m_sendRight;
+    semaphore_t m_semaphore { SEMAPHORE_NULL };
+#endif
+};
 
-} // namespace WTF
+} // namespace IPC

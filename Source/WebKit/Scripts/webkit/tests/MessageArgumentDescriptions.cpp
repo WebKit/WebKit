@@ -40,12 +40,14 @@
 #include "MachPort.h"
 #endif
 #include "Plugin.h"
+#include "Semaphore.h"
 #include "TestClassName.h"
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
 #endif
 #include "TestWithIfMessageMessages.h"
 #include "TestWithLegacyReceiverMessages.h"
+#include "TestWithSemaphoreMessages.h"
 #include "TestWithSuperclassMessages.h"
 #include "TestWithoutAttributesMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -216,6 +218,10 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
     case MessageName::TestWithIfMessage_LoadURL:
         return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
 #endif
+    case MessageName::TestWithSemaphore_SendSemaphore:
+        return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, decoder);
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
     default:
         break;
     }
@@ -517,6 +523,12 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
             {"value", "int64_t", nullptr, false},
         };
 #endif
+    case MessageName::TestWithSemaphore_SendSemaphore:
+        return Vector<ArgumentDescription> {
+            {"s0", "IPC::Semaphore", nullptr, false},
+        };
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return Vector<ArgumentDescription> { };
     default:
         break;
     }

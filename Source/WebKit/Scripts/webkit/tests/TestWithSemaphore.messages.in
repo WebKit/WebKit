@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,26 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(GPU_PROCESS)
-
-messages -> GPUConnectionToWebProcess WantsDispatchMessage {
-    void CreateRenderingBackend(WebKit::RenderingBackendIdentifier identifier, IPC::Semaphore resumeDisplayListSemaphore)
-    void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
-#if ENABLE(WEBGL)
-    void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier)
-    void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier)
-#endif
-    void ClearNowPlayingInfo()
-    void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo)
-#if USE(AUDIO_SESSION)
-    EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
-#endif
-#if PLATFORM(IOS_FAMILY)
-    EnsureMediaSessionHelper()
-#endif
-#if ENABLE(VP9)
-    EnableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
-#endif
+messages -> TestWithSemaphore {
+    void SendSemaphore(IPC::Semaphore s0)
+    void ReceiveSemaphore() -> (IPC::Semaphore r0)
 }
-
-#endif // ENABLE(GPU_PROCESS)

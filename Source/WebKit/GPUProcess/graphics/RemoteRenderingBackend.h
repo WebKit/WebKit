@@ -35,17 +35,13 @@
 #include "MessageSender.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
+#include "Semaphore.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(COCOA)
-namespace WTF {
-class MachSemaphore;
-}
-#endif
 
 namespace WebCore {
 namespace DisplayList {
@@ -62,14 +58,14 @@ namespace WebKit {
 
 class DisplayListReaderHandle;
 class GPUConnectionToWebProcess;
-struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend
     : private IPC::MessageSender
     , public IPC::Connection::WorkQueueMessageReceiver
     , public WebCore::DisplayList::ItemBufferReadingClient {
 public:
-    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
+
+    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&& resumeDisplayListSemaphore);
     virtual ~RemoteRenderingBackend();
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
@@ -86,7 +82,7 @@ public:
     void disconnect();
 
 private:
-    RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
+    RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&&);
 
     Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t length, WebCore::DisplayList::ItemType, uint8_t* handleLocation) override;
 
@@ -148,9 +144,7 @@ private:
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListReaderHandle>> m_sharedDisplayListHandles;
     Optional<PendingWakeupInformation> m_pendingWakeupInfo;
-#if PLATFORM(COCOA)
-    std::unique_ptr<WTF::MachSemaphore> m_resumeDisplayListSemaphore;
-#endif
+    IPC::Semaphore m_resumeDisplayListSemaphore;
 };
 
 } // namespace WebKit

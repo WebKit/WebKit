@@ -1,3 +1,137 @@
+2021-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MachSemaphore does not work well with IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=220919
+        <rdar://problem/73826848>
+
+        Reviewed by Sam Weinig.
+
+        Move WTF::MachSemaphore to WebKit IPC::Semaphore. Currently the
+        MachSemaphore is useful only in cross-process IPC, implemented by the
+        IPC::.
+
+        Adds a stub IPC::Semaphore to all non-COCOA platforms, so that
+        constructors do not need to ifdef'ed to be able to compile platforms
+        that do not yet support GPU process fully.
+
+        Implement move constructor and move assignment operator for Semaphore.
+        Makes it possible to create types that hold Semaphore but still are
+        decode()able from a IPC message. The decoded objects are held with
+        Optional, and this forces the subobjects to have move assignment
+        operator.
+
+        Add asserts that the moved-away object is not used. Add the asserts as
+        asserts on the call return values, so the values are also checked on
+        normal objects on normal operation.
+
+        Implement an encoder and decoder for IPC::Semaphore. Makes it possible
+        to send it via IPC as its own type, not as MachSendRight.
+
+        As an example, changes existing uses of MachSendRight for semaphores in
+        messages as Semaphores, described below.
+
+        No new tests, a refactor.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Shared/RemoteRenderingBackendCreationParameters.h: Removed.
+        Changes RemoteRenderingBackend to receive its parameters from the normal
+        message parameters instead of redundant
+        RemoteRenderingBackendCreationParameters. The IPC generator already
+        generates 1:1 identical structure, it is just the message
+        Messages::GPUConnectionToWebProcess::CreateRenderingBackend. There is no
+        need to double-wrap the simple list of parameters. The double-wrapping
+        is a problem: The message system parameters are of ownership "const
+        reference", which is what is expected.
+        RemoteRenderingBackendCreationParameters contents were of ownership
+        "value", which works as expected only for simple primitive types.
+        Essentially previously calling the IPC function meant transfering
+        objects to RemoteRenderingBackendCreationParameters. This is not how the
+        IPC system is meant to work. The intention of a IPC call is to, by
+        default, reference its arguments for the purpose of encoding.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::create):
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::createAudioDestination):
+        * GPUProcess/media/RemoteAudioDestinationManager.h:
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in:
+
+        Receive the semaphore from RemoteAudioDestinationProxy. Previously
+        it was created during RemoteAudioDestination creation and
+        be sent back by RemoteAudioDestinationManager.
+
+        * Platform/IPC/Semaphore.cpp: Renamed from Source/WTF/wtf/cocoa/MachSemaphore.cpp.
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        * Platform/IPC/Semaphore.h: Renamed from Source/WTF/wtf/cocoa/MachSemaphore.h.
+        (IPC::Semaphore::operator bool const):
+        * Platform/IPC/cocoa/SemaphoreCocoa.cpp: Added.
+        (IPC::Semaphore::Semaphore):
+        (IPC::Semaphore::~Semaphore):
+        (IPC::Semaphore::operator=):
+        (IPC::Semaphore::signal):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+        (IPC::Semaphore::createSendRight const):
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        (IPC::Semaphore::destroy):
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/tests/Makefile:
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithMachSemaphore.messages.in: Copied from Source/WebKit/GPUProcess/GPUConnectionToWebProcess.messages.in.
+        * Scripts/webkit/tests/TestWithMachSemaphoreMessageReceiver.cpp: Added.
+        * Scripts/webkit/tests/TestWithMachSemaphoreMessages.h: Added.
+        * Scripts/webkit/tests/TestWithMachSemaphoreMessagesReplies.h: Added.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::connectToGPUProcess):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::startRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingThread):
+        Change the semaphore usage from unique_ptr to the normal
+        object access. The semaphore is now created by the proxy,
+        so there is no unique_ptr.
+
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        (WebKit::RemoteAudioDestinationProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+
+        Changes RemoteAudioDestinationProxy to send its own semaphore from
+        WebProcess to GPUProcess. Previously the semaphore would be sent back by
+        RemoteAudioDestinationManager. Previously the code structure is more
+        complicated than neccessary, as the semaphore holder was being
+        null-checked, reset and re-seated. The WebProcess gets already to choose
+        the semaphores GPUProcess uses, so this should not increase security
+        surface. The change chosen here side-steps the shortcoming of the IPC
+        system where unpacking objects from the Reply messages mandates that a
+        constructed version of that type exists. For previous MachSendRight
+        empty-constructed object is simple, but for MachSemaphore
+        empty-constructed object creates unnecessary complication that is not
+        required otherwise at the moment. The alternative to what was chosen
+        here would be to hold with Optional<MachSemaphore> and add a
+        empty-initializing constructor to hold the object where to unpack the
+        semaphore object from the Reply.
+
 2021-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Reduce the use of SoupURI in preparation for libsoup3

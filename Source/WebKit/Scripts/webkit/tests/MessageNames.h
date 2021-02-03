@@ -31,11 +31,12 @@ namespace IPC {
 enum class ReceiverName : uint8_t {
     TestWithIfMessage = 1
     , TestWithLegacyReceiver = 2
-    , TestWithSuperclass = 3
-    , TestWithoutAttributes = 4
-    , IPC = 5
-    , AsyncReply = 6
-    , Invalid = 7
+    , TestWithSemaphore = 3
+    , TestWithSuperclass = 4
+    , TestWithoutAttributes = 5
+    , IPC = 6
+    , AsyncReply = 7
+    , Invalid = 8
 };
 
 enum class MessageName : uint16_t {
@@ -60,6 +61,8 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_TemplateTest
     , TestWithLegacyReceiver_TestParameterAttributes
     , TestWithLegacyReceiver_TouchEvent
+    , TestWithSemaphore_ReceiveSemaphore
+    , TestWithSemaphore_SendSemaphore
     , TestWithSuperclass_LoadURL
     , TestWithSuperclass_TestAsyncMessage
     , TestWithSuperclass_TestAsyncMessageWithConnection
