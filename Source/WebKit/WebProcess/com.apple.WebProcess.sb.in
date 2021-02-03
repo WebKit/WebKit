@@ -1852,9 +1852,7 @@
     )
 )
 
-;; FIXME: Data indicates this is only needed on ARM64. This logging will confirm.
-;; Remove when the GPU process is enabled by default
-(allow iokit-open (with report)
+(deny iokit-open
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
     (with telemetry-backtrace)
 #endif
