@@ -1,3 +1,56 @@
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271770. rdar://problem/73890671
+
+    REGRESSION(r266148) Cancelling a navigation in decidePolicyForNavigationAction should not suspend the previous document's font loading timer
+    https://bugs.webkit.org/show_bug.cgi?id=220882
+    <rdar://problem/71634501>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-01-22
+    Reviewed by Brady Eidson.
+    
+    Source/WebCore:
+    
+    Things like the load event and didFinishNavigation wait until loading of things like fonts and iframes has completed.
+    
+    If we navigate to a document that immediately tries to navigate to a different document after starting the loads of fonts,
+    then we momentarily have two DocumentLoaders with m_frame pointing to the same main frame.
+    
+    If we cancel that second navigation using WKNavigationActionPolicyCancel, then it calls DocumentLoader::stopLoading on the second DocumentLoader.
+    This is fine.  This is the way things have worked for a very long time.
+    
+    r266148 introduced a call to the document's font loader's suspendFontLoadingTimer inside of DocumentLoader::stopLoading which is also fine.
+    What is not fine is the way we get that document.  Using m_frame->document() in this case gets us the first document, which may still be loading fonts that we do still want.
+    Using this->document() only returns non-null if this DocumentLoader is the DocumentLoader that was used to load the Frame's Document,
+    and in this case the DocumentLoader should only stop the font loading timer if that is true.
+    
+    I added an API test that reproduces the issue before but not after this fix.
+    For further verification, you can replace server.request() in my API test with a request to the URL in the radar ending in "Authentication.htm"
+    and verify it times out before the fix but not after.
+    
+    This is close to the largest amount of time spent per character changed I've ever written to change "m_frame" to "this".
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::stopLoading):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271770 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-22  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r266148) Cancelling a navigation in decidePolicyForNavigationAction should not suspend the previous document's font loading timer
+            https://bugs.webkit.org/show_bug.cgi?id=220882
+            <rdar://problem/71634501>
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+            (TEST):
+
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271507. rdar://problem/73473467

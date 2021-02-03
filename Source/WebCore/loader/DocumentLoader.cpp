@@ -337,7 +337,7 @@ void DocumentLoader::stopLoading()
     // Always cancel multipart loaders
     cancelAll(m_multipartSubresourceLoaders);
 
-    if (auto* document = m_frame->document())
+    if (auto* document = this->document())
         document->fontSelector().suspendFontLoadingTimer();
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
