@@ -1,3 +1,46 @@
+2021-02-02  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r272229. rdar://problem/73907002
+
+    REGRESSION(r271744): Broke Microsoft live login in internal builds
+    https://bugs.webkit.org/show_bug.cgi?id=221271
+    <rdar://problem/73848416>
+    
+    Reviewed by Alex Christensen.
+    
+    If a user goes straight to login.live.com without first visiting
+    microsoft.com, we crash when checking for storage access because
+    we assume the user has interacted with the page. Since this is a
+    quirked flow, we should not assume that, and should insert the
+    domain into the database.
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt const): Deleted.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272229 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-02  Kate Cheney  <katherine_cheney@apple.com>
+
+            REGRESSION(r271744): Broke Microsoft live login in internal builds
+            https://bugs.webkit.org/show_bug.cgi?id=221271
+            <rdar://problem/73848416>
+
+            Reviewed by Alex Christensen.
+
+            If a user goes straight to login.live.com without first visiting
+            microsoft.com, we crash when checking for storage access because
+            we assume the user has interacted with the page. Since this is a
+            quirked flow, we should not assume that, and should insert the
+            domain into the database.
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+            (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt const): Deleted.
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271813. rdar://problem/73888012
