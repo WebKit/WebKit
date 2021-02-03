@@ -1,3 +1,17 @@
+2021-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r270392): Launch time regression under IOSurface::maximumSize()
+        https://bugs.webkit.org/show_bug.cgi?id=221346
+        <rdar://problem/73507706>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        Scope r270392 to only the case where it is needed, when DOM rendering in the GPU process
+        is enabled and the Web Content process does not have access to IOSurface,
+        because it causes a small launch time regression.
+
 2021-02-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new picker for select elements

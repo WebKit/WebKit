@@ -471,7 +471,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
 
-    parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
+    // If we're using the GPU process for DOM rendering, we can't query the maximum IOSurface size in the Web Content process.
+    // However, querying this is a launch time regression, so limit this to only the necessary case.
+    if (m_defaultPageGroup->preferences().useGPUProcessForDOMRenderingEnabled())
+        parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
