@@ -179,6 +179,17 @@ extern const CGFloat kCTFontWeightBold;
 extern const CGFloat kCTFontWeightHeavy;
 extern const CGFloat kCTFontWeightBlack;
 
+extern const CGFloat kCTFontWidthUltraCompressed;
+extern const CGFloat kCTFontWidthExtraCompressed;
+extern const CGFloat kCTFontWidthCompressed;
+extern const CGFloat kCTFontWidthExtraCondensed;
+extern const CGFloat kCTFontWidthCondensed;
+extern const CGFloat kCTFontWidthSemiCondensed;
+extern const CGFloat kCTFontWidthStandard;
+extern const CGFloat kCTFontWidthSemiExpanded;
+extern const CGFloat kCTFontWidthExpanded;
+extern const CGFloat kCTFontWidthExtraExpanded;
+
 extern const CFStringRef kCTUIFontTextStyleTitle0;
 extern const CFStringRef kCTUIFontTextStyleTitle1;
 extern const CFStringRef kCTUIFontTextStyleTitle2;
