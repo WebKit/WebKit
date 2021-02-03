@@ -54,11 +54,11 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned 
 
 InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
-    auto& style = inlineTextBox.style();
-    auto& font = style.fontCascade();
-    if (!font.size() || from == to)
+    if (from == to)
         return 0;
 
+    auto& style = inlineTextBox.style();
+    auto& font = style.fontCascade();
     auto text = inlineTextBox.content();
     ASSERT(to <= text.length());
     auto hasKerningOrLigatures = font.enableKerning() || font.requiresShaping();
