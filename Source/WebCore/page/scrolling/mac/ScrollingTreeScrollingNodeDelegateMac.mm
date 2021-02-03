@@ -356,7 +356,14 @@ bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDi
     if (scrollingNode().isRootNode())
         return scrollingTree().mainFrameCanRubberBandInDirection(direction);
 
-    // FIXME: Consult the node.
+    switch (direction) {
+    case ScrollDirection::ScrollUp:
+    case ScrollDirection::ScrollDown:
+        return allowsVerticalScrolling();
+    case ScrollDirection::ScrollLeft:
+    case ScrollDirection::ScrollRight:
+        return allowsHorizontalScrolling();
+    }
     return true;
 }
 

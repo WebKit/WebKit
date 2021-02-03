@@ -1,5 +1,68 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271701. rdar://problem/73889964
+
+    Source/WebCore:
+    REGRESSION (Async overflow): Scroll stutters/blocked with nested scrolling
+    https://bugs.webkit.org/show_bug.cgi?id=219923
+    <rdar://72390196>
+    
+    Reviewed by Sam Weinig.
+    
+    When handling wheel events in overflow:scroll areas which are only scrollable on
+    one axis, particularly when nested, we need to account for the different
+    scrollability on each axis in a couple of places.
+    
+    First, address the FIXME in ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection()
+    by consulting node scrollability; this prevents attempts to rubberband on a non-scrollable
+    axis.
+    
+    Second, ScrollController should only allow stretching on a scrollable axis.
+    
+    The effects of these changes are that we no longer keep sending events to a node which
+    ends up not handling them; this resulted in latching "timing out", re-hit-testing
+    in the middle of a gesture and causing stuttery position changes on a different
+    scroller.
+    
+    Tests: fast/scrolling/latching/nested-cross-axis-latch-expiration.html
+           fast/scrolling/latching/overflow-hidden-on-one-axis.html
+    
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+    (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection const):
+    * platform/cocoa/ScrollController.mm:
+    (WebCore::ScrollController::handleWheelEvent):
+    * rendering/RenderLayerScrollableArea.cpp:
+    (WebCore::RenderLayerScrollableArea::scrollTo): Add the scrollingNodeID to the logging.
+    
+    LayoutTests:
+    REGRESSION (?): Scroll stutters/blocked with nested scrolling
+    https://bugs.webkit.org/show_bug.cgi?id=219923
+    <rdar://72390196>
+    
+    Reviewed by Sam Weinig.
+    
+    * fast/scrolling/latching/nested-cross-axis-latch-expiration-expected.txt: Added.
+    * fast/scrolling/latching/nested-cross-axis-latch-expiration.html: Added.
+    * fast/scrolling/latching/overflow-hidden-on-one-axis-expected.txt: Added.
+    * fast/scrolling/latching/overflow-hidden-on-one-axis.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271701 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (?): Scroll stutters/blocked with nested scrolling
+            https://bugs.webkit.org/show_bug.cgi?id=219923
+            <rdar://72390196>
+
+            Reviewed by Sam Weinig.
+
+            * fast/scrolling/latching/nested-cross-axis-latch-expiration-expected.txt: Added.
+            * fast/scrolling/latching/nested-cross-axis-latch-expiration.html: Added.
+            * fast/scrolling/latching/overflow-hidden-on-one-axis-expected.txt: Added.
+            * fast/scrolling/latching/overflow-hidden-on-one-axis.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272073. rdar://problem/73847891
 
     font-stretch is not applied to system-ui
