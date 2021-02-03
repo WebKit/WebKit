@@ -1017,7 +1017,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 String HTMLInputElement::value() const
 {
     String value;
-    if (m_inputType->getTypeSpecificValue(value))
+    if (m_inputType->canHaveTypeSpecificValue() && m_inputType->getTypeSpecificValue(value))
         return value;
 
     value = m_valueIfDirty;

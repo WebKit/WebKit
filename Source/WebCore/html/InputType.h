@@ -190,6 +190,7 @@ public:
     bool isCheckable() const { return checkableTypes.contains(m_type); }
     bool isSteppable() const { return steppableTypes.contains(m_type); }
     bool supportsValidation() const { return !nonValidatingTypes.contains(m_type); }
+    bool canHaveTypeSpecificValue() const { return isFileUpload(); }
 
     bool isInteractiveContent() const;
     bool supportLabels() const;
