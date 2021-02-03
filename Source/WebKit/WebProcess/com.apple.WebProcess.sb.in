@@ -115,8 +115,7 @@
             (global-name "com.apple.cvmsServ")
         )
     )
-    ;; This is just for logging. Remove when the GPU process is enabled by default.
-    (allow mach-lookup (with report)
+    (deny mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         (with telemetry-backtrace)
 #endif
