@@ -51,6 +51,7 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
 class WebProcessPool;
+enum class ViewStabilityFlag : uint8_t;
 }
 
 @interface WKContentView : WKApplicationStateTrackingView {
@@ -81,8 +82,7 @@ class WebProcessPool;
     unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
     inputViewBounds:(CGRect)inputViewBounds
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
-    inStableState:(BOOL)isStableState
-    isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
+    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
     enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
     sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged;
 
