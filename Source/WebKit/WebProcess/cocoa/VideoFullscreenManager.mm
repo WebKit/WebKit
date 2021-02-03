@@ -148,6 +148,11 @@ void VideoFullscreenManager::invalidate()
     m_page = nullptr;
 }
 
+bool VideoFullscreenManager::hasVideoPlayingInPictureInPicture() const
+{
+    return !!m_videoElementInPictureInPicture;
+}
+
 VideoFullscreenManager::ModelInterfaceTuple VideoFullscreenManager::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     auto model = VideoFullscreenModelVideoElement::create();
@@ -265,6 +270,9 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     else
         interface->setTargetIsFullscreen(false);
 
+    if (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+        m_videoElementInPictureInPicture = makeWeakPtr(videoElement);
+
     interface->setFullscreenMode(mode);
     interface->setFullscreenStandby(standby);
     model->setVideoElement(&videoElement);
@@ -295,7 +303,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
 }
 
-void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
+void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenForVideoElement(%p)", this);
     ASSERT(m_page);
@@ -308,11 +316,14 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = makeRefPtr(this), this, contextId, completionHandler = WTFMove(completionHandler)](auto success) mutable {
+    m_page->sendWithAsyncReply(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = makeRefPtr(this), this, contextId, videoElementPtr = &videoElement, completionHandler = WTFMove(completionHandler)](auto success) mutable {
         if (!success) {
             completionHandler(false);
             return;
         }
+
+        if (m_videoElementInPictureInPicture == videoElementPtr)
+            m_videoElementInPictureInPicture = nullptr;
 
         auto& interface = ensureInterface(contextId);
         interface.setTargetIsFullscreen(false);
@@ -321,12 +332,15 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
     });
 }
 
-void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
+void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(%p)", this);
 
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(&videoElement));
+
+    if (m_videoElementInPictureInPicture == &videoElement)
+        m_videoElementInPictureInPicture = nullptr;
 
     auto contextId = m_videoElements.get(&videoElement);
     auto& interface = ensureInterface(contextId);

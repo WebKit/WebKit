@@ -1,5 +1,52 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271737. rdar://problem/73890706
+
+    PiP video subtitles stop updating when Safari is backgrounded
+    https://bugs.webkit.org/show_bug.cgi?id=220660
+    
+    Reviewed by Darin Adler.
+    
+    Subtitles in the picture-in-picture window will stop updating when the browser is
+    in the background because we freeze the layer tree when a browser is in the background.
+    This patch fixes this issue by avoiding freezing the layer tree if a video is playing
+    in picture-in-picture when the browser is in the background.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::updateDrawingAreaLayerTreeFreezeState):
+    * WebProcess/cocoa/VideoFullscreenManager.h:
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenManager::videoInPictureInPicture const):
+    (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+    (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+    (WebKit::VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271737 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-21  Peng Liu  <peng.liu6@apple.com>
+
+            PiP video subtitles stop updating when Safari is backgrounded
+            https://bugs.webkit.org/show_bug.cgi?id=220660
+
+            Reviewed by Darin Adler.
+
+            Subtitles in the picture-in-picture window will stop updating when the browser is
+            in the background because we freeze the layer tree when a browser is in the background.
+            This patch fixes this issue by avoiding freezing the layer tree if a video is playing
+            in picture-in-picture when the browser is in the background.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::updateDrawingAreaLayerTreeFreezeState):
+            * WebProcess/cocoa/VideoFullscreenManager.h:
+            * WebProcess/cocoa/VideoFullscreenManager.mm:
+            (WebKit::VideoFullscreenManager::videoInPictureInPicture const):
+            (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+            (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+            (WebKit::VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271656. rdar://problem/73890220
 
     [Mac] Netflix controls do not fade out after entering fullscreen
