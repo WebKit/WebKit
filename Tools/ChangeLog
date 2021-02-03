@@ -1,3 +1,12 @@
+2021-02-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Replace Apple-Catalina-Release-JSC-Tests bot due to hardware failure
+        https://bugs.webkit.org/show_bug.cgi?id=221315
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/config.json: Replace bot157 with bot610.
+
 2021-02-03  Antoine Quint  <graouts@webkit.org>
 
         Add a loader for <model> resources

@@ -17,7 +17,6 @@
                     { "name": "bot1027", "platform": "mac-bigsur"},
 
                     { "name": "bot121", "platform": "mac-catalina" },
-                    { "name": "bot157", "platform": "mac-catalina" },
                     { "name": "bot187", "platform": "mac-catalina" },
                     { "name": "bot205", "platform": "mac-catalina" },
                     { "name": "bot241", "platform": "mac-catalina" },
@@ -30,6 +29,7 @@
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot260", "platform": "mac-catalina" },
                     { "name": "bot302", "platform": "mac-catalina" },
+                    { "name": "bot610", "platform": "mac-catalina" },
                     { "name": "bot638", "platform": "mac-catalina" },
                     { "name": "bot674", "platform": "mac-catalina" },
                     { "name": "bot683", "platform": "mac-catalina" },
@@ -45,7 +45,6 @@
                     { "name": "bot185", "platform": "*" },
                     { "name": "bot198", "platform": "*" },
                     { "name": "bot210", "platform": "*" },
-                    { "name": "bot610", "platform": "*" },
                     { "name": "bot611", "platform": "*" },
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
@@ -205,7 +204,7 @@
                     },
                     { "name": "Apple-Catalina-Release-JSC-Tests", "factory": "TestJSCFactory", "builddir": "catalina-release-tests-jsc",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "workernames": ["bot157"]
+                      "workernames": ["bot610"]
                     },
                     { "name": "Apple-Catalina-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory", "builddir": "catalina-cloop-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
