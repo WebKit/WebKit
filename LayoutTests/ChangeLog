@@ -1,5 +1,115 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272004. rdar://problem/73890647
+
+    REGRESSION(r268615): images flicker on apple.com/ios/ios-14
+    https://bugs.webkit.org/show_bug.cgi?id=221054
+    <rdar://problem/72880447>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    When we added support for accelerated animations of individual transform properties in r268615 (bug 217842),
+    we made it so that base values of each transform-related property had a non-interpolating animation in the
+    Core Animation animations list that would combine with interpolating animations for that property as additive
+    animations. Prior to any of those animations, we'd reset the combined transform with an identity transform
+    as another non-interpolating animation.
+    
+    However, we neglected to consider the case where one of the interpolating animations would not start right
+    away if a positive delay was set. In the case of this apple.com page, the target element would be composited
+    due to a "will-change: transform" style, and a non-animated "transform" was set as well as an animation for
+    the "transform" property with a delay.
+    
+    Since we had a "transform" animation, we'd create a Core Animation animations lists as follows:
+    
+        1. non-interpolating, non-additive animation set to the identity matrix
+        2. interpolating, additive animation with the keyframes set in the CSS animation, with a begin time
+           set to the current time plus the specified delay
+    
+    The result of this was that during the animation delay, the static "transform" property was overridden
+    by animation #1 until animation #2 would kick in.
+    
+    We now make it so that for each transform-related property, we create a non-interpoloating, additive animation
+    to represent the static value for that property for the duration of any potential delay until the first
+    interpolating animation for this property starts.
+    
+    In this example, the Core Animation animations list is now as follows:
+    
+        1. non-interpolating, non-additive animation set to the identity matrix
+        2. non-interpolating, additive animation set to the static transform value
+        3. interpolating, additive animation with the keyframes set in the CSS animation, with a begin time
+           set to the current time plus the specified delay
+    
+    We implement this with a new lambda function within GraphicsLayerCA::updateAnimations() called
+    addAnimationsForProperty() which adds a non-interpolating animation in two cases:
+    
+        1. if there is no animation for this property at all, making it last forever
+        2. if all animations have a delay, making it last until the first animation starts
+    
+    Tests: webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html
+           webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html
+           webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
+           webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html
+           webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html
+    
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::updateAnimations):
+    
+    LayoutTests:
+    
+    Add a series of tests ensuring that starting an animation for transform-related properties does not clobber the static
+    value for this property. We only run those tests on WK2 because running those in WK1 is flaky as there doesn't seem
+    to be a solid test utility to determine that Core Animation animations have been committed, even with long delays
+    that would make tests run slow.
+    
+    * TestExpectations:
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer-expected.html: Added.
+    * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html: Added.
+    * webanimations/resources/wait-until-animations-are-committed.js: Added.
+    * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer-expected.html: Added.
+    * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html: Added.
+    * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer-expected.html: Added.
+    * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html: Added.
+    * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer-expected.html: Added.
+    * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html: Added.
+    * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer-expected.html: Added.
+    * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272004 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-27  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r268615): images flicker on apple.com/ios/ios-14
+            https://bugs.webkit.org/show_bug.cgi?id=221054
+            <rdar://problem/72880447>
+
+            Reviewed by Dean Jackson.
+
+            Add a series of tests ensuring that starting an animation for transform-related properties does not clobber the static
+            value for this property. We only run those tests on WK2 because running those in WK1 is flaky as there doesn't seem
+            to be a solid test utility to determine that Core Animation animations have been committed, even with long delays
+            that would make tests run slow.
+
+            * TestExpectations:
+            * platform/ios-wk2/TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+            * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer-expected.html: Added.
+            * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html: Added.
+            * webanimations/resources/wait-until-animations-are-committed.js: Added.
+            * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer-expected.html: Added.
+            * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html: Added.
+            * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer-expected.html: Added.
+            * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html: Added.
+            * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer-expected.html: Added.
+            * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html: Added.
+            * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer-expected.html: Added.
+            * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271861. rdar://problem/73890854
 
     [iOS] Obscured elements should not be focusable using the accessory bar

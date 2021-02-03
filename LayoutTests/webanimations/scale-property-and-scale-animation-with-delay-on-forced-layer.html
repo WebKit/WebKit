@@ -1,0 +1,26 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+    will-change: scale;
+    scale: 0.5;
+
+    animation-name: scale;
+    animation-delay: 1000s;
+    animation-duration: 1000s;
+}
+
+@keyframes scale {
+    from { scale: 2 }
+    to { scale: 2 }
+}
+    
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>
