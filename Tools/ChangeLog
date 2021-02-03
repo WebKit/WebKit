@@ -1,3 +1,14 @@
+2021-02-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Big Sur test262 queues failing download-built-product step
+        https://bugs.webkit.org/show_bug.cgi?id=221314
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/config.json: Since we are building both x86
+        and arm64 on Big Sur, we need to both architectures to be listed in the
+        config so that the test262 bots can find the archives.
+
 2021-02-03  Youenn Fablet  <youenn@apple.com>
 
         Enable webrtc video capture in GPUProcess for iOS WebKitTestRunner

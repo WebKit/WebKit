@@ -126,7 +126,7 @@
                       "workernames": ["bot279", "bot600", "bot614"]
                     },
                     { "name": "Apple-BigSur-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-release-tests-test262",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot632"]
                     },
                     { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-release-tests-wk1",
@@ -145,7 +145,7 @@
                       "workernames": ["bot684", "bot685"]
                     },
                     { "name": "Apple-BigSur-Debug-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-debug-tests-test262",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot603"]
                     },
                     { "name": "Apple-BigSur-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-debug-tests-wk1",
