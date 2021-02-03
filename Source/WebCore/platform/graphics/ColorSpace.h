@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ColorTypes.h"
+#include <functional>
 
 namespace WTF {
 class TextStream;
