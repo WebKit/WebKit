@@ -1231,3 +1231,7 @@ webkit.org/b/221095 [ BigSur ] media/mediacapabilities/vp9.html [ Failure ]
 webkit.org/b/221146 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Failure ]
 
 webkit.org/b/221230 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
+
+webkit.org/b/221300 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Failure ]
+webkit.org/b/221300 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure ]
+webkit.org/b/221300 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
