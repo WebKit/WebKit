@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)initWithIdentifier:(SpeechRecognitionConnectionClientIdentifier)identifier locale:(NSString*)localeIdentifier doMultipleRecognitions:(BOOL)continuous reportInterimResults:(BOOL)interimResults maxAlternatives:(unsigned long)alternatives delegateCallback:(void(^)(const SpeechRecognitionUpdate&))callback;
-- (void)callbackWithResult:(SFTranscription *)transcription isFinal:(BOOL)isFinal;
+- (void)callbackWithTranscriptions:(NSArray<SFTranscription *> *)transcriptions isFinal:(BOOL)isFinal;
 - (void)audioSamplesAvailable:(CMSampleBufferRef)sampleBuffer;
 - (void)abort;
 - (void)stop;
@@ -113,24 +113,23 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (void)callbackWithResult:(SFTranscription *)transcription isFinal:(BOOL)isFinal
+- (void)callbackWithTranscriptions:(NSArray<SFTranscription *> *)transcriptions isFinal:(BOOL)isFinal
 {
-    auto segments = [transcription segments];
-    Vector<SpeechRecognitionResultData> datas;
-    datas.reserveInitialCapacity(segments.count);
-    for (SFTranscriptionSegment* segment in segments) {
-        // Note segment confidence is reported 0 when result is not final.
-        Vector<SpeechRecognitionAlternativeData> alternatives;
-        alternatives.reserveInitialCapacity(_maxAlternatives);
-        alternatives.uncheckedAppend(SpeechRecognitionAlternativeData { [segment substring], [segment confidence] });
-        for (NSString* segmentAlternative : [segment alternativeSubstrings]) {
-            if (alternatives.size() == _maxAlternatives)
-                break;
-            // FIXME: calculate or get alternative confidence if possible.
-            alternatives.uncheckedAppend(SpeechRecognitionAlternativeData { segmentAlternative, 0.0 });
+    Vector<SpeechRecognitionAlternativeData> alternatives;
+    alternatives.reserveInitialCapacity(_maxAlternatives);
+    for (SFTranscription* transcription in transcriptions) {
+        // FIXME: <rdar://73629573> get confidence of SFTranscription when possible.
+        double maxConfidence = 0.0;
+        for (SFTranscriptionSegment* segment in [transcription segments]) {
+            double confidence = [segment confidence];
+            maxConfidence = maxConfidence < confidence ? confidence : maxConfidence;
         }
-        datas.uncheckedAppend(SpeechRecognitionResultData { WTFMove(alternatives), bool(isFinal) });
+        alternatives.uncheckedAppend(SpeechRecognitionAlternativeData { [transcription formattedString], maxConfidence });
+        if (alternatives.size() == _maxAlternatives)
+            break;
     }
+    Vector<SpeechRecognitionResultData> datas;
+    datas.append(SpeechRecognitionResultData { WTFMove(alternatives), bool(isFinal) });
     _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, WTFMove(datas)));
 }
 
@@ -219,14 +218,13 @@ NS_ASSUME_NONNULL_BEGIN
     ASSERT(isMainThread());
 
     [self sendSpeechStartIfNeeded];
-    [self callbackWithResult:transcription isFinal:NO];
+    [self callbackWithTranscriptions:[NSArray arrayWithObjects:transcription, nil] isFinal:NO];
 }
 
 - (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult
 {
     ASSERT(isMainThread());
-
-    [self callbackWithResult:recognitionResult.bestTranscription isFinal:YES];
+    [self callbackWithTranscriptions:recognitionResult.transcriptions isFinal:YES];
 
     if (!_doMultipleRecognitions) {
         [self sendSpeechEndIfNeeded];
