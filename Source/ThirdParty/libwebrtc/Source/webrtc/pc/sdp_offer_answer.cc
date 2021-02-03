@@ -2802,17 +2802,16 @@ RTCError SdpOfferAnswerHandler::UpdateTransceiversAndDataChannels(
         old_remote_content =
             &old_remote_description->description()->contents()[i];
       }
-      // In the case where an m-section has completed its rejection,
-      // and is not being reused, we do not expect a transceiver.
-      if (old_local_content && old_local_content->rejected &&
-          old_remote_content && old_remote_content->rejected &&
-          new_content.rejected) {
-        continue;
-      }
       auto transceiver_or_error =
           AssociateTransceiver(source, new_session.GetType(), i, new_content,
                                old_local_content, old_remote_content);
       if (!transceiver_or_error.ok()) {
+        // In the case where a transceiver is rejected locally, we don't
+        // expect to find a transceiver, but might find it in the case
+        // where state is still "stopping", not "stopped".
+        if (new_content.rejected) {
+          continue;
+        }
         return transceiver_or_error.MoveError();
       }
       auto transceiver = transceiver_or_error.MoveValue();
@@ -2874,8 +2873,9 @@ SdpOfferAnswerHandler::AssociateTransceiver(
       transceiver = pc_->GetTransceiverByMLineIndex(mline_index);
     }
     if (!transceiver) {
+      // This may happen normally when media sections are rejected.
       LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
-                           "Unknown transceiver");
+                           "Transceiver not found based on m-line index");
     }
   } else {
     RTC_DCHECK_EQ(source, cricket::CS_REMOTE);
