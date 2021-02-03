@@ -3247,6 +3247,9 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
     if (logicalHeight == initialLogicalHeight)
         return true;
     
+    if (logicalHeight.isPercentOrCalculated() && hasOverridingContainingBlockContentLogicalHeight())
+        return overridingContainingBlockContentLogicalHeight() == LayoutUnit(-1);
+
     // Make sure % min-height and % max-height resolve to none if the containing block has auto height.
     // Note that the "height" case for replaced elements was handled by hasReplacedLogicalHeight, which is why
     // min and max-height are the only ones handled here.
