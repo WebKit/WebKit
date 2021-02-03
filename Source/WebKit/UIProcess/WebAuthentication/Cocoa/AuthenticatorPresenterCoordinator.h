@@ -87,6 +87,9 @@ private:
     HashMap<String, RefPtr<WebCore::AuthenticatorAssertionResponse>> m_credentials;
 
     CompletionHandler<void(const String&)> m_pinHandler;
+#if HAVE(ASC_AUTH_UI)
+    bool m_presentedPIN { false };
+#endif
 };
 
 } // namespace WebKit
