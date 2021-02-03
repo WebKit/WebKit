@@ -37,18 +37,18 @@
                     { "name": "bot688", "platform": "mac-catalina" },
 
 
-                    { "name": "bot132", "platform": "mac-mojave" },
-                    { "name": "bot178", "platform": "mac-mojave" },
-                    { "name": "bot179", "platform": "mac-mojave" },
-                    { "name": "bot183", "platform": "mac-mojave" },
-                    { "name": "bot184", "platform": "mac-mojave" },
-                    { "name": "bot185", "platform": "mac-mojave" },
-                    { "name": "bot198", "platform": "mac-mojave" },
-                    { "name": "bot210", "platform": "mac-mojave" },
-                    { "name": "bot610", "platform": "mac-mojave" },
-                    { "name": "bot611", "platform": "mac-mojave" },
-                    { "name": "bot612", "platform": "mac-mojave" },
-                    { "name": "bot613", "platform": "mac-mojave" },
+                    { "name": "bot132", "platform": "*" },
+                    { "name": "bot178", "platform": "*" },
+                    { "name": "bot179", "platform": "*" },
+                    { "name": "bot183", "platform": "*" },
+                    { "name": "bot184", "platform": "*" },
+                    { "name": "bot185", "platform": "*" },
+                    { "name": "bot198", "platform": "*" },
+                    { "name": "bot210", "platform": "*" },
+                    { "name": "bot610", "platform": "*" },
+                    { "name": "bot611", "platform": "*" },
+                    { "name": "bot612", "platform": "*" },
+                    { "name": "bot613", "platform": "*" },
 
 
                     { "name": "bot673", "platform": "ios-14" },
@@ -215,36 +215,6 @@
                       "name": "Apple-Catalina-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "catalina-release-perf-tests",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "workernames": ["bot205"]
-                    },
-                    { "name": "Apple-Mojave-Debug-Build", "factory": "BuildFactory", "builddir": "mojave-debug",
-                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["mojave-debug-tests-wk1", "mojave-debug-tests-wk2"],
-                      "workernames": ["bot612", "bot613"]
-                    },
-                    { "name": "Apple-Mojave-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-debug-tests-wk1",
-                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot183", "bot184"]
-                    },
-                    { "name": "Apple-Mojave-Debug-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "mojave-debug-tests-wk2",
-                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot178", "bot179"]
-                    },
-                    { "name": "Apple-Mojave-Release-Build", "factory": "BuildFactory", "builddir": "mojave-release",
-                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["mojave-release-tests-wk1", "mojave-release-tests-wk2"],
-                      "workernames": ["bot610", "bot611"]
-                    },
-                    { "name": "Apple-Mojave-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-release-tests-wk1",
-                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot132", "bot185"]
-                    },
-                    { "name": "Apple-Mojave-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "mojave-release-tests-wk2",
-                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot198", "bot210"]
                     },
                     {
                       "name": "Apple-iOS-14-Release-Build", "factory": "BuildFactory", "builddir": "ios-14-release",
@@ -580,21 +550,6 @@
                     },
                     { "type": "Triggerable", "name": "catalina-release-tests-jsc",
                       "builderNames": ["Apple-Catalina-Release-JSC-Tests"]
-                    },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-Mojave-Release-Build", "Apple-Mojave-Debug-Build"]
-                    },
-                    { "type": "Triggerable", "name": "mojave-release-tests-wk1",
-                      "builderNames": ["Apple-Mojave-Release-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "mojave-release-tests-wk2",
-                      "builderNames": ["Apple-Mojave-Release-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "mojave-debug-tests-wk1",
-                      "builderNames": ["Apple-Mojave-Debug-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "mojave-debug-tests-wk2",
-                      "builderNames": ["Apple-Mojave-Debug-WK2-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-14", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-14-Release-Build"]

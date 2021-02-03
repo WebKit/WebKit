@@ -221,10 +221,6 @@ table.queue-grid tr.platform.watchos-7 img.logo {
     content: -webkit-image-set(url(../Images/WatchOS7@2x.png) 2x, url(../Images/WatchOS7.png) 1x);
 }
 
-table.queue-grid tr.platform.macos-mojave img.logo {
-    content: -webkit-image-set(url(../Images/Mojave@2x.png) 2x, url(../Images/Mojave.png) 1x);
-}
-
 table.queue-grid tr.platform.macos-catalina img.logo {
     content: -webkit-image-set(url(../Images/Catalina@2x.png) 2x, url(../Images/Catalina.png) 1x);
 }

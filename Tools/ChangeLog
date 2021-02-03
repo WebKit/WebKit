@@ -1,3 +1,17 @@
+2021-02-02  Matt Lewis  <jlewis3@apple.com>
+
+        Remove Apple macOS Mojave queues
+        https://bugs.webkit.org/show_bug.cgi?id=221211
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.macos-mojave img.logo): Deleted.
+        
 2021-02-02  Don Olmstead  <don.olmstead@sony.com>
 
         [webkitcorepy] Autoinstaller can fail on packages containing write protected files
