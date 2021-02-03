@@ -1,3 +1,13 @@
+2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Add fraud prevention experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=221292
+        <rdar://problem/73581064>
+
+        Reviewed by John Wilander.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         MachSemaphore does not work well with IPC messages

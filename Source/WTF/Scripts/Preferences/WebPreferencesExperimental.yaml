@@ -676,6 +676,15 @@ PrivateClickMeasurementDebugModeEnabled:
     WebKit:
       default: false
 
+PrivateClickMeasurementFraudPreventionEnabled:
+  type: bool
+  humanReadableName: "Private Click Measurement Fraud Prevention"
+  humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKit:
+      default: false
+
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   humanReadableName: "Swap Processes on Cross-Site Navigation"
