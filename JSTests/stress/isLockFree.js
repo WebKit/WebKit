@@ -35,6 +35,26 @@ function foo5(bytes) {
 }
 noInline(foo5);
 
+function foo6(bytes) {
+    return Atomics.isLockFree(6);
+}
+noInline(foo6);
+
+function foo7(bytes) {
+    return Atomics.isLockFree(7);
+}
+noInline(foo7);
+
+function foo8(bytes) {
+    return Atomics.isLockFree(8);
+}
+noInline(foo8);
+
+function foo9(bytes) {
+    return Atomics.isLockFree(9);
+}
+noInline(foo9);
+
 for (var i = 0; i < 10000; ++i) {
     var result = foo(0);
     if (result !== false)
@@ -54,6 +74,18 @@ for (var i = 0; i < 10000; ++i) {
     var result = foo(5);
     if (result !== false)
         throw new Error("Bad result: " + result);
+    var result = foo(6);
+    if (result !== false)
+        throw new Error("Bad result: " + result);
+    var result = foo(7);
+    if (result !== false)
+        throw new Error("Bad result: " + result);
+    var result = foo(8);
+    if (result !== true)
+        throw new Error("Bad result: " + result);
+    var result = foo(9);
+    if (result !== false)
+        throw new Error("Bad result: " + result);
     var result = foo0();
     if (result !== false)
         throw new Error("Bad result: " + result);
@@ -70,6 +102,18 @@ for (var i = 0; i < 10000; ++i) {
     if (result !== true)
         throw new Error("Bad result: " + result);
     var result = foo5();
+    if (result !== false)
+        throw new Error("Bad result: " + result);
+    var result = foo6();
+    if (result !== false)
+        throw new Error("Bad result: " + result);
+    var result = foo7();
+    if (result !== false)
+        throw new Error("Bad result: " + result);
+    var result = foo8();
+    if (result !== true)
+        throw new Error("Bad result: " + result);
+    var result = foo9();
     if (result !== false)
         throw new Error("Bad result: " + result);
 }

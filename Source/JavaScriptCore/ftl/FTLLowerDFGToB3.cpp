@@ -4295,10 +4295,11 @@ private:
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(trueCase);
         
-        Vector<SwitchCase> cases;
+        Vector<SwitchCase, 4> cases;
         cases.append(SwitchCase(m_out.constInt32(1), trueCase, Weight()));
         cases.append(SwitchCase(m_out.constInt32(2), trueCase, Weight()));
         cases.append(SwitchCase(m_out.constInt32(4), trueCase, Weight()));
+        cases.append(SwitchCase(m_out.constInt32(8), trueCase, Weight()));
         m_out.switchInstruction(bytes, cases, falseCase, Weight());
         
         m_out.appendTo(trueCase, falseCase);

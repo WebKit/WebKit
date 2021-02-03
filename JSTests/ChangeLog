@@ -1,3 +1,32 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics should support BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=221245
+
+        Reviewed by Keith Miller.
+
+        * stress/atomic-increment-bigint64.js: Added.
+        (shouldBe):
+        (i.agent.start.262.agent.receiveBroadcast):
+        * stress/bigint-atomics-fail.js: Added.
+        (shouldThrow):
+        * stress/bigint64-atomics.js: Added.
+        (shouldBe):
+        (test):
+        * stress/biguint64-atomics.js: Added.
+        (shouldBe):
+        (test):
+        * stress/isLockFree.js:
+        (foo6):
+        (foo7):
+        (foo8):
+        (foo9):
+        * stress/shared-array-buffer-bigint.js: Added.
+        (shouldFail):
+        (shouldSucceed):
+        (runAtomic):
+        * test262/config.yaml:
+
 2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         Completion value of a finally block should not be ignored if completion is abrupt

@@ -1,3 +1,30 @@
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics should support BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=221245
+
+        Reviewed by Keith Miller.
+
+        This patch adds BigInt64Array / BigUint64Array support for Atomics.
+
+        1. Atomics.store should be rewritten since it returns non-type-coerced result, so we cannot use atomicReadModifyWrite.
+           The spec also describes Atomics.store without using AtomicReadModifyWrite[1].
+        2. Extend Atomics.isLockFree to also accept a size of 8.
+        3. Currently, DFG / FTL handle Atomics + BigInt64Array/BigUint64Array as Array::Generic.
+
+        [1]: https://tc39.es/ecma262/#sec-atomics.store
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsIsLockFree):
+        * runtime/AtomicsObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::atomicsWaitImpl):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValue):
+
 2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [AppleWin 32bit][LLInt] LLIntData.h(104) : warning C4172: returning address of local variable or temporary: id

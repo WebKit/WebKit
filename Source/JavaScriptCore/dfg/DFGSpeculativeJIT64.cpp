@@ -3455,6 +3455,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
         m_jit.move(TrustedImm32(JSValue::ValueTrue), resultGPR);
         JITCompiler::JumpList done;
+        done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(8)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(4)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(1)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(2)));

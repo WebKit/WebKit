@@ -33,7 +33,7 @@ namespace JSC {
 template<typename Adaptor>
 typename Adaptor::Type toNativeFromValue(JSValue value)
 {
-    // FIXME: BigInt
+    ASSERT(!value.isBigInt());
     if (value.isInt32())
         return Adaptor::toNativeFromInt32(value.asInt32());
     return Adaptor::toNativeFromDouble(value.asDouble());
