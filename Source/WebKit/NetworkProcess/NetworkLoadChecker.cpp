@@ -327,6 +327,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     case FetchOptions::Destination::Font:
     case FetchOptions::Destination::Image:
     case FetchOptions::Destination::Manifest:
+    case FetchOptions::Destination::Model:
     case FetchOptions::Destination::Object:
     case FetchOptions::Destination::Report:
     case FetchOptions::Destination::Style:

@@ -30,6 +30,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContextDestructionObserver.h"
+#include "FetchOptions.h"
 #include "PlatformMediaResourceLoader.h"
 #include "ResourceResponse.h"
 #include <wtf/HashSet.h>
@@ -41,12 +42,12 @@ namespace WebCore {
 
 class CachedRawResource;
 class Document;
-class HTMLMediaElement;
+class Element;
 class MediaResource;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public CanMakeWeakPtr<MediaResourceLoader>, public ContextDestructionObserver {
 public:
-    WEBCORE_EXPORT MediaResourceLoader(Document&, HTMLMediaElement&, const String& crossOriginMode);
+    WEBCORE_EXPORT MediaResourceLoader(Document&, Element&, const String& crossOriginMode, FetchOptions::Destination);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
 
     RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final;
@@ -64,10 +65,11 @@ private:
     void contextDestroyed() override;
 
     WeakPtr<Document> m_document;
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<Element> m_element;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
     Vector<ResourceResponse> m_responsesForTesting;
+    FetchOptions::Destination m_destination;
 };
 
 class MediaResource : public PlatformMediaResource, CachedRawResourceClient {

@@ -6941,7 +6941,8 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 
 RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceLoader()
 {
-    auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin()));
+    auto destination = isVideo() ? FetchOptions::Destination::Video : FetchOptions::Destination::Audio;
+    auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin(), destination));
 
     m_lastMediaResourceLoaderForTesting = makeWeakPtr(mediaResourceLoader.get());
 

@@ -1,3 +1,17 @@
+2021-02-03  Antoine Quint  <graouts@webkit.org>
+
+        Add a loader for <model> resources
+        https://bugs.webkit.org/show_bug.cgi?id=221255
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::isAllowedByContentSecurityPolicy):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2021-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         MachSemaphore does not work well with IPC messages

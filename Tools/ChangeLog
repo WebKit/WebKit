@@ -1,3 +1,13 @@
+2021-02-03  Antoine Quint  <graouts@webkit.org>
+
+        Add a loader for <model> resources
+        https://bugs.webkit.org/show_bug.cgi?id=221255
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+
 2021-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Big Sur test262 queues failing download-built-product step

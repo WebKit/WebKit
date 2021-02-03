@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct FetchOptions {
-    enum class Destination : uint8_t { EmptyString, Audio, Audioworklet, Document, Embed, Font, Image, Manifest, Object, Paintworklet, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
+    enum class Destination : uint8_t { EmptyString, Audio, Audioworklet, Document, Embed, Font, Image, Manifest, Model, Object, Paintworklet, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
     enum class Mode : uint8_t { Navigate, SameOrigin, NoCors, Cors };
     enum class Credentials : uint8_t { Omit, SameOrigin, Include };
     enum class Cache : uint8_t { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
@@ -113,6 +113,7 @@ template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::Font,
         WebCore::FetchOptions::Destination::Image,
         WebCore::FetchOptions::Destination::Manifest,
+        WebCore::FetchOptions::Destination::Model,
         WebCore::FetchOptions::Destination::Object,
         WebCore::FetchOptions::Destination::Paintworklet,
         WebCore::FetchOptions::Destination::Report,

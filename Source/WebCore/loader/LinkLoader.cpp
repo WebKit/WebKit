@@ -167,6 +167,9 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
 #endif
+#if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::ModelResource:
+#endif
         // None of these values is currently supported as an `as` value.
         ASSERT_NOT_REACHED();
     }

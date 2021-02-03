@@ -392,6 +392,10 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
             return ResourceLoadInfo::Type::Image;
         case WebCore::FetchOptions::Destination::Manifest:
             return ResourceLoadInfo::Type::ApplicationManifest;
+#if ENABLE(MODEL_ELEMENT)
+        case WebCore::FetchOptions::Destination::Model:
+            return ResourceLoadInfo::Type::Media;
+#endif
         case WebCore::FetchOptions::Destination::Object:
             return ResourceLoadInfo::Type::Object;
         case WebCore::FetchOptions::Destination::Paintworklet:
