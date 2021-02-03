@@ -1,3 +1,16 @@
+2021-02-03  Alex Christensen  <achristensen@webkit.org>
+
+        Flaky API Test: TestWebKitAPI.WebKitLegacy.CrossPartitionFileSchemeAccess
+        https://bugs.webkit.org/show_bug.cgi?id=206956
+
+        Reviewed by Alexey Proskuryakov.
+
+        createPartition is timing out on the bots but not locally.
+        Don't hide the output of hdiutil so we can see what is happening on the bots.
+
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm:
+        (createPartition):
+
 2021-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Replace Apple-Catalina-Release-JSC-Tests bot due to hardware failure
