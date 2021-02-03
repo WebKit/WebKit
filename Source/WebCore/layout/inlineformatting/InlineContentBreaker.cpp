@@ -373,7 +373,10 @@ OverflowingTextContent InlineContentBreaker::processOverflowingTextContent(const
                     // We are at "breakable", <span> is at index - 1 and the trailing run is at index - 2.
                     ASSERT(runs[index - 1].inlineItem.isInlineBoxStart());
                     auto trailingRunIndex = findTrailingRunIndex(index);
-                    ASSERT(trailingRunIndex);
+                    if (!trailingRunIndex) {
+                        // This continuous content did not fit from the get-go. No trailing run.
+                        return OverflowingTextContent::BreakingPosition { };
+                    }
                     // At worst we are back to the overflowing run, like in the example above.
                     ASSERT(*trailingRunIndex >= overflowingRunIndex);
                     return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
