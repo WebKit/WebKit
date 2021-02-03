@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <array>
+#include <limits>
+
 namespace WebCore {
 
 template<typename> struct AlphaTraits;

@@ -1,3 +1,19 @@
+2021-02-03  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(xyz ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221190
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        Remove now passing xyz test. Update comment for the other xyz test which is invalid.
+        Getting it removed in https://github.com/web-platform-tests/wpt/pull/27416.
+
+        * fast/css/parsing-color-function-expected.txt:
+        * fast/css/parsing-color-function.html:
+        Add xyz specific parsing tests, as the rgb ones can't be reusued due to xyz
+        not supporting percentages for any component.
+
 2021-02-03  Ziran Sun  <zsun@igalia.com>
 
         [css-grid][css-flex] <table> grid item should fill the grid area for 'stretch'/'normal' self alignment

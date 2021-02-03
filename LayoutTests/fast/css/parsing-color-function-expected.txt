@@ -123,6 +123,38 @@ PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0 10%)") is "rgb
 PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0deg)") is "rgba(0, 0, 0, 0)"
 PASS computedStyle("background-color", "color(prophoto-rgb 0% 0% 0deg)") is "rgba(0, 0, 0, 0)"
 PASS computedStyle("background-color", "color(prophoto-rgb 40% 0 0deg)") is "rgba(0, 0, 0, 0)"
+
+Testing color(xyz ...)
+PASS computedStyle("background-color", "color(xyz 0 0 0)") is "color(xyz 0 0 0)"
+PASS computedStyle("background-color", "color(xyz 0 0 0 / 1)") is "color(xyz 0 0 0)"
+PASS computedStyle("background-color", "color(xyz 1 1 1)") is "color(xyz 1 1 1)"
+PASS computedStyle("background-color", "color(xyz 1 1 1 / 1)") is "color(xyz 1 1 1)"
+PASS computedStyle("background-color", "color(xyz -1 -1 -1)") is "color(xyz -1 -1 -1)"
+PASS computedStyle("background-color", "color(xyz 0.1 0.1 0.1)") is "color(xyz 0.1 0.1 0.1)"
+PASS computedStyle("background-color", "color(xyz 10 10 10)") is "color(xyz 10 10 10)"
+PASS computedStyle("background-color", "color(xyz .2 .2 .25)") is "color(xyz 0.2 0.2 0.25)"
+PASS computedStyle("background-color", "color(xyz 0 0 0 / 0.5)") is "color(xyz 0 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(xyz .20 0 10/0.5)") is "color(xyz 0.2 0 10 / 0.5)"
+PASS computedStyle("background-color", "color(xyz .20 0 10/50%)") is "color(xyz 0.2 0 10 / 0.5)"
+PASS computedStyle("background-color", "color(xyz 0 0 0 / -10%)") is "color(xyz 0 0 0 / 0)"
+PASS computedStyle("background-color", "color(xyz 0 0 0 / 110%)") is "color(xyz 0 0 0)"
+PASS computedStyle("background-color", "color(xyz 0 0 0 / 300%)") is "color(xyz 0 0 0)"
+PASS computedStyle("background-color", "color(xyz 1 1)") is "color(xyz 1 1 0)"
+PASS computedStyle("background-color", "color(xyz 1)") is "color(xyz 1 0 0)"
+PASS computedStyle("background-color", "color(xyz)") is "color(xyz 0 0 0)"
+PASS computedStyle("background-color", "color(xyz 1 1 / .5)") is "color(xyz 1 1 0 / 0.5)"
+PASS computedStyle("background-color", "color(xyz 1 / 0.5)") is "color(xyz 1 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(xyz / 50%)") is "color(xyz 0 0 0 / 0.5)"
+
+Test invalid values
+PASS computedStyle("background-color", "color(xyz 0 0 0 0)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0deg 0% 0)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0% 0 0)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0% 0 0 1)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0% 0 0 10%)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0% 0 0deg)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 0% 0% 0deg)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(xyz 40% 0 0deg)") is "rgba(0, 0, 0, 0)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

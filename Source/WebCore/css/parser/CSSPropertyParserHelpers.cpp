@@ -942,6 +942,36 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
     return Lab<float> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), *alpha };
 }
 
+static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
+{
+    ASSERT(args.peek().id() == CSSValueXyz);
+    consumeIdentRaw(args);
+
+    double channels[3] = { 0, 0, 0 };
+    [&] {
+        auto x = consumeNumberRaw(args, ValueRangeAll);
+        if (!x)
+            return;
+        channels[0] = *x;
+
+        auto y = consumeNumberRaw(args, ValueRangeAll);
+        if (!y)
+            return;
+        channels[1] = *y;
+
+        auto z = consumeNumberRaw(args, ValueRangeAll);
+        if (!z)
+            return;
+        channels[2] = *z;
+    }();
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    return XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), *alpha };
+}
+
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueColor);
@@ -966,6 +996,9 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
         break;
     case CSSValueSRGB:
         color = parseColorFunctionForRGBTypes<SRGBA<float>>(args);
+        break;
+    case CSSValueXyz:
+        color = parseColorFunctionForXYZParameters(args);
         break;
     default:
         return { };

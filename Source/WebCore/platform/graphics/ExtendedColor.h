@@ -66,7 +66,7 @@ inline bool operator!=(const ExtendedColor& a, const ExtendedColor& b)
 
 template<typename ColorType> inline Ref<ExtendedColor> ExtendedColor::create(const ColorType& color)
 {
-    return adoptRef(*new ExtendedColor(asColorComponents(color), color.colorSpace));
+    return adoptRef(*new ExtendedColor(asColorComponents(color), ColorSpaceFor<ColorType>));
 }
 
 inline Ref<ExtendedColor> ExtendedColor::create(ColorComponents<float> components, ColorSpace colorSpace)

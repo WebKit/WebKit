@@ -27,7 +27,6 @@
 
 #include "ColorComponents.h"
 #include "ColorModels.h"
-#include "ColorSpace.h"
 
 namespace WebCore {
 
@@ -149,9 +148,6 @@ template<typename T> constexpr void assertInRange(T)
 
 #endif
 
-template<typename, typename = void> inline constexpr bool HasColorSpaceMember = false;
-template<typename T> inline constexpr bool HasColorSpaceMember<T, std::void_t<decltype(std::declval<T>().colorSpace)>> = true;
-
 template<typename, typename = void> inline constexpr bool IsConvertibleToColorComponents = false;
 template<typename T> inline constexpr bool IsConvertibleToColorComponents<T, std::void_t<decltype(asColorComponents(std::declval<T>()))>> = true;
 
@@ -162,8 +158,8 @@ template<typename T, typename U, bool enabled> inline constexpr bool HasComponen
 template<typename T, typename U> inline constexpr bool HasComponentTypeValue<T, U, true> = std::is_same_v<typename T::ComponentType, U>;
 template<typename T, typename U> inline constexpr bool HasComponentType = HasComponentTypeValue<T, U, HasComponentTypeMember<T>>;
 
-template<typename T> inline constexpr bool IsColorType = HasColorSpaceMember<T> && IsConvertibleToColorComponents<T> && HasComponentTypeMember<T>;
-template<typename T, typename U> inline constexpr bool IsColorTypeWithComponentType = HasColorSpaceMember<T> && IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
+template<typename T> inline constexpr bool IsColorType = IsConvertibleToColorComponents<T> && HasComponentTypeMember<T>;
+template<typename T, typename U> inline constexpr bool IsColorTypeWithComponentType = IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
 
 template<typename Parent> struct ColorWithAlphaHelper {
     // Helper to allow convenient syntax for working with color types.
@@ -228,7 +224,6 @@ template<typename T> struct A98RGB : RGBAType<A98RGB, T, RGBModel<T>> {
     using RGBAType<A98RGB, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearA98RGB<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-    static constexpr auto colorSpace = ColorSpace::A98RGB;
 };
 template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
 
@@ -236,7 +231,6 @@ template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
     using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearDisplayP3<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-    static constexpr auto colorSpace = ColorSpace::DisplayP3;
 };
 template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
@@ -286,7 +280,6 @@ template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> 
     using RGBAType<LinearSRGBA, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = SRGBA<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-    static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
 template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
 
@@ -294,7 +287,6 @@ template<typename T> struct ProPhotoRGB : RGBAType<ProPhotoRGB, T, RGBModel<T>> 
     using RGBAType<ProPhotoRGB, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearProPhotoRGB<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
-    static constexpr auto colorSpace = ColorSpace::ProPhotoRGB;
 };
 template<typename T> ProPhotoRGB(T, T, T, T) -> ProPhotoRGB<T>;
 
@@ -302,7 +294,6 @@ template<typename T> struct Rec2020 : RGBAType<Rec2020, T, RGBModel<T>> {
     using RGBAType<Rec2020, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearRec2020<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-    static constexpr auto colorSpace { ColorSpace::Rec2020 };
 };
 template<typename T> Rec2020(T, T, T, T) -> Rec2020<T>;
 
@@ -310,7 +301,6 @@ template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
     using RGBAType<SRGBA, T, RGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearSRGBA<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-    static constexpr auto colorSpace { ColorSpace::SRGB };
 };
 template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
 
@@ -320,7 +310,6 @@ template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
     using Model = LabModel<T>;
     using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
-    static constexpr auto colorSpace = ColorSpace::Lab;
 
     constexpr Lab(T lightness, T a, T b, T alpha = AlphaTraits<T>::opaque)
         : lightness { lightness }

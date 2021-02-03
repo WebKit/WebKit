@@ -148,6 +148,20 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBColorSpace;
 }
 
+CGColorSpaceRef xyzD50ColorSpaceRef()
+{
+    static CGColorSpaceRef xyzD50ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        xyzD50ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericXYZ);
+#else
+        xyzD50ColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return xyzD50ColorSpace;
+}
+
 }
 
 #endif // USE(CG)

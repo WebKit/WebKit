@@ -1409,6 +1409,7 @@ display-p3
 prophoto-rgb
 // rec2020
 // sRGB
+xyz
 
 // prefers-default-appearance
 prefers

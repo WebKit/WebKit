@@ -256,28 +256,4 @@ template<typename T> SRGBA<float> toSRGBA(const T& color)
     return toSRGBA(performChomaticAdapatation<SRGBA<float>>(toXYZA(color)));
 }
 
-
-template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
-{
-    switch (colorSpace) {
-    case ColorSpace::A98RGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
-    case ColorSpace::DisplayP3:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
-    case ColorSpace::Lab:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
-    case ColorSpace::LinearRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
-    case ColorSpace::ProPhotoRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
-    case ColorSpace::Rec2020:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Rec2020<T>>(components));
-    case ColorSpace::SRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
-}
-
 } // namespace WebCore

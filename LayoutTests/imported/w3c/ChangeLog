@@ -1,3 +1,23 @@
+2021-02-03  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(xyz ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221190
+
+        Reviewed by Simon Fraser.
+
+        Add some new WPT tests for color(xyz ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/xyz-001-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-001.html: Added.
+        * web-platform-tests/css/css-color/xyz-002-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-002.html: Added.
+        * web-platform-tests/css/css-color/xyz-003-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-003.html: Added.
+        * web-platform-tests/css/css-color/xyz-004-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-004.html: Added.
+        * web-platform-tests/css/css-color/xyz-005-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-005.html: Added.
+
 2021-02-03  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] max-height percentages are wrongly resolved for replaced grid items

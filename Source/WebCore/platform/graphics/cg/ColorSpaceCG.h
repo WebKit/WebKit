@@ -39,6 +39,7 @@ WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef proPhotoRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef rec2020ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef xyzD50ColorSpaceRef();
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
@@ -57,6 +58,8 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return rec2020ColorSpaceRef();
     case ColorSpace::SRGB:
         return sRGBColorSpaceRef();
+    case ColorSpace::XYZ_D50:
+        return xyzD50ColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();

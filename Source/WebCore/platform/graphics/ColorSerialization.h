@@ -31,54 +31,12 @@ namespace WebCore {
 
 class Color;
 
-template<typename> struct A98RGB;
-template<typename> struct DisplayP3;
-template<typename> struct Lab;
-template<typename> struct LinearSRGBA;
-template<typename> struct ProPhotoRGB;
-template<typename> struct Rec2020;
-template<typename> struct SRGBA;
-
-// serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
-// serializationForCSS returns the color serialized according to CSS
-// serializationForRenderTreeAsText returns the color serialized for DumpRenderTree, #RRGGBB, #RRGGBBAA or the CSS serialization
+// serializationForCSS returns the color serialized according to CSS <https://drafts.csswg.org/css-color-4/#serializing-color-values>.
+// serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015).
+// serializationForRenderTreeAsText returns the color serialized for DumpRenderTree, #RRGGBB, #RRGGBBAA or the CSS serialization.
 
 WEBCORE_EXPORT String serializationForCSS(const Color&);
 WEBCORE_EXPORT String serializationForHTML(const Color&);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const Color&);
-
-// Per-ColorType specializations.
-
-WEBCORE_EXPORT String serializationForCSS(const A98RGB<float>&);
-WEBCORE_EXPORT String serializationForHTML(const A98RGB<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const A98RGB<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const DisplayP3<float>&);
-WEBCORE_EXPORT String serializationForHTML(const DisplayP3<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const DisplayP3<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const Lab<float>&);
-WEBCORE_EXPORT String serializationForHTML(const Lab<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const Lab<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const LinearSRGBA<float>&);
-WEBCORE_EXPORT String serializationForHTML(const LinearSRGBA<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const ProPhotoRGB<float>&);
-WEBCORE_EXPORT String serializationForHTML(const ProPhotoRGB<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const ProPhotoRGB<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const Rec2020<float>&);
-WEBCORE_EXPORT String serializationForHTML(const Rec2020<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const Rec2020<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(const SRGBA<float>&);
-WEBCORE_EXPORT String serializationForHTML(const SRGBA<float>&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const SRGBA<float>&);
-
-WEBCORE_EXPORT String serializationForCSS(SRGBA<uint8_t>);
-WEBCORE_EXPORT String serializationForHTML(SRGBA<uint8_t>);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(SRGBA<uint8_t>);
 
 }

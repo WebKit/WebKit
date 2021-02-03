@@ -36,6 +36,43 @@
 
 namespace WebCore {
 
+static String serializationForCSS(const A98RGB<float>&);
+static String serializationForHTML(const A98RGB<float>&);
+static String serializationForRenderTreeAsText(const A98RGB<float>&);
+
+static String serializationForCSS(const DisplayP3<float>&);
+static String serializationForHTML(const DisplayP3<float>&);
+static String serializationForRenderTreeAsText(const DisplayP3<float>&);
+
+static String serializationForCSS(const Lab<float>&);
+static String serializationForHTML(const Lab<float>&);
+static String serializationForRenderTreeAsText(const Lab<float>&);
+
+static String serializationForCSS(const LinearSRGBA<float>&);
+static String serializationForHTML(const LinearSRGBA<float>&);
+static String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
+
+static String serializationForCSS(const ProPhotoRGB<float>&);
+static String serializationForHTML(const ProPhotoRGB<float>&);
+static String serializationForRenderTreeAsText(const ProPhotoRGB<float>&);
+
+static String serializationForCSS(const Rec2020<float>&);
+static String serializationForHTML(const Rec2020<float>&);
+static String serializationForRenderTreeAsText(const Rec2020<float>&);
+
+static String serializationForCSS(const SRGBA<float>&);
+static String serializationForHTML(const SRGBA<float>&);
+static String serializationForRenderTreeAsText(const SRGBA<float>&);
+
+static String serializationForCSS(SRGBA<uint8_t>);
+static String serializationForHTML(SRGBA<uint8_t>);
+static String serializationForRenderTreeAsText(SRGBA<uint8_t>);
+
+static String serializationForCSS(const XYZA<float, WhitePoint::D50>&);
+static String serializationForHTML(const XYZA<float, WhitePoint::D50>&);
+static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&);
+
+
 String serializationForCSS(const Color& color)
 {
     return color.callOnUnderlyingType([] (auto underlyingColor) {
@@ -74,6 +111,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "rec2020"_s;
     case ColorSpace::SRGB:
         return "srgb"_s;
+    case ColorSpace::XYZ_D50:
+        return "xyz"_s;
     }
 
     ASSERT_NOT_REACHED();
@@ -84,8 +123,8 @@ template<typename ColorType> static String serialization(const ColorType& color)
 {
     auto [c1, c2, c3, alpha] = color;
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, ')');
-    return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
+        return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, ')');
+    return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
 }
 
 // MARK: A98RGB<float> overloads
@@ -258,6 +297,23 @@ String serializationForRenderTreeAsText(SRGBA<uint8_t> color)
     if (alpha < 0xFF)
         return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
     return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2));
+}
+
+// MARK: XYZA<float, WhitePoint::D50> overloads
+
+String serializationForCSS(const XYZA<float, WhitePoint::D50>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const XYZA<float, WhitePoint::D50>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color)
+{
+    return serialization(color);
 }
 
 }

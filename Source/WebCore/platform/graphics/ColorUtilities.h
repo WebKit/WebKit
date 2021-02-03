@@ -171,6 +171,11 @@ template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const Col
     return makeFromComponents<ColorType>(copy);
 }
 
+template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>& color)
+{
+    return color.y == 0 && color.alpha == AlphaTraits<float>::opaque;
+}
+
 constexpr bool isBlack(const Lab<float>& color)
 {
     return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
@@ -182,6 +187,11 @@ constexpr bool isBlack(const ColorType& color)
     auto [c1, c2, c3, alpha] = color;
     constexpr auto ranges = ColorType::Model::ranges;
     return c1 == ranges[0].min && c2 == ranges[1].min && c3 == ranges[2].min && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+}
+
+template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>& color)
+{
+    return color.y == 1 && color.alpha == AlphaTraits<float>::opaque;
 }
 
 constexpr bool isWhite(const Lab<float>& color)

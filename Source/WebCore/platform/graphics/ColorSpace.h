@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ColorTypes.h"
+
 namespace WTF {
 class TextStream;
 }
@@ -39,8 +41,48 @@ enum class ColorSpace : uint8_t {
     ProPhotoRGB,
     Rec2020,
     SRGB,
+    XYZ_D50,
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
+
+
+template<typename> struct ColorSpaceMapping;
+template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto colorSpace { ColorSpace::A98RGB }; };
+template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
+template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearRGB }; };
+template<typename T> struct ColorSpaceMapping<ProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ProPhotoRGB }; };
+template<typename T> struct ColorSpaceMapping<Rec2020<T>> { static constexpr auto colorSpace { ColorSpace::Rec2020 }; };
+template<typename T> struct ColorSpaceMapping<SRGBA<T>> { static constexpr auto colorSpace { ColorSpace::SRGB }; };
+template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D50>> { static constexpr auto colorSpace { ColorSpace::XYZ_D50 }; };
+
+template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<ColorType>::colorSpace;
+
+
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
+{
+    switch (colorSpace) {
+    case ColorSpace::A98RGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
+    case ColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+    case ColorSpace::Lab:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
+    case ColorSpace::LinearRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::ProPhotoRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
+    case ColorSpace::Rec2020:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Rec2020<T>>(components));
+    case ColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+    case ColorSpace::XYZ_D50:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D50>>(components));
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+}
 
 } // namespace WebCore
