@@ -1,5 +1,50 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271751. rdar://problem/73890346
+
+    Crash under FFTFrame::fftSetupForSize()
+    https://bugs.webkit.org/show_bug.cgi?id=220866
+    <rdar://73199504>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    The crash was caused by FFTFrame::fftSetupForSize() but being called concurrently
+    from "HRTF database loader" threads. This patch makes FFTFrame::fftSetupForSize()
+    thread safe to address the issue.
+    
+    Test: webaudio/Panner/PannerNode-crash.html
+    
+    * platform/audio/mac/FFTFrameMac.cpp:
+    (WebCore::fftSetups):
+    (WebCore::FFTFrame::fftSetupForSize):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * webaudio/Panner/PannerNode-crash-expected.txt: Added.
+    * webaudio/Panner/PannerNode-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271751 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-22  Chris Dumez  <cdumez@apple.com>
+
+            Crash under FFTFrame::fftSetupForSize()
+            https://bugs.webkit.org/show_bug.cgi?id=220866
+            <rdar://73199504>
+
+            Reviewed by Eric Carlson.
+
+            Add layout test coverage.
+
+            * webaudio/Panner/PannerNode-crash-expected.txt: Added.
+            * webaudio/Panner/PannerNode-crash.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271644. rdar://problem/73890311
 
     [css-multicol] OOM with 1px height columns
