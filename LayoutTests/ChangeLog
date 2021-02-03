@@ -1,3 +1,15 @@
+2021-02-03  Fernando Jimenez Moreno  <fjimenez@igalia.com>
+
+        [GStreamer] Add DASH support in the registry scanner
+        https://bugs.webkit.org/show_bug.cgi?id=215922
+
+        Reviewed by Philippe Normand.
+
+        Add test to check that 'application/dash+xml' can potentially be played
+
+        * platform/glib/media/media-can-play-dash-expected.txt: Added.
+        * platform/glib/media/media-can-play-dash.html: Added.
+
 2021-02-03  Rob Buis  <rbuis@igalia.com>
 
         Rename aspect-ratio/parsing/contain-intrinsic-size*

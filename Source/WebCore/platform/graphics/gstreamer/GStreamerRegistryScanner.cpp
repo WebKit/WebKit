@@ -336,6 +336,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::Demuxer, "application/x-3gp", { }, { } },
         { ElementFactories::Type::Demuxer, "application/x-hls", { "application/vnd.apple.mpegurl", "application/x-mpegurl" }, { } },
         { ElementFactories::Type::Demuxer, "application/x-pn-realaudio", { }, { } },
+        { ElementFactories::Type::Demuxer, "application/dash+xml", { }, { } },
         { ElementFactories::Type::Demuxer, "audio/x-aiff", { }, { } },
         { ElementFactories::Type::Demuxer, "audio/x-wav", { "audio/x-wav", "audio/wav", "audio/vnd.wave" }, { "1" } },
         { ElementFactories::Type::Demuxer, "video/quicktime", { }, { } },
