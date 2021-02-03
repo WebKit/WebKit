@@ -67,7 +67,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 ] dictionary RTCRtpTransceiverInit {
     RtpTransceiverDirection direction = "sendrecv";
     sequence<MediaStream> streams = [];
-    // FIXME 169662: missing sendEncodings
+    sequence<RTCRtpEncodingParameters> sendEncodings = [];
 };
 
 [
