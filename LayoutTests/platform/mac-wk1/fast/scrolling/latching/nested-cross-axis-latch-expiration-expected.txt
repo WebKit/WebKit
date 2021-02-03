@@ -1,7 +1,0 @@
-PASS innerOverflowScrollEventCount > 0 is true
-FAIL outerOverflowScrollEventCount should be 0. Was 11.
-PASS windowScrollEventCount is 0
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

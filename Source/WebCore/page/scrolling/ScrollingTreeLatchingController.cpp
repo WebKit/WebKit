@@ -95,7 +95,10 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
     LockHolder locker(m_latchedNodeMutex);
 
     if (wheelEvent.useLatchedEventElement() && m_latchedNodeAndSteps && m_latchedNodeAndSteps->scrollingNodeID == scrollingNodeID) {
-        m_lastLatchedNodeInterationTime = MonotonicTime::now();
+        if (wheelEvent.isEndOfMomentumScroll())
+            m_lastLatchedNodeInterationTime = { };
+        else
+            m_lastLatchedNodeInterationTime = MonotonicTime::now();
         return;
     }
 
