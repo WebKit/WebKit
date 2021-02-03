@@ -38,15 +38,14 @@ namespace Layout {
 
 static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
 
-static inline bool isWhitespaceCharacter(UChar character, bool preserveNewline)
+static size_t moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline)
 {
-    return character == space || character == tabCharacter || (character == newlineCharacter && !preserveNewline);
-}
+    auto isWhitespaceCharacter = [&](auto character) {
+        return character == space || character == tabCharacter || (character == newlineCharacter && !preserveNewline);
+    };
 
-static unsigned moveToNextNonWhitespacePosition(const StringView& textContent, unsigned startPosition, bool preserveNewline)
-{
     auto nextNonWhiteSpacePosition = startPosition;
-    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition], preserveNewline))
+    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition]))
         ++nextNonWhiteSpacePosition;
     return nextNonWhiteSpacePosition - startPosition;
 }
@@ -95,7 +94,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             continue;
         }
 
-        if (isWhitespaceCharacter(text[currentPosition], style.preserveNewline())) {
+        if (auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline())) {
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
                 auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
@@ -116,13 +115,11 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
                 }();
                 inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, isWordSeparator, width));
             };
-
-            auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline());
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
-                for (unsigned i = 0; i < length; ++i)
+                for (size_t i = 0; i < length; ++i)
                     appendWhitespaceItem(currentPosition + i, 1);
             } else
                 appendWhitespaceItem(currentPosition, length);
