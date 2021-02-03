@@ -1,5 +1,42 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271895. rdar://problem/73890430
+
+    REGRESSION(r261238): WKWebView crashes on launch inside a quicklook preview
+    https://bugs.webkit.org/show_bug.cgi?id=219632
+    <rdar://problem/72154830>
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Partially revert r261238 to allow applications without access to 'nsurlsessiond' to still
+    be able to use WebKit for local file access. This workaround should be removed once we
+    complete the work needed to support true offline WebKit use.
+    
+    * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+    (WebKit::XPCServiceInitializerDelegate::checkEntitlements): Add an early return if the application
+    possesses the 'com.apple.security.network.client' entitlement.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271895 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION(r261238): WKWebView crashes on launch inside a quicklook preview
+            https://bugs.webkit.org/show_bug.cgi?id=219632
+            <rdar://problem/72154830>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Partially revert r261238 to allow applications without access to 'nsurlsessiond' to still
+            be able to use WebKit for local file access. This workaround should be removed once we
+            complete the work needed to support true offline WebKit use.
+
+            * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+            (WebKit::XPCServiceInitializerDelegate::checkEntitlements): Add an early return if the application
+            possesses the 'com.apple.security.network.client' entitlement.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271890. rdar://problem/73890942
 
     [CoreIPC] Add size check in decodeSharedBuffer to allow it to be validated against the SharedMemory received
