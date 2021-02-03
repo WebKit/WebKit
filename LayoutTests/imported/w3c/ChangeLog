@@ -1,3 +1,25 @@
+2021-02-03  Sam Weinig  <weinig@apple.com>
+
+        Add support for hwb() colors defined in CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221352
+
+        Reviewed by Darin Adler.
+
+        Add some new WPT tests for hwb() that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/color-resolving-hwb-expected.txt: Added.
+        * web-platform-tests/css/css-color/color-resolving-hwb.html: Added.
+        * web-platform-tests/css/css-color/hwb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-001.html: Added.
+        * web-platform-tests/css/css-color/hwb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-002.html: Added.
+        * web-platform-tests/css/css-color/hwb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-003.html: Added.
+        * web-platform-tests/css/css-color/hwb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-004.html: Added.
+        * web-platform-tests/css/css-color/hwb-005-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-005.html: Added.
+
 2021-02-03  Ziran Sun  <zsun@igalia.com>
 
         the nested grid container which has replaced item with 'max-height' has wrong width(0px).

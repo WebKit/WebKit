@@ -36,6 +36,7 @@ template<typename> struct A98RGB;
 template<typename> struct DisplayP3;
 template<typename> struct ExtendedSRGBA;
 template<typename> struct HSLA;
+template<typename> struct HWBA;
 template<typename> struct LCHA;
 template<typename> struct Lab;
 template<typename> struct LinearA98RGB;
@@ -399,6 +400,38 @@ template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
 template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T>& c)
 {
     return { c.hue, c.saturation, c.lightness, c.alpha };
+}
+
+// MARK: - HWBA Color Type.
+
+template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
+    using ComponentType = T;
+    using Model = HWBModel<T>;
+    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+
+    constexpr HWBA(T hue, T whiteness, T blackness, T alpha = AlphaTraits<T>::opaque)
+        : hue { hue }
+        , whiteness { whiteness }
+        , blackness { blackness }
+        , alpha { alpha }
+    {
+        assertInRange(*this);
+    }
+
+    constexpr HWBA()
+        : HWBA { 0, 0, 0, 0 }
+    {
+    }
+
+    T hue;
+    T whiteness;
+    T blackness;
+    T alpha;
+};
+
+template<typename T> constexpr ColorComponents<T> asColorComponents(const HWBA<T>& c)
+{
+    return { c.hue, c.whiteness, c.blackness, c.alpha };
 }
 
 // MARK: - XYZ Color Type.

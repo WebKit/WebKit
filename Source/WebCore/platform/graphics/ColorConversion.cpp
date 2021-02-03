@@ -305,11 +305,16 @@ LinearSRGBA<float>::ReferenceXYZ toXYZA(const LinearSRGBA<float>& color)
 
 // MARK: HSL conversions.
 
-HSLA<float> toHSLA(const SRGBA<float>& color)
-{
-    // http://en.wikipedia.org/wiki/HSL_color_space.
-    auto [r, g, b, alpha] = color;
+struct HSLHueCalculationResult {
+    float hue;
+    float min;
+    float max;
+    float chroma;
+};
 
+static HSLHueCalculationResult calculateHSLHue(const SRGBA<float>& color)
+{
+    auto [r, g, b, alpha] = color;
     auto [min, max] = std::minmax({ r, g, b });
     float chroma = max - min;
 
@@ -328,6 +333,15 @@ HSLA<float> toHSLA(const SRGBA<float>& color)
 
     hue /= 360.0f;
 
+    return { hue, min, max, chroma };
+}
+
+HSLA<float> toHSLA(const SRGBA<float>& color)
+{
+    // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
+    auto [r, g, b, alpha] = color;
+    auto [hue, min, max, chroma] = calculateHSLHue(color);
+
     float lightness = 0.5f * (max + min);
     float saturation;
     if (!chroma)
@@ -337,55 +351,101 @@ HSLA<float> toHSLA(const SRGBA<float>& color)
     else
         saturation = (chroma / (2.0f - (max + min)));
 
-    return {
-        hue,
-        saturation,
-        lightness,
-        alpha
-    };
+    return { hue, saturation, lightness, alpha };
 }
 
-// Hue is in the range 0-6, other args in 0-1.
-static float calcHue(float temp1, float temp2, float hueVal)
-{
-    if (hueVal < 0.0f)
-        hueVal += 6.0f;
-    else if (hueVal >= 6.0f)
-        hueVal -= 6.0f;
-    if (hueVal < 1.0f)
-        return temp1 + (temp2 - temp1) * hueVal;
-    if (hueVal < 3.0f)
-        return temp2;
-    if (hueVal < 4.0f)
-        return temp1 + (temp2 - temp1) * (4.0f - hueVal);
-    return temp1;
-}
-
-// Explanation of this algorithm can be found in the CSS Color 4 Module
-// specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
-// further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
 SRGBA<float> toSRGBA(const HSLA<float>& color)
 {
+    // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
     auto [hue, saturation, lightness, alpha] = color;
 
-    // Convert back to RGB.
-    if (!saturation) {
-        return {
-            lightness,
-            lightness,
-            lightness,
-            alpha
-        };
-    }
+    if (!saturation)
+        return { lightness, lightness, lightness, alpha };
     
     float temp2 = lightness <= 0.5f ? lightness * (1.0f + saturation) : lightness + saturation - lightness * saturation;
     float temp1 = 2.0f * lightness - temp2;
     
-    hue *= 6.0f; // calcHue() wants hue in the 0-6 range.
+    // Hue is in the range 0-6, other args in 0-1.
+    auto hueToRGB = [](float temp1, float temp2, float hue) {
+        if (hue < 1.0f)
+            return temp1 + (temp2 - temp1) * hue;
+        if (hue < 3.0f)
+            return temp2;
+        if (hue < 4.0f)
+            return temp1 + (temp2 - temp1) * (4.0f - hue);
+        return temp1;
+    };
+
+    // hueToRGB() wants hue in the 0-6 range.
+    hue *= 6.0f;
+
+    auto hueForRed = hue + 2.0f;
+    auto hueForGreen = hue;
+    auto hueForBlue = hue - 2.0f;
+    if (hueForRed > 6.0f)
+        hueForRed -= 6.0f;
+    else if (hueForBlue < 0.0f)
+        hueForBlue += 6.0f;
+
     return {
-        calcHue(temp1, temp2, hue + 2.0f),
-        calcHue(temp1, temp2, hue),
-        calcHue(temp1, temp2, hue - 2.0f),
+        hueToRGB(temp1, temp2, hueForRed),
+        hueToRGB(temp1, temp2, hueForGreen),
+        hueToRGB(temp1, temp2, hueForBlue),
+        alpha
+    };
+}
+
+// MARK: HWB conversions.
+
+HWBA<float> toHWBA(const SRGBA<float>& color)
+{
+    // https://drafts.csswg.org/css-color-4/#rgb-to-hwb
+    auto [hue, min, max, chroma] = calculateHSLHue(color);
+    auto whiteness = min;
+    auto blackness = 1.0f - max;
+    
+    return { hue, whiteness, blackness, color.alpha };
+}
+
+SRGBA<float> toSRGBA(const HWBA<float>& color)
+{
+    // https://drafts.csswg.org/css-color-4/#hwb-to-rgb
+    auto [hue, whiteness, blackness, alpha] = color;
+
+    if (whiteness + blackness == 1.0f)
+        return { whiteness, whiteness, whiteness, alpha };
+
+    // This is the hueToRGB function in toSRGBA(const HSLA&) with temp1 == 0
+    // and temp2 == 1 strength reduced through it.
+    auto hueToRGB = [](float hue) {
+        if (hue < 1.0f)
+            return hue;
+        if (hue < 3.0f)
+            return 1.0f;
+        if (hue < 4.0f)
+            return 4.0f - hue;
+        return 0.0f;
+    };
+
+    auto applyWhitenessBlackness = [&](float component) {
+        return (component * (1.0f - color.whiteness - color.blackness)) + color.whiteness;
+    };
+
+    // hueToRGB() wants hue in the 0-6 range.
+    hue *= 6.0f;
+
+    auto hueForRed = hue + 2.0f;
+    auto hueForGreen = hue;
+    auto hueForBlue = hue - 2.0f;
+    if (hueForRed > 6.0f)
+        hueForRed -= 6.0f;
+    else if (hueForBlue < 0.0f)
+        hueForBlue += 6.0f;
+
+    return {
+        applyWhitenessBlackness(hueToRGB(hueForRed)),
+        applyWhitenessBlackness(hueToRGB(hueForGreen)),
+        applyWhitenessBlackness(hueToRGB(hueForBlue)),
         alpha
     };
 }
@@ -524,6 +584,18 @@ HSLA<float>::ReferenceXYZ toXYZA(const HSLA<float>& color)
 HSLA<float> toHSLA(const HSLA<float>::ReferenceXYZ& color)
 {
     return toHSLA(toSRGBA(color));
+}
+
+// - HWBA combination functions.
+
+HWBA<float>::ReferenceXYZ toXYZA(const HWBA<float>& color)
+{
+    return toXYZA(toSRGBA(color));
+}
+
+HWBA<float> toHWBA(const HWBA<float>::ReferenceXYZ& color)
+{
+    return toHWBA(toSRGBA(color));
 }
 
 // - LCHA combination functions.

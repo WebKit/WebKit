@@ -71,6 +71,12 @@ WEBCORE_EXPORT HSLA<float> toHSLA(const HSLA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
+// HWBA
+WEBCORE_EXPORT HWBA<float>::ReferenceXYZ toXYZA(const HWBA<float>&);
+WEBCORE_EXPORT HWBA<float> toHWBA(const HWBA<float>::ReferenceXYZ&);
+// Additions
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const HWBA<float>&);
+
 // LCHA
 WEBCORE_EXPORT LCHA<float>::ReferenceXYZ toXYZA(const LCHA<float>&);
 WEBCORE_EXPORT LCHA<float> toLCHA(const LCHA<float>::ReferenceXYZ&);
@@ -137,6 +143,7 @@ WEBCORE_EXPORT SRGBA<float> toSRGBA(const SRGBA<float>::ReferenceXYZ&);
 // Additions
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+WEBCORE_EXPORT HWBA<float> toHWBA(const SRGBA<float>&);
 
 
 // Chromatic Adaptation conversions.
@@ -162,6 +169,7 @@ constexpr A98RGB<float> toA98RGB(const A98RGB<float>& color) { return color; }
 constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
 constexpr ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>& color) { return color; }
 constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
+constexpr HWBA<float> toHWBA(const HWBA<float>& color) { return color; }
 constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
 constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
 constexpr LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>& color) { return color; }
@@ -199,6 +207,11 @@ template<typename T> ExtendedSRGBA<float> toExtendedSRGBA(const T& color)
 template<typename T> HSLA<float> toHSLA(const T& color)
 {
     return toHSLA(performChomaticAdapatation<HSLA<float>>(toXYZA(color)));
+}
+
+template<typename T> HWBA<float> toHWBA(const T& color)
+{
+    return toHWBA(performChomaticAdapatation<HWBA<float>>(toXYZA(color)));
 }
 
 template<typename T> LCHA<float> toLCHA(const T& color)

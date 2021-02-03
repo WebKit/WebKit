@@ -829,6 +829,65 @@ static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
     return WTF::nullopt;
 }
 
+static Color parseHWBParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    ASSERT(range.peek().functionId() == CSSValueHwb);
+    CSSParserTokenRange args = consumeFunction(range);
+
+    double hueAngleInDegrees;
+    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
+    else if (auto number = consumeNumberRaw(args))
+        hueAngleInDegrees = *number;
+    else
+        return { };
+
+    auto whiteness = consumePercentRaw(args, ValueRangeAll);
+    if (!whiteness)
+        return { };
+
+    auto blackness = consumePercentRaw(args, ValueRangeAll);
+    if (!blackness)
+        return { };
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // Normalize hue.
+
+    hueAngleInDegrees = std::fmod(hueAngleInDegrees, 360.0);
+    if (hueAngleInDegrees < 0.0)
+        hueAngleInDegrees += 360.0;
+    
+    // Convert angle to normalized form from 0 - 1.
+    auto normalizedHue = hueAngleInDegrees / 360.0;
+
+    // Normalize whiteness/blackness.
+
+    //   Values outside of these ranges are not invalid, but are clamped to the
+    //   ranges defined here at computed-value time.
+    auto nomalizedWhiteness = clampTo<double>(*whiteness, 0, 100);
+    auto nomalizedBlackness = clampTo<double>(*blackness, 0, 100);
+
+    //   If the sum of these two arguments is greater than 100%, then at
+    //   computed-value time they are further normalized to add up to 100%, with
+    //   the same relative ratio.
+    if (auto sum = nomalizedWhiteness + nomalizedBlackness; sum >= 100) {
+        nomalizedWhiteness *= 100.0 / sum;
+        nomalizedBlackness *= 100.0 / sum;
+    }
+
+    // Convert to normalized form from 0 - 1.
+    nomalizedWhiteness /= 100.0;
+    nomalizedBlackness /= 100.0;
+
+    return convertTo<SRGBA<uint8_t>>(toSRGBA(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(nomalizedWhiteness), static_cast<float>(nomalizedBlackness), static_cast<float>(*alpha) }));
+}
+
 static Color parseLabParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueLab);
@@ -1065,6 +1124,9 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
     case CSSValueHsl:
     case CSSValueHsla:
         color = parseHSLParameters(colorRange, cssParserMode);
+        break;
+    case CSSValueHwb:
+        color = parseHWBParameters(colorRange, cssParserMode);
         break;
     case CSSValueLab:
         color = parseLabParameters(colorRange);

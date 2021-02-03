@@ -34,6 +34,7 @@ template<typename> struct AlphaTraits;
 template<typename> struct ColorComponentRange;
 template<typename> struct ExtendedRGBModel;
 template<typename> struct HSLModel;
+template<typename> struct HWBModel;
 template<typename> struct LCHModel;
 template<typename> struct LabModel;
 template<typename> struct RGBModel;
@@ -66,11 +67,20 @@ template<> struct ExtendedRGBModel<float> {
 
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 360 },
-        { 0, 100 },
-        { 0, 100 }
+        { 0, 1 },
+        { 0, 1 },
+        { 0, 1 }
     } };
-    static constexpr bool isInvertible = true;
+    static constexpr bool isInvertible = false;
+};
+
+template<> struct HWBModel<float> {
+    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
+        { 0, 1 },
+        { 0, 1 },
+        { 0, 1 }
+    } };
+    static constexpr bool isInvertible = false;
 };
 
 template<> struct LabModel<float> {

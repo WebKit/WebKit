@@ -1261,6 +1261,7 @@ rgb
 rgba
 hsl
 hsla
+hwb
 lab
 lch
 //color
