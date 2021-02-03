@@ -22,21 +22,21 @@ PASS getComputedStyle(button.element).height is "16px"
 AirplayButton
 PASS getComputedStyle(button.element).top became "18px"
 PASS getComputedStyle(button.element).left is "12px"
-PASS getComputedStyle(button.element).height is "13px"
+PASS getComputedStyle(button.element).height is "16px"
 
 PiPButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "44px"
+PASS getComputedStyle(button.element).left is "47px"
 PASS getComputedStyle(button.element).height is "16px"
 
 TracksButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "79px"
-PASS getComputedStyle(button.element).height is "13px"
+PASS getComputedStyle(button.element).left is "82px"
+PASS getComputedStyle(button.element).height is "16px"
 
 FullscreenButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "112px"
+PASS getComputedStyle(button.element).left is "115px"
 PASS getComputedStyle(button.element).height is "16px"
 PASS successfullyParsed is true
 
