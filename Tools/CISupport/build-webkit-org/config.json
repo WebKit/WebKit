@@ -160,7 +160,7 @@
                     },
                     { "name": "Apple-Catalina-Debug-Build", "factory": "BuildFactory", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-test262", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-gpuprocess"],
+                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-gpuprocess"],
                       "workernames": ["bot687", "bot688"]
                     },
                     { "name": "Apple-Catalina-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "catalina-debug-tests-wk1",

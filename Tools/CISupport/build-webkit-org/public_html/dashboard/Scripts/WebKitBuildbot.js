@@ -34,7 +34,7 @@ WebKitBuildbot = function()
         "Apple-BigSur-Release-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-BigSur JSC": {platform: Dashboard.Platform.macOSBigSur, heading: "JavaScript", combinedQueues: {
             "Apple-BigSur-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
-            "Apple-BigSUr-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
+            "Apple-BigSur-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
         }},
         "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},

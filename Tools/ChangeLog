@@ -1,3 +1,14 @@
+2021-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update Test262 bot to Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=218844
+
+        Unreviewed infrastructure fix.
+
+        * CISupport/build-webkit-org/config.json: Remove an old trigger.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Fix typo in queue name.
+
 2021-02-02  Matt Lewis  <jlewis3@apple.com>
 
         Remove Apple macOS Mojave queues
