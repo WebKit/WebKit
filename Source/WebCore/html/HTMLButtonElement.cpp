@@ -117,7 +117,7 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomStri
         else
             m_type = SUBMIT;
         if (oldType != m_type) {
-            setNeedsWillValidateCheck();
+            updateWillValidateAndValidity();
             if (form() && (oldType == SUBMIT || m_type == SUBMIT))
                 form()->resetDefaultButton();
         }
