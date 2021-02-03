@@ -3074,6 +3074,7 @@ void GraphicsLayerCA::updateAnimations()
             if (earliestBeginTime)
                 earliestBeginTime += animationGroupBeginTime;
 
+            Vector<RefPtr<PlatformCAAnimation>> caAnimations;
             if (earliestBeginTime > currentTime) {
                 if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
                     prepareAnimationForAddition(*baseValueTransformAnimation);
