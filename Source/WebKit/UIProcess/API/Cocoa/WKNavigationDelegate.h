@@ -167,7 +167,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param challenge The authentication challenge.
  @param decisionHandler The decision handler you must invoke to respond to indicate whether or not to continue with the connection establishment.
  */
-- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*
  @abstract Called after using WKNavigationActionPolicyDownload.

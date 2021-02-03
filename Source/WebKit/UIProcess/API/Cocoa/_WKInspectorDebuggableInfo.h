@@ -38,9 +38,9 @@ typedef NS_ENUM(NSInteger, _WKInspectorDebuggableType) {
     _WKInspectorDebuggableTypeServiceWorker,
     _WKInspectorDebuggableTypePage,
     _WKInspectorDebuggableTypeWebPage,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 @interface _WKInspectorDebuggableInfo : NSObject <NSCopying>
 @property (nonatomic) _WKInspectorDebuggableType debuggableType;
 @property (nonatomic, copy) NSString *targetPlatformName;

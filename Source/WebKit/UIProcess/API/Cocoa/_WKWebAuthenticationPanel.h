@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelResult) {
     _WKWebAuthenticationPanelResultUnavailable,
     _WKWebAuthenticationPanelResultPresented,
     _WKWebAuthenticationPanelResultDidNotPresent,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
     _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent,
@@ -50,48 +50,48 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
     _WKWebAuthenticationPanelUpdateLAError,
     _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched,
     _WKWebAuthenticationPanelUpdateLANoCredential,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {
     _WKWebAuthenticationResultSucceeded,
     _WKWebAuthenticationResultFailed,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationTransport) {
     _WKWebAuthenticationTransportUSB,
     _WKWebAuthenticationTransportNFC,
     _WKWebAuthenticationTransportInternal,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
     _WKWebAuthenticationTypeCreate,
     _WKWebAuthenticationTypeGet,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKLocalAuthenticatorPolicy) {
     _WKLocalAuthenticatorPolicyAllow,
     _WKLocalAuthenticatorPolicyDisallow,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationSource) {
     _WKWebAuthenticationSourceLocal,
     _WKWebAuthenticationSourceExternal,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 // FIXME: <rdar://problem/71509141> Optimize the delegate for the AuthenticationService.framework.
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
 @optional
 
-- (void)panel:(_WKWebAuthenticationPanel *)panel updateWebAuthenticationPanel:(_WKWebAuthenticationPanelUpdate)update WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRemainingRetries:(NSUInteger)retries completionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses source:(_WKWebAuthenticationSource)source completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)panel:(_WKWebAuthenticationPanel *)panel decidePolicyForLocalAuthenticatorWithCompletionHandler:(void (^)(_WKLocalAuthenticatorPolicy policy))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)panel:(_WKWebAuthenticationPanel *)panel updateWebAuthenticationPanel:(_WKWebAuthenticationPanelUpdate)update WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+- (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+- (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRemainingRetries:(NSUInteger)retries completionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+- (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses source:(_WKWebAuthenticationSource)source completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)panel:(_WKWebAuthenticationPanel *)panel decidePolicyForLocalAuthenticatorWithCompletionHandler:(void (^)(_WKLocalAuthenticatorPolicy policy))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 @interface _WKWebAuthenticationPanel : NSObject
 
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
