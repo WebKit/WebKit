@@ -1,5 +1,17 @@
 2021-02-03  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Remove access to graphics related user clients
+        https://bugs.webkit.org/show_bug.cgi?id=221327
+        <rdar://problem/70496539>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to graphics related IOKit classes in the WebContent process on macOS when the GPU process is enabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-02-03  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Remove access to com.apple.cvmsServ
         https://bugs.webkit.org/show_bug.cgi?id=221336
         <rdar://problem/70495789>
