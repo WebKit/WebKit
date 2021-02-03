@@ -30,6 +30,7 @@
 
 #import "AppKitSPI.h"
 #import "LayerTreeContext.h"
+#import "NativeWebMouseEvent.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
@@ -396,6 +397,19 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         _page->setTopContentInset(_savedTopContentInset);
         [self _manager]->didExitFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
+
+        // FIXME(53342): remove once pointer events fire when elements move out from under the pointer.
+        NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
+            location:[NSEvent mouseLocation]
+            modifierFlags:[[NSApp currentEvent] modifierFlags]
+            timestamp:[NSDate timeIntervalSinceReferenceDate]
+            windowNumber:[[_webView window] windowNumber]
+            context:nullptr
+            eventNumber:0
+            clickCount:0
+            pressure:0];
+        WebKit::NativeWebMouseEvent webEvent(fakeEvent, nil, _webView);
+        _page->handleMouseEvent(webEvent);
     }
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

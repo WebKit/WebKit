@@ -1,3 +1,48 @@
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271656. rdar://problem/73890220
+
+    [Mac] Netflix controls do not fade out after entering fullscreen
+    https://bugs.webkit.org/show_bug.cgi?id=220472
+    <rdar://70602577>
+    
+    Reviewed by Eric Carlson.
+    
+    Test: TestWebKitAPI/Tests/mac/FullscreenPointerLeave.mm
+    
+    Netflix uses a "pointerleave" event over their playback controls to trigger setting their "fade out controls"
+    timer, but a "pointerleave" event isn't fired when the element moves out from under the pointer (either due to
+    style changes, or the window screen location moving due to entering fullscreen).
+    
+    Work around this behavior by sending a synthetic mouse event after entering fullscreen, which causes the
+    "pointerleave" event to be fired if, indeed, the pointer is no longer over the element in question.
+    
+    * UIProcess/mac/WKFullScreenWindowController.mm:
+    (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271656 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-20  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Netflix controls do not fade out after entering fullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=220472
+            <rdar://70602577>
+
+            Reviewed by Eric Carlson.
+
+            Test: TestWebKitAPI/Tests/mac/FullscreenPointerLeave.mm
+
+            Netflix uses a "pointerleave" event over their playback controls to trigger setting their "fade out controls"
+            timer, but a "pointerleave" event isn't fired when the element moves out from under the pointer (either due to
+            style changes, or the window screen location moving due to entering fullscreen).
+
+            Work around this behavior by sending a synthetic mouse event after entering fullscreen, which causes the
+            "pointerleave" event to be fired if, indeed, the pointer is no longer over the element in question.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+
 2021-02-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271939. rdar://problem/73838846
