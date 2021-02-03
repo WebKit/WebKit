@@ -1,0 +1,3 @@
+* { display: block; writing-mode: vertical-lr; -webkit-column-axis: horizontal; } *::first-letter {}
+if (window.testRunner) testRunner.dumpAsText();
+The test PASS if it does not crash.

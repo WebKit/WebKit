@@ -148,7 +148,7 @@ LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) c
     LayoutUnit contentLogicalTop = logicalTop() - multicolBlock.borderAndPaddingBefore();
 
     height -= contentLogicalTop;
-    return std::max(height, 1_lu); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
+    return std::max(height, 0_lu);
 }
 
 LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) const

@@ -1,5 +1,47 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271644. rdar://problem/73890311
+
+    [css-multicol] OOM with 1px height columns
+    https://bugs.webkit.org/show_bug.cgi?id=220490
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Test: fast/multicol/newmulticol/zero-height-columns-oom-crash.html
+    
+    Multicol sometimes computes <= 0 heights for the columns. For all those cases the code was adjusting them to 1px
+    values apparently to avoid creating an "infinite" amount of columns. However that adjustment was precisely causing
+    OOM situations in those cases where there was a relatively large amount of free space. In those cases the code was
+    creating dozens of thousands of 1px height columns (with all their associated structures) until we run out of memory.
+    
+    Using zero heights in those cases seem sane because it's already being properly handled in the current code.
+    
+    * rendering/RenderMultiColumnSet.cpp:
+    (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset const): cap negative heights to 0.
+    
+    LayoutTests:
+    
+    * fast/multicol/newmulticol/zero-height-columns-oom-crash-expected.txt: Added.
+    * fast/multicol/newmulticol/zero-height-columns-oom-crash.html: Added.
+    * imported/blink/fast/pagination/first-letter-inherit-all-crash-expected.txt: Updated expectations.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271644 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+            [css-multicol] OOM with 1px height columns
+            https://bugs.webkit.org/show_bug.cgi?id=220490
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/multicol/newmulticol/zero-height-columns-oom-crash-expected.txt: Added.
+            * fast/multicol/newmulticol/zero-height-columns-oom-crash.html: Added.
+            * imported/blink/fast/pagination/first-letter-inherit-all-crash-expected.txt: Updated expectations.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271635. rdar://problem/73890109
 
     Elements in a table are incorrectly selected in JavaScript.
