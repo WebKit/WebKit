@@ -1055,6 +1055,11 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     }
 
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
+        if (storageAccessGranted == StorageAccessWasGranted::No) {
+            completionHandler(storageAccessGranted);
+            return;
+        }
+
         ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [storageAccessGranted, completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(storageAccessGranted);
         });
