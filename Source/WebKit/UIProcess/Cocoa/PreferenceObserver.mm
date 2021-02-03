@@ -135,7 +135,6 @@
 #if PLATFORM(IOS_FAMILY)
         @"com.apple.Accessibility",
         @"com.apple.AdLib",
-        @"com.apple.Preferences",
         @"com.apple.SpeakSelection",
         @"com.apple.UIKit",
         @"com.apple.WebUI",
