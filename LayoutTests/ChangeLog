@@ -1,5 +1,69 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271796. rdar://problem/73847788
+
+    AX: @alt and bounds ignored when using img[src] points to an inaccessible SVG
+    https://bugs.webkit.org/show_bug.cgi?id=160705
+    <rdar://problem/27771579>
+    
+    Reviewed by Chris Fleizach and Darin Adler.
+    
+    Source/WebCore:
+    
+    Tests: accessibility/img-with-svg-source.html
+           accessibility/ios-simulator/img-with-svg-source.html
+    
+    The problem was caused by AccessibilityRenderObject::determineAccessibilityRole
+    that was returning AccessibilityRole::SVGRoot for all images with a remote
+    SVG source, regardless whether the SVG hierarchy contained some accessibility
+    data or not. This resulted in VoiceOver reading the image like an empty
+    group on Mac, or completely ignoring the image on iOS.
+    The solution in this patch is to only return AccessibilityRole::SVGRoot
+    if the SVG has some accessibility conveyable data. Added the method
+    AccessibilitySVGRoot::hasAccessibleContent for this purpose.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+    (WebCore::AccessibilityRenderObject::remoteSVGRootElement const):
+    Comment was missplaced, moved it to the right place.
+    (WebCore::AccessibilityRenderObject::addRemoteSVGChildren):
+    * accessibility/AccessibilitySVGRoot.cpp:
+    (WebCore::AccessibilitySVGRoot::hasAccessibleContent const):
+    * accessibility/AccessibilitySVGRoot.h:
+    
+    LayoutTests:
+    
+    * accessibility/img-with-svg-source-expected.txt: Added.
+    * accessibility/img-with-svg-source.html: Added.
+    * accessibility/ios-simulator/img-with-svg-source-expected.txt: Added.
+    * accessibility/ios-simulator/img-with-svg-source.html: Added.
+    * accessibility/svg-shape-labelled-expected.txt:
+    * accessibility/svg-shape-labelled.html:
+    Removed the <img> test cases since they are covered correctly in the new
+    test img-with-svg-source.html.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271796 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-25  Andres Gonzalez  <andresg_22@apple.com>
+
+            AX: @alt and bounds ignored when using img[src] points to an inaccessible SVG
+            https://bugs.webkit.org/show_bug.cgi?id=160705
+            <rdar://problem/27771579>
+
+            Reviewed by Chris Fleizach and Darin Adler.
+
+            * accessibility/img-with-svg-source-expected.txt: Added.
+            * accessibility/img-with-svg-source.html: Added.
+            * accessibility/ios-simulator/img-with-svg-source-expected.txt: Added.
+            * accessibility/ios-simulator/img-with-svg-source.html: Added.
+            * accessibility/svg-shape-labelled-expected.txt:
+            * accessibility/svg-shape-labelled.html:
+            Removed the <img> test cases since they are covered correctly in the new
+            test img-with-svg-source.html.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271790. rdar://problem/73847621
 
     AX: iOS: VO: Web: Column Names Not Announced

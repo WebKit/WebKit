@@ -19,17 +19,10 @@
     <circle id="circle3" cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
 </svg>
 
-<img id="test1" src="resources/apple-logo.svg"/>
-
-<img id="test2" src="resources/apple-logo.svg" alt="hello" />
-
-<img id="test3" alt="Apple logo" src="resources/apple-logo.svg" />
-
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-
     description("This tests that SVG shapes are exposed to ax tree as images if there are labels describing them.");
 
     if (window.accessibilityController) {
@@ -41,19 +34,8 @@
 
         var circle3 = accessibilityController.accessibleElementById("circle3");
         debug("circle3: " + (circle3 ? circle3.role : "Element not exposed"));
-
-        var image1 = accessibilityController.accessibleElementById("test1");
-        shouldBeTrue("!image1");
-
-        var image2 = accessibilityController.accessibleElementById("test2");
-        shouldBe("image2.role", "'AXRole: AXImage'");
-
-        var image3 = accessibilityController.accessibleElementById("test3");
-        shouldBe("image3.role", "'AXRole: AXImage'");
     }
-
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>
