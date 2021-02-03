@@ -1901,11 +1901,12 @@ gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
  *
  * Deprecated: 2.32
  */
-void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean)
+void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    g_warning("webkit_settings_set_enable_plugins is deprecated and does nothing. Plugins are no longer supported.");
+    if (enabled)
+        g_warning("webkit_settings_set_enable_plugins is deprecated and does nothing. Plugins are no longer supported.");
 }
 
 /**
