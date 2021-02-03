@@ -161,6 +161,12 @@ webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ Imag
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/reference-mutated.html [ ImageOnlyFailure ]
 
+# CSS transitions
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Timeout ]
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Timeout ]
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Timeout ]
+
+
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 

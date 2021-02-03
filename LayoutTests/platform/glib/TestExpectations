@@ -361,6 +361,9 @@ webkit.org/b/216292 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/qu
 # Skipped in root TestExpectations for Debug config.
 webkit.org/b/209330 [ Release ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
 
+webkit.org/b/221308 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
+webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -609,6 +612,9 @@ webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-offscreen.html [ Failure ]
 
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
+
+webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
+webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
@@ -1194,6 +1200,8 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-mencl
 
 # Failed since added in r270045.
 webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ ImageOnlyFailure ]
+
+webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

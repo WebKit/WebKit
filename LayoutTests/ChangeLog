@@ -1,3 +1,12 @@
+2021-02-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening debug timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-02-02  Youenn Fablet  <youenn@apple.com>
 
         http/wpt/mediarecorder/mute-tracks.html is flaky
