@@ -1074,6 +1074,9 @@ void HTMLMediaElement::load()
 
     INFO_LOG(LOGIDENTIFIER);
 
+    if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture && document().quirks().requiresUserGestureToLoadInPictureInPicture() && !document().processingUserGestureForMedia())
+        return;
+
     prepareForLoad();
     m_resourceSelectionTaskQueue.enqueueTask([this] {
         prepareToPlay();
@@ -3492,7 +3495,7 @@ void HTMLMediaElement::pause()
     if (m_waitingToEnterFullscreen)
         m_waitingToEnterFullscreen = false;
 
-    if (!m_mediaSession->playbackPermitted())
+    if (!m_mediaSession->playbackPermitted(MediaPlaybackOperation::Pause))
         return;
 
     if (processingUserGestureForMedia())
@@ -3500,7 +3503,6 @@ void HTMLMediaElement::pause()
 
     pauseInternal();
 }
-
 
 void HTMLMediaElement::pauseInternal()
 {
@@ -7441,7 +7443,7 @@ void HTMLMediaElement::suspendPlayback()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
     if (!paused())
-        pause();
+        pauseInternal();
 }
 
 void HTMLMediaElement::resumeAutoplaying()

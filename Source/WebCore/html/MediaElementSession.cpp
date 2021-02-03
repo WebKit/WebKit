@@ -276,7 +276,7 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() const
+SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(MediaPlaybackOperation operation) const
 {
     if (m_element.isSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is suspended");
@@ -317,7 +317,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
     const auto& topDocument = document.topDocument();
     if (topDocument.quirks().requiresUserGestureToPauseInPictureInPicture()
         && m_element.fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
-        && !m_element.paused()
+        && !m_element.paused() && operation == MediaPlaybackOperation::Pause
         && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a quirk requires a user gesture to pause while in Picture-in-Picture");
         return MediaPlaybackDenialReason::UserGestureRequired;

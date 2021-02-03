@@ -42,6 +42,11 @@ enum class MediaSessionMainContentPurpose {
     Autoplay
 };
 
+enum class MediaPlaybackOperation {
+    All,
+    Pause
+};
+
 enum class MediaPlaybackDenialReason {
     UserGestureRequired,
     FullscreenRequired,
@@ -71,7 +76,8 @@ public:
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
 
-    SuccessOr<MediaPlaybackDenialReason> playbackPermitted() const;
+    // FIXME: <http://webkit.org/b/220939>
+    SuccessOr<MediaPlaybackDenialReason> playbackPermitted(MediaPlaybackOperation = MediaPlaybackOperation::All) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
     MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
