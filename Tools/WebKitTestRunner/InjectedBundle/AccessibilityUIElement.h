@@ -202,6 +202,9 @@ public:
     JSRetainPtr<JSStringRef> attributesOfVisibleCells();
     JSRetainPtr<JSStringRef> attributesOfHeader();
     bool isInTableCell() const;
+    bool isInTable() const;
+    bool isInList() const;
+    bool isInLandmark() const;
     int indexInTable();
     JSRetainPtr<JSStringRef> rowIndexRange();
     JSRetainPtr<JSStringRef> columnIndexRange();

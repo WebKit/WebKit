@@ -95,6 +95,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
 - (NSString *)accessibilityColorStringValue;
+- (id)_accessibilityTableAncestor;
+- (id)_accessibilityLandmarkAncestor;
+- (id)_accessibilityListAncestor;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -790,6 +793,21 @@ int AccessibilityUIElement::columnCount()
 bool AccessibilityUIElement::isInTableCell() const
 {
     return [m_element _accessibilityIsInTableCell];
+}
+
+bool AccessibilityUIElement::isInTable() const
+{
+    return [m_element _accessibilityTableAncestor] != nullptr;
+}
+
+bool AccessibilityUIElement::isInLandmark() const
+{
+    return [m_element _accessibilityLandmarkAncestor] != nullptr;
+}
+
+bool AccessibilityUIElement::isInList() const
+{
+    return [m_element _accessibilityListAncestor] != nullptr;
 }
 
 int AccessibilityUIElement::indexInTable()

@@ -611,7 +611,14 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (AccessibilityObjectWrapper*)_accessibilityTableAncestor
 {
     if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::Table;
+        switch (object.roleValue()) {
+        case AccessibilityRole::Table:
+        case AccessibilityRole::TreeGrid:
+        case AccessibilityRole::Grid:
+            return true;
+        default:
+            return false;
+        }
     }))
         return parent->wrapper();
     return nil;
@@ -680,15 +687,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             [self setAccessibilityValue:[wrapper accessibilityValue]];
             break;
         }
-        case AccessibilityRole::ListBox:
-        case AccessibilityRole::List:
-            traits |= [self _axContainedByListTrait];
-            break;
-        case AccessibilityRole::Grid:
-        case AccessibilityRole::Table:
-        case AccessibilityRole::TreeGrid:
-            traits |= [self _axContainedByTableTrait];
-            break;
         default:
             if ([self _accessibilityIsLandmarkRole:parentRole])
                 traits |= [self _axContainedByLandmarkTrait];
