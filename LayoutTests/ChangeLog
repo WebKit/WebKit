@@ -1,3 +1,17 @@
+2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+        http/wpt/mediarecorder/mute-tracks.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=221195
+
+        Reviewed by Eric Carlson.
+
+        In case bot is slow, we were doing more than one analysis.
+        For each analysis, we were creating a new MediaElementSourceNode for the same video element which is not allowed.
+        Instead, do the AudioContext setup once and run the analysis steps as long as needed.
+
+        * http/wpt/mediarecorder/mute-tracks-expected.txt:
+        * http/wpt/mediarecorder/mute-tracks.html:
+
 2021-02-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur WK1] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v* is consistently failing
