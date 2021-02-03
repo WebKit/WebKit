@@ -45,6 +45,7 @@
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
 #include "PlatformMouseEvent.h"
+#include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPathElement.h"
@@ -1302,6 +1303,20 @@ bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
 #else
     return false;
 #endif
+}
+
+bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
+{
+    // Facebook will naively pause a <video> element that has scrolled out of the viewport, regardless of whether that element is currently in PiP mode.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_requiresUserGestureToPauseInPictureInPicture) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_requiresUserGestureToPauseInPictureInPicture = domain.string() == "facebook.com"_s;
+    }
+
+    return *m_requiresUserGestureToPauseInPictureInPicture;
 }
 
 }
