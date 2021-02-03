@@ -1,3 +1,54 @@
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271635. rdar://problem/73890109
+
+    Elements in a table are incorrectly selected in JavaScript.
+    https://bugs.webkit.org/show_bug.cgi?id=220607
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    After the fix for https://bugs.webkit.org/show_bug.cgi?id=130844 in https://trac.webkit.org/changeset/260207/webkit a regression was found for
+    table cell selections through JavaScript. The previous fix was for an issue in the difference between how PositionIterator and Position calculated
+    if it was canonical (::isCandidate) in the cases where the renderer was a BR. Instead of only converging isCandidate for BR, this function in PositionIterator
+    was completely subsumed by just calling the implementation for Position. While there are many similarities, there are important differences, especially in the
+    table code, therefore PositionIterator::isCandidate is being reinstated, but with the convergence in the BR case only.
+    Also, moved the check added in http://webkit.org/b/211864 so it will cover cases that were missed due to this code being wrong while that fix was added.
+    
+    Test: editing/selection/editable-table-cell-selection.html
+    
+    * dom/PositionIterator.cpp:
+    (WebCore::PositionIterator::isCandidate const):
+    * editing/InsertParagraphSeparatorCommand.cpp:
+    (WebCore::InsertParagraphSeparatorCommand::doApply):
+    
+    LayoutTests:
+    
+    * editing/execCommand/null_calc_primitive_value_for_css_property.html:
+    Added ending tag that was missing and does not affect the issue the test was verifying.
+    * editing/inserting/insert-list-in-table-cell-07-expected.txt:
+    Restored expected text file to original output.
+    * editing/selection/editable-table-cell-selection-expected.txt: Added.
+    * editing/selection/editable-table-cell-selection.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271635 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Megan Gardner  <megan_gardner@apple.com>
+
+            Elements in a table are incorrectly selected in JavaScript.
+            https://bugs.webkit.org/show_bug.cgi?id=220607
+
+            Reviewed by Wenson Hsieh.
+
+            * editing/execCommand/null_calc_primitive_value_for_css_property.html:
+            Added ending tag that was missing and does not affect the issue the test was verifying.
+            * editing/inserting/insert-list-in-table-cell-07-expected.txt:
+            Restored expected text file to original output.
+            * editing/selection/editable-table-cell-selection-expected.txt: Added.
+            * editing/selection/editable-table-cell-selection.html: Added.
+
 2021-02-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271933. rdar://problem/73838863
