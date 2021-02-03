@@ -1,3 +1,16 @@
+2021-02-03  Devin Rousso  <drousso@apple.com>
+
+        [iOS] delay `+[BKSMousePointerService sharedInstance]` so that it doesn't impact launch perf
+        https://bugs.webkit.org/show_bug.cgi?id=221298
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (iOSMouseSupport.MouseInitiallyDisconnected):
+        (iOSMouseSupport.MouseInitiallyConnected):
+        (iOSMouseSupport.MouseLaterDisconnected):
+        (iOSMouseSupport.MouseLaterConnected):
+
 2021-02-03  Alex Christensen  <achristensen@webkit.org>
 
         Flaky API Test: TestWebKitAPI.WebKitLegacy.CrossPartitionFileSchemeAccess
