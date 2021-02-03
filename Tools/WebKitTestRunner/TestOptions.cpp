@@ -31,7 +31,7 @@
 
 namespace WTR {
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 static constexpr bool captureAudioInGPUProcessEnabledValue = true;
 static constexpr bool captureVideoInGPUProcessEnabledValue = true;
 #else
