@@ -1,3 +1,22 @@
+2021-02-03  Rob Buis  <rbuis@igalia.com>
+
+        Rename aspect-ratio/parsing/contain-intrinsic-size*
+        https://bugs.webkit.org/show_bug.cgi?id=221329
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Rename aspect-ratio/parsing/contain-intrinsic-size* since they deal with
+        parsing aspect-ratio, not contain-intrinsic-size.
+
+        Relevant WPT PR is https://github.com/web-platform-tests/wpt/pull/27457.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-computed-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-computed.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-valid-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-valid.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid.html.
+
 2021-02-03  Sam Weinig  <weinig@apple.com>
 
         Add support for color(xyz ...) as part of CSS Color 4

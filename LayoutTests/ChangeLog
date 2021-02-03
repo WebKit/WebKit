@@ -1,3 +1,15 @@
+2021-02-03  Rob Buis  <rbuis@igalia.com>
+
+        Rename aspect-ratio/parsing/contain-intrinsic-size*
+        https://bugs.webkit.org/show_bug.cgi?id=221329
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Remove entry for test that passes.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+
 2021-02-03  Sam Weinig  <weinig@apple.com>
 
         Add support for color(xyz ...) as part of CSS Color 4
