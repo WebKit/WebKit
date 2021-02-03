@@ -1,3 +1,16 @@
+2021-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Reduce the use of SoupURI in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=221251
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_get_scheme):
+        (webkit_uri_scheme_request_get_path):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_uri):
+
 2021-02-02  Per Arne Vollan  <pvollan@apple.com>
 
         Register for power notifications in the UI process

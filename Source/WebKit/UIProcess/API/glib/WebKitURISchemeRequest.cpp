@@ -26,12 +26,9 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
-#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/URLSoup.h>
-#include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
@@ -64,7 +61,8 @@ struct _WebKitURISchemeRequestPrivate {
 
     RefPtr<WebPageProxy> initiatingPage;
     CString uri;
-    GUniquePtr<SoupURI> soupURI;
+    CString uriScheme;
+    CString uriPath;
 
     GRefPtr<GInputStream> stream;
     uint64_t streamLength;
@@ -106,10 +104,10 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
 {
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
-    if (!request->priv->soupURI)
-        request->priv->soupURI = urlToSoupURI(request->priv->task->request().url());
+    if (request->priv->uriScheme.isNull())
+        request->priv->uriScheme = request->priv->task->request().url().protocol().toString().utf8();
 
-    return request->priv->soupURI->scheme;
+    return request->priv->uriScheme.data();
 }
 
 /**
@@ -142,10 +140,10 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
-    if (!request->priv->soupURI)
-        request->priv->soupURI = urlToSoupURI(request->priv->task->request().url());
+    if (request->priv->uriPath.isNull())
+        request->priv->uriPath = request->priv->task->request().url().path().toString().utf8();
 
-    return request->priv->soupURI->path;
+    return request->priv->uriPath.data();
 }
 
 /**
