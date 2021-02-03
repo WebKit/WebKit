@@ -1,5 +1,102 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271880. rdar://problem/73889737
+
+    WebGL power preference and discrete/internal gpu selection implemented incorrectly with ANGLE
+    https://bugs.webkit.org/show_bug.cgi?id=220843
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-01-26
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Use ANGLE extension EGL_ANGLE_power_preference to signal to ANGLE that the underlying
+    CGL context should be updated as a response to display reconfiguration signal.
+    This ensures that ANGLE state stays consistent with the actual CGL context behavior, as
+    we don't change the context behind ANGLE's back.
+    
+    Remove the feature where the context GPU is selected based on the display the window is
+    on. This cannot work with the logic of "powerPreference = "high-performance" goes to
+    discrete GPU". Also, this cannot work with ANGLE at all, since all contexts are backed
+    by a single platform context. Thus all contexts will use the same underlying GPU.
+    
+    No new tests due to the test runner missing features. The bug blockers track the testing.
+    
+    * PlatformMac.cmake:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::isHighPerformanceContext):
+    * page/Chrome.cpp:
+    (WebCore::Chrome::windowScreenDidChange):
+    * platform/graphics/GraphicsContextGL.h:
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.cpp:
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.h:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::create):
+    (WebCore::GraphicsContextGLOpenGL::createShared):
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+    (WebCore::GraphicsContextGLOpenGL::displayWasReconfigured):
+    (WebCore::GraphicsContextGLOpenGL::simulateContextChanged):
+    * platform/graphics/mac/GraphicsChecksMac.cpp: Added.
+    (WebCore::attachToAppleGraphicsControl):
+    (WebCore::hasMuxCapability):
+    (WebCore::hasLowAndHighPowerGPUs):
+    * platform/graphics/mac/GraphicsChecksMac.h: Copied from Source/WebKit/WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.h.
+    * platform/graphics/mac/ScopedHighPerformanceGPURequest.h: Copied from Source/WebCore/platform/graphics/mac/SwitchingGPUClient.h.
+    (WebCore::ScopedHighPerformanceGPURequest::ScopedHighPerformanceGPURequest):
+    (WebCore::ScopedHighPerformanceGPURequest::~ScopedHighPerformanceGPURequest):
+    (WebCore::ScopedHighPerformanceGPURequest::operator=):
+    (WebCore::ScopedHighPerformanceGPURequest::acquire):
+    * platform/graphics/mac/SwitchingGPUClient.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp:
+    (WebCore::GraphicsContextGLOpenGLManager::displayWasReconfigured):
+    (WebCore::GraphicsContextGLOpenGLManager::addContext):
+    (WebCore::GraphicsContextGLOpenGLManager::removeContext):
+    * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h:
+    * testing/Internals.cpp:
+    
+    Source/WebKit:
+    
+    Move the high-performance GPU shutdown timer from individual web processes to the main class
+    in the ui process. This simplifies the implementation and reduces the number of timers.
+    
+    * UIProcess/mac/HighPerformanceGPUManager.h:
+    * UIProcess/mac/HighPerformanceGPUManager.mm:
+    (WebKit::HighPerformanceGPUManager::HighPerformanceGPUManager):
+    (WebKit::HighPerformanceGPUManager::removeProcessRequiringHighPerformance):
+    (WebKit::HighPerformanceGPUManager::updateState):
+    * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp:
+    (WebKit::WebSwitchingGPUClient::requestHighPerformanceGPU):
+    (WebKit::WebSwitchingGPUClient::releaseHighPerformanceGPU):
+    * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271880 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            WebGL power preference and discrete/internal gpu selection implemented incorrectly with ANGLE
+            https://bugs.webkit.org/show_bug.cgi?id=220843
+
+            Reviewed by Dean Jackson.
+
+            Move the high-performance GPU shutdown timer from individual web processes to the main class
+            in the ui process. This simplifies the implementation and reduces the number of timers.
+
+            * UIProcess/mac/HighPerformanceGPUManager.h:
+            * UIProcess/mac/HighPerformanceGPUManager.mm:
+            (WebKit::HighPerformanceGPUManager::HighPerformanceGPUManager):
+            (WebKit::HighPerformanceGPUManager::removeProcessRequiringHighPerformance):
+            (WebKit::HighPerformanceGPUManager::updateState):
+            * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp:
+            (WebKit::WebSwitchingGPUClient::requestHighPerformanceGPU):
+            (WebKit::WebSwitchingGPUClient::releaseHighPerformanceGPU):
+            * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.h:
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272072. rdar://problem/73890534
 
     [iOS] Stop observing changes in one preference domain

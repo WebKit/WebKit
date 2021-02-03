@@ -642,7 +642,7 @@ private:
 
 static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 {
-    return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
+    return context->contextAttributes().powerPreference == WebGLPowerPreference::HighPerformance;
 }
 
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)

@@ -1255,8 +1255,6 @@ public:
 
     virtual void setContextVisibility(bool) = 0;
 
-    virtual GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const = 0;
-
     virtual bool isGLES2Compliant() const = 0;
 
     // Synthesizes an OpenGL error which will be returned from a

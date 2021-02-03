@@ -32,9 +32,10 @@ namespace WebKit {
 class WebSwitchingGPUClient : public WebCore::SwitchingGPUClient {
 public:
     static WebSwitchingGPUClient& singleton();
-    
+private:
     void requestHighPerformanceGPU() override;
     void releaseHighPerformanceGPU() override;
+    unsigned m_requests { 0 };
 };
 
 }

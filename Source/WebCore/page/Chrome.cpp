@@ -67,10 +67,6 @@
 #include "DateTimeChooser.h"
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBGL)
-#include "GraphicsContextGLOpenGLManager.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -548,10 +544,6 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigne
         return;
 
     m_page.windowScreenDidChange(displayID, nominalFrameInterval);
-
-#if PLATFORM(MAC) && ENABLE(WEBGL)
-    GraphicsContextGLOpenGLManager::sharedManager().screenDidChange(displayID, this);
-#endif
 }
 
 bool Chrome::selectItemWritingDirectionIsNatural()
