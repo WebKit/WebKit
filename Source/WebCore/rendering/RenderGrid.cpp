@@ -1859,4 +1859,36 @@ const char* RenderGrid::renderName() const
     return "RenderGrid";
 }
 
+bool RenderGrid::hasAutoSizeInColumnAxis(const RenderBox& child) const
+{
+    if (child.style().hasAspectRatio()) {
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+            // A non-auto inline size means the same for block size (column axis size) because of the aspect ratio.
+            if (!child.style().logicalWidth().isAuto())
+                return false;
+        } else {
+            const Length& logicalHeight = child.style().logicalHeight();
+            if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
+                return false;
+        }
+    }
+    return isHorizontalWritingMode() ? child.style().height().isAuto() : child.style().width().isAuto();
+}
+
+bool RenderGrid::hasAutoSizeInRowAxis(const RenderBox& child) const
+{
+    if (child.style().hasAspectRatio()) {
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+            // A non-auto block size means the same for inline size (row axis size) because of the aspect ratio.
+            const Length& logicalHeight = child.style().logicalHeight();
+            if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
+                return false;
+        } else {
+            if (!child.style().logicalWidth().isAuto())
+                return false;
+        }
+    }
+    return isHorizontalWritingMode() ? child.style().width().isAuto() : child.style().height().isAuto();
+}
+
 } // namespace WebCore
