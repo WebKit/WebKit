@@ -2524,6 +2524,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 @implementation WKWebView (WKPrivateIOS)
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 - (void)_setUIEventAttribution:(UIEventAttribution *)attribution
 {
 #if HAVE(UI_EVENT_ATTRIBUTION)
@@ -2554,6 +2555,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return nil;
 #endif
 }
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 - (CGRect)_contentVisibleRect
 {

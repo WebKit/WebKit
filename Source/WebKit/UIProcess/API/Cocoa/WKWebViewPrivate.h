@@ -393,7 +393,9 @@ for this property.
 
 @interface WKWebView (WKPrivateIOS)
 
+#if !TARGET_OS_TV && !TARGET_OS_WATCH
 @property (nonatomic, copy, setter=_setUIEventAttribution:) UIEventAttribution *_uiEventAttribution WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
 
 @property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));
 

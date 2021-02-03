@@ -1,3 +1,14 @@
+2021-02-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix watch and tv build after r272228
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+
+        UIEventAttribution is special in that the symbol is declared as unavailable on watchOS and tvOS.
+        To fix the build, we need to not use this symbol on those operating systems.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+
 2021-02-03  Antoine Quint  <graouts@webkit.org>
 
         Add a loader for <model> resources
