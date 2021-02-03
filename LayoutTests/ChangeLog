@@ -1,5 +1,46 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272024. rdar://problem/73847822
+
+    AX: Long narrow tables should not be made in data tables unnecessarily
+    https://bugs.webkit.org/show_bug.cgi?id=221061
+    <rdar://problem/73681149>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Some web authors use long columns/rows of cells for layout purposes. We shouldn't
+    automatically turn these into data tables based on row count only.
+    Instead let's ensure there are at least two rows/cols of content before automatically
+    turning into a data table.
+    
+    Test: accessibility/narrow-tables-ignored.html
+    
+    * accessibility/AccessibilityTable.cpp:
+    (WebCore::AccessibilityTable::isDataTable const):
+    
+    LayoutTests:
+    
+    * accessibility/narrow-tables-ignored-expected.txt: Added.
+    * accessibility/narrow-tables-ignored.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272024 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-28  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Long narrow tables should not be made in data tables unnecessarily
+            https://bugs.webkit.org/show_bug.cgi?id=221061
+            <rdar://problem/73681149>
+
+            Reviewed by Zalan Bujtas.
+
+            * accessibility/narrow-tables-ignored-expected.txt: Added.
+            * accessibility/narrow-tables-ignored.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271930. rdar://problem/73886919
 
     REGRESSION (r271584): Hovering slowly over and out of "Top 100" items on liberation.fr does not restore animated state
