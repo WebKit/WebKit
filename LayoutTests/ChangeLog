@@ -1,5 +1,59 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271760. rdar://problem/73890156
+
+    AX: AT-synthesized key events for common user actions (increment/decrement) are detectably different in many ways, potentially causing both web app breakage and AT identification
+    https://bugs.webkit.org/show_bug.cgi?id=220675
+    <rdar://problem/73263977>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: accessibility/keyevents-for-actions-mimic-real-key-events.html
+    
+    When accessibility posts keyboard events in response to ax actions, they should mimic
+    real key events so as to be indistinguishable.
+    
+    https://github.com/WICG/aom/blob/gh-pages/explainer.md#deprecated-keyboardevent-object-properties-optional
+    
+    * accessibility/AccessibilityNodeObject.cpp:
+    (WebCore::dispatchSimulatedKeyboardUpDownEvent):
+    (WebCore::InitializeLegacyKeyInitProperties):
+    (WebCore::AccessibilityNodeObject::performDismissAction):
+    (WebCore::AccessibilityNodeObject::postKeyboardKeysForValueChange):
+    * dom/KeyboardEvent.cpp:
+    (WebCore::KeyboardEvent::KeyboardEvent):
+    (WebCore::KeyboardEvent::create):
+    * dom/KeyboardEvent.h:
+    * dom/UIEvent.cpp:
+    (WebCore::UIEvent::UIEvent):
+    * dom/UIEvent.h:
+    (WebCore::UIEvent::create):
+    * dom/UIEventWithKeyState.h:
+    (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+    
+    LayoutTests:
+    
+    * accessibility/keyevents-for-actions-mimic-real-key-events-expected.txt: Added.
+    * accessibility/keyevents-for-actions-mimic-real-key-events.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271760 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: AT-synthesized key events for common user actions (increment/decrement) are detectably different in many ways, potentially causing both web app breakage and AT identification
+            https://bugs.webkit.org/show_bug.cgi?id=220675
+            <rdar://problem/73263977>
+
+            Reviewed by Zalan Bujtas.
+
+            * accessibility/keyevents-for-actions-mimic-real-key-events-expected.txt: Added.
+            * accessibility/keyevents-for-actions-mimic-real-key-events.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271751. rdar://problem/73890346
 
     Crash under FFTFrame::fftSetupForSize()
