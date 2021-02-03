@@ -1,5 +1,73 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271930. rdar://problem/73886919
+
+    REGRESSION (r271584): Hovering slowly over and out of "Top 100" items on liberation.fr does not restore animated state
+    https://bugs.webkit.org/show_bug.cgi?id=220862
+    <rdar://problem/73501684>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    The optimization in r271584 fails to invalidate hover/active style when clearing the existing state under some circumstances.
+    
+    Test: fast/selectors/hover-invalidation-descendant-clear.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::updateHoverActiveState):
+    
+    We would do descendant invalidation when changing the hover/active state of the rootmost changing element.
+    However since the state of descendants was changed before this invalidation happened we would try to invalidate
+    them in a tree that was already in the new state.
+    
+    Fix by scoping the descendant invalidation over all changes.
+    
+    * dom/Element.cpp:
+    (WebCore::Element::setActive):
+    (WebCore::Element::setHovered):
+    
+    Switch to new 3-state enum type that allows us to skip descendant invalidation that has already been done by the caller.
+    Skope it to Style namepace.
+    
+    * dom/Element.h:
+    * html/HTMLAnchorElement.cpp:
+    (WebCore::HTMLAnchorElement::setActive):
+    * html/HTMLAnchorElement.h:
+    * html/HTMLLabelElement.cpp:
+    (WebCore::HTMLLabelElement::setActive):
+    (WebCore::HTMLLabelElement::setHovered):
+    * html/HTMLLabelElement.h:
+    * html/shadow/SpinButtonElement.cpp:
+    (WebCore::SpinButtonElement::setHovered):
+    * html/shadow/SpinButtonElement.h:
+    * style/PseudoClassChangeInvalidation.cpp:
+    (WebCore::Style::PseudoClassChangeInvalidation::computeInvalidation):
+    * style/PseudoClassChangeInvalidation.h:
+    (WebCore::Style::PseudoClassChangeInvalidation::PseudoClassChangeInvalidation):
+    * style/StyleValidity.h:
+    
+    LayoutTests:
+    
+    * fast/selectors/hover-invalidation-descendant-clear-expected.html: Added.
+    * fast/selectors/hover-invalidation-descendant-clear.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271930 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-26  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r271584): Hovering slowly over and out of "Top 100" items on liberation.fr does not restore animated state
+            https://bugs.webkit.org/show_bug.cgi?id=220862
+            <rdar://problem/73501684>
+
+            Reviewed by Simon Fraser.
+
+            * fast/selectors/hover-invalidation-descendant-clear-expected.html: Added.
+            * fast/selectors/hover-invalidation-descendant-clear.html: Added.
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271810. rdar://problem/73889904
 
     REGRESSION (Big Sur): Some tests in http/tests/security/http-0.9 flakily fail
