@@ -1,3 +1,40 @@
+2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Allow one user gesture free prompt for each navigation
+        https://bugs.webkit.org/show_bug.cgi?id=220897
+        <rdar://problem/73541303>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/ctap-hid-failure.https-expected.txt:
+        * http/wpt/webauthn/ctap-hid-success.https-expected.txt:
+        * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt:
+        * http/wpt/webauthn/idl.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt:
+
 2021-02-03  Sam Weinig  <weinig@apple.com>
 
         Add support for hwb() colors defined in CSS Color 4

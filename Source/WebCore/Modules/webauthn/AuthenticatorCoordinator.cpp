@@ -292,6 +292,11 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOM
     m_client->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
 }
 
+void AuthenticatorCoordinator::resetUserGestureRequirement()
+{
+    m_client->resetUserGestureRequirement();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

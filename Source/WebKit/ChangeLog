@@ -1,3 +1,27 @@
+2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Allow one user gesture free prompt for each navigation
+        https://bugs.webkit.org/show_bug.cgi?id=220897
+        <rdar://problem/73541303>
+
+        Reviewed by Brent Fulgham.
+
+        This is a quirk that only allows certain websites.
+
+        Covered by existing tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::filterTransports const):
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::runPresenter):
+        Cancel the whole WebAuthn operation if no user gesture is indicated.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h:
+        Set a boolean to indicate a free coupon for each navigation.
+
 2021-02-03  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] webkit_settings_set_enable_plugins deprecation warning breaks unit tests

@@ -142,6 +142,10 @@ public:
     static RegistrableDomain mapToTopDomain(const URL&);
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    WEBCORE_EXPORT bool shouldBypassUserGestureRequirementForWebAuthn() const;
+#endif
+
 private:
     bool needsQuirks() const;
 

@@ -1349,4 +1349,30 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #endif
 }
 
+#if ENABLE(WEB_AUTHN)
+bool Quirks::shouldBypassUserGestureRequirementForWebAuthn() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    if (equalLettersIgnoringASCIICase(host, "dropbox.com") || host.endsWithIgnoringASCIICase(".dropbox.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "microsoft.com") || host.endsWithIgnoringASCIICase(".microsoft.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "facebook.com") || host.endsWithIgnoringASCIICase(".facebook.com"))
+        return true;
+
+    return false;
+}
+#endif
+
 }

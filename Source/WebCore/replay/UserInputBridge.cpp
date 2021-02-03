@@ -28,6 +28,7 @@
 #include "config.h"
 #include "UserInputBridge.h"
 
+#include "AuthenticatorCoordinator.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -114,11 +115,17 @@ bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction,
 
 void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
 {
+#if ENABLE(WEB_AUTHN)
+    m_page.authenticatorCoordinator().resetUserGestureRequirement();
+#endif
     m_page.mainFrame().loader().load(WTFMove(request));
 }
 
 void UserInputBridge::reloadFrame(Frame& frame, OptionSet<ReloadOption> options, InputSource)
 {
+#if ENABLE(WEB_AUTHN)
+    m_page.authenticatorCoordinator().resetUserGestureRequirement();
+#endif
     frame.loader().reload(options);
 }
 
