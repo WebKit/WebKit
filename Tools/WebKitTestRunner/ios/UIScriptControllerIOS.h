@@ -94,8 +94,8 @@ private:
     double contentOffsetY() const override;
     bool scrollUpdatesDisabled() const override;
     void setScrollUpdatesDisabled(bool) override;
-    void scrollToOffset(long x, long y) override;
-    void immediateScrollToOffset(long x, long y) override;
+    void scrollToOffset(long x, long y, ScrollToOptions*) override;
+    void immediateScrollToOffset(long x, long y, ScrollToOptions*) override;
     void immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset) override;
     void immediateZoomToScale(double scale) override;
     void keyboardAccessoryBarNext() override;

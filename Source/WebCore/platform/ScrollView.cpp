@@ -586,7 +586,7 @@ bool ScrollView::managesScrollbars() const
 
 void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::updateScrollbars " << desiredPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::updateScrollbars " << desiredPosition << " isRubberBandInProgress " << isRubberBandInProgress());
 
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;

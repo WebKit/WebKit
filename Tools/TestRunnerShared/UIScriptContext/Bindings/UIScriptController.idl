@@ -38,6 +38,10 @@ enum ModifierKey {
     "shift"
 };
 
+dictionary ScrollToOptions {
+    boolean unconstrained = false;
+};
+
 interface UIScriptController {
 
     undefined doAsyncTask(object callback); // Used to test the harness.
@@ -282,10 +286,10 @@ interface UIScriptController {
 
     attribute boolean scrollUpdatesDisabled; // Turns off notifications back to the web process after scrolls (used for testing scrolling tree).
 
-    undefined scrollToOffset(long x, long y); // Initiate an animated scroll in the UI process.
+    undefined scrollToOffset(long x, long y, ScrollToOptions options); // Initiate an animated scroll in the UI process.
     attribute object didEndScrollingCallback;
 
-    undefined immediateScrollToOffset(long x, long y); // Set the scroll position in the UI process without animation.
+    undefined immediateScrollToOffset(long x, long y, ScrollToOptions options); // Set the scroll position in the UI process without animation.
     undefined immediateZoomToScale(double scale); // Set the zoom scale in the UI process without animation.
 
     // Find the scroller for the given point in content ("absolute") coordinates, and do an immediate scroll.

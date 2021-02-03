@@ -125,6 +125,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture(Scrol
     m_webPageProxy.scrollingNodeScrollViewWillStartPanGesture();
 }
 
+// This is not called for the main scroll view.
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
     m_webPageProxy.scrollingNodeScrollWillStartScroll();
@@ -133,6 +134,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll(Scrolling
     sendUIStateChangedIfNecessary();
 }
 
+// This is not called for the main scroll view.
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
 {
     m_webPageProxy.scrollingNodeScrollDidEndScroll();

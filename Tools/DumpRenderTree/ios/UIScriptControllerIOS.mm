@@ -75,19 +75,24 @@ double UIScriptControllerIOS::zoomScale() const
     return gWebScrollView.zoomScale;
 }
 
-static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
+static CGPoint contentOffsetBoundedIfNecessary(UIScrollView *scrollView, long x, long y, ScrollToOptions* options)
 {
-    UIEdgeInsets contentInsets = scrollView.contentInset;
-    CGSize contentSize = scrollView.contentSize;
-    CGSize scrollViewSize = scrollView.bounds.size;
+    auto contentOffset = CGPointMake(x, y);
+    bool constrain = !options || !options->unconstrained;
+    if (constrain) {
+        UIEdgeInsets contentInsets = scrollView.contentInset;
+        CGSize contentSize = scrollView.contentSize;
+        CGSize scrollViewSize = scrollView.bounds.size;
 
-    CGFloat maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
-    contentOffset.x = std::min(maxHorizontalOffset, contentOffset.x);
-    contentOffset.x = std::max(-contentInsets.left, contentOffset.x);
+        CGFloat maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
+        contentOffset.x = std::min(maxHorizontalOffset, contentOffset.x);
+        contentOffset.x = std::max(-contentInsets.left, contentOffset.x);
 
-    CGFloat maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
-    contentOffset.y = std::min(maxVerticalOffset, contentOffset.y);
-    contentOffset.y = std::max(-contentInsets.top, contentOffset.y);
+        CGFloat maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
+        contentOffset.y = std::min(maxVerticalOffset, contentOffset.y);
+        contentOffset.y = std::max(-contentInsets.top, contentOffset.y);
+    }
+
     return contentOffset;
 }
 
@@ -101,14 +106,16 @@ double UIScriptControllerIOS::contentOffsetY() const
     return [gWebScrollView contentOffset].y;
 }
 
-void UIScriptControllerIOS::scrollToOffset(long x, long y)
+void UIScriptControllerIOS::scrollToOffset(long x, long y, ScrollToOptions* options)
 {
-    [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:YES];
+    auto offset = contentOffsetBoundedIfNecessary(gWebScrollView, x, y, options);
+    [gWebScrollView setContentOffset:offset animated:YES];
 }
 
-void UIScriptControllerIOS::immediateScrollToOffset(long x, long y)
+void UIScriptControllerIOS::immediateScrollToOffset(long x, long y, ScrollToOptions* options)
 {
-    [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:NO];
+    auto offset = contentOffsetBoundedIfNecessary(gWebScrollView, x, y, options);
+    [gWebScrollView setContentOffset:offset animated:NO];
 }
 
 void UIScriptControllerIOS::immediateZoomToScale(double scale)

@@ -125,6 +125,16 @@ void RemoteScrollingCoordinator::scrollingStateInUIProcessChanged(const RemoteSc
         m_nodesWithActiveUserScrolls = uiState.nodesWithActiveUserScrolls();
 }
 
+void RemoteScrollingCoordinator::addNodeWithActiveRubberBanding(ScrollingNodeID nodeID)
+{
+    m_nodesWithActiveRubberBanding.add(nodeID);
+}
+
+void RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding(ScrollingNodeID nodeID)
+{
+    m_nodesWithActiveRubberBanding.remove(nodeID);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

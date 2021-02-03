@@ -1,5 +1,149 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271786. rdar://problem/73890368
+
+    [iOS WK2] theverge.com - rubber band scrolling at the top of the page causes an abrupt jump
+    https://bugs.webkit.org/show_bug.cgi?id=220886
+    <rdar://71177566>
+    
+    Reviewed by Sam Weinig.
+    Source/WebCore:
+    
+    theverge.com on iOS is a page that has long main thread stalls with forced layouts on a timer
+    that alter the page height; this caused the post-layout updateScrollbars() called from
+    FrameView::adjustViewSize() to call scrollToPosition() after adjusting the scroll position
+    to the allowed range.
+    
+    If the page laid out while rubberbanding was happening, the current scroll position would
+    be negative, then clamped to 0, then sent to the UI process as a requested scroll to 0,
+    triggering the jump to top in the UI process.
+    
+    There's existing code to prevent this from happening if we know that rubberbanding is
+    happening; this patch makes isRubberBandInProgress() work for iOS WK2. It does so
+    by having updateVisibleContentRects() push information about rubberbanding nodes onto
+    RemoteScrollingCoordinator.
+    
+    We remove an unnecessary shouldUpdateScrollLayerPositionSynchronously() check in
+    FrameView::isRubberBandInProgress() - if it's true, then the scrolling coordinator
+    won't see any rubberbanding nodes anyway.
+    
+    Test: fast/scrolling/ios/content-size-change-during-rubberband.html
+    
+    * page/FrameView.cpp:
+    (WebCore::FrameView::isRubberBandInProgress const):
+    * page/FrameView.h:
+    * platform/ScrollView.cpp:
+    (WebCore::ScrollView::updateScrollbars):
+    
+    Source/WebKit:
+    
+    theverge.com on iOS is a page that has long main thread stalls with forced layouts on a timer
+    that alter the page height; this caused the post-layout updateScrollbars() called from
+    FrameView::adjustViewSize() to call scrollToPosition() after adjusting the scroll position
+    to the allowed range.
+    
+    If the page laid out while rubberbanding was happening, the current scroll position would
+    be negative, then clamped to 0, then sent to the UI process as a requested scroll to 0,
+    triggering the jump to top in the UI process.
+    
+    There's existing code to prevent this from happening if we know that rubberbanding is
+    happening; this patch makes isRubberBandInProgress() work for iOS WK2. It does so
+    by having updateVisibleContentRects() push information about rubberbanding nodes onto
+    RemoteScrollingCoordinator.
+    
+    We remove an unnecessary shouldUpdateScrollLayerPositionSynchronously() check in
+    FrameView::isRubberBandInProgress() - if it's true, then the scrolling coordinator
+    won't see any rubberbanding nodes anyway.
+    
+    * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+    * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+    * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+    (WebKit::RemoteScrollingCoordinator::addNodeWithActiveRubberBanding):
+    (WebKit::RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::updateVisibleContentRects):
+    
+    Tools:
+    
+    Add test infrastructure to allow UIScriptController::scrollToOffset() and
+    UIScriptController::immediateScrollToOffset() to take an options argument with
+    a 'unconstrained' property, which allows scrolling to unstable offset to simulate
+    rubberbanding.
+    
+    * DumpRenderTree/ios/UIScriptControllerIOS.h:
+    * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+    (WTR::contentOffsetBoundedIfNecessary):
+    (WTR::UIScriptControllerIOS::scrollToOffset):
+    (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+    (WTR::contentOffsetBoundedInValidRange): Deleted.
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::scrollToOffset):
+    (WTR::UIScriptController::immediateScrollToOffset):
+    * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+    (WTR::toScrollToOptions):
+    * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::contentOffsetBoundedIfNecessary):
+    (WTR::UIScriptControllerIOS::scrollToOffset):
+    (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+    (WTR::contentOffsetBoundedInValidRange): Deleted.
+    
+    LayoutTests:
+    
+    Add test infrastructure to allow UIScriptController::scrollToOffset() and
+    UIScriptController::immediateScrollToOffset() to take an options argument with
+    a 'unconstrained' property, which allows scrolling to unstable offset to simulate
+    rubberbanding.
+    
+    * fast/scrolling/ios/content-size-change-during-rubberband-expected.txt: Added.
+    * fast/scrolling/ios/content-size-change-during-rubberband.html: Added.
+    * resources/ui-helper.js:
+    (window.UIHelper.scrollTo.return.new.Promise.):
+    (window.UIHelper.scrollTo.return.new.Promise):
+    (window.UIHelper.scrollTo):
+    (window.UIHelper.immediateScrollTo):
+    (window.UIHelper.immediateUnstableScrollTo):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271786 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] theverge.com - rubber band scrolling at the top of the page causes an abrupt jump
+            https://bugs.webkit.org/show_bug.cgi?id=220886
+            <rdar://71177566>
+
+            Reviewed by Sam Weinig.
+
+            theverge.com on iOS is a page that has long main thread stalls with forced layouts on a timer
+            that alter the page height; this caused the post-layout updateScrollbars() called from
+            FrameView::adjustViewSize() to call scrollToPosition() after adjusting the scroll position
+            to the allowed range.
+
+            If the page laid out while rubberbanding was happening, the current scroll position would
+            be negative, then clamped to 0, then sent to the UI process as a requested scroll to 0,
+            triggering the jump to top in the UI process.
+
+            There's existing code to prevent this from happening if we know that rubberbanding is
+            happening; this patch makes isRubberBandInProgress() work for iOS WK2. It does so
+            by having updateVisibleContentRects() push information about rubberbanding nodes onto
+            RemoteScrollingCoordinator.
+
+            We remove an unnecessary shouldUpdateScrollLayerPositionSynchronously() check in
+            FrameView::isRubberBandInProgress() - if it's true, then the scrolling coordinator
+            won't see any rubberbanding nodes anyway.
+
+            * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+            * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+            * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+            (WebKit::RemoteScrollingCoordinator::addNodeWithActiveRubberBanding):
+            (WebKit::RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::updateVisibleContentRects):
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271771. rdar://problem/73890368
 
     [iOS WK2] Make the "in stable state" bit in visible content rect updates more fine-grained

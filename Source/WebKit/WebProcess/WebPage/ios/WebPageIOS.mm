@@ -40,6 +40,7 @@
 #import "PluginView.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
+#import "RemoteScrollingCoordinator.h"
 #import "SandboxUtilities.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
@@ -3835,6 +3836,19 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     FloatRect adjustedExposedContentRect = adjustExposedRectForNewScale(exposedContentRect, visibleContentRectUpdateInfo.scale(), scaleToUse);
     m_drawingArea->setExposedContentRect(adjustedExposedContentRect);
 
+    auto& frame = m_page->mainFrame();
+    FrameView& frameView = *frame.view();
+
+    if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
+        auto& remoteScrollingCoordinator = downcast<RemoteScrollingCoordinator>(*scrollingCoordinator);
+        if (auto mainFrameScrollingNodeID = frameView.scrollingNodeID()) {
+            if (visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ScrollViewRubberBanding))
+                remoteScrollingCoordinator.addNodeWithActiveRubberBanding(mainFrameScrollingNodeID);
+            else
+                remoteScrollingCoordinator.removeNodeWithActiveRubberBanding(mainFrameScrollingNodeID);
+        }
+    }
+
     IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredContentRect().location());
 
     bool pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale = ([&] {
@@ -3870,8 +3884,6 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         }
     }
 
-    auto& frame = m_page->mainFrame();
-    FrameView& frameView = *frame.view();
     if (scrollPosition != frameView.scrollPosition())
         m_dynamicSizeUpdateHistory.clear();
 
@@ -3924,9 +3936,9 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (!isChangingObscuredInsetsInteractively)
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
-        ViewportRectStability viewportStability = ViewportRectStability::Stable;
-        ScrollingLayerPositionAction layerAction = ScrollingLayerPositionAction::Sync;
+    if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
+        auto viewportStability = ViewportRectStability::Stable;
+        auto layerAction = ScrollingLayerPositionAction::Sync;
         
         if (isChangingObscuredInsetsInteractively) {
             viewportStability = ViewportRectStability::ChangingObscuredInsetsInteractively;

@@ -55,6 +55,9 @@ public:
 
     void scrollingStateInUIProcessChanged(const RemoteScrollingUIState&);
 
+    void addNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
+    void removeNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
+
 private:
     RemoteScrollingCoordinator(WebPage*);
     virtual ~RemoteScrollingCoordinator();
