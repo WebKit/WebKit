@@ -1,5 +1,39 @@
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271696. rdar://problem/73887913
+
+    Check for TURN username/credentials sizes in RTCPeerConnection constructor
+    https://bugs.webkit.org/show_bug.cgi?id=220789
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Covered by updated test.
+    
+    * Modules/mediastream/RTCPeerConnection.cpp:
+    (WebCore::RTCPeerConnection::iceServersFromConfiguration):
+    
+    LayoutTests:
+    
+    * webrtc/stun-server-filtering-expected.txt:
+    * webrtc/stun-server-filtering.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271696 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-21  Youenn Fablet  <youenn@apple.com>
+
+            Check for TURN username/credentials sizes in RTCPeerConnection constructor
+            https://bugs.webkit.org/show_bug.cgi?id=220789
+
+            Reviewed by Eric Carlson.
+
+            * webrtc/stun-server-filtering-expected.txt:
+            * webrtc/stun-server-filtering.html:
+
+2021-02-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271674. rdar://problem/73889860
 
     [ Big Sur ] platform/mac/fast/text/international/bidi-fallback-font-weight.html is failing

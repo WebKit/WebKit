@@ -372,6 +372,12 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                 if (serverURL.protocolIs("turn") || serverURL.protocolIs("turns")) {
                     if (server.credential.isNull() || server.username.isNull())
                         return Exception { InvalidAccessError, "TURN/TURNS server requires both username and credential" };
+                    // https://tools.ietf.org/html/rfc8489#section-14.3
+                    if (server.credential.length() > 64 || server.username.length() > 64) {
+                        constexpr size_t MaxTurnUsernameLength = 509;
+                        if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
+                            return Exception { TypeError, "TURN/TURNS username and/or credential are too long" };
+                    }
                 } else if (!serverURL.protocolIs("stun"))
                     return Exception { NotSupportedError, "ICE server protocol not supported" };
             }
