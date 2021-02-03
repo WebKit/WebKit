@@ -2553,6 +2553,23 @@ static inline bool isAssistableElement(Element& element)
     return element.isContentEditable();
 }
 
+static inline bool isObscuredElement(Element& element)
+{
+    auto topDocument = makeRef(element.document().topDocument());
+    auto elementRectInMainFrame = element.clientRect();
+
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent };
+    HitTestResult result(elementRectInMainFrame.center());
+
+    topDocument->hitTest(hitType, result);
+    result.setToNonUserAgentShadowAncestor();
+
+    if (result.targetElement() == &element)
+        return false;
+
+    return true;
+}
+
 void WebPage::getPositionInformation(const InteractionInformationRequest& request, CompletionHandler<void(InteractionInformationAtPosition&&)>&& reply)
 {
     // Avoid UIProcess hangs when the WebContent process is stuck on a sync IPC.
@@ -3029,7 +3046,7 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
         nextElement = isForward
             ? page.focusController().nextFocusableElement(*nextElement)
             : page.focusController().previousFocusableElement(*nextElement);
-    } while (nextElement && !isAssistableElement(*nextElement));
+    } while (nextElement && (!isAssistableElement(*nextElement) || isObscuredElement(*nextElement)));
 
     return nextElement;
 }
