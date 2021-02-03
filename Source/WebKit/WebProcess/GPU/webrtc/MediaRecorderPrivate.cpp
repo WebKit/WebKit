@@ -36,11 +36,13 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaStreamPrivate.h>
 #include <WebCore/MediaStreamTrackPrivate.h>
+#include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {
+using namespace PAL;
 using namespace WebCore;
 
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
@@ -87,7 +89,28 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
 
 void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample)
 {
-    if (auto remoteSample = RemoteVideoSample::create(sample))
+    std::unique_ptr<RemoteVideoSample> remoteSample;
+    if (shouldMuteVideo()) {
+        if (!m_blackFrame) {
+            auto blackFrameDescription = CMSampleBufferGetFormatDescription(sample.platformSample().sample.cmSampleBuffer);
+            auto dimensions = CMVideoFormatDescriptionGetDimensions(blackFrameDescription);
+            auto blackFrame = createBlackPixelBuffer(dimensions.width, dimensions.height);
+            // FIXME: We convert to get an IOSurface. We could optimize this.
+            m_blackFrame = convertToBGRA(blackFrame.get());
+        }
+        remoteSample = RemoteVideoSample::create(m_blackFrame.get(), sample.presentationTime(), sample.videoRotation());
+    } else {
+        m_blackFrame = nullptr;
+        remoteSample = RemoteVideoSample::create(sample);
+        if (!remoteSample) {
+            // FIXME: Optimize this code path.
+            auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
+            auto newPixelBuffer = convertToBGRA(pixelBuffer);
+            remoteSample = RemoteVideoSample::create(newPixelBuffer.get(), sample.presentationTime(), sample.videoRotation());
+        }
+    }
+
+    if (remoteSample)
         m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample) }, m_identifier);
 }
 
@@ -100,10 +123,20 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
         m_numberOfFrames = m_description.sampleRate() * 2;
         m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
+        m_silenceAudioBuffer = nullptr;
     }
 
     ASSERT(is<WebAudioBufferList>(audioData));
-    m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
+
+    if (shouldMuteAudio()) {
+        if (!m_silenceAudioBuffer)
+            m_silenceAudioBuffer = makeUnique<WebAudioBufferList>(m_description, numberOfFrames);
+        else
+            m_silenceAudioBuffer->setSampleCount(numberOfFrames);
+        m_silenceAudioBuffer->zeroFlatBuffer();
+        m_ringBuffer->store(m_silenceAudioBuffer->list(), numberOfFrames, time.timeValue());
+    } else
+        m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
     m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
 }
 

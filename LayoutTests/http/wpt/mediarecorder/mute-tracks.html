@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ WebRTCPlatformCodecsInGPUProcessEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -127,7 +126,7 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
 
     if (counter === undefined)
         counter = 0;
-    if (counter > 400) {
+    if (counter > 100) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;
         return Promise.reject(errorMessage);

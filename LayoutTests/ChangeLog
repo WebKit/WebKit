@@ -1,3 +1,13 @@
+2021-02-03  Youenn Fablet  <youenn@apple.com>
+
+        Make sure GPUProcess MediaRecorder handles correctly muted tracks
+        https://bugs.webkit.org/show_bug.cgi?id=221325
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/mute-tracks.html:
+        Enable media recorder in GPUProcess and reduce the number of retries to have the test fail and not timeout.
+
 2021-02-03  Fernando Jimenez Moreno  <fjimenez@igalia.com>
 
         [GStreamer] Add DASH support in the registry scanner

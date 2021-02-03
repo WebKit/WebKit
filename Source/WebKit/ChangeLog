@@ -1,3 +1,28 @@
+2021-02-03  Youenn Fablet  <youenn@apple.com>
+
+        Make sure GPUProcess MediaRecorder handles correctly muted tracks
+        https://bugs.webkit.org/show_bug.cgi?id=221325
+
+        Reviewed by Eric Carlson.
+
+        In case of muted audio, zero the audio buffer before writing it in the ring buffer.
+        In case of muted video, send a black frame instead of the real frame.
+        For that purpose, create a black frame and convert it to IOSurface.
+        Apply this to any non IOSurface based video sample.
+
+        Fix unified build.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::videoSampleAvailable):
+        (WebKit::MediaRecorderPrivate::audioSamplesAvailable):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.mm: Added.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+
 2021-02-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix watch and tv build after r272228
