@@ -160,6 +160,9 @@ private:
 
     void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
 
+    void pendingUpdateTimerFired();
+    void clearPendingUpdate();
+
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
@@ -167,6 +170,8 @@ private:
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
+
+    Timer m_pendingUpdateTimer;
 
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
