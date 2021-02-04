@@ -417,7 +417,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
     
-    WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
+    if (!parameters.maximumIOSurfaceSize.isEmpty())
+        WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
