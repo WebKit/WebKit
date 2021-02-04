@@ -1,3 +1,19 @@
+2021-02-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Update .eslintrc to account for ECMAScript 2020
+        https://bugs.webkit.org/show_bug.cgi?id=221402
+
+        Reviewed by Devin Rousso.
+        
+        Add ES2020 parser option so ESLint-based linters don't throw errors
+        for newer JavaScript language features used in WebInspectorUI.
+        
+        Note: The linter in an editor must support ESLint v6.2.0 or newer to 
+        understand ES2020.
+
+        * .eslintrc:
+        Drive-by: add 4 spaces indentation rule to match Coding Style Guidelines.
+
 2021-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Collapse blackboxed call frames in Sources
