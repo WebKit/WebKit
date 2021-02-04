@@ -1,3 +1,23 @@
+2021-02-04  Devin Rousso  <drousso@apple.com>
+
+        [macOS] Default to showing the total duration, only switching to time remaining when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=221364
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt:
+        * media/modern-media-controls/time-label/ios-time-label.html:
+        * media/modern-media-controls/time-label/ios-time-label-expected.txt:
+        * media/modern-media-controls/time-label/time-label.html:
+        * media/modern-media-controls/time-label/time-label-expected.txt:
+        * media/modern-media-controls/time-labels-support/remaining-time.html:
+
 2021-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Collapse blackboxed call frames in Sources

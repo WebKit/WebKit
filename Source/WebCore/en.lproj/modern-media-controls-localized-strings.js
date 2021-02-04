@@ -3,6 +3,7 @@ const UIStrings = {
     "Apple TV": "Apple TV",
     "Audio": "Audio",
     "Audio Controls": "Audio Controls",
+    "Duration": "Duration",
     "Enter Full Screen": "Enter Full Screen",
     "Enter Picture in Picture": "Enter Picture in Picture",
     "Elapsed": "Elapsed",

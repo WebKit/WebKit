@@ -14,35 +14,42 @@ shouldBe("timeLabel.value", "0");
 shouldBeEqualToString("timeLabel.element.localName", "div");
 shouldBeEqualToString("timeLabel.element.className", "time-label");
 
-timeLabel.element.id = "elasped";
-
 const NaNTimeLabel = new TimeLabel;
 NaNTimeLabel.setValueWithNumberOfDigits(NaN, 4);
 
 const digits = [3, 4, 5, 6];
 let elapsedTimeLabels = new Map;
 let remainingTimeLabels = new Map;
+let durationTimeLabels = new Map;
 for (let numberOfDigits of digits) {
-    elapsedTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Types.Elapsed);
+    elapsedTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Elapsed);
     elapsedTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
-    remainingTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Types.Remaining);
+    remainingTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Remaining);
     remainingTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
+    durationTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Duration);
+    durationTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
 }
 
-const remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
+const durationTimeLabel = new TimeLabel(TimeLabel.Type.Duration);
+durationTimeLabel.element.id = "duration";
+durationTimeLabel.setValueWithNumberOfDigits(0, 4);
+
+const remainingTimeLabel = new TimeLabel(TimeLabel.Type.Remaining);
 remainingTimeLabel.element.id = "remaining";
 remainingTimeLabel.setValueWithNumberOfDigits(0, 4);
 
-const elaspedTimeLabel = new TimeLabel(TimeLabel.Types.Elasped);
+const elaspedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
 elaspedTimeLabel.element.id = "elasped";
 elaspedTimeLabel.setValueWithNumberOfDigits(0, 4);
 
 let style;
 let elaspedLabel;
 let remainingLabel;
+let durationLabel;
 scheduler.frameDidFire = function()
 {
     document.body.appendChild(timeLabel.element);
+    document.body.appendChild(durationTimeLabel.element);
     document.body.appendChild(remainingTimeLabel.element);
     document.body.appendChild(elaspedTimeLabel.element);
 
@@ -59,11 +66,15 @@ scheduler.frameDidFire = function()
 
     elaspedLabel = elaspedTimeLabel.element.getAttribute("aria-label").split(":")[0];
     remainingLabel = remainingTimeLabel.element.getAttribute("aria-label").split(":")[0];
+    durationLabel = durationTimeLabel.element.getAttribute("aria-label").split(":")[0];
     shouldBeEqualToString("elaspedLabel", "Elapsed");
     shouldBeEqualToString("remainingLabel", "Remaining");
+    shouldBeEqualToString("durationLabel", "Duration");
+    shouldBeEqualToString("accessibilityController.accessibleElementById('duration').role", "AXRole: AXStaticText");
     shouldBeEqualToString("accessibilityController.accessibleElementById('remaining').role", "AXRole: AXStaticText");
     shouldBeEqualToString("accessibilityController.accessibleElementById('elasped').role", "AXRole: AXStaticText");
     timeLabel.element.remove();
+    durationTimeLabel.element.remove();
     remainingTimeLabel.element.remove();
     elaspedTimeLabel.element.remove();
 
@@ -73,6 +84,8 @@ scheduler.frameDidFire = function()
         debug(`elapsedTimeLabels[${numberOfDigits}].width = ${elapsedTimeLabels[numberOfDigits].width}`);
         debug(`remainingTimeLabels[${numberOfDigits}].element.textContent = ${remainingTimeLabels[numberOfDigits].element.textContent}`);
         debug(`remainingTimeLabels[${numberOfDigits}].width = ${remainingTimeLabels[numberOfDigits].width}`);
+        debug(`durationTimeLabels[${numberOfDigits}].element.textContent = ${durationTimeLabels[numberOfDigits].element.textContent}`);
+        debug(`durationTimeLabels[${numberOfDigits}].width = ${durationTimeLabels[numberOfDigits].width}`);
     }
 
     debug("");

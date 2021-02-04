@@ -59,7 +59,7 @@ class TimeLabel extends LayoutNode
     {
         this._value = value;
         this._numberOfDigits = numberOfDigits;
-        this.width = WidthsForDigits[this._numberOfDigits] + (this._type === TimeLabel.Types.Remaining && !isNaN(this._value) ? MinusSignWidthsForDigits[this._numberOfDigits] : 0);
+        this.width = WidthsForDigits[this._numberOfDigits] + (this._type === TimeLabel.Type.Remaining && !isNaN(this._value) ? MinusSignWidthsForDigits[this._numberOfDigits] : 0);
         this.markDirtyProperty("value");
     }
 
@@ -69,9 +69,22 @@ class TimeLabel extends LayoutNode
     {
         if (propertyName === "value") {
             this.element.textContent = this._formattedTime();
+
             const timeAsString = formattedStringForDuration(this.value);
-            const ariaLabel = (this._type === TimeLabel.Types.Remaining) ? UIString("Remaining") : UIString("Elapsed");
-            this.element.setAttribute("aria-label", `${ariaLabel}: ${timeAsString}`);
+            switch (this._type) {
+            case TimeLabel.Type.Elapsed:
+                this.element.setAttribute("aria-label", `${UIString("Elapsed")}: ${timeAsString}`);
+                break;
+
+            case TimeLabel.Type.Remaining:
+                this.element.setAttribute("aria-label", `${UIString("Remaining")}: ${timeAsString}`);
+                break;
+
+            case TimeLabel.Type.Duration:
+                this.element.setAttribute("aria-label", `${UIString("Duration")}: ${timeAsString}`);
+                break;
+            }
+
             if (this.parent instanceof TimeControl)
                 this.parent.updateScrubberLabel();
         }
@@ -98,7 +111,7 @@ class TimeLabel extends LayoutNode
         else if (this._numberOfDigits == 6)
             timeComponents = [doubleDigits(time.hours), doubleDigits(time.minutes), doubleDigits(time.seconds)];
 
-        return (this._type === TimeLabel.Types.Remaining ? "-" : "") + timeComponents.join(":");
+        return (this._type === TimeLabel.Type.Remaining ? "-" : "") + timeComponents.join(":");
     }
 
 }
@@ -110,7 +123,8 @@ function doubleDigits(x)
     return `${x}`;
 }
 
-TimeLabel.Types = {
+TimeLabel.Type = {
     Elapsed: 0,
-    Remaining: 1
+    Remaining: 1,
+    Duration: 2,
 };

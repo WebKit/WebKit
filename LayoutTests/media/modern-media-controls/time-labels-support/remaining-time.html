@@ -13,6 +13,8 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
+mediaController.controls.timeControl.durationTimeLabel?.element.click();
+
 media.addEventListener("timeupdate", (event) => {
     debug("");
     debug("timeupdate event was dispatched");
