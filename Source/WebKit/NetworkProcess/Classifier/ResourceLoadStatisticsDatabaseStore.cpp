@@ -2118,11 +2118,17 @@ CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const SubResource
     return CookieAccess::OnlyIfGranted;
 }
 
-StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt(unsigned requestingDomainID, const RegistrableDomain& firstPartyDomain) const
+StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt(unsigned requestingDomainID, const RegistrableDomain& firstPartyDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto firstPartyPrimaryDomainID = domainID(firstPartyDomain).value();
+    auto result = ensureResourceStatisticsForRegistrableDomain(firstPartyDomain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt was not completed due to failed insert attempt", this);
+        return StorageAccessPromptWasShown::No;
+    }
+
+    auto firstPartyPrimaryDomainID = *result.second;
 
     SQLiteStatement statement(m_database, "SELECT COUNT(*) FROM StorageAccessUnderTopFrameDomains WHERE domainID = ? AND topLevelDomainID = ?");
     if (statement.prepare() != SQLITE_OK
