@@ -1,3 +1,14 @@
+2021-02-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Supplementary code points (U+10000 - U+10FFFF) are not shaped correctly in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=221356
+        <rdar://problem/72555297>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/multi-code-unit-simple-path-expected-mismatch.html: Added.
+        * fast/text/multi-code-unit-simple-path.html: Added.
+
 2021-02-04  Devin Rousso  <drousso@apple.com>
 
         Add intermediate volume icon states between "mute" and "max"
