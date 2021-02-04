@@ -1,3 +1,14 @@
+2021-02-04  Rob Buis  <rbuis@igalia.com>
+
+        Make shouldComputeLogicalWidthFromAspectRatioAndInsets writing mode aware
+        https://bugs.webkit.org/show_bug.cgi?id=221328
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Enable some tests that pass now.
+
+        * TestExpectations:
+
 2021-02-04  Miguel Gomez  <magomez@igalia.com>
 
         [WPE][GTK] Wrong rendering when using opacity filters on hw accelerated layers

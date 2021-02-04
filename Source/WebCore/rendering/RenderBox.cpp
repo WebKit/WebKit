@@ -5100,7 +5100,7 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets() const
     if (!isOutOfFlowPositioned())
         return false;
     // FIXME: see if this can become a helper on RenderStyle.
-    if (style().width().isAuto() && style().height().isAuto() && !style().top().isAuto() && !style().bottom().isAuto() && (style().left().isAuto() || style().right().isAuto()))
+    if (style().width().isAuto() && style().height().isAuto() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto() && (style().logicalLeft().isAuto() || style().logicalRight().isAuto()))
         return true;
     return false;
 }
