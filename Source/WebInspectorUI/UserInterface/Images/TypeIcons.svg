@@ -290,6 +290,8 @@
     <g id="AuditTestGroup-light" class="light blue"><use href="#box"/><use href="#T"/></g>
     <g id="AuditTestGroupResult-dark" class="dark grey"><use href="#box"/><use href="#T"/></g>
     <g id="AuditTestGroupResult-light" class="light grey"><use href="#box"/><use href="#T"/></g>
+    <g id="Blackboxed-dark" class="dark grey"><use href="#box"/><use href="#question-mark"/></g>
+    <g id="Blackboxed-light" class="light grey"><use href="#box"/><use href="#question-mark"/></g>
     <g id="CallTrees-dark" class="dark grey"><use href="#box"/><use href="#calltree"/></g>
     <g id="CallTrees-light" class="light grey"><use href="#box"/><use href="#calltree"/></g>
     <g id="DebuggerStatement-dark" class="dark blue"><use href="#box"/><use href="#D"/></g>

@@ -105,6 +105,16 @@ PASS: lastValue of an empty array should be undefined.
 [1,2,3] => [[1,2],[2,3]]
 [1,2,3,4] => [[1,2],[2,3],[3,4]]
 
+-- Running test case: Array.prototype.groupBy
+[0,1,0,1,1,0,1,1,1,0] => [0,[1],0,[1,1],0,[1,1,1],0]
+[0,1,0,1,1,0,1,1,1,0] => [0,1,0,[1,1],0,[1,1,1],0]
+[0,1,0,1,1,0,1,1,1,0] => [0,1,0,1,1,0,[1,1,1],0]
+[0,1,0,1,1,0,1,1,1,0] => [0,1,0,1,1,0,1,1,1,0]
+[0,1,0,1,1,0,1,1,1] => [0,[1],0,[1,1],0,[1,1,1]]
+[0,1,0,1,1,0,1,1,1] => [0,1,0,[1,1],0,[1,1,1]]
+[0,1,0,1,1,0,1,1,1] => [0,1,0,1,1,0,[1,1,1]]
+[0,1,0,1,1,0,1,1,1] => [0,1,0,1,1,0,1,1,1]
+
 -- Running test case: Array.prototype.remove
 PASS: remove should return true when removing a value that exists.
 PASS: remove should only remove the first matching value.

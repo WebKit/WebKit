@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,70 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.call-frame {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.tree-outline .item.blackboxed-group {
     cursor: pointer;
-}
-
-.call-frame.blackboxed > .title,
-.call-frame.blackboxed:not(:hover, :focus) > .subtitle {
     opacity: var(--blackboxed-tree-item-opacity);
 }
 
-.call-frame .icon {
-    display: inline-block;
-    vertical-align: top;
-    width: 16px;
-    height: 16px;
-    margin-inline-end: 3px;
-}
-
-.call-frame .titles {
-    display: inline-block;
-}
-
-.call-frame .subtitle,
-.call-frame .subtitle .source-link {
-    color: hsla(0, 0%, 0%, 0.6);
-    text-decoration: none;
-}
-
-.call-frame:hover .subtitle .source-link,
-.call-frame:focus .subtitle .source-link {
-    color: hsl(210, 0%, 0%);
-}
-
-.call-frame .subtitle:empty {
-    display: none;
-}
-
-.call-frame .subtitle {
-    font-size: inherit;
-}
-
-.call-frame .colon {
-    background-color: red;
-}
-
-.call-frame .separator {
-    white-space: nowrap;
-    color: hsla(0, 0%, 0%, 0.2);
+.tree-outline .item.blackboxed-group .icon {
+    content: url(../Images/TypeIcons.svg#Blackboxed-light);
 }
 
 @media (prefers-color-scheme: dark) {
-    .call-frame .subtitle,
-    .call-frame .subtitle .source-link {
-        color: hsla(0, 0%, var(--foreground-lightness), 0.6);
-    }
-
-    .call-frame:hover .subtitle .source-link,
-    .call-frame:focus .subtitle .source-link {
-        color: hsl(0, 0%, var(--foreground-lightness));
-    }
-
-    .call-frame .separator {
-        color: hsla(0, 0%, var(--foreground-lightness), 0.2);
+    .tree-outline .item.blackboxed-group .icon {
+        content: url(../Images/TypeIcons.svg#Blackboxed-dark);
     }
 }

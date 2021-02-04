@@ -215,6 +215,8 @@
     --reference-page-link-size: 20px;
 
     --image-button-navigation-item-width: 26px;
+
+    --blackboxed-tree-item-opacity: 0.5;
 }
 
 body.window-inactive {

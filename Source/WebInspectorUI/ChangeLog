@@ -1,3 +1,50 @@
+2021-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Collapse blackboxed call frames in Sources
+        https://bugs.webkit.org/show_bug.cgi?id=216897
+
+        Reviewed by Devin Rousso.
+
+        Stack traces often have dozens of blackboxed call frames when using blackboxing for JS-frameworks such as React.js.
+        It makes it hard to see more relevant non-framework code.
+
+        To improve this, introduce "Collapse blackboxed call frames" experimental setting, that collapses adjacent
+        blackboxed call frames into expandable items.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Images/TypeIcons.svg:
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame):
+        (WI.CallFrame.prototype.get blackboxed):
+        (WI.CallFrame.fromDebuggerPayload):
+        (WI.CallFrame.fromPayload):
+        * UserInterface/Views/BlackboxedGroupTreeElement.css: Added.
+        (.tree-outline .item.blackboxed-group):
+        (.tree-outline .item.blackboxed-group .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline .item.blackboxed-group .icon):
+        * UserInterface/Views/BlackboxedGroupTreeElement.js: Added.
+        (WI.BlackboxedGroupTreeElement):
+        (WI.BlackboxedGroupTreeElement.prototype.expand):
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame.blackboxed:not(.selected)):
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame.blackboxed > .title,):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype.refresh):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.treeElementToggled):
+        This is necessary since `WI.BlackboxedGroupTreeElement` removes itself when expanded.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2021-02-02  BJ Burg  <bburg@apple.com>
 
         Web Inspector: Add another Protocol Version (iOS 14.5)

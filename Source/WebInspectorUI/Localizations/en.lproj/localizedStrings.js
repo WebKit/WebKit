@@ -219,6 +219,8 @@ localizedStrings["Binding"] = "Binding";
 localizedStrings["Blackbox"] = "Blackbox";
 localizedStrings["Blackbox Script"] = "Blackbox Script";
 localizedStrings["Blackbox script to ignore it when debugging"] = "Blackbox script to ignore it when debugging";
+/* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["Blackboxed @ Debugger Call Stack"] = "Blackboxed";
 localizedStrings["Block Variables"] = "Block Variables";
 /* Input label for the blur radius of a CSS box shadow */
 localizedStrings["Blur @ Box Shadow Editor"] = "Blur";
@@ -324,6 +326,8 @@ localizedStrings["Closure Variables"] = "Closure Variables";
 localizedStrings["Closure Variables (%s)"] = "Closure Variables (%s)";
 localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
+/* Setting to collapse blackboxed call frames in the debugger. */
+localizedStrings["Collapse blackboxed call frames @ Experimental Settings"] = "Collapse blackboxed call frames";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
 localizedStrings["Comment"] = "Comment";
@@ -420,6 +424,8 @@ localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Stat
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
 localizedStrings["Debugging:"] = "Debugging:";
+/* Category label for experimental settings related to debugging. */
+localizedStrings["Debugging: @ Experimental Settings"] = "Debugging:";
 localizedStrings["Debugs"] = "Debugs";
 localizedStrings["Decoded"] = "Decoded";
 localizedStrings["Default"] = "Default";
@@ -1689,6 +1695,10 @@ localizedStrings["\u0022%s\u0022 must be an %s"] = "\u0022%s\u0022 must be an %s
 localizedStrings["\u0022%s\u0022 threw an error"] = "\u0022%s\u0022 threw an error";
 localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
+/* Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["call frame @ Debugger Call Stack"] = "%d call frame";
+/* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["call frames @ Debugger Call Stack"] = "%d call frames";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
 localizedStrings["default prevented"] = "default prevented";

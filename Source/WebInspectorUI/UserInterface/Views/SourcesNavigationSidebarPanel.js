@@ -1987,6 +1987,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
+        if (treeElement instanceof WI.BlackboxedGroupTreeElement)
+            return;
+
         console.error("Unknown tree element", treeElement);
     }
 
