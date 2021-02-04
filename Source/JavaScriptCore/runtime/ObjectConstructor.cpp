@@ -32,6 +32,7 @@
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorAssign);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorEntries);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorValues);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorGetPrototypeOf);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorSetPrototypeOf);
@@ -76,7 +77,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   is                        objectConstructorIs                         DontEnum|Function 2 ObjectIsIntrinsic
   assign                    objectConstructorAssign                     DontEnum|Function 2
   values                    objectConstructorValues                     DontEnum|Function 1
-  entries                   JSBuiltin                                   DontEnum|Function 1
+  entries                   objectConstructorEntries                    DontEnum|Function 1
   fromEntries               JSBuiltin                                   DontEnum|Function 1
 @end
 */
@@ -98,7 +99,6 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().createPrivateName(), objectConstructorCreate, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().definePropertyPrivateName(), objectConstructorDefineProperty, static_cast<unsigned>(PropertyAttribute::DontEnum), 3);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyNamesPrivateName(), objectConstructorGetOwnPropertyNames, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 }
 
 // ES 19.1.1.1 Object([value])
@@ -388,6 +388,65 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
     return JSValue::encode(target);
 }
 
+JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue targetValue = callFrame->argument(0);
+    if (targetValue.isUndefinedOrNull())
+        return throwVMTypeError(globalObject, scope, "Object.entries requires that input parameter not be null or undefined"_s);
+    JSObject* target = targetValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSArray* entries = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    PropertyNameArray properties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, properties, DontEnumPropertiesMode::Include);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned index = 0;
+    auto append = [&] (JSGlobalObject* globalObject, PropertyName propertyName) {
+        PropertySlot slot(target, PropertySlot::InternalMethodType::GetOwnProperty);
+        bool hasProperty = target->methodTable(vm)->getOwnPropertySlot(target, globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!hasProperty)
+            return;
+        if (slot.attributes() & PropertyAttribute::DontEnum)
+            return;
+
+        JSValue value;
+        if (LIKELY(!slot.isTaintedByOpaqueObject()))
+            value = slot.getValue(globalObject, propertyName);
+        else
+            value = target->get(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        JSString* key = jsOwnedString(vm, propertyName.uid());
+        JSArray* entry = nullptr;
+        {
+            ObjectInitializationScope initializationScope(vm);
+            if ((entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
+                entry->initializeIndex(initializationScope, 0, key);
+                entry->initializeIndex(initializationScope, 1, value);
+            }
+        }
+        if (!entry) {
+            throwOutOfMemoryError(globalObject, scope);
+            return;
+        }
+        entries->putDirectIndex(globalObject, index++, entry);
+    };
+
+    for (const auto& propertyName : properties) {
+        append(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(entries);
+}
+
 JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -407,7 +466,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned index = 0;
-    auto addValue = [&] (PropertyName propertyName) {
+    auto append = [&] (JSGlobalObject* globalObject, PropertyName propertyName) {
         PropertySlot slot(target, PropertySlot::InternalMethodType::GetOwnProperty);
         bool hasProperty = target->methodTable(vm)->getOwnPropertySlot(target, globalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, void());
@@ -426,12 +485,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
         values->putDirectIndex(globalObject, index++, value);
     };
 
-    for (unsigned i = 0, numProperties = properties.size(); i < numProperties; i++) {
-        const auto& propertyName = properties[i];
-        if (propertyName.isSymbol())
-            continue;
-
-        addValue(propertyName);
+    for (const auto& propertyName : properties) {
+        append(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

@@ -44,7 +44,6 @@ class JSGlobalObject;
     v(setBucketNext, nullptr) \
     v(setBucketKey, nullptr) \
     v(setPrototypeDirect, nullptr) \
-    v(propertyIsEnumerable, nullptr) \
     v(copyDataProperties, nullptr) \
     v(enqueueJob, nullptr) \
     v(makeTypeError, nullptr) \

@@ -66,7 +66,6 @@ namespace JSC {
     macro(create) \
     macro(defineProperty) \
     macro(defaultPromiseThen) \
-    macro(getOwnPropertyNames) \
     macro(Set) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
@@ -169,7 +168,6 @@ namespace JSC {
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(importModule) \
-    macro(propertyIsEnumerable) \
     macro(copyDataProperties) \
     macro(meta) \
     macro(webAssemblyCompileStreamingInternal) \
@@ -177,6 +175,7 @@ namespace JSC {
     macro(instanceFieldInitializer) \
     macro(hasOwnPropertyFunction) \
     macro(createPrivateSymbol) \
+    macro(entries) \
 
 
 namespace Symbols {

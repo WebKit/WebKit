@@ -1,3 +1,29 @@
+2021-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Object.entries in C++
+        https://bugs.webkit.org/show_bug.cgi?id=221380
+
+        Reviewed by Alexey Shvayka.
+
+        This patch implements Object.entries in C++ because it is more efficient.
+        It is not using dynamic feature (like, calling a callback). And in C++,
+        we can avoid JSArray allocations for @Object.@getOwnPropertyNames.
+
+        This patch also removes unnecessary JS private functions, @propertyIsEnumerable,
+        and @getOwnPropertyNames.
+
+        * builtins/BuiltinNames.h:
+        * builtins/ObjectConstructor.js:
+        (entries): Deleted.
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Insert PhantomLocal just before SetLocal for |this| to ensure liveness

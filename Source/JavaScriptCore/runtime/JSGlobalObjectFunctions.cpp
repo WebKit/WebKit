@@ -815,22 +815,6 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
     return JSValue::encode(promise);
 }
 
-JSC_DEFINE_HOST_FUNCTION(globalFuncPropertyIsEnumerable, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    RELEASE_ASSERT(callFrame->argumentCount() == 2);
-    JSObject* object = jsCast<JSObject*>(callFrame->uncheckedArgument(0));
-    auto propertyName = callFrame->uncheckedArgument(1).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    scope.release();
-    PropertyDescriptor descriptor;
-    bool enumerable = object->getOwnPropertyDescriptor(globalObject, propertyName, descriptor) && descriptor.enumerable();
-    return JSValue::encode(jsBoolean(enumerable));
-}
-
 static bool canPerformFastPropertyEnumerationForCopyDataProperties(Structure* structure)
 {
     if (structure->typeInfo().overridesGetOwnPropertySlot())

@@ -25,22 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function entries(object)
-{
-    "use strict";
-
-    var obj = @toObject(object, "Object.entries requires that input parameter not be null or undefined");
-    var names = @Object.@getOwnPropertyNames(obj);
-    var properties = [];
-    for (var i = 0, length = names.length; i < length; ++i) {
-        var name = names[i];
-        if (@propertyIsEnumerable(obj, name))
-            @arrayPush(properties, [name, obj[name]]);
-    }
-
-    return properties;
-}
-
 function fromEntries(iterable)
 {
     "use strict";
