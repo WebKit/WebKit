@@ -44,6 +44,7 @@ class ValidationMessage;
 // unless there is a special reason.
 class HTMLFormControlElement : public LabelableElement, public FormAssociatedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
+    friend class DelayedUpdateValidityScope;
 public:
     virtual ~HTMLFormControlElement();
 
@@ -173,6 +174,9 @@ private:
     bool isValidFormControlElement() const;
 
     bool computeIsDisabledByFieldsetAncestor() const;
+    
+    void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }
+    void endDelayingUpdateValidity();
 
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
@@ -182,6 +186,9 @@ private:
     bool needsMouseFocusableQuirk() const;
 
     std::unique_ptr<ValidationMessage> m_validationMessage;
+    
+    unsigned m_delayedUpdateValidityCount { 0 };
+
     bool m_isFocusingWithValidationMessage { false };
 
     unsigned m_disabled : 1;
@@ -207,6 +214,24 @@ private:
 
     unsigned m_hasAutofocused : 1;
 };
+
+class DelayedUpdateValidityScope {
+public:
+    DelayedUpdateValidityScope(HTMLFormControlElement& element)
+        : m_element(element)
+    {
+        m_element.startDelayingUpdateValidity();
+    }
+    
+    ~DelayedUpdateValidityScope()
+    {
+        m_element.endDelayingUpdateValidity();
+    }
+
+private:
+    HTMLFormControlElement& m_element;
+};
+
 
 } // namespace WebCore
 
