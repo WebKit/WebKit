@@ -641,6 +641,7 @@ def headers_for_type(type):
         'MachSendRight': ['<wtf/MachSendRight.h>'],
         'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
+        'IPC::Semaphore': ['"IPCSemaphore.h"'],
         'Inspector::InspectorTargetType': ['<JavaScriptCore/InspectorTarget.h>'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
         'WebCore::DisplayList::FlushIdentifier': ['<WebCore/DisplayList.h>'],

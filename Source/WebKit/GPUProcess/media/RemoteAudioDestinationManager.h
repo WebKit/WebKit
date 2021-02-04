@@ -28,8 +28,8 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "Connection.h"
+#include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
-#include "Semaphore.h"
 #include "SharedMemory.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>

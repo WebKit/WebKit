@@ -29,12 +29,12 @@
 
 #include "GPUProcessConnection.h"
 #include "GPUProcessWakeupMessageArguments.h"
+#include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
-#include "Semaphore.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Deque.h>

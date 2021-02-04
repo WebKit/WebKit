@@ -29,13 +29,13 @@
 
 #include "Connection.h"
 #include "GPUProcessWakeupMessageArguments.h"
+#include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "ImageDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
-#include "Semaphore.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>

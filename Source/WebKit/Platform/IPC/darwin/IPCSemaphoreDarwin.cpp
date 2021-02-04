@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Semaphore.h"
+#include "IPCSemaphore.h"
 
 #include "WebCoreArgumentCoders.h"
 #include <mach/mach.h>

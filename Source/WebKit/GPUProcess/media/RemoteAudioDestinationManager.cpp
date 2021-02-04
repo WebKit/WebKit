@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
-#include "Semaphore.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

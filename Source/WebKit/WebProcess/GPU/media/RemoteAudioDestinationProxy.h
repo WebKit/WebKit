@@ -29,8 +29,8 @@
 
 #include "Connection.h"
 #include "GPUProcessConnection.h"
+#include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
-#include "Semaphore.h"
 #include <WebCore/AudioIOCallback.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/MediaTime.h>

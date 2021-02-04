@@ -87,8 +87,8 @@ Platform/ios/PaymentAuthorizationController.mm
 
 Platform/IPC/cocoa/ConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp
-Platform/IPC/darwin/SemaphoreDarwin.cpp
 
+Platform/IPC/darwin/IPCSemaphoreDarwin.cpp
 
 Platform/mac/MachUtilities.cpp
 Platform/mac/MenuUtilities.mm

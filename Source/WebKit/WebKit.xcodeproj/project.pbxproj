@@ -1327,8 +1327,6 @@
 		7AFBD36721E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */; };
 		7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */; };
 		7B1DB26625668CE1000E26BC /* ArrayReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1DB26525668CE0000E26BC /* ArrayReference.h */; };
-		7B73122825C988AA003B2796 /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B73122625C988AA003B2796 /* Semaphore.cpp */; };
-		7B73122925C988AB003B2796 /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73122725C988AA003B2796 /* Semaphore.h */; };
 		7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C065F2A1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h */; };
 		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1BA33E1A4A0E600043E249 /* APIDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1BA33C1A4A0E600043E249 /* APIDictionary.h */; };
@@ -1577,6 +1575,8 @@
 		A1EF36C02581F76F0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A1EF36D52581F7EB0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */; };
+		A31F60A525CC7DB900AF14F4 /* IPCSemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31F60A325CC7DB800AF14F4 /* IPCSemaphore.cpp */; };
 		A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A513F53E2154A5CC00662841 /* WebPageInspectorController.h */; };
 		A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
@@ -4519,9 +4519,6 @@
 		7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
 		7B1DB26525668CE0000E26BC /* ArrayReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReference.h; sourceTree = "<group>"; };
 		7B64C0B6254C5C250006B4AF /* GraphicsContextGLIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLIdentifier.h; sourceTree = "<group>"; };
-		7B73122625C988AA003B2796 /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
-		7B73122725C988AA003B2796 /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
-		7B73122A25C988C6003B2796 /* SemaphoreDarwin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SemaphoreDarwin.cpp; sourceTree = "<group>"; };
 		7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxy.cpp; sourceTree = "<group>"; };
 		7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxy.h; sourceTree = "<group>"; };
 		7B904167254AFE17006EEB8C /* RemoteGraphicsContextGLProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGraphicsContextGLProxy.messages.in; sourceTree = "<group>"; };
@@ -4966,6 +4963,9 @@
 		A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
 		A1FB68221F6E518200C43F9F /* WKCrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCrashReporter.h; sourceTree = "<group>"; };
 		A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCrashReporter.mm; sourceTree = "<group>"; };
+		A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPCSemaphore.h; sourceTree = "<group>"; };
+		A31F60A325CC7DB800AF14F4 /* IPCSemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPCSemaphore.cpp; sourceTree = "<group>"; };
+		A31F60A625CC7DCF00AF14F4 /* IPCSemaphoreDarwin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPCSemaphoreDarwin.cpp; sourceTree = "<group>"; };
 		A38A12E123C93AC700FABFA9 /* TextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextChecker.cpp; sourceTree = "<group>"; };
 		A3937B6123CD1B9B005B2A2E /* WebPreferencesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesCocoa.mm; sourceTree = "<group>"; };
 		A513F53E2154A5CC00662841 /* WebPageInspectorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorController.h; sourceTree = "<group>"; };
@@ -6901,6 +6901,8 @@
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				1C9AF36124134D2300D3EC02 /* ImageDataReference.h */,
+				A31F60A325CC7DB800AF14F4 /* IPCSemaphore.cpp */,
+				A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */,
 				9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */,
 				9B47908E253151CC00EC11AB /* JSIPCBinding.h */,
 				9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */,
@@ -6910,8 +6912,6 @@
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
 				1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */,
 				1AAB0378185A7C6A00EDF501 /* MessageSender.h */,
-				7B73122625C988AA003B2796 /* Semaphore.cpp */,
-				7B73122725C988AA003B2796 /* Semaphore.h */,
 				2DC18001D90DDD15FC6991A9 /* SharedBufferCopy.cpp */,
 				5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */,
 				2DC1855EDBFB850BA0B6D06D /* SharedBufferDataReference.cpp */,
@@ -9019,7 +9019,7 @@
 		7B73122C25CA67AE003B2796 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
-				7B73122A25C988C6003B2796 /* SemaphoreDarwin.cpp */,
+				A31F60A625CC7DCF00AF14F4 /* IPCSemaphoreDarwin.cpp */,
 			);
 			path = darwin;
 			sourceTree = "<group>";
@@ -11660,6 +11660,7 @@
 				A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */,
 				C5BCE5DF1C50766A00CDE3FA /* InteractionInformationAtPosition.h in Headers */,
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
+				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
@@ -11922,7 +11923,6 @@
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
-				7B73122925C988AB003B2796 /* Semaphore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
@@ -13676,6 +13676,7 @@
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
+				A31F60A525CC7DB900AF14F4 /* IPCSemaphore.cpp in Sources */,
 				9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */,
 				2D913441212CF9F000128AFD /* JSNPMethod.cpp in Sources */,
 				2D913442212CF9F000128AFD /* JSNPObject.cpp in Sources */,
@@ -13774,7 +13775,6 @@
 				A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */,
 				1BBBE4A019B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
-				7B73122825C988AA003B2796 /* Semaphore.cpp in Sources */,
 				41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */,
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				2DC18FEBF337B9671C88E3CD /* SharedBufferCopy.cpp in Sources */,
