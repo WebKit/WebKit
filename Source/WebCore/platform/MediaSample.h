@@ -83,6 +83,7 @@ public:
         IsSync = 1 << 0,
         IsNonDisplaying = 1 << 1,
         HasAlpha = 1 << 2,
+        HasSyncInfo = 1 << 3,
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() = 0;
@@ -106,6 +107,7 @@ public:
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }
     bool hasAlpha() const { return flags() & HasAlpha; }
+    bool hasSyncInfo() const { return flags() & HasSyncInfo; }
 
     virtual void dump(PrintStream&) const = 0;
     String toJSONString() const

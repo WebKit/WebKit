@@ -343,11 +343,19 @@ OSStatus MediaSampleCursor::getSampleTiming(CMSampleTimingInfo* sampleTiming) co
 
 OSStatus MediaSampleCursor::getSyncInfo(MTPluginSampleCursorSyncInfo* syncInfo) const
 {
-    return getMediaSample([&](MediaSample& sample) {
-        *syncInfo = {
-            .fullSync = sample.isSync()
-        };
+    OSStatus syncInfoStatus = noErr;
+    auto getSampleStatus = getMediaSample([&](MediaSample& sample) {
+        if (sample.hasSyncInfo()) {
+            *syncInfo = {
+                .fullSync = sample.isSync()
+            };
+            return;
+        }
+        syncInfoStatus = kCMBaseObjectError_ValueNotAvailable;
     });
+    if (syncInfoStatus != noErr)
+        return syncInfoStatus;
+    return getSampleStatus;
 }
 
 OSStatus MediaSampleCursor::copyFormatDescription(CMFormatDescriptionRef* formatDescriptionOut) const

@@ -1161,14 +1161,14 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     m_currentBlockBuffer = nullptr;
     m_currentBlockBufferPosition = 0;
 
-    if (!isKey) {
-        auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
-        ASSERT(attachmentsArray);
-        if (!attachmentsArray) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
-            return;
-        }
+    auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    ASSERT(attachmentsArray);
+    if (!attachmentsArray) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
+        return;
+    }
 
+    if (!isKey) {
         for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
             CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
             CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);

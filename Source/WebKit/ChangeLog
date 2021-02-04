@@ -1,3 +1,24 @@
+2021-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] WebM audio goes out-of-sync or stops playing after a seek
+        https://bugs.webkit.org/show_bug.cgi?id=221354
+        <rdar://73471690>
+
+        Reviewed by Eric Carlson.
+
+        The MTPluginFormatReader will attempt to determine whether an audio sample needs priming frames
+        by querying for, among other things, its "syncInfo". Previously, we had just presumed all samples
+        without a sample attachment dictionary were sync samples, and reported them as such from
+        MediaSampleCursor, but this causes the format reader plugin to walk backwards all the way to the
+        beginning of the audio track looking for priming samples. Instead, since the sample in question
+        has no sync info (it was synthesized by MediaSample), return kCMBaseObjectError_ValueNotAvailable
+        in this case, which causes the plugin format reader to assume all samples are both sync and do
+        not require explicit priming frames.
+
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::getSampleTiming const):
+        (WebKit::MediaSampleCursor::getSyncInfo const):
+
 2021-02-03  Andy Estes  <aestes@apple.com>
 
         [macOS] Shrink MediaSampleByteRange by 8 bytes

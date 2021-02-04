@@ -66,7 +66,7 @@ class SampleIsRandomAccess {
 public:
     bool operator()(DecodeOrderSampleMap::MapType::value_type& value)
     {
-        return value.second->flags() == MediaSample::IsSync;
+        return value.second->isSync();
     }
 };
 
