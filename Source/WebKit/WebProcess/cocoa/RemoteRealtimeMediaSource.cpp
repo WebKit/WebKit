@@ -303,6 +303,7 @@ void RemoteRealtimeMediaSource::captureFailed()
 
 void RemoteRealtimeMediaSource::stopBeingObserved()
 {
+    m_hasRequestedToEnd = true;
     connection()->send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { m_identifier }, 0);
 }
 
@@ -324,7 +325,7 @@ void RemoteRealtimeMediaSource::requestToEnd(Observer& observer)
 void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     ASSERT(m_shouldCaptureInGPUProcess);
-    if (isEnded())
+    if (isEnded() || m_hasRequestedToEnd)
         return;
 
     m_manager.didUpdateSourceConnection(*this);

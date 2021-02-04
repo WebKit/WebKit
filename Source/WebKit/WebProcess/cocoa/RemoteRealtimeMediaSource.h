@@ -113,6 +113,7 @@ private:
     Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
     bool m_shouldCaptureInGPUProcess { false };
     bool m_isReady { false };
+    bool m_hasRequestedToEnd { false };
     String m_errorMessage;
     CompletionHandler<void(String)> m_callback;
     WebCore::CaptureDevice m_device;

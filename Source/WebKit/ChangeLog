@@ -1,3 +1,28 @@
+2021-02-04  Youenn Fablet  <youenn@apple.com>
+
+        Test landed flaky: [iOS] TestWebKitAPI.WebKit2.CrashGPUProcessWhileCapturing
+        https://bugs.webkit.org/show_bug.cgi?id=221331
+        <rdar://problem/73935129>
+
+        Reviewed by Eric Carlson.
+
+        For video sources tied to a remote source in GPUProcess, we are calling requestToEnd instead of end
+        since the same remote source may be shared with other cloned video sources.
+        In that case, the source in WebProcess should be considered as ended as soon as requestToEnd is called.
+
+        This is important as in case of GPUProcess, we are recreating sources that are not ended.
+        We were thus recreating a source which was actually ended in WebProcess.
+        This appears in particular on iOS where only one source can be active at a time.
+
+        A further refactoring should probably change the way we clone video sources given we are now supporting size and frame rate adaptations in RealtimeVideoSource.
+
+        Covered by API test no longer falkily failing.
+
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp:
+        (WebKit::RemoteRealtimeMediaSource::captureFailed):
+        (WebKit::RemoteRealtimeMediaSource::requestToEnd):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h:
+
 2021-02-04  Alex Christensen  <achristensen@apple.com>
 
         REGRESSION(r267763) Network process launches earlier than before
