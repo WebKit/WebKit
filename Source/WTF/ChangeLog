@@ -1,3 +1,18 @@
+2021-02-04  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::dynamic_cf_cast<> should not assert in Debug builds
+        <https://webkit.org/b/221428>
+        <rdar://problem/73451079>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/cf/TypeCastsCF.h:
+        (WTF::dynamic_cf_cast):
+        - Remove ASSERT_WITH_SECURITY_IMPLICATION().
+        (WTF::checked_cf_cast):
+        - Add comments about how to use these template functions
+          correctly.
+
 2021-02-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix Catalyst build after r272228
