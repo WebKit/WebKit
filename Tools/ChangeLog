@@ -1,3 +1,13 @@
+2021-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Don't launch a network process when registering URL schemes
+        https://bugs.webkit.org/show_bug.cgi?id=221427
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2021-02-04  Jonathan Bedard  <jbedard@apple.com>
 
         [Python-3] Change shebang in check-webkit-style

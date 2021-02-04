@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -83,5 +84,7 @@ TEST(WebKit, NetworkProcessLaunchOnlyWhenNecessary)
 {
     auto webView = [[WKWebView new] autorelease];
     webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = YES;
+    [webView.configuration.processPool _registerURLSchemeAsSecure:@"test"];
+    [webView.configuration.processPool _registerURLSchemeAsBypassingContentSecurityPolicy:@"test"];
     EXPECT_FALSE([webView.configuration.websiteDataStore _networkProcessExists]);
 }

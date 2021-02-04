@@ -1,3 +1,19 @@
+2021-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Don't launch a network process when registering URL schemes
+        https://bugs.webkit.org/show_bug.cgi?id=221427
+
+        Reviewed by Chris Dumez.
+
+        When Safari on macOS is launching, it calls registerURLSchemeAsSecure and registerURLSchemeAsBypassingContentSecurityPolicy.
+        This causes the network process to launch before the app has finished launching.  Since values are stored in the UI process
+        and sent in NetworkProcessCreationParameters whenever a network process starts, so it's not necessary to start the network
+        process when calling these two functions.  This should decrease Safari's launch time.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::registerURLSchemeAsSecure):
+        (WebKit::WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy):
+
 2021-02-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Don't use Semaphore.h as a filename

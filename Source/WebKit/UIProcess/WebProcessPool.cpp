@@ -1265,7 +1265,8 @@ void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
     LegacyGlobalSettings::singleton().registerURLSchemeAsSecure(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
     WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
     });
 }
 
@@ -1274,7 +1275,8 @@ void WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy(const Str
     LegacyGlobalSettings::singleton().registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme));
     WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
     });
 }
 
