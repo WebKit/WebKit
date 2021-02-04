@@ -1,3 +1,15 @@
+2021-02-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [Python-3] Change shebang in git-webkit (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=221412
+        <rdar://problem/73983881>
+
+        Reviewed by Michael Catanzaro.
+
+        * CISupport/ews-build/steps.py:
+        (ShowIdentifier.start): Invoke git-webkit with Python 3.
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Don't launch a network process when registering URL schemes

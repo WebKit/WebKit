@@ -3786,7 +3786,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
             ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
@@ -3801,7 +3801,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )
