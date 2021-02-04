@@ -48,10 +48,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
-#if (!defined(GST_DISABLE_GST_DEBUG))
-GST_DEBUG_CATEGORY_EXTERN(webkitMediaThunderDecryptDebugCategory);
-#define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory
-#endif
+GST_DEBUG_CATEGORY(webkitMediaThunderDebugCategory);
+#define GST_CAT_DEFAULT webkitMediaThunderDebugCategory
 
 namespace {
 
@@ -93,6 +91,11 @@ static CDMInstanceSession::SessionLoadFailure sessionLoadFailureFromThunder(cons
 
 CDMFactoryThunder& CDMFactoryThunder::singleton()
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        ensureGStreamerInitialized();
+        GST_DEBUG_CATEGORY_INIT(webkitMediaThunderDebugCategory, "webkitthunder", 0, "Thunder");
+    });
     static NeverDestroyed<CDMFactoryThunder> s_factory;
     return s_factory;
 }
@@ -115,8 +118,7 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
     static Vector<String> supportedKeySystems;
     std::call_once(onceFlag, [] {
         std::string emptyString;
-        // Yes, this is right, 0 means supported, hence something else means not supported.
-        if (!opencdm_is_type_supported(GStreamerEMEUtilities::s_WidevineKeySystem, emptyString.c_str()))
+        if (opencdm_is_type_supported(GStreamerEMEUtilities::s_WidevineKeySystem, emptyString.c_str()) == ERROR_NONE)
             supportedKeySystems.append(GStreamerEMEUtilities::s_WidevineKeySystem);
 #ifndef NDEBUG
         if (supportedKeySystems.isEmpty() && isThunderRanked()) {
@@ -132,6 +134,12 @@ bool CDMFactoryThunder::supportsKeySystem(const String& keySystem)
 {
     return CDMFactoryThunder::singleton().supportedKeySystems().contains(keySystem);
 }
+
+CDMPrivateThunder::CDMPrivateThunder(const String& keySystem)
+    : m_keySystem(keySystem)
+    , m_thunderSystem(opencdm_create_system(keySystem.utf8().data()))
+{
+};
 
 Vector<AtomString> CDMPrivateThunder::supportedInitDataTypes() const
 {
@@ -162,7 +170,9 @@ bool CDMPrivateThunder::supportsConfiguration(const CDMKeySystemConfiguration& c
 
 Vector<AtomString> CDMPrivateThunder::supportedRobustnesses() const
 {
-    return { emptyAtom() };
+    return { emptyAtom(),
+        "SW_SECURE_DECODE",
+        "SW_SECURE_CRYPTO" };
 }
 
 CDMRequirement CDMPrivateThunder::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
@@ -192,8 +202,9 @@ void CDMPrivateThunder::loadAndInitialize()
 
 bool CDMPrivateThunder::supportsServerCertificates() const
 {
-    // Server certificates are not supported.
-    return false;
+    bool isSupported = opencdm_system_supports_server_certificate(m_thunderSystem.get());
+    GST_DEBUG("server certificate supported %s", boolForPrinting(isSupported));
+    return isSupported;
 }
 
 bool CDMPrivateThunder::supportsSessions() const
@@ -258,9 +269,9 @@ void CDMInstanceThunder::setServerCertificate(Ref<SharedBuffer>&& certificate,  
     callback(!error ? Succeeded : Failed);
 }
 
-void CDMInstanceThunder::setStorageDirectory(const String&)
+void CDMInstanceThunder::setStorageDirectory(const String& storageDirectory)
 {
-    notImplemented();
+    FileSystem::makeAllDirectories(storageDirectory);
 }
 
 CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instance)
@@ -346,7 +357,7 @@ public:
     bool hasPayload() const { return static_cast<bool>(m_payload); }
     const Ref<SharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
     Ref<SharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
-    bool hasType() const { return static_cast<bool>(m_type); }
+    bool hasType() const { return m_type.hasValue(); }
     WebCore::MediaKeyMessageType type() const { ASSERT(m_type); return m_type.value(); }
     WebCore::MediaKeyMessageType typeOr(WebCore::MediaKeyMessageType alternate) const { return m_type ? m_type.value() : alternate; }
     explicit operator bool() const { return m_isValid; }
@@ -546,10 +557,9 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
     m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<SharedBuffer>&& responseMessage) mutable {
         ASSERT(isMainThread());
         if (success) {
-            if (!responseMessage) {
-                ASSERT(!m_keyStore.isEmpty());
+            if (!responseMessage)
                 callback(false, m_keyStore.convertToJSKeyStatusVector(), WTF::nullopt, WTF::nullopt, SuccessValue::Succeeded);
-            } else {
+            else {
                 // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
                 ParsedResponseMessage parsedResponseMessage(responseMessage);

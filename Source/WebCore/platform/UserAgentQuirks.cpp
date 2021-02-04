@@ -98,6 +98,11 @@ static bool urlRequiresFirefoxBrowser(const URL& url)
     if (domain == "bugzilla.redhat.com")
         return true;
 
+#if ENABLE(THUNDER)
+    if (domain == "www.netflix.com")
+        return true;
+#endif
+
     return false;
 }
 

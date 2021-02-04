@@ -1,3 +1,13 @@
+2021-02-04  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Misc Thunder nitpicks
+        https://bugs.webkit.org/show_bug.cgi?id=221398
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/FindThunder.cmake: Look-up Thunder through pkg-config before attempting a
+        direct libocdm lookup.
+
 2021-02-01  Saam Barati  <sbarati@apple.com>
 
         Lazily create m_windowCloseWatchpoints so we don't mistakenly think we have a frame when re-associating a document to a given cached frame
