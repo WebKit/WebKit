@@ -1,3 +1,21 @@
+2021-02-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Selecting a date on datetime-local inputs unexpectedly adds second and millisecond fields
+        https://bugs.webkit.org/show_bug.cgi?id=221350
+        <rdar://problem/73943517>
+
+        Reviewed by Devin Rousso.
+
+        Added a method to UIScriptController to simulate selecting a date using
+        the presented date picker.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::chooseDateTimePickerValue):
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::chooseDateTimePickerValue):
+
 2021-02-04  Eleni Maria Stea  <estea@igalia.com>
 
         Modifications to Tools/wpe/install-dependencies

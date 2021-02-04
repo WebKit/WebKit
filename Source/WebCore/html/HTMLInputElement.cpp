@@ -38,7 +38,6 @@
 #include "ChromeClient.h"
 #include "DateComponents.h"
 #include "DateTimeChooser.h"
-#include "DateTimeChooserParameters.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EventNames.h"
@@ -2101,63 +2100,6 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     return textBlockStyle;
 }
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
-bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
-{
-    if (!document().view())
-        return false;
-
-    parameters.type = type();
-    parameters.minimum = minimum();
-    parameters.maximum = maximum();
-    parameters.required = isRequired();
-
-    if (!document().settings().langAttributeAwareFormControlUIEnabled())
-        parameters.locale = defaultLanguage();
-    else {
-        AtomString computedLocale = computeInheritedLanguage();
-        parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;
-    }
-
-    auto stepRange = createStepRange(AnyStepHandling::Reject);
-    if (stepRange.hasStep()) {
-        parameters.step = stepRange.step().toDouble();
-        parameters.stepBase = stepRange.stepBase().toDouble();
-    } else {
-        parameters.step = 1.0;
-        parameters.stepBase = 0;
-    }
-
-    if (RenderElement* renderer = this->renderer())
-        parameters.anchorRectInRootView = document().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
-    else
-        parameters.anchorRectInRootView = IntRect();
-    parameters.currentValue = value();
-
-    auto* computedStyle = this->computedStyle();
-    parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
-    parameters.useDarkAppearance = document().useDarkAppearance(computedStyle);
-
-#if ENABLE(DATALIST_ELEMENT)
-    if (auto dataList = this->dataList()) {
-        for (auto& option : dataList->suggestions()) {
-            auto label = option.label();
-            auto value = option.value();
-            if (!isValidValue(value))
-                continue;
-            parameters.suggestionValues.append(sanitizeValue(value));
-            parameters.localizedSuggestionValues.append(localizeValue(value));
-            parameters.suggestionLabels.append(value == label ? String() : label);
-        }
-    }
-#endif
-
-    return true;
-}
-
-#endif
 
 void HTMLInputElement::capsLockStateMayHaveChanged()
 {

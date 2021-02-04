@@ -1,3 +1,20 @@
+2021-02-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Selecting a date on datetime-local inputs unexpectedly adds second and millisecond fields
+        https://bugs.webkit.org/show_bug.cgi?id=221350
+        <rdar://problem/73943517>
+
+        Reviewed by Devin Rousso.
+
+        Added a test to to verify that the presence of seconds and milliseconds
+        in the value of a datetime-local input after selecting a date using the
+        picker matches the configuration.
+
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.chooseDateTimePickerValue):
+
 2021-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Improve the serialization of scroll-snap-type and scroll-snap-align

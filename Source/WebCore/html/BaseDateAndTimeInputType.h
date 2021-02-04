@@ -44,6 +44,8 @@ namespace WebCore {
 
 class DateComponents;
 
+struct DateTimeChooserParameters;
+
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
 protected:
@@ -133,6 +135,7 @@ private:
     void didChooseValue(StringView) final;
     void didEndChooser() final;
 
+    bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
     void closeDateTimeChooser();
 
     std::unique_ptr<DateTimeChooser> m_dateTimeChooser;

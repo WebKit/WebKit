@@ -223,6 +223,7 @@ public:
     virtual double timePickerValueMinute() const { notImplemented(); return -1; }
     virtual bool isShowingDateTimePicker() const { notImplemented(); return false; }
     virtual double dateTimePickerValue() const { notImplemented(); return 0; }
+    virtual void chooseDateTimePickerValue() { notImplemented(); }
     virtual bool isShowingDataListSuggestions() const { notImplemented(); return false; }
     virtual JSObjectRef calendarType() const { notImplemented(); return nullptr; }
     virtual void setDefaultCalendarType(JSStringRef, JSStringRef) { notImplemented(); }

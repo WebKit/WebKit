@@ -229,6 +229,7 @@ interface UIScriptController {
 
     readonly attribute boolean isShowingDateTimePicker;
     readonly attribute double dateTimePickerValue;
+    undefined chooseDateTimePickerValue();
 
     // <datalist>
     readonly attribute boolean isShowingDataListSuggestions;
