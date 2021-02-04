@@ -1,3 +1,12 @@
+2021-02-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening more debug crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Allow one user gesture free prompt for each navigation
