@@ -1,3 +1,14 @@
+2021-02-03  Rob Buis  <rbuis@igalia.com>
+
+        Handle aspect-ratio: auto m/n for replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=221323
+
+        Reviewed by Simon Fraser.
+
+        replaced-element-030.html now passes.
+
+        * TestExpectations:
+
 2021-02-03  Peng Liu  <peng.liu6@apple.com>
 
         [MSE] Move the call to didParseInitializationDataCallback() from the beginning of a cluster to the end of "tracks" element
