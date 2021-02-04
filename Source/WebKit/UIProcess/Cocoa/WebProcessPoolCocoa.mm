@@ -141,7 +141,8 @@ static void registerUserDefaultsIfNeeded()
 void WebProcessPool::updateProcessSuppressionState()
 {
     WebsiteDataStore::forEachWebsiteDataStore([enabled = processSuppressionEnabled()] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().setProcessSuppressionEnabled(enabled);
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->setProcessSuppressionEnabled(enabled);
     });
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

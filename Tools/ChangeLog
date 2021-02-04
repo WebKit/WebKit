@@ -1,3 +1,14 @@
+2021-02-04  Alex Christensen  <achristensen@apple.com>
+
+        REGRESSION(r267763) Network process launches earlier than before
+        https://bugs.webkit.org/show_bug.cgi?id=221384
+        <rdar://problem/73507706>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2021-02-04  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Misc Thunder nitpicks

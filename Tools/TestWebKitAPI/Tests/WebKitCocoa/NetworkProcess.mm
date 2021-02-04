@@ -78,3 +78,10 @@ TEST(WebKit, HTTPReferer)
     checkReferer([NSURL URLWithString:longHost], nullptr);
     checkReferer([NSURL URLWithString:shorterHost], shorterHost.UTF8String);
 }
+
+TEST(WebKit, NetworkProcessLaunchOnlyWhenNecessary)
+{
+    auto webView = [[WKWebView new] autorelease];
+    webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = YES;
+    EXPECT_FALSE([webView.configuration.websiteDataStore _networkProcessExists]);
+}
