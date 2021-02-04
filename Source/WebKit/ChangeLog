@@ -1,3 +1,16 @@
+2021-02-03  Andy Estes  <aestes@apple.com>
+
+        [macOS] Shrink MediaSampleByteRange by 8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=221363
+
+        Reviewed by Eric Carlson.
+
+        Reordered member variables to shrink MediaSampleByteRange from 160 bytes to 152 bytes.
+
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::MediaSampleByteRange):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h:
+
 2021-02-03  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: earliestTimeToSend should be treated as an independent time value, not relative to timeOfAdClick
