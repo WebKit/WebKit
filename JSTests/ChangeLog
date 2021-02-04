@@ -1,3 +1,79 @@
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=221367
+
+        Reviewed by Ross Kirsling.
+
+        This patch updates test262 results. And since test262 bot is upgraded to Big Sur,
+        we also clean up some of failures in config.yaml.
+        Still some of Intl tests are failing because test262 strongly assumes a certain
+        kind of format. We should fix it in test262 side since the spec does not require that.
+
+        * test262/config.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Function/property-order.js: Added.
+        * test262/test/built-ins/Function/prototype/property-order.js: Added.
+        * test262/test/built-ins/Object/property-order.js: Added.
+        * test262/test/built-ins/Promise/all/resolve-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/allSettled/reject-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/allSettled/resolve-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/any/reject-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/executor-function-property-order.js: Added.
+        (NotPromise):
+        * test262/test/built-ins/Promise/property-order.js: Added.
+        * test262/test/built-ins/Promise/reject-function-property-order.js: Added.
+        (new.Promise):
+        * test262/test/built-ins/Promise/resolve-function-property-order.js: Added.
+        (new.Promise):
+        * test262/test/built-ins/Proxy/property-order.js: Added.
+        * test262/test/built-ins/Proxy/revocable/revocation-function-property-order.js: Added.
+        * test262/test/built-ins/ThrowTypeError/property-order.js: Added.
+        (ThrowTypeError.Object.getOwnPropertyDescriptor):
+        * test262/test/intl402/Collator/prototype/compare/compare-function-property-order.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/format-function-property-order.js: Added.
+        * test262/test/intl402/NumberFormat/prototype/format/format-function-property-order.js: Added.
+        * test262/test/language/export/escaped-as-export-specifier.js:
+        * test262/test/language/export/escaped-default.js:
+        * test262/test/language/export/escaped-from.js:
+        * test262/test/language/expressions/async-arrow-function/escaped-async-line-terminator.js:
+        * test262/test/language/expressions/async-arrow-function/escaped-async.js:
+        * test262/test/language/expressions/async-function/escaped-async.js:
+        * test262/test/language/expressions/async-generator/escaped-async.js:
+        * test262/test/language/expressions/dynamic-import/escape-sequence-import.js:
+        * test262/test/language/expressions/import.meta/syntax/escape-sequence-import.js:
+        * test262/test/language/expressions/import.meta/syntax/escape-sequence-meta.js:
+        * test262/test/language/expressions/new.target/escaped-new.js:
+        * test262/test/language/expressions/new.target/escaped-target.js:
+        * test262/test/language/expressions/object/method-definition/async-gen-meth-escaped-async.js:
+        * test262/test/language/expressions/object/method-definition/async-meth-escaped-async.js:
+        * test262/test/language/expressions/object/method-definition/escaped-get.js:
+        * test262/test/language/expressions/object/method-definition/escaped-set.js:
+        * test262/test/language/import/escaped-as-import-specifier.js:
+        * test262/test/language/import/escaped-as-namespace-import.js:
+        * test262/test/language/import/escaped-from.js:
+        * test262/test/language/statements/async-function/escaped-async.js:
+        * test262/test/language/statements/async-generator/escaped-async.js:
+        * test262/test/language/statements/class/async-gen-meth-escaped-async.js:
+        * test262/test/language/statements/class/async-meth-escaped-async.js:
+        * test262/test/language/statements/class/syntax/escaped-static.js:
+        * test262/test/language/statements/for-await-of/escaped-of.js:
+        * test262/test/language/statements/for-of/escaped-of.js:
+        * test262/test/language/statements/let/syntax/escaped-let.js:
+        * test262/test262-Revision.txt:
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Atomics should support BigInt64Array / BigUint64Array

@@ -8,7 +8,7 @@ description: >
 info: |
   5.1.5 Grammar Notation
 
-  Terminal symbols of the lexical, RegExp, and numeric string grammars are shown in fixed width
+  Terminal symbols are shown in fixed width
   font, both in the productions of the grammars and throughout this specification whenever the
   text directly refers to such a terminal symbol. These are to appear in a script exactly as
   written. All terminal symbol code points specified in this way are to be understood as the

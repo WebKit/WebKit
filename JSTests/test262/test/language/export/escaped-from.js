@@ -6,7 +6,7 @@ esid: sec-grammar-notation
 description: >
   The `from` contextual keyword must not contain Unicode escape sequences.
 info: |
-  Terminal symbols of the lexical, RegExp, and numeric string grammars are shown
+  Terminal symbols are shown
   in fixed width font, both in the productions of the grammars and throughout this
   specification whenever the text directly refers to such a terminal symbol. These
   are to appear in a script exactly as written. All terminal symbol code points
