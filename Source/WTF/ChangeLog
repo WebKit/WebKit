@@ -1,3 +1,12 @@
+2021-02-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Catalyst build after r272228
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+        <rdar://problem/73940814>
+
+        * wtf/PlatformHave.h:
+        Turn off our use of UIEventAttribution on Catalyst until we update our internal bots.
+
 2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Add fraud prevention experimental feature flag

@@ -743,7 +743,9 @@
 #define HAVE_RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT 1
 #endif
 
-#if ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000)
+// FIXME: This should include PLATFORM(MACCATALYST) but our internal bots have not updated enough yet.
+// Try again when they do.  See rdar://problem/73940814
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000
 #define HAVE_UI_EVENT_ATTRIBUTION 1
 #endif
 
