@@ -1,3 +1,15 @@
+2021-02-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Link libnetworkextension at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=221372
+        <rdar://problem/73855844>
+
+        Reviewed by Brent Fulgham.
+
+        Network Extension is not available on tvOS.
+
+        * Configurations/WebKit.xcconfig:
+
 2021-02-04  Megan Gardner  <megan_gardner@apple.com>
 
         Allow highlight delegate to be set on WKWebView
