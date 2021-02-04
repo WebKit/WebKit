@@ -1099,7 +1099,7 @@ class CheckStyle(TestWithFailureCount):
     descriptionDone = ['check-webkit-style']
     flunkOnFailure = True
     failedTestsFormatString = '%d style error%s'
-    command = ['python', 'Tools/Scripts/check-webkit-style']
+    command = ['python3', 'Tools/Scripts/check-webkit-style']
 
     def __init__(self, **kwargs):
         super(CheckStyle, self).__init__(logEnviron=False, **kwargs)

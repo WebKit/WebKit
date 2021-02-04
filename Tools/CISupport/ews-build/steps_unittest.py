@@ -236,7 +236,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + 0,
         )
@@ -252,7 +252,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + 2,
         )
@@ -268,7 +268,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='''ERROR: Source/WebCore/layout/FloatingContext.cpp:36:  Code inside a namespace should not be indented.  [whitespace/indent] [4]
 ERROR: Source/WebCore/layout/FormattingContext.h:94:  Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]
@@ -291,7 +291,7 @@ Total errors found: 8 in 48 files''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 6 files')
             + 0,
@@ -308,7 +308,7 @@ Total errors found: 8 in 48 files''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 0 files')
             + 2,
