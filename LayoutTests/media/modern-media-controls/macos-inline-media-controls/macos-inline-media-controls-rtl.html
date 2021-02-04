@@ -18,10 +18,10 @@ step1();
 function step1()
 {
     debug("width = 600");
-    debug("muted = false");
+    debug("muted = true");
     debug("usesLTRUserInterfaceLayoutDirection = true");
     mediaControls.usesLTRUserInterfaceLayoutDirection = true;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMuted", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", step2);
         });
@@ -32,10 +32,10 @@ function step2()
 {
     debug("");
     debug("width = 600");
-    debug("muted = false");
+    debug("muted = true");
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.usesLTRUserInterfaceLayoutDirection = false;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeRTL", () => {
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMutedRTL", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step3);
         });
@@ -46,10 +46,10 @@ function step3()
 {
     debug("");
     debug("width = 250");
-    debug("muted = false");
+    debug("muted = true");
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.width = 250;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeRTL", () => {
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMutedRTL", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step4);
         });
@@ -60,10 +60,10 @@ function step4()
 {
     debug("");
     debug("width = 250");
-    debug("muted = true");
+    debug("muted = false");
     debug("usesLTRUserInterfaceLayoutDirection = false");
-    mediaControls.muteButton.muted = true;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMutedRTL", () => {
+    mediaControls.muteButton.muted = false;
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume3RTL", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step5);
         });
@@ -74,10 +74,10 @@ function step5()
 {
     debug("");
     debug("width = 250");
-    debug("muted = true");
+    debug("muted = false");
     debug("usesLTRUserInterfaceLayoutDirection = true");
     mediaControls.usesLTRUserInterfaceLayoutDirection = true;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMuted", () => {
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume3", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", done);
         });

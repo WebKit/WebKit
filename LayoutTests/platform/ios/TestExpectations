@@ -2904,8 +2904,6 @@ media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
 media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
-media/modern-media-controls/volume-down-support [ Skip ]
-media/modern-media-controls/volume-up-support [ Skip ]
 
 # There is no focus state for on iOS
 media/modern-media-controls/button/button-focus-state.html [ Skip ]

@@ -46,6 +46,7 @@ class MuteSupport extends MediaControllerSupport
 
     syncControl()
     {
+        this.control.volume = this.mediaController.media.volume;
         this.control.muted = this.mediaController.media.muted;
     }
 

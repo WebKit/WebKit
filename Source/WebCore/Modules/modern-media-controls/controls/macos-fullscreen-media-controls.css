@@ -42,7 +42,7 @@
 
 /* Volume controls */
 
-.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) :is(.volume-down, .volume.slider, .volume-up) {
+.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider {
     transform: scaleX(-1);
 }
 

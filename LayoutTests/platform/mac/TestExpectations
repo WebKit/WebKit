@@ -2140,11 +2140,7 @@ media/vp9.html [ Skip ]
 
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
 
-webkit.org/b/215576 media/modern-media-controls/volume-up-support/volume-up-support.html [ Pass Timeout ]
-
 webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Failure Timeout ] 
-
-webkit.org/b/215587 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Timeout ]
 
 webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ Pass Failure ]
 
