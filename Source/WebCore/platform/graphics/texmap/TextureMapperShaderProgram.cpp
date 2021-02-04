@@ -356,7 +356,7 @@ static const char* fragmentTemplateCommon =
 
         void applyOpacityFilter(inout vec4 color)
         {
-            color = vec4(color.r, color.g, color.b, color.a * u_filterAmount);
+            color *= u_filterAmount;
         }
 
         vec4 sampleColorAtRadius(float radius, vec2 texCoord)
