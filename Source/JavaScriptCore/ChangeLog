@@ -1,3 +1,56 @@
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Insert PhantomLocal just before SetLocal for |this| to ensure liveness
+        https://bugs.webkit.org/show_bug.cgi?id=221353
+        <rdar://problem/70373862>
+
+        Reviewed by Saam Barati.
+
+        Let's consider the following case before SSA conversion.
+
+            BB#0:
+                SetArgumentDefinitely(this)
+                ...
+            @a: SomethingFun()
+                MoveHint(@a, this)
+                SetLocal(@a, this)
+                Jump #1
+
+            BB#1:
+                ...
+                ExitOK (this point)
+                ...
+            @b: SomethingFun()
+                MoveHint(@b, this)
+                SetLocal(@b, this)
+                ...
+
+            BB#2: (Catch entry point)
+                ...
+            @c: SetArgumentDefinitely(this)
+                ...
+                Jump #1
+
+        We have two entry points. And BB#0 sets @a to |this| while BB#2 does not update |this|, so it is using @c.
+        We have several patterns we can store |this|: arrow functions' |this| loading, derived constructors' |this| update. So we can see
+        SetLocal(@x, this) at arbitrary code points in CodeBlocks having them.
+
+        The problem is that DFG strongly assumed that |this| is initialized in the root basic block only once. So usually, we do not insert Flush/PhantomLocal for |this|.
+        But this is problematic when we can store |this| at arbitrary basic blocks since we do not properly insert Flush/PhantomLocal(this) in BB#1's just before Store.
+
+        Not inserting that in the above case makes |this| dead in BB#1's head liveness. Then we do not properly insert Phi(BB#0, BB#2) for |this|.
+        This is OK for non |this| locals since literally that local is not used at all in BB#1. But |this| is special since it is always live in bytecode.
+        So, OSR availability will be broken in the above graph: at ExitOK place, |this| must be live in bytecode. But |this| is pointing ConflictingFlush since
+        BB#0 says @a and BB#2 says @c while we do not have Phi.
+
+        The problem is that we do not keep liveness of |this| properly in BB#1. When setting a new |this|, we insert PhantomLocal to keep liveness so that appropriate Phi
+        will be inserted when two predecessors have different DFG nodes for |this|, and this graph can appear in arrow functions, derived constructors, and code with catch.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setArgument):
+        * dfg/DFGVariableAccessDataDump.cpp:
+        (JSC::DFG::VariableAccessDataDump::dump const):
+
 2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Atomics should support BigInt64Array / BigUint64Array
