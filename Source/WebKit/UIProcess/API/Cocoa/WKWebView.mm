@@ -1409,20 +1409,27 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+
+- (id <_WKAppHighlightDelegate>)_appHighlightDelegate
+{
 #if ENABLE(APP_HIGHLIGHTS)
-- (id <_WKAppHighlightDelegate>)_appHighlightsDelegate
-{
-    return _appHighlightsDelegate.getAutoreleased();
+    return _appHighlightDelegate.getAutoreleased();
+#else
+    return nil;
+#endif
 }
 
-- (void)_setAppHighlightsDelegate:(id <_WKAppHighlightDelegate>)delegate
+- (void)_setAppHighlightDelegate:(id <_WKAppHighlightDelegate>)delegate
 {
-    _appHighlightsDelegate = delegate;
+#if ENABLE(APP_HIGHLIGHTS)
+    _appHighlightDelegate = delegate;
+#endif
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
 - (void)_updateAppHighlightsStorage:(NSData *)data
 {
-    auto delegate = self._appHighlightsDelegate;
+    auto delegate = self._appHighlightDelegate;
     if (!delegate)
         return;
 

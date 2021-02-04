@@ -120,7 +120,7 @@ class ViewGestureController;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
-    WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightsDelegate;
+    WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
 
     RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
 

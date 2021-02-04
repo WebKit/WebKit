@@ -129,6 +129,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKWebViewPrintFormatter;
 
 @protocol WKHistoryDelegatePrivate;
+@protocol _WKAppHighlightDelegate;
 @protocol _WKDiagnosticLoggingDelegate;
 @protocol _WKFindDelegate;
 @protocol _WKFullscreenDelegate;
@@ -364,6 +365,7 @@ for this property.
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+@property (nonatomic, weak, setter=_setAppHighlightDelegate:) id <_WKAppHighlightDelegate> _appHighlightDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_restoreAppHighlights:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract The theme color of the active page.

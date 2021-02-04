@@ -1,3 +1,12 @@
+2021-02-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow highlight delegate to be set on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=221362
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Don't launch a network process when registering URL schemes
