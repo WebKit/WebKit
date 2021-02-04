@@ -56,9 +56,9 @@ public:
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
     // EXT Robustness - uses getGraphicsResetStatusARB()
-    void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data);
-    void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params);
-    void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params);
+    void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
+    void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;
+    void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params) override;
 
     bool isNVIDIA() const { return m_isNVIDIA; }
     bool isAMD() const { return m_isAMD; }
