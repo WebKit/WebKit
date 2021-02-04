@@ -1,3 +1,16 @@
+2021-02-04  Martin Robinson  <mrobinson@webkit.org>
+
+        Improve the serialization of scroll-snap-type and scroll-snap-align
+        https://bugs.webkit.org/show_bug.cgi?id=221324
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-valid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-02-03  Sam Weinig  <weinig@apple.com>
 
         Add support for hwb() colors defined in CSS Color 4

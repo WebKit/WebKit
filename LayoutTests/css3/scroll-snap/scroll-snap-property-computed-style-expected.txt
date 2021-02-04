@@ -41,31 +41,31 @@ strictness following axis: `inline mandatory`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'inline mandatory'
 
 invalid snap align: `potato`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 empty string: ``
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 too many values: `start center end`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 invalid second value: `start wut`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 invalid first value: `wat center`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 one length: `10px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 two lengths: `10px 50px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 initial value: `initial`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 single value: `start`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start start'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start'
 
 two values: `start end`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start end'

@@ -2508,13 +2508,22 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
 
 static RefPtr<CSSValueList> consumeScrollSnapAlign(CSSParserTokenRange& range)
 {
+    auto firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
+    if (!firstValue)
+        return nullptr;
+
+    auto secondValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
+    bool shouldAddSecondValue = secondValue && !secondValue->equals(*firstValue);
+
     RefPtr<CSSValueList> alignmentValue = CSSValueList::createSpaceSeparated();
-    if (RefPtr<CSSPrimitiveValue> firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range)) {
-        alignmentValue->append(firstValue.releaseNonNull());
-        if (auto secondValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range))
-            alignmentValue->append(secondValue.releaseNonNull());
-    }
-    return alignmentValue->length() ? alignmentValue : nullptr;
+    alignmentValue->append(firstValue.releaseNonNull());
+
+    // Only add the second value if it differs from the first so that we produce the canonical
+    // serialization of this CSSValueList.
+    if (shouldAddSecondValue)
+        alignmentValue->append(secondValue.releaseNonNull());
+
+    return alignmentValue;
 }
 
 static RefPtr<CSSValueList> consumeScrollSnapType(CSSParserTokenRange& range)
@@ -2524,10 +2533,12 @@ static RefPtr<CSSValueList> consumeScrollSnapType(CSSParserTokenRange& range)
     auto firstValue = consumeIdent<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
     if (!firstValue)
         return nullptr;
-    auto secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
-
     typeValue->append(firstValue.releaseNonNull());
-    if (secondValue)
+
+    // We only add the second value if it is not the initial value as described in specification
+    // so that serialization of this CSSValueList produces the canonical serialization.
+    auto secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
+    if (secondValue && secondValue->valueID() != CSSValueProximity)
         typeValue->append(secondValue.releaseNonNull());
 
     return typeValue;

@@ -1,3 +1,20 @@
+2021-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Improve the serialization of scroll-snap-type and scroll-snap-align
+        https://bugs.webkit.org/show_bug.cgi?id=221324
+
+        Reviewed by Alex Christensen.
+
+        * css3/scroll-snap/resources/iframe-content-rtl.html:
+        * css3/scroll-snap/resources/iframe-content.html:
+        * css3/scroll-snap/scroll-snap-inherit-expected.txt:
+        * css3/scroll-snap/scroll-snap-inherit.html:
+        * css3/scroll-snap/scroll-snap-initial-expected.txt:
+        * css3/scroll-snap/scroll-snap-initial.html:
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-computed-style.js:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-02-04  Rob Buis  <rbuis@igalia.com>
 
         Make shouldComputeLogicalWidthFromAspectRatioAndInsets writing mode aware

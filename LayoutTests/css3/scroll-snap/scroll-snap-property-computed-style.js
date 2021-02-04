@@ -36,16 +36,16 @@ testComputedScrollSnapRule("strictness following axis", "scroll-snap-type", "inl
 
 // Test the scroll-snap-align property
 // Invalid declarations
-testComputedScrollSnapRule("invalid snap align", "scroll-snap-align", "potato", "none none");
-testComputedScrollSnapRule("empty string", "scroll-snap-align", "", "none none");
-testComputedScrollSnapRule("too many values", "scroll-snap-align", "start center end", "none none");
-testComputedScrollSnapRule("invalid second value", "scroll-snap-align", "start wut", "none none");
-testComputedScrollSnapRule("invalid first value", "scroll-snap-align", "wat center", "none none");
-testComputedScrollSnapRule("one length", "scroll-snap-align", "10px", "none none");
-testComputedScrollSnapRule("two lengths", "scroll-snap-align", "10px 50px", "none none");
+testComputedScrollSnapRule("invalid snap align", "scroll-snap-align", "potato", "none");
+testComputedScrollSnapRule("empty string", "scroll-snap-align", "", "none");
+testComputedScrollSnapRule("too many values", "scroll-snap-align", "start center end", "none");
+testComputedScrollSnapRule("invalid second value", "scroll-snap-align", "start wut", "none");
+testComputedScrollSnapRule("invalid first value", "scroll-snap-align", "wat center", "none");
+testComputedScrollSnapRule("one length", "scroll-snap-align", "10px", "none");
+testComputedScrollSnapRule("two lengths", "scroll-snap-align", "10px 50px", "none");
 // Valid declarations
-testComputedScrollSnapRule("initial value", "scroll-snap-align", "initial", "none none");
-testComputedScrollSnapRule("single value", "scroll-snap-align", "start", "start start");
+testComputedScrollSnapRule("initial value", "scroll-snap-align", "initial", "none");
+testComputedScrollSnapRule("single value", "scroll-snap-align", "start", "start");
 testComputedScrollSnapRule("two values", "scroll-snap-align", "start end", "start end");
 
 // Test the scroll-padding property

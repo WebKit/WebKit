@@ -1113,7 +1113,8 @@ static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alig
 {
     auto value = CSSValueList::createSpaceSeparated();
     value->append(CSSPrimitiveValue::create(alignment.y));
-    value->append(CSSPrimitiveValue::create(alignment.x));
+    if (alignment.x != alignment.y)
+        value->append(CSSPrimitiveValue::create(alignment.x));
     return value;
 }
 
