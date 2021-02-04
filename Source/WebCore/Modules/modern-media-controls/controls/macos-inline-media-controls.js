@@ -40,6 +40,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
 
         this.volumeSlider = new Slider("volume");
         this.volumeSlider.width = 60;
+        this.volumeSlider.secondaryValue = 1;
 
         this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container"></div>`);
         this._volumeSliderContainer.children = [new BackgroundTint, this.volumeSlider];

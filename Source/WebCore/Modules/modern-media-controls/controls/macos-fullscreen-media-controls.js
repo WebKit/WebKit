@@ -49,6 +49,7 @@ class MacOSFullscreenMediaControls extends MediaControls
 
         this.volumeSlider = new Slider("volume");
         this.volumeSlider.width = 60;
+        this.volumeSlider.secondaryValue = 1;
 
         this._leftContainer = new ButtonsContainer({
             children: this._volumeControlsForCurrentDirection(),

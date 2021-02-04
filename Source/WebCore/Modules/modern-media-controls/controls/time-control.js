@@ -40,7 +40,7 @@ class TimeControl extends LayoutItem
         });
 
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Types.Elapsed);
-        this.scrubber = new Slider("scrubber");
+        this.scrubber = new Slider("scrubber", this.layoutTraits & LayoutTraits.macOS ? Slider.KnobStyle.Bar : Slider.KnobStyle.Circle);
         this.remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
 
         this.activityIndicator = new LayoutNode(`<div class="activity-indicator"></div>`);
