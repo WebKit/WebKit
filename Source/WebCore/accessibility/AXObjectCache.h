@@ -193,7 +193,8 @@ public:
     Node* modalNode();
 
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
-    void recomputeIsIgnored(RenderObject* renderer);
+    void recomputeIsIgnored(RenderObject*);
+    void recomputeIsIgnored(Node*);
 
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
