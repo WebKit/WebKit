@@ -36,6 +36,7 @@
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletProcessorConstructionData.h"
 #include "BaseAudioContext.h"
+#include "CommonVM.h"
 #include "JSAudioWorkletProcessor.h"
 #include "JSAudioWorkletProcessorConstructor.h"
 #include "JSDOMConvert.h"
@@ -47,8 +48,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletGlobalScope);
 
-AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, const WorkletParameters& parameters)
-    : WorkletGlobalScope(thread, parameters)
+RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletThread& thread, const WorkletParameters& parameters)
+{
+    auto vm = JSC::VM::tryCreate();
+    if (!vm)
+        return nullptr;
+    return adoptRef(*new AudioWorkletGlobalScope(thread, vm.releaseNonNull(), parameters));
+}
+
+AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
+    : WorkletGlobalScope(thread, WTFMove(vm), parameters)
     , m_sampleRate(parameters.sampleRate)
 {
     ASSERT(!isMainThread());

@@ -1,3 +1,16 @@
+2021-02-04  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT(bigInt) in VM constructor when constructing a WorkletGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=221425
+        <rdar://73747997>
+
+        Reviewed by Keith Miller.
+
+        Add layout test coverage.
+
+        * webaudio/audioworket-out-of-memory-expected.txt: Added.
+        * webaudio/audioworket-out-of-memory.html: Added.
+
 2021-02-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: expose focusable elements even if element or ancestor has aria-hidden=true

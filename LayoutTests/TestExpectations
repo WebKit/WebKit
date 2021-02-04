@@ -401,6 +401,7 @@ fast/history/page-cache-active-fetch-request-blobReadAsText.html [ DumpJSConsole
 fast/history/page-cache-active-fetch-request-blobReadAsReadableStream.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-active-fetch-response-blobReadAsBlob.html [ DumpJSConsoleLogInStdErr ]
 fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
+webaudio/audioworket-out-of-memory.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/202495 imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html [ ImageOnlyFailure ]
 

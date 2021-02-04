@@ -46,9 +46,9 @@ AudioWorkletThread::AudioWorkletThread(AudioWorkletMessagingProxy& messagingProx
 
 AudioWorkletThread::~AudioWorkletThread() = default;
 
-Ref<WorkerOrWorkletGlobalScope> AudioWorkletThread::createGlobalScope()
+RefPtr<WorkerOrWorkletGlobalScope> AudioWorkletThread::createGlobalScope()
 {
-    return AudioWorkletGlobalScope::create(*this, m_parameters);
+    return AudioWorkletGlobalScope::tryCreate(*this, m_parameters);
 }
 
 WorkerLoaderProxy& AudioWorkletThread::workerLoaderProxy()

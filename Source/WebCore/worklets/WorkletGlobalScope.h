@@ -94,7 +94,7 @@ public:
     const Document* responsibleDocument() const { return m_document.get(); }
 
 protected:
-    WorkletGlobalScope(WorkerOrWorkletThread&, const WorkletParameters&);
+    WorkletGlobalScope(WorkerOrWorkletThread&, Ref<JSC::VM>&&, const WorkletParameters&);
     WorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
 
 private:

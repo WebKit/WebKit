@@ -49,8 +49,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
-WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const WorkletParameters& parameters)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, JSC::VM::create(), &thread)
+WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, WTFMove(vm), &thread)
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)

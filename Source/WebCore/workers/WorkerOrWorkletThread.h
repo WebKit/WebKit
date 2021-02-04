@@ -78,7 +78,7 @@ protected:
 
 private:
     virtual Ref<WTF::Thread> createThread() = 0;
-    virtual Ref<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
+    virtual RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
     virtual void evaluateScriptIfNecessary(String&) { }
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
 
