@@ -1144,6 +1144,7 @@ $(PROJECT_DIR)/plugins/DOMMimeType.idl
 $(PROJECT_DIR)/plugins/DOMMimeTypeArray.idl
 $(PROJECT_DIR)/plugins/DOMPlugin.idl
 $(PROJECT_DIR)/plugins/DOMPluginArray.idl
+$(PROJECT_DIR)/preprocess-localizable-strings.pl
 $(PROJECT_DIR)/storage/Storage.idl
 $(PROJECT_DIR)/storage/StorageEvent.idl
 $(PROJECT_DIR)/svg/Document+SVG.idl

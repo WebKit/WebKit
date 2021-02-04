@@ -42,6 +42,7 @@ sub applyPreprocessor
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
+    my $keepComments = shift;
 
     my @args = ();
     if (!$preprocessor) {
@@ -51,6 +52,9 @@ sub applyPreprocessor
         } else {
             $preprocessor = $ENV{CC} || (-x "/usr/bin/clang" ? "/usr/bin/clang" : "/usr/bin/gcc");
             push(@args, qw(-E -P -x c++));
+            if ($keepComments) {
+                push(@args, qw(-C));
+            }
         }
     }
 
