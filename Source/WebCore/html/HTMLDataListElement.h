@@ -44,6 +44,7 @@ class HTMLDataListElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDataListElement);
 public:
     static Ref<HTMLDataListElement> create(const QualifiedName&, Document&);
+    ~HTMLDataListElement();
 
     Ref<HTMLCollection> options();
 
@@ -53,6 +54,8 @@ public:
     auto suggestions() const { return filteredDescendants<HTMLOptionElement, isSuggestion>(*this); }
 
 private:
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
     HTMLDataListElement(const QualifiedName&, Document&);
 };
 

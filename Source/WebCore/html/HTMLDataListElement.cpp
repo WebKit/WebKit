@@ -49,11 +49,24 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDataListElement);
 inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
+    document.incrementDataListElementCount();
+}
+
+HTMLDataListElement::~HTMLDataListElement()
+{
+    document().decrementDataListElementCount();
 }
 
 Ref<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLDataListElement(tagName, document));
+}
+
+void HTMLDataListElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    oldDocument.decrementDataListElementCount();
+    newDocument.incrementDataListElementCount();
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 Ref<HTMLCollection> HTMLDataListElement::options()

@@ -2215,12 +2215,13 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
+    
+    if (auto* page = document().page()) {
 #if ENABLE(POINTER_LOCK)
-    if (document().page())
-        document().page()->pointerLockController().elementRemoved(*this);
+        page->pointerLockController().elementWasRemoved(*this);
 #endif
-    if (document().page())
-        document().page()->pointerCaptureController().elementWasRemoved(*this);
+        page->pointerCaptureController().elementWasRemoved(*this);
+    }
 
     setSavedLayerScrollPosition(ScrollPosition());
 
