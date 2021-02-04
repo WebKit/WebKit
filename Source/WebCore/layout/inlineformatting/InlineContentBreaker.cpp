@@ -38,15 +38,39 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
+
+#if ASSERT_ENABLED
+static inline bool hasTrailingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
-    // <span>text</span> is considered a text run even with the [container start][container end] inline items.
-    // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
+    for (auto& run : WTF::makeReversedRange(continuousContent.runs())) {
+        auto& inlineItem = run.inlineItem;
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
+            continue;
+        return inlineItem.isText();
+    }
+    return false;
+}
+#endif
+
+static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
+{
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
         return inlineItem.isText();
+    }
+    return false;
+}
+
+static inline bool hasTextRun(const InlineContentBreaker::ContinuousContent& continuousContent)
+{
+    // <span>text</span> is considered a text run even with the [container start][container end] inline items.
+    // Based on standards commit boundary rules it would be enough to check the first inline item, but due to the table quirk, we can have
+    // image and text next to each other inside a continuous set of runs (see InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage).
+    for (auto& run : continuousContent.runs()) {
+        if (run.inlineItem.isText())
+            return true;
     }
     return false;
 }
@@ -148,7 +172,7 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
             }
         }
     } else if (result.action == Result::Action::Wrap) {
-        if (lineStatus.trailingSoftHyphenWidth && isTextContent(candidateContent)) {
+        if (lineStatus.trailingSoftHyphenWidth && hasLeadingTextContent(candidateContent)) {
             // A trailing soft hyphen with a wrapped text content turns into a visible hyphen.
             // Let's check if there's enough space for the hyphen character.
             auto hyphenOverflows = *lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth; 
@@ -181,7 +205,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
     if (continuousContent.hasTrailingCollapsibleContent()) {
-        ASSERT(isTextContent(continuousContent));
+        ASSERT(hasTrailingTextContent(overflowContent));
         // First check if the content fits without the trailing collapsible part.
         if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
             return { Result::Action::Keep, IsEndOfLine::No };
@@ -203,13 +227,13 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     }
 
     size_t overflowingRunIndex = 0;
-    if (isTextContent(continuousContent)) {
-        auto tryBreakingTextContent = [&]() -> Optional<Result> {
+    if (hasTextRun(continuousContent)) {
+        auto tryBreakingContentWithText = [&]() -> Optional<Result> {
             // 1. This text content is not breakable.
             // 2. This breakable text content does not fit at all. Not even the first glyph. This is a very special case.
             // 3. We can break the content but it still overflows.
             // 4. Managed to break the content before the overflow point.
-            auto overflowingContent = processOverflowingTextContent(continuousContent, lineStatus);
+            auto overflowingContent = processOverflowingContentWithText(continuousContent, lineStatus);
             overflowingRunIndex = overflowingContent.runIndex;
             if (!overflowingContent.breakingPosition)
                 return { };
@@ -236,7 +260,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             auto trailingPartialContent = Result::PartialTrailingContent { overflowingContent.breakingPosition->runIndex, trailingContent->partialRun };
             return Result { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
         };
-        if (auto result = tryBreakingTextContent())
+        if (auto result = tryBreakingContentWithText())
             return *result;
     } else if (continuousContent.runs().size() > 1) {
         // FIXME: Add support for various content.
@@ -271,13 +295,13 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-OverflowingTextContent InlineContentBreaker::processOverflowingTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
+OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
     auto& runs = continuousContent.runs();
     ASSERT(!runs.isEmpty());
 
     auto isBreakableRun = [] (auto& run) {
-        ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd());
+        ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.layoutBox().isImage());
         if (!run.inlineItem.isText()) {
             // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
             // we need to check if there's another inline item beyond the [container end] to split.
