@@ -1,3 +1,28 @@
+2021-02-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline and gardening commong gtk/wpe failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
+        Rebaselines after r272100
+        * platform/glib/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug82946-2-expected.txt:
+
+        Rebaseline after r272035
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+        Rebaseline after r271110
+        * platform/gtk/fast/block/basic/014-expected.txt:
+        * platform/wpe/fast/block/basic/014-expected.txt:
+
 2021-02-05  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur WK1] media/media-source/media-source-webm-append-buffer-after-abort.html is consistently failing
