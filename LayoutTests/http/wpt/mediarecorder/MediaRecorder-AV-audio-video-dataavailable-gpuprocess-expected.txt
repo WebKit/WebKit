@@ -1,4 +1,0 @@
-
-
-PASS Verify MediaRecorder is working in GPUProcess
-

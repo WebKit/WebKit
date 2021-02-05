@@ -1,5 +1,21 @@
 2021-02-05  Youenn Fablet  <youenn@apple.com>
 
+        Remove GPUProcess flag in MediaRecorder tests
+        https://bugs.webkit.org/show_bug.cgi?id=221401
+
+        Reviewed by Eric Carlson.
+
+        Remove test that is the same as http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess-expected.txt: Removed.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html: Removed.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+        * http/wpt/mediarecorder/pause-recording.html:
+        Increase timer to cope with added latency introduced by IPC messaging.
+        * platform/mac-wk2/TestExpectations:
+
+2021-02-05  Youenn Fablet  <youenn@apple.com>
+
         Make sure click attribution is processed in case of redirected kept alive loads
         https://bugs.webkit.org/show_bug.cgi?id=221453
         <rdar://problem/70896640>
