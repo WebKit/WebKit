@@ -1,3 +1,15 @@
+2021-02-05  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [CMake] Hide libwebrtc symbols
+        https://bugs.webkit.org/show_bug.cgi?id=221333
+
+        This is a naive approach to hide libwebrtc symbols, particularly beacuse of boringssl, which
+        migth collide with system's libssl. It compiles libwebrtc with visibility set to hidden.
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt:
+
 2021-02-02  Youenn Fablet  <youenn@apple.com>
 
         Update WebRTC usrsctp to M88

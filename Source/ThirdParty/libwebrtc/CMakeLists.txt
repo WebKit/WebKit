@@ -1426,6 +1426,9 @@ target_compile_options(webrtc PRIVATE
     "-w"
 )
 
+set_target_properties(webrtc PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(webrtc PROPERTIES C_VISIBILITY_PRESET hidden)
+
 target_compile_definitions(webrtc PRIVATE
   OPENSSL_NO_ASM
   DISABLE_H265
@@ -1433,7 +1436,7 @@ target_compile_definitions(webrtc PRIVATE
   EXPAT_RELATIVE_PATH
   HAVE_LRINT
   HAVE_LRINTF
-  HAVE_NETINET_IN_H 
+  HAVE_NETINET_IN_H
   HAVE_SCTP
   HAVE_WEBRTC_VIDEO
   HAVE_WEBRTC_VOICE
