@@ -50,15 +50,22 @@
     mix-blend-mode: plus-lighter;
 }
 
-.slider > .custom-slider > .primary {
+.slider > .custom-slider > .fill.primary {
     left: 0;
     background-color: rgba(255, 255, 255, 0.45);
     border-top-left-radius: 4.5px;
     border-bottom-left-radius: 4.5px;
 }
 
-.slider > .custom-slider > .secondary {
-    background-color: rgba(255, 255, 255, 0.18);
+.slider > .custom-slider > .fill.track {
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top-right-radius: 4.5px;
+    border-bottom-right-radius: 4.5px;
+}
+
+.slider > .custom-slider > .fill.secondary {
+    background-color: rgba(255, 255, 255, 0.08);
     border-top-right-radius: 4.5px;
     border-bottom-right-radius: 4.5px;
 }
