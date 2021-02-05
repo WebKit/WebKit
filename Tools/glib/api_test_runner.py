@@ -250,10 +250,11 @@ class TestRunner(object):
 
         return {subtest: "PASS"}
 
-    def _run_google_test_suite(self, test_program, skipped_test_cases):
+    def _run_google_test_suite(self, test_program, subtests, skipped_test_cases):
         result = {}
         for subtest in self._get_tests_from_google_test_suite(test_program, skipped_test_cases):
-            result.update(self._run_google_test(test_program, subtest))
+            if subtest in subtests or not subtests:
+                result.update(self._run_google_test(test_program, subtest))
         return result
 
     def is_glib_test(self, test_program):
@@ -270,7 +271,7 @@ class TestRunner(object):
             return self._run_test_glib(test_program, subtests, skipped_test_cases)
 
         if self.is_google_test(test_program):
-            return self._run_google_test_suite(test_program, skipped_test_cases)
+            return self._run_google_test_suite(test_program, subtests, skipped_test_cases)
 
         # FIXME: support skipping Qt subtests
         if self.is_qt_test(test_program):

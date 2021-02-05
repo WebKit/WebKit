@@ -1,3 +1,20 @@
+2021-02-05  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] run-gtk-tests: Support running individual tests for GTest test suites
+        https://bugs.webkit.org/show_bug.cgi?id=221050
+
+        Reviewed by Adrian Perez de Castro.
+
+        run-gtk-tests accepts any number of optional `-p` arguments to run
+        only certain tests. Unfortunately, this feature is only currently
+        implemented for glib tests suites.
+
+        This patch adds support for this feature with gtest suites as well.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_google_test_suite):
+        (TestRunner._run_test):
+
 2021-02-04  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update dashboard links for layout test results
