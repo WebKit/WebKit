@@ -157,9 +157,9 @@ private:
     RealtimeMediaSourceIdentifier m_identifier;
     Ref<RealtimeMediaSource> m_source;
     Ref<IPC::Connection> m_connection;
-    uint64_t m_numberOfFrames { 0 };
 
 #if PLATFORM(COCOA)
+    uint64_t m_numberOfFrames { 0 };
     CARingBuffer m_ringBuffer;
     CAAudioStreamDescription m_description { };
 #endif

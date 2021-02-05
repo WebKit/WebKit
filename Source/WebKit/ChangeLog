@@ -1,3 +1,18 @@
+2021-02-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=221410
+
+        Reviewed by Adrian Perez de Castro.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo): Remove ifdef added in r272313, the
+        corresponding enum value is not ifdeffed either.
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::sendUpdate): Use portable format specifier for uint64_t.
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp: Ifdef member variable
+        currently used only on Cocoa platforms.
+
 2021-02-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.31.1 release

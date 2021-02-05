@@ -159,7 +159,7 @@ void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionCli
 
 void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate& update)
 {
-    WTFLogAlways("[%p]SpeechRecognitionServer::sendUpdate update.type[%d], update.clientIdentifier[%llu]", this, update.type(), update.clientIdentifier().toUInt64());
+    WTFLogAlways("[%p]SpeechRecognitionServer::sendUpdate update.type[%d], update.clientIdentifier[%" PRIu64 "]", this, update.type(), update.clientIdentifier().toUInt64());
     send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update));
 }
 
