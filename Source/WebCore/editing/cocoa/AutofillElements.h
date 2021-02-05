@@ -37,9 +37,10 @@ public:
 
     const HTMLInputElement* username() const { return m_username.get(); }
 private:
-    AutofillElements(RefPtr<HTMLInputElement>&&, RefPtr<HTMLInputElement>&&);
+    AutofillElements(RefPtr<HTMLInputElement>&&, RefPtr<HTMLInputElement>&&, RefPtr<HTMLInputElement>&&);
     RefPtr<HTMLInputElement> m_username;
     RefPtr<HTMLInputElement> m_password;
+    RefPtr<HTMLInputElement> m_secondPassword;
 };
 
 } // namespace WebCore
