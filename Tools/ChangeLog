@@ -1,3 +1,16 @@
+2021-02-05  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess][iOS] Audio is lost after media playback recovers from the GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=221305
+        <rdar://problem/73904864>
+
+        Reviewed by Eric Carlson.
+
+        Unskip API test checks on iOS now that they are passing.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-02-05  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] run-gtk-tests: Support running individual tests for GTest test suites

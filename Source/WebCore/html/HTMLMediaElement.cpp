@@ -1198,6 +1198,31 @@ void HTMLMediaElement::prepareForLoad()
     configureMediaControls();
 }
 
+void HTMLMediaElement::mediaPlayerReloadAndResumePlaybackIfNeeded()
+{
+    auto previousMediaTime = m_cachedTime;
+    bool wasPaused = paused();
+
+    load();
+
+    // FIXME: It would be even better if we could resume in full screen mode, but, for now, exiting full screen makes the video rendering work.
+    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+        exitFullscreen();
+
+    if (previousMediaTime) {
+        m_resourceSelectionTaskQueue.enqueueTask([this, previousMediaTime] {
+            if (m_player)
+                m_player->seekWhenPossible(previousMediaTime);
+        });
+    }
+
+    if (!wasPaused) {
+        m_resourceSelectionTaskQueue.enqueueTask([this] {
+            playInternal();
+        });
+    }
+}
+
 void HTMLMediaElement::selectMediaResource()
 {
     // https://www.w3.org/TR/2016/REC-html51-20161101/semantics-embedded-content.html#resource-selection-algorithm
@@ -6883,16 +6908,6 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 }
 
 #endif
-
-void HTMLMediaElement::mediaPlayerEnterFullscreen()
-{
-    enterFullscreen();
-}
-
-void HTMLMediaElement::mediaPlayerExitFullscreen()
-{
-    exitFullscreen();
-}
 
 bool HTMLMediaElement::mediaPlayerIsFullscreen() const
 {

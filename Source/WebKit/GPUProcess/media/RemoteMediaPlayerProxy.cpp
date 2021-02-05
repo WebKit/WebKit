@@ -648,16 +648,6 @@ void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(const WebCore::MediaPlayb
 }
 #endif
 
-void RemoteMediaPlayerProxy::mediaPlayerEnterFullscreen()
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerExitFullscreen()
-{
-    notImplemented();
-}
-
 bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreen() const
 {
     return false;

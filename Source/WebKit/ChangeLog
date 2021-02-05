@@ -1,3 +1,24 @@
+2021-02-05  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess][iOS] Audio is lost after media playback recovers from the GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=221305
+        <rdar://problem/73904864>
+
+        Reviewed by Eric Carlson.
+
+        Fix issue where we would sometimes lose the video after recovering from a GPUProcess
+        crash. The issue is that RemoteMediaPlayerProxy::setVideoInlineSizeFenced() may get
+        called *before* RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable(). As a
+        result, we would not have a root layer yet and we would fail to set the video
+        dimensions and they would remain at 0x0.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::setVideoInlineSizeIfPossible):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced):
+
 2021-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r271879) [SOUP] webrtc/datachannel/gather-candidates-networkprocess-crash.html is crashing in debug mode

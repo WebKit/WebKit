@@ -660,6 +660,7 @@ private:
     void mediaPlayerEngineUpdated() final;
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
+    void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
@@ -699,8 +700,6 @@ private:
     String mediaPlayerReferrer() const override;
     String mediaPlayerUserAgent() const override;
 
-    void mediaPlayerEnterFullscreen() override;
-    void mediaPlayerExitFullscreen() override;
     bool mediaPlayerIsFullscreen() const override;
     bool mediaPlayerIsFullscreenPermitted() const override;
     bool mediaPlayerIsVideo() const override;

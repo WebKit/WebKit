@@ -36,6 +36,18 @@
 
 namespace WebKit {
 
+static void setVideoInlineSizeIfPossible(LayerHostingContext& context, const WebCore::IntSize& size)
+{
+    if (!context.rootLayer())
+        return;
+
+    // We do not want animations here.
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [context.rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
+    [CATransaction commit];
+}
+
 void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
@@ -50,19 +62,18 @@ void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::Media
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
-    // Initially the size of the platformLayer will be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
+    // Initially the size of the platformLayer may be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
     m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+    setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, m_videoInlineSize);
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& size, const WTF::MachSendRight& machSendRight)
 {
     m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
-    // We do not want animations here
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [m_inlineLayerHostingContext->rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
-    [CATransaction commit];
+
+    m_videoInlineSize = size;
+    setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, size);
 }
 
 } // namespace WebKit
