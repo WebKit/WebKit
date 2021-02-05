@@ -1205,9 +1205,8 @@ void HTMLMediaElement::mediaPlayerReloadAndResumePlaybackIfNeeded()
 
     load();
 
-    // FIXME: It would be even better if we could resume in full screen mode, but, for now, exiting full screen makes the video rendering work.
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
-        exitFullscreen();
+        enterFullscreen(m_videoFullscreenMode);
 
     if (previousMediaTime) {
         m_resourceSelectionTaskQueue.enqueueTask([this, previousMediaTime] {
