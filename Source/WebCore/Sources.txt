@@ -507,6 +507,7 @@ bindings/js/JSAudioTrackCustom.cpp
 bindings/js/JSAudioTrackListCustom.cpp
 bindings/js/JSAudioWorkletProcessorCustom.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
+bindings/js/JSBaseAudioContextCustom.cpp
 bindings/js/JSBasicCredentialCustom.cpp
 bindings/js/JSBlobCustom.cpp
 bindings/js/JSCSSRuleCustom.cpp

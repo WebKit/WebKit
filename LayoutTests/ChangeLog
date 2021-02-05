@@ -1,5 +1,18 @@
 2021-02-04  Chris Dumez  <cdumez@apple.com>
 
+        Potential crash under BaseAudioContext's toJSNewlyCreated()
+        https://bugs.webkit.org/show_bug.cgi?id=221423
+        <rdar://73352543>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/base-audio-context-wrapper-gc-expected.txt: Added.
+        * webaudio/base-audio-context-wrapper-gc.html: Added.
+
+2021-02-04  Chris Dumez  <cdumez@apple.com>
+
         RELEASE_ASSERT(bigInt) in VM constructor when constructing a WorkletGlobalScope
         https://bugs.webkit.org/show_bug.cgi?id=221425
         <rdar://73747997>
