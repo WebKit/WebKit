@@ -74,6 +74,7 @@ inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& 
 
 inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width)
 {
+    // FIXME: Use the following list of non-whitespace characters to set the "isWordSeparator" bit: noBreakSpace, ethiopicWordspace, aegeanWordSeparatorLine aegeanWordSeparatorDot ugariticWordDivider.
     return { inlineTextBox, start, length, hasTrailingSoftHyphen, false, width, TextItemType::NonWhitespace };
 }
 

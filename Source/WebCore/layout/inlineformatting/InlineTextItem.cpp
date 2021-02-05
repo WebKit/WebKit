@@ -38,16 +38,23 @@ namespace Layout {
 
 static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
 
-static size_t moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline)
+struct WhitespaceContent {
+    size_t length { 0 };
+    bool isWordSeparator { true };
+};
+static Optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline, bool preserveTab)
 {
+    auto hasWordSeparatorCharacter = false;
     auto isWhitespaceCharacter = [&](auto character) {
-        return character == space || character == tabCharacter || (character == newlineCharacter && !preserveNewline);
+        // white space processing in CSS affects only the document white space characters: spaces (U+0020), tabs (U+0009), and segment breaks.
+        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab);
+        hasWordSeparatorCharacter = hasWordSeparatorCharacter || isTreatedAsSpaceCharacter;
+        return isTreatedAsSpaceCharacter || character == tabCharacter;
     };
-
     auto nextNonWhiteSpacePosition = startPosition;
     while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition]))
         ++nextNonWhiteSpacePosition;
-    return nextNonWhiteSpacePosition - startPosition;
+    return nextNonWhiteSpacePosition == startPosition ? WTF::nullopt : makeOptional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
 }
 
 static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBreakIterator& lineBreakIterator, const RenderStyle& style)
@@ -95,36 +102,22 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             continue;
         }
 
-        if (auto length = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreseveNewline)) {
+        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreseveNewline, !whitespaceContentIsTreatedAsSingleSpace)) {
+            ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
                 auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                auto isWordSeparator = [&] {
-                    if (whitespaceContentIsTreatedAsSingleSpace)
-                        return true;
-                    if (itemLength != 1) {
-                        // FIXME: Add support for cases where the whitespace content contains different type of characters (e.g  "\t  \t  \t").
-                        return false;
-                    }
-                    auto whitespaceCharacter = text[startPosition];
-                    return whitespaceCharacter == space
-                        || whitespaceCharacter == noBreakSpace
-                        || whitespaceCharacter == ethiopicWordspace
-                        || whitespaceCharacter == aegeanWordSeparatorLine
-                        || whitespaceCharacter == aegeanWordSeparatorDot
-                        || whitespaceCharacter == ugariticWordDivider;
-                }();
-                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, isWordSeparator, width));
+                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
-                for (size_t i = 0; i < length; ++i)
+                for (size_t i = 0; i < whitespaceContent->length; ++i)
                     appendWhitespaceItem(currentPosition + i, 1);
             } else
-                appendWhitespaceItem(currentPosition, length);
-            currentPosition += length;
+                appendWhitespaceItem(currentPosition, whitespaceContent->length);
+            currentPosition += whitespaceContent->length;
             continue;
         }
 
