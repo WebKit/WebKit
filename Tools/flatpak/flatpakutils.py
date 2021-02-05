@@ -1078,6 +1078,10 @@ class WebkitFlatpak:
 
                 result = self.execute_command(cmd, stdout=coredump, stderr=stderr)
                 if result != 0:
+                    Console.error_message("coredumpctl failed")
+                    with open(stderr.name, 'r') as stderrf:
+                        stderr = stderrf.read()
+                        Console.error_message(stderr)
                     return result
 
                 with open(stderr.name, 'r') as stderrf:
