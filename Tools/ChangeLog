@@ -1,5 +1,16 @@
 2021-02-04  Jonathan Bedard  <jbedard@apple.com>
 
+        [Python-3] Change shebang in git-webkit (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=221412
+        <rdar://problem/73983881>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/subprocess_utils.py:
+        (run): Python 3.6 does not support capture_output in subprocess.run()
+
+2021-02-04  Jonathan Bedard  <jbedard@apple.com>
+
         [Python-3] Change shebang in test-webkitpy (Part-1)
         https://bugs.webkit.org/show_bug.cgi?id=221415
         <rdar://problem/73986503>
