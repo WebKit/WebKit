@@ -1,3 +1,36 @@
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics.store in DFG / FTL should return ToNumber(input) value
+        https://bugs.webkit.org/show_bug.cgi?id=221438
+        <rdar://problem/73973264>
+
+        Reviewed by Filip Pizlo.
+
+        Atomics.store is different from the other ReadModifyWrite atomics. It returns the input value without truncating it into TypedArray's requirement.
+        For example,
+
+            var u8 = new Uint8Array(8);
+            Atomics.store(u8, 0, 0xffff) === 0xffff // Not 0xff.
+
+        However DFG and FTL implementations do not handle it correctly.
+        This patch fixes AI, fixup, and code generations to handle this.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::getIntTypedArrayStoreOperandForAtomics):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::setIntTypedArrayLoadResult):
+        (JSC::FTL::DFG::LowerDFGToB3::toIntegerOrInfinity):
+
 2021-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Object.entries in C++

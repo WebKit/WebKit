@@ -4275,7 +4275,27 @@ private:
 
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(lowCell(baseEdge));
-        setIntTypedArrayLoadResult(result, type);
+
+        if (m_node->op() == AtomicsStore) {
+            Edge operand = argEdges[0];
+            switch (operand.useKind()) {
+            case Int32Use:
+                setInt32(lowInt32(operand));
+                break;
+            case Int52RepUse:
+                setStrictInt52(lowStrictInt52(operand));
+                break;
+            case DoubleRepUse:
+                setDouble(toIntegerOrInfinity(lowDouble(operand)));
+                break;
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad result type");
+                break;
+            }
+            return;
+        }
+        constexpr bool canSpeculate = false;
+        setIntTypedArrayLoadResult(result, type, canSpeculate);
     }
     
     void compileAtomicsIsLockFree()
@@ -5247,7 +5267,7 @@ private:
                     LValue result = loadFromIntTypedArray(pointer, type);
                     // We have to keep base alive since that keeps storage alive.
                     ensureStillAliveHere(base);
-                    bool canSpeculate = true;
+                    constexpr bool canSpeculate = true;
                     setIntTypedArrayLoadResult(result, type, canSpeculate);
                     return;
                 }
@@ -16892,7 +16912,7 @@ private:
         }
     }
     
-    void setIntTypedArrayLoadResult(LValue result, TypedArrayType type, bool canSpeculate = false)
+    void setIntTypedArrayLoadResult(LValue result, TypedArrayType type, bool canSpeculate)
     {
         if (elementSize(type) < 4 || isSigned(type)) {
             setInt32(result);
@@ -19632,6 +19652,14 @@ private:
     LValue toButterfly(LValue immutableButterfly)
     {
         return m_out.addPtr(immutableButterfly, JSImmutableButterfly::offsetOfData());
+    }
+
+    LValue toIntegerOrInfinity(LValue doubleValue)
+    {
+        // https://tc39.es/ecma262/#sec-tointegerorinfinity
+        // 1. If value is either of +0, -0, or NaN, return +0
+        // 2. Otherwise, return trunc(value)
+        return m_out.select(m_out.doubleNotEqualAndOrdered(doubleValue, m_out.doubleZero), m_out.doubleTrunc(doubleValue), m_out.doubleZero);
     }
 
     void addWeakReference(JSCell* target)

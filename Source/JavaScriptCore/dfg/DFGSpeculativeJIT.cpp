@@ -3145,7 +3145,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
 
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     loadFromIntTypedArray(storageReg, propertyReg, resultReg, type);
-    bool canSpeculate = true;
+    constexpr bool canSpeculate = true;
     setIntTypedArrayLoadResult(node, resultReg, type, canSpeculate);
 }
 
@@ -3269,6 +3269,31 @@ bool SpeculativeJIT::getIntTypedArrayStoreOperand(
         }
     }
     return true;
+}
+
+bool SpeculativeJIT::getIntTypedArrayStoreOperandForAtomics(
+    GPRTemporary& value,
+    GPRReg property,
+#if USE(JSVALUE32_64)
+    GPRTemporary& propertyTag,
+    GPRTemporary& valueTag,
+#endif
+    Edge valueUse)
+{
+    JITCompiler::JumpList slowPathCases;
+    constexpr bool isClamped = false;
+    bool result = getIntTypedArrayStoreOperand(
+        value,
+        property,
+#if USE(JSVALUE32_64)
+        propertyTag,
+        valueTag,
+#endif
+        valueUse,
+        slowPathCases,
+        isClamped);
+    ASSERT(slowPathCases.empty());
+    return result;
 }
 
 void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node* node, TypedArrayType type)

@@ -1379,10 +1379,26 @@ private:
                 }
 
                 blessArrayOperation(base, index, m_graph.child(node, 2 + numExtraAtomicsArgs(node->op())));
-                if (node->arrayMode().type() != Array::Generic) {
-                    fixEdge<CellUse>(base);
-                    fixEdge<Int32Use>(index);
+                fixEdge<CellUse>(base);
+                fixEdge<Int32Use>(index);
 
+                if (node->op() == AtomicsStore) {
+                    Edge& operand = m_graph.child(node, 2);
+                    switch (operand.useKind()) {
+                    case Int32Use:
+                        // Default result type.
+                        break;
+                    case Int52RepUse:
+                        node->setResult(NodeResultInt52);
+                        break;
+                    case DoubleRepUse:
+                        node->setResult(NodeResultDouble);
+                        break;
+                    default:
+                        DFG_CRASH(m_graph, node, "Bad use kind");
+                        break;
+                    }
+                } else {
                     if (node->arrayMode().type() == Array::Uint32Array) {
                         // NOTE: This means basically always doing Int52.
                         if (node->shouldSpeculateInt52())

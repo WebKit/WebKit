@@ -2324,6 +2324,44 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (!storageEdge)
                 clobberWorld();
         }
+
+        if (node->op() == AtomicsStore) {
+            // The returned value from Atomics.store does not rely on typed array types. It is relying
+            // on input's UseKind. For example,
+            //
+            //     Atomics.store(uint8Array, /* index */ 0, Infinity) // => returned value is Infinity
+            //
+            // Since the other ReadModifyWrite atomics return values stored in the typed array previously,
+            // the returned values rely on the typed array types. On the other hand, Atomics.store's
+            // returned value is input value. This means that Atomics.store + Uint8Array can return doubles
+            // while the typed array is Uint8Array (the above one is the example).
+            switch (node->arrayMode().type()) {
+            case Array::Generic:
+                clobberWorld();
+                makeHeapTopForNode(node);
+                break;
+            default: {
+                Edge operand = m_graph.child(node, 2);
+                switch (operand.useKind()) {
+                case Int32Use:
+                    setNonCellTypeForNode(node, SpecInt32Only);
+                    break;
+                case Int52RepUse:
+                    setNonCellTypeForNode(node, SpecInt52Any);
+                    break;
+                case DoubleRepUse:
+                    setNonCellTypeForNode(node, SpecFullDouble);
+                    break;
+                default:
+                    DFG_CRASH(m_graph, node, "Bad use kind");
+                    break;
+                }
+                break;
+            }
+            }
+            break;
+        }
+
         switch (node->arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:

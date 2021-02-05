@@ -1,3 +1,26 @@
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics.store in DFG / FTL should return ToNumber(input) value
+        https://bugs.webkit.org/show_bug.cgi?id=221438
+        <rdar://problem/73973264>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/atomic-store-result-type-in-ai.js: Added.
+        * stress/atomics-store-result-double-nan.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-double-negative-zero.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-double.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-int52.js: Added.
+        (shouldBe):
+        * stress/atomics-store-result.js: Added.
+        (shouldBe):
+
 2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update test262
