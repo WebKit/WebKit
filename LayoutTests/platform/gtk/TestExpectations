@@ -1329,7 +1329,7 @@ webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pa
 webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
-accessibility/aria-current-state-changed-notification.html [ Skip ]
+
 webkit.org/b/182761 accessibility/gtk/aria-current-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-disabled-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-expanded-changed-notification.html [ Pass Failure ]

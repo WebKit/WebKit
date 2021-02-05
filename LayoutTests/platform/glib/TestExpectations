@@ -257,6 +257,9 @@ webkit.org/b/220719 accessibility/braille-label-role.html [ Failure ]
 # Key events for AX actions seems to not be not being emitted
 webkit.org/b/221022 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Timeout ]
 
+webkit.org/b/221447 accessibility/aria-current.html [ Failure ]
+webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -425,6 +428,16 @@ webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html [ 
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-4.html [ ImageOnlyFailure ]
+
+# system-ui support
+webkit.org/b/221445 fast/text/system-font-width-2.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-3.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-4.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-6.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-7.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-8.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width-9.html [ Skip ]
+webkit.org/b/221445 fast/text/system-font-width.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Fonts-related bugs

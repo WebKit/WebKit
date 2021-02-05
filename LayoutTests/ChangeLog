@@ -1,3 +1,17 @@
+2021-02-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening accessibility and font failures
+
+        Unreviewed test gardening.
+
+        The img-with-svg-source.html test differed only in the content of the
+        image.description field, with empty AXDescription text, like other
+        accessibility tests.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/accessibility/img-with-svg-source-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+
 2021-02-04  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Null dereference in DocumentLoader::commitData()
