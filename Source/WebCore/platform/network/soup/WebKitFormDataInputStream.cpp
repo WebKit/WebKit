@@ -89,7 +89,7 @@ static gssize webkitFormDataInputStreamRead(GInputStream* input, void* buffer, g
             bytesToRead = priv->currentStreamRangeLength;
 
         auto bytesRead = g_input_stream_read(priv->currentStream.get(), buffer, bytesToRead, cancellable, error);
-        if (error)
+        if (bytesRead == -1)
             return bytesRead;
 
         if (bytesRead) {
