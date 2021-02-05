@@ -1,5 +1,16 @@
 2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSImmutableButterfly's toString cache should not happen for generic join
+        https://bugs.webkit.org/show_bug.cgi?id=221444
+        <rdar://problem/73972862>
+
+        Reviewed by Mark Lam.
+
+        * stress/immutable-butterfly-to-string-cache-should-not-happen-for-generic-join.js: Added.
+        (foo):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Atomics.store in DFG / FTL should return ToNumber(input) value
         https://bugs.webkit.org/show_bug.cgi?id=221438
         <rdar://problem/73973264>
