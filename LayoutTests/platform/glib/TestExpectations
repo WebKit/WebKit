@@ -949,12 +949,9 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Failure ]
-webkit.org/b/221379 [ Debug ] webrtc/video-h264.html [ Crash ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
 webkit.org/b/212809 [ Release ] webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
-webkit.org/b/221379 [ Debug ] webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Crash ]
-
 
 webkit.org/b/213780 webrtc/vp9.html [ Failure ]
 

@@ -1,3 +1,13 @@
+2021-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r271879) [SOUP] webrtc/datachannel/gather-candidates-networkprocess-crash.html is crashing in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=221379
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/soup/WebKitDirectoryInputStream.cpp:
+        (webkitDirectoryInputStreamRead): Fix bytes read calculation.
+
 2021-02-05  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] clang warnings
