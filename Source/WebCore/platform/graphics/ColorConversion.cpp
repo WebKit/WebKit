@@ -159,72 +159,72 @@ template<typename TransferFunction, typename ColorType> static auto toGammaEncod
 
 // A98RGB <-> LinearA98RGB conversions.
 
-LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>& color)
+LinearA98RGB<float> ColorConversion<LinearA98RGB<float>, A98RGB<float>>::convert(const A98RGB<float>& color)
 {
     return toLinear<A98RGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
-A98RGB<float> toA98RGB(const LinearA98RGB<float>& color)
+A98RGB<float> ColorConversion<A98RGB<float>, LinearA98RGB<float>>::convert(const LinearA98RGB<float>& color)
 {
     return toGammaEncoded<A98RGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // DisplayP3 <-> LinearDisplayP3 conversions.
 
-LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
+LinearDisplayP3<float> ColorConversion<LinearDisplayP3<float>, DisplayP3<float>>::convert(const DisplayP3<float>& color)
 {
     return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
-DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
+DisplayP3<float> ColorConversion<DisplayP3<float>, LinearDisplayP3<float>>::convert(const LinearDisplayP3<float>& color)
 {
     return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // ExtendedSRGBA <-> LinearExtendedSRGBA conversions.
 
-LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& color)
+LinearExtendedSRGBA<float> ColorConversion<LinearExtendedSRGBA<float>, ExtendedSRGBA<float>>::convert(const ExtendedSRGBA<float>& color)
 {
     return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
 }
 
-ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
+ExtendedSRGBA<float> ColorConversion<ExtendedSRGBA<float>, LinearExtendedSRGBA<float>>::convert(const LinearExtendedSRGBA<float>& color)
 {
     return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
 }
 
 // ProPhotoRGB <-> LinearProPhotoRGB conversions.
 
-LinearProPhotoRGB<float> toLinearProPhotoRGB(const ProPhotoRGB<float>& color)
+LinearProPhotoRGB<float> ColorConversion<LinearProPhotoRGB<float>, ProPhotoRGB<float>>::convert(const ProPhotoRGB<float>& color)
 {
     return toLinear<ProPhotoRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
-ProPhotoRGB<float> toProPhotoRGB(const LinearProPhotoRGB<float>& color)
+ProPhotoRGB<float> ColorConversion<ProPhotoRGB<float>, LinearProPhotoRGB<float>>::convert(const LinearProPhotoRGB<float>& color)
 {
     return toGammaEncoded<ProPhotoRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // Rec2020 <-> LinearRec2020 conversions.
 
-LinearRec2020<float> toLinearRec2020(const Rec2020<float>& color)
+LinearRec2020<float> ColorConversion<LinearRec2020<float>, Rec2020<float>>::convert(const Rec2020<float>& color)
 {
     return toLinear<Rec2020TransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
-Rec2020<float> toRec2020(const LinearRec2020<float>& color)
+Rec2020<float> ColorConversion<Rec2020<float>, LinearRec2020<float>>::convert(const LinearRec2020<float>& color)
 {
     return toGammaEncoded<Rec2020TransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // SRGBA <-> LinearSRGBA conversions.
 
-LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
+LinearSRGBA<float> ColorConversion<LinearSRGBA<float>, SRGBA<float>>::convert(const SRGBA<float>& color)
 {
     return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
-SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
+SRGBA<float> ColorConversion<SRGBA<float>, LinearSRGBA<float>>::convert(const LinearSRGBA<float>& color)
 {
     return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
@@ -233,72 +233,72 @@ SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 
 // - LinearA98RGB matrix conversions.
 
-LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>::ReferenceXYZ& color)
+LinearA98RGB<float> ColorConversion<LinearA98RGB<float>, LinearA98RGB<float>::ReferenceXYZ>::convert(const LinearA98RGB<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>>(xyzToLinearA98RGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearA98RGB<float>::ReferenceXYZ toXYZA(const LinearA98RGB<float>& color)
+LinearA98RGB<float>::ReferenceXYZ ColorConversion<LinearA98RGB<float>::ReferenceXYZ, LinearA98RGB<float>>::convert(const LinearA98RGB<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>::ReferenceXYZ>(linearA98RGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearDisplayP3 matrix conversions.
 
-LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>::ReferenceXYZ& color)
+LinearDisplayP3<float> ColorConversion<LinearDisplayP3<float>, LinearDisplayP3<float>::ReferenceXYZ>::convert(const LinearDisplayP3<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearDisplayP3<float>>(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearDisplayP3<float>::ReferenceXYZ toXYZA(const LinearDisplayP3<float>& color)
+LinearDisplayP3<float>::ReferenceXYZ ColorConversion<LinearDisplayP3<float>::ReferenceXYZ, LinearDisplayP3<float>>::convert(const LinearDisplayP3<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearDisplayP3<float>::ReferenceXYZ>(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearExtendedSRGBA matrix conversions.
 
-LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>::ReferenceXYZ& color)
+LinearExtendedSRGBA<float> ColorConversion<LinearExtendedSRGBA<float>, LinearExtendedSRGBA<float>::ReferenceXYZ>::convert(const LinearExtendedSRGBA<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearExtendedSRGBA<float>::ReferenceXYZ toXYZA(const LinearExtendedSRGBA<float>& color)
+LinearExtendedSRGBA<float>::ReferenceXYZ ColorConversion<LinearExtendedSRGBA<float>::ReferenceXYZ, LinearExtendedSRGBA<float>>::convert(const LinearExtendedSRGBA<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>::ReferenceXYZ>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearProPhotoRGB matrix conversions.
 
-LinearProPhotoRGB<float> toLinearProPhotoRGB(const LinearProPhotoRGB<float>::ReferenceXYZ& color)
+LinearProPhotoRGB<float> ColorConversion<LinearProPhotoRGB<float>, LinearProPhotoRGB<float>::ReferenceXYZ>::convert(const LinearProPhotoRGB<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>>(xyzToLinearProPhotoRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearProPhotoRGB<float>::ReferenceXYZ toXYZA(const LinearProPhotoRGB<float>& color)
+LinearProPhotoRGB<float>::ReferenceXYZ ColorConversion<LinearProPhotoRGB<float>::ReferenceXYZ, LinearProPhotoRGB<float>>::convert(const LinearProPhotoRGB<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>::ReferenceXYZ>(linearProPhotoRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearRec2020 matrix conversions.
 
-LinearRec2020<float> toLinearRec2020(const LinearRec2020<float>::ReferenceXYZ& color)
+LinearRec2020<float> ColorConversion<LinearRec2020<float>, LinearRec2020<float>::ReferenceXYZ>::convert(const LinearRec2020<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearRec2020<float>>(xyzToLinearRec2020Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearRec2020<float>::ReferenceXYZ toXYZA(const LinearRec2020<float>& color)
+LinearRec2020<float>::ReferenceXYZ ColorConversion<LinearRec2020<float>::ReferenceXYZ, LinearRec2020<float>>::convert(const LinearRec2020<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearRec2020<float>::ReferenceXYZ>(linearRec2020ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearSRGBA matrix conversions.
 
-LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>::ReferenceXYZ& color)
+LinearSRGBA<float> ColorConversion<LinearSRGBA<float>, LinearSRGBA<float>::ReferenceXYZ>::convert(const LinearSRGBA<float>::ReferenceXYZ& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-LinearSRGBA<float>::ReferenceXYZ toXYZA(const LinearSRGBA<float>& color)
+LinearSRGBA<float>::ReferenceXYZ ColorConversion<LinearSRGBA<float>::ReferenceXYZ, LinearSRGBA<float>>::convert(const LinearSRGBA<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>::ReferenceXYZ>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
@@ -336,7 +336,7 @@ static HSLHueCalculationResult calculateHSLHue(const SRGBA<float>& color)
     return { hue, min, max, chroma };
 }
 
-HSLA<float> toHSLA(const SRGBA<float>& color)
+HSLA<float> ColorConversion<HSLA<float>, SRGBA<float>>::convert(const SRGBA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
     auto [r, g, b, alpha] = color;
@@ -354,7 +354,7 @@ HSLA<float> toHSLA(const SRGBA<float>& color)
     return { hue, saturation, lightness, alpha };
 }
 
-SRGBA<float> toSRGBA(const HSLA<float>& color)
+SRGBA<float> ColorConversion<SRGBA<float>, HSLA<float>>::convert(const HSLA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#hsl-to-rgb
     auto [hue, saturation, lightness, alpha] = color;
@@ -397,7 +397,7 @@ SRGBA<float> toSRGBA(const HSLA<float>& color)
 
 // MARK: HWB conversions.
 
-HWBA<float> toHWBA(const SRGBA<float>& color)
+HWBA<float> ColorConversion<HWBA<float>, SRGBA<float>>::convert(const SRGBA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#rgb-to-hwb
     auto [hue, min, max, chroma] = calculateHSLHue(color);
@@ -407,7 +407,7 @@ HWBA<float> toHWBA(const SRGBA<float>& color)
     return { hue, whiteness, blackness, color.alpha };
 }
 
-SRGBA<float> toSRGBA(const HWBA<float>& color)
+SRGBA<float> ColorConversion<SRGBA<float>, HWBA<float>>::convert(const HWBA<float>& color)
 {
     // https://drafts.csswg.org/css-color-4/#hwb-to-rgb
     auto [hue, whiteness, blackness, alpha] = color;
@@ -415,7 +415,7 @@ SRGBA<float> toSRGBA(const HWBA<float>& color)
     if (whiteness + blackness == 1.0f)
         return { whiteness, whiteness, whiteness, alpha };
 
-    // This is the hueToRGB function in toSRGBA(const HSLA&) with temp1 == 0
+    // This is the hueToRGB function in convertColor<SRGBA<float>>(const HSLA&) with temp1 == 0
     // and temp2 == 1 strength reduced through it.
     auto hueToRGB = [](float hue) {
         if (hue < 1.0f)
@@ -456,7 +456,7 @@ static constexpr float LABe = 216.0f / 24389.0f;
 static constexpr float LABk = 24389.0f / 27.0f;
 static constexpr float D50WhiteValues[] = { 0.96422f, 1.0f, 0.82521f };
 
-Lab<float>::ReferenceXYZ toXYZA(const Lab<float>& color)
+Lab<float>::ReferenceXYZ ColorConversion<Lab<float>::ReferenceXYZ, Lab<float>>::convert(const Lab<float>& color)
 {
     float f1 = (color.lightness + 16.0f) / 116.0f;
     float f0 = f1 + (color.a / 500.0f);
@@ -486,7 +486,7 @@ Lab<float>::ReferenceXYZ toXYZA(const Lab<float>& color)
     return { x, y, z, color.alpha };
 }
 
-Lab<float> toLab(const Lab<float>::ReferenceXYZ& color)
+Lab<float> ColorConversion<Lab<float>, Lab<float>::ReferenceXYZ>::convert(const Lab<float>::ReferenceXYZ& color)
 {
     float x = color.x / D50WhiteValues[0];
     float y = color.y / D50WhiteValues[1];
@@ -510,7 +510,7 @@ Lab<float> toLab(const Lab<float>::ReferenceXYZ& color)
 
 // MARK: LCH conversions.
 
-LCHA<float> toLCHA(const Lab<float>& color)
+LCHA<float> ColorConversion<LCHA<float>, Lab<float>>::convert(const Lab<float>& color)
 {
     // https://www.w3.org/TR/css-color-4/#lab-to-lch
     float hue = rad2deg(atan2(color.b, color.a));
@@ -523,7 +523,7 @@ LCHA<float> toLCHA(const Lab<float>& color)
     };
 }
 
-Lab<float> toLab(const LCHA<float>& color)
+Lab<float> ColorConversion<Lab<float>, LCHA<float>>::convert(const LCHA<float>& color)
 {
     // https://www.w3.org/TR/css-color-4/#lch-to-lab
     float hueAngleRadians = deg2rad(color.hue);
@@ -540,110 +540,110 @@ Lab<float> toLab(const LCHA<float>& color)
 
 // - A98RGB combination functions.
 
-A98RGB<float>::ReferenceXYZ toXYZA(const A98RGB<float>& color)
+A98RGB<float>::ReferenceXYZ ColorConversion<A98RGB<float>::ReferenceXYZ, A98RGB<float>>::convert(const A98RGB<float>& color)
 {
-    return toXYZA(toLinearA98RGB(color));
+    return convertColor<A98RGB<float>::ReferenceXYZ>(convertColor<LinearA98RGB<float>>(color));
 }
 
-A98RGB<float> toA98RGB(const A98RGB<float>::ReferenceXYZ& color)
+A98RGB<float> ColorConversion<A98RGB<float>, A98RGB<float>::ReferenceXYZ>::convert(const A98RGB<float>::ReferenceXYZ& color)
 {
-    return toA98RGB(toLinearA98RGB(color));
+    return convertColor<A98RGB<float>>(convertColor<LinearA98RGB<float>>(color));
 }
 
 // - DisplayP3 combination functions.
 
-DisplayP3<float>::ReferenceXYZ toXYZA(const DisplayP3<float>& color)
+DisplayP3<float>::ReferenceXYZ ColorConversion<DisplayP3<float>::ReferenceXYZ, DisplayP3<float>>::convert(const DisplayP3<float>& color)
 {
-    return toXYZA(toLinearDisplayP3(color));
+    return convertColor<DisplayP3<float>::ReferenceXYZ>(convertColor<LinearDisplayP3<float>>(color));
 }
 
-DisplayP3<float> toDisplayP3(const DisplayP3<float>::ReferenceXYZ& color)
+DisplayP3<float> ColorConversion<DisplayP3<float>, DisplayP3<float>::ReferenceXYZ>::convert(const DisplayP3<float>::ReferenceXYZ& color)
 {
-    return toDisplayP3(toLinearDisplayP3(color));
+    return convertColor<DisplayP3<float>>(convertColor<LinearDisplayP3<float>>(color));
 }
 
 // - ExtendedSRGB combination functions.
 
-ExtendedSRGBA<float>::ReferenceXYZ toXYZA(const ExtendedSRGBA<float>& color)
+ExtendedSRGBA<float>::ReferenceXYZ ColorConversion<ExtendedSRGBA<float>::ReferenceXYZ, ExtendedSRGBA<float>>::convert(const ExtendedSRGBA<float>& color)
 {
-    return toXYZA(toLinearExtendedSRGBA(color));
+    return convertColor<ExtendedSRGBA<float>::ReferenceXYZ>(convertColor<LinearExtendedSRGBA<float>>(color));
 }
 
-ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>::ReferenceXYZ& color)
+ExtendedSRGBA<float> ColorConversion<ExtendedSRGBA<float>, ExtendedSRGBA<float>::ReferenceXYZ>::convert(const ExtendedSRGBA<float>::ReferenceXYZ& color)
 {
-    return toExtendedSRGBA(toLinearExtendedSRGBA(color));
+    return convertColor<ExtendedSRGBA<float>>(convertColor<LinearExtendedSRGBA<float>>(color));
 }
 
 // - HSLA combination functions.
 
-HSLA<float>::ReferenceXYZ toXYZA(const HSLA<float>& color)
+HSLA<float>::ReferenceXYZ ColorConversion<HSLA<float>::ReferenceXYZ, HSLA<float>>::convert(const HSLA<float>& color)
 {
-    return toXYZA(toSRGBA(color));
+    return convertColor<HSLA<float>::ReferenceXYZ>(convertColor<SRGBA<float>>(color));
 }
 
-HSLA<float> toHSLA(const HSLA<float>::ReferenceXYZ& color)
+HSLA<float> ColorConversion<HSLA<float>, HSLA<float>::ReferenceXYZ>::convert(const HSLA<float>::ReferenceXYZ& color)
 {
-    return toHSLA(toSRGBA(color));
+    return convertColor<HSLA<float>>(convertColor<SRGBA<float>>(color));
 }
 
 // - HWBA combination functions.
 
-HWBA<float>::ReferenceXYZ toXYZA(const HWBA<float>& color)
+HWBA<float>::ReferenceXYZ ColorConversion<HWBA<float>::ReferenceXYZ, HWBA<float>>::convert(const HWBA<float>& color)
 {
-    return toXYZA(toSRGBA(color));
+    return convertColor<HWBA<float>::ReferenceXYZ>(convertColor<SRGBA<float>>(color));
 }
 
-HWBA<float> toHWBA(const HWBA<float>::ReferenceXYZ& color)
+HWBA<float> ColorConversion<HWBA<float>, HWBA<float>::ReferenceXYZ>::convert(const HWBA<float>::ReferenceXYZ& color)
 {
-    return toHWBA(toSRGBA(color));
+    return convertColor<HWBA<float>>(convertColor<SRGBA<float>>(color));
 }
 
 // - LCHA combination functions.
 
-LCHA<float>::ReferenceXYZ toXYZA(const LCHA<float>& color)
+LCHA<float>::ReferenceXYZ ColorConversion<LCHA<float>::ReferenceXYZ, LCHA<float>>::convert(const LCHA<float>& color)
 {
-    return toXYZA(toLab(color));
+    return convertColor<LCHA<float>::ReferenceXYZ>(convertColor<Lab<float>>(color));
 }
 
-LCHA<float> toLCHA(const LCHA<float>::ReferenceXYZ& color)
+LCHA<float> ColorConversion<LCHA<float>, LCHA<float>::ReferenceXYZ>::convert(const LCHA<float>::ReferenceXYZ& color)
 {
-    return toLCHA(toLab(color));
+    return convertColor<LCHA<float>>(convertColor<Lab<float>>(color));
 }
 
 // - ProPhotoRGB combination functions.
 
-ProPhotoRGB<float>::ReferenceXYZ toXYZA(const ProPhotoRGB<float>& color)
+ProPhotoRGB<float>::ReferenceXYZ ColorConversion<ProPhotoRGB<float>::ReferenceXYZ, ProPhotoRGB<float>>::convert(const ProPhotoRGB<float>& color)
 {
-    return toXYZA(toLinearProPhotoRGB(color));
+    return convertColor<ProPhotoRGB<float>::ReferenceXYZ>(convertColor<LinearProPhotoRGB<float>>(color));
 }
 
-ProPhotoRGB<float> toProPhotoRGB(const ProPhotoRGB<float>::ReferenceXYZ& color)
+ProPhotoRGB<float> ColorConversion<ProPhotoRGB<float>, ProPhotoRGB<float>::ReferenceXYZ>::convert(const ProPhotoRGB<float>::ReferenceXYZ& color)
 {
-    return toProPhotoRGB(toLinearProPhotoRGB(color));
+    return convertColor<ProPhotoRGB<float>>(convertColor<LinearProPhotoRGB<float>>(color));
 }
 
 // - Rec2020 combination functions.
 
-Rec2020<float>::ReferenceXYZ toXYZA(const Rec2020<float>& color)
+Rec2020<float>::ReferenceXYZ ColorConversion<Rec2020<float>::ReferenceXYZ, Rec2020<float>>::convert(const Rec2020<float>& color)
 {
-    return toXYZA(toLinearRec2020(color));
+    return convertColor<Rec2020<float>::ReferenceXYZ>(convertColor<LinearRec2020<float>>(color));
 }
 
-Rec2020<float> toRec2020(const Rec2020<float>::ReferenceXYZ& color)
+Rec2020<float> ColorConversion<Rec2020<float>, Rec2020<float>::ReferenceXYZ>::convert(const Rec2020<float>::ReferenceXYZ& color)
 {
-    return toRec2020(toLinearRec2020(color));
+    return convertColor<Rec2020<float>>(convertColor<LinearRec2020<float>>(color));
 }
 
 // - SRGB combination functions.
 
-SRGBA<float>::ReferenceXYZ toXYZA(const SRGBA<float>& color)
+SRGBA<float>::ReferenceXYZ ColorConversion<SRGBA<float>::ReferenceXYZ, SRGBA<float>>::convert(const SRGBA<float>& color)
 {
-    return toXYZA(toLinearSRGBA(color));
+    return convertColor<SRGBA<float>::ReferenceXYZ>(convertColor<LinearSRGBA<float>>(color));
 }
 
-SRGBA<float> toSRGBA(const SRGBA<float>::ReferenceXYZ& color)
+SRGBA<float> ColorConversion<SRGBA<float>, SRGBA<float>::ReferenceXYZ>::convert(const SRGBA<float>::ReferenceXYZ& color)
 {
-    return toSRGBA(toLinearSRGBA(color));
+    return convertColor<SRGBA<float>>(convertColor<LinearSRGBA<float>>(color));
 }
 
 } // namespace WebCore

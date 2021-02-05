@@ -39,10 +39,10 @@ float lightness(const SRGBA<float>& color)
 
 float luminance(const SRGBA<float>& color)
 {
-    // NOTE: This is the equivalent of toXYZA(toLinearSRGBA(color)).y
+    // NOTE: This is the equivalent of convertColor<XYZA<float, WhitePoint::D65>>(color).y
     // FIMXE: If we can generalize ColorMatrix a bit more, it might be nice to write this as:
-    //      return toLinearSRGBA(color) * linearSRGBToXYZMatrix.row(1);
-    auto [r, g, b, a] = toLinearSRGBA(color);
+    //      return convertColor<LinearSRGBA<float>>(color) * linearSRGBToXYZMatrix.row(1);
+    auto [r, g, b, a] = convertColor<LinearSRGBA<float>>(color);
     return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 }
 

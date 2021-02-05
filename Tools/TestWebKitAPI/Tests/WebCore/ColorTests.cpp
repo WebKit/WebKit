@@ -38,7 +38,7 @@ TEST(Color, RGBToHSL_White)
 {
     Color color = Color::white;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
@@ -46,7 +46,7 @@ TEST(Color, RGBToHSL_White)
     
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
     
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -54,7 +54,7 @@ TEST(Color, RGBToHSL_Black)
 {
     Color color = Color::black;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
@@ -62,7 +62,7 @@ TEST(Color, RGBToHSL_Black)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -70,7 +70,7 @@ TEST(Color, RGBToHSL_Red)
 {
     Color color = Color::red;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(1, hslaColor.saturation);
@@ -78,7 +78,7 @@ TEST(Color, RGBToHSL_Red)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -86,7 +86,7 @@ TEST(Color, RGBToHSL_Green)
 {
     Color color = Color::green;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0.33333334, hslaColor.hue);
     EXPECT_FLOAT_EQ(1, hslaColor.saturation);
@@ -94,7 +94,7 @@ TEST(Color, RGBToHSL_Green)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -102,7 +102,7 @@ TEST(Color, RGBToHSL_Blue)
 {
     Color color = Color::blue;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0.66666669, hslaColor.hue);
     EXPECT_FLOAT_EQ(1, hslaColor.saturation);
@@ -110,7 +110,7 @@ TEST(Color, RGBToHSL_Blue)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -118,7 +118,7 @@ TEST(Color, RGBToHSL_DarkGray)
 {
     Color color = Color::darkGray;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
@@ -126,7 +126,7 @@ TEST(Color, RGBToHSL_DarkGray)
     
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -134,7 +134,7 @@ TEST(Color, RGBToHSL_Gray)
 {
     Color color = Color::gray;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
@@ -142,7 +142,7 @@ TEST(Color, RGBToHSL_Gray)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 
@@ -150,7 +150,7 @@ TEST(Color, RGBToHSL_LightGray)
 {
     Color color = Color::lightGray;
 
-    auto hslaColor = toHSLA(color.toSRGBALossy<float>());
+    auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
@@ -158,7 +158,7 @@ TEST(Color, RGBToHSL_LightGray)
 
     EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
 
-    auto roundTrippedColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hslaColor));
+    auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
 }
 

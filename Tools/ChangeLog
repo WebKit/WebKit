@@ -1,3 +1,14 @@
+2021-02-05  Sam Weinig  <weinig@apple.com>
+
+        Generalize color conversion code to reduce number of overloads required
+        https://bugs.webkit.org/show_bug.cgi?id=221443
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update tests to use convertColor<>.
+
 2021-02-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should use commits.webkit.org url instead of trac url

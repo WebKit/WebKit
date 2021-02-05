@@ -1419,13 +1419,15 @@ constexpr float datePlaceholderColorLightnessAdjustmentFactor = 0.66f;
 
 Color RenderTheme::datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const
 {
-    auto hsla = toHSLA(textColor.toSRGBALossy<float>());
+    // FIXME: Consider using LCHA<float> rather than HSLA<float> for better perceptual results and to avoid clamping to sRGB gamut, which is what HSLA does.
+    auto hsla = textColor.toColorTypeLossy<HSLA<float>>();
     if (textColor.luminance() < backgroundColor.luminance())
         hsla.lightness += datePlaceholderColorLightnessAdjustmentFactor * (1.0f - hsla.lightness);
     else
         hsla.lightness *= datePlaceholderColorLightnessAdjustmentFactor;
 
-    return toSRGBA(hsla);
+    // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.
+    return convertColor<SRGBA<float>>(hsla);
 }
 
 void RenderTheme::setCustomFocusRingColor(const Color& color)

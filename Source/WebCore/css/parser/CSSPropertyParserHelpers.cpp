@@ -701,7 +701,7 @@ static uint8_t clampRGBComponent(double value, bool isPercentage)
 static Color parseRGBParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     bool isPercentage = false;
     double colorParameter;
@@ -772,7 +772,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
 static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     double hueAngleInDegrees;
     if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
@@ -815,7 +815,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return { };
 
-    return convertTo<SRGBA<uint8_t>>(toSRGBA(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) });
 }
 
 static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
@@ -832,7 +832,7 @@ static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
 static Color parseHWBParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     ASSERT(range.peek().functionId() == CSSValueHwb);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     double hueAngleInDegrees;
     if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
@@ -885,13 +885,13 @@ static Color parseHWBParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     nomalizedWhiteness /= 100.0;
     nomalizedBlackness /= 100.0;
 
-    return convertTo<SRGBA<uint8_t>>(toSRGBA(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(nomalizedWhiteness), static_cast<float>(nomalizedBlackness), static_cast<float>(*alpha) }));
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(nomalizedWhiteness), static_cast<float>(nomalizedBlackness), static_cast<float>(*alpha) });
 }
 
 static Color parseLabParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueLab);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     auto lightness = consumePercentRaw(args, ValueRangeAll);
     if (!lightness)
@@ -918,7 +918,7 @@ static Color parseLabParameters(CSSParserTokenRange& range)
 static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     ASSERT(range.peek().functionId() == CSSValueLch);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     auto lightness = consumePercentRaw(args, ValueRangeAll);
     if (!lightness)
@@ -947,7 +947,7 @@ static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return { };
 
-    return toLab(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(*chromaValue), static_cast<float>(hueAngleInDegrees), *alpha });
+    return convertColor<Lab<float>>(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(*chromaValue), static_cast<float>(hueAngleInDegrees), *alpha });
 }
 
 template<typename ColorType>
@@ -1034,7 +1034,7 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueColor);
-    CSSParserTokenRange args = consumeFunction(range);
+    auto args = consumeFunction(range);
 
     Color color;
     switch (args.peek().id()) {

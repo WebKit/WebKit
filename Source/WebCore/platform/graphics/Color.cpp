@@ -149,7 +149,7 @@ Color Color::invertedColorWithAlpha(float alpha) const
         if constexpr (ColorType::Model::isInvertible)
             return invertedColorWithOverridenAlpha(underlyingColor, alpha);
         else
-            return invertedColorWithOverridenAlpha(toSRGBA(underlyingColor), alpha);
+            return invertedColorWithOverridenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
     });
 }
 

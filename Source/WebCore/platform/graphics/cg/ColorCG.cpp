@@ -81,7 +81,7 @@ static Optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    return convertTo<SRGBA<uint8_t>>(SRGBA { r, g, b, a });
+    return convertColor<SRGBA<uint8_t>>(SRGBA { r, g, b, a });
 }
 
 Color::Color(CGColorRef color)
@@ -108,7 +108,7 @@ static CGColorRef leakCGColor(const Color& color)
     // more explicit.
     if (colorSpace != ColorSpace::SRGB && cgColorSpace == sRGBColorSpaceRef()) {
         auto colorConvertedToExtendedSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return toExtendedSRGBA(color);
+            return convertColor<ExtendedSRGBA<float>>(color);
         });
         components = asColorComponents(colorConvertedToExtendedSRGBA);
         cgColorSpace = extendedSRGBColorSpaceRef();

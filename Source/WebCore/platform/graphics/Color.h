@@ -106,8 +106,14 @@ public:
 
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
-    // This will convert non-sRGB colorspace colors into sRGB.
-    template<typename T> SRGBA<T> toSRGBALossy() const;
+    // This will convert the underlying color into ColorType, potentially lossily if the gamut
+    // or precision of ColorType is smaller than the current underlying type.
+    template<typename ColorType> ColorType toColorTypeLossy() const;
+
+    // This will convert the underlying color into sRGB, potentially lossily if the gamut
+    // or precision of sRGB is smaller than the current underlying type. This is a convenience
+    // wrapper around toColorTypeLossy<>().
+    template<typename T> SRGBA<T> toSRGBALossy() const { return toColorTypeLossy<SRGBA<T>>(); }
 
     WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float>> colorSpaceAndComponents() const;
 
@@ -321,22 +327,11 @@ template<typename Functor> decltype(auto) Color::callOnUnderlyingType(Functor&& 
     return std::invoke(std::forward<Functor>(functor), asInline());
 }
 
-template<typename T> SRGBA<T> Color::toSRGBALossy() const
+template<typename ColorType> ColorType Color::toColorTypeLossy() const
 {
-    return callOnUnderlyingType(WTF::makeVisitor(
-        [] (const SRGBA<uint8_t>& color) {
-            if constexpr (std::is_same_v<T, uint8_t>)
-                return color;
-            if constexpr (std::is_same_v<T, float>)
-                return convertTo<SRGBA<float>>(color);
-        },
-        [] (const auto& color) {
-            if constexpr (std::is_same_v<T, uint8_t>)
-                return convertTo<SRGBA<uint8_t>>(toSRGBA(color));
-            if constexpr (std::is_same_v<T, float>)
-                return toSRGBA(color);
-        }
-    ));
+    return callOnUnderlyingType([] (const auto& underlyingColor) {
+        return convertColor<ColorType>(underlyingColor);
+    });
 }
 
 inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const

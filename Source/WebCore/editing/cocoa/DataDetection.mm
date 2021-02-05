@@ -595,13 +595,16 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
                 if (renderStyle) {
                     auto textColor = renderStyle->visitedDependentColor(CSSPropertyColor);
                     if (textColor.isValid()) {
-                        auto hsla = toHSLA(textColor.toSRGBALossy<float>());
+                        // FIXME: Consider using LCHA<float> rather than HSLA<float> for better perceptual results and to avoid clamping to sRGB gamut, which is what HSLA does.
+                        auto hsla = textColor.toColorTypeLossy<HSLA<float>>();
 
                         // Force the lightness of the underline color to the middle, and multiply the alpha by 38%,
                         // so the color will appear on light and dark backgrounds, since only one color can be specified.
                         hsla.lightness = 0.5f;
                         hsla.alpha *= 0.38f;
-                        auto underlineColor = convertTo<SRGBA<uint8_t>>(toSRGBA(hsla));
+                        
+                        // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.
+                        auto underlineColor = convertColor<SRGBA<uint8_t>>(hsla);
 
                         anchorElement->setInlineStyleProperty(CSSPropertyColor, CSSValueCurrentcolor);
                         anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, serializationForCSS(underlineColor));
