@@ -185,11 +185,9 @@ float StyleCachedImage::imageScaleFactor() const
     return m_scaleFactor;
 }
 
-bool StyleCachedImage::knownToBeOpaque(const RenderElement* renderer) const
+bool StyleCachedImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->currentFrameKnownToBeOpaque(renderer);
+    return m_cachedImage && m_cachedImage->currentFrameKnownToBeOpaque(&renderer);
 }
 
 }

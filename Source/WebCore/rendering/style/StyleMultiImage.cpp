@@ -162,7 +162,7 @@ float StyleMultiImage::imageScaleFactor() const
     return m_selectedImage->imageScaleFactor();
 }
 
-bool StyleMultiImage::knownToBeOpaque(const RenderElement* renderer) const
+bool StyleMultiImage::knownToBeOpaque(const RenderElement& renderer) const
 {
     return m_selectedImage && m_selectedImage->knownToBeOpaque(renderer);
 }

@@ -65,7 +65,7 @@ public:
     virtual RefPtr<Image> image(RenderElement*, const FloatSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
     virtual float imageScaleFactor() const { return 1; }
-    virtual bool knownToBeOpaque(const RenderElement*) const = 0;
+    virtual bool knownToBeOpaque(const RenderElement&) const = 0;
     virtual CachedImage* cachedImage() const { return 0; }
     virtual StyleImage* selectedImage() { return this; }
     virtual const StyleImage* selectedImage() const { return this; }

@@ -54,29 +54,27 @@ void StyleGeneratedImage::load(CachedResourceLoader& loader, const ResourceLoade
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
-    if (m_fixedSize) {
-        if (!renderer)
-            return { };
+    if (!m_fixedSize)
+        return m_containerSize;
 
-        FloatSize fixedSize = m_imageGeneratorValue->fixedSize(*renderer);
-        if (multiplier == 1.0f)
-            return fixedSize;
+    if (!renderer)
+        return { };
 
-        float width = fixedSize.width() * multiplier;
-        float height = fixedSize.height() * multiplier;
+    FloatSize fixedSize = m_imageGeneratorValue->fixedSize(*renderer);
+    if (multiplier == 1.0f)
+        return fixedSize;
 
-        // Don't let images that have a width/height >= 1 shrink below 1 device pixel when zoomed.
-        float deviceScaleFactor = renderer ? renderer->document().deviceScaleFactor() : 1;
-        if (fixedSize.width() > 0)
-            width = std::max<float>(1 / deviceScaleFactor, width);
+    float width = fixedSize.width() * multiplier;
+    float height = fixedSize.height() * multiplier;
 
-        if (fixedSize.height() > 0)
-            height = std::max<float>(1 / deviceScaleFactor, height);
+    // Don't let images that have a width/height >= 1 shrink below 1 device pixel when zoomed.
+    float deviceScaleFactor = renderer->document().deviceScaleFactor();
+    if (fixedSize.width() > 0)
+        width = std::max<float>(1 / deviceScaleFactor, width);
+    if (fixedSize.height() > 0)
+        height = std::max<float>(1 / deviceScaleFactor, height);
 
-        return FloatSize(width, height);
-    }
-    
-    return m_containerSize;
+    return { width, height };
 }
 
 void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
@@ -103,9 +101,9 @@ RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSiz
     return renderer ? m_imageGeneratorValue->image(*renderer, size) : &Image::nullImage();
 }
 
-bool StyleGeneratedImage::knownToBeOpaque(const RenderElement* renderer) const
+bool StyleGeneratedImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return renderer && m_imageGeneratorValue->knownToBeOpaque(*renderer);
+    return m_imageGeneratorValue->knownToBeOpaque(renderer);
 }
 
 }

@@ -61,7 +61,7 @@ private:
     void removeClient(RenderElement&) final;
     RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
     float imageScaleFactor() const final;
-    bool knownToBeOpaque(const RenderElement*) const final;
+    bool knownToBeOpaque(const RenderElement&) const final;
     const StyleImage* selectedImage() const final { return m_selectedImage.get(); }
     StyleImage* selectedImage() final { return m_selectedImage.get(); }
 

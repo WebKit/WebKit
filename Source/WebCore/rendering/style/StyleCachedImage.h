@@ -62,7 +62,7 @@ public:
     void removeClient(RenderElement&) final;
     RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
     float imageScaleFactor() const final;
-    bool knownToBeOpaque(const RenderElement*) const final;
+    bool knownToBeOpaque(const RenderElement&) const final;
 
 private:
     StyleCachedImage(CSSImageValue&, float);
