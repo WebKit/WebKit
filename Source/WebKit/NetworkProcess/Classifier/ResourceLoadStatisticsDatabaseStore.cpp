@@ -796,7 +796,7 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "domainID"_s);
     if (!scopedStatement
         || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDFromString failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDFromString failed. Statement: %s. Error message: %{private}s", this, scopedStatement->query().utf8().data(), m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return WTF::nullopt;
     }
@@ -1670,6 +1670,13 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const Registrable
     if (shouldSkip(domain))
         return;
 
+    auto registrableDomainID = domainID(domain);
+    if (!registrableDomainID) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setPrevalentResource domainID should exist but was not found.", this);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     auto scopedUpdatePrevalentResourceStatement = this->scopedStatement(m_updatePrevalentResourceStatement, updatePrevalentResourceQuery, "setPrevalentResource"_s);
     if (!scopedUpdatePrevalentResourceStatement
         || scopedUpdatePrevalentResourceStatement->bindInt(1, 1) != SQLITE_OK
@@ -1693,7 +1700,7 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const Registrable
     }
 
     StdSet<unsigned> nonPrevalentRedirectionSources;
-    recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(domainID(domain).value(), nonPrevalentRedirectionSources, 0);
+    recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(*registrableDomainID, nonPrevalentRedirectionSources, 0);
     setDomainsAsPrevalent(WTFMove(nonPrevalentRedirectionSources));
 }
 

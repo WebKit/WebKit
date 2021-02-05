@@ -1,3 +1,25 @@
+2021-02-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        CrashTracer: com.apple.WebKit.Networking at WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+        https://bugs.webkit.org/show_bug.cgi?id=221432
+        <rdar://problem/67069819>
+
+        Reviewed by John Wilander.
+
+        We are seeing crashes in ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+        as a result of trying to use a nullopt domainID value. In theory this should
+        never be WTF::nullopt but is because of a failing SQLite query in
+        ResourceLoadStatisticsDatabaseStore::domainID which reports the error "not an error".
+
+        To fix this we should check the domain ID and return early with a
+        debug assert in setPrevalentResource() if it is WTF::nullopt to avoid
+        a crash. Additionally, we should add more information to the logging
+        statement, specifically the SQLite statement string, to try and debug further.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+
 2021-02-05  Sihui Liu  <sihui_liu@appe.com>
 
         SpeechRecognitionPermissionManager should not handle requests that are already cancelled
