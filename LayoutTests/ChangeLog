@@ -1,3 +1,14 @@
+2021-02-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r272392): [ MacOS ] webaudio/audioworklet-addModule-failure.html is flakey timing out
+        https://bugs.webkit.org/show_bug.cgi?id=221469
+        <rdar://problem/74027196>
+
+        Unreviewed, make sure the test triggers JS garbage collection before exiting so that the next test does
+        not fail with an out-of-memory error.
+
+        * webaudio/audioworket-out-of-memory.html:
+
 2021-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r271879) [SOUP] webrtc/datachannel/gather-candidates-networkprocess-crash.html is crashing in debug mode

@@ -28,4 +28,7 @@
     CSS.paintWorklet.addModule('');
   }
   new AudioContext().audioWorklet.addModule('');
+
+  // Clean up before moving on to next test.
+  $vm.gc();
 </script>
