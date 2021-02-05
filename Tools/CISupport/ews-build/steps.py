@@ -3106,7 +3106,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         return rc
 
     def url_for_revision(self, revision):
-        return 'https://trac.webkit.org/changeset/{}'.format(revision)
+        return 'https://commits.webkit.org/r{}'.format(revision)
 
     def comment_text_for_bug(self, svn_revision=None):
         patch_id = self.getProperty('patch_id', '')

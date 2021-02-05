@@ -3749,7 +3749,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://trac.webkit.org/changeset/256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
