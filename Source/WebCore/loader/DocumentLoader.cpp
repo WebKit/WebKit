@@ -1820,7 +1820,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
         case Document::AboutToEnterBackForwardCache: {
             // A page about to enter the BackForwardCache should only be able to start ping loads.
             auto* cachedResource = MemoryCache::singleton().resourceForRequest(loader->request(), loader->frameLoader()->frame().page()->sessionID());
-            ASSERT(cachedResource && CachedResource::shouldUsePingLoad(cachedResource->type()));
+            ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->options().keepAlive));
             break;
         }
         case Document::InBackForwardCache:

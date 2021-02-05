@@ -1,3 +1,15 @@
+2021-02-05  Youenn Fablet  <youenn@apple.com>
+
+        Make sure click attribution is processed in case of redirected kept alive loads
+        https://bugs.webkit.org/show_bug.cgi?id=221453
+        <rdar://problem/70896640>
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        Move the click attribution processing before kept alive check.
+
 2021-02-05  Per Arne Vollan  <pvollan@apple.com>
 
         Remove access to IOMobileFramebufferUserClient
