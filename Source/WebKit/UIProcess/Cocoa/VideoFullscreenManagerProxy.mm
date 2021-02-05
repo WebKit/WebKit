@@ -181,14 +181,14 @@ void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& clien
     m_clients.remove(&client);
 }
 
-void VideoFullscreenModelContext::requestFullscreenModeWithCallback(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
+void VideoFullscreenModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_manager) {
         completionHandler();
         return;
     }
 
-    m_manager->requestFullscreenModeWithCallback(m_contextId, mode, finishedWithMedia, WTFMove(completionHandler));
+    m_manager->requestCloseAllMediaPresentations(m_contextId, finishedWithMedia, WTFMove(completionHandler));
 }
 
 void VideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
@@ -746,14 +746,16 @@ void VideoFullscreenManagerProxy::callCloseCompletionHandlers()
         callback();
 }
 
-void VideoFullscreenManagerProxy::requestFullscreenModeWithCallback(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
+void VideoFullscreenManagerProxy::requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier contextId, bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
 {
-    if (mode == WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone
-        && (hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-            || hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard)))
-        m_closeCompletionHandlers.append(WTFMove(completionHandler));
+    if (!hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+        && !hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
+        completionHandler();
+        return;
+    }
 
-    requestFullscreenMode(contextId, mode, finishedWithMedia);
+    m_closeCompletionHandlers.append(WTFMove(completionHandler));
+    requestFullscreenMode(contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone, finishedWithMedia);
 }
 
 void VideoFullscreenManagerProxy::requestFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)

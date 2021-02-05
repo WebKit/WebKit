@@ -916,7 +916,7 @@ static bool validateArgument(id argument)
 #if ENABLE(FULLSCREEN_API)
     if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
         videoFullscreenManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
-            model.requestFullscreenModeWithCallback(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone, false, [callbackAggregator] { });
+            model.requestCloseAllMediaPresentations(false, [callbackAggregator] { });
         });
     }
 

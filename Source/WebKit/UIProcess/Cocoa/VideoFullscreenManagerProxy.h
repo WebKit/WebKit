@@ -78,7 +78,7 @@ public:
 
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
-    void requestFullscreenModeWithCallback(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia, CompletionHandler<void()>&&);
+    void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
 
 private:
     VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
@@ -201,7 +201,7 @@ private:
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
 
-    void requestFullscreenModeWithCallback(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia, CompletionHandler<void()>&&);
+    void requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier, bool finishedWithMedia, CompletionHandler<void()>&&);
     void callCloseCompletionHandlers();
 
     bool m_mockVideoPresentationModeEnabled { false };

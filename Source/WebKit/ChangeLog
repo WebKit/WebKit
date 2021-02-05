@@ -1,3 +1,31 @@
+2021-02-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        ASSERTION FAILED: Completion handler should always be called under WebKit::VideoFullscreenManagerProxy::forEachSession
+        https://bugs.webkit.org/show_bug.cgi?id=221343
+        <rdar://problem/73939450>
+
+        Reviewed by Youenn Fablet.
+
+        If a client tries to exit fullscreen mode when there is no fullscreen
+        video present, we should call the completion handler immediately and
+        return.
+
+        Rename requestFullscreenModeWithCallback to requestCloseAllMediaPresentations
+        because the completion handler is only called when all media presentations
+        are closed. requestFullscreenModeWithCallback makes it seem like we
+        can use this function with other modes besides VideoFullscreenModeNone.
+
+        No new tests, this will fix a crashing iOS test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeAllMediaPresentations:]):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::requestCloseAllMediaPresentations):
+        (WebKit::VideoFullscreenManagerProxy::requestCloseAllMediaPresentations):
+        (WebKit::VideoFullscreenModelContext::requestFullscreenModeWithCallback): Deleted.
+        (WebKit::VideoFullscreenManagerProxy::requestFullscreenModeWithCallback): Deleted.
+
 2021-02-05  Youenn Fablet  <youenn@apple.com>
 
         Make sure click attribution is processed in case of redirected kept alive loads
