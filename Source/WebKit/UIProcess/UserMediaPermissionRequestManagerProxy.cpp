@@ -240,8 +240,10 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID(), ", video: ", request.videoDevice().label(), ", audio: ", request.audioDevice().label());
 
     if (auto callback = request.decisionCompletionHandler()) {
+        m_page.willStartCapture(request, [callback = WTFMove(callback)]() mutable {
+            callback(true);
+        });
         m_grantedRequests.append(makeRef(request));
-        callback(true);
         return;
     }
 

@@ -10441,12 +10441,12 @@ void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifie
 
 WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRecognition()
 {
-    if (preferences().captureAudioInGPUProcessEnabled())
-        return CaptureSourceOrError { "Not implemented for GPU process" };
-
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
     if (!captureDevice)
         return CaptureSourceOrError { "No device is available for capture" };
+
+    if (preferences().captureAudioInGPUProcessEnabled())
+        return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice) };
 
 #if PLATFORM(IOS_FAMILY)
     return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice) };

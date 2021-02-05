@@ -54,7 +54,7 @@ class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
 #endif
 {
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints&, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeMediaSource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
@@ -72,7 +72,7 @@ public:
     void remoteAudioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
 
 private:
-    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, WebCore::CaptureDevice::DeviceType, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // RealtimeMediaSource
     void startProducingData() final;
@@ -88,7 +88,7 @@ private:
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final;
     void whenReady(CompletionHandler<void(String)>&&) final;
-    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
+    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_device.type(); }
     Ref<RealtimeMediaSource> clone() final;
 
 #if ENABLE(GPU_PROCESS)
@@ -96,7 +96,7 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 #endif
 
-    void createRemoteMediaSource(const WebCore::CaptureDevice&, const WebCore::MediaConstraints&);
+    void createRemoteMediaSource();
     void didFail(String&& errorMessage);
     void setAsReady();
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
@@ -107,8 +107,10 @@ private:
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
 
+    WebCore::CaptureDevice m_device;
+    WebCore::MediaConstraints m_constraints;
+
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
-    WebCore::CaptureDevice::DeviceType m_deviceType { WebCore::CaptureDevice::DeviceType::Unknown };
 
     Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
     bool m_shouldCaptureInGPUProcess { false };
@@ -116,8 +118,6 @@ private:
     bool m_hasRequestedToEnd { false };
     String m_errorMessage;
     CompletionHandler<void(String)> m_callback;
-    WebCore::CaptureDevice m_device;
-    WebCore::MediaConstraints m_constraints;
 };
 
 } // namespace WebKit

@@ -1,3 +1,41 @@
+2021-02-05  Youenn Fablet  <youenn@apple.com>
+
+        Enable audio capture for speech recognition in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=221457
+
+        Reviewed by Eric Carlson.
+
+        Allow to create remote sources without any constraint.
+        To do so, we serialize through IPC a MediaConstraints with isValid = false and treat it as no constraint in capture process.
+
+        Make sure to send sandbox extensions and authorizations for GPUProcess to capture in case of speech recognition audio capture request.
+
+        In case of GPUProcess audio capture, send the request to capture to WebProcess like done for iOS.
+        WebProcess is then responsible to get audio samples from GPUProcess and forward them to UIProcess.
+        A future refactoring should move speech recognition to GPUProcess.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createRealtimeMediaSourceForSpeechRecognition):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::createSource):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp:
+        (WebKit::RemoteRealtimeMediaSource::create):
+        (WebKit::RemoteRealtimeMediaSource::RemoteRealtimeMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::cloneVideoSource):
+        (WebKit::RemoteRealtimeMediaSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource):
+
 2021-02-05  Kate Cheney  <katherine_cheney@apple.com>
 
         ASSERTION FAILED: Completion handler should always be called under WebKit::VideoFullscreenManagerProxy::forEachSession
