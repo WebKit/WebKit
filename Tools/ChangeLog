@@ -1,3 +1,33 @@
+2021-02-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Connect MediaSession with MediaRemote and NowPlaying
+        https://bugs.webkit.org/show_bug.cgi?id=221431
+        <rdar://problem/74000363>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaSession.mm: Added.
+        (TestWebKitAPI::MediaSessionTest::webView):
+        (TestWebKitAPI::MediaSessionTest::webViewPid):
+        (TestWebKitAPI::MediaSessionTest::getNowPlayingClient):
+        (TestWebKitAPI::MediaSessionTest::getNowPlayingClientPid):
+        (TestWebKitAPI::MediaSessionTest::loadPageAndBecomeNowPlaying):
+        (TestWebKitAPI::MediaSessionTest::runScriptWithUserGesture):
+        (TestWebKitAPI::MediaSessionTest::play):
+        (TestWebKitAPI::MediaSessionTest::pause):
+        (TestWebKitAPI::MediaSessionTest::sendMediaRemoteCommand):
+        (TestWebKitAPI::MediaSessionTest::sendMediaRemoteSeekCommand):
+        (TestWebKitAPI::MediaSessionTest::listenForEventMessages):
+        (TestWebKitAPI::MediaSessionTest::eventListenerWasCalled):
+        (TestWebKitAPI::MediaSessionTest::waitForEventListenerToBeCalled):
+        (TestWebKitAPI::MediaSessionTest::listenForSessionHandlerMessages):
+        (TestWebKitAPI::MediaSessionTest::sessionHandlerWasCalled):
+        (TestWebKitAPI::MediaSessionTest::waitForSessionHandlerToBeCalled):
+        (TestWebKitAPI::MediaSessionTest::getSupportedCommands):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/media-remote.html: Added.
+
 2021-02-05  Sam Weinig  <weinig@apple.com>
 
         Generalize color conversion code to reduce number of overloads required

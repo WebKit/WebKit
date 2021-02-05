@@ -1,3 +1,18 @@
+2021-02-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Connect MediaSession with MediaRemote and NowPlaying
+        https://bugs.webkit.org/show_bug.cgi?id=221431
+        <rdar://problem/74000363>
+
+        Reviewed by Jer Noble.
+
+        Add a private preference so the new MediaSession API test can enable the feature.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _mediaSessionEnabled]):
+        (-[WKPreferences _setMediaSessionEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2021-02-05  Youenn Fablet  <youenn@apple.com>
 
         Enable audio capture for speech recognition in GPUProcess

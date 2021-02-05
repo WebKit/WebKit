@@ -101,7 +101,6 @@ class HTMLMediaElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
-class MediaSessionMetadata;
 class NavigationAction;
 class Node;
 class Page;

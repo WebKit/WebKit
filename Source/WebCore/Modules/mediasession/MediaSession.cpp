@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,45 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "Logging.h"
 #include "MediaMetadata.h"
 #include "Navigator.h"
+#include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
+
+static const void* nextLogIdentifier()
+{
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    return reinterpret_cast<const void*>(++logIdentifier);
+}
+
+static WTFLogChannel& logChannel() { return LogMedia; }
+static const char* logClassName() { return "MediaSession"; }
+
+static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSessionAction(MediaSessionAction action)
+{
+    static const auto commandMap = makeNeverDestroyed([] {
+        using ActionToCommandMap = HashMap<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>>;
+
+        return ActionToCommandMap {
+            { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },
+            { MediaSessionAction::Pause, PlatformMediaSession::PauseCommand },
+            { MediaSessionAction::Seekforward, PlatformMediaSession::SkipForwardCommand },
+            { MediaSessionAction::Seekbackward, PlatformMediaSession::SkipBackwardCommand },
+            { MediaSessionAction::Previoustrack, PlatformMediaSession::NextTrackCommand },
+            { MediaSessionAction::Nexttrack, PlatformMediaSession::PreviousTrackCommand },
+            { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
+            { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
+        };
+    }());
+
+    auto it = commandMap.get().find(action);
+    if (it != commandMap.get().end())
+        return it->value;
+
+    return PlatformMediaSession::NoCommand;
+}
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {
@@ -41,12 +76,18 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 MediaSession::MediaSession(Navigator& navigator)
     : m_navigator(makeWeakPtr(navigator))
 {
+    m_logger = makeRefPtr(Document::sharedLogger());
+    m_logIdentifier = nextLogIdentifier();
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 MediaSession::~MediaSession() = default;
 
 void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     if (m_metadata)
         m_metadata->resetMediaSession();
     m_metadata = WTFMove(metadata);
@@ -60,6 +101,8 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
     if (m_playbackState == state)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, state);
+
     auto currentPosition = this->currentPosition();
     if (m_positionState && currentPosition) {
         m_positionState->position = *currentPosition;
@@ -70,10 +113,18 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 
 void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
 {
-    if (handler)
+    if (handler) {
+        ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
         m_actionHandlers.set(action, handler);
-    else
-        m_actionHandlers.remove(action);
+        PlatformMediaSessionManager::sharedManager().addSupportedCommand(platformCommandForMediaSessionAction(action));
+    } else {
+        if (m_actionHandlers.contains(action)) {
+            ALWAYS_LOG(LOGIDENTIFIER, "removing ", action);
+            m_actionHandlers.remove(action);
+        }
+        PlatformMediaSessionManager::sharedManager().removeSupportedCommand(platformCommandForMediaSessionAction(action));
+    }
+    
     actionHandlersUpdated();
 }
 
@@ -89,6 +140,8 @@ RefPtr<MediaSessionActionHandler> MediaSession::handlerForAction(MediaSessionAct
 
 ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     if (!state) {
         m_positionState = WTF::nullopt;
         return { };

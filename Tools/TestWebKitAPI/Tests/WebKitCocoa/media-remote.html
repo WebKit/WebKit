@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #eventslog {
+        font-size: 10px; 
+        height: calc(100% - (320px));
+        overflow-y: scroll;
+        border: 1px solid rgba(147, 128, 108, 0.25);
+    }
+</style>
+    <script>
+
+        let playlist = {
+            current: 0,
+            metadata: [
+                {
+                    url: 'video-with-audio.mp4',
+                    title: 'Bip Bop With Audio',
+                    artist: 'The Bip Bop Authors',
+                    album: 'WebKit Greatest Hits',
+                    artwork: [
+
+                    ],
+                },
+                {
+                    url: 'video-without-audio.mp4',
+                    title: 'Bip Bop Without Audio',
+                    artist: 'The Bip Bop Authors',
+                    album: 'WebKit Original Test Content',
+                    artwork: [
+
+                    ],
+                },
+            ],
+        };
+
+        function setMetadata(data)
+        {
+            navigator.mediaSession.metadata = new MediaMetadata(data);
+            postMessage('set metadata')
+        }
+
+        function setPlaylistMetadata(index)
+        {
+            setMetadata(playlist.metadata[index]);
+        
+        }
+
+        function clearActionHandlers()
+        {
+            setEmptyActionHandlers([]);
+        }
+
+        function setEmptyActionHandlers(handlers)
+        {
+            const actions = {
+                'play' : () => { postMessage('play handler'); },
+
+                'pause' : () => { postMessage('pause handler') },
+                
+                'seekto' : (details) => { postMessage('seekto handler') },
+
+                'seekforward' : (details) => { postMessage('seekforward handler') },
+
+                'seekbackward' : (details) => { postMessage('seekbackward handler') }, 
+
+                'previoustrack' : () => { postMessage('previoustrack handler') }, 
+
+                'nexttrack' : () => { postMessage('nexttrack handler') }, 
+            };
+
+            Object.keys(actions).forEach(action => {  navigator.mediaSession.setActionHandler(action, null); });
+
+            handlers.forEach(handler => {
+                if (!actions[handler]) {
+                    log(`asked to register handler for unknown action '${handler}'`);
+                    return;
+                }
+
+                log(`registering '${handler}' handler`);
+                navigator.mediaSession.setActionHandler(handler, actions[handler]); 
+            });
+        }
+
+        function postMessage(message)
+        {
+            log(`${message}`)
+            if (window.webkit)
+                window.webkit.messageHandlers.testHandler.postMessage(message);
+        }
+
+        function postEvent(evt) 
+        {
+            postMessage(`${evt.type} event`);
+        }
+        
+        function load()
+        {
+            let src = playlist.metadata[0].url;
+            if (!window.webkit)
+                src = `../WebKitLegacy/ios/${src}`;
+            audio.src = src;
+            audio.load();
+        }
+        
+        function log(msg)
+        {
+            let eventLog = document.getElementById('eventslog')
+            let note = document.createElement('div');
+            note.innerHTML = msg;
+            eventLog.insertBefore(note, eventLog.firstChild);
+        }
+
+        
+        window.addEventListener("load", evt => {
+            audio = document.getElementsByTagName('audio')[0];
+            audio.addEventListener('canplaythrough', postEvent);
+            audio.addEventListener('play', postEvent);
+            audio.addEventListener('pause', postEvent);
+            audio.addEventListener('seeked', postEvent);
+        }, false);
+
+    </script>
+</head>
+<body>
+    <audio controls> </audio>
+    <br>
+    <button onclick="setEmptyActionHandlers(['play','pause','seekto'])">Empty Play, Pause, SeekTo</button>
+    <br>
+    <button onclick="setEmptyActionHandlers(['play','pause','seekforward','seekbackward'])">Empty Play, Pause, Seek Forward, Seek Backward</button>
+    <br>
+    <button onclick="load()">Load</button>
+    <br>
+    <button onclick="setPlaylistMetadata(0)">Set Metadata 1</button><button onclick="setPlaylistMetadata(1)">Set Metadata 2</button>
+    <br>
+    <div id='eventslog'></div>
+</body>
+</html>

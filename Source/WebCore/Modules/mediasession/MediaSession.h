@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,14 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "JSMediaPositionState.h"
+#include "JSMediaSessionAction.h"
+#include "JSMediaSessionPlaybackState.h"
 #include "MediaPositionState.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
 #include "MediaSessionPlaybackState.h"
+#include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
@@ -57,12 +61,17 @@ public:
     WEBCORE_EXPORT Optional<double> currentPosition() const;
 
     void metadataUpdated();
+
     void actionHandlersUpdated();
     bool hasActionHandler(MediaSessionAction) const;
     WEBCORE_EXPORT RefPtr<MediaSessionActionHandler> handlerForAction(MediaSessionAction) const;
+    bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
 
 private:
     explicit MediaSession(Navigator&);
+
+    const Logger& logger() const { return *m_logger.get(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
@@ -71,6 +80,20 @@ private:
     Optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
+    RefPtr<const Logger> m_logger;
+    const void* m_logIdentifier;
+};
+
+}
+
+namespace WTF {
+
+template<> struct LogArgument<WebCore::MediaSessionPlaybackState> {
+    static String toString(WebCore::MediaSessionPlaybackState state) { return convertEnumerationToString(state); }
+};
+
+template<> struct LogArgument<WebCore::MediaSessionAction> {
+    static String toString(WebCore::MediaSessionAction action) { return convertEnumerationToString(action); }
 };
 
 }

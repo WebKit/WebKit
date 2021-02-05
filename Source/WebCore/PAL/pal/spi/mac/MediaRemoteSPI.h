@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,8 @@ enum {
 typedef uint32_t MRNowPlayingClientVisibility;
 
 typedef uint32_t MRMediaRemoteError;
+typedef uint32_t MRSendCommandAppOptions;
+typedef uint32_t MRSendCommandError;
 typedef struct _MROrigin *MROriginRef;
 typedef struct _MRMediaRemoteCommandInfo *MRMediaRemoteCommandInfoRef;
 typedef void *MRNowPlayingClientRef;
@@ -103,8 +105,10 @@ WTF_EXTERN_C_BEGIN
 
 void* MRMediaRemoteAddAsyncCommandHandlerBlock(MRMediaRemoteAsyncCommandHandlerBlock);
 void MRMediaRemoteRemoveCommandHandlerBlock(void *observer);
-void MRMediaRemoteSetSupportedCommands(CFArrayRef commands, MROriginRef, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err));
+void MRMediaRemoteSetSupportedCommands(CFArrayRef, MROriginRef, dispatch_queue_t, void(^completion)(MRMediaRemoteError));
+void MRMediaRemoteGetSupportedCommandsForOrigin(MROriginRef, dispatch_queue_t, void(^completion)(CFArrayRef));
 void MRMediaRemoteSetNowPlayingVisibility(MROriginRef, MRNowPlayingClientVisibility);
+Boolean MRMediaRemoteSendCommandToApp(MRMediaRemoteCommand, CFDictionaryRef, MROriginRef, CFStringRef, MRSendCommandAppOptions, dispatch_queue_t, void(^completion)(MRSendCommandError, CFArrayRef));
 
 #pragma mark - MROrigin
 

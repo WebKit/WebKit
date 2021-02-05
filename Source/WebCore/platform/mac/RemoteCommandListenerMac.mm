@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,65 @@
 
 namespace WebCore {
 
+static Optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    static const auto commandMap = makeNeverDestroyed([] {
+        using CommandToActionMap = HashMap<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
+
+        return CommandToActionMap {
+            { PlatformMediaSession::PlayCommand, MRMediaRemoteCommandPlay },
+            { PlatformMediaSession::PauseCommand, MRMediaRemoteCommandPause },
+            { PlatformMediaSession::StopCommand, MRMediaRemoteCommandStop },
+            { PlatformMediaSession::TogglePlayPauseCommand, MRMediaRemoteCommandTogglePlayPause },
+            { PlatformMediaSession::BeginSeekingBackwardCommand, MRMediaRemoteCommandBeginRewind },
+            { PlatformMediaSession::EndSeekingBackwardCommand, MRMediaRemoteCommandEndRewind },
+            { PlatformMediaSession::BeginSeekingForwardCommand, MRMediaRemoteCommandBeginFastForward },
+            { PlatformMediaSession::EndSeekingForwardCommand, MRMediaRemoteCommandEndFastForward },
+            { PlatformMediaSession::SeekToPlaybackPositionCommand, MRMediaRemoteCommandSeekToPlaybackPosition },
+            { PlatformMediaSession::SkipForwardCommand, MRMediaRemoteCommandSkipForward },
+            { PlatformMediaSession::SkipBackwardCommand, MRMediaRemoteCommandSkipBackward },
+            { PlatformMediaSession::NextTrackCommand, MRMediaRemoteCommandNextTrack },
+            { PlatformMediaSession::PreviousTrackCommand, MRMediaRemoteCommandPreviousTrack },
+        };
+    }());
+
+    auto it = commandMap.get().find(command);
+    if (it != commandMap.get().end())
+        return { it->value };
+
+    return { };
+}
+
 std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
     return makeUnique<RemoteCommandListenerMac>(client);
+}
+
+const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerMac::defaultCommands()
+{
+    static NeverDestroyed<RemoteCommandsSet> commands(std::initializer_list<PlatformMediaSession::RemoteControlCommandType> {
+        PlatformMediaSession::PlayCommand,
+        PlatformMediaSession::PauseCommand,
+        PlatformMediaSession::TogglePlayPauseCommand,
+        PlatformMediaSession::BeginSeekingForwardCommand,
+        PlatformMediaSession::EndSeekingForwardCommand,
+        PlatformMediaSession::BeginSeekingBackwardCommand,
+        PlatformMediaSession::EndSeekingBackwardCommand,
+        PlatformMediaSession::SeekToPlaybackPositionCommand,
+        PlatformMediaSession::SkipForwardCommand,
+        PlatformMediaSession::SkipBackwardCommand,
+    });
+
+    return commands;
+}
+
+static bool isSeekCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    return command == PlatformMediaSession::SeekToPlaybackPositionCommand
+        || command == PlatformMediaSession::SkipForwardCommand
+        || command == PlatformMediaSession::SkipBackwardCommand
+        || command == PlatformMediaSession::BeginSeekingForwardCommand
+        || command == PlatformMediaSession::BeginSeekingBackwardCommand;
 }
 
 void RemoteCommandListenerMac::updateSupportedCommands()
@@ -45,32 +101,29 @@ void RemoteCommandListenerMac::updateSupportedCommands()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    static const MRMediaRemoteCommand supportedCommands[] = {
-        MRMediaRemoteCommandPlay,
-        MRMediaRemoteCommandPause,
-        MRMediaRemoteCommandTogglePlayPause,
-        MRMediaRemoteCommandBeginFastForward,
-        MRMediaRemoteCommandEndFastForward,
-        MRMediaRemoteCommandBeginRewind,
-        MRMediaRemoteCommandEndRewind,
-        MRMediaRemoteCommandSeekToPlaybackPosition,
-    };
+    auto& supportedCommands = !m_registeredCommands.isEmpty() ? m_registeredCommands : defaultCommands();
+    if (m_supportsSeeking == client().supportsSeeking() && m_currentCommands == supportedCommands)
+        return;
 
-    auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, sizeof(supportedCommands) / sizeof(MRMediaRemoteCommand), &kCFTypeArrayCallBacks));
+    auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, supportedCommands.size(), &kCFTypeArrayCallBacks));
+    for (auto platformCommand : supportedCommands) {
+        if (isSeekCommand(platformCommand) && !client().supportsSeeking())
+            continue;
 
-    for (auto command : supportedCommands) {
+        auto command = mediaRemoteCommandForPlatformCommand(platformCommand);
+        ASSERT(command);
+        if (!command)
+            continue;
+
         auto commandInfo = adoptCF(MRMediaRemoteCommandInfoCreate(kCFAllocatorDefault));
-        MRMediaRemoteCommandInfoSetCommand(commandInfo.get(), command);
+        MRMediaRemoteCommandInfoSetCommand(commandInfo.get(), command.value());
         MRMediaRemoteCommandInfoSetEnabled(commandInfo.get(), true);
         CFArrayAppendValue(commandInfoArray.get(), commandInfo.get());
     }
 
-    auto seekCommandInfo = adoptCF(MRMediaRemoteCommandInfoCreate(kCFAllocatorDefault));
-    MRMediaRemoteCommandInfoSetCommand(seekCommandInfo.get(), MRMediaRemoteCommandSeekToPlaybackPosition);
-    MRMediaRemoteCommandInfoSetEnabled(seekCommandInfo.get(), client().supportsSeeking());
-    CFArrayAppendValue(commandInfoArray.get(), seekCommandInfo.get());
-
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
+    m_currentCommands = supportedCommands;
+    m_supportsSeeking = client().supportsSeeking();
 }
 
 RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
@@ -79,7 +132,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    updateSupportedCommands();
+    scheduleSupportedCommandsUpdate();
 
     auto weakThis = makeWeakPtr(*this);
     m_commandHandler = MRMediaRemoteAddAsyncCommandHandlerBlock(^(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef)) {
@@ -88,6 +141,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
 
         PlatformMediaSession::RemoteControlCommandType platformCommand { PlatformMediaSession::NoCommand };
         PlatformMediaSession::RemoteCommandArgument argument { 0 };
+        PlatformMediaSession::RemoteCommandArgument* argumentPtr = nullptr;
         MRMediaRemoteCommandHandlerStatus status = MRMediaRemoteCommandHandlerStatusSuccess;
 
         switch (command) {
@@ -128,16 +182,37 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
             }
 
             CFNumberGetValue(positionRef, kCFNumberDoubleType, &argument.asDouble);
+            argumentPtr = &argument;
             platformCommand = PlatformMediaSession::SeekToPlaybackPositionCommand;
             break;
         }
+        case MRMediaRemoteCommandSkipForward:
+        case MRMediaRemoteCommandSkipBackward:
+            if (!client.supportsSeeking()) {
+                status = MRMediaRemoteCommandHandlerStatusCommandFailed;
+                break;
+            }
+
+            if (auto positionRef = static_cast<CFNumberRef>(CFDictionaryGetValue(options, kMRMediaRemoteOptionSkipInterval))) {
+                CFNumberGetValue(positionRef, kCFNumberDoubleType, &argument.asDouble);
+                argumentPtr = &argument;
+            }
+
+            platformCommand = (command == MRMediaRemoteCommandSkipForward) ? PlatformMediaSession::SkipForwardCommand : PlatformMediaSession::SkipBackwardCommand;
+            break;
+        case MRMediaRemoteCommandNextTrack:
+            platformCommand = PlatformMediaSession::NextTrackCommand;
+            break;
+        case MRMediaRemoteCommandPreviousTrack:
+            platformCommand = PlatformMediaSession::PreviousTrackCommand;
+            break;
         default:
             LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - command %u not supported!", command);
             status = MRMediaRemoteCommandHandlerStatusCommandFailed;
         };
 
         if (weakThis && status != MRMediaRemoteCommandHandlerStatusCommandFailed)
-            weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, &argument);
+            weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, argumentPtr);
 
         completion((__bridge CFArrayRef)@[@(status)]);
     });

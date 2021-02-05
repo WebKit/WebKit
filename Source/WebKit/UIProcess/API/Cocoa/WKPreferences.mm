@@ -1479,6 +1479,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
 }
 
+- (BOOL)_mediaSessionEnabled
+{
+    return _preferences->mediaSessionEnabled();
+}
+
+- (void)_setMediaSessionEnabled:(BOOL)mediaSessionEnabled
+{
+    _preferences->setMediaSessionEnabled(mediaSessionEnabled);
+}
+
 @end
 
 

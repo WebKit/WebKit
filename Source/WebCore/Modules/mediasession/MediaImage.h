@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,32 @@ struct MediaImage {
     String src;
     String sizes;
     String type;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaImage> decode(Decoder&);
 };
+
+template<class Encoder> inline void MediaImage::encode(Encoder& encoder) const
+{
+    encoder << src << sizes << type;
+}
+
+template<class Decoder> inline Optional<MediaImage> MediaImage::decode(Decoder& decoder)
+{
+    String src;
+    if (!decoder.decode(src))
+        return { };
+
+    String sizes;
+    if (!decoder.decode(sizes))
+        return { };
+
+    String type;
+    if (!decoder.decode(type))
+        return { };
+
+    return MediaImage { WTFMove(src), WTFMove(sizes), WTFMove(type) };
+}
 
 }
 

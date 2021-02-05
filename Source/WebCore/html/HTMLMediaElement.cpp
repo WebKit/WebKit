@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -7519,6 +7519,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
     UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
+    double offset = 15;
     switch (command) {
     case PlatformMediaSession::PlayCommand:
         play();
@@ -7539,6 +7540,16 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     case PlatformMediaSession::EndSeekingBackwardCommand:
     case PlatformMediaSession::EndSeekingForwardCommand:
         endScanning();
+        break;
+    case PlatformMediaSession::SkipForwardCommand:
+        if (argument)
+            offset = argument->asDouble;
+        handleSeekToPlaybackPosition(offset);
+        break;
+    case PlatformMediaSession::SkipBackwardCommand:
+        if (argument)
+            offset = argument->asDouble;
+        handleSeekToPlaybackPosition(0 - offset);
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument);

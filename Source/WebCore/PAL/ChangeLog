@@ -1,3 +1,13 @@
+2021-02-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Connect MediaSession with MediaRemote and NowPlaying
+        https://bugs.webkit.org/show_bug.cgi?id=221431
+        <rdar://problem/74000363>
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/mac/MediaRemoteSPI.h:
+
 2021-02-01  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Disable interstitial events on AVPlayerItem.

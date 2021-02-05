@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,6 +93,10 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
         MAKE_STATIC_STRING_IMPL("BeginSeekingForwardCommand"),
         MAKE_STATIC_STRING_IMPL("EndSeekingForwardCommand"),
         MAKE_STATIC_STRING_IMPL("SeekToPlaybackPositionCommand"),
+        MAKE_STATIC_STRING_IMPL("SkipForwardCommand"),
+        MAKE_STATIC_STRING_IMPL("SkipBackwardCommand"),
+        MAKE_STATIC_STRING_IMPL("NextTrackCommand"),
+        MAKE_STATIC_STRING_IMPL("PreviousTrackCommand"),
     };
     static_assert(!static_cast<size_t>(PlatformMediaSession::NoCommand), "PlatformMediaSession::NoCommand is not 0 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::PlayCommand) == 1, "PlatformMediaSession::PlayCommand is not 1 as expected");
@@ -104,6 +108,10 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
     static_assert(static_cast<size_t>(PlatformMediaSession::BeginSeekingForwardCommand) == 7, "PlatformMediaSession::BeginSeekingForwardCommand is not 7 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::EndSeekingForwardCommand) == 8, "PlatformMediaSession::EndSeekingForwardCommand is not 8 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::SeekToPlaybackPositionCommand) == 9, "PlatformMediaSession::SeekToPlaybackPositionCommand is not 9 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SkipForwardCommand) == 10, "PlatformMediaSession::SkipForwardCommand is not 10 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SkipBackwardCommand) == 11, "PlatformMediaSession::SkipBackwardCommand is not 11 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::NextTrackCommand) == 12, "PlatformMediaSession::NextTrackCommand is not 12 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::PreviousTrackCommand) == 13, "PlatformMediaSession::PreviousTrackCommand is not 13 as expected");
     ASSERT(static_cast<size_t>(command) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(command)];
 }
