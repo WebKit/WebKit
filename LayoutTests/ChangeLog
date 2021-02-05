@@ -1,3 +1,16 @@
+2021-02-04  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Null dereference in DocumentLoader::commitData()
+        https://bugs.webkit.org/show_bug.cgi?id=221097
+
+        Reviewed by Alex Christensen.
+
+        Add a test that catches the null dereference
+        in DocumentLoader::commitData().
+
+        * loader/cancel-load-crash-expected.txt: Added.
+        * loader/cancel-load-crash.html: Added.
+
 2021-02-04  Chris Dumez  <cdumez@apple.com>
 
         Potential crash under BaseAudioContext's toJSNewlyCreated()

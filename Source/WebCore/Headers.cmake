@@ -692,6 +692,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/LinkIconType.h
     html/LinkRelAttribute.h
     html/MediaControllerInterface.h
+    html/MediaDocument.h
     html/MediaElementSession.h
     html/MediaError.h
     html/PluginDocument.h

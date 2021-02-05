@@ -1137,6 +1137,9 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
         bool hasBegun = m_writer.begin(documentURL(), false);
+        if (!hasBegun)
+            return;
+
         m_writer.setDocumentWasLoadedAsPartOfNavigation();
 
         auto* documentOrNull = m_frame ? m_frame->document() : nullptr;
@@ -1204,8 +1207,6 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         }
 
         m_writer.setEncoding(encoding, userChosen);
-
-        RELEASE_ASSERT(hasBegun);
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)

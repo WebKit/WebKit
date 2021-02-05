@@ -1,3 +1,17 @@
+2021-02-04  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Null dereference in DocumentLoader::commitData()
+        https://bugs.webkit.org/show_bug.cgi?id=221097
+
+        Reviewed by Alex Christensen.
+
+        As we add another return-early case to commitData(),
+        WebFrameLoaderClient::committedLoad() has to allow for
+        the absence of a Document.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::committedLoad):
+
 2021-02-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Link libnetworkextension at compile time
