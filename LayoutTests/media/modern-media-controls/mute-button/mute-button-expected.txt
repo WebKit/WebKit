@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS muteButton.element.localName is "button"
 PASS muteButton.element.classList.contains("mute") is true
-PASS muteButton.iconName is Icons.VolumeMutedRTL
 PASS muteButton.muted is true
+PASS muteButton.iconName became Icons.VolumeMutedRTL
 PASS muteButton.image.element.style.webkitMaskImage.includes("macOS/VolumeMuted-RTL.svg") became true
 Unmuting...
 PASS muteButton.muted is false

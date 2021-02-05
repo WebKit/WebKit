@@ -1,3 +1,13 @@
+2021-02-05  Devin Rousso  <drousso@apple.com>
+
+        Add intermediate volume icon states between "mute" and "max"
+        https://bugs.webkit.org/show_bug.cgi?id=221371
+
+        Unreviewed test fix.
+
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/mute-button/mute-button-expected.txt:
+
 2021-02-04  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening accessibility and font failures
