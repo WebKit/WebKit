@@ -1,4 +1,36 @@
 =================
+WPE WebKit 2.31.1
+=================
+
+What's new in WPE WebKit 2.31.1?
+
+  - Remove support for NPAPI plugins.
+  - Enable the web process cache when PSON is enabled too.
+  - TLS errors and proxy settings APIs have been moved from WebKitContext to WebKitWebsiteDataManager.
+  - Add new API to remove individual scripts/stylesheets using WebKitUserContentManager.
+  - Correctly apply the system font scaling factor.
+  - Show main loop frames information in the web inspector.
+  - Internal audio rendering support. The WebProcess can now maintain a single
+    connection to the system audio daemon and perform audio mixing internally.
+	For the time being this has to be enabled at runtime through the
+	WEBKIT_GST_ENABLE_AUDIO_MIXER=1 environment variable.
+  - On-demand GStreamer initialization support, mostly contained to WebProcess.
+    GStreamer used to be initialized unconditionally once from the UI process
+	and once from the WebProcess. GStreamer is now used mostly only from the
+    WebProcess, even for audio/video capture devices probing. Users of the
+    webkit_web_view_can_show_mime_type API will still trigger GStreamer
+    initialization in the UIProcess though.
+  - ImageDecoder video decoder switched to decodebin3.
+  - WebAudio to MediaStream support.
+  - Multi-channel (>2) support for the AudioFileReader.
+  - Multi-channel (>2) support for the WebAudio renderer.
+  - Audio worklet support.
+  - Optional support for native formats rendering.
+  - Opus support for the Thunder CDM.
+  - Common-encryption support for CMAF in Thunder CDM.
+  - MSE/EME/WebAudio and general media playback bug fixes.
+
+=================
 WPE WebKit 2.29.2
 =================
 
