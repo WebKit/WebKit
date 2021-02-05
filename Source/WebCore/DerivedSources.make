@@ -1321,9 +1321,12 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 IDL_PATHS := $(sort $(foreach IDL_FILE, $(JS_BINDING_IDLS), $(realpath $(dir $(IDL_FILE)))))
 
-ADDITIONAL_BINDING_IDLS_PATHS = \
+ADDITIONS_PATHS = \
     $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions \
-    $(SDKROOT)/usr/local/include/WebKitAdditions \
+    $(SDKROOT)/usr/local/include/WebKitAdditions
+
+ADDITIONAL_BINDING_IDLS_PATHS = \
+    $(ADDITIONS_PATHS) \
     $(IDL_PATHS)
 
 JS_BINDING_IDLS += \
@@ -1370,6 +1373,7 @@ all : \
     JSMathMLElementWrapperFactory.h \
     JSSVGElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.h \
+    LocalizableAdditions.strings.out \
     PlugInsResources.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
@@ -1496,6 +1500,17 @@ $(HTTP_HEADER_NAMES_FILES_PATTERNS) : $(WebCore)/platform/network/HTTPHeaderName
 
 ColorData.cpp : $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl . $(WebCore)/platform/ColorData.gperf
+
+# --------
+
+# .strings files
+
+POSSIBLE_LOCALIZABLE_STRINGS_FILES := $(wildcard $(foreach ADDITIONS_PATH,$(ADDITIONS_PATHS),$(ADDITIONS_PATH)/LocalizableAdditions.strings.txt))
+
+LOCALIZABLE_STRINGS_FILE = $(word 1,$(POSSIBLE_LOCALIZABLE_STRINGS_FILES))
+
+LocalizableAdditions.strings.out : $(WebCore)/preprocess-localizable-strings.pl $(WebCore)/bindings/scripts/preprocessor.pm $(LOCALIZABLE_STRINGS_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ LocalizableAdditions.strings.txt $(LOCALIZABLE_STRINGS_FILE)
 
 # --------
 

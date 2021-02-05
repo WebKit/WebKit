@@ -2637,6 +2637,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRWebGLLayerInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRWebGLLayerInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXSLTProcessor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXSLTProcessor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/LocalizableAdditions.strings.out
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementTypeHelpers.h
