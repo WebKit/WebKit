@@ -54,6 +54,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
+#include "RenderGrid.h"
 #include "RenderStyleConstants.h"
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
@@ -922,6 +923,31 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
     element->document().styleScope().didChangeStyleSheetEnvironment();
 
     return { };
+}
+
+Optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeForRenderer(RenderObject* renderer)
+{
+    if (is<RenderGrid>(renderer))
+        return Protocol::CSS::LayoutContextType::Grid;
+    return WTF::nullopt;
+}
+
+void InspectorCSSAgent::nodeLayoutContextTypeChanged(Node& node, RenderObject* oldRenderer)
+{
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    if (!domAgent)
+        return;
+    
+    auto newLayoutContextType = layoutContextTypeForRenderer(node.renderer());
+    if (newLayoutContextType == layoutContextTypeForRenderer(oldRenderer))
+        return;
+    
+    // FIXME: <https://webkit.org/b/221449> Support enabling events for uninstrumented nodes.
+    auto nodeId = domAgent->boundNodeId(&node);
+    if (!nodeId)
+        return;
+    
+    m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, WTFMove(newLayoutContextType));
 }
 
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)

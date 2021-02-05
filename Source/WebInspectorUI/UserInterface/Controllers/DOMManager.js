@@ -221,6 +221,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient);
     }
 
+    nodeLayoutContextTypeChanged(nodeId, layoutContextType)
+    {
+        let domNode = this._idToDOMNode[nodeId];
+        console.assert(domNode instanceof WI.DOMNode, domNode, nodeId);
+        if (!domNode)
+            return;
+
+        domNode.layoutContextType = layoutContextType;
+    }
+
     // Private
 
     _dispatchWhenDocumentAvailable(func, callback)

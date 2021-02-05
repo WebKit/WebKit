@@ -1,3 +1,15 @@
+2021-02-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement backend support for maintaining a list of Grid layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221228
+
+        Reviewed by Devin Rousso.
+
+        Added tests for `CSS.nodeLayoutContextTypeChanged` event and corresponding properties.
+
+        * inspector/css/nodeLayoutContextTypeChanged-expected.txt: Added.
+        * inspector/css/nodeLayoutContextTypeChanged.html: Added.
+
 2021-02-05  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Repopulate the TestExpectations file #2

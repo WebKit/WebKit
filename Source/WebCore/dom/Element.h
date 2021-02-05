@@ -727,6 +727,8 @@ private:
     void ownerDocument() const = delete;
     
     void attachAttributeNodeIfNeeded(Attr&);
+    
+    void didChangeRenderer(RenderObject*) final;
 
 #if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;

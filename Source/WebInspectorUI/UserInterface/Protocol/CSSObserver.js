@@ -47,6 +47,11 @@ WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
         WI.cssManager.styleSheetRemoved(id);
     }
 
+    nodeLayoutContextTypeChanged(nodeId, layoutContextType)
+    {
+        WI.domManager.nodeLayoutContextTypeChanged(nodeId, layoutContextType);
+    }
+
     namedFlowCreated(namedFlow)
     {
         // COMPATIBILITY (iOS 11.3): Removed.

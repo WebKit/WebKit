@@ -176,6 +176,12 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrum
         domAgent->didRemoveDOMNode(node);
 }
 
+void InspectorInstrumentation::nodeLayoutContextChangedImpl(InstrumentingAgents& instrumentingAgents, Node& node, RenderObject* oldRenderer)
+{
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->nodeLayoutContextTypeChanged(node, oldRenderer); 
+}
+
 void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())

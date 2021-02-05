@@ -1,3 +1,18 @@
+2021-02-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement backend support for maintaining a list of Grid layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221228
+
+        Reviewed by Devin Rousso.
+
+        Added `CSS.LayoutContextType` property to `DOM.Node` and added `CSS.nodeLayoutContextTypeChanged` event.
+
+        * inspector/protocol/CSS.json:
+        - Added `CSS.LayoutContextType` type.
+        - Added `DOM.nodeLayoutContextTypeChanged` event.
+        * inspector/protocol/DOM.json:
+        - Added `layoutContextType` property to `DOM.Node` type.
+
 2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up change after r272428

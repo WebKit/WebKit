@@ -52,6 +52,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._shadowRootType = payload.shadowRootType;
         this._computedRole = null;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
+        this._layoutContextType = payload.layoutContextType;
 
         if (this._nodeType === Node.DOCUMENT_NODE)
             this.ownerDocument = this;
@@ -240,6 +241,18 @@ WI.DOMNode = class DOMNode extends WI.Object
     set childNodeCount(count)
     {
         this._childNodeCount = count;
+    }
+
+    get layoutContextType()
+    {
+        return this._layoutContextType;
+    }
+
+    set layoutContextType(layoutContextType)
+    {
+        console.assert(layoutContextType !== this._layoutContextType);
+        this._layoutContextType = layoutContextType;
+        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutContextTypeChanged);
     }
 
     markDestroyed()
@@ -1122,6 +1135,7 @@ WI.DOMNode.Event = {
     EventListenersChanged: "dom-node-event-listeners-changed",
     DidFireEvent: "dom-node-did-fire-event",
     PowerEfficientPlaybackStateChanged: "dom-node-power-efficient-playback-state-changed",
+    LayoutContextTypeChanged: "dom-node-layout-context-type-changed",
 };
 
 WI.DOMNode.PseudoElementType = {
@@ -1140,4 +1154,9 @@ WI.DOMNode.CustomElementState = {
     Custom: "custom",
     Waiting: "waiting",
     Failed: "failed",
+};
+
+// Corresponds to `CSS.LayoutContextType`.
+WI.DOMNode.LayoutContextType = {
+    Grid: "grid",
 };

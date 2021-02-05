@@ -66,7 +66,8 @@
                 { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." },
                 { "name": "templateContent", "$ref": "Node", "optional": true, "description": "Content document fragment for template elements" },
                 { "name": "pseudoElements", "type": "array", "items": { "$ref": "Node" }, "optional": true, "description": "Pseudo elements associated with this node." },
-                { "name": "contentSecurityPolicyHash", "type": "string", "optional": true, "description": "Computed SHA-256 Content Security Policy hash source for given element." }
+                { "name": "contentSecurityPolicyHash", "type": "string", "optional": true, "description": "Computed SHA-256 Content Security Policy hash source for given element." },
+                { "name": "layoutContextType", "$ref": "CSS.LayoutContextType", "optional": true, "description": "The layout context type of the node. When not provided, the <code>LayoutContextType</code> of the node is not a context for which Web Inspector has specific functionality." }
             ]
         },
         {

@@ -93,6 +93,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PseudoElement.h"
+#include "RenderGrid.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptState.h"
@@ -1756,6 +1757,9 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
         if (children->length() > 0)
             value->setChildren(WTFMove(children));
     }
+    
+    if (auto layoutContextType = InspectorCSSAgent::layoutContextTypeForRenderer(node->renderer()))
+        value->setLayoutContextType(layoutContextType.value());
 
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {
