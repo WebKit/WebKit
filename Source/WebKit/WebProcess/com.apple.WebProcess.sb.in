@@ -1829,7 +1829,6 @@
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-user-client-class
                 "AppleAVDUserClient"
-                "IOMobileFramebufferUserClient"
                 "IOSurfaceAcceleratorClient"
             )
         )

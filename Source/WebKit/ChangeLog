@@ -1,3 +1,17 @@
+2021-02-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove access to IOMobileFramebufferUserClient
+        https://bugs.webkit.org/show_bug.cgi?id=221408
+        <rdar://problem/70551457>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to the IOKit class IOMobileFramebufferUserClient in the WebContent process on macOS and iOS
+        when the GPU process is enabled.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-05  Kate Cheney  <katherine_cheney@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking at WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource
