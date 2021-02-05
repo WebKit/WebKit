@@ -816,7 +816,7 @@ class RunWebKitPyTests(RunPythonTests):
     description = ["python-tests running"]
     descriptionDone = ["python-tests"]
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/test-webkitpy",
         "--verbose",
         "--buildbot-master", CURRENT_HOSTNAME,
