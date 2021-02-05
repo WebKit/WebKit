@@ -35,12 +35,12 @@
 #if PLATFORM(MAC)
 #include "GestureTypes.h"
 #endif
+#include "IPCSemaphore.h"
 #include "JSIPCBinding.h"
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
 #include "Plugin.h"
-#include "Semaphore.h"
 #include "TestClassName.h"
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"

@@ -1,3 +1,15 @@
+2021-02-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION (r272382): 2 webkit.messages_unittest.GeneratedFileContentsTest tests failing after Semaphore.h rename
+        https://bugs.webkit.org/show_bug.cgi?id=221433
+
+        Reviewed by Don Olmstead.
+
+        Looks like some changes were accidentally dropped prior to landing.
+
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+
 2021-02-04  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Null dereference in DocumentLoader::commitData()

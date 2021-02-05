@@ -27,7 +27,7 @@
 
 #include "Decoder.h"
 #include "HandleMessage.h"
-#include "Semaphore.h"
+#include "IPCSemaphore.h"
 #include "TestWithSemaphoreMessages.h"
 
 namespace WebKit {
