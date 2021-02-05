@@ -1,3 +1,17 @@
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] globalFuncCopyDataProperties should not perform GC-sensitive operation in the middle of Structure::forEachProperty
+        https://bugs.webkit.org/show_bug.cgi?id=221454
+
+        Reviewed by Mark Lam.
+
+        isPropertyNameExcluded can invoke GC etc. And running Structure::forEachProperty
+        is fragile state against any side-effect including GC.
+        We should not perform GC-sensitive operation during Structure::forEachProperty.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-02-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Object.assign should throw for property creation on non-extensible `target`

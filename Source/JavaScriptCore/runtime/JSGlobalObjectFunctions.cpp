@@ -885,10 +885,6 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             if (propertyName.isPrivateName())
                 return true;
 
-            bool excluded = isPropertyNameExcluded(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
-            if (excluded)
-                return true;
             if (entry.attributes & PropertyAttribute::DontEnum)
                 return true;
 
@@ -902,6 +898,10 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         for (size_t i = 0; i < properties.size(); ++i) {
             // FIXME: We could put properties in a batching manner to accelerate CopyDataProperties more.
             // https://bugs.webkit.org/show_bug.cgi?id=185358
+            bool excluded = isPropertyNameExcluded(globalObject, properties[i].get());
+            RETURN_IF_EXCEPTION(scope, { });
+            if (excluded)
+                continue;
             target->putDirect(vm, properties[i].get(), values.at(i));
         }
     } else {
