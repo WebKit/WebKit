@@ -509,13 +509,13 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!locationInContainer.intersects(runRect))
             continue;
 
-        auto& style = run.style();
-        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
-            continue;
-
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
         if (is<RenderText>(renderer)) {
+            auto& style = run.style();
+            if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+                continue;
+
             renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
             if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
                 return true;
