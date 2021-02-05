@@ -1,3 +1,16 @@
+2021-02-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update dashboard links for layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=221280
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot): Set baseURLForResults.
+        (Buildbot.prototype.layoutTestResultsDirectoryURLForIteration): Use baseURLForResults if available.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Pass baseURLForResults appropriately.
+
 2021-02-04  Jonathan Bedard  <jbedard@apple.com>
 
         [Python-3] Change shebang in test-webkitpy (Part-2)
