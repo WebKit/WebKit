@@ -63,11 +63,8 @@ void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
 {
-    m_permissionChecker(request.lang(), request.clientOrigin(), request.frameIdentifier(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto error) mutable {
-        if (!weakThis)
-            return;
-
-        if (!weakRequest)
+    m_permissionChecker(request, [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto error) mutable {
+        if (!weakThis || !weakRequest)
             return;
 
         auto identifier = weakRequest->clientIdentifier();
@@ -159,7 +156,6 @@ void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionCli
 
 void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate& update)
 {
-    WTFLogAlways("[%p]SpeechRecognitionServer::sendUpdate update.type[%d], update.clientIdentifier[%" PRIu64 "]", this, update.type(), update.clientIdentifier().toUInt64());
     send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update));
 }
 

@@ -46,7 +46,7 @@ namespace WebKit {
 class WebProcessProxy;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
-using SpeechRecognitionPermissionChecker = Function<void(const String&, const WebCore::ClientOrigin&, WebCore::FrameIdentifier, SpeechRecognitionPermissionRequestCallback&&)>;
+using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {

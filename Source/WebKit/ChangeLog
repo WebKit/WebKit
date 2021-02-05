@@ -1,3 +1,42 @@
+2021-02-05  Sihui Liu  <sihui_liu@appe.com>
+
+        SpeechRecognitionPermissionManager should not handle requests that are already cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=221296
+
+        Reviewed by Youenn Fablet.
+
+        It is possible that client asks to stop/abort pending requests, which are waiting for permission check to be 
+        done. In our current implementation, SpeechRecognitionPermissionManager would perform permission checks for
+        these cancelled requests, which is unnecessary and may cause extra prompts. We should let 
+        SpeechRecognitionPermissionManager check if request is still valid before checking permissions.
+
+        No test is added as this behavior change is not observable without resetting the TCC permission between requests.
+
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::request):
+        (WebKit::SpeechRecognitionPermissionManager::startNextRequest):
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::continueProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+        * UIProcess/SpeechRecognitionPermissionManager.h:
+        * UIProcess/SpeechRecognitionPermissionRequest.h:
+        (WebKit::SpeechRecognitionPermissionRequest::create):
+        (WebKit::SpeechRecognitionPermissionRequest::~SpeechRecognitionPermissionRequest):
+        (WebKit::SpeechRecognitionPermissionRequest::request):
+        (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+        (WebKit::SpeechRecognitionPermissionRequest::origin const): Deleted.
+        (WebKit::SpeechRecognitionPermissionRequest::lang const): Deleted.
+        (WebKit::SpeechRecognitionPermissionRequest::frameIdentifier const): Deleted.
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::sendUpdate):
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+
 2021-02-05  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess][iOS] Audio is lost after media playback recovers from the GPUProcess crash
