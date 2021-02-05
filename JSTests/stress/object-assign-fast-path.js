@@ -163,3 +163,19 @@ function checkProperty(object, name, value, attributes = { writable: true, enume
     shouldBe(result.hello, 0);
     shouldBe(setterCalledWithValue, "world");
 }
+{
+    let object = Object.freeze({ foo: 1 });
+    shouldBe(Object.assign(object, {}), object);
+}
+{
+    let object = Object.preventExtensions({ foo: 1 });
+    shouldBe(Object.assign(object, { foo: 2 }), object);
+    shouldBe(object.foo, 2);
+}
+{
+    let object = Object.preventExtensions({ foo: 1 });
+    shouldThrow(() => {
+        Object.assign(object, { bar: 2 });
+    }, `TypeError: Attempted to assign to readonly property.`);
+    shouldBe(object.bar, undefined);
+}
