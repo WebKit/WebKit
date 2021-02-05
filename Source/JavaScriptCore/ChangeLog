@@ -1,5 +1,19 @@
 2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up change after r272428
+        https://bugs.webkit.org/show_bug.cgi?id=221454
+
+        isPropertyNameExcluded can invoke GC etc. Structure::forEachProperty can miss PropertyTable and Structure
+        reference when it is highly optimized, so that it can crash if GC happens in the middle of Structure::forEachProperty.
+
+        1. Insert ensureStillAliveHere in Structure::forEachProperty to ensure liveness of PropertyTable
+        2. We should not perform side-effectful operation including GC in Structure::forEachProperty. So we moved isPropertyNameExcluded.
+
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachProperty):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] globalFuncCopyDataProperties should not perform GC-sensitive operation in the middle of Structure::forEachProperty
         https://bugs.webkit.org/show_bug.cgi?id=221454
 
