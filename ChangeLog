@@ -1,3 +1,16 @@
+2021-02-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [MSVC] Catalog warnings
+        https://bugs.webkit.org/show_bug.cgi?id=199248
+
+        Reviewed by Fujii Hironori.
+
+        Catalog all the MSVC warnings providing the message and a link to documentation
+        for the warning. Some warnings are noted as being against the style guide so they
+        won't be addressed. All other warnings could potentially be fixed in the codebase.
+
+        * Source/cmake/OptionsMSVC.cmake:
+
 2021-02-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.31.1 release
