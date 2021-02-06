@@ -545,8 +545,18 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
             }
             inlineLevelBoxAbsoluteBaselineOffsetMap.add(inlineLevelBox.get(), absoluteBaselineOffset);
             auto affectsRootInlineBoxVerticalPosition = quirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox);
-            if (affectsRootInlineBoxVerticalPosition)
-                maximumTopOffsetFromRootInlineBoxBaseline = std::max(maximumTopOffsetFromRootInlineBoxBaseline.valueOr(std::numeric_limits<InlineLayoutUnit>::lowest()), absoluteBaselineOffset + inlineLevelBox->layoutBounds().ascent);
+            if (affectsRootInlineBoxVerticalPosition) {
+                auto topOffsetFromRootInlineBoxBaseline = absoluteBaselineOffset + inlineLevelBox->layoutBounds().ascent;
+                if (maximumTopOffsetFromRootInlineBoxBaseline)
+                    maximumTopOffsetFromRootInlineBoxBaseline = std::max(*maximumTopOffsetFromRootInlineBoxBaseline, topOffsetFromRootInlineBoxBaseline);
+                else {
+                    // We are is quirk mode and the root inline box has no content. The root inline box's baseline is anchored at 0.
+                    // However negative ascent (e.g negative top margin) can "push" the root inline box upwards and have a negative value.
+                    maximumTopOffsetFromRootInlineBoxBaseline = inlineLevelBox->layoutBounds().ascent >= 0
+                        ? std::max(0.0f, topOffsetFromRootInlineBoxBaseline)
+                        : topOffsetFromRootInlineBoxBaseline;
+                }
+            }
         }
         auto rootInlineBoxLogicalTop = maximumTopOffsetFromRootInlineBoxBaseline.valueOr(0.f) - rootInlineBox.baseline();
         rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
