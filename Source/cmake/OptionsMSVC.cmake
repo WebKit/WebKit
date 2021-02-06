@@ -44,6 +44,9 @@ add_compile_options(
     /wd4305 # 'context' : truncation from 'type1' to 'type2'
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
 
+    /wd4309 # 'conversion' : truncation of constant value
+            # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4309
+
     /wd4312 # 'operation' : conversion from 'type1' to 'type2' of greater size
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4312
 
