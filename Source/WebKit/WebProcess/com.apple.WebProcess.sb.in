@@ -85,11 +85,14 @@
     (literal "/dev/null")
     (literal "/dev/zero"))
 
-(with-filter (system-attribute apple-internal)
-    (allow file-read*
-           file-write-data
-           file-ioctl
-        (literal "/dev/dtracehelper"))
+(allow file-read*
+       file-write-data
+       file-ioctl
+    (require-all
+        (literal "/dev/dtracehelper")
+        (require-any
+            (csr CSR_ALLOW_APPLE_INTERNAL)
+            (csr CSR_ALLOW_UNRESTRICTED_DTRACE)))
 )
 
 ;;; Allow creation of core dumps.

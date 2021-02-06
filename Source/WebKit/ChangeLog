@@ -1,3 +1,16 @@
+2021-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r271815): [macOS] /dev/dtracehelper is blocked on customer builds, even with SIP disabled
+        https://bugs.webkit.org/show_bug.cgi?id=221501
+        <rdar://73893768>
+
+        Reviewed by Per Arne Vollan.
+
+        Instead of requiring apple-internal to use /dev/dtracehelper, allow on systems where
+        SIP has been deactivated.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Use CSR filter to gate access to /dev/dtracehelper
+
 2021-02-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Connect MediaSession with MediaRemote and NowPlaying
