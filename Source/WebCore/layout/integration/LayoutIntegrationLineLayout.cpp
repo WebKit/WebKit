@@ -173,9 +173,17 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
 {
     auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
 
-    boxGeometry.setBorder({ { renderInline.borderLeft(), renderInline.borderRight() }, { renderInline.borderTop(), renderInline.borderBottom() } });
-    boxGeometry.setPadding(Layout::Edges { { renderInline.paddingLeft(), renderInline.paddingRight() }, { renderInline.paddingTop(), renderInline.paddingBottom() } });
-    boxGeometry.setHorizontalMargin({ renderInline.marginLeft(), renderInline.marginRight() });
+    // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
+    auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.parent()->isAnonymousBlock() && renderInline.isContinuation();
+    auto shouldNotRetainBorderPaddingAndMarginEnd = renderInline.parent()->isAnonymousBlock() && !renderInline.isContinuation() && renderInline.inlineContinuation();
+    
+    auto horizontalMargin = Layout::BoxGeometry::HorizontalMargin { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.marginLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.marginRight() };
+    auto horizontalBorder = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.borderLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.borderRight() };
+    auto horizontalPadding = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.paddingLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.paddingRight() };
+    
+    boxGeometry.setPadding(Layout::Edges { horizontalPadding, { renderInline.paddingTop(), renderInline.paddingBottom() } });
+    boxGeometry.setBorder({ horizontalBorder, { renderInline.borderTop(), renderInline.borderBottom() } });
+    boxGeometry.setHorizontalMargin(horizontalMargin);
     boxGeometry.setVerticalMargin({ });
 }
 
