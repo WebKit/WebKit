@@ -510,6 +510,10 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             // This candidate inline content ends because the entire content ends and not because there's a soft wrap opportunity.
             return false;
         }
+        if (m_inlineItems[softWrapOpportunityIndex - 1].isFloat()) {
+            // While we stop at floats, they are not considered real soft wrap opportunities. 
+            return false;
+        }
         // See https://www.w3.org/TR/css-text-3/#line-break-details
         auto& trailingInlineItem = m_inlineItems[softWrapOpportunityIndex - 1];
         if (trailingInlineItem.isBox() || trailingInlineItem.isLineBreak() || trailingInlineItem.isWordBreakOpportunity() || trailingInlineItem.isInlineBoxEnd()) {
