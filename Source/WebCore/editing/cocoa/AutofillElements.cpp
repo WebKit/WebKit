@@ -73,9 +73,9 @@ static inline RefPtr<HTMLInputElement> previousAutofillableElement(Node* startNo
 }
 
 AutofillElements::AutofillElements(RefPtr<HTMLInputElement>&& username, RefPtr<HTMLInputElement>&& password, RefPtr<HTMLInputElement>&& secondPassword)
-    : m_username(username)
-    , m_password(password)
-    , m_secondPassword(secondPassword)
+    : m_username(WTFMove(username))
+    , m_password(WTFMove(password))
+    , m_secondPassword(WTFMove(secondPassword))
 {
 }
 
