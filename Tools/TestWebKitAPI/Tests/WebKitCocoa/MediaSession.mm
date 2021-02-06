@@ -262,7 +262,7 @@ private:
     RetainPtr<NSMutableArray> _messageHandlers;
 };
 
-TEST_F(MediaSessionTest, OnlyOneHandler)
+TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 {
     loadPageAndBecomeNowPlaying("media-remote");
 
@@ -305,7 +305,7 @@ TEST_F(MediaSessionTest, OnlyOneHandler)
     ASSERT_FALSE(sessionHandlerWasCalled("previoustrack"));
 }
 
-TEST_F(MediaSessionTest, RemoteCommands)
+TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 {
     loadPageAndBecomeNowPlaying("media-remote");
 
