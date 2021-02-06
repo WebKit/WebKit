@@ -1,3 +1,24 @@
+2021-02-05  Darin Adler  <darin@apple.com>
+
+        Add missing null checks to decoding functions involving RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221441
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData): Fail if the dictionary
+        is null: the encoder never encodes a null dictionary.
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode): Fail if the SecTrustRef is null:
+        the encoder never encodes a null SecTrustRef. Fail if the certificate chain array is null:
+        the encoder never encodes a null CFArrayRef.
+        (IPC::decodeNSError): Return a RetainPtr instead of using a bool return value and a
+        RetainPtr out argument. Fail if the user info dictionary is null: the encoder never encodes
+        a null user info dictionary.
+        (IPC::ArgumentCoder<WebCore::ResourceError>::decodePlatformData): Updated for the change
+        to the interface of decodeNSError.
+        (IPC::ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode): Fail if the CFDataRef
+        is null: the encoder never encodes a null CFDataRef.
+
 2021-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r271815): [macOS] /dev/dtracehelper is blocked on customer builds, even with SIP disabled
