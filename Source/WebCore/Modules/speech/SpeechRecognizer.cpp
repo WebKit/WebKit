@@ -42,12 +42,6 @@ SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRe
 {
 }
 
-SpeechRecognizer::~SpeechRecognizer()
-{
-    if (m_state == State::Aborting || m_state == State::Stopping || m_state == State::Running)
-        m_delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::End));
-}
-
 void SpeechRecognizer::abort(Optional<SpeechRecognitionError>&& error)
 {
     if (m_state == State::Aborting || m_state == State::Inactive)
@@ -74,6 +68,16 @@ void SpeechRecognizer::stop()
 SpeechRecognitionConnectionClientIdentifier SpeechRecognizer::clientIdentifier() const
 {
     return m_request->clientIdentifier();
+}
+
+void SpeechRecognizer::prepareForDestruction()
+{
+    if (m_state == State::Inactive)
+        return;
+
+    auto delegateCallback = std::exchange(m_delegateCallback, [](const SpeechRecognitionUpdate&) { });
+    delegateCallback(SpeechRecognitionUpdate::create(clientIdentifier(), SpeechRecognitionUpdateType::End));
+    m_state = State::Inactive;
 }
 
 #if ENABLE(MEDIA_STREAM)

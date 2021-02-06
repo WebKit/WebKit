@@ -1,3 +1,13 @@
+2021-02-05  Sihui Liu  <sihui_liu@appe.com>
+
+        REGRESSION(r272337): crash under WebCore::SpeechRecognizer::setInactive()
+        https://bugs.webkit.org/show_bug.cgi?id=221451
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::handleRequest):
+
 2021-02-05  Darin Adler  <darin@apple.com>
 
         Add missing null checks to decoding functions involving RetainPtr

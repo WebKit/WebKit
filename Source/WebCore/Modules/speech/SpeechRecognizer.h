@@ -45,13 +45,13 @@ class SpeechRecognizer : public CanMakeWeakPtr<SpeechRecognizer> {
 public:
     using DelegateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&, UniqueRef<SpeechRecognitionRequest>&&);
-    WEBCORE_EXPORT ~SpeechRecognizer();
 
 #if ENABLE(MEDIA_STREAM)
     WEBCORE_EXPORT void start(Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled);
 #endif
     WEBCORE_EXPORT void abort(Optional<SpeechRecognitionError>&& = WTF::nullopt);
     WEBCORE_EXPORT void stop();
+    WEBCORE_EXPORT void prepareForDestruction();
 
     WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier clientIdentifier() const;
     SpeechRecognitionCaptureSource* source() { return m_source.get(); }

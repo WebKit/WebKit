@@ -81,8 +81,10 @@ void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecogni
 
 void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&& request)
 {
-    if (m_recognizer)
+    if (m_recognizer) {
         m_recognizer->abort(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, "Another request is started"_s });
+        m_recognizer->prepareForDestruction();
+    }
 
     auto clientIdentifier = request->clientIdentifier();
     m_recognizer = makeUnique<WebCore::SpeechRecognizer>([this, weakThis = makeWeakPtr(this)](auto& update) {

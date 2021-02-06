@@ -305,4 +305,31 @@ TEST(WebKit2, SpeechRecognitionMediaCaptureStateChange)
 
 #endif
 
+TEST(WebKit2, SpeechRecognitionWebProcessCrash)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[SpeechRecognitionMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto preferences = [configuration preferences];
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._speechRecognitionEnabled = YES;
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
+    shouldGrantPermissionRequest = true;
+
+    @autoreleasepool {
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView setUIDelegate:delegate.get()];
+
+        receivedScriptMessage = false;
+        [webView synchronouslyLoadTestPageNamed:@"speechrecognition-basic"];
+        [webView evaluateJavaScript:@"start();" completionHandler:nil];
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+        EXPECT_WK_STREQ(@"Start", [lastScriptMessage body]);
+
+        [webView _killWebContentProcess];
+    }
+
+    TestWebKitAPI::Util::sleep(0.5);
+}
+
 } // namespace TestWebKitAPI
