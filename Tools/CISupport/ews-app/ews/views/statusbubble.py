@@ -68,7 +68,7 @@ class StatusBubble(View):
                      '^Printed configuration$', '^Patch contains relevant changes$', '^Deleted .git/index.lock$',
                      '^triggered.*$', '^Found modified ChangeLogs$', '^Created local git commit$', '^Set build summary$',
                      '^Validated commiter$', '^Validated commiter and reviewer$', '^Validated ChangeLog and Reviewer$',
-                     '^Removed flags on bugzilla patch$', '^Checked patch status on other queues$']
+                     '^Removed flags on bugzilla patch$', '^Checked patch status on other queues$', '^Identifier:.*$']
     DAYS_TO_CHECK = 1
     BUILDER_ICON = u'\U0001f6e0'
     TESTER_ICON = u'\U0001f52c'
