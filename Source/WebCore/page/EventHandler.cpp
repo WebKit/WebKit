@@ -701,9 +701,9 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
 }
 
-bool EventHandler::mouseDownMayStartSelect()
+bool EventHandler::mouseDownMayStartSelect() const
 {
-    Page* page = m_frame.page();
+    auto* page = m_frame.page();
     if (page && !page->textInteractionEnabled())
         return false;
 

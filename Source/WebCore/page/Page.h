@@ -832,7 +832,7 @@ public:
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
-    bool textInteractionEnabled() { return m_textInteractionEnabled; }
+    bool textInteractionEnabled() const { return m_textInteractionEnabled; }
     void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }

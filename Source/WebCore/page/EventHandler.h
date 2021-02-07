@@ -394,8 +394,6 @@ private:
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
     bool shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const;
-    
-    bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 
     static bool isKeyboardOptionTab(KeyboardEvent&);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent&);
@@ -528,8 +526,7 @@ private:
     bool shouldSendMouseEventsToInactiveWindows() const;
 
     bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
-
-    bool mouseDownMayStartSelect();
+    bool mouseDownMayStartSelect() const;
     
     Frame& m_frame;
     RefPtr<Node> m_mousePressNode;
