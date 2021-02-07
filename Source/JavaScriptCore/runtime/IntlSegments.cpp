@@ -71,7 +71,7 @@ JSValue IntlSegments::containing(JSGlobalObject* globalObject, JSValue indexValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double value = indexValue.toInteger(globalObject);
+    double value = indexValue.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (value < 0 || value >= m_buffer->size())

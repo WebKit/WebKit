@@ -27,14 +27,14 @@
 // @internal
 
 @globalPrivate
-function toInteger(target)
+function toIntegerOrInfinity(target)
 {
     "use strict";
 
     var numberValue = +target;
 
-    // isNaN(numberValue)
-    if (numberValue !== numberValue)
+    // isNaN(numberValue) or 0
+    if (numberValue !== numberValue || !numberValue)
         return 0;
     return @trunc(numberValue);
 }
@@ -44,7 +44,7 @@ function toLength(target)
 {
     "use strict";
 
-    var length = @toInteger(target);
+    var length = @toIntegerOrInfinity(target);
     // originally Math.min(Math.max(length, 0), maxSafeInteger));
     return +(length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0);
 }

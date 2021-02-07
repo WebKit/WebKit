@@ -205,7 +205,7 @@ function fill(value /* [, start [, end]] */)
     var array = @toObject(this, "Array.prototype.fill requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    var relativeStart = @toInteger(@argument(1));
+    var relativeStart = @toIntegerOrInfinity(@argument(1));
     var k = 0;
     if (relativeStart < 0) {
         k = length + relativeStart;
@@ -219,7 +219,7 @@ function fill(value /* [, start [, end]] */)
     var relativeEnd = length;
     var end = @argument(2);
     if (end !== @undefined)
-        relativeEnd = @toInteger(end);
+        relativeEnd = @toIntegerOrInfinity(end);
     var final = 0;
     if (relativeEnd < 0) {
         final = length + relativeEnd;
@@ -285,7 +285,7 @@ function includes(searchElement /*, fromIndex*/)
     var fromIndex = 0;
     var from = @argument(1);
     if (from !== @undefined)
-        fromIndex = @toInteger(from);
+        fromIndex = @toIntegerOrInfinity(from);
 
     var index;
     if (fromIndex >= 0)
@@ -576,10 +576,10 @@ function copyWithin(target, start /*, end */)
     var array = @toObject(this, "Array.prototype.copyWithin requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    var relativeTarget = @toInteger(target);
+    var relativeTarget = @toIntegerOrInfinity(target);
     var to = (relativeTarget < 0) ? maxWithPositives(length + relativeTarget, 0) : minWithMaybeNegativeZeroAndPositive(relativeTarget, length);
 
-    var relativeStart = @toInteger(start);
+    var relativeStart = @toIntegerOrInfinity(start);
     var from = (relativeStart < 0) ? maxWithPositives(length + relativeStart, 0) : minWithMaybeNegativeZeroAndPositive(relativeStart, length);
 
     var relativeEnd;
@@ -587,7 +587,7 @@ function copyWithin(target, start /*, end */)
     if (end === @undefined)
         relativeEnd = length;
     else
-        relativeEnd = @toInteger(end);
+        relativeEnd = @toIntegerOrInfinity(end);
 
     var finalValue = (relativeEnd < 0) ? maxWithPositives(length + relativeEnd, 0) : minWithMaybeNegativeZeroAndPositive(relativeEnd, length);
 
@@ -641,7 +641,7 @@ function flat()
     var depthNum = 1;
     var depth = @argument(0);
     if (depth !== @undefined)
-        depthNum = @toInteger(depth);
+        depthNum = @toIntegerOrInfinity(depth);
 
     var result = @arraySpeciesCreate(array, 0);
 
@@ -694,7 +694,7 @@ function at(index)
     var array = @toObject(this, "Array.prototype.at requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    var k = @toInteger(index);
+    var k = @toIntegerOrInfinity(index);
     if (k < 0)
         k += length;
 

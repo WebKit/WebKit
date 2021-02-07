@@ -91,7 +91,7 @@ inline unsigned argumentClampedIndexFromStartOrEnd(JSGlobalObject* globalObject,
     if (value.isUndefined())
         return undefinedValue;
 
-    double indexDouble = value.toInteger(globalObject);
+    double indexDouble = value.toIntegerOrInfinity(globalObject);
     if (indexDouble < 0) {
         indexDouble += length;
         return indexDouble < 0 ? 0 : static_cast<unsigned>(indexDouble);
@@ -112,7 +112,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
 
     unsigned offset;
     if (callFrame->argumentCount() >= 2) {
-        double offsetNumber = callFrame->uncheckedArgument(1).toInteger(globalObject);
+        double offsetNumber = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (UNLIKELY(offsetNumber < 0))
             return throwVMRangeError(globalObject, scope, "Offset should not be negative");
@@ -355,7 +355,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
     int index = length - 1;
     if (callFrame->argumentCount() >= 2) {
         JSValue fromValue = callFrame->uncheckedArgument(1);
-        double fromDouble = fromValue.toInteger(globalObject);
+        double fromDouble = fromValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (fromDouble < 0) {
             fromDouble += length;

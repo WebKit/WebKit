@@ -994,7 +994,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCharAt, (JSGlobalObject* globalObject, C
             return JSValue::encode(jsSingleCharacterString(vm, view[i]));
         return JSValue::encode(jsEmptyString(vm));
     }
-    double dpos = a0.toInteger(globalObject);
+    double dpos = a0.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsSingleCharacterString(vm, view[static_cast<unsigned>(dpos)]));
@@ -1021,7 +1021,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCharCodeAt, (JSGlobalObject* globalObjec
             return JSValue::encode(jsNumber(view[i]));
         return JSValue::encode(jsNaN());
     }
-    double dpos = a0.toInteger(globalObject);
+    double dpos = a0.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsNumber(view[static_cast<int>(dpos)]));
@@ -1061,7 +1061,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCodePointAt, (JSGlobalObject* globalObje
 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    double doublePosition = argument0.toInteger(globalObject);
+    double doublePosition = argument0.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (doublePosition >= 0 && doublePosition < length)
         return JSValue::encode(jsNumber(codePointAt(string, static_cast<unsigned>(doublePosition), length)));
@@ -1092,7 +1092,7 @@ static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame*
         if (a1.isUInt32())
             pos = std::min<uint32_t>(a1.asUInt32(), len);
         else {
-            double dpos = a1.toInteger(globalObject);
+            double dpos = a1.toIntegerOrInfinity(globalObject);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (dpos < 0)
                 dpos = 0;
@@ -1191,9 +1191,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSlice, (JSGlobalObject* globalObject, Ca
     RELEASE_ASSERT(length >= 0);
 
     // The arg processing is very much like ArrayProtoFunc::Slice
-    double start = a0.toInteger(globalObject);
+    double start = a0.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    double end = a1.isUndefined() ? length : a1.toInteger(globalObject);
+    double end = a1.isUndefined() ? length : a1.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(stringSlice(globalObject, vm, string, length, start, end)));
 }
@@ -1393,9 +1393,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstr, (JSGlobalObject* globalObject, C
     JSValue a0 = callFrame->argument(0);
     JSValue a1 = callFrame->argument(1);
 
-    double start = a0.toInteger(globalObject);
+    double start = a0.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    double length = a1.isUndefined() ? len : a1.toInteger(globalObject);
+    double length = a1.isUndefined() ? len : a1.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (start >= len || length <= 0)
         return JSValue::encode(jsEmptyString(vm));
@@ -1731,7 +1731,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncStartsWith, (JSGlobalObject* globalObjec
         start = std::max(0, positionArg.asInt32());
     else {
         unsigned length = stringToSearchIn.length();
-        start = clampAndTruncateToUnsigned(positionArg.toInteger(globalObject), 0, length);
+        start = clampAndTruncateToUnsigned(positionArg.toIntegerOrInfinity(globalObject), 0, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -1766,7 +1766,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncEndsWith, (JSGlobalObject* globalObject,
     if (endPositionArg.isInt32())
         end = std::max(0, endPositionArg.asInt32());
     else if (!endPositionArg.isUndefined()) {
-        end = clampAndTruncateToUnsigned(endPositionArg.toInteger(globalObject), 0, length);
+        end = clampAndTruncateToUnsigned(endPositionArg.toIntegerOrInfinity(globalObject), 0, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -1781,7 +1781,7 @@ static EncodedJSValue stringIncludesImpl(JSGlobalObject* globalObject, VM& vm, S
         start = std::max(0, positionArg.asInt32());
     else {
         unsigned length = stringToSearchIn.length();
-        start = clampAndTruncateToUnsigned(positionArg.toInteger(globalObject), 0, length);
+        start = clampAndTruncateToUnsigned(positionArg.toIntegerOrInfinity(globalObject), 0, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 

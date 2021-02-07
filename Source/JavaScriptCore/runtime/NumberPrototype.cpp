@@ -393,7 +393,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     JSValue arg = callFrame->argument(0);
     // Perform ToInteger on the argument before remaining steps.
-    int decimalPlaces = static_cast<int>(arg.toInteger(globalObject));
+    int decimalPlaces = static_cast<int>(arg.toIntegerOrInfinity(globalObject));
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
@@ -428,7 +428,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToFixed, (JSGlobalObject* globalObject, 
     if (!toThisNumber(vm, callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
-    int decimalPlaces = static_cast<int>(callFrame->argument(0).toInteger(globalObject));
+    int decimalPlaces = static_cast<int>(callFrame->argument(0).toIntegerOrInfinity(globalObject));
     RETURN_IF_EXCEPTION(scope, { });
     if (decimalPlaces < 0 || decimalPlaces > 100)
         return throwVMRangeError(globalObject, scope, "toFixed() argument must be between 0 and 100"_s);
@@ -468,7 +468,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
         return JSValue::encode(jsString(vm, String::number(x)));
 
     // Perform ToInteger on the argument before remaining steps.
-    int significantFigures = static_cast<int>(arg.toInteger(globalObject));
+    int significantFigures = static_cast<int>(arg.toIntegerOrInfinity(globalObject));
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
@@ -601,7 +601,7 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
         if (radix >= 2 && radix <= 36)
             return radix;
     } else {
-        double radixDouble = radixValue.toInteger(globalObject);
+        double radixDouble = radixValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(throwScope, 0);
         if (radixDouble >= 2 && radixDouble <= 36)
             return static_cast<int32_t>(radixDouble);   

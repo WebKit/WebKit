@@ -222,10 +222,10 @@ function subarray(begin, end)
     if (!@isTypedArrayView(this))
         @throwTypeError("|this| should be a typed array view");
 
-    var start = @toInteger(begin);
+    var start = @toIntegerOrInfinity(begin);
     var finish;
     if (end !== @undefined)
-        finish = @toInteger(end);
+        finish = @toIntegerOrInfinity(end);
 
     var constructor = @typedArraySpeciesConstructor(this);
 
@@ -364,7 +364,7 @@ function at(index)
 
     var length = @typedArrayLength(this);
 
-    var k = @toInteger(index);
+    var k = @toIntegerOrInfinity(index);
     if (k < 0)
         k += length;
 

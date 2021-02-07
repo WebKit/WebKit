@@ -287,7 +287,7 @@ static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* global
     if (value.isUndefined())
         return undefinedValue;
 
-    double indexDouble = value.toInteger(globalObject);
+    double indexDouble = value.toIntegerOrInfinity(globalObject);
     if (indexDouble < 0) {
         indexDouble += length;
         return indexDouble < 0 ? 0 : static_cast<uint64_t>(indexDouble);
@@ -1167,7 +1167,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
 
     uint64_t actualDeleteCount = length - actualStart;
     if (callFrame->argumentCount() > 1) {
-        double deleteCount = callFrame->uncheckedArgument(1).toInteger(globalObject);
+        double deleteCount = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (deleteCount < 0)
             actualDeleteCount = 0;
@@ -1427,7 +1427,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
     uint64_t index = length - 1;
     if (callFrame->argumentCount() >= 2) {
         JSValue fromValue = callFrame->uncheckedArgument(1);
-        double fromDouble = fromValue.toInteger(globalObject);
+        double fromDouble = fromValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (fromDouble < 0) {
             fromDouble += length;

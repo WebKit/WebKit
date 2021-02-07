@@ -1,3 +1,62 @@
+2021-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Replace toInteger with toIntegerOrInfinity
+        https://bugs.webkit.org/show_bug.cgi?id=218642
+
+        Reviewed by Alexey Shvayka.
+
+        In ECMA262 spec, ToInteger abstract operation is replaced with ToIntegerOrInfinity.
+        This patch renames toInteger to toIntegerOrInfinity in JSC.
+
+        * builtins/ArrayPrototype.js:
+        (fill):
+        (includes):
+        (copyWithin):
+        (flat):
+        (at):
+        * builtins/FunctionPrototype.js:
+        (bind):
+        * builtins/GlobalOperations.js:
+        (globalPrivate.toIntegerOrInfinity):
+        (globalPrivate.toLength):
+        (globalPrivate.toInteger): Deleted.
+        * builtins/RegExpPrototype.js:
+        (overriddenName.string_appeared_here.replace):
+        * builtins/StringPrototype.js:
+        (repeat):
+        (at):
+        * builtins/TypedArrayPrototype.js:
+        (subarray):
+        (at):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::containing):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toIntegerOrInfinity const):
+        (JSC::JSValue::toLength const):
+        (JSC::JSValue::toInteger const): Deleted.
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        * runtime/NumberPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::extractToStringRadixArgument):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::getRegExpObjectLastIndexAsUnsigned):
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::stringIndexOfImpl):
+        (JSC::stringIncludesImpl):
+
 2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()

@@ -290,7 +290,6 @@ public:
     JSObject* toObject(JSGlobalObject*) const;
 
     // Integer conversions.
-    JS_EXPORT_PRIVATE double toInteger(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
     double toIntegerOrInfinity(JSGlobalObject*) const;
     int32_t toInt32(JSGlobalObject*) const;
