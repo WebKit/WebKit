@@ -44,7 +44,7 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, publ
     using BaseConcreteImageBuffer::putImageData;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::DestinationColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     {
         return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }

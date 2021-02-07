@@ -103,7 +103,7 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "display-p3"_s;
     case ColorSpace::Lab:
         return "lab"_s;
-    case ColorSpace::LinearRGB:
+    case ColorSpace::LinearSRGB:
         return "linear-srgb"_s;
     case ColorSpace::ProPhotoRGB:
         return "prophoto-rgb"_s;

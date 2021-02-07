@@ -89,17 +89,17 @@ void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const Flo
         Cairo::clipToImageBuffer(*destContext.platformContext(), image->platformImage().get(), destRect);
 }
 
-void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace)
+void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColorSpace, DestinationColorSpace destColorSpace)
 {
     if (srcColorSpace == destColorSpace)
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != ColorSpace::LinearRGB && srcColorSpace != ColorSpace::SRGB)
-        || (destColorSpace != ColorSpace::LinearRGB && destColorSpace != ColorSpace::SRGB))
+    if ((srcColorSpace != DestinationColorSpace::LinearSRGB && srcColorSpace != DestinationColorSpace::SRGB)
+        || (destColorSpace != DestinationColorSpace::LinearSRGB && destColorSpace != DestinationColorSpace::SRGB))
         return;
 
-    if (destColorSpace == ColorSpace::LinearRGB) {
+    if (destColorSpace == DestinationColorSpace::LinearSRGB) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
@@ -110,7 +110,7 @@ void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, Colo
             return array;
         }();
         platformTransformColorSpace(linearRgbLUT);
-    } else if (destColorSpace == ColorSpace::SRGB) {
+    } else if (destColorSpace == DestinationColorSpace::SRGB) {
         static const std::array<uint8_t, 256> deviceRgbLUT= [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {

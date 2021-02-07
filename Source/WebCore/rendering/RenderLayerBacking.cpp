@@ -3243,7 +3243,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 {
     const FloatSize tileSize { 32, 18 };
 
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, ColorSpace::SRGB, destContext);
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, DestinationColorSpace::SRGB, destContext);
     if (!imageBuffer)
         return nullptr;
 

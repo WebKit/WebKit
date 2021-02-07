@@ -1617,7 +1617,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         didDrawEntireCanvas();
     } else if (state().globalComposite == CompositeOperator::Copy) {
         if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = buffer->copyRectToBuffer(srcRect, ColorSpace::SRGB, *c)) {
+            if (auto copy = buffer->copyRectToBuffer(srcRect, DestinationColorSpace::SRGB, *c)) {
                 clearCanvas();
                 c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, { state().globalComposite, state().globalBlend });
             }
@@ -2572,7 +2572,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
             }
         };
 
-        if (c->clipToDrawingCommands(maskRect, ColorSpace::SRGB, WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
+        if (c->clipToDrawingCommands(maskRect, DestinationColorSpace::SRGB, WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
             return;
 
         drawStyle.applyFillColor(*c);

@@ -34,7 +34,7 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow, Arguments&&... arguments)
     {
         auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat };
         auto backend = BackendType::create(parameters, hostWindow);
@@ -46,7 +46,7 @@ public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
     {
-        auto parameters = ImageBufferBackend::Parameters { size, 1, ColorSpace::SRGB, PixelFormat::BGRA8 };
+        auto parameters = ImageBufferBackend::Parameters { size, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8 };
         auto backend = BackendType::create(parameters, context);
         if (!backend)
             return nullptr;
@@ -91,7 +91,7 @@ protected:
 
     IntSize logicalSize() const override { return IntSize(m_parameters.logicalSize); }
     float resolutionScale() const override { return m_parameters.resolutionScale; }
-    ColorSpace colorSpace() const override { return m_parameters.colorSpace; }
+    DestinationColorSpace colorSpace() const override { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const override { return m_parameters.pixelFormat; }
     const ImageBufferBackend::Parameters& parameters() const override { return m_parameters; }
 
@@ -195,7 +195,7 @@ protected:
         }
     }
 
-    void transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace) override
+    void transformColorSpace(DestinationColorSpace srcColorSpace, DestinationColorSpace destColorSpace) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();

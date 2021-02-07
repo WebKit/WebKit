@@ -42,8 +42,8 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
     case ColorSpace::Lab:
         ts << "L*a*b";
         break;
-    case ColorSpace::LinearRGB:
-        ts << "LinearRGB";
+    case ColorSpace::LinearSRGB:
+        ts << "LinearSRGB";
         break;
     case ColorSpace::ProPhotoRGB:
         ts << "ProPhotoRGB";
@@ -56,6 +56,19 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         break;
     case ColorSpace::XYZ_D50:
         ts << "XYZ";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, DestinationColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::LinearSRGB:
+        ts << "LinearSRGB";
+        break;
+    case DestinationColorSpace::SRGB:
+        ts << "sRGB";
         break;
     }
     return ts;

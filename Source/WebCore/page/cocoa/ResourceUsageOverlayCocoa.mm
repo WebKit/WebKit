@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
+#import "ColorSpaceCG.h"
 #import "CommonVM.h"
 #import "JSDOMWindow.h"
 #import "PlatformCALayer.h"
@@ -120,9 +121,8 @@ private:
 
 static CGColorRef createColor(float r, float g, float b, float a)
 {
-    static CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     CGFloat components[4] = { r, g, b, a };
-    return CGColorCreate(colorSpace, components);
+    return CGColorCreate(sRGBColorSpaceRef(), components);
 }
 
 struct HistoricMemoryCategoryInfo {

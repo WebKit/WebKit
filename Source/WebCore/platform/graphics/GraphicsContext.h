@@ -405,7 +405,7 @@ public:
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
 
     enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };
-    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&&);
+    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace, Function<void(GraphicsContext&)>&&);
     
     IntRect clipBounds() const;
 

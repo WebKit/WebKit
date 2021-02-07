@@ -726,7 +726,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
 
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
-        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpace::SRGB, context);
+        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, DestinationColorSpace::SRGB, context);
         if (!imageBuffer)
             return needsRepaint;
         {

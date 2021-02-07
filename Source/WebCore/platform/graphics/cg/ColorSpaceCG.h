@@ -50,7 +50,7 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return displayP3ColorSpaceRef();
     case ColorSpace::Lab:
         return labColorSpaceRef();
-    case ColorSpace::LinearRGB:
+    case ColorSpace::LinearSRGB:
         return linearRGBColorSpaceRef();
     case ColorSpace::ProPhotoRGB:
         return proPhotoRGBColorSpaceRef();
@@ -60,6 +60,18 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return sRGBColorSpaceRef();
     case ColorSpace::XYZ_D50:
         return xyzD50ColorSpaceRef();
+    }
+    ASSERT_NOT_REACHED();
+    return sRGBColorSpaceRef();
+}
+
+static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::LinearSRGB:
+        return linearRGBColorSpaceRef();
+    case DestinationColorSpace::SRGB:
+        return sRGBColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();

@@ -236,7 +236,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     return absoluteTransform;
 }
 
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, DestinationColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
 {
     IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
     // Don't create empty ImageBuffers.
@@ -264,7 +264,7 @@ RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targ
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, DestinationColorSpace colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
 {
     IntSize clampedSize = roundedIntSize(clampedRect.size());
     FloatSize unclampedSize = roundedIntSize(targetRect.size());
@@ -350,7 +350,7 @@ bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
 
     // Create a new buffer and paint the foreground into it.
     if (!imageBuffer) {
-        imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), ColorSpace::SRGB, m_paintInfo->context());
+        imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), DestinationColorSpace::SRGB, m_paintInfo->context());
         if (!imageBuffer)
             return false;
     }

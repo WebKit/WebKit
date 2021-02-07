@@ -27,6 +27,7 @@
 
 #include "ColorTypes.h"
 #include <functional>
+#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;
@@ -38,21 +39,27 @@ enum class ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,
     Lab,
-    LinearRGB,
+    LinearSRGB,
     ProPhotoRGB,
     Rec2020,
     SRGB,
     XYZ_D50,
 };
 
+enum class DestinationColorSpace : uint8_t {
+    LinearSRGB,
+    SRGB,
+};
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, DestinationColorSpace);
 
 
 template<typename> struct ColorSpaceMapping;
 template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto colorSpace { ColorSpace::A98RGB }; };
 template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
 template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
-template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearRGB }; };
+template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearSRGB }; };
 template<typename T> struct ColorSpaceMapping<ProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ProPhotoRGB }; };
 template<typename T> struct ColorSpaceMapping<Rec2020<T>> { static constexpr auto colorSpace { ColorSpace::Rec2020 }; };
 template<typename T> struct ColorSpaceMapping<SRGBA<T>> { static constexpr auto colorSpace { ColorSpace::SRGB }; };
@@ -70,7 +77,7 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
     case ColorSpace::Lab:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
-    case ColorSpace::LinearRGB:
+    case ColorSpace::LinearSRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
     case ColorSpace::ProPhotoRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
@@ -87,3 +94,29 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ColorSpace> {
+    using values = EnumValues<
+        WebCore::ColorSpace,
+        WebCore::ColorSpace::A98RGB,
+        WebCore::ColorSpace::DisplayP3,
+        WebCore::ColorSpace::Lab,
+        WebCore::ColorSpace::LinearSRGB,
+        WebCore::ColorSpace::ProPhotoRGB,
+        WebCore::ColorSpace::Rec2020,
+        WebCore::ColorSpace::SRGB,
+        WebCore::ColorSpace::XYZ_D50
+    >;
+};
+
+template<> struct EnumTraits<WebCore::DestinationColorSpace> {
+    using values = EnumValues<
+        WebCore::DestinationColorSpace,
+        WebCore::DestinationColorSpace::LinearSRGB,
+        WebCore::DestinationColorSpace::SRGB
+    >;
+};
+
+}

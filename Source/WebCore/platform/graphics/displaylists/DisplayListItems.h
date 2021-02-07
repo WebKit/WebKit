@@ -868,7 +868,7 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = false;
 
-    ClipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, DisplayList&& drawingCommands)
+    ClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, DisplayList&& drawingCommands)
         : m_destination(destination)
         , m_colorSpace(colorSpace)
         , m_drawingCommands(WTFMove(drawingCommands))
@@ -891,7 +891,7 @@ public:
     }
 
     const FloatRect& destination() const { return m_destination; }
-    ColorSpace colorSpace() const { return m_colorSpace; }
+    DestinationColorSpace colorSpace() const { return m_colorSpace; }
     const DisplayList& drawingCommands() const { return m_drawingCommands; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -901,7 +901,7 @@ public:
 
 private:
     FloatRect m_destination;
-    ColorSpace m_colorSpace;
+    DestinationColorSpace m_colorSpace;
     DisplayList m_drawingCommands;
 };
 
@@ -921,7 +921,7 @@ Optional<ClipToDrawingCommands> ClipToDrawingCommands::decode(Decoder& decoder)
     if (!destination)
         return WTF::nullopt;
 
-    Optional<ColorSpace> colorSpace;
+    Optional<DestinationColorSpace> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return WTF::nullopt;

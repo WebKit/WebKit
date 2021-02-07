@@ -53,7 +53,7 @@ class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendT
     using BaseDisplayListImageBuffer::resolutionScale;
 
 public:
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, WebCore::DestinationColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         if (BackendType::calculateBackendSize(size, resolutionScale).isEmpty())
             return nullptr;

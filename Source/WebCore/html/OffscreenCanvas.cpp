@@ -432,14 +432,14 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
         m_context->paintRenderingResultsToCanvas();
 
     if (m_placeholderData->bufferPipeSource) {
-        auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context());
+        auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
         if (bufferCopy)
             m_placeholderData->bufferPipeSource->handle(WTFMove(bufferCopy));
     }
 
     auto locker = holdLock(m_placeholderData->bufferLock);
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
-    m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context());
+    m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
         pushBufferToPlaceholder();
 }

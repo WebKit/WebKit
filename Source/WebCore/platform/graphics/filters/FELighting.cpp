@@ -404,7 +404,7 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     data.widthDecreasedByOne = width - 1;
     data.heightDecreasedByOne = height - 1;
     
-    if (operatingColorSpace() == ColorSpace::LinearRGB) {
+    if (operatingColorSpace() == DestinationColorSpace::LinearSRGB) {
         auto [r, g, b, a] = m_lightingColor.toColorTypeLossy<LinearSRGBA<float>>();
         paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
     } else {

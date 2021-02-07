@@ -420,7 +420,7 @@ FloatRect GraphicsContextImplDirect2D::roundToDevicePixels(const FloatRect& rect
     return Direct2D::State::roundToDevicePixels(m_platformContext, rect);
 }
 
-void GraphicsContextImplDirect2D::clipToDrawingCommands(const FloatRect&, ColorSpace, Function<void(GraphicsContext&)>&&)
+void GraphicsContextImplDirect2D::clipToDrawingCommands(const FloatRect&, DestinationColorSpace, Function<void(GraphicsContext&)>&&)
 {
     // FIXME: Not implemented.
 }

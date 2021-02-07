@@ -118,7 +118,7 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat)
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat)
 {
     RefPtr<ImageBuffer> imageBuffer;
 

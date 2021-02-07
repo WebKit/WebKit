@@ -909,7 +909,7 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 #if ENABLE(GPU_PROCESS)
 
 
-RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat) const
+RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat) const
 {
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return nullptr;

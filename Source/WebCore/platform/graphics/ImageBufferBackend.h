@@ -81,7 +81,7 @@ public:
     struct Parameters {
         FloatSize logicalSize;
         float resolutionScale;
-        ColorSpace colorSpace;
+        DestinationColorSpace colorSpace;
         PixelFormat pixelFormat;
     };
 
@@ -110,7 +110,7 @@ public:
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 
     WEBCORE_EXPORT void convertToLuminanceMask();
-    virtual void transformColorSpace(ColorSpace, ColorSpace) { }
+    virtual void transformColorSpace(DestinationColorSpace, DestinationColorSpace) { }
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
@@ -149,7 +149,7 @@ protected:
 
     IntSize logicalSize() const { return IntSize(m_parameters.logicalSize); }
     float resolutionScale() const { return m_parameters.resolutionScale; }
-    ColorSpace colorSpace() const { return m_parameters.colorSpace; }
+    DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
 
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };

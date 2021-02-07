@@ -60,7 +60,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
     FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates();
 
-    auto maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpace::SRGB, context->renderingMode());
+    auto maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, DestinationColorSpace::SRGB, context->renderingMode());
     if (!maskImage)
         return false;
 

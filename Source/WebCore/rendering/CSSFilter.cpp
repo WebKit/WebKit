@@ -125,7 +125,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
 
         effectElement.setStandardAttributes(effect.get());
         if (effectElement.renderer())
-            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? ColorSpace::LinearRGB : ColorSpace::SRGB);
+            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB : DestinationColorSpace::SRGB);
 
         builder->add(effectElement.result(), effect);
         referenceEffects.append(*effect);
@@ -293,7 +293,7 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
             // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
             // property applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(consumer == FilterConsumer::FilterFunction);
-            effect->setOperatingColorSpace(ColorSpace::SRGB);
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
             
             if (filterOperation.type() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(WTFMove(previousEffect));
@@ -377,12 +377,12 @@ void CSSFilter::apply()
     if (m_filterRenderer) {
         m_filterRenderer->applyEffects(effect);
         if (m_filterRenderer->hasResult()) {
-            effect.transformResultColorSpace(ColorSpace::SRGB);
+            effect.transformResultColorSpace(DestinationColorSpace::SRGB);
             return;
         }
     }
     effect.apply();
-    effect.transformResultColorSpace(ColorSpace::SRGB);
+    effect.transformResultColorSpace(DestinationColorSpace::SRGB);
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

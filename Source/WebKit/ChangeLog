@@ -1,5 +1,35 @@
 2021-02-07  Sam Weinig  <weinig@apple.com>
 
+        Differentiate between color spaces used to tag colors and color spaces used to tag destinations
+        https://bugs.webkit.org/show_bug.cgi?id=221520
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.h:
+        Coder implementation of EnumTraits for color space types is now
+        in WebCore.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Update to use DestinationColorSpace rather than ColorSpace.
+
+2021-02-07  Sam Weinig  <weinig@apple.com>
+
         Remove more special cases from color conversion
         https://bugs.webkit.org/show_bug.cgi?id=221519
 

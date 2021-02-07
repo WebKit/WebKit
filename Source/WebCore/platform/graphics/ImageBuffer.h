@@ -45,14 +45,14 @@ struct ItemBufferHandle;
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     // Will return a null pointer on allocation failure.
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale = 1, ColorSpace = ColorSpace::SRGB, PixelFormat = PixelFormat::BGRA8, const HostWindow* = nullptr);
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, ColorSpace = ColorSpace::SRGB, PixelFormat = PixelFormat::BGRA8, const HostWindow* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale = 1, DestinationColorSpace = DestinationColorSpace::SRGB, PixelFormat = PixelFormat::BGRA8, const HostWindow* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, DestinationColorSpace = DestinationColorSpace::SRGB, PixelFormat = PixelFormat::BGRA8, const HostWindow* = nullptr);
     static RefPtr<ImageBuffer> create(const FloatSize&, const GraphicsContext&);
 
     // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
     static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, ColorSpace, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext&);
+    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, DestinationColorSpace, const GraphicsContext&);
+    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, DestinationColorSpace, const GraphicsContext&);
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
@@ -87,7 +87,7 @@ public:
 
     virtual IntSize logicalSize() const = 0;
     virtual float resolutionScale() const = 0;
-    virtual ColorSpace colorSpace() const = 0;
+    virtual DestinationColorSpace colorSpace() const = 0;
     virtual PixelFormat pixelFormat() const = 0;
     virtual const ImageBufferBackend::Parameters& parameters() const = 0;
 
@@ -108,7 +108,7 @@ public:
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
 
     // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
-    RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, ColorSpace, const GraphicsContext&);
+    RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, DestinationColorSpace, const GraphicsContext&);
 
     virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { }) = 0;
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
@@ -121,7 +121,7 @@ public:
     virtual void clipToMask(GraphicsContext&, const FloatRect& destRect) = 0;
 
     virtual void convertToLuminanceMask() = 0;
-    virtual void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace) = 0;
+    virtual void transformColorSpace(DestinationColorSpace srcColorSpace, DestinationColorSpace dstColorSpace) = 0;
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality = WTF::nullopt, PreserveResolution = PreserveResolution::No) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const = 0;

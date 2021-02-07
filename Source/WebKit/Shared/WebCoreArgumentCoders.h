@@ -889,20 +889,11 @@ template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::ColorSpace> {
-    using values = EnumValues<
-    WebCore::ColorSpace,
-    WebCore::ColorSpace::SRGB,
-    WebCore::ColorSpace::LinearRGB,
-    WebCore::ColorSpace::DisplayP3
-    >;
-};
-
 template<> struct EnumTraits<WebCore::RenderingMode> {
     using values = EnumValues<
-    WebCore::RenderingMode,
-    WebCore::RenderingMode::Unaccelerated,
-    WebCore::RenderingMode::Accelerated
+        WebCore::RenderingMode,
+        WebCore::RenderingMode::Unaccelerated,
+        WebCore::RenderingMode::Accelerated
     >;
 };
 
