@@ -299,25 +299,36 @@ template<> struct ColorConversion<HWBA<float>, SRGBA<float>> {
     WEBCORE_EXPORT static HWBA<float> convert(const SRGBA<float>&);
 };
 
+// Special cases for SRGBA<uint8_t>. Only sRGB supports non-floating point component types.
+template<> struct ColorConversion<SRGBA<float>, SRGBA<uint8_t>> {
+    WEBCORE_EXPORT static SRGBA<float> convert(const SRGBA<uint8_t>&);
+};
+
+template<> struct ColorConversion<SRGBA<uint8_t>, SRGBA<float>> {
+    WEBCORE_EXPORT static SRGBA<uint8_t> convert(const SRGBA<float>&);
+};
 
 
-// Chromatic Adaptation conversions.
-WEBCORE_EXPORT XYZA<float, WhitePoint::D65> convertFromD50WhitePointToD65WhitePoint(const XYZA<float, WhitePoint::D50>&);
-WEBCORE_EXPORT XYZA<float, WhitePoint::D50> convertFromD65WhitePointToD50WhitePoint(const XYZA<float, WhitePoint::D65>&);
+// XYZA Chromatic Adaptation conversions.
+template<> struct ColorConversion<XYZA<float, WhitePoint::D65>, XYZA<float, WhitePoint::D50>> {
+    WEBCORE_EXPORT static XYZA<float, WhitePoint::D65> convert(const XYZA<float, WhitePoint::D50>&);
+};
 
-template<typename T, WhitePoint inputWhitePoint> constexpr typename T::ReferenceXYZ performChomaticAdapatation(const XYZA<float, inputWhitePoint>& color)
-{
-    constexpr WhitePoint outputWhitePoint = T::ReferenceXYZ::whitePoint;
+template<> struct ColorConversion<XYZA<float, WhitePoint::D50>, XYZA<float, WhitePoint::D65>> {
+    WEBCORE_EXPORT static XYZA<float, WhitePoint::D50> convert(const XYZA<float, WhitePoint::D65>&);
+};
 
-    if constexpr (outputWhitePoint == inputWhitePoint)
+
+// Identity conversion.
+
+template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
+    static ColorType convert(const ColorType& color)
+    {
         return color;
-    else if constexpr (outputWhitePoint == WhitePoint::D50)
-        return convertFromD65WhitePointToD50WhitePoint(color);
-    else if constexpr (outputWhitePoint == WhitePoint::D65)
-        return convertFromD50WhitePointToD65WhitePoint(color);
-}
+    }
+};
 
-// Fallback conversions.
+// Fallback conversion.
 
 // All types are required to have a conversion to their reference XYZ space, so this is guaranteed
 // to work if another specialization is not already provided.
@@ -357,15 +368,13 @@ template<typename T, WhitePoint inputWhitePoint> constexpr typename T::Reference
 template<typename Output, typename Input> struct ColorConversion {
     static Output convert(const Input& color)
     {
-        if constexpr(std::is_same_v<Output, Input>)
-            return color;
-        else if constexpr (std::is_same_v<typename Input::ComponentType, uint8_t>)
-            return convertColor<Output>(convertTo<SRGBA<float>>(color));
-        else if constexpr (std::is_same_v<typename Output::ComponentType, uint8_t>)
-            return convertTo<SRGBA<uint8_t>>(convertColor<SRGBA<float>>(color));
+        if constexpr (std::is_same_v<Input, SRGBA<uint8_t>>)
+            return convertColor<Output>(convertColor<SRGBA<float>>(color));
+        else if constexpr (std::is_same_v<Output, SRGBA<uint8_t>>)
+            return convertColor<SRGBA<uint8_t>>(convertColor<SRGBA<float>>(color));
         else {
             auto xyz1 = convertColor<typename Input::ReferenceXYZ>(color);
-            auto xyz2 = performChomaticAdapatation<Output>(xyz1);
+            auto xyz2 = convertColor<typename Output::ReferenceXYZ>(xyz1);
             return convertColor<Output>(xyz2);
         }
     }

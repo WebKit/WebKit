@@ -1,3 +1,14 @@
+2021-02-07  Sam Weinig  <weinig@apple.com>
+
+        Remove more special cases from color conversion
+        https://bugs.webkit.org/show_bug.cgi?id=221519
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkitColorToWebCoreColor):
+        Replace convertTo<> component type conversion to general convertColor<>.
+
 2021-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add support for accessibility image extraction

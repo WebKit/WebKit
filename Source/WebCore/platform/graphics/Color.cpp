@@ -91,7 +91,7 @@ Color Color::lightened() const
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return convertTo<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
+    return convertColor<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 Color Color::darkened() const
@@ -105,7 +105,7 @@ Color Color::darkened() const
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return convertTo<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
+    return convertColor<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 float Color::lightness() const
@@ -165,7 +165,7 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
 {
     if (isExtended())
         return { asExtended().colorSpace(), asExtended().components() };
-    return { ColorSpace::SRGB, asColorComponents(convertTo<SRGBA<float>>(asInline())) };
+    return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline())) };
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

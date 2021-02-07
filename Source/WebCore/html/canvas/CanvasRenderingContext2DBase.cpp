@@ -1324,7 +1324,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
     if (std::isnan(grayLevel) || std::isnan(alpha))
         return;
 
-    setShadow(FloatSize(width, height), blur, convertTo<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(grayLevel, grayLevel, grayLevel, alpha)));
+    setShadow(FloatSize(width, height), blur, convertColor<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(grayLevel, grayLevel, grayLevel, alpha)));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float r, float g, float b, float a)
@@ -1332,7 +1332,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
     if (std::isnan(r) || std::isnan(g) || std::isnan(b)  || std::isnan(a))
         return;
 
-    setShadow(FloatSize(width, height), blur, convertTo<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(r, g, b, a)));
+    setShadow(FloatSize(width, height), blur, convertColor<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(r, g, b, a)));
 }
 
 void CanvasRenderingContext2DBase::clearShadow()

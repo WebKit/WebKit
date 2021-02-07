@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,10 +50,6 @@ uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float);
 template<typename T> T convertByteAlphaTo(uint8_t);
 template<typename T> T convertFloatAlphaTo(float);
 
-template<typename T, typename U> T convertTo(const U&);
-template<> SRGBA<float> convertTo(const SRGBA<uint8_t>&);
-template<> SRGBA<uint8_t> convertTo(const SRGBA<float>&);
-
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
 
 template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
@@ -62,13 +58,13 @@ template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType&,
 template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType&, float overrideAlpha);
 
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isBlack(const ColorType&);
+template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
 constexpr bool isBlack(const Lab<float>&);
-template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr>
-constexpr bool isBlack(const ColorType&);
 
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isWhite(const ColorType&);
+template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>&);
 constexpr bool isWhite(const Lab<float>&);
-template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr>
-constexpr bool isWhite(const ColorType&);
 
 constexpr uint16_t fastMultiplyBy255(uint16_t);
 constexpr uint16_t fastDivideBy255(uint16_t);
@@ -97,26 +93,6 @@ template<> inline uint8_t convertFloatAlphaTo<uint8_t>(float value)
 template<> inline float convertFloatAlphaTo<float>(float value)
 {
     return clampedAlpha(value);
-}
-
-template<> inline SRGBA<float> convertTo(const SRGBA<uint8_t>& color)
-{
-    auto convertToSRGBAFloat = [](uint8_t value) -> float {
-        return value / 255.0f;
-    };
-
-    auto components = asColorComponents(color);
-    return { convertToSRGBAFloat(components[0]), convertToSRGBAFloat(components[1]), convertToSRGBAFloat(components[2]), convertToSRGBAFloat(components[3]) };
-}
-
-template<> inline SRGBA<uint8_t> convertTo(const SRGBA<float>& color)
-{
-    auto convertToSRGBAByte = [](float value) -> uint8_t {
-        return std::clamp(std::lround(value * 255.0f), 0l, 255l);
-    };
-
-    auto components = asColorComponents(color);
-    return { convertToSRGBAByte(components[0]), convertToSRGBAByte(components[1]), convertToSRGBAByte(components[2]), convertToSRGBAByte(components[3]) };
 }
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType& color, Functor&& functor)

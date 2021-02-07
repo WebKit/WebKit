@@ -133,12 +133,12 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
 
 // MARK: Chromatic Adaptation conversions.
 
-XYZA<float, WhitePoint::D65> convertFromD50WhitePointToD65WhitePoint(const XYZA<float, WhitePoint::D50>& color)
+XYZA<float, WhitePoint::D65> ColorConversion<XYZA<float, WhitePoint::D65>, XYZA<float, WhitePoint::D50>>::convert(const XYZA<float, WhitePoint::D50>& color)
 {
     return makeFromComponentsClampingExceptAlpha<XYZA<float, WhitePoint::D65>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float, WhitePoint::D50> convertFromD65WhitePointToD50WhitePoint(const XYZA<float, WhitePoint::D65>& color)
+XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, XYZA<float, WhitePoint::D65>>::convert(const XYZA<float, WhitePoint::D65>& color)
 {
     return makeFromComponentsClampingExceptAlpha<XYZA<float, WhitePoint::D50>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
 }
@@ -644,6 +644,22 @@ SRGBA<float>::ReferenceXYZ ColorConversion<SRGBA<float>::ReferenceXYZ, SRGBA<flo
 SRGBA<float> ColorConversion<SRGBA<float>, SRGBA<float>::ReferenceXYZ>::convert(const SRGBA<float>::ReferenceXYZ& color)
 {
     return convertColor<SRGBA<float>>(convertColor<LinearSRGBA<float>>(color));
+}
+
+// MARK: SRGBA<uint8_t> component type conversions.
+
+SRGBA<float> ColorConversion<SRGBA<float>, SRGBA<uint8_t>>::convert(const SRGBA<uint8_t>& color)
+{
+    return makeFromComponents<SRGBA<float>>(asColorComponents(color).map([](uint8_t value) -> float {
+        return value / 255.0f;
+    }));
+}
+
+SRGBA<uint8_t> ColorConversion<SRGBA<uint8_t>, SRGBA<float>>::convert(const SRGBA<float>& color)
+{
+    return makeFromComponents<SRGBA<uint8_t>>(asColorComponents(color).map([](float value) -> uint8_t {
+        return std::lround(value * 255.0f);
+    }));
 }
 
 } // namespace WebCore

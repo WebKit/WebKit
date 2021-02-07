@@ -1453,7 +1453,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
 
     if (self.axBackingObject->isColorWell()) {
-        auto color = convertTo<SRGBA<float>>(self.axBackingObject->colorValue());
+        auto color = convertColor<SRGBA<float>>(self.axBackingObject->colorValue());
         return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
     }
 

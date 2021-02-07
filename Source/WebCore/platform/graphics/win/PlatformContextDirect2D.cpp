@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,7 +132,7 @@ void PlatformContextDirect2D::setActiveLayer(COMPtr<ID2D1Layer>&& layer)
 
 COMPtr<ID2D1SolidColorBrush> PlatformContextDirect2D::brushWithColor(const D2D1_COLOR_F& color)
 {
-    auto colorKey = convertTo<SRGBA<uint8_t>>(SRGBA { color.r, color.g, color.b, color.a });
+    auto colorKey = colorConvert<SRGBA<uint8_t>>(SRGBA { color.r, color.g, color.b, color.a });
 
     if (!colorKey) {
         if (!m_zeroBrush)

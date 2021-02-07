@@ -2385,7 +2385,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @(backingObject->isSelected());
 
         if (backingObject->isColorWell()) {
-            auto color = convertTo<SRGBA<float>>(backingObject->colorValue());
+            auto color = convertColor<SRGBA<float>>(backingObject->colorValue());
             return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
         }
 
