@@ -161,6 +161,10 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @end
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.mm>
+#endif
+
 @interface WKAccessibilitySettingsObserver : NSObject {
     WebKit::WebViewImpl *_impl;
 }
@@ -5585,16 +5589,6 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
 {
     return false;
 }
-
-#if ENABLE(IMAGE_EXTRACTION)
-
-void WebViewImpl::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
-{
-    UNUSED_PARAM(imageData);
-    completion({ });
-}
-
-#endif // ENABLE(IMAGE_EXTRACTION)
 
 } // namespace WebKit
 

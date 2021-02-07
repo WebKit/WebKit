@@ -7134,6 +7134,9 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 
 void WebPage::requestImageExtraction(WebCore::Element& element)
 {
+    if (!is<HTMLElement>(element))
+        return;
+
     if (m_elementsWithExtractedImages.contains(element))
         return;
 
@@ -7153,8 +7156,8 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
         return;
 
     sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
-        UNUSED_PARAM(result);
-        UNUSED_PARAM(weakElement);
+        if (auto element = weakElement.get(); is<HTMLElement>(element))
+            downcast<HTMLElement>(*element).updateWithImageExtractionResult(WTFMove(result));
     });
 }
 

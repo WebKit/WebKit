@@ -1,3 +1,19 @@
+2021-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add support for accessibility image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=221262
+        <rdar://problem/70744978>
+
+        Reviewed by Devin Rousso.
+
+        Add WebKitAdditions support for image extraction.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestImageExtraction): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestImageExtraction):
+
 2021-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs should have an opaque origin

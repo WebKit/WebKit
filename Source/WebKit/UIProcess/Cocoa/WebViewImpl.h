@@ -81,6 +81,10 @@ OBJC_CLASS WebPlaybackControlsManager;
 OBJC_CLASS WKPDFHUDView;
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsBefore.h>
+#endif
+
 namespace API {
 class HitTestResult;
 class Object;
@@ -839,6 +843,10 @@ private:
     RetainPtr<NSMenu> m_domPasteMenu;
     RetainPtr<WKDOMPasteMenuDelegate> m_domPasteMenuDelegate;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> m_domPasteRequestHandler;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsAfter.h>
+#endif
 };
     
 } // namespace WebKit
