@@ -1,3 +1,28 @@
+2021-02-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
+        https://bugs.webkit.org/show_bug.cgi?id=221391
+
+        Reviewed by Carlos Garcia Campos.
+
+        When triggerRenderingUpdate was called back, it added the whole
+        view area into the dirty region to repaint in non-AC mode pages.
+        This caused a problem that the whole content was unnecessarily
+        repainted by animations in non-AC mode pages
+
+        If triggerRenderingUpdate is called back,
+        DrawingAreaCoordinatedGraphics::display should be called to ensure
+        WebPage::updateRendering() called even if m_dirtyRegion is empty.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::triggerRenderingUpdate):
+        Call scheduleDisplay() instead of setNeedsDisplay().
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleDisplay): Don't
+        return early even if m_dirtyRegion is empty.
+        (WebKit::DrawingAreaCoordinatedGraphics::display()): Ditto.
+        (WebKit::DrawingAreaCoordinatedGraphics::display(UpdateInfo&)):
+        Return early if m_dirtyRegion is empty.
+
 2021-02-07  Sam Weinig  <weinig@apple.com>
 
         Differentiate between color spaces used to tag colors and color spaces used to tag destinations
