@@ -69,17 +69,35 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
     }
     if (inlineLevelBox.isInlineBox()) {
         // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
-        if (inlineLevelBox.hasContent())
-            return true;
-        if (!inlineLevelBox.isRootInlineBox()) {
-            auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-            if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().valueOr(0_lu)) {
-                // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
-                return true;
-            }
-        }
         auto inlineBoxHasImaginaryStrut = layoutState().inStandardsMode();
-        return inlineBoxHasImaginaryStrut;
+        if (inlineLevelBox.hasContent() || inlineBoxHasImaginaryStrut)
+            return true;
+        if (inlineLevelBox.isRootInlineBox()) {
+            auto shouldRootInlineBoxWithNoContentStretchLineBox = [&] {
+                if (inlineLevelBox.layoutBox().style().lineHeight().isNegative())
+                    return false;
+                // The root inline box with non-initial line height value stretches the line box even when root has no content
+                // but there's at least one inline box with content.
+                // e.g. <div style="line-height: 100px;"><span>content</span></div>
+                if (!lineBox.hasInlineBox())
+                    return false;
+                for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+                    if (!inlineLevelBox->isInlineBox())
+                        continue;
+                    if (inlineLevelBox->hasContent())
+                        return true;
+                }
+                return false;
+            };
+            return shouldRootInlineBoxWithNoContentStretchLineBox();
+        }
+        // Non-root inline boxes (e.g. <span>).
+        auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+        if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().valueOr(0_lu)) {
+            // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
+            return true;
+        }
+        return false;
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())

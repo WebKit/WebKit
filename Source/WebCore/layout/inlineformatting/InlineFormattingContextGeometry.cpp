@@ -333,7 +333,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // FIXME: Add support for simple inline boxes too.
         // We can do simplified vertical alignment with non-atomic inline boxes as long as the line has no content.
         // e.g. <div><span></span><span></span></div> is still okay.
-        m_inlineLevelBoxesNeedVerticalAlignment = lineHasContent;
+        m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || lineHasContent;
         if (run.isInlineBoxStart()) {
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
@@ -369,6 +369,11 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     }
 
     lineBox.setHasContent(lineHasContent);
+    if (lineHasContent && !m_inlineLevelBoxesNeedVerticalAlignment) {
+        // FIXME: Add fast path support for line-height content.
+        m_inlineLevelBoxesNeedVerticalAlignment = !rootBox().style().lineHeight().isNegative();
+    }
+
     if (!m_inlineLevelBoxesNeedVerticalAlignment) {
         if (!lineHasContent) {
             simplifiedVerticalAlignment.rootInlineBoxTop = -rootInlineBox.baseline();
