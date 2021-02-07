@@ -28,6 +28,7 @@
 
 #include "DocumentMarkerController.h"
 #include "HTMLTextFormControlElement.h"
+#include "HighlightRegister.h"
 #include "InlineIterator.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
@@ -235,6 +236,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowIncludesDocumentMarkers:
         stream << "text includes document markers";
+        break;
+    case AvoidanceReason::FlowIncludesHighlights:
+        stream << "text includes highlights";
         break;
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
@@ -742,6 +746,12 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
+    if (flow.document().highlightRegisterIfExists() && !flow.document().highlightRegisterIfExists()->map().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesHighlights, reasons, includeReasons);
+#if ENABLE(APP_HIGHLIGHTS)
+    if (flow.document().appHighlightRegisterIfExists() && !flow.document().appHighlightRegisterIfExists()->map().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesHighlights, reasons, includeReasons);
+#endif
     if (flow.firstLineBlock())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow() == TextOverflow::Ellipsis)
