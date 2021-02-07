@@ -1038,6 +1038,7 @@ $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObject.idl
 $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObjectOES.idl
 $(PROJECT_DIR)/html/parser/HTMLEntityNames.in
 $(PROJECT_DIR)/html/parser/create-html-entity-table
+$(PROJECT_DIR)/html/shadow/imageOverlay.css
 $(PROJECT_DIR)/html/shadow/meterElementShadow.css
 $(PROJECT_DIR)/html/track/AudioTrack.idl
 $(PROJECT_DIR)/html/track/AudioTrackList.idl

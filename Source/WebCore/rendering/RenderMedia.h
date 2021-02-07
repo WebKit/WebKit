@@ -56,7 +56,6 @@ private:
     bool isImage() const final { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 

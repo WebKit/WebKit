@@ -35,6 +35,10 @@ class FormAssociatedElement;
 class FormNamedItem;
 class HTMLFormElement;
 
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
+
 enum class EnterKeyHint : uint8_t;
 
 class HTMLElement : public StyledElement {
@@ -121,6 +125,12 @@ public:
     WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
     String enterKeyHint() const;
     void setEnterKeyHint(const String& value);
+
+    bool hasImageOverlay() const;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    WEBCORE_EXPORT void updateWithImageExtractionResult(ImageExtractionResult&&);
+#endif
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
