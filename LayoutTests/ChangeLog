@@ -1,3 +1,11 @@
+2021-02-06  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening mathml failures
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2021-02-05  Antti Koivisto  <antti@apple.com>
 
         Remove the Timer from Style::Scope
