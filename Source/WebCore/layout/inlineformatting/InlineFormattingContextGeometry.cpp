@@ -369,7 +369,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     }
 
     lineBox.setHasContent(lineHasContent);
-    if (lineHasContent && !m_inlineLevelBoxesNeedVerticalAlignment) {
+    if (!lineHasContent) {
+        // We should always be able to exercise the fast path when the line has no content at all.
+        m_inlineLevelBoxesNeedVerticalAlignment = false;
+    } else if (!m_inlineLevelBoxesNeedVerticalAlignment) {
         // FIXME: Add fast path support for line-height content.
         m_inlineLevelBoxesNeedVerticalAlignment = !rootBox().style().lineHeight().isNegative();
     }
@@ -387,6 +390,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
 
 void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(LineBox& lineBox)
 {
+    ASSERT(lineBox.hasContent());
     // This function (partially) implements:
     // 2.2. Layout Within Line Boxes
     // https://www.w3.org/TR/css-inline-3/#line-layout
