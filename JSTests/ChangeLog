@@ -1,3 +1,12 @@
+2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=221494
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/redefine-property-same-value-exception-check.js: Added.
+
 2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewd, update test262/config.yaml

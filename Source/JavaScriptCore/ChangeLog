@@ -1,3 +1,25 @@
+2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=221494
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch brings back exception check after sameValue(), which was accidentally
+        removed in r264574. sameValue() may throw OOM when comparing rope strings.
+
+        Even though this case was unreachable because of PropertyDescriptor::equalTo()
+        fast path, we should maintain consistent exception checks.
+
+        For the same reason, sameValue() in protoFuncFinalizationRegistryRegister() is
+        replaced with pointer comparison, which is safe & unobservable because `target`
+        is a known JSObject.
+
+        * runtime/FinalizationRegistryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::validateAndApplyPropertyDescriptor):
+
 2021-02-05  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Implement backend support for maintaining a list of Grid layout contexts

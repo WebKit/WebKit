@@ -3651,8 +3651,12 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
         if (!current.configurable() && !current.writable()) {
             if (descriptor.writable())
                 return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
-            if (descriptor.value() && !sameValue(globalObject, current.value(), descriptor.value()))
-                return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
+            if (descriptor.value()) {
+                bool isSame = sameValue(globalObject, descriptor.value(), current.value());
+                RETURN_IF_EXCEPTION(scope, false);
+                if (!isSame)
+                    return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
+            }
 
             return true;
         }
