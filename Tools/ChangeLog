@@ -1,3 +1,13 @@
+2021-02-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Switch bot watchers dashboard to use new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=221493
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2021-02-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Disable MediaSessionTest API tests
