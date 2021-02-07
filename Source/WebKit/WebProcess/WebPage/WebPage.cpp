@@ -792,6 +792,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     for (const auto& iterator : parameters.urlSchemeHandlers)
         registerURLSchemeHandler(iterator.value, iterator.key);
+    for (auto& scheme : parameters.urlSchemesWithLegacyCustomProtocolHandlers)
+        LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler({ scheme });
 
     m_userContentController->addContentWorlds(parameters.userContentControllerParameters.userContentWorlds);
     m_userContentController->addUserScripts(WTFMove(parameters.userContentControllerParameters.userScripts), InjectUserScriptImmediately::No);
@@ -6631,6 +6633,7 @@ void WebPage::stopAllURLSchemeTasks()
 
 void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String& scheme)
 {
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(scheme);
     WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
     auto schemeResult = m_schemeToURLSchemeHandlerProxyMap.add(scheme, WebURLSchemeHandlerProxy::create(*this, handlerIdentifier));
     m_identifierToURLSchemeHandlerProxyMap.add(handlerIdentifier, schemeResult.iterator->value.get());

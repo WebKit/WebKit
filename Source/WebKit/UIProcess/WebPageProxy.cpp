@@ -7970,6 +7970,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());
+    parameters.urlSchemesWithLegacyCustomProtocolHandlers = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
 
 #if ENABLE(WEB_RTC)
     parameters.iceCandidateFilteringEnabled = m_preferences->iceCandidateFilteringEnabled();
@@ -10414,7 +10415,7 @@ void WebPageProxy::requestSpeechRecognitionPermission(WebCore::SpeechRecognition
     m_speechRecognitionPermissionManager->request(request, WTFMove(completionHandler));
 }
 
-void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager) {
         completionHandler(false);

@@ -1,3 +1,32 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        I needed to change API::SecurityOrigin from wrapping a WebCore::SecurityOrigin to wrapping a WebCore::SecurityOriginData,
+        otherwise it would often be null and we want it to be not null in the UI process.
+
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::createFromString):
+        (API::SecurityOrigin::create):
+        (API::SecurityOrigin::securityOrigin const):
+        (API::SecurityOrigin::SecurityOrigin):
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCopyDatabaseIdentifier):
+        (WKSecurityOriginCopyProtocol):
+        (WKSecurityOriginCopyHost):
+        (WKSecurityOriginGetPort):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveFetchCacheForOrigin):
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin protocol]):
+        (-[WKSecurityOrigin host]):
+        (-[WKSecurityOrigin port]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::registerURLSchemeHandler):
+
 2021-02-05  Sihui Liu  <sihui_liu@appe.com>
 
         REGRESSION(r272337): crash under WebCore::SpeechRecognizer::setInactive()

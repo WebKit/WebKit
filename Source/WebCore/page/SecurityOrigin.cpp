@@ -44,6 +44,10 @@
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(COCOA)
+#include "VersionChecks.h"
+#endif
+
 namespace WebCore {
 
 constexpr unsigned maximumURLSize = 0x04000000;
@@ -106,8 +110,26 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol().toStringWithoutCopying()))
         return true;
 
-    // This is the common case.
-    return false;
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfter(SDKVersion::FirstWithNullOriginForNonSpecialSchemedURLs))
+        return false;
+#endif
+
+    // https://url.spec.whatwg.org/#origin with some additions
+    if (url.hasSpecialScheme()
+#if PLATFORM(COCOA)
+        || url.protocolIs("applewebdata")
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        || url.protocolIs("resource")
+#endif
+#if USE(QUICK_LOOK)
+        || url.protocolIs("x-apple-ql-id")
+#endif
+        || url.protocolIs("blob"))
+        return false;
+
+    return !LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
 }
 
 static bool isLoopbackIPAddress(StringView host)

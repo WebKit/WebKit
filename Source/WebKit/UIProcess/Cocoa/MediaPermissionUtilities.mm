@@ -31,7 +31,7 @@
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 #import <mutex>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
@@ -117,16 +117,16 @@ static NSString* visibleDomain(const String& host)
     return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
 }
 
-static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOrigin& origin)
+static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOriginData& origin)
 {
     NSString *visibleOrigin;
-    if (origin.protocol() != "http" && origin.protocol() != "https") {
+    if (origin.protocol != "http" && origin.protocol != "https") {
         NSBundle *appBundle = [NSBundle mainBundle];
         NSString *displayName = appBundle.infoDictionary[(__bridge NSString *)_kCFBundleDisplayNameKey];
         NSString *readableName = appBundle.infoDictionary[(__bridge NSString *)kCFBundleNameKey];
         visibleOrigin = displayName ?: readableName;
     } else
-        visibleOrigin = visibleDomain(origin.host());
+        visibleOrigin = visibleDomain(origin.host);
 
     switch (reason) {
     case MediaPermissionReason::UserMedia:
@@ -138,7 +138,7 @@ static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaP
             return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin];
         return nil;
     case MediaPermissionReason::SpeechRecognition:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host())];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host)];
     }
 }
 
@@ -162,7 +162,7 @@ static NSString *doNotAllowButtonText(MediaPermissionReason reason)
     }
 }
 
-void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto *webView = fromWebPageProxy(page);
     if (!webView) {

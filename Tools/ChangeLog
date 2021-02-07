@@ -1,3 +1,12 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2021-02-06  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Switch bot watchers dashboard to use new buildbot

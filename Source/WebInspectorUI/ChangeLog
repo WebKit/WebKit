@@ -1,3 +1,13 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+
 2021-02-05  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Implement backend support for maintaining a list of Grid layout contexts

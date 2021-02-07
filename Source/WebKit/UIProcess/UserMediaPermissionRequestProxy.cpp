@@ -160,7 +160,7 @@ void UserMediaPermissionRequestProxy::doDefaultAction()
         requestedTypes.add(MediaPermissionType::Audio);
     if (requiresVideoCapture())
         requestedTypes.add(MediaPermissionType::Video);
-    alertForPermission(m_manager->page(), MediaPermissionReason::UserMedia, requestedTypes, topLevelDocumentSecurityOrigin(), [this, protectedThis = makeRef(*this)](bool granted) {
+    alertForPermission(m_manager->page(), MediaPermissionReason::UserMedia, requestedTypes, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = makeRef(*this)](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else

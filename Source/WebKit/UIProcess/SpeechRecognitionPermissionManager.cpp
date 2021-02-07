@@ -240,7 +240,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission(WebCore::SpeechRe
     m_page.requestUserMediaPermissionForSpeechRecognition(recognitionRequest.frameIdentifier(), requestingOrigin, topOrigin, WTFMove(decisionHandler));
 }
 
-void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(COCOA)
     OptionSet<MediaPermissionType> type = MediaPermissionType::Audio;

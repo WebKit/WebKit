@@ -41,7 +41,7 @@ public:
     ~SpeechRecognitionPermissionManager();
     void request(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&);
 
-    void decideByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+    void decideByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
     WebPageProxy& page() { return m_page; }
 
 private:

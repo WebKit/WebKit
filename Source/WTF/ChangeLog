@@ -1,3 +1,12 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * wtf/URL.h:
+
 2021-02-04  David Kilzer  <ddkilzer@apple.com>
 
         WTF::dynamic_cf_cast<> should not assert in Debug builds

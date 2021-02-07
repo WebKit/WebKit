@@ -83,6 +83,9 @@ public:
     WEBCORE_EXPORT static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
     WEBCORE_EXPORT static Vector<String> allURLSchemesRegisteredAsCORSEnabled();
 
+    WEBCORE_EXPORT static void registerURLSchemeAsHandledBySchemeHandler(const String&);
+    WEBCORE_EXPORT static bool schemeIsHandledBySchemeHandler(StringView);
+
     // Allow resources from some schemes to load on a page, regardless of its
     // Content Security Policy.
     WEBCORE_EXPORT static void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme); // Thread safe.
