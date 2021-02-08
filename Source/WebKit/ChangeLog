@@ -1,5 +1,109 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272345. rdar://problem/74032500
+
+    [WebAuthn] Allow one user gesture free prompt for each navigation
+    https://bugs.webkit.org/show_bug.cgi?id=220897
+    <rdar://problem/73541303>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    * Modules/webauthn/AuthenticatorCoordinator.cpp:
+    (WebCore::AuthenticatorCoordinator::resetUserGestureRequirement):
+    * Modules/webauthn/AuthenticatorCoordinator.h:
+    * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+    * page/Quirks.cpp:
+    * page/Quirks.cpp.h:
+    * replay/UserInputBridge.cpp:
+    (WebCore::UserInputBridge::loadRequest):
+    (WebCore::UserInputBridge::reloadFrame):
+    Adds the ability to reset the user gesture requirement flag for user initiated reloads and quirks.
+    
+    Source/WebKit:
+    
+    This is a quirk that only allows certain websites.
+    
+    Covered by existing tests.
+    
+    * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+    (WebKit::AuthenticatorManager::filterTransports const):
+    (WebKit::AuthenticatorManager::runPanel):
+    (WebKit::AuthenticatorManager::runPresenter):
+    Cancel the whole WebAuthn operation if no user gesture is indicated.
+    
+    * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+    (WebKit::WebAuthenticatorCoordinator::makeCredential):
+    (WebKit::WebAuthenticatorCoordinator::getAssertion):
+    * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h:
+    Set a boolean to indicate a free coupon for each navigation.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    
+    * http/wpt/webauthn/ctap-hid-failure.https-expected.txt:
+    * http/wpt/webauthn/ctap-hid-success.https-expected.txt:
+    * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt:
+    * http/wpt/webauthn/idl.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272345 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Allow one user gesture free prompt for each navigation
+            https://bugs.webkit.org/show_bug.cgi?id=220897
+            <rdar://problem/73541303>
+
+            Reviewed by Brent Fulgham.
+
+            This is a quirk that only allows certain websites.
+
+            Covered by existing tests.
+
+            * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+            (WebKit::AuthenticatorManager::filterTransports const):
+            (WebKit::AuthenticatorManager::runPanel):
+            (WebKit::AuthenticatorManager::runPresenter):
+            Cancel the whole WebAuthn operation if no user gesture is indicated.
+
+            * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+            (WebKit::WebAuthenticatorCoordinator::makeCredential):
+            (WebKit::WebAuthenticatorCoordinator::getAssertion):
+            * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h:
+            Set a boolean to indicate a free coupon for each navigation.
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272184. rdar://problem/74032500
 
     [WebAuthn] Optimize _WKWebAuthenticationPanelDelegate for native API

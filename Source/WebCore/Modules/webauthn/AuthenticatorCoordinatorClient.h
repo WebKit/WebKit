@@ -55,6 +55,8 @@ public:
     virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
     virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) { };
+
+    virtual void resetUserGestureRequirement() { }
 };
 
 } // namespace WebCore
