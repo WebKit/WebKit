@@ -48,7 +48,7 @@ struct NowPlayingInfo {
 
 template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
 {
-    encoder << title << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility;
+    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility;
 }
 
 template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
