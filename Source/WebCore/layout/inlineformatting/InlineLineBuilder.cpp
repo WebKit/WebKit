@@ -392,7 +392,6 @@ Optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineRect& 
     auto lineLogicalLeft = lineLogicalRect.left();
     auto lineLogicalRight = lineLogicalRect.right();
     if (constraints.left && constraints.right) {
-        ASSERT(constraints.left->x <= constraints.right->x);
         lineLogicalRight = constraints.right->x;
         lineLogicalLeft = constraints.left->x;
     } else if (constraints.left) {
