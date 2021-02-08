@@ -62,13 +62,6 @@ public:
 
     void scheduleStartAnimation();
 
-#if USE(CAIRO)
-    RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
-#endif
-#if USE(DIRECT2D)
-    RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) final;
-#endif
-    
     Page* internalPage() { return m_page.get(); }
 
 private:
@@ -92,6 +85,9 @@ private:
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
+
+    RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
+    RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) final;
 
     void startAnimationTimerFired();
 
