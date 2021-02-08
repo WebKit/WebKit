@@ -1,3 +1,43 @@
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r271571. rdar://problem/74105245
+
+    [JSC] FTL OSR entry FlushFormat array is reversed
+    https://bugs.webkit.org/show_bug.cgi?id=220695
+    <rdar://problem/72930932>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/ftl-osr-entry-order-reverse.js: Added.
+    (shouldThrow):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    After r268783, FlushFormat array is erroneously sorted in reversed order.
+    This patch fixes that.
+    
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::lower):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271571 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] FTL OSR entry FlushFormat array is reversed
+            https://bugs.webkit.org/show_bug.cgi?id=220695
+            <rdar://problem/72930932>
+
+            Reviewed by Mark Lam.
+
+            After r268783, FlushFormat array is erroneously sorted in reversed order.
+            This patch fixes that.
+
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::lower):
+
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271813. rdar://problem/73888012
