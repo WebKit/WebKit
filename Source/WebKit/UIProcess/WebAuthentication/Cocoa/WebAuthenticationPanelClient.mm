@@ -50,6 +50,7 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
     m_delegateMethods.panelSelectAssertionResponseSourceCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:source:completionHandler:)];
     m_delegateMethods.panelDecidePolicyForLocalAuthenticatorCompletionHandler = [delegate respondsToSelector:@selector(panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:)];
+    m_delegateMethods.panelRequestLAContextForUserVerificationCompletionHandler = [delegate respondsToSelector:@selector(panel:requestLAContextForUserVerificationWithCompletionHandler:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
@@ -214,6 +215,28 @@ void WebAuthenticationPanelClient::decidePolicyForLocalAuthenticator(CompletionH
             return;
         checker->didCallCompletionHandler();
         completionHandler(localAuthenticatorPolicy(policy));
+    }).get()];
+}
+
+void WebAuthenticationPanelClient::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler) const
+{
+    if (!m_delegateMethods.panelRequestLAContextForUserVerificationCompletionHandler) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    auto delegate = m_delegate.get();
+    if (!delegate) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:requestLAContextForUserVerificationWithCompletionHandler:));
+    [delegate panel:m_panel requestLAContextForUserVerificationWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](LAContext *context) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(context);
     }).get()];
 }
 

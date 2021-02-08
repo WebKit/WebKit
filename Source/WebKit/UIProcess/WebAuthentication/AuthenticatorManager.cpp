@@ -165,10 +165,9 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     // 2. Ask clients to show appropriate UI if any and then start the request.
     initTimeOutTimer();
 
-    // FIXME<rdar://problem/70822834>: The m_webAuthenticationModernEnabled is used to determine
-    // whether or not we are in the UIProcess.
+    // FIXME<rdar://problem/70822834>: The m_mode is used to determine whether or not we are in the UIProcess.
     // If so, continue to the old route. Otherwise, use the modern WebAuthn process way.
-    if (!m_webAuthenticationModernEnabled) {
+    if (m_mode == Mode::Compatible) {
         runPanel();
         return;
     }
@@ -209,7 +208,12 @@ void AuthenticatorManager::cancel()
 
 void AuthenticatorManager::enableModernWebAuthentication()
 {
-    m_webAuthenticationModernEnabled = true;
+    m_mode = Mode::Modern;
+}
+
+void AuthenticatorManager::enableNativeSupport()
+{
+    m_mode = Mode::Native;
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -236,7 +240,7 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT(RunLoop::isMain());
     authenticator->setObserver(*this);
     authenticator->handleRequest(m_pendingRequestData);
-    authenticator->setWebAuthenticationModernEnabled(m_webAuthenticationModernEnabled);
+    authenticator->setWebAuthenticationModernEnabled(m_mode != Mode::Compatible);
     auto addResult = m_authenticators.add(WTFMove(authenticator));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -354,12 +358,14 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
 
 void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
-    if (!m_presenter) {
-        completionHandler(nullptr);
+    if (m_presenter) {
+        m_presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
         return;
     }
 
-    m_presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
+    dispatchPanelClientCall([completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().requestLAContextForUserVerification(WTFMove(completionHandler));
+    });
 }
 
 void AuthenticatorManager::cancelRequest()
@@ -444,10 +450,14 @@ void AuthenticatorManager::runPanel()
 void AuthenticatorManager::runPresenter()
 {
     // Get available transports and start discovering authenticators on them.
-    auto& options = m_pendingRequestData.options;
     auto transports = getTransports();
     startDiscovery(transports);
 
+    // For native API support, we skip the UI part. The native API will handle that.
+    if (m_mode == Mode::Native)
+        return;
+
+    auto& options = m_pendingRequestData.options;
     m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options));
 }
 
@@ -488,15 +498,19 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
 
 void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&& call) const
 {
-    if (auto* panel = m_pendingRequestData.panel.get()) {
-        // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
-        // of the current run loop in unexpected ways.
-        RunLoop::main().dispatch([weakPanel = makeWeakPtr(*panel), call = WTFMove(call)] () {
-            if (!weakPanel)
-                return;
-            call(*weakPanel);
-        });
-    }
+    auto weakPanel = m_pendingRequestData.weakPanel;
+    if (!weakPanel)
+        weakPanel = makeWeakPtr(*m_pendingRequestData.panel.get());
+    if (!weakPanel)
+        return;
+
+    // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
+    // of the current run loop in unexpected ways.
+    RunLoop::main().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
+        if (!weakPanel)
+            return;
+        call(*weakPanel);
+    });
 }
 
 } // namespace WebKit

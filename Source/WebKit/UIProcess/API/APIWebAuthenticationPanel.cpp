@@ -30,6 +30,7 @@
 
 #include "APIWebAuthenticationPanelClient.h"
 #include "AuthenticatorManager.h"
+#include "MockAuthenticatorManager.h"
 #include <WebCore/WebAuthenticationConstants.h>
 
 namespace API {
@@ -45,6 +46,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     : m_manager(makeUnique<AuthenticatorManager>())
     , m_client(makeUniqueRef<WebAuthenticationPanelClient>())
 {
+    m_manager->enableNativeSupport();
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type)
@@ -68,13 +70,30 @@ WebAuthenticationPanel::~WebAuthenticationPanel() = default;
 void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& request, Callback&& callback)
 {
     ASSERT(m_manager);
+    request.weakPanel = makeWeakPtr(*this);
     m_manager->handleRequest(WTFMove(request), WTFMove(callback));
 }
 
 void WebAuthenticationPanel::cancel() const
 {
-    if (m_weakManager)
+    if (m_weakManager) {
         m_weakManager->cancelRequest(*this);
+        return;
+    }
+
+    m_manager->cancel();
+}
+
+void WebAuthenticationPanel::setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
+{
+    ASSERT(m_manager);
+
+    if (!m_manager->isMock()) {
+        m_manager = makeUnique<MockAuthenticatorManager>(WTFMove(configuration));
+        m_manager->enableNativeSupport();
+        return;
+    }
+    static_cast<MockAuthenticatorManager*>(m_manager.get())->setTestConfiguration(WTFMove(configuration));
 }
 
 void WebAuthenticationPanel::setClient(UniqueRef<WebAuthenticationPanelClient>&& client)
