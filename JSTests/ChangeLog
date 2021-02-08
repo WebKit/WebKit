@@ -1,5 +1,66 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r271731. rdar://problem/74105559
+
+    [JSC] JSPromise should not propagate TerminatedExecutionError
+    https://bugs.webkit.org/show_bug.cgi?id=220820
+    <rdar://problem/72929399>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/terminated-execution-error-in-promise.js: Added.
+    (let.x.get toString):
+    (import.x.then):
+    
+    Source/JavaScriptCore:
+    
+    TerminatedExecutionError is uncatcheable exception to finish JS execution as soon as possible.
+    We should not propagate TerminatedExecutionError in JSPromise's rejection.
+    In this patch, we do not reject promise if exception is TerminatedExecutionError.
+    
+    * API/JSAPIGlobalObject.mm:
+    (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+    (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+    * API/JSContext.mm:
+    (-[JSContext evaluateJSScript:]):
+    * jsc.cpp:
+    (GlobalObject::moduleLoaderImportModule):
+    (GlobalObject::moduleLoaderFetch):
+    (runWithOptions):
+    * runtime/Completion.cpp:
+    (JSC::rejectPromise):
+    (JSC::loadAndEvaluateModule):
+    (JSC::loadModule):
+    * runtime/JSGlobalObjectFunctions.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/JSModuleLoader.cpp:
+    (JSC::reject):
+    (JSC::JSModuleLoader::importModule):
+    (JSC::JSModuleLoader::resolve):
+    (JSC::JSModuleLoader::fetch):
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * wasm/js/JSWebAssembly.cpp:
+    (JSC::reject):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271731 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] JSPromise should not propagate TerminatedExecutionError
+            https://bugs.webkit.org/show_bug.cgi?id=220820
+            <rdar://problem/72929399>
+
+            Reviewed by Mark Lam.
+
+            * stress/terminated-execution-error-in-promise.js: Added.
+            (let.x.get toString):
+            (import.x.then):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271596. rdar://problem/74105183
 
     [JSC] FTL::prepareOSREntry can clear OSR entry CodeBlock if it is already invalidated

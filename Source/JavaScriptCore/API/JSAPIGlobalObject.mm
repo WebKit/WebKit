@@ -135,34 +135,37 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto reject = [&] (JSValue error) -> JSInternalPromise* {
-        scope.clearException();
+    auto reject = [&] (Exception* exception) -> JSInternalPromise* {
         auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+        if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
+            return promise;
+        JSValue error = exception->value();
+        scope.clearException();
         // FIXME: We could have error since any JS call can throw stack-overflow errors.
         // https://bugs.webkit.org/show_bug.cgi?id=203402
         promise->reject(globalObject, error);
-        scope.clearException();
         return promise;
     };
 
     auto import = [&] (URL& url) {
         auto result = importModule(globalObject, Identifier::fromString(vm, url.string()), jsUndefined(), jsUndefined());
         if (UNLIKELY(scope.exception()))
-            return reject(scope.exception()->value());
+            return reject(scope.exception());
         return result;
     };
 
     auto specifier = specifierValue->value(globalObject);
-    if (UNLIKELY(scope.exception())) {
-        Exception* exception = scope.exception();
-        scope.clearException();
-        return reject(exception->value());
-    }
+    if (UNLIKELY(scope.exception()))
+        return reject(scope.exception());
 
     auto result = computeValidImportSpecifier(sourceOrigin.url(), specifier);
     if (result)
         return import(result.value());
-    return reject(createError(globalObject, result.error()));
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    promise->reject(globalObject, createError(globalObject, result.error()));
+    return promise;
 }
 
 JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
@@ -178,9 +181,10 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
     Identifier moduleKey = key.toPropertyKey(globalObject);
     if (UNLIKELY(scope.exception())) {
         Exception* exception = scope.exception();
+        if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
+            return promise;
         scope.clearException();
         promise->reject(globalObject, exception->value());
-        scope.clearException();
         return promise;
     }
 
