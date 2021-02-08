@@ -1,5 +1,39 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272188. rdar://problem/74032553
+
+    [Cocoa] Disable interstitial events on AVPlayerItem.
+    https://bugs.webkit.org/show_bug.cgi?id=221215
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-01  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Disable interstitial events on AVPlayerItem.
+            https://bugs.webkit.org/show_bug.cgi?id=221215
+
+            Reviewed by Eric Carlson.
+
+            * wtf/PlatformHave.h:
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271633. rdar://problem/74105761
 
     [WTF] StringImpl::removeCharacters should be inlined
