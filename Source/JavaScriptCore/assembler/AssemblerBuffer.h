@@ -53,26 +53,47 @@ namespace JSC {
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AssemblerData);
 
     struct AssemblerLabel {
-        AssemblerLabel()
-            : m_offset(std::numeric_limits<uint32_t>::max())
+        inline AssemblerLabel() { setOffset(std::numeric_limits<uint32_t>::max()); }
+        inline AssemblerLabel(const AssemblerLabel& other) { setOffset(other.offset()); }
+        inline AssemblerLabel(AssemblerLabel&& other) { setOffset(other.offset()); }
+        inline explicit AssemblerLabel(uint32_t offset) { setOffset(offset); }
+
+        AssemblerLabel& operator=(const AssemblerLabel& other) { setOffset(other.offset()); return *this; }
+        AssemblerLabel& operator=(AssemblerLabel&& other) { setOffset(other.offset()); return *this; }
+
+        bool isSet() const { return (offset() != std::numeric_limits<uint32_t>::max()); }
+
+        inline AssemblerLabel labelAtOffset(int offset) const
         {
+            return AssemblerLabel(this->offset() + offset);
         }
 
-        explicit AssemblerLabel(uint32_t offset)
-            : m_offset(offset)
+        bool operator==(const AssemblerLabel& other) const { return offset() == other.offset(); }
+
+        inline uint32_t offset() const
         {
+#if CPU(ARM64E)
+            return static_cast<uint32_t>(untagInt(m_offset, bitwise_cast<PtrTag>(this)));
+#else
+            return m_offset;
+#endif
         }
 
-        bool isSet() const { return (m_offset != std::numeric_limits<uint32_t>::max()); }
-
-        AssemblerLabel labelAtOffset(int offset) const
+    private:
+        inline void setOffset(uint32_t offset)
         {
-            return AssemblerLabel(m_offset + offset);
+#if CPU(ARM64E)
+            m_offset = tagInt(static_cast<uint64_t>(offset), bitwise_cast<PtrTag>(this));
+#else
+            m_offset = offset;
+#endif
         }
 
-        bool operator==(const AssemblerLabel& other) const { return m_offset == other.m_offset; }
-
+#if CPU(ARM64E)
+        uint64_t m_offset;
+#else
         uint32_t m_offset;
+#endif
     };
 
     class AssemblerData {
