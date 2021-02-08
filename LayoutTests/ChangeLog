@@ -1,3 +1,19 @@
+2021-02-08  Rob Buis  <rbuis@igalia.com>
+
+        Null check document element in createGradient
+        https://bugs.webkit.org/show_bug.cgi?id=221378
+
+        Reviewed by Alex Christensen.
+
+        Add tests for this.
+
+        * fast/css/conic-gradient-no-document-element-crash-expected.txt: Added.
+        * fast/css/conic-gradient-no-document-element-crash.html: Added.
+        * fast/css/linear-gradient-no-document-element-crash-expected.txt: Added.
+        * fast/css/linear-gradient-no-document-element-crash.html: Added.
+        * fast/css/radial-gradient-no-document-element-crash-expected.txt: Added.
+        * fast/css/radial-gradient-no-document-element-crash.html: Added.
+
 2021-02-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Return key binding for date inputs conflicts with return to submit form
