@@ -1,5 +1,76 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272201. rdar://problem/74105623
+
+    Animation of "rotate" or "scale" property does not correctly account for static "translate" property
+    https://bugs.webkit.org/show_bug.cgi?id=219894
+    <rdar://problem/72342798>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    The CSS transform-related properties are designed to be applied in a specific order, guaranteeing that
+    "translate" is applied prior to both "scale" and "rotate". Since Core Animation has no concept of these
+    individual transform-related CSS properties, we use additive Core Animation animations to apply the value
+    of each CSS property, using non-interpolating animations set to start at the earliest time in the Core
+    Animation timeline and lasting forever to set the value of any underlying, non-animated value.
+    
+    As such, in an example where an element would have a static "translate" property set as well as a "rotate"
+    or "scale" animation, we would yield the following animations, added in this order:
+    
+        1. non-interpolating animation beginning at 1s setting the identity transform (the "clean slate" animation)
+        2. interpolating animation beginning at a time > 1s for the "scale" or "rotate" animation
+        3. non-interpolating animation beginning at 1s setting the "translate" value
+    
+    Note that animations 2 and 3 are additive and thus added in the inverse order that we expect animations to be
+    applied. Due to a peculiarity of Core Animation (introduced in macOS 10.15), additive animations are applied
+    in an inverse order, hence the build-time flag CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED.
+    
+    However, Core Animation will first sort all animations based on their begin time, only respecting the order
+    in which animations are added when their begin time is equal. This means that in practice, our animations were
+    applied in the order 1, 3, 2, and thus the "translate" property was applied after the "rotate" or "scale" animation.
+    
+    In order to address this, we now create a CAAnimationGroup for each set of animations created for a given CSS
+    property. Each of these groups shares the same begin time, 1s, to allow for "forever" non-interpolating animations
+    to be applied, but also to set a common base time for animations to be applied in the expected order.
+    
+    Tests: webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html
+           webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html
+    
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::updateAnimations):
+    * platform/graphics/ca/GraphicsLayerCA.h:
+    (WebCore::GraphicsLayerCA::LayerPropertyAnimation::computedBeginTime const):
+    
+    LayoutTests:
+    
+    Add two new tests that ensure that translate is indeed applied before rotate and scale.
+    
+    * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated-expected.html: Added.
+    * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html: Added.
+    * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated-expected.html: Added.
+    * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272201 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-01  Antoine Quint  <graouts@webkit.org>
+
+            Animation of "rotate" or "scale" property does not correctly account for static "translate" property
+            https://bugs.webkit.org/show_bug.cgi?id=219894
+            <rdar://problem/72342798>
+
+            Reviewed by Dean Jackson.
+
+            Add two new tests that ensure that translate is indeed applied before rotate and scale.
+
+            * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated-expected.html: Added.
+            * webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html: Added.
+            * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated-expected.html: Added.
+            * webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html: Added.
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272166. rdar://problem/74032437
 
     ReadableStream C++ methods should check for exception

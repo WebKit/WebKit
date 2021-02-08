@@ -467,7 +467,7 @@ private:
         Optional<Seconds> computedBeginTime() const
         {
             if (m_beginTime)
-                return m_beginTime - m_timeOffset;
+                return *m_beginTime - m_timeOffset;
             return WTF::nullopt;
         }
 
@@ -477,7 +477,7 @@ private:
         int m_index;
         int m_subIndex;
         Seconds m_timeOffset { 0_s };
-        Seconds m_beginTime { 0_s };
+        Optional<Seconds> m_beginTime;
         PlayState m_playState { PlayState::PlayPending };
         bool m_pendingRemoval { false };
     };
@@ -606,6 +606,7 @@ private:
     
     Vector<LayerPropertyAnimation> m_animations;
     Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;
+    Vector<LayerPropertyAnimation> m_animationGroups;
 
     Vector<FloatRect> m_dirtyRects;
 
