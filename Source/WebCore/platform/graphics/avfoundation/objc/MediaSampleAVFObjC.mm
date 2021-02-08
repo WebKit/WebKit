@@ -120,6 +120,11 @@ static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDic
     return !CFDictionaryContainsKey(attachmentDict, kCMSampleAttachmentKey_NotSync);
 }
 
+static bool doesCMSampleBufferHaveSyncInfo(CMSampleBufferRef sample)
+{
+    return CMSampleBufferGetSampleAttachmentsArray(sample, false);
+}
+
 static bool isCMSampleBufferRandomAccess(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
@@ -155,6 +160,9 @@ static bool isCMSampleBufferNonDisplaying(CMSampleBufferRef sample)
 MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 {
     int returnValue = MediaSample::None;
+
+    if (doesCMSampleBufferHaveSyncInfo(m_sample.get()))
+        returnValue |= MediaSample::HasSyncInfo;
 
     if (isCMSampleBufferRandomAccess(m_sample.get()))
         returnValue |= MediaSample::IsSync;

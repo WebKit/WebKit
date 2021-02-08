@@ -1,5 +1,73 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272353. rdar://problem/74105476
+
+    [Cocoa] WebM audio goes out-of-sync or stops playing after a seek
+    https://bugs.webkit.org/show_bug.cgi?id=221354
+    <rdar://73471690>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add a new flag to MediaSample indicating whether the sample has any information about whether
+    it is an sync-sample or not, and expose that through a new method hasSyncInfo().
+    
+    Drive-by Fix: Force all video samples to contain a sample attachments dictionary, whether or
+    not the sample is sync.
+    
+    Drive-by Fix #2: SampleMap does an equality comparison for `flags() == MediaSample::IsSync`.
+    This breaks as soon as any sample has both `IsSync` and any other flag. Replace with a specific
+    call to `isSync()` instead.
+    
+    * platform/MediaSample.h:
+    * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+    (WebCore::doesCMSampleBufferHaveSyncInfo):
+    (WebCore::MediaSampleAVFObjC::flags const):
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::VideoTrackData::createSampleBuffer):
+    
+    Source/WebKit:
+    
+    The MTPluginFormatReader will attempt to determine whether an audio sample needs priming frames
+    by querying for, among other things, its "syncInfo". Previously, we had just presumed all samples
+    without a sample attachment dictionary were sync samples, and reported them as such from
+    MediaSampleCursor, but this causes the format reader plugin to walk backwards all the way to the
+    beginning of the audio track looking for priming samples. Instead, since the sample in question
+    has no sync info (it was synthesized by MediaSample), return kCMBaseObjectError_ValueNotAvailable
+    in this case, which causes the plugin format reader to assume all samples are both sync and do
+    not require explicit priming frames.
+    
+    * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+    (WebKit::MediaSampleCursor::getSampleTiming const):
+    (WebKit::MediaSampleCursor::getSyncInfo const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272353 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-03  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] WebM audio goes out-of-sync or stops playing after a seek
+            https://bugs.webkit.org/show_bug.cgi?id=221354
+            <rdar://73471690>
+
+            Reviewed by Eric Carlson.
+
+            The MTPluginFormatReader will attempt to determine whether an audio sample needs priming frames
+            by querying for, among other things, its "syncInfo". Previously, we had just presumed all samples
+            without a sample attachment dictionary were sync samples, and reported them as such from
+            MediaSampleCursor, but this causes the format reader plugin to walk backwards all the way to the
+            beginning of the audio track looking for priming samples. Instead, since the sample in question
+            has no sync info (it was synthesized by MediaSample), return kCMBaseObjectError_ValueNotAvailable
+            in this case, which causes the plugin format reader to assume all samples are both sync and do
+            not require explicit priming frames.
+
+            * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+            (WebKit::MediaSampleCursor::getSampleTiming const):
+            (WebKit::MediaSampleCursor::getSyncInfo const):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272346. rdar://problem/74105218
 
     PCM: earliestTimeToSend should be treated as an independent time value, not relative to timeOfAdClick
