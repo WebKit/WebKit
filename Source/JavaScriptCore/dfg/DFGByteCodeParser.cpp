@@ -539,6 +539,9 @@ private:
         if (argument || m_graph.needsFlushedThis()) {
             if (setMode != ImmediateNakedSet)
                 flushDirect(reg);
+        } else if (!argument) {
+            if (setMode != ImmediateNakedSet)
+                phantomLocalDirect(reg);
         }
         
         if (!argument && m_codeBlock->specializationKind() == CodeForConstruct)
