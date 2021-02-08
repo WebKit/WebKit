@@ -146,6 +146,7 @@ UIProcess/API/glib/WebKitInjectedBundleClient.cpp @no-unify
 UIProcess/API/glib/WebKitInputMethodContext.cpp @no-unify
 UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitJavascriptResult.cpp @no-unify
+UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitMimeInfo.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationAction.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationClient.cpp @no-unify

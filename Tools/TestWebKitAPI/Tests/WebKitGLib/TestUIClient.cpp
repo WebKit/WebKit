@@ -896,6 +896,43 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 }
 
+#if ENABLE(ENCRYPTED_MEDIA)
+static void testWebViewMediaKeySystemPermissionRequests(UIClientTest* test, gconstpointer)
+{
+    webkit_settings_set_enable_encrypted_media(webkit_web_view_get_settings(test->m_webView), TRUE);
+    test->showInWindow();
+    static const char* mediaKeySystemRequestHTML = "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "    const options = ["
+        "     { initDataTypes: [\"cenc\"],"
+        "       videoCapabilities: [{contentType : 'video/mp4'}] }"
+        "    ];"
+        "    navigator.requestMediaKeySystemAccess('org.w3.clearkey', options).then((access) => {"
+        "      window.webkit.messageHandlers.permission.postMessage('OK');"
+        "    }).catch((e) => {"
+        "      window.webkit.messageHandlers.permission.postMessage(e.name);"
+        "    });"
+        "  }"
+        "  </script>"
+        "  <body onload='runTest();'></body>"
+        "</html>";
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(mediaKeySystemRequestHTML, "https://foo.com/bar");
+    const gchar* result = test->waitUntilPermissionResultMessageReceived();
+    g_assert_cmpstr(result, ==, "NotSupportedError");
+
+    // Test allowing a permission request.
+    test->m_allowPermissionRequests = true;
+    test->loadHtml(mediaKeySystemRequestHTML, "https://foo.com/bar");
+    result = test->waitUntilPermissionResultMessageReceived();
+    g_assert_cmpstr(result, ==, "OK");
+}
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* test, gconstpointer)
 {
@@ -1299,6 +1336,9 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
 #endif
     UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
+#if ENABLE(ENCRYPTED_MEDIA)
+    UIClientTest::add("WebKitWebView", "mediaKeySystem-permission-requests", testWebViewMediaKeySystemPermissionRequests);
+#endif
 #if ENABLE(MEDIA_STREAM)
     UIClientTest::add("WebKitWebView", "usermedia-enumeratedevices-permission-check", testWebViewUserMediaEnumerateDevicesPermissionCheck);
     UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
