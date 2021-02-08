@@ -1,3 +1,50 @@
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r271633. rdar://problem/74105761
+
+    [WTF] StringImpl::removeCharacters should be inlined
+    https://bugs.webkit.org/show_bug.cgi?id=220742
+    
+    Reviewed by Saam Barati.
+    
+    removeCharacters is used in WebCore's HTMLInputElement's critical path. And since String relatively has many elements (characters),
+    non-inlined StringImpl::removeCharacters causes significant number of indirect function calls of `findMatch` argument since it is
+    passed function pointer. We should make them templatized function to allow inlining of `findMatch` function to avoid repeated indirect calls.
+    
+    * wtf/text/StringImpl.cpp:
+    (WTF::StringImpl::removeCharacters): Deleted.
+    * wtf/text/StringImpl.h:
+    (WTF::StringImpl::removeCharactersImpl):
+    (WTF::StringImpl::removeCharacters):
+    * wtf/text/WTFString.cpp:
+    (WTF::String::removeCharacters const): Deleted.
+    * wtf/text/WTFString.h:
+    (WTF::String::removeCharacters const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271633 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [WTF] StringImpl::removeCharacters should be inlined
+            https://bugs.webkit.org/show_bug.cgi?id=220742
+
+            Reviewed by Saam Barati.
+
+            removeCharacters is used in WebCore's HTMLInputElement's critical path. And since String relatively has many elements (characters),
+            non-inlined StringImpl::removeCharacters causes significant number of indirect function calls of `findMatch` argument since it is
+            passed function pointer. We should make them templatized function to allow inlining of `findMatch` function to avoid repeated indirect calls.
+
+            * wtf/text/StringImpl.cpp:
+            (WTF::StringImpl::removeCharacters): Deleted.
+            * wtf/text/StringImpl.h:
+            (WTF::StringImpl::removeCharactersImpl):
+            (WTF::StringImpl::removeCharacters):
+            * wtf/text/WTFString.cpp:
+            (WTF::String::removeCharacters const): Deleted.
+            * wtf/text/WTFString.h:
+            (WTF::String::removeCharacters const):
+
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r272073. rdar://problem/73847891

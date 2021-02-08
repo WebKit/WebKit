@@ -260,7 +260,7 @@ public:
     WTF_EXPORT_PRIVATE String simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
     WTF_EXPORT_PRIVATE String stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
-    WTF_EXPORT_PRIVATE String removeCharacters(CodeUnitMatchFunction) const;
+    template<typename Predicate> String removeCharacters(const Predicate&) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
@@ -633,6 +633,12 @@ inline String String::fromUTF8(const Vector<LChar>& characters)
     if (characters.isEmpty())
         return emptyString();
     return fromUTF8(characters.data(), characters.size());
+}
+
+template<typename Predicate>
+String String::removeCharacters(const Predicate& findMatch) const
+{
+    return m_impl ? m_impl->removeCharacters(findMatch) : String { };
 }
 
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])

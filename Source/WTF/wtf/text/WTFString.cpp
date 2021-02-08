@@ -399,12 +399,6 @@ String String::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace) const
     return m_impl ? m_impl->simplifyWhiteSpace(isWhiteSpace) : String { };
 }
 
-String String::removeCharacters(CodeUnitMatchFunction findMatch) const
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    return m_impl ? m_impl->removeCharacters(findMatch) : String { };
-}
-
 String String::foldCase() const
 {
     // FIXME: Should this function, and the many others like it, be inlined?

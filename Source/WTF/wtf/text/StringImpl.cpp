@@ -761,43 +761,6 @@ Ref<StringImpl> StringImpl::stripLeadingAndTrailingCharacters(CodeUnitMatchFunct
     return stripMatchedCharacters(predicate);
 }
 
-template<typename CharacterType> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharacters(const CharacterType* characters, CodeUnitMatchFunction findMatch)
-{
-    auto* from = characters;
-    auto* fromEnd = from + m_length;
-
-    // Assume the common case will not remove any characters
-    while (from != fromEnd && !findMatch(*from))
-        ++from;
-    if (from == fromEnd)
-        return *this;
-
-    StringBuffer<CharacterType> data(m_length);
-    auto* to = data.characters();
-    unsigned outc = from - characters;
-
-    if (outc)
-        copyCharacters(to, characters, outc);
-
-    do {
-        while (from != fromEnd && findMatch(*from))
-            ++from;
-        while (from != fromEnd && !findMatch(*from))
-            to[outc++] = *from++;
-    } while (from != fromEnd);
-
-    data.shrink(outc);
-
-    return adopt(WTFMove(data));
-}
-
-Ref<StringImpl> StringImpl::removeCharacters(CodeUnitMatchFunction findMatch)
-{
-    if (is8Bit())
-        return removeCharacters(characters8(), findMatch);
-    return removeCharacters(characters16(), findMatch);
-}
-
 template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
 {
     StringBuffer<CharacterType> data(m_length);
