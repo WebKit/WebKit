@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 ImageInputType::ImageInputType(HTMLInputElement& element)
-    : BaseButtonInputType(element)
+    : BaseButtonInputType(Type::Image, element)
 {
 }
 

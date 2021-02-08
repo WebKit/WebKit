@@ -70,8 +70,32 @@ enum class DateComponentsType : uint8_t;
 // other than HTMLInputElement.
 class InputType : public RefCounted<InputType> {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
+    enum class Type : uint8_t {
+        Button,
+        Checkbox,
+        Color,
+        Date,
+        DateTimeLocal,
+        Email,
+        File,
+        Hidden,
+        Image,
+        Month,
+        Number,
+        Password,
+        Radio,
+        Range,
+        Reset,
+        Search,
+        Submit,
+        Telephone,
+        Time,
+        URL,
+        Week,
+        Text,
+    };
+
     static Ref<InputType> create(HTMLInputElement&, const AtomString&);
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
@@ -217,7 +241,7 @@ public:
 
     // Shadow tree handling.
 
-    virtual void createShadowSubtree();
+    virtual void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool);
     virtual void destroyShadowSubtree();
 
     virtual HTMLElement* containerElement() const { return nullptr; }
@@ -254,7 +278,6 @@ public:
     virtual bool shouldRespectListAttribute();
     virtual bool isEnumeratable();
     virtual bool isCheckable();
-    virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual bool supportsPlaceholder() const;
     virtual bool supportsReadOnly() const;
@@ -275,6 +298,8 @@ public:
     virtual void selectColor(StringView);
     virtual Vector<Color> suggestedColors() const;
 
+    bool isSteppable() const;
+
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing
     // succeeds; Returns defaultValue otherwise. This function can
@@ -290,6 +315,8 @@ public:
     // element is image. It returns 0 if the element is not image type.
     virtual unsigned height() const;
     virtual unsigned width() const;
+
+    bool isInvalid(const String&) const;
 
     void dispatchSimulatedClickIfActive(KeyboardEvent&) const;
 
@@ -307,19 +334,29 @@ public:
     virtual String displayString() const;
 
 protected:
-    explicit InputType(HTMLInputElement& element)
-        : m_element(makeWeakPtr(element)) { }
+    explicit InputType(Type type, HTMLInputElement& element)
+        : m_type(type)
+        , m_element(makeWeakPtr(element)) { }
     HTMLInputElement* element() const { return m_element.get(); }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
+    virtual bool isSteppableSlow() const { return false; }
 
 private:
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
     ExceptionOr<void> applyStep(int count, AnyStepHandling, TextFieldEventBehavior);
 
+    const Type m_type;
     // m_element is null if this InputType is no longer associated with an element (either the element died or changed input type).
     WeakPtr<HTMLInputElement> m_element;
 };
+
+template<typename DowncastedType>
+ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const String& value)
+{
+    auto& inputType = static_cast<const DowncastedType&>(baseInputType);
+    return inputType.typeMismatch() || inputType.stepMismatch(value) || inputType.rangeUnderflow(value) || inputType.rangeOverflow(value) || inputType.patternMismatch(value) || inputType.valueMissing(value) || inputType.hasBadInput();
+}
 
 } // namespace WebCore
 

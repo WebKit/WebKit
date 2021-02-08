@@ -35,8 +35,9 @@
 namespace WebCore {
 
 class HiddenInputType final : public InputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit HiddenInputType(HTMLInputElement& element) : InputType(element) { }
+    explicit HiddenInputType(HTMLInputElement& element) : InputType(Type::Hidden, element) { }
 
 private:
     const AtomString& formControlType() const override;

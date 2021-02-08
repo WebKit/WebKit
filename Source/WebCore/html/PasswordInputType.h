@@ -35,8 +35,9 @@
 namespace WebCore {
 
 class PasswordInputType final : public BaseTextInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit PasswordInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
+    explicit PasswordInputType(HTMLInputElement& element) : BaseTextInputType(Type::Password, element) { }
 
 private:
     const AtomString& formControlType() const override;

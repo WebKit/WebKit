@@ -80,7 +80,7 @@ static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimu
 }
 
 RangeInputType::RangeInputType(HTMLInputElement& element)
-    : InputType(element)
+    : InputType(Type::Range, element)
 {
 }
 
@@ -133,7 +133,7 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
 }
 
-bool RangeInputType::isSteppable() const
+bool RangeInputType::isSteppableSlow() const
 {
     return true;
 }
@@ -252,7 +252,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     return ShouldCallBaseEventHandler::Yes;
 }
 
-void RangeInputType::createShadowSubtree()
+void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
 {
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());

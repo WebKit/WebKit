@@ -158,8 +158,7 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot&)
 {
     Ref<InputType> protectedInputType(*m_inputType);
-    protectedInputType->createShadowSubtree();
-    updateInnerTextElementEditability();
+    protectedInputType->createShadowSubtreeAndUpdateInnerTextElementEditability(m_parsingInProgress ? ChildChange::Source::Parser : ChildChange::Source::API, isInnerTextElementEditable());
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -390,9 +389,7 @@ bool HTMLInputElement::isValid() const
         return true;
 
     String value = this->value();
-    bool someError = m_inputType->typeMismatch() || m_inputType->stepMismatch(value) || m_inputType->rangeUnderflow(value) || m_inputType->rangeOverflow(value)
-        || tooShort(value, CheckDirtyFlag) || tooLong(value, CheckDirtyFlag) || m_inputType->patternMismatch(value) || m_inputType->valueMissing(value)
-        || m_inputType->hasBadInput() || customError();
+    bool someError = m_inputType->isInvalid(value) || tooShort(value, CheckDirtyFlag) || tooLong(value, CheckDirtyFlag) || customError();
     return !someError;
 }
 
@@ -564,8 +561,7 @@ void HTMLInputElement::updateType()
     m_inputType->detachFromElement();
 
     m_inputType = WTFMove(newType);
-    m_inputType->createShadowSubtree();
-    updateInnerTextElementEditability();
+    m_inputType->createShadowSubtreeAndUpdateInnerTextElementEditability(m_parsingInProgress ? ChildChange::Source::Parser : ChildChange::Source::API, isInnerTextElementEditable());
 
     setNeedsWillValidateCheck();
 

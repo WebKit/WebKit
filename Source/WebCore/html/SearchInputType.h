@@ -39,6 +39,7 @@ namespace WebCore {
 class SearchFieldResultsButtonElement;
 
 class SearchInputType final : public BaseTextInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit SearchInputType(HTMLInputElement&);
 
@@ -51,7 +52,7 @@ private:
     const AtomString& formControlType() const final;
     bool isSearchField() const final;
     bool needsContainer() const final;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void destroyShadowSubtree() final;
     HTMLElement* resultsButtonElement() const final;
     HTMLElement* cancelButtonElement() const final;

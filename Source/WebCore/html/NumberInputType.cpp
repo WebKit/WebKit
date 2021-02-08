@@ -210,7 +210,7 @@ float NumberInputType::decorationWidth() const
     return width;
 }
 
-bool NumberInputType::isSteppable() const
+bool NumberInputType::isSteppableSlow() const
 {
     return true;
 }

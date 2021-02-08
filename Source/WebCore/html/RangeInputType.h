@@ -38,6 +38,7 @@ namespace WebCore {
 class SliderThumbElement;
 
 class RangeInputType final : public InputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit RangeInputType(HTMLInputElement&);
 
@@ -49,11 +50,11 @@ private:
     bool typeMismatchFor(const String&) const final;
     bool supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
-    bool isSteppable() const final;
+    bool isSteppableSlow() const final;
     void handleMouseDownEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     Decimal parseToNumber(const String&, const Decimal&) const final;
     String serialize(const Decimal&) const final;
     bool accessKeyAction(bool sendMouseEvents) final;

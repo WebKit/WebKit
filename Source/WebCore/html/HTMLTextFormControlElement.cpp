@@ -540,12 +540,8 @@ bool HTMLTextFormControlElement::isInnerTextElementEditable() const
 
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
 {
-    if (auto innerText = innerTextElement()) {
-        static MainThreadNeverDestroyed<const AtomString> plainTextOnlyName("plaintext-only", AtomString::ConstructFromLiteral);
-        static MainThreadNeverDestroyed<const AtomString> falseName("false", AtomString::ConstructFromLiteral);
-        const auto& value = isInnerTextElementEditable() ? plainTextOnlyName.get() : falseName.get();
-        innerText->setAttributeWithoutSynchronization(contenteditableAttr, value);
-    }
+    if (auto innerText = innerTextElement())
+        innerText->updateInnerTextElementEditability(isInnerTextElementEditable());
 }
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const

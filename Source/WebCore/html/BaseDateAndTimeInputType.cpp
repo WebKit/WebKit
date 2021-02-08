@@ -167,7 +167,7 @@ Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
     return Decimal::fromDouble(ms + (offset * msPerMinute));
 }
 
-bool BaseDateAndTimeInputType::isSteppable() const
+bool BaseDateAndTimeInputType::isSteppableSlow() const
 {
     return true;
 }
@@ -307,7 +307,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
     }
 }
 
-void BaseDateAndTimeInputType::createShadowSubtree()
+void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
 {
     ASSERT(element());
 
