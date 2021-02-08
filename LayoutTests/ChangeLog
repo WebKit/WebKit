@@ -1,5 +1,105 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272368. rdar://problem/74032667
+
+    [macOS] Selecting a date on datetime-local inputs unexpectedly adds second and millisecond fields
+    https://bugs.webkit.org/show_bug.cgi?id=221350
+    <rdar://problem/73943517>
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    Currently, when setting the value of a datetime-local input using the
+    picker, the length of the current value of the input is used to determine
+    whether or not to return a value with second/millisecond precision.
+    
+    This is approach is incorrect, since the value could be empty, while the
+    step attribute can specify second/millisecond precision. To fix, ensure
+    the DateTimeChooserParameters knows whether the input has second and
+    millisecond fields. That information can then be used by the UIProcess
+    to return a correctly formatted value to the WebProcess.
+    
+    Test: fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html
+    
+    * html/BaseDateAndTimeInputType.cpp:
+    (WebCore::BaseDateAndTimeInputType::handleDOMActivateEvent):
+    (WebCore::BaseDateAndTimeInputType::didChangeValueFromControl):
+    (WebCore::BaseDateAndTimeInputType::setupDateTimeChooserParameters):
+    
+    Moved this method from HTMLInputElement to the input type, since it is
+    specific to date/time input types, and to leverage the existing
+    shouldHaveSecondField and shouldHaveMillisecondField methods when
+    building the DateTimeChooserParameters.
+    
+    * html/BaseDateAndTimeInputType.h:
+    * html/HTMLInputElement.cpp:
+    * html/HTMLInputElement.h:
+    * platform/DateTimeChooserParameters.h:
+    
+    Added hasSecondField and hasMillisecondField members, so that the UIProcess
+    knows whether or not to return a string that contains seconds/milliseconds.
+    
+    (WebCore::DateTimeChooserParameters::encode const):
+    (WebCore::DateTimeChooserParameters::decode):
+    
+    Source/WebKit:
+    
+    * UIProcess/mac/WebDateTimePickerMac.mm:
+    (-[WKDateTimePicker updatePicker:]):
+    (-[WKDateTimePicker dateFormatStringForType:]):
+    
+    Do not use the length of the value to determine whether or seconds and
+    milliseconds should be present, since the value can be empty.
+    
+    Instead, use the new information in DateTimeChooserParameters, matching
+    the visual appearance of the input.
+    
+    Tools:
+    
+    Added a method to UIScriptController to simulate selecting a date using
+    the presented date picker.
+    
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::chooseDateTimePickerValue):
+    * WebKitTestRunner/mac/UIScriptControllerMac.h:
+    * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+    (WTR::UIScriptControllerMac::chooseDateTimePickerValue):
+    
+    LayoutTests:
+    
+    Added a test to to verify that the presence of seconds and milliseconds
+    in the value of a datetime-local input after selecting a date using the
+    picker matches the configuration.
+    
+    * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker-expected.txt: Added.
+    * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html: Added.
+    * resources/ui-helper.js:
+    (window.UIHelper.chooseDateTimePickerValue):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272368 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-04  Aditya Keerthi  <akeerthi@apple.com>
+
+            [macOS] Selecting a date on datetime-local inputs unexpectedly adds second and millisecond fields
+            https://bugs.webkit.org/show_bug.cgi?id=221350
+            <rdar://problem/73943517>
+
+            Reviewed by Devin Rousso.
+
+            Added a test to to verify that the presence of seconds and milliseconds
+            in the value of a datetime-local input after selecting a date using the
+            picker matches the configuration.
+
+            * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker-expected.txt: Added.
+            * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html: Added.
+            * resources/ui-helper.js:
+            (window.UIHelper.chooseDateTimePickerValue):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272201. rdar://problem/74105623
 
     Animation of "rotate" or "scale" property does not correctly account for static "translate" property

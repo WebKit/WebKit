@@ -119,6 +119,21 @@ double UIScriptControllerMac::dateTimePickerValue() const
     return 0;
 }
 
+void UIScriptControllerMac::chooseDateTimePickerValue()
+{
+    for (NSWindow *childWindow in webView().window.childWindows) {
+        if ([childWindow isKindOfClass:NSClassFromString(@"WKDateTimePickerWindow")]) {
+            for (NSView *subview in childWindow.contentView.subviews) {
+                if ([subview isKindOfClass:[NSDatePicker class]]) {
+                    NSDatePicker *datePicker = (NSDatePicker *)subview;
+                    [datePicker.target performSelector:datePicker.action withObject:datePicker];
+                    return;
+                }
+            }
+        }
+    }
+}
+
 bool UIScriptControllerMac::isShowingDataListSuggestions() const
 {
     return dataListSuggestionsTableView();

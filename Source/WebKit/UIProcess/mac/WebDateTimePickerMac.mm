@@ -240,7 +240,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     NSString *currentDateValueString = _params.currentValue;
 
-    [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type value:currentDateValueString]];
+    [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type]];
 
     if (![currentDateValueString length])
         [_datePicker setDateValue:[self initialDateForEmptyValue]];
@@ -276,16 +276,14 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     _picker->didChooseDate(StringView(dateString));
 }
 
-- (NSString *)dateFormatStringForType:(NSString *)type value:(NSString *)value
+- (NSString *)dateFormatStringForType:(NSString *)type
 {
     if ([type isEqualToString:@"datetime-local"]) {
-        // Add two additional characters for the string delimiters in 'T'.
-        NSUInteger valueLengthForFormat = value.length + 2;
-        if (valueLengthForFormat == kDateTimeFormatString.length)
-            return kDateTimeFormatString;
-        if (valueLengthForFormat == kDateTimeWithSecondsFormatString.length)
+        if (_params.hasMillisecondField)
+            return kDateTimeWithMillisecondsFormatString;
+        if (_params.hasSecondField)
             return kDateTimeWithSecondsFormatString;
-        return kDateTimeWithMillisecondsFormatString;
+        return kDateTimeFormatString;
     }
 
     return kDateFormatString;

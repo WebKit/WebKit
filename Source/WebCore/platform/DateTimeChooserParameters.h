@@ -43,13 +43,15 @@ struct DateTimeChooserParameters {
     Vector<String> suggestionValues;
     Vector<String> localizedSuggestionValues;
     Vector<String> suggestionLabels;
-    double minimum;
-    double maximum;
-    double step;
-    double stepBase;
-    bool required;
-    bool isAnchorElementRTL;
-    bool useDarkAppearance;
+    double minimum { 0 };
+    double maximum { 0 };
+    double step { 0 };
+    double stepBase { 0 };
+    bool required { false };
+    bool isAnchorElementRTL { false };
+    bool useDarkAppearance { false };
+    bool hasSecondField { false };
+    bool hasMillisecondField { false };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DateTimeChooserParameters> decode(Decoder&);
@@ -72,6 +74,8 @@ void DateTimeChooserParameters::encode(Encoder& encoder) const
     encoder << required;
     encoder << isAnchorElementRTL;
     encoder << useDarkAppearance;
+    encoder << hasSecondField;
+    encoder << hasMillisecondField;
 }
 
 template<class Decoder>
@@ -133,7 +137,15 @@ Optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& d
     if (!decoder.decode(useDarkAppearance))
         return WTF::nullopt;
 
-    return {{ WTFMove(type), anchorRectInRootView, WTFMove(locale), WTFMove(currentValue), WTFMove(suggestionValues), WTFMove(localizedSuggestionValues), WTFMove(suggestionLabels), minimum, maximum, step, stepBase, required, isAnchorElementRTL, useDarkAppearance }};
+    bool hasSecondField;
+    if (!decoder.decode(hasSecondField))
+        return WTF::nullopt;
+
+    bool hasMillisecondField;
+    if (!decoder.decode(hasMillisecondField))
+        return WTF::nullopt;
+
+    return {{ WTFMove(type), anchorRectInRootView, WTFMove(locale), WTFMove(currentValue), WTFMove(suggestionValues), WTFMove(localizedSuggestionValues), WTFMove(suggestionLabels), minimum, maximum, step, stepBase, required, isAnchorElementRTL, useDarkAppearance, hasSecondField, hasMillisecondField }};
 }
 
 } // namespace WebCore

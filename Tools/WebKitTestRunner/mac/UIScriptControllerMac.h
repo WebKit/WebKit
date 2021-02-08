@@ -45,6 +45,7 @@ private:
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     bool isShowingDateTimePicker() const override;
     double dateTimePickerValue() const override;
+    void chooseDateTimePickerValue() override;
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned index, JSValueRef callback) override;
     void beginBackSwipe(JSValueRef) override;
