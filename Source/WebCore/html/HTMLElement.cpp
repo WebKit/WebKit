@@ -1200,6 +1200,30 @@ static const AtomString& imageOverlayElementIdentifier()
     return identifier;
 }
 
+bool HTMLElement::shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
+{
+    if (!is<HTMLDivElement>(targetNode))
+        return true;
+
+    auto shadowHost = makeRefPtr(targetNode.shadowHost());
+    if (!is<HTMLElement>(shadowHost))
+        return true;
+
+    auto& host = downcast<HTMLElement>(*shadowHost);
+    if (!host.hasImageOverlay())
+        return true;
+
+    if (!targetNode.contains(selectionBeforeUpdate.start().containerNode()))
+        return true;
+
+    for (auto& child : childrenOfType<HTMLDivElement>(*host.userAgentShadowRoot())) {
+        if (child.getIdAttribute() == imageOverlayElementIdentifier())
+            return &targetNode != &child;
+    }
+
+    return true;
+}
+
 bool HTMLElement::hasImageOverlay() const
 {
     auto shadowRoot = userAgentShadowRoot();

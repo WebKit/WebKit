@@ -34,6 +34,7 @@ namespace WebCore {
 class FormAssociatedElement;
 class FormNamedItem;
 class HTMLFormElement;
+class VisibleSelection;
 
 #if ENABLE(IMAGE_EXTRACTION)
 struct ImageExtractionResult;
@@ -126,6 +127,7 @@ public:
     String enterKeyHint() const;
     void setEnterKeyHint(const String& value);
 
+    static bool shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
     bool hasImageOverlay() const;
 
 #if ENABLE(IMAGE_EXTRACTION)
