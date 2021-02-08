@@ -1,5 +1,25 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r271624. rdar://problem/74105183
+
+    Unreviewed, fix GCC warnings
+    https://bugs.webkit.org/show_bug.cgi?id=220718
+    
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::tierUpCommon):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271624 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, fix GCC warnings
+            https://bugs.webkit.org/show_bug.cgi?id=220718
+
+            * dfg/DFGOperations.cpp:
+            (JSC::DFG::tierUpCommon):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271596. rdar://problem/74105183
 
     [JSC] FTL::prepareOSREntry can clear OSR entry CodeBlock if it is already invalidated
