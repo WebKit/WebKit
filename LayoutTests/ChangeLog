@@ -1,3 +1,15 @@
+2021-02-08  Rob Buis  <rbuis@igalia.com>
+
+        Make getStartEndListChildren check renderers
+        https://bugs.webkit.org/show_bug.cgi?id=221388
+
+        Reviewed by Alex Christensen.
+
+        Add test for this.
+
+        * editing/execCommand/insert-nested-lists-crash-expected.txt: Added.
+        * editing/execCommand/insert-nested-lists-crash.html: Added.
+
 2021-02-08  Said Abou-Hallawa  <said@apple.com>
 
         A Pattern with an SVG image is not rendered correctly
