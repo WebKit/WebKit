@@ -262,7 +262,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             glyph = 0;
 
         glyphBuffer.add(glyph, *font, width, currentCharacterIndex);
-#if !PLATFORM(COCOA) || USE(CTFONTSHAPEGLYPHS)
+#if (!PLATFORM(COCOA) && !USE(GLIB)) || USE(CTFONTSHAPEGLYPHS)
         // These 0 glyphs are needed by shapers if the source text has surrogate pairs.
         // However, CTFontTransformGlyphs() can't delete these 0 glyphs from the shaped text,
         // so we shouldn't add them in the first place if we're using that shaping routine.

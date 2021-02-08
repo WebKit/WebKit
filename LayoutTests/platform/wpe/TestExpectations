@@ -207,25 +207,6 @@ webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 # SVG
 webkit.org/b/220614 imported/w3c/web-platform-tests/svg/linking/reftests/url-reference-local-textpath.svg [ Failure Pass ]
 
-# Text
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-initial.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-looped.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-monospace.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-script.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-stretched.html [ ImageOnlyFailure ]
-webkit.org/b/221523 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-tailed.html [ ImageOnlyFailure ]
-
 # WebGL
 webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
 webkit.org/b/220720 fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
