@@ -1,3 +1,18 @@
+2021-02-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] event.ctrlKey and other are false in keydown event
+        https://bugs.webkit.org/show_bug.cgi?id=221456
+
+        Reviewed by Adrian Perez de Castro.
+
+        The test only pass in GTK right now, despite testing it manually works fine in all platforms,
+        it looks like they might need changes to make the test pass.
+
+        * TestExpectations:
+        * fast/events/keyboardevent-modifier-expected.txt: Added.
+        * fast/events/keyboardevent-modifier.html: Added.
+        * platform/gtk/TestExpectations:
+
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
         Permission request API for MediaKeySystem access support

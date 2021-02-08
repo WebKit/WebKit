@@ -55,6 +55,8 @@ css-dark-mode/older-systems [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pass ]
 
+fast/events/keyboardevent-modifier.html [ Pass ]
+
 # permessage-deflate WebSocket extension
 
 # css-values passing for us

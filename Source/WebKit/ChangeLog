@@ -1,3 +1,23 @@
+2021-02-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] event.ctrlKey and other are false in keydown event
+        https://bugs.webkit.org/show_bug.cgi?id=221456
+
+        Reviewed by Adrian Perez de Castro.
+
+        Modifier keys were not being set on "keydown" events.
+        For example if you check event.ctrlKey (and other) you'll get always false when the user only typed Ctrl key
+        (it'll be true when it's in combination with some other key, like Ctrl + P).
+        This is due to some differences on how X system manages the modifier keys (see http://crbug.com/127142#c8),
+        but this patch will align WebKitGTK with other platforms and browsers on this case.
+
+        Test: fast/events/keyboardevent-modifier.html
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent): In the case of a keyboard press event check if some modifier key has been pressed.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSynthesizeKeyEvent): Check if some modifier key has been pressed.
+
 2021-02-08  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed unified build fix.
