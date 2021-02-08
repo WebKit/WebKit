@@ -1,3 +1,21 @@
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
+        ConsoleMessage: Don't encode string JSONLogValue's as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=221421
+
+        Reviewed by Eric Carlson.
+
+        Added API tests to check for the output of message() when constructing
+        ConsoleMessage objects with JSONLogValue's.
+
+        This includes changes contributed by Philippe Normand enabling
+        JavaScriptCore tests which were previously disabled in WebKitGTK and
+        making them compile again.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit/InspectorConsoleMessage.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
         Permission request API for MediaKeySystem access support

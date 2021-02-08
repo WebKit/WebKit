@@ -135,7 +135,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
             break;
         case JSONLogValue::Type::JSON:
             if (builder.length()) {
-                m_jsonLogValues.append({ JSONLogValue::Type::String, JSON::Value::create(builder.toString())->toJSONString() });
+                m_jsonLogValues.append({ JSONLogValue::Type::String, builder.toString() });
                 builder.resize(0);
             }
 
@@ -145,7 +145,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 
     if (builder.length())
-        m_jsonLogValues.append({ JSONLogValue::Type::String, JSON::Value::create(builder.toString())->toJSONString() });
+        m_jsonLogValues.append({ JSONLogValue::Type::String, builder.toString() });
 
     if (m_jsonLogValues.size())
         m_message = m_jsonLogValues[0].value;
@@ -280,10 +280,19 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
             }
 
             if (m_jsonLogValues.size()) {
+                JSC::JSLockHolder lock(globalObject()->vm()); // Necessary for safe jsString() instantiation.
                 for (auto& message : m_jsonLogValues) {
                     if (message.value.isEmpty())
                         continue;
-                    auto inspectorValue = injectedScript.wrapJSONString(message.value, "console"_s, generatePreview);
+                    RefPtr<Protocol::Runtime::RemoteObject> inspectorValue;
+                    switch (message.type) {
+                    case JSONLogValue::Type::JSON:
+                        inspectorValue = injectedScript.wrapJSONString(message.value, "console"_s, generatePreview);
+                        break;
+                    case JSONLogValue::Type::String:
+                        inspectorValue = injectedScript.wrapObject(JSC::JSValue(JSC::jsString(globalObject()->vm(), message.value)), "console"_s, generatePreview);
+                        break;
+                    }
                     if (!inspectorValue)
                         continue;
 

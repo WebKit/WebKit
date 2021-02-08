@@ -1,3 +1,24 @@
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
+        ConsoleMessage: Don't encode string JSONLogValue's as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=221421
+
+        Reviewed by Eric Carlson.
+
+        JSONLogValue's have two tagged types: String and JSON. Despite this,
+        the ConsoleMessage constructor was converting the string values to
+        JSON while coalescing them.
+
+        This also added quotes on the return value of message() for
+        ConsoleMessage's created with this constructor, but not with others.
+
+        This patch removes that behavior, keeping strings as strings and using
+        wrapObject() instead of wrapJSONString() for them.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        (Inspector::ConsoleMessage::addToFrontend):
+
 2021-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Replace toInteger with toIntegerOrInfinity

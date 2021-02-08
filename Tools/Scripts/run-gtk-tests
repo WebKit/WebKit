@@ -34,7 +34,7 @@ import flatpakutils
 from api_test_runner import TestRunner, add_options
 
 class GtkTestRunner(TestRunner):
-    TestRunner.TEST_TARGETS = [ "WebKit2Gtk", "TestWebKit", "TestJSC", "TestWTF", "TestWebCore" ]
+    TestRunner.TEST_TARGETS = [ "WebKit2Gtk", "TestWebKit", "TestJSC", "TestWTF", "TestWebCore", "TestJavaScriptCore" ]
 
     def __init__(self, options, tests=[]):
         super(GtkTestRunner, self).__init__("gtk", options, tests)
@@ -123,7 +123,7 @@ class GtkTestRunner(TestRunner):
         return os.path.basename(os.path.dirname(test_program)) in ["WebKit2Gtk"] or os.path.basename(test_program) in ["TestJSC"]
 
     def is_google_test(self, test_program):
-        return os.path.basename(test_program) in ["TestWebKit", "TestWTF", "TestWebCore"]
+        return os.path.basename(test_program) in ["TestWebKit", "TestWTF", "TestWebCore", "TestJavaScriptCore"]
 
     def is_qt_test(self, test_program):
         return False
