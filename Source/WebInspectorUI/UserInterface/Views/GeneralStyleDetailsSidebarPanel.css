@@ -234,7 +234,7 @@
 }
 
 .multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,
-.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle-class-toggle,
 .multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .class-list-container {
     display: none;
 }
