@@ -1,3 +1,9 @@
+2021-02-08  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed unified build fix.
+
+        * UIProcess/MediaPermissionUtilities.h:
+
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Permission request API for MediaKeySystem access support
