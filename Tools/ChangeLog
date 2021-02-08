@@ -1,5 +1,16 @@
 2021-02-08  Youenn Fablet  <youenn@apple.com>
 
+        [MacOS] Enable Audio Capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=221400
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (-[GetUserMediaRepromptTestView haveStream:]):
+        Increase timeout since capture might require spinning GPUProcess.
+
+2021-02-08  Youenn Fablet  <youenn@apple.com>
+
         NetworkRTCSocketCocoa extractDataMessages should not read too much data
         https://bugs.webkit.org/show_bug.cgi?id=221544
 

@@ -1,3 +1,15 @@
+2021-02-08  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Enable Audio Capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=221400
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+
 2021-02-08  David Kilzer  <ddkilzer@apple.com>
 
         Check that CGPDFDocumentRef is consistently unlocked and printable
