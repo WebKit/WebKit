@@ -1,3 +1,34 @@
+2021-02-08  David Kilzer  <ddkilzer@apple.com>
+
+        Check that CGPDFDocumentRef is consistently unlocked and printable
+        <https://webkit.org/b/221512>
+        <rdar://problem/65277765>
+
+        Reviewed by Daniel Bates.
+
+        This patch does the following when printing PDFs:
+        - Checks return value of CGPDFDocumentUnlockWithPassword().
+        - Calls CGPDFDocumentAllowsPrinting() consistently.
+        - Handles -_ensureDocumentForPrinting and -_wk_printedDocument
+          returning nullptr.
+
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        (-[_WKWebViewPrintFormatter drawInRect:forPageAtIndex:]):
+        - Check return value of -_wk_printedDocument since it may return
+          nullptr now.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _ensureDocumentForPrinting]):
+        - Check return value of CGPDFDocumentUnlockWithPassword(), and
+          return nullptr if unsuccessful.
+        - Add CGPDFDocumentAllowsPrinting() check and return nullptr if
+          it fails.
+        (-[WKPDFView _wk_pageCountForPrintFormatter:]):
+        - Move the CGPDFDocumentAllowsPrinting() check into
+          -[WKPDFView _ensureDocumentForPrinting].
+        - Check return value of -_ensureDocumentForPrinting since it may
+          return nullptr now.
+
 2021-02-08  Youenn Fablet  <youenn@apple.com>
 
         NetworkRTCSocketCocoa extractDataMessages should not read too much data
