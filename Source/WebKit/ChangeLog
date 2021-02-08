@@ -1,3 +1,35 @@
+2021-02-08  Brady Eidson  <beidson@apple.com>
+
+        Make the UserContentController for ServiceWorker pages be non-optional.
+        <rdar://problem/71434565> and https://bugs.webkit.org/show_bug.cgi?id=221503
+
+        Reviewed by Alex Christensen.
+        
+        Normal Pages always have a UserContentProvider, even if they just create an empty default one.
+        
+        Same should be true for ServiceWorkers.
+
+        * Shared/ServiceWorkerInitializationData.cpp:
+        (WebKit::ServiceWorkerInitializationData::decode):
+        * Shared/ServiceWorkerInitializationData.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::userContentControllerIdentifierForServiceWorkers):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+        * UIProcess/WebProcessProxy.h:
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::m_userContentController):
+        (WebKit::m_userAgent): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
 2021-02-08  Chris Dumez  <cdumez@apple.com>
 
         Prevent WebProcess to re-enter on sync IPC to the GPUProcess

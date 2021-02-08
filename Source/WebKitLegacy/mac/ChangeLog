@@ -1,3 +1,13 @@
+2021-02-08  Brady Eidson  <beidson@apple.com>
+
+        Make the UserContentController for ServiceWorker pages be non-optional.
+        <rdar://problem/71434565> and https://bugs.webkit.org/show_bug.cgi?id=221503
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Permission request API for MediaKeySystem access support
