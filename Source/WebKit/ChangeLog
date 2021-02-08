@@ -1,5 +1,93 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272178. rdar://problem/74105398
+
+    Allow support for CAAnimationGroup
+    https://bugs.webkit.org/show_bug.cgi?id=221209
+    
+    Reviewed by Dean Jackson, Sam Weinig and Simon Fraser.
+    
+    In order to fix bug 219894, we need to use Core Animation's CAAnimationGroup and its
+    Source/WebCore:
+    
+    setAnimations() method. This patch adds a new "Group" type to PlatformCAAnimation and
+    platform-specific integration for Windows and Cocoa ports.
+    
+    * platform/graphics/ca/PlatformCAAnimation.cpp:
+    (WebCore::operator<<):
+    * platform/graphics/ca/PlatformCAAnimation.h:
+    * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.h:
+    * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+    (WebCore::PlatformCAAnimationCocoa::PlatformCAAnimationCocoa):
+    (WebCore::PlatformCAAnimationCocoa::keyPath const):
+    (WebCore::PlatformCAAnimationCocoa::setTimingFunction):
+    (WebCore::PlatformCAAnimationCocoa::isAdditive const):
+    (WebCore::PlatformCAAnimationCocoa::setAdditive):
+    (WebCore::PlatformCAAnimationCocoa::valueFunction const):
+    (WebCore::PlatformCAAnimationCocoa::setValueFunction):
+    (WebCore::PlatformCAAnimationCocoa::setFromValue):
+    (WebCore::PlatformCAAnimationCocoa::copyFromValueFrom):
+    (WebCore::PlatformCAAnimationCocoa::setToValue):
+    (WebCore::PlatformCAAnimationCocoa::copyToValueFrom):
+    (WebCore::PlatformCAAnimationCocoa::setValues):
+    (WebCore::PlatformCAAnimationCocoa::copyValuesFrom):
+    (WebCore::PlatformCAAnimationCocoa::setKeyTimes):
+    (WebCore::PlatformCAAnimationCocoa::copyKeyTimesFrom):
+    (WebCore::PlatformCAAnimationCocoa::setTimingFunctions):
+    (WebCore::PlatformCAAnimationCocoa::copyTimingFunctionsFrom):
+    (WebCore::PlatformCAAnimationCocoa::setAnimations):
+    (WebCore::PlatformCAAnimationCocoa::copyAnimationsFrom):
+    * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+    (WebCore::PlatformCALayerCocoa::addAnimationForKey):
+    (WebCore::PlatformCALayerCocoa::animationForKey):
+    * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+    (PlatformCAAnimationWin::PlatformCAAnimationWin):
+    (PlatformCAAnimationWin::setAnimations):
+    (PlatformCAAnimationWin::copyAnimationsFrom):
+    * platform/graphics/ca/win/PlatformCAAnimationWin.h:
+    
+    Source/WebKit:
+    
+    setAnimations() method. Add support for the new "Group" PlatformCAAnimation type for
+    the remote animations.
+    
+    * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+    * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+    (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+    (WebKit::PlatformCAAnimationRemote::Properties::decode):
+    (WebKit::PlatformCAAnimationRemote::copy const):
+    (WebKit::PlatformCAAnimationRemote::setAnimations):
+    (WebKit::PlatformCAAnimationRemote::copyAnimationsFrom):
+    (WebKit::createAnimation):
+    (WebKit::addAnimationToLayer):
+    (WebKit::operator<<):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272178 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-01  Antoine Quint  <graouts@webkit.org>
+
+            Allow support for CAAnimationGroup
+            https://bugs.webkit.org/show_bug.cgi?id=221209
+
+            Reviewed by Dean Jackson, Sam Weinig and Simon Fraser.
+
+            In order to fix bug 219894, we need to use Core Animation's CAAnimationGroup and its
+            setAnimations() method. Add support for the new "Group" PlatformCAAnimation type for
+            the remote animations.
+
+            * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+            * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+            (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+            (WebKit::PlatformCAAnimationRemote::Properties::decode):
+            (WebKit::PlatformCAAnimationRemote::copy const):
+            (WebKit::PlatformCAAnimationRemote::setAnimations):
+            (WebKit::PlatformCAAnimationRemote::copyAnimationsFrom):
+            (WebKit::createAnimation):
+            (WebKit::addAnimationToLayer):
+            (WebKit::operator<<):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271908. rdar://problem/74032594
 
     Harden NetworkProcess against integer overflow in CacheStorageEngine size calculation

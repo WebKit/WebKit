@@ -511,7 +511,7 @@ void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnima
         [webAnimationDelegate setOwner:this];
     }
     
-    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(downcast<PlatformCAAnimationCocoa>(animation).platformAnimation());
+    CAAnimation *propertyAnimation = static_cast<CAAnimation *>(downcast<PlatformCAAnimationCocoa>(animation).platformAnimation());
     if (![propertyAnimation delegate])
         [propertyAnimation setDelegate:static_cast<id>(m_delegate.get())];
 
@@ -529,7 +529,7 @@ void PlatformCALayerCocoa::removeAnimationForKey(const String& key)
 
 RefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& key)
 {
-    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>([m_layer animationForKey:key]);
+    CAAnimation *propertyAnimation = static_cast<CAAnimation *>([m_layer animationForKey:key]);
     if (!propertyAnimation)
         return nullptr;
     return PlatformCAAnimationCocoa::create(propertyAnimation);

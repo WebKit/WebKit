@@ -34,6 +34,7 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::AnimationType type)
 {
     switch (type) {
     case PlatformCAAnimation::Basic: ts << "basic"; break;
+    case PlatformCAAnimation::Group: ts << "group"; break;
     case PlatformCAAnimation::Keyframe: ts << "keyframe"; break;
     case PlatformCAAnimation::Spring: ts << "spring"; break;
     }
