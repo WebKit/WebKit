@@ -238,12 +238,12 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, JSGlobalObject*
         }
 
         bool status = thisObject->defineOwnIndexedProperty(globalObject, index, newDescriptor, shouldThrow);
+        RETURN_IF_EXCEPTION(scope, false);
         if (!status) {
             ASSERT(!isMapped || thisObject->isModifiedArgumentDescriptor(index));
-            RELEASE_AND_RETURN(scope, false);
+            return false;
         }
 
-        scope.assertNoException();
         thisObject->setModifiedArgumentDescriptor(globalObject, index);
         RETURN_IF_EXCEPTION(scope, false);
 
