@@ -1012,7 +1012,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         [m_avPlayer.get() setMuted:m_muted];
 
 #if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
-        m_avPlayer.get().suppressesAudioRendering = YES;
+        if (player()->isVideoPlayer())
+            m_avPlayer.get().suppressesAudioRendering = YES;
 #endif
     }
 
