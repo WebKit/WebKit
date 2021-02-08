@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(ENCRYPTED_MEDIA)
+
 #import <WebCore/MediaKeySystemClient.h>
 
 class WebMediaKeySystemClient : public WebCore::MediaKeySystemClient {
@@ -35,3 +37,5 @@ public:
     void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) override;
     void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) override { }
 };
+
+#endif // ENABLE(ENCRYPTED_MEDIA)

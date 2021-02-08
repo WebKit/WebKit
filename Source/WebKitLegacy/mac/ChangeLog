@@ -1,3 +1,12 @@
+2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Unreviewed build fix for macCatalyst.
+
+        * WebCoreSupport/WebMediaKeySystemClient.h: Add a check for ENABLE(ENCRYPTED_MEDIA).
+
 2021-01-29  Darin Adler  <darin@apple.com>
 
         Check activeDocumentLoader() for null consistently everywhere
