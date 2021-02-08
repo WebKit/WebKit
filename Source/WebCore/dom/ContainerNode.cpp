@@ -759,6 +759,15 @@ void ContainerNode::parserAppendChild(Node& newChild)
     });
 }
 
+ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& newChild)
+{
+    if (source == ChildChange::Source::Parser) {
+        parserAppendChild(newChild);
+        return { };
+    }
+    return appendChild(newChild);
+}
+
 static bool affectsElements(const ContainerNode::ChildChange& change)
 {
     switch (change.type) {

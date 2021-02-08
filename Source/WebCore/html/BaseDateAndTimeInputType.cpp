@@ -307,7 +307,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
     }
 }
 
-void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
+void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
 
@@ -316,12 +316,12 @@ void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEdita
 
     if (document.settings().dateTimeInputsEditableComponentsEnabled()) {
         m_dateTimeEditElement = DateTimeEditElement::create(document, *this);
-        element.userAgentShadowRoot()->appendChild(*m_dateTimeEditElement);
+        element.userAgentShadowRoot()->appendChild(source, *m_dateTimeEditElement);
     } else {
         static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
         auto valueContainer = HTMLDivElement::create(document);
         valueContainer->setPseudo(valueContainerPseudo);
-        element.userAgentShadowRoot()->appendChild(valueContainer);
+        element.userAgentShadowRoot()->appendChild(source, valueContainer);
     }
     updateInnerTextValue();
 }

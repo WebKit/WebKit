@@ -139,7 +139,7 @@ Color ColorInputType::valueAsColor() const
     return parseSimpleColorValue(element()->value()).value();
 }
 
-void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
+void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
     ASSERT(element()->shadowRoot());
@@ -152,8 +152,8 @@ void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(Con
     wrapperElement->setPseudo(webkitColorSwatchWrapperName);
     auto colorSwatch = HTMLDivElement::create(document);
     colorSwatch->setPseudo(webkitColorSwatchName);
-    wrapperElement->appendChild(colorSwatch);
-    element()->userAgentShadowRoot()->appendChild(wrapperElement);
+    wrapperElement->appendChild(source, colorSwatch);
+    element()->userAgentShadowRoot()->appendChild(source, wrapperElement);
 
     updateColorSwatch();
 }
