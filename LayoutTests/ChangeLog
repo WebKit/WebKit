@@ -1,3 +1,18 @@
+2021-02-08  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Hit test inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=221545
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inline-with-linebreak.html:
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inlines.html:
+        * fast/dom/nodesFromRect/resources/nodesFromRect.js:
+        (nodeListToString):
+
+        Sort the vector based on node type so the order is not sensitive to engine internals.
+        Rect based hit testing is not web exposed and the leaf-to-root order is still maintained.
+
 2021-02-08  Imanol Fernandez  <ifernandez@igalia.com>
 
         WebXRSystem::RequestSession with 'viewer' as a required feature should succeed

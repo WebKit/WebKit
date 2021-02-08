@@ -21,14 +21,17 @@ function nodeToString(node) {
 }
 
 function nodeListToString(nodes) {
+    let sortedNodes = Array.from(nodes);
+    sortedNodes.sort((a, b) => a.nodeType == b.nodeType ? 0 : a.nodeType < b.nodeType);
+
     var nodeString = "";
 
-    for (var i = 0; i < nodes.length; i++) {
-        var str = nodeToString(nodes[i]);
+    for (var i = 0; i < sortedNodes.length; i++) {
+        var str = nodeToString(sortedNodes[i]);
         if (!str)
             continue;
         nodeString += str;
-        if (i + 1 < nodes.length)
+        if (i + 1 < sortedNodes.length)
             nodeString += ", ";
     }
     return nodeString;

@@ -542,6 +542,24 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         }
     }
 
+    for (auto& inlineBox : WTF::makeReversedRange(inlineContent.nonRootInlineBoxes)) {
+        auto inlineBoxRect = Layout::toLayoutRect(inlineBox.rect());
+        inlineBoxRect.moveBy(accumulatedOffset);
+
+        if (!locationInContainer.intersects(inlineBoxRect))
+            continue;
+
+        auto& style = inlineBox.style();
+        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+            continue;
+
+        auto& renderer = m_boxTree.rendererForLayoutBox(inlineBox.layoutBox());
+
+        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, inlineBoxRect) == HitTestProgress::Stop)
+            return true;
+    }
+
     return false;
 }
 

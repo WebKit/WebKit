@@ -32,7 +32,7 @@
             /* Rect based test over the word2 only. */
             checkRect(20, 45, 10, 10, "'word2'");
             /* Rect based test not contained by culledinline, but contained by its bounding box. */
-            checkRect(20, 35, 10, 20, "'word2', SPAN#wordinline2, SPAN#culledinline, P, 'Word '");
+            checkRect(20, 35, 10, 20, "'word2', 'Word ', SPAN#wordinline2, SPAN#culledinline, P");
             /* Note the order of P and 'Word ' is slightly unusual, but this is due to lines being tested one by one. */
 
             document.getElementById('sandbox').style.display = 'none';
