@@ -32,7 +32,7 @@ start = function()
     }
 }
 
-xhr.open("GET", "/resources/reset-temp-file.php?" + filename, true);
+xhr.open("GET", "/resources/reset-temp-file.py?" + filename, true);
 xhr.onreadystatechange = start;
 xhr.send();
 
@@ -47,7 +47,7 @@ function firstRequest()
         }
     }
 
-    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php?" + filename, true);
+    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py?" + filename, true);
     xhr.send();
 }
 
@@ -63,7 +63,7 @@ function secondRequest()
         }
     }
 
-    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php?" + filename, true);
+    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py?" + filename, true);
     xhr.send();
 }
 

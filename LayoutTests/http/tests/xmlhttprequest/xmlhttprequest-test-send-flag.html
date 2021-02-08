@@ -29,7 +29,7 @@ if (window.XMLHttpRequest) {
 }
 
 // First test : test open method send() flag check
-xhr.open("GET", "resources/endlessxml.php", true);
+xhr.open("GET", "resources/endlessxml.py", true);
 xhr.send(null);
 try {
     if (xhr.readyState == 1)
@@ -42,7 +42,7 @@ try {
 }
 
 // Second test : test setResponseHeader method send() flag check
-xhr.open("GET", "resources/endlessxml.php", true);
+xhr.open("GET", "resources/endlessxml.py", true);
 xhr.setRequestHeader("Test1", "Test1");
 xhr.send(null);
 try {

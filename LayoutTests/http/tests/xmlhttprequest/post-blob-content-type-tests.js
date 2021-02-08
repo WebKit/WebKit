@@ -1,4 +1,4 @@
-var xhrBlobTestUrl = '/xmlhttprequest/resources/access-control-allow-lists.php';
+var xhrBlobTestUrl = '/xmlhttprequest/resources/access-control-allow-lists.py';
 
 var xhrBlobTestCases = [{
     mime: 'text/plain;charset=utf-8',

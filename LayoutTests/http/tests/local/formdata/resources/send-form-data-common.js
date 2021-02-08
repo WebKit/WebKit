@@ -39,7 +39,7 @@ function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
     if (addEventHandlers)
         addEventHandlers(xhr, fileSliced);
 
-    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.php", sendAsAsync);
+    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.py", sendAsAsync);
     xhr.send(formData);
 
     if (sendAsAsync)

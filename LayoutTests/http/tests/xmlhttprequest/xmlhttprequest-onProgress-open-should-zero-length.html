@@ -19,7 +19,7 @@ function onProgress(e) {
         var xhr = e.target;
         xhr.onprogress = onProgressTest;
         xhr.onreadystatechange = onReadyStateChange;
-        xhr.open("GET", "resources/big-response.php", true);
+        xhr.open("GET", "resources/big-response.py", true);
         xhr.send(null);
     }
 }
@@ -44,7 +44,7 @@ if (window.testRunner) {
 
 var req = new XMLHttpRequest();
 req.onprogress = onProgress;
-req.open("GET", "resources/big-response.php", true);
+req.open("GET", "resources/big-response.py", true);
 req.send(null);
 </script>
 </body>

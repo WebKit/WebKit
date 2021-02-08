@@ -1,7 +1,7 @@
 <script>
 alert("Executing script in the child window.");
 var x = new XMLHttpRequest();
-x.open("POST", "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*&headers=Content-Type", false);
+x.open("POST", "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*&headers=Content-Type", false);
 alert("XHR POST opened.");
 try {
     x.send(1);

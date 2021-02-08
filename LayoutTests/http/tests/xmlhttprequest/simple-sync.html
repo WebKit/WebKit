@@ -9,7 +9,7 @@
       testRunner.dumpAsText();
 
     req = new XMLHttpRequest;
-    req.open("GET", "resources/print-referer.php", false);
+    req.open("GET", "resources/print-referer.py", false);
     req.send(null);
     if (req.responseText == document.URL)
       document.getElementById("result").firstChild.data += "OK";

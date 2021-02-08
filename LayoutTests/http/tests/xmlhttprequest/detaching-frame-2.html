@@ -16,7 +16,7 @@
      var client
      try {
        client = new window.x()
-       client.open("GET", "/xmlhttprequest/resources/echo-host.php", false)
+       client.open("GET", "/xmlhttprequest/resources/echo-host.py", false)
        client.send("")
      } catch(e)
      {
@@ -29,6 +29,6 @@
    frames[0].location = frames[0].location.toString().replace("127.0.0.1", "localhost")
  }
 </script>
-<iframe src="resources/echo-host.php"></iframe>
+<iframe src="resources/echo-host.py"></iframe>
 <div id=result>FAIL: Script did not run.</div>
 </body>

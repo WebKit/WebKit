@@ -19,7 +19,7 @@ var intervalId = setInterval(function() {
 
 try {
     var req = new XMLHttpRequest();
-    req.open("GET", "resources/download-with-delay.php?iteration=5&delay=50", false);
+    req.open("GET", "resources/download-with-delay.py?iteration=5&delay=50", false);
     req.send(null);
 } catch (ex) {
     log(ex);

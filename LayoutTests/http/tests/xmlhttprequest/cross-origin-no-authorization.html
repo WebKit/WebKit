@@ -24,7 +24,7 @@ function test()
     log("You should see several PASS messages followed by a DONE\n");
     log("SCRIPT SRC='...' Should succeed, since authorization is sent for cross-origin subresource loads.");
     var scriptElement = document.createElement("script");
-    scriptElement.setAttribute("src", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php");
+    scriptElement.setAttribute("src", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py");
     scriptElement.setAttribute("onload", "test_sync_auth_stored()");
     scriptElement.setAttribute("onerror", "test_sync_auth_stored()");
     document.body.appendChild(scriptElement);
@@ -35,7 +35,7 @@ function test_sync_auth_stored()
     log("Cross-origin XMLHttpRequest (sync), authorization will not be sent, because withCredentials is false.");
     
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", false);
     try {
         req.send();
         log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
@@ -50,7 +50,7 @@ function test_sync_auth_stored_with_credentials()
     log("Cross-origin XMLHttpRequest (sync), testing authorization that's not allowed by the server (withCredentials is true, but access control headers are not set).");
     
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", false);
     req.withCredentials = true;
     try {
         req.send();
@@ -66,7 +66,7 @@ function test_sync_cookies()
     log("Cross-origin XMLHttpRequest (sync), testing cookies.");
     
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php", false);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.py", false);
     req.send();
     log(req.responseText.match(/WK\-cross\-origin/) ? "FAIL" : "PASS");
     test_async_auth_stored();
@@ -77,7 +77,7 @@ function test_async_auth_stored()
     log("Cross-origin XMLHttpRequest (async), authorization will not be sent, because withCredentials is false.");
 
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", true);
     req.send();
     req.onload = function() {
         log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
@@ -94,7 +94,7 @@ function test_async_auth_stored_with_credentials()
     log("Cross-origin XMLHttpRequest (async), testing authorization that's not allowed by the server (withCredentials is true, but access control headers are not set).");
 
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", true);
     req.withCredentials = true;
     req.send();
     req.onload = function() {
@@ -112,7 +112,7 @@ function test_async_cookies()
     log("Cross-origin XMLHttpRequest (async), testing cookies.");
 
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php", true);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.py", true);
     req.send();
     req.onload = function() {
         log(req.responseText.match(/WK\-cross\-origin/) ? "FAIL" : "PASS");
@@ -125,7 +125,7 @@ function test_sync_auth_explicit()
     log("Cross-origin XMLHttpRequest (sync), testing authorization with explicitly provided credentials that should be ignored.");
     
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false, "test", "test");
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", false, "test", "test");
     try {
         req.send();
         log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
@@ -141,7 +141,7 @@ function test_async_auth_explicit()
     log("Cross-origin XMLHttpRequest (async), testing authorization with explicitly provided credentials that should be ignored.");
 
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true, "test", "test");
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.py", true, "test", "test");
     req.send();
     req.onload = function() {
         log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");

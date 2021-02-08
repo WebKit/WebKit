@@ -10,7 +10,7 @@
     const req = new XMLHttpRequest();
 
     /* Send auth info after getting authorization header. */
-    req.open('GET', '/resources/digest-auth/authorize.php', false, 'everybody', 'lovesbeer');
+    req.open('GET', 'resources/url-with-credentials/authorize.py', false, 'everybody', 'lovesbeer');
     req.send(null);
 
     const check = function(req) {

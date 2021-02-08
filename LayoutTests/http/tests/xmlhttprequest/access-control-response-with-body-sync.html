@@ -10,7 +10,7 @@ Body from cross origin preflight response is prepended to the actual response bo
 
   window.onload = function() {
       var xhr = new XMLHttpRequest();
-       xhr.open("GET","http://localhost:8000/xmlhttprequest/resources/access-control-allow-with-body.php", false);
+       xhr.open("GET","http://localhost:8000/xmlhttprequest/resources/access-control-allow-with-body.py", false);
        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
        xhr.send(null);

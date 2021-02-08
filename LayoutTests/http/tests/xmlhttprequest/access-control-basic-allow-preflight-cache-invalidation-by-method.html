@@ -32,7 +32,7 @@ start = function()
     }
 }
 
-xhr.open("GET", "/resources/reset-temp-file.php?" + filename, true);
+xhr.open("GET", "/resources/reset-temp-file.py?" + filename, true);
 xhr.onreadystatechange = start;
 xhr.send();
 
@@ -47,7 +47,7 @@ function firstRequest()
         }
     }
 
-    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php?" + filename, true);
+    xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py?" + filename, true);
     xhr.send();
 }
 
@@ -64,7 +64,7 @@ function secondRequest()
     }
 
     // Send a method not included in the initial cache.
-    xhr.open("XMETHOD", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php?" + filename, true);
+    xhr.open("XMETHOD", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py?" + filename, true);
     xhr.send();
 }
 

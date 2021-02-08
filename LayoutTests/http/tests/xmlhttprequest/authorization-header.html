@@ -5,7 +5,7 @@ if (window.testRunner)
 
 try {
     var req = new XMLHttpRequest;
-    req.open("GET", "resources/basic-auth/basic-auth.php?uid=Authorization-Header", false);
+    req.open("GET", "resources/basic-auth/basic-auth.py?uid=Authorization-Header", false);
     req.setRequestHeader("Authorization", "Basic QXV0aG9yaXphdGlvbi1IZWFkZXI6QXV0aG9yaXphdGlvbi1IZWFkZXI=");
     req.send(null);
     document.write(req.responseText.match(/Authorization\-Header/) ? "PASS" : ("FAIL. Unexpected response: " + req.responseText));

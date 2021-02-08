@@ -11,7 +11,7 @@ window.jsTestIsAsync = true;
 req = new XMLHttpRequest;
 debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
 shouldBeEqualToString('req.responseURL', '');
-req.open("GET", "resources/basic-auth/basic-auth.php?uid=async", true, "async", "123");
+req.open("GET", "resources/basic-auth/basic-auth.py?uid=async", true, "async", "123");
 debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
 shouldBeEqualToString('req.responseURL', '');
 req.onreadystatechange = processStateChange;
@@ -23,7 +23,7 @@ function processStateChange() {
     debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
 
     if (req.readyState == 4) {
-        shouldBeEqualToString('req.responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async');
+        shouldBeEqualToString('req.responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.py?uid=async');
         finishJSTest();
     }
 }

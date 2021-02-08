@@ -10,7 +10,7 @@
     <script type="text/javascript">
       function testMethod(methodName) {
         var client = new XMLHttpRequest();
-        client.open(methodName, "resources/echo-request-method.php");
+        client.open(methodName, "resources/echo-request-method.py");
         client.onreadystatechange = function(event) {
           if (event.target.readyState == 4)
             assert_equals(client.getResponseHeader("x-custom-request-method"), methodName.toUpperCase());

@@ -21,7 +21,7 @@ function log(message)
 function test()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/chunked-transfer.php", true);
+    xhr.open("GET", "resources/chunked-transfer.py", true);
 
     xhr.onprogress = function(e) {
         if (e.loaded == 4 && e.total == 0 && !e.lengthComputable)

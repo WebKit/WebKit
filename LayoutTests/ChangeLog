@@ -1,3 +1,261 @@
+2021-02-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Convert xmlhttprequest php to Python
+        https://bugs.webkit.org/show_bug.cgi?id=220995
+        <rdar://problem/73630008>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/local/formdata/resources/send-form-data-common.js:
+        (sendFormData):
+        * http/tests/local/formdata/send-form-data-constructed-from-form-expected.txt:
+        * http/tests/local/formdata/send-form-data-constructed-from-form-using-open-panel-expected.txt:
+        * http/tests/local/formdata/send-form-data-constructed-from-form-using-open-panel.html:
+        * http/tests/local/formdata/send-form-data-constructed-from-form.html:
+        * http/tests/local/formdata/send-form-data-with-empty-blob-filename.html:
+        * http/tests/local/formdata/send-form-data-with-empty-file-filename-using-open-panel.html:
+        * http/tests/local/formdata/send-form-data-with-empty-file-filename.html:
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest.html:
+        * http/tests/resources/__init__.py: Added.
+        * http/tests/resources/portabilityLayer.py: Added.
+        (setState):
+        (getState):
+        * http/tests/resources/reset-temp-file.py: Added.
+        * http/tests/xmlhttprequest/XMLHttpRequestException.html:
+        * http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt:
+        * http/tests/xmlhttprequest/abort-should-cancel-load.html:
+        * http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-async.html:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-sync.html:
+        * http/tests/xmlhttprequest/access-control-preflight-headers-async.html:
+        * http/tests/xmlhttprequest/access-control-preflight-headers-sync.html:
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful.html:
+        * http/tests/xmlhttprequest/access-control-preflight-request-header-lowercase.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html:
+        * http/tests/xmlhttprequest/access-control-response-with-body-sync.html:
+        * http/tests/xmlhttprequest/access-control-response-with-body.html:
+        * http/tests/xmlhttprequest/access-control-response-with-expose-headers.html:
+        * http/tests/xmlhttprequest/auth-reject-protection-space.html:
+        * http/tests/xmlhttprequest/authorization-header.html:
+        * http/tests/xmlhttprequest/basic-auth-credentials-escaping.html:
+        * http/tests/xmlhttprequest/basic-auth-default.html:
+        * http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes.html:
+        * http/tests/xmlhttprequest/basic-auth-nopassword.html:
+        * http/tests/xmlhttprequest/basic-auth-nouser.html:
+        * http/tests/xmlhttprequest/basic-auth-responseURL-expected.txt:
+        * http/tests/xmlhttprequest/basic-auth-responseURL.html:
+        * http/tests/xmlhttprequest/basic-auth.html:
+        * http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html:
+        * http/tests/xmlhttprequest/connection-error-sync.html:
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight-expected.txt:
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight.html:
+        * http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html:
+        * http/tests/xmlhttprequest/cross-origin-authorization.html:
+        * http/tests/xmlhttprequest/cross-origin-cookie-storage.html:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization.html:
+        * http/tests/xmlhttprequest/cross-origin-no-credential-prompt-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html:
+        * http/tests/xmlhttprequest/cross-origin-preflight-get.html:
+        * http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html:
+        * http/tests/xmlhttprequest/detaching-frame-2.html:
+        * http/tests/xmlhttprequest/digest-auth.html:
+        * http/tests/xmlhttprequest/failed-auth-expected.txt:
+        * http/tests/xmlhttprequest/failed-auth.html:
+        * http/tests/xmlhttprequest/gzip-content-type.html:
+        * http/tests/xmlhttprequest/head-redirection.html:
+        * http/tests/xmlhttprequest/logout.html:
+        * http/tests/xmlhttprequest/navigation-should-abort.html:
+        * http/tests/xmlhttprequest/null-auth.php: Removed.
+        * http/tests/xmlhttprequest/null-auth.py: Added.
+        * http/tests/xmlhttprequest/onabort-event.html:
+        * http/tests/xmlhttprequest/onabort-progressevent-attributes.html:
+        * http/tests/xmlhttprequest/onloadend-event-after-error.html:
+        * http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html:
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt:
+        * http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html:
+        * http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-tests.js:
+        * http/tests/xmlhttprequest/re-login-async.html:
+        * http/tests/xmlhttprequest/re-login.html:
+        * http/tests/xmlhttprequest/redirect-cors-origin-null.html:
+        * http/tests/xmlhttprequest/redirect-credentials-responseURL-expected.txt:
+        * http/tests/xmlhttprequest/redirect-credentials-responseURL.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html:
+        * http/tests/xmlhttprequest/redirections-and-user-headers.html:
+        * http/tests/xmlhttprequest/remember-bad-password-expected.txt:
+        * http/tests/xmlhttprequest/remember-bad-password.html:
+        * http/tests/xmlhttprequest/resources/access-control-allow-lists.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-allow-lists.py: Added.
+        * http/tests/xmlhttprequest/resources/access-control-allow-with-body.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-allow-with-body.py: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py: Added.
+        (fail):
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py: Added.
+        (fail):
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.py: Added.
+        (fail):
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.py: Added.
+        (fail):
+        * http/tests/xmlhttprequest/resources/access-control-preflight-redirect.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-preflight-redirect.py: Added.
+        * http/tests/xmlhttprequest/resources/access-control-preflight-request-header-lowercase.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-preflight-request-header-lowercase.py: Added.
+        * http/tests/xmlhttprequest/resources/access-control-response-with-expose-headers.php: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-response-with-expose-headers.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir1/basic-auth.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir1/basic-auth.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir2/basic-auth.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir2/basic-auth.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir2/catch.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth-default/dir2/catch.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth-nouserpass/basic-auth-nouserpass.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth-nouserpass/basic-auth-nouserpass.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth/access-control-auth-basic.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth/access-control-auth-basic.py: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth/basic-auth.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth/basic-auth.py: Added.
+        * http/tests/xmlhttprequest/resources/big-response.php: Removed.
+        * http/tests/xmlhttprequest/resources/big-response.py: Added.
+        * http/tests/xmlhttprequest/resources/chunked-transfer.php: Removed.
+        * http/tests/xmlhttprequest/resources/chunked-transfer.py: Added.
+        * http/tests/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php: Removed.
+        * http/tests/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.py: Added.
+        * http/tests/xmlhttprequest/resources/cross-origin-authorization.php: Removed.
+        * http/tests/xmlhttprequest/resources/cross-origin-authorization.py: Added.
+        * http/tests/xmlhttprequest/resources/cross-origin-check-cookies.php: Removed.
+        * http/tests/xmlhttprequest/resources/cross-origin-check-cookies.py: Added.
+        * http/tests/xmlhttprequest/resources/cross-origin-no-authorization.php: Removed.
+        * http/tests/xmlhttprequest/resources/cross-origin-no-authorization.py: Added.
+        * http/tests/xmlhttprequest/resources/cross-origin-preflight-get.php: Removed.
+        * http/tests/xmlhttprequest/resources/cross-origin-preflight-get.py: Added.
+        * http/tests/xmlhttprequest/resources/cross-origin-preset-authorization-frame.html:
+        * http/tests/xmlhttprequest/resources/cross-origin-set-cookies.php: Removed.
+        * http/tests/xmlhttprequest/resources/cross-origin-set-cookies.py: Added.
+        * http/tests/xmlhttprequest/resources/custom-headers.php: Removed.
+        * http/tests/xmlhttprequest/resources/custom-headers.py: Added.
+        * http/tests/xmlhttprequest/resources/download-header-with-delay.php: Removed.
+        * http/tests/xmlhttprequest/resources/download-header-with-delay.py: Added.
+        * http/tests/xmlhttprequest/resources/download-with-delay.php: Removed.
+        * http/tests/xmlhttprequest/resources/download-with-delay.py: Added.
+        * http/tests/xmlhttprequest/resources/echo-auth.php: Removed.
+        * http/tests/xmlhttprequest/resources/echo-auth.py: Added.
+        * http/tests/xmlhttprequest/resources/echo-host.php: Removed.
+        * http/tests/xmlhttprequest/resources/echo-host.py: Added.
+        * http/tests/xmlhttprequest/resources/echo-request-method.php: Removed.
+        * http/tests/xmlhttprequest/resources/echo-request-method.py: Added.
+        * http/tests/xmlhttprequest/resources/echo-user-agent.php: Removed.
+        * http/tests/xmlhttprequest/resources/echo-user-agent.py: Added.
+        * http/tests/xmlhttprequest/resources/empty-content-type.php: Removed.
+        * http/tests/xmlhttprequest/resources/empty-content-type.py: Added.
+        * http/tests/xmlhttprequest/resources/endlessxml.php: Removed.
+        * http/tests/xmlhttprequest/resources/endlessxml.py: Added.
+        * http/tests/xmlhttprequest/resources/frame-load-to-cancel.html:
+        * http/tests/xmlhttprequest/resources/get-content.php: Removed.
+        * http/tests/xmlhttprequest/resources/get-content.py: Added.
+        * http/tests/xmlhttprequest/resources/get_method.php: Removed.
+        * http/tests/xmlhttprequest/resources/get_method.py: Added.
+        * http/tests/xmlhttprequest/resources/gzip-lorem.php: Removed.
+        * http/tests/xmlhttprequest/resources/gzip-lorem.py: Added.
+        * http/tests/xmlhttprequest/resources/headers.php: Removed.
+        * http/tests/xmlhttprequest/resources/headers.py: Added.
+        * http/tests/xmlhttprequest/resources/infinite-loop.php: Removed.
+        * http/tests/xmlhttprequest/resources/infinite-loop.py: Added.
+        * http/tests/xmlhttprequest/resources/logout/resource.php: Removed.
+        * http/tests/xmlhttprequest/resources/logout/resource.py: Added.
+        * http/tests/xmlhttprequest/resources/multipart-post-echo-filenames.php: Removed.
+        * http/tests/xmlhttprequest/resources/multipart-post-echo-filenames.py: Added.
+        * http/tests/xmlhttprequest/resources/multipart-post-echo.php: Removed.
+        * http/tests/xmlhttprequest/resources/multipart-post-echo.py: Added.
+        * http/tests/xmlhttprequest/resources/no-authenticate-header-401.php: Removed.
+        * http/tests/xmlhttprequest/resources/no-authenticate-header-401.py: Added.
+        * http/tests/xmlhttprequest/resources/no-custom-header.php: Removed.
+        * http/tests/xmlhttprequest/resources/no-custom-header.py: Added.
+        * http/tests/xmlhttprequest/resources/not-ascii-status.php: Removed.
+        * http/tests/xmlhttprequest/resources/not-ascii-status.py: Added.
+        * http/tests/xmlhttprequest/resources/origin-exact-matching-iframe.html:
+        * http/tests/xmlhttprequest/resources/print-headers.php: Removed.
+        * http/tests/xmlhttprequest/resources/print-headers.py: Added.
+        * http/tests/xmlhttprequest/resources/print-referer.php: Removed.
+        * http/tests/xmlhttprequest/resources/print-referer.py: Added.
+        * http/tests/xmlhttprequest/resources/re-login/resource.php: Removed.
+        * http/tests/xmlhttprequest/resources/re-login/resource.py: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null-pass.php: Removed.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null-pass.py: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null.php: Removed.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null.py: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cors.php: Removed.
+        * http/tests/xmlhttprequest/resources/redirect-cors.py: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.php: Removed.
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.py: Added.
+        * http/tests/xmlhttprequest/resources/redirect_methods.php: Removed.
+        * http/tests/xmlhttprequest/resources/redirect_methods.py: Added.
+        * http/tests/xmlhttprequest/resources/remember-bad-password/count-failures.php: Removed.
+        * http/tests/xmlhttprequest/resources/remember-bad-password/count-failures.py: Added.
+        * http/tests/xmlhttprequest/resources/status-404-without-body.php: Removed.
+        * http/tests/xmlhttprequest/resources/status-404-without-body.py: Added.
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authenticate.php: Removed.
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authenticate.py: Added.
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authorize.php: Removed.
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authorize.py: Added.
+        * http/tests/xmlhttprequest/resources/xmlhttprequest-in-unload.html:
+        * http/tests/xmlhttprequest/resources/xmlhttprequest-mimetype-mixed-case.php: Removed.
+        * http/tests/xmlhttprequest/resources/xmlhttprequest-mimetype-mixed-case.py: Added.
+        * http/tests/xmlhttprequest/response-access-on-error.html:
+        * http/tests/xmlhttprequest/response-special-characters.html:
+        * http/tests/xmlhttprequest/simple-sync.html:
+        * http/tests/xmlhttprequest/unauthorized-without-authenticate-header.html:
+        * http/tests/xmlhttprequest/url-with-credentials.html:
+        * http/tests/xmlhttprequest/workers/resources/endless-response.php: Removed.
+        * http/tests/xmlhttprequest/workers/resources/endless-response.py: Added.
+        * http/tests/xmlhttprequest/workers/resources/endless-sync-xhr.js:
+        * http/tests/xmlhttprequest/xhr-user-agent.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-body.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-mimetype-mixed-case.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-case-insensitive.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-responseURL.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-timers.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html:
+        * imported/blink/http/tests/security/mixedContent/resources/frame-with-insecure-sync-xhr-post.html:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+
 2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS macOS] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html is a flaky failure

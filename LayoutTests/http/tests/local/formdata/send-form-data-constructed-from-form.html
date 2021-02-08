@@ -25,7 +25,7 @@ function onInputFileChange()
 
     var file = document.getElementById("file").files[0];
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.php", false);
+    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.py", false);
     xhr.send(new FormData(document.getElementById("f")));
     log("Response: " + xhr.responseText);
 

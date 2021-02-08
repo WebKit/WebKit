@@ -28,7 +28,7 @@
         assert_equals( client.responseText, 'テスト', 'overrideMimeType() in HEADERS RECEIVED state set encoding' );
         test.done();
       });
-      client.open("GET", "resources/get-content.php?type="+encodeURIComponent('text/html;charset=UTF-8')+'&content=%83%65%83%58%83%67');
+      client.open("GET", "resources/get-content.py?type="+encodeURIComponent('text/html;charset=UTF-8')+'&content=%83%65%83%58%83%67');
       client.send( '' );
     </script>
   </body>
