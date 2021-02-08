@@ -93,6 +93,7 @@
     readonly attribute boolean isExpanded;
     readonly attribute boolean isChecked;
     readonly attribute DOMString currentStateValue;
+    readonly attribute DOMString sortDirection;
     readonly attribute boolean isIndeterminate;
     readonly attribute boolean isVisible;
     readonly attribute boolean isCollapsed;

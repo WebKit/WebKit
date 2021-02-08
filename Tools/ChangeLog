@@ -1,3 +1,20 @@
+2021-02-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add support for aria-sort change notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=221495
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::sortDirection const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::sortDirection const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::currentStateValue const):
+        (WTR::AccessibilityUIElement::sortDirection const):
+
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Permission request API for MediaKeySystem access support

@@ -174,6 +174,7 @@ public:
     bool isExpanded() const;
     bool isChecked() const;
     JSRetainPtr<JSStringRef> currentStateValue() const;
+    JSRetainPtr<JSStringRef> sortDirection() const;
     bool isIndeterminate() const;
     bool isVisible() const;
     bool isOnScreen() const;

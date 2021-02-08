@@ -2017,6 +2017,11 @@ static RenderObject* rendererForView(WAKView* view)
     // The UIKit accessibility wrapper will override and post appropriate notification.
 }
 
+- (void)postNotification:(NSString *)notificationName
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.
+}
+
 // These will be used by the UIKit wrapper to calculate an appropriate description of scroll status.
 - (CGPoint)_accessibilityScrollPosition
 {
@@ -3056,17 +3061,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
+
     switch (self.axBackingObject->sortDirection()) {
     case AccessibilitySortDirection::Ascending:
-        return @"ascending";
+        return @"AXAscendingSortDirection";
     case AccessibilitySortDirection::Descending:
-        return @"descending";
-    case AccessibilitySortDirection::Other:
-        return @"other";
-    case AccessibilitySortDirection::Invalid:
-    case AccessibilitySortDirection::None:
-        return nil;
+        return @"AXDescendingSortDirection";
+    default:
+        return @"AXUnknownSortDirection";
     }
 }
 

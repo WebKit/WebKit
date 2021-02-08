@@ -1,3 +1,23 @@
+2021-02-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add support for aria-sort change notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=221495
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-sort-changed-notification-expected.txt: Added.
+        * accessibility/aria-sort-changed-notification.html: Added.
+        * accessibility/aria-sort-expected.txt:
+        * accessibility/aria-sort.html:
+        Calls sortDirection property on the JS accessible element instead of
+        retrieving the aria-sort attribute. This matches more accurately what an
+        actual client would do. Changed the expected file accordingly.
+        * accessibility/ios-simulator/aria-sort-ios-expected.txt:
+        * accessibility/ios-simulator/aria-sort-ios.html:
+        Same as in the Mac test above.
+        * platform/ios/TestExpectations:
+        Added the new test to be run on the ios-simulator.
+
 2021-02-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] event.ctrlKey and other are false in keydown event
