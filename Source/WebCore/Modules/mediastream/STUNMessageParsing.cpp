@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <WebCore/LibWebRTCMacros.h>
+#include <LibWebRTCMacros.h>
 #include <webrtc/rtc_base/byte_order.h>
 
 namespace WebCore {
