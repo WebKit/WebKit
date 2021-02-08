@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Logging.h"
 #include "SpeechRecognitionRealtimeMediaSourceManagerMessages.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h"
 #include "WebProcess.h"

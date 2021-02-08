@@ -1,5 +1,12 @@
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, unified build fix after r272480
+
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp: Logging.h is needed for
+        log channel macros usage.
+
+2021-02-08  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, build fix after r272480
 
         * UIProcess/WebPageProxy.cpp:
