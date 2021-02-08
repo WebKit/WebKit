@@ -1831,7 +1831,7 @@ public:
     void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
     void requestUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 
-    void requestMediaKeySystemPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+    void requestMediaKeySystemPermissionByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 
     void syncIfMockDevicesEnabledChanged();
 

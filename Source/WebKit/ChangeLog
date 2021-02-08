@@ -1,5 +1,13 @@
 2021-02-08  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, build fix after r272480
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestMediaKeySystemPermissionByDefaultAction):
+        * UIProcess/WebPageProxy.h:
+
+2021-02-08  Philippe Normand  <pnormand@igalia.com>
+
         Permission request API for MediaKeySystem access support
         https://bugs.webkit.org/show_bug.cgi?id=221187
 
