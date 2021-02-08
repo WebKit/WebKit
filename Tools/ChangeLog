@@ -1,3 +1,13 @@
+2021-02-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening geolocation API test flakiness
+
+        Unreviewed test gardening.
+
+        Failing regularly, likely due to the same geolocation API limitation.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-02-08  Andres Gonzalez  <andresg_22@apple.com>
 
         Add support for aria-sort change notifications.

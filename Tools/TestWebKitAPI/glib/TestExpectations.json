@@ -12,6 +12,16 @@
             }
         }
     },
+    "TestGeolocationManager": {
+        "subtests": {
+            "/webkit/WebKitGeolocationManager/current-position": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/213786"}}
+            },
+            "/webkit/WebKitGeolocationManager/watch-position": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/213786"}}
+            }
+        }
+    },
     "TestWebKitSettings": {
         "subtests": {
             "/webkit/WebKitSettings/javascript-markup": {
