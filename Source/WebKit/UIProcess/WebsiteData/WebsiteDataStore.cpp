@@ -1990,13 +1990,15 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         
         resolveDirectoriesIfNecessary();
         
-        networkProcess().send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true), 0);
+        if (m_networkProcess)
+            m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true), 0);
         for (auto& processPool : processPools())
             processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true), m_sessionID);
         return;
     }
 
-    networkProcess().send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false), 0);
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false), 0);
     for (auto& processPool : processPools())
         processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false), m_sessionID);
 

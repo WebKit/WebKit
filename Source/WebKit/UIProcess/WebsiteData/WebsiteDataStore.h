@@ -122,6 +122,7 @@ public:
     
     NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();
+    NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
 
     static WebsiteDataStore* existingDataStoreForSessionID(PAL::SessionID);
 
