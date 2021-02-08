@@ -61,51 +61,51 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& lex
     return create(globalObject, *jsCast<JSReadableStream*>(object));
 }
 
-namespace ReadableStreamInternal {
-static inline JSC::JSValue callFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
+static inline Optional<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier, JSC::JSValue thisValue, const JSC::MarkedArgumentBuffer& arguments)
 {
-    VM& vm = lexicalGlobalObject.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto function = lexicalGlobalObject.get(&lexicalGlobalObject, identifier);
+    ASSERT(function.isCallable(lexicalGlobalObject.vm()));
+
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto callData = JSC::getCallData(vm, jsFunction);
-    ASSERT(callData.type != JSC::CallData::Type::None);
-    auto result = call(&lexicalGlobalObject, jsFunction, callData, thisValue, arguments);
-    scope.assertNoException();
+    auto callData = JSC::getCallData(vm, function);
+    auto result = call(&lexicalGlobalObject, function, callData, thisValue, arguments);
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+    if (scope.exception())
+        return { };
     return result;
-}
 }
 
 void ReadableStream::pipeTo(ReadableStreamSink& sink)
 {
     auto& lexicalGlobalObject = *m_globalObject;
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
-    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamPipeToPrivateName();
-
-    auto readableStreamPipeTo = m_globalObject->get(&lexicalGlobalObject, privateName);
-    ASSERT(readableStreamPipeTo.isCallable(lexicalGlobalObject.vm()));
+    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamPipeToPrivateName();
 
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(toJS(&lexicalGlobalObject, m_globalObject.get(), sink));
     ASSERT(!arguments.hasOverflowed());
-    ReadableStreamInternal::callFunction(lexicalGlobalObject, readableStreamPipeTo, JSC::jsUndefined(), arguments);
+    invokeReadableStreamFunction(lexicalGlobalObject, privateName, JSC::jsUndefined(), arguments);
 }
 
-std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
+Optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> ReadableStream::tee()
 {
     auto& lexicalGlobalObject = *m_globalObject;
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
-    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamTeePrivateName();
-
-    auto readableStreamTee = m_globalObject->get(&lexicalGlobalObject, privateName);
-    ASSERT(readableStreamTee.isCallable(lexicalGlobalObject.vm()));
+    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamTeePrivateName();
 
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(JSC::jsBoolean(true));
     ASSERT(!arguments.hasOverflowed());
-    auto returnedValue = ReadableStreamInternal::callFunction(lexicalGlobalObject, readableStreamTee, JSC::jsUndefined(), arguments);
+    auto returnedValue = invokeReadableStreamFunction(lexicalGlobalObject, privateName, JSC::jsUndefined(), arguments);
+    if (!returnedValue)
+        return { };
 
-    auto results = Detail::SequenceConverter<IDLInterface<ReadableStream>>::convert(lexicalGlobalObject, returnedValue);
+    auto results = Detail::SequenceConverter<IDLInterface<ReadableStream>>::convert(lexicalGlobalObject, *returnedValue);
 
     ASSERT(results.size() == 2);
     return std::make_pair(results[0].releaseNonNull(), results[1].releaseNonNull());
@@ -114,8 +114,10 @@ std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
 void ReadableStream::lock()
 {
     auto& lexicalGlobalObject = *m_globalObject;
-    VM& vm = lexicalGlobalObject.vm();
+    auto& vm = lexicalGlobalObject.vm();
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     auto scope = DECLARE_CATCH_SCOPE(vm);
+#endif
 
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
 
@@ -129,7 +131,7 @@ void ReadableStream::lock()
     ASSERT(!args.hasOverflowed());
 
     JSC::construct(&lexicalGlobalObject, constructor, constructData, args);
-    scope.assertNoException();
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 }
 
 static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadableStream* readableStream, JSC::JSValue function)
@@ -140,7 +142,16 @@ static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadab
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
     ASSERT(!arguments.hasOverflowed());
-    return ReadableStreamInternal::callFunction(lexicalGlobalObject, function, JSC::jsUndefined(), arguments).isTrue();
+
+    auto& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != JSC::CallData::Type::None);
+
+    auto result = call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+
+    return result.isTrue() || scope.exception();
 }
 
 bool ReadableStream::isLocked() const

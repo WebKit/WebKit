@@ -330,8 +330,10 @@ FetchBody FetchBody::clone()
 
     if (m_readableStream) {
         auto clones = m_readableStream->tee();
-        m_readableStream = WTFMove(clones.first);
-        clone.m_readableStream = WTFMove(clones.second);
+        if (clones) {
+            m_readableStream = WTFMove(clones->first);
+            clone.m_readableStream = WTFMove(clones->second);
+        }
     }
     return clone;
 }
