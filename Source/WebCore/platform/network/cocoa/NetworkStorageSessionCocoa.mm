@@ -267,7 +267,7 @@ static RetainPtr<NSArray> cookiesForURL(NSHTTPCookieStorage *storage, NSURL *url
     UNUSED_PARAM(sameSiteInfo);
 #endif
     ASSERT(!!cookiesPtr);
-    return *cookiesPtr;
+    return WTFMove(*cookiesPtr);
 }
 
 void NetworkStorageSession::setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSArray *cookies, NSURL *url, NSURL *mainDocumentURL, const SameSiteInfo& sameSiteInfo) const
