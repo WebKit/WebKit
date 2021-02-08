@@ -311,6 +311,17 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
     consoleFrontendDispatcher.messageAdded(WTFMove(messageObject));
 }
 
+String ConsoleMessage::toString() const
+{
+    if (m_jsonLogValues.isEmpty())
+        return m_message;
+
+    StringBuilder builder;
+    for (auto& message : m_jsonLogValues)
+        builder.append(message.value);
+    return builder.toString();
+}
+
 void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& consoleFrontendDispatcher)
 {
     consoleFrontendDispatcher.messageRepeatCountUpdated(m_repeatCount);

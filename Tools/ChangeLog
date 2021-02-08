@@ -1,3 +1,15 @@
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
+        Add ConsoleMessage::toString()
+        https://bugs.webkit.org/show_bug.cgi?id=221539
+
+        Reviewed by Eric Carlson.
+
+        Added unit tests.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/InspectorConsoleMessage.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-02-08  Sam Weinig  <weinig@apple.com>
 
         Update sRGB <-> XYZ conversion matrix values to match values in latest spec

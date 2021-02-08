@@ -1,5 +1,35 @@
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
+        Add ConsoleMessage::toString()
+        https://bugs.webkit.org/show_bug.cgi?id=221539
+
+        Reviewed by Eric Carlson.
+
+        Currently ConsoleMessage doesn't have a publicly API to retrieve the
+        stored JSON values into a string for printing.
+
+        The closest equivalent is message(), but it doesn't return any JSON
+        objects attached. This makes it an ill fit when printing
+        ConsoleMessage's to the system terminal, since these JSON values often
+        contain information that is important for debugging, e.g.:
+
+        SourceBufferPrivateGStreamer::removeCodedFrames(126493C320000001) removing sample (notice: no sample)
+        SourceBufferPrivateGStreamer::removeCodedFrames(126493C320000001) the range in removeCodedFrames() includes already enqueued samples, reenqueueing from (notice: no time)
+
+        This patch adds a new ConsoleMessage::toString() method that
+        constructs a String containing these JSON values, and makes use of it
+        when printing messages to the system terminal, giving more useful
+        output, e.g:
+
+        CONSOLE MEDIASOURCE DEBUG MediaSourcePrivateGStreamer::addSourceBuffer(D4447A9F1F483EEF) {"containerType":"video/webm","codecs":"codecs","profiles":"profiles"}
+        CONSOLE MEDIA LOG HTMLMediaElement::mediaPlayerDurationChanged(D4447A9F1F483EEF) duration = {"invalid":true,"numerator":-1,"denominator":1,"flags":0}, current time = {"value":0,"numerator":0,"denominator":10000000,"flags":1}
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::toString const):
+        * inspector/ConsoleMessage.h:
+
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
         ConsoleMessage: Don't encode string JSONLogValue's as JSON
         https://bugs.webkit.org/show_bug.cgi?id=221421
 
