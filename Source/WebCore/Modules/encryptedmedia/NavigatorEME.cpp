@@ -37,6 +37,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeySystemAccess.h"
 #include "Logging.h"
+#include "MediaKeySystemRequest.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -99,23 +100,27 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
         return;
     }
 
-    document.postTask([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), promise = WTFMove(promise), &document, logger = WTFMove(logger), identifier = WTFMove(identifier)] (ScriptExecutionContext&) mutable {
-        // 3. Let document be the calling context's Document.
-        // 4. Let origin be the origin of document.
-        // 5. Let promise be a new promise.
-        // 6. Run the following steps in parallel:
-        // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
-        //      String comparison is case-sensitive.
-        if (!CDM::supportsKeySystem(keySystem)) {
-            infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
-            promise->reject(NotSupportedError);
-            return;
-        }
+    auto request = MediaKeySystemRequest::create(document, keySystem, WTFMove(promise));
+    request->setAllowCallback([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), &document, logger = WTFMove(logger), identifier = WTFMove(identifier)](Ref<DeferredPromise>&& promise) mutable {
+        document.postTask([promise = WTFMove(promise), &document, keySystem, logger = WTFMove(logger), identifier = WTFMove(identifier), supportedConfigurations = WTFMove(supportedConfigurations)] (ScriptExecutionContext&) mutable {
+            // 3. Let document be the calling context's Document.
+            // 4. Let origin be the origin of document.
+            // 5. Let promise be a new promise.
+            // 6. Run the following steps in parallel:
+            // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
+            //      String comparison is case-sensitive.
+            if (!CDM::supportsKeySystem(keySystem)) {
+                infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
+                promise->reject(NotSupportedError);
+                return;
+            }
 
-        // 6.2. Let implementation be the implementation of keySystem.
-        auto implementation = CDM::create(document, keySystem);
-        tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
+            // 6.2. Let implementation be the implementation of keySystem.
+            auto implementation = CDM::create(document, keySystem);
+            tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
+        });
     });
+    request->start();
 }
 
 static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise, Ref<Logger>&& logger, WTF::Logger::LogSiteIdentifier&& identifier)

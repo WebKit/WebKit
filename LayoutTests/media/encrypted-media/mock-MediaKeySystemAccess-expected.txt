@@ -31,6 +31,10 @@ RUN(capabilities.persistentState = "not-allowed")
 RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
 Promise resolved OK
 
+RUN(testRunner.setIsMediaKeySystemPermissionGranted(false))
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise rejected correctly OK
+
 RUN(promise = mediaKeySystemAccess.createMediaKeys())
 Promise resolved OK
 

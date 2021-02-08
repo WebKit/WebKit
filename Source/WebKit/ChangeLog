@@ -1,3 +1,96 @@
+2021-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Reviewed by Jer Noble.
+
+        Add new IPC and C API exposing MediaKeySystem access permissions to the UIProcess. At least
+        GTK/WPE would like to have API for asking permission to the user when EME's MediaKeyAccess
+        is being requested by a page. On Apple platforms the permission is granted by default until
+        a decision is made about supporting this in their APIUIClient.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Platform/Logging.h:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForMediaKeySystemPermissionRequest):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp: Added.
+        (WKMediaKeySystemPermissionCallbackGetTypeID):
+        (WKMediaKeySystemPermissionCallbackComplete):
+        * UIProcess/API/C/WKMediaKeySystemPermissionCallback.h: Added.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/MediaKeySystemPermissionRequest.h: Added.
+        (WebKit::MediaKeySystemPermissionRequest::create):
+        (WebKit::MediaKeySystemPermissionRequest::complete):
+        (WebKit::MediaKeySystemPermissionRequest::keySystem const):
+        (WebKit::MediaKeySystemPermissionRequest::MediaKeySystemPermissionRequest):
+        (WebKit::MediaKeySystemPermissionCallback::create):
+        (WebKit::MediaKeySystemPermissionCallback::complete):
+        (WebKit::MediaKeySystemPermissionCallback::MediaKeySystemPermissionCallback):
+        * UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp: Added.
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::MediaKeySystemPermissionRequestManagerProxy):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::~MediaKeySystemPermissionRequestManagerProxy):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::invalidatePendingRequests):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::denyRequest):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::grantRequest):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::logChannel const):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::logger const):
+        * UIProcess/MediaKeySystemPermissionRequestManagerProxy.h: Added.
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::page const):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::denyRequest):
+        * UIProcess/MediaKeySystemPermissionRequestProxy.cpp: Added.
+        (WebKit::MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy):
+        (WebKit::MediaKeySystemPermissionRequestProxy::allow):
+        (WebKit::MediaKeySystemPermissionRequestProxy::deny):
+        (WebKit::MediaKeySystemPermissionRequestProxy::invalidate):
+        (WebKit::MediaKeySystemPermissionRequestProxy::doDefaultAction):
+        * UIProcess/MediaKeySystemPermissionRequestProxy.h: Added.
+        (WebKit::MediaKeySystemPermissionRequestProxy::create):
+        (WebKit::MediaKeySystemPermissionRequestProxy::isPending const):
+        (WebKit::MediaKeySystemPermissionRequestProxy::mediaKeySystemID const):
+        (WebKit::MediaKeySystemPermissionRequestProxy::mainFrameID const):
+        (WebKit::MediaKeySystemPermissionRequestProxy::frameID const):
+        (WebKit::MediaKeySystemPermissionRequestProxy::topLevelDocumentSecurityOrigin):
+        (WebKit::MediaKeySystemPermissionRequestProxy::topLevelDocumentSecurityOrigin const):
+        (WebKit::MediaKeySystemPermissionRequestProxy::keySystem const):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestMediaKeySystemPermissionForFrame):
+        (WebKit::WebPageProxy::mediaKeySystemPermissionRequestManager):
+        (WebKit::WebPageProxy::requestMediaKeySystemPermissionByDefaultAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp: Added.
+        (WebKit::MediaKeySystemPermissionRequestManager::MediaKeySystemPermissionRequestManager):
+        (WebKit::MediaKeySystemPermissionRequestManager::startMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted):
+        (WebKit::MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied):
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.h: Added.
+        * WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp: Added.
+        (WebKit::WebMediaKeySystemClient::WebMediaKeySystemClient):
+        (WebKit::WebMediaKeySystemClient::pageDestroyed):
+        (WebKit::WebMediaKeySystemClient::requestMediaKeySystem):
+        (WebKit::WebMediaKeySystemClient::cancelMediaKeySystemRequest):
+        * WebProcess/WebCoreSupport/WebMediaKeySystemClient.h: Added.
+        (WebKit::WebMediaKeySystemClient::~WebMediaKeySystemClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::mediaKeySystemWasGranted):
+        (WebKit::WebPage::mediaKeySystemWasDenied):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::mediaKeySystemPermissionRequestManager):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-02-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages

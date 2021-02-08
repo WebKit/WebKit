@@ -33,6 +33,8 @@
 
 #if PLATFORM(COCOA)
 #include "SharedRingBufferStorage.h"
+#include <WebCore/CARingBuffer.h>
+#include <WebCore/WebAudioBufferList.h>
 #endif
 
 namespace WebKit {
@@ -47,7 +49,7 @@ SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMedia
     , m_identifier(identifier)
     , m_manager(makeWeakPtr(manager))
 #if PLATFORM(COCOA)
-    , m_ringBuffer(makeUnique<CARingBuffer>())
+    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>())
 #endif
 {
     m_manager->addSource(*this, captureDevice);
@@ -77,8 +79,8 @@ void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(const SharedMemory::
 {
     m_description = description;
 
-    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
-    m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
+    m_ringBuffer = makeUnique<WebCore::CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
+    m_buffer = makeUnique<WebCore::WebAudioBufferList>(description, numberOfFrames);
 }
 
 #endif

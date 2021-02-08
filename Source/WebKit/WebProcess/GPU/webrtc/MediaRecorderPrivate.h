@@ -41,6 +41,7 @@ class Connection;
 
 namespace WebCore {
 class MediaStreamPrivate;
+class WebAudioBufferList;
 }
 
 namespace WebKit {

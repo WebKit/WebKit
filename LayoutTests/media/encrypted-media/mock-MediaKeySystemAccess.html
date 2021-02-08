@@ -84,6 +84,13 @@
         },
 
         function() {
+            run('testRunner.setIsMediaKeySystemPermissionGranted(false)');
+            run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
+            shouldReject(promise).then(next, next);
+        },
+
+        function() {
+            testRunner.setIsMediaKeySystemPermissionGranted(true);
             run('promise = mediaKeySystemAccess.createMediaKeys()');
             shouldResolve(promise).then(next, next);
         },

@@ -46,6 +46,7 @@
 #include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKMediaKeySystemPermissionCallback.h>
 #include <WebKit/WKMessageListener.h>
 #include <WebKit/WKMockDisplay.h>
 #include <WebKit/WKMockMediaDevice.h>
@@ -341,6 +342,21 @@ void TestController::completeSpeechRecognitionPermissionCheck(WKSpeechRecognitio
 void TestController::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
     m_isSpeechRecognitionPermissionGranted = granted;
+}
+
+static void decidePolicyForMediaKeySystemPermissionRequest(WKPageRef, WKSecurityOriginRef, WKStringRef, WKMediaKeySystemPermissionCallbackRef callback)
+{
+    TestController::singleton().completeMediaKeySystemPermissionCheck(callback);
+}
+
+void TestController::completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef callback)
+{
+    WKMediaKeySystemPermissionCallbackComplete(callback, m_isMediaKeySystemPermissionGranted);
+}
+
+void TestController::setIsMediaKeySystemPermissionGranted(bool granted)
+{
+    m_isMediaKeySystemPermissionGranted = granted;
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
@@ -699,8 +715,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV15 pageUIClient = {
-        { 15, m_mainWebView.get() },
+    WKPageUIClientV16 pageUIClient = {
+        { 16, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -774,7 +790,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // requestStorageAccessConfirm
         shouldAllowDeviceOrientationAndMotionAccess,
         runWebAuthenticationPanel,
-        decidePolicyForSpeechRecognitionPermissionRequest
+        decidePolicyForSpeechRecognitionPermissionRequest,
+        decidePolicyForMediaKeySystemPermissionRequest
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

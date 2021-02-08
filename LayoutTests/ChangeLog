@@ -1,3 +1,16 @@
+2021-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Reviewed by Jer Noble.
+
+        Add basic coverage support for overriding the MediaKeySystem permission answer and thus have
+        the promise rejection tested in this case.
+
+        * media/encrypted-media/mock-MediaKeySystemAccess-expected.txt:
+        * media/encrypted-media/mock-MediaKeySystemAccess.html:
+
 2021-02-07  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r272379) [WPE] imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant tests are Image Failing
