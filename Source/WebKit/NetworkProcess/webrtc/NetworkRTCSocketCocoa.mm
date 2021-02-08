@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
+#include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
 
@@ -53,94 +54,6 @@ std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCSocketCocoa::createClientT
     if ((tcpOptions & rtc::PacketSocketFactory::OPT_TLS_FAKE) || (tcpOptions & rtc::PacketSocketFactory::OPT_TLS_INSECURE))
         return nullptr;
     return makeUnique<NetworkRTCSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, WTFMove(connection));
-}
-
-static inline bool isStunMessage(uint16_t messageType)
-{
-    // https://tools.ietf.org/html/rfc5389#section-6 for STUN messages.
-    // TURN messages start by the channel number which is constrained by https://tools.ietf.org/html/rfc5766#section-11.
-    return !(messageType & 0xC000);
-}
-
-struct STUNMessageLengths {
-    size_t messageLength { 0 };
-    size_t messageLengthWithPadding { 0 };
-};
-
-static inline Optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(const uint8_t* data, size_t size)
-{
-    if (size < 4)
-        return { };
-
-    auto messageType = be16toh(*reinterpret_cast<const uint16_t*>(data));
-    auto messageLength = be16toh(*reinterpret_cast<const uint16_t*>(data + 2));
-
-    // STUN data message header is 20 bytes.
-    if (isStunMessage(messageType)) {
-        size_t length = 20 + messageLength;
-        return STUNMessageLengths { length, length };
-    }
-
-    // TURN data message header is 4 bytes plus padding bytes to get 4 bytes alignment as needed.
-    size_t length = 4 + messageLength;
-    size_t roundedLength = length % 4 ? (length + 4 - (length % 4)) : length;
-    return STUNMessageLengths { length, roundedLength };
-}
-
-static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffered, const Function<void(const uint8_t* data, size_t size)>& processMessage)
-{
-    auto* data = buffered.data();
-    size_t size = buffered.size();
-
-    while (true) {
-        auto lengths = getSTUNOrTURNMessageLengths(data, size);
-
-        if (!lengths || lengths->messageLengthWithPadding > size) {
-            if (!size)
-                return { };
-
-            std::memcpy(buffered.data(), data, size);
-            buffered.resize(size);
-            return WTFMove(buffered);
-        }
-
-        processMessage(data, lengths->messageLength);
-
-        data += lengths->messageLengthWithPadding;
-        size -= lengths->messageLengthWithPadding;
-    }
-}
-
-static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, const Function<void(const uint8_t* data, size_t size)>& processMessage)
-{
-    auto* data = buffered.data();
-    size_t size = buffered.size();
-
-    while (true) {
-        bool canReadLength = size >= 2;
-        size_t length = canReadLength ? be16toh(*reinterpret_cast<const uint16_t*>(data)) : 0;
-        if (!canReadLength || length > size + 2) {
-            if (!size)
-                return { };
-
-            std::memcpy(buffered.data(), data, size);
-            buffered.resize(size);
-            return WTFMove(buffered);
-        }
-
-        data += 2;
-        size -= 2;
-
-        processMessage(data, length);
-
-        data += length;
-        size -= length;
-    }
-}
-
-static inline Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, bool isSTUN, const Function<void(const uint8_t* data, size_t size)>& processMessage)
-{
-    return isSTUN ? extractSTUNOrTURNMessages(WTFMove(buffer), processMessage) : extractDataMessages(WTFMove(buffer), processMessage);
 }
 
 static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection, Function<Vector<uint8_t>(Vector<uint8_t>&&)>&& processData, Vector<uint8_t>&& buffer = { })
@@ -204,7 +117,7 @@ NetworkRTCSocketCocoa::NetworkRTCSocketCocoa(LibWebRTCSocketIdentifier identifie
     }).get());
 
     processIncomingData(m_nwConnection.get(), [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port(), isSTUN = m_isSTUN](auto&& buffer) mutable {
-        return extractMessages(WTFMove(buffer), isSTUN, [&](auto* message, auto size) {
+        return WebRTC::extractMessages(WTFMove(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto* message, auto size) {
             IPC::DataReference data(message, size);
             connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
         });
@@ -241,7 +154,7 @@ Vector<uint8_t> NetworkRTCSocketCocoa::createMessageBuffer(const uint8_t* data, 
         return { };
 
     if (m_isSTUN) {
-        auto messageLengths = getSTUNOrTURNMessageLengths(data, size);
+        auto messageLengths = WebRTC::getSTUNOrTURNMessageLengths(data, size);
         if (!messageLengths)
             return { };
 

@@ -1,3 +1,14 @@
+2021-02-08  Youenn Fablet  <youenn@apple.com>
+
+        NetworkRTCSocketCocoa extractDataMessages should not read too much data
+        https://bugs.webkit.org/show_bug.cgi?id=221544
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/STUNMessageParsingTest.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
         Add ConsoleMessage::toString()
