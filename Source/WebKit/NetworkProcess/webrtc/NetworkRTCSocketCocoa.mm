@@ -182,7 +182,7 @@ NetworkRTCSocketCocoa::NetworkRTCSocketCocoa(LibWebRTCSocketIdentifier identifie
     m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 
     nw_connection_set_queue(m_nwConnection.get(), socketQueue());
-    nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([identifier = m_identifier, &rtcProvider, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
+    nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([identifier = m_identifier, rtcProvider = makeRef(rtcProvider), connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
         ASSERT_UNUSED(error, !error);
         switch (state) {
         case nw_connection_state_invalid:
@@ -193,7 +193,7 @@ NetworkRTCSocketCocoa::NetworkRTCSocketCocoa(LibWebRTCSocketIdentifier identifie
             connection->send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
             return;
         case nw_connection_state_failed:
-            rtcProvider.callOnRTCNetworkThread([rtcProvider = makeRef(rtcProvider), identifier] {
+            rtcProvider->callOnRTCNetworkThread([rtcProvider, identifier] {
                 rtcProvider->takeSocket(identifier);
             });
             connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, -1), 0);

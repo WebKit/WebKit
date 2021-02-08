@@ -1,5 +1,40 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272212. rdar://problem/74032657
+
+    Make sure NetworkRTCProvider stays valid for all NetworkRTCSocketCocoa callbacks
+    https://bugs.webkit.org/show_bug.cgi?id=221249
+    <rdar://problem/72671547>
+    
+    Reviewed by Eric Carlson.
+    
+    Make the connection callback take a ref of the NetworkRTCProvider.
+    The ref cycle will break at NetworkConnectionToWebProcess destruction since it will call NetworkRTCProvider::close
+    which deletes all sockets owning the connection.
+    
+    * NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm:
+    (WebKit::NetworkRTCSocketCocoa::NetworkRTCSocketCocoa):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272212 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-02  Youenn Fablet  <youenn@apple.com>
+
+            Make sure NetworkRTCProvider stays valid for all NetworkRTCSocketCocoa callbacks
+            https://bugs.webkit.org/show_bug.cgi?id=221249
+            <rdar://problem/72671547>
+
+            Reviewed by Eric Carlson.
+
+            Make the connection callback take a ref of the NetworkRTCProvider.
+            The ref cycle will break at NetworkConnectionToWebProcess destruction since it will call NetworkRTCProvider::close
+            which deletes all sockets owning the connection.
+
+            * NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm:
+            (WebKit::NetworkRTCSocketCocoa::NetworkRTCSocketCocoa):
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272178. rdar://problem/74105398
 
     Allow support for CAAnimationGroup
