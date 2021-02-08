@@ -1,3 +1,15 @@
+2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS macOS] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219460
+
+        Unreviwed test gardening.
+
+        Skip the test since it is a flaky failure on release, and a flaky assertion failure on debug.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-02-08  Rob Buis  <rbuis@igalia.com>
 
         Null check document element in createGradient

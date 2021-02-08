@@ -3482,7 +3482,7 @@ fast/forms/defaultValue-clobbering.html [ Failure ]
 
 webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
 
-webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
+webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ]
 
 # The system font does not handle all the various width values on iOS.
 fast/text/system-font-width-4.html [ ImageOnlyFailure ]
