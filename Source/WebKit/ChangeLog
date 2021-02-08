@@ -1,5 +1,50 @@
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272422. rdar://problem/74033021
+
+    Make sure click attribution is processed in case of redirected kept alive loads
+    https://bugs.webkit.org/show_bug.cgi?id=221453
+    <rdar://problem/70896640>
+    
+    Reviewed by John Wilander.
+    
+    Source/WebCore:
+    
+    Test: http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::addSubresourceLoader):
+    Update assertion to cope with keep alive fetches which are similar to beacon/ping loads.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+    Move the click attribution processing before kept alive check.
+    
+    LayoutTests:
+    
+    * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt: Added.
+    * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html: Added.
+    * http/tests/privateClickMeasurement/resources/redirectToConversion.php:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272422 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-05  Youenn Fablet  <youenn@apple.com>
+
+            Make sure click attribution is processed in case of redirected kept alive loads
+            https://bugs.webkit.org/show_bug.cgi?id=221453
+            <rdar://problem/70896640>
+
+            Reviewed by John Wilander.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+            Move the click attribution processing before kept alive check.
+
+2021-02-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272376. rdar://problem/74032694
 
     REGRESSION(r267763) Network process launches earlier than before
