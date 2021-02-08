@@ -1,3 +1,14 @@
+2021-02-08  Imanol Fernandez  <ifernandez@igalia.com>
+
+        WebXRSystem::RequestSession with 'viewer' as a required feature should succeed
+        https://bugs.webkit.org/show_bug.cgi?id=221267
+
+        Reviewed by Sergio Villar Senin.
+
+        Mark xrSession_viewer_availability test as passing.
+
+        * web-platform-tests/webxr/xrSession_viewer_availability.https-expected.txt: Added.
+
 2021-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs should have an opaque origin
