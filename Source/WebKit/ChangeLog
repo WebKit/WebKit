@@ -1,3 +1,17 @@
+2021-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Prevent WebProcess to re-enter on sync IPC to the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=221566
+        <rdar://problem/74108466>
+
+        Reviewed by Ryosuke Niwa.
+
+        Prevent WebProcess to re-enter on sync IPC to the GPUProcess, similarly to what we already
+        do for sync IPC to other processes (Network, UI).
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+
 2021-02-08  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Enable Audio Capture in GPUProcess by default
