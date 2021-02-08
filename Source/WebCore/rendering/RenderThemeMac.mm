@@ -2591,8 +2591,10 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
     imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));
     auto imageRect = NSMakeRect(0, 0, imageSize.width(), imageSize.height());
     auto cgImage = [image CGImageForProposedRect:&imageRect context:nil hints:@{
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSImageHintSymbolFont : [NSFont systemFontOfSize:32],
         NSImageHintSymbolScale : @(NSImageSymbolScaleMedium)
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }];
     return { BitmapImage::create(cgImage), deviceScaleFactor };
 #else
