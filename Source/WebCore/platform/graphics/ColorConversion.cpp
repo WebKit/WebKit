@@ -99,20 +99,18 @@ static constexpr ColorMatrix<3, 3> linearRec2020ToXYZMatrix {
 
 // sRGB Matrices.
 
-// https://en.wikipedia.org/wiki/SRGB
-// http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+// https://drafts.csswg.org/css-color/#color-conversion-code
 static constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
-     3.2404542f, -1.5371385f, -0.4985314f,
-    -0.9692660f,  1.8760108f,  0.0415560f,
-     0.0556434f, -0.2040259f,  1.0572252f
+     3.2409699419045226f,  -1.537383177570094f,   -0.4986107602930034f,
+    -0.9692436362808796f,   1.8759675015077202f,   0.04155505740717559f,
+     0.05563007969699366f, -0.20397695888897652f,  1.0569715142428786f
 };
 
-// https://en.wikipedia.org/wiki/SRGB
-// http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+// https://drafts.csswg.org/css-color/#color-conversion-code
 static constexpr ColorMatrix<3, 3> linearSRGBToXYZMatrix {
-    0.4124564f,  0.3575761f,  0.1804375f,
-    0.2126729f,  0.7151522f,  0.0721750f,
-    0.0193339f,  0.1191920f,  0.9503041f
+    0.41239079926595934f, 0.357584339383878f,   0.1804807884018343f,
+    0.21263900587151027f, 0.715168678767756f,   0.07219231536073371f,
+    0.01933081871559182f, 0.11919477979462598f, 0.9505321522496607f
 };
 
 // Chromatic Adaptation Matrices.

@@ -237,10 +237,10 @@ TEST(ExtendedColor, P3ConversionToSRGB)
     EXPECT_TRUE(p3Color.isExtended());
 
     auto sRGBAColor = p3Color.toSRGBALossy<float>();
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.462537885f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.149147838f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.alpha, 0.75f));
+    EXPECT_FLOAT_EQ(sRGBAColor.red, 1.0f);
+    EXPECT_FLOAT_EQ(sRGBAColor.green, 0.46253282f);
+    EXPECT_FLOAT_EQ(sRGBAColor.blue, 0.14912748f);
+    EXPECT_FLOAT_EQ(sRGBAColor.alpha, 0.75f);
 }
 
 TEST(ExtendedColor, LinearSRGBConversionToSRGB)
@@ -249,10 +249,10 @@ TEST(ExtendedColor, LinearSRGBConversionToSRGB)
     EXPECT_TRUE(linearSRGBAColor.isExtended());
 
     auto sRGBAColor = linearSRGBAColor.toSRGBALossy<float>();
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.735356927f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.537098706f));
-    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.alpha, 0.75f));
+    EXPECT_FLOAT_EQ(sRGBAColor.red, 1.0f);
+    EXPECT_FLOAT_EQ(sRGBAColor.green, 0.735356927f);
+    EXPECT_FLOAT_EQ(sRGBAColor.blue, 0.537098706f);
+    EXPECT_FLOAT_EQ(sRGBAColor.alpha, 0.75f);
 }
 
 TEST(ExtendedColor, ColorWithAlphaMultipliedBy)

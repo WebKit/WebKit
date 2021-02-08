@@ -1,3 +1,16 @@
+2021-02-08  Sam Weinig  <weinig@apple.com>
+
+        Update sRGB <-> XYZ conversion matrix values to match values in latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=221533
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update values to values in P3 <-> sRGB conversion test and update to
+        use EXPECT_FLOAT_EQ so the values can be seen in the output when thigs
+        fail.
+
 2021-02-08  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening geolocation API test flakiness
