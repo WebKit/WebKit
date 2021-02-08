@@ -413,6 +413,11 @@ auto BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event) -> Shoul
 
 void BaseDateAndTimeInputType::handleKeypressEvent(KeyboardEvent& event)
 {
+    // The return key should not activate the element, as it conflicts with
+    // the key binding to submit a form.
+    if (event.charCode() == '\r')
+        return;
+
     ASSERT(element());
     BaseClickableWithKeyInputType::handleKeypressEvent(*element(), event);
 }

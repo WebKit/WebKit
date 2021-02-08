@@ -1,3 +1,31 @@
+2021-02-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Return key binding for date inputs conflicts with return to submit form
+        https://bugs.webkit.org/show_bug.cgi?id=221532
+        <rdar://problem/74039204>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify that pressing the space key in a focused date
+        input presents a calendar view, and pressing the enter key in a focused
+        date input submits a form.
+
+        Rebaselined existing tests to account for the fact that the space key
+        no longer focuses the next editable component within a date input.
+
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events-expected.txt:
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html:
+        * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress-expected.txt: Added.
+        * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress.html: Added.
+        * fast/forms/date/date-editable-components/form-submit-on-return-keypress-expected.txt: Added.
+        * fast/forms/date/date-editable-components/form-submit-on-return-keypress.html: Added.
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events-expected.txt:
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events.html:
+        * fast/forms/month/month-editable-components/month-editable-components-keyboard-events-expected.txt:
+        * fast/forms/month/month-editable-components/month-editable-components-keyboard-events.html:
+        * fast/forms/time/time-editable-components/time-editable-components-keyboard-events-expected.txt:
+        * fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html:
+
 2021-02-08  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Hit test inline boxes
