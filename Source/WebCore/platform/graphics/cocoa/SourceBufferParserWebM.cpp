@@ -41,6 +41,7 @@
 #include "VideoTrackPrivateWebM.h"
 #include "WebMAudioUtilitiesCocoa.h"
 #include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
 #include <wtf/LoggerHelper.h>
@@ -772,6 +773,11 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
 
     if (metadata.id == Id::kTracks) {
+        if (!m_keyIds.isEmpty() && !m_didProvideContentKeyRequestInitializationDataForTrackIDCallback) {
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered encrypted content without an key request callback");
+            return Status(Status::Code(ErrorCode::ContentEncrypted));
+        }
+
         if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
             m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
                 m_didParseInitializationDataCallback(WTFMove(initializationSegment));
@@ -779,6 +785,12 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
         }
         m_initializationSegmentEncountered = false;
         m_initializationSegment = nullptr;
+
+        if (!m_keyIds.isEmpty()) {
+            for (auto& keyIdPair : m_keyIds)
+                m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(keyIdPair.second), keyIdPair.first);
+        }
+        m_keyIds.clear();
     }
 
     return Status(Status::kOkCompleted);
@@ -881,6 +893,25 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
         if (m_logger)
             track->setLogger(*m_logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
         m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+    }
+
+    if (trackEntry.content_encodings.is_present() && !trackEntry.content_encodings.value().encodings.empty()) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "content_encodings detected:");
+        for (auto& encoding : trackEntry.content_encodings.value().encodings) {
+            if (!encoding.is_present())
+                continue;
+
+            auto& encryption = encoding.value().encryption;
+            if (!encryption.is_present())
+                continue;
+
+            auto& keyIdElement = encryption.value().key_id;
+            if (!keyIdElement.is_present())
+                continue;
+
+            auto& keyId = keyIdElement.value();
+            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), Uint8Array::create(keyId.data(), keyId.size())));
+        }
     }
 
     StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
