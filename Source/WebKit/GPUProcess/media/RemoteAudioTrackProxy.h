@@ -47,8 +47,7 @@ struct TrackPrivateRemoteConfiguration;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::AudioTrackPrivateClient
-    , private IPC::MessageReceiver {
+    , private WebCore::AudioTrackPrivateClient {
 public:
     static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -58,6 +57,7 @@ public:
     virtual ~RemoteAudioTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
+    void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
 
 private:
     RemoteAudioTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::AudioTrackPrivate&, WebCore::MediaPlayerIdentifier);
@@ -70,9 +70,6 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
-
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
 
     TrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();

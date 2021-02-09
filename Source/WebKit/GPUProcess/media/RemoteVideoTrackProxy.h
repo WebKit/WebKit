@@ -47,8 +47,7 @@ struct TrackPrivateRemoteConfiguration;
 
 class RemoteVideoTrackProxy final
     : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::VideoTrackPrivateClient
-    , private IPC::MessageReceiver {
+    , private WebCore::VideoTrackPrivateClient {
 public:
     static Ref<RemoteVideoTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::VideoTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -58,6 +57,7 @@ public:
     virtual ~RemoteVideoTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
+    void setSelected(bool selected) { m_trackPrivate->setSelected(selected); }
 
 private:
     RemoteVideoTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::VideoTrackPrivate&, WebCore::MediaPlayerIdentifier);
@@ -70,9 +70,6 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
-
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void setSelected(bool selected) { m_trackPrivate->setSelected(selected); }
 
     TrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();

@@ -324,7 +324,6 @@ media/modern-media-controls/media-controller/media-controller-fade-controls-when
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Timeout ]
 media/modern-media-controls/mute-button/mute-button.html [ Failure ]
-media/track/audio-track.html [ Crash ]
 media/video-as-img-output-pts.html [ Timeout ]
 media/video-canvas-createPattern.html [ Crash ]
 media/video-controller-child-rate.html [ Timeout ]

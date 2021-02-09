@@ -34,7 +34,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "RemoteTextTrackProxyMessages.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ISOVTTCue.h>
@@ -51,13 +50,11 @@ RemoteTextTrackProxy::RemoteTextTrackProxy(GPUConnectionToWebProcess& connection
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(this);
-    m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteTextTrackProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteTextTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteTextTrackProxy::~RemoteTextTrackProxy()
 {
-    m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteTextTrackProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
 TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()

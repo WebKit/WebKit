@@ -1,3 +1,71 @@
+2021-02-09  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Test media/track/audio-track-add-remove.html crashes on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=221595
+
+        Reviewed by Eric Carlson.
+
+        Under stress tests, instances of RemoteAudioTrackProxy, RemoteTextTrackProxy, and
+        RemoteVideoTrackProxy might be destroyed in the GPU process when an IPC message
+        comes and leads to an assertion failure.
+
+        To fix the assertion failure, this patches removes three IPC message receivers in
+        the GPU process:
+        - RemoteAudioTrackProxy
+        - RemoteTextTrackProxy
+        - RemoteVideoTrackProxy
+        Instead of using these three message receivers, this patch adds three new IPC messages
+        to RemoteMediaPlayerProxy:
+        - AudioTrackSetEnabled
+        - TextTrackSetMode
+        - VideoTrackSetSelected
+
+        No new tests, fixing following tests:
+        - media/track/audio-track-add-remove.html
+        - media/track/audio-track.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::~RemoteAudioTrackProxy):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteAudioTrackProxy.messages.in: Removed.
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::audioTrackSetEnabled):
+        (WebKit::RemoteMediaPlayerProxy::videoTrackSetSelected):
+        (WebKit::RemoteMediaPlayerProxy::textTrackSetMode):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::~RemoteTextTrackProxy):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * GPUProcess/media/RemoteTextTrackProxy.messages.in: Removed.
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::~RemoteVideoTrackProxy):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.messages.in: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        (WebKit::AudioTrackPrivateRemote::setEnabled):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::TextTrackPrivateRemote):
+        (WebKit::TextTrackPrivateRemote::setMode):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        (WebKit::VideoTrackPrivateRemote::setSelected):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+        (WebKit::VideoTrackPrivateRemote::create):
+
 2021-02-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build with the latest SDK.

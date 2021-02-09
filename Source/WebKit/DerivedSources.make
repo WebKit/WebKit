@@ -248,7 +248,6 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteCDMProxy \
 	GPUProcess/media/ios/RemoteMediaSessionHelperProxy \
 	GPUProcess/media/RemoteAudioDestinationManager \
-	GPUProcess/media/RemoteAudioTrackProxy \
 	GPUProcess/media/RemoteCDMFactoryProxy \
 	GPUProcess/media/RemoteCDMInstanceProxy \
 	GPUProcess/media/RemoteLegacyCDMProxy \
@@ -258,8 +257,6 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteMediaResourceManager \
 	GPUProcess/media/RemoteMediaSourceProxy \
 	GPUProcess/media/RemoteSourceBufferProxy \
-	GPUProcess/media/RemoteTextTrackProxy \
-	GPUProcess/media/RemoteVideoTrackProxy \
 	WebAuthnProcess/WebAuthnConnectionToWebProcess \
 	WebAuthnProcess/WebAuthnProcess \
 #

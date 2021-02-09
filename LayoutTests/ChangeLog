@@ -1,3 +1,12 @@
+2021-02-09  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Test media/track/audio-track-add-remove.html crashes on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=221595
+
+        Reviewed by Eric Carlson.
+
+        * gpu-process/TestExpectations:
+
 2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use UIColorPickerViewController for color inputs

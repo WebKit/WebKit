@@ -32,6 +32,7 @@
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 
 namespace IPC {
 class Connection;
@@ -50,9 +51,9 @@ class TextTrackPrivateRemote final : public WebCore::InbandTextTrackPrivate {
     WTF_MAKE_NONCOPYABLE(TextTrackPrivateRemote)
 public:
 
-    static Ref<TextTrackPrivateRemote> create(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<TextTrackPrivateRemote> create(IPC::Connection& connection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new TextTrackPrivateRemote(connection, idendifier, WTFMove(configuration)));
+        return adoptRef(*new TextTrackPrivateRemote(connection, playerIdentifier, idendifier, WTFMove(configuration)));
     }
 
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
@@ -99,7 +100,7 @@ public:
     bool isDefault() const final { return m_isDefault; }
 
 private:
-    TextTrackPrivateRemote(IPC::Connection&, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+    TextTrackPrivateRemote(IPC::Connection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
     IPC::Connection& m_connection;
     AtomString m_id;
@@ -107,7 +108,8 @@ private:
     AtomString m_language;
     int m_trackIndex { -1 };
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
-    TrackPrivateRemoteIdentifier m_idendifier;
+    WebCore::MediaPlayerIdentifier m_playerIdentifier;
+    TrackPrivateRemoteIdentifier m_identifier;
 
     TextTrackCueFormat m_format { TextTrackCueFormat::Generic };
     TextTrackKind m_kind { TextTrackKind::None };

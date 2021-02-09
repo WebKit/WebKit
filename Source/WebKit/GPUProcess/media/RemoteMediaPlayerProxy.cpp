@@ -484,6 +484,16 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteAudioTrackProxy(We
     return identifier;
 }
 
+void RemoteMediaPlayerProxy::audioTrackSetEnabled(const TrackPrivateRemoteIdentifier& identifier, bool enabled)
+{
+    for (auto& track : m_audioTracks.values()) {
+        if (track->identifier() == identifier) {
+            track->setEnabled(enabled);
+            return;
+        }
+    }
+}
+
 TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate& track)
 {
 #if !RELEASE_LOG_DISABLED
@@ -495,6 +505,16 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(We
     return identifier;
 }
 
+void RemoteMediaPlayerProxy::videoTrackSetSelected(const TrackPrivateRemoteIdentifier& identifier, bool selected)
+{
+    for (auto& track : m_videoTracks.values()) {
+        if (track->identifier() == identifier) {
+            track->setSelected(selected);
+            return;
+        }
+    }
+}
+
 TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate& track)
 {
 #if !RELEASE_LOG_DISABLED
@@ -504,6 +524,16 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteTextTrackProxy(Web
     auto identifier = TrackPrivateRemoteIdentifier::generate();
     m_textTracks.set(&track, RemoteTextTrackProxy::create(m_manager.gpuConnectionToWebProcess(), identifier, track, m_id));
     return identifier;
+}
+
+void RemoteMediaPlayerProxy::textTrackSetMode(const TrackPrivateRemoteIdentifier& identifier, WebCore::InbandTextTrackPrivate::Mode mode)
+{
+    for (auto& track : m_textTracks.values()) {
+        if (track->identifier() == identifier) {
+            track->setMode(mode);
+            return;
+        }
+    }
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate& track)

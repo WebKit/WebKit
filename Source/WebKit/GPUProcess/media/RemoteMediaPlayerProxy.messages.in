@@ -105,6 +105,10 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     NotifyTrackModeChanged()
     TracksChanged()
 
+    AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier identifier, bool enabled)
+    VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
+    TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
 #endif

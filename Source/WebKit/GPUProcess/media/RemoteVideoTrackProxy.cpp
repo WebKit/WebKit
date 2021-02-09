@@ -33,7 +33,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "RemoteVideoTrackProxyMessages.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
@@ -47,13 +46,11 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(this);
-    m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteVideoTrackProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
 {
-    m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteVideoTrackProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
 TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()

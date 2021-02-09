@@ -47,8 +47,7 @@ struct TextTrackPrivateRemoteConfiguration;
 
 class RemoteTextTrackProxy final
     : public ThreadSafeRefCounted<RemoteTextTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::InbandTextTrackPrivateClient
-    , private IPC::MessageReceiver {
+    , private WebCore::InbandTextTrackPrivateClient {
 public:
     static Ref<RemoteTextTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::InbandTextTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -58,6 +57,7 @@ public:
     virtual ~RemoteTextTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; }
+    void setMode(WebCore::InbandTextTrackPrivate::Mode mode) { m_trackPrivate->setMode(mode); }
 
 private:
     RemoteTextTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::InbandTextTrackPrivate&, WebCore::MediaPlayerIdentifier);
@@ -84,9 +84,6 @@ private:
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
-
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void setMode(WebCore::InbandTextTrackPrivate::Mode mode) { m_trackPrivate->setMode(mode); }
 
     TextTrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();
