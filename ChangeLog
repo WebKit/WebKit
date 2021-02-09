@@ -1,3 +1,13 @@
+2021-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        AX: introduction.md broken architecture.png link
+        https://bugs.webkit.org/show_bug.cgi?id=221607
+        <rdar://problem/74140397>
+
+        Reviewed by Sam Weinig.
+
+        * Introduction.md: webkit2-process-architecture.png Moved to resources.
+
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
         ConsoleMessage: Don't encode string JSONLogValue's as JSON
