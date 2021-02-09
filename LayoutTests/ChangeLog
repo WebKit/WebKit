@@ -1,3 +1,14 @@
+2021-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Convert xmlhttprequest php to Python (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=220995
+        <rdar://problem/73630008>
+
+        Unreviewed test fix.
+
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest.html: Lengthen timeouts, Python is slightly slower than PHP.
+        * http/tests/xmlhttprequest/resources/download-with-delay.py: Match iteration behavior to PHP script.
+
 2021-02-09  Chris Dumez  <cdumez@apple.com>
 
         Disallow alert/confirm/prompt in cross-origin-domain subframes

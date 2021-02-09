@@ -139,7 +139,7 @@
             switch (method) {
             case 'xhr':
                 consoleWrite(`sending XHR, delay = ${delay}`);
-                doXHR(delay, test.timeout || 0.6, () => runTest(test));
+                doXHR(delay, test.timeout || 1.0, () => runTest(test));
                 break;
             case 'timeout':
                 consoleWrite(`setting timeout, delay = ${delay}`);
@@ -147,11 +147,11 @@
                 break;
             case 'fetch':
                 consoleWrite(`fetching, delay = ${delay}`);
-                doFetch(delay, test.timeout || 0.6, () => runTest(test));
+                doFetch(delay, test.timeout || 1.0, () => runTest(test));
                 break;
             case 'fetchblob':
                 consoleWrite(`fetching blob, delay = ${delay}`);
-                doFetchBlob(delay, test.timeout || 0.6, () => runTest(test));
+                doFetchBlob(delay, test.timeout || 1.0, () => runTest(test));
                 break;
             case 'promise':
                 consoleWrite(`promise`);
@@ -185,7 +185,7 @@
                 action : 'play',  withkey : false,  success : false,  sequence : ['100 XHR', '100 timeout'] },
 
             { title : 'gesture -> "long" XHR -> video playback: should fail',
-                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 XHR'] },
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 XHR'] },
 
             { title : 'gesture -> fetch -> window.open: should fail because Fetch only propagates user gesture for media',
                 action : 'popup', withkey : true,  success : false,  sequence : ['100 Fetch'] },
@@ -194,7 +194,7 @@
                 action : 'play',  withkey : true,  success : true,  sequence : ['100 Fetch'] },
 
             { title : 'gesture -> "long" Fetch -> video playback: should fail',
-                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 Fetch'] },
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 Fetch'] },
 
             { title : 'no gesture -> fetch -> video playback: should fail',
                 action : 'play',  withkey : false,  success : false,  sequence : ['100 Fetch'] },
@@ -206,7 +206,7 @@
                 action : 'play',  withkey : true,  success : true,  sequence : ['100 FetchBlob'] },
 
             { title : 'gesture -> fetch -> "long" blob -> video playback: should fail',
-                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 FetchBlob'] },
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 FetchBlob'] },
 
             { title : 'no gesture -> fetch -> blob -> video playback: should fail',
                 action : 'play',  withkey : false,  success : false,  sequence : ['100 FetchBlob'] },
