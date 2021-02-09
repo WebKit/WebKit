@@ -1503,6 +1503,10 @@ if (ENABLE_ENCRYPTED_MEDIA)
 
         html/MediaEncryptedEvent.cpp
     )
+
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
+    )
 endif ()
 
 list(APPEND WebCore_CSS_VALUE_KEYWORDS

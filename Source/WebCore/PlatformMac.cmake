@@ -94,7 +94,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/audio/mac"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/cocoa"
-    "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/cf"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/objc"
@@ -224,8 +223,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ThemeCocoa.mm
     platform/cocoa/VideoToolboxSoftLink.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
-
-    platform/encryptedmedia/clearkey/CDMClearKey.cpp
 
     platform/gamepad/mac/HIDGamepad.cpp
     platform/gamepad/mac/HIDGamepadProvider.cpp
