@@ -128,6 +128,7 @@ def function_parameter_type(type, kind):
         'int16_t',
         'int32_t',
         'int64_t',
+        'size_t',
     ])
 
     if type in builtin_types:

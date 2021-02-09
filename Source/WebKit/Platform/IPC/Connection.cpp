@@ -1006,13 +1006,7 @@ void Connection::dispatchMessage(Decoder& decoder)
 {
     RELEASE_ASSERT(isValid());
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
-        Optional<uint64_t> listenerID;
-        decoder >> listenerID;
-        if (!listenerID) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        auto handler = takeAsyncReplyHandler(*this, *listenerID);
+        auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
         if (!handler) {
             ASSERT_NOT_REACHED();
             return;

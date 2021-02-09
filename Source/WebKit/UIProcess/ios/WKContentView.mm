@@ -49,6 +49,7 @@
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"
+#import "WebPageMessages.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcessPool.h"
 #import "_WKFrameHandleInternal.h"
@@ -143,7 +144,7 @@
     RetainPtr<NSUndoManager> _undoManager;
     RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
 
-    BOOL _isPrintingToPDF;
+    uint64_t _pdfPrintCallbackID;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
 }
 
@@ -620,7 +621,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _removeVisibilityPropagationView];
 #endif
 
-    _isPrintingToPDF = NO;
+    _pdfPrintCallbackID = 0;
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -791,7 +792,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-    if (_isPrintingToPDF)
+    if (_pdfPrintCallbackID)
         [self _waitForDrawToPDFCallback];
 
     WebCore::FrameIdentifier frameID;
@@ -824,30 +825,32 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.availablePaperWidth = CGRectGetWidth(printingRect);
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
 
-    _isPrintingToPDF = YES;
     auto retainedSelf = retainPtr(self);
-    return _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
-        retainedSelf->_isPrintingToPDF = NO;
-        if (error != WebKit::CallbackBase::Error::None)
+    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::DataReference& pdfData) {
+        retainedSelf->_pdfPrintCallbackID = 0;
+        if (pdfData.isEmpty())
             return;
 
         auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
         auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
         retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
     });
+    _pdfPrintCallbackID = pair.second;
+    return pair.first;
 }
 
 - (BOOL)_waitForDrawToPDFCallback
 {
-    if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->webPageID(), Seconds::infinity()))
+    ASSERT(_pdfPrintCallbackID);
+    if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(std::exchange(_pdfPrintCallbackID, 0), Seconds::infinity()))
         return false;
-    ASSERT(!_isPrintingToPDF);
+    ASSERT(!_pdfPrintCallbackID);
     return true;
 }
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
-    if (_isPrintingToPDF) {
+    if (_pdfPrintCallbackID) {
         if (![self _waitForDrawToPDFCallback])
             return nullptr;
     }

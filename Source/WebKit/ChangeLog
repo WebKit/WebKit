@@ -1,3 +1,57 @@
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandler instead of DrawToPDFCallback
+        https://bugs.webkit.org/show_bug.cgi?id=220120
+
+        Reviewed by Chris Dumez.
+
+        Along the way I made all asynchronous message replies use 8 fewer bytes by using the destination ID for the listener ID
+        instead of encoding 0 as the destination ID and then encoding the listener ID.  This was needed in order to make implementing
+        waitForAsyncCallbackAndDispatchImmediately possible, which looks at the destination IDs of incoming messages.
+        I also made it so that if we are just snapshotting the first page, we don't send a synchronous message because we already know the page count:
+        1!
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+        (IPC::Connection::waitForAndDispatchImmediately):
+        (IPC::Connection::waitForAsyncCallbackAndDispatchImmediately):
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+        * Platform/IPC/JSIPCBinding.cpp:
+        (IPC::jsValueForDecodedArgumentValue):
+        * Platform/IPC/JSIPCBinding.h:
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendWithAsyncReply):
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawToPDF):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::drawToPDFCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        (-[WKContentView _waitForDrawToPDFCallback]):
+        (-[WKContentView _wk_printedDocument]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawToPDF):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingiOS):
+        (WebKit::WebPage::drawToPDFiOS):
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF): Deleted.
+
 2021-02-09  Per Arne  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the fonts service
