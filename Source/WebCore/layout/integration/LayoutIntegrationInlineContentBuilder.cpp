@@ -42,6 +42,8 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
+#define PROCESS_BIDI_CONTENT 0
+
 struct LineLevelVisualAdjustmentsForRuns {
     bool needsIntegralPosition { false };
     // It's only 'text-overflow: ellipsis' for now.
@@ -60,6 +62,7 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutU
     return std::max(lineBoxLogicalWidth, lineContentLogicalWidth);
 }
 
+#if PROCESS_BIDI_CONTENT
 class Iterator {
 public:
     Iterator() = default;
@@ -145,6 +148,7 @@ BidiRun::BidiRun(unsigned start, unsigned end, BidiContext* context, UCharDirect
     else
         m_level = (direction == U_RIGHT_TO_LEFT) ? m_level + 1 : (direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 2 : m_level;
 }
+#endif
 
 InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow)
     : m_layoutState(layoutState)
@@ -202,12 +206,14 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         return;
     auto& lines = inlineFormattingState.lines();
 
+#if PROCESS_BIDI_CONTENT
     BidiResolver<Iterator, BidiRun> bidiResolver;
     // FIXME: Add support for override.
     bidiResolver.setStatus(BidiStatus(m_layoutState.root().style().direction(), false));
     // FIXME: Grab the nested isolates from the previous line.
     bidiResolver.setPosition(Iterator(&runList, 0), 0);
     bidiResolver.createBidiRunsForLine(Iterator(&runList, runList.size()));
+#endif
 
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
 
@@ -287,18 +293,13 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         inlineContent.runs.append(displayRun);
     };
 
-    auto& bidiRuns = bidiResolver.runs();
-    if (bidiRuns.runCount() == 1) {
-        // Fast path for cases when there's no bidi boundary.
-        inlineContent.runs.reserveInitialCapacity(inlineFormattingState.lineRuns().size());
-        for (auto& lineRun : inlineFormattingState.lineRuns()) {
-            if (auto& text = lineRun.text())
-                createDisplayTextRunForRange(lineRun, text->start(), text->end());
-            else
-                createDisplayBoxRun(lineRun);
-        }
-    } else
-        ASSERT_NOT_IMPLEMENTED_YET();
+    inlineContent.runs.reserveInitialCapacity(inlineFormattingState.lineRuns().size());
+    for (auto& lineRun : inlineFormattingState.lineRuns()) {
+        if (auto& text = lineRun.text())
+            createDisplayTextRunForRange(lineRun, text->start(), text->end());
+        else
+            createDisplayBoxRun(lineRun);
+    }
 }
 
 void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
