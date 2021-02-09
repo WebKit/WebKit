@@ -60,7 +60,6 @@ void WebViewTest::initializeWebView()
         "user-content-manager", m_userContentManager.get(),
         "is-ephemeral", shouldCreateEphemeralWebView,
         nullptr));
-
     platformInitializeWebView();
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 

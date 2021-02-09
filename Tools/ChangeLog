@@ -1,3 +1,17 @@
+2021-02-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r272485.
+        https://bugs.webkit.org/show_bug.cgi?id=221588
+
+        Required revisions were reversed
+
+        Reverted changeset:
+
+        "[GLib] Permission request API for MediaKeySystem access
+        support"
+        https://bugs.webkit.org/show_bug.cgi?id=221199
+        https://trac.webkit.org/changeset/272485
+
 2021-02-08  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Connect MediaSession with MediaRemote and NowPlaying
