@@ -52,6 +52,7 @@ extern "C" {
     M(ContextMenu) \
     M(DiskPersistency) \
     M(DragAndDrop) \
+    M(EME) \
     M(Fullscreen) \
     M(Gamepad) \
     M(IPC) \

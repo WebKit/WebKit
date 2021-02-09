@@ -519,6 +519,8 @@ public:
 
     void setIsSpeechRecognitionPermissionGranted(bool);
 
+    void setIsMediaKeySystemPermissionGranted(bool);
+
 private:
     TestRunner();
 

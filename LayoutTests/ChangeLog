@@ -1,3 +1,16 @@
+2021-02-09  Philippe Normand  <pnormand@igalia.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Reviewed by Jer Noble.
+
+        Add basic coverage support for overriding the MediaKeySystem permission answer and thus have
+        the promise rejection tested in this case.
+
+        * media/encrypted-media/mock-MediaKeySystemAccess-expected.txt:
+        * media/encrypted-media/mock-MediaKeySystemAccess.html:
+
 2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Allow sending modifier keys in test_driver.send_keys()

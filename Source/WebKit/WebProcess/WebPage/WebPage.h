@@ -247,6 +247,7 @@ class GamepadData;
 class GeolocationPermissionRequestManager;
 class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
+class MediaKeySystemPermissionRequestManager;
 class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
@@ -671,6 +672,10 @@ public:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
     void captureDevicesChanged();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    MediaKeySystemPermissionRequestManager& mediaKeySystemPermissionRequestManager() { return m_mediaKeySystemPermissionRequestManager; }
 #endif
 
     void elementDidFocus(WebCore::Element&);
@@ -1674,7 +1679,11 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDeviceUID, WebCore::CaptureDevice&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
     void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint);
+#endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void mediaKeySystemWasGranted(uint64_t mediaKeySystemID, CompletionHandler<void()>&&);
+    void mediaKeySystemWasDenied(uint64_t mediaKeySystemID, String&& message);
 #endif
 
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
@@ -1984,6 +1993,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     UniqueRef<UserMediaPermissionRequestManager> m_userMediaPermissionRequestManager;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    UniqueRef<MediaKeySystemPermissionRequestManager> m_mediaKeySystemPermissionRequestManager;
 #endif
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;

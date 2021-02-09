@@ -75,6 +75,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/Cache"
     "${WEBKIT_DIR}/WebProcess/Databases"
     "${WEBKIT_DIR}/WebProcess/Databases/IndexedDB"
+    "${WEBKIT_DIR}/WebProcess/EncryptedMedia"
     "${WEBKIT_DIR}/WebProcess/FileAPI"
     "${WEBKIT_DIR}/WebProcess/FullScreen"
     "${WEBKIT_DIR}/WebProcess/Gamepad"

@@ -1498,6 +1498,8 @@ if (ENABLE_ENCRYPTED_MEDIA)
         Modules/encryptedmedia/MediaKeySession.cpp
         Modules/encryptedmedia/MediaKeyStatusMap.cpp
         Modules/encryptedmedia/MediaKeySystemAccess.cpp
+        Modules/encryptedmedia/MediaKeySystemController.cpp
+        Modules/encryptedmedia/MediaKeySystemRequest.cpp
         Modules/encryptedmedia/MediaKeys.cpp
         Modules/encryptedmedia/NavigatorEME.cpp
 
