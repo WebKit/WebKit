@@ -1,3 +1,16 @@
+2021-02-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add `CSS.setLayoutContextTypeChangedMode` for getting information about all layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221449
+
+        Reviewed by Devin Rousso.
+
+        Added `CSS.setLayoutContextTypeChangedMode` command and `CSS.LayoutContextTypeChangedMode` enum for controlling
+        if the frontend should be informed of all layout context type changes, or if only currently instrumented nodes
+        should be observed.
+
+        * inspector/protocol/CSS.json:
+
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
         Add ConsoleMessage::toString()

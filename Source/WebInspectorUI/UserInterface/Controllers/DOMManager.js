@@ -231,6 +231,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         domNode.layoutContextType = layoutContextType;
     }
 
+    nodesWithLayoutContextType(layoutContextType)
+    {
+        return Object.values(this._idToDOMNode).filter((node) => node.layoutContextType === layoutContextType);
+    }
+
     // Private
 
     _dispatchWhenDocumentAvailable(func, callback)

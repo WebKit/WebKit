@@ -1,3 +1,21 @@
+2021-02-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add `CSS.setLayoutContextTypeChangedMode` for getting information about all layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221449
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CSSManager.js:
+        - Added CSS.LayoutContextTypeChangedMode enum values.
+        (WI.CSSManager.prototype.set layoutContextTypeChangedMode):
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.nodesWithLayoutContextType):
+        - Added ability to get all instrumented nodes of a specific layout context type.
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel.prototype.attached):
+        (WI.LayoutDetailsSidebarPanel.prototype.detached):
+        - Change the LayoutContextTypeChangedMode when showing/hiding the Layout panel.
+
 2021-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs should have an opaque origin

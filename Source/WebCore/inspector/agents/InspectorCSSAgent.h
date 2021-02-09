@@ -106,6 +106,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties();
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames();
     Inspector::Protocol::ErrorStringOr<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses);
+    Inspector::Protocol::ErrorStringOr<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode);
 
     // InspectorStyleSheet::Listener
     void styleSheetChanged(InspectorStyleSheet*);
@@ -171,6 +172,7 @@ private:
 
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
+    Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
 };
 
 } // namespace WebCore

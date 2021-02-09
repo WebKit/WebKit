@@ -80,10 +80,14 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         super.attached();
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
     }
 
     detached()
     {
+        WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         super.detached();

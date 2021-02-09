@@ -236,6 +236,15 @@ WI.CSSManager = class CSSManager extends WI.Object
         });
     }
 
+    set layoutContextTypeChangedMode(layoutContextTypeChangedMode)
+    {
+        for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 14.5): CSS.setLayoutContextTypeChangedMode did not exist.
+            if (target.hasCommand("CSS.setLayoutContextTypeChangedMode"))
+                target.CSSAgent.setLayoutContextTypeChangedMode(layoutContextTypeChangedMode);
+        }
+    }
+
     canForceAppearance()
     {
         return InspectorBackend.hasCommand("Page.setForcedAppearance") && this._defaultAppearance;
@@ -687,6 +696,11 @@ WI.CSSManager.PseudoSelectorNames = {
     ScrollbarTrack: "scrollbar-track",
     ScrollbarTrackPiece: "scrollbar-track-piece",
     Selection: "selection",
+};
+
+WI.CSSManager.LayoutContextTypeChangedMode = {
+    Observed: "observed",
+    All: "all",
 };
 
 WI.CSSManager.PseudoElementNames = ["before", "after"];
