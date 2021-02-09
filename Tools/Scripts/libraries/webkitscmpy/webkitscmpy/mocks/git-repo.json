@@ -82,7 +82,7 @@
             }, 
             "timestamp": 1601664000, 
             "branch": "branch-b", 
-            "message": "5th commit\n", 
+            "message": "5th commit\n    Cherry pick\n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc",
             "identifier": "2.2@branch-b", 
             "revision": 5
         }, 

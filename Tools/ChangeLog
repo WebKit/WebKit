@@ -1,3 +1,23 @@
+2021-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Correctly parse branch commits
+        https://bugs.webkit.org/show_bug.cgi?id=221609
+        <rdar://problem/74142906>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Only respect the last revision in a commit message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/git-repo.json: Make one commit similar
+        to a cherry-pick.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.commit): Only respect the last revision in a commit message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_hash): Change commit being tested since original commit would
+        resolve a revision.
+
 2021-02-09  Daniel Kolesa  <dkolesa@igalia.com>
 
         Allow icecream toolchain override in flatpakutils

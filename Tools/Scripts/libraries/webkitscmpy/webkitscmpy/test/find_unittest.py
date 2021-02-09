@@ -101,10 +101,10 @@ class TestFind(unittest.TestCase):
     def test_hash(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
-                args=('find', '3cd32e352410', '-q'),
+                args=('find', '790725a6', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | 3cd32e352410 | 5th commit\n')
+        self.assertEqual(captured.stdout.getvalue(), '2.3@branch-b | 790725a6d79e | 8th commit\n')
 
     def test_revision_svn(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:

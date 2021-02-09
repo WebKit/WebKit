@@ -317,8 +317,8 @@ class GitHub(Scm):
                 identifier = self._difference(self.default_branch, commit_data['sha'])
             branch_point = self._count_for_ref(ref=commit_data['sha'])[0] - identifier
 
-        match = self.GIT_SVN_REVISION.search(commit_data['commit']['message'])
-        revision = int(match.group('revision')) if match else None
+        matches = self.GIT_SVN_REVISION.findall(commit_data['commit']['message'])
+        revision = int(matches[-1].split('@')[0]) if matches else None
 
         date = datetime.strptime(commit_data['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ')
         email_match = self.EMAIL_RE.match(commit_data['commit']['author']['email'])
