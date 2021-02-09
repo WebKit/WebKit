@@ -1,3 +1,21 @@
+2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use UIColorPickerViewController for color inputs
+        https://bugs.webkit.org/show_bug.cgi?id=221572
+        <rdar://problem/72183130>
+
+        Reviewed by Sam Weinig.
+
+        Added UIScriptController hooks to simulate selecting a color on the
+        new color picker.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setSelectedColorForColorPicker):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::setSelectedColorForColorPicker):
+
 2021-02-09  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Correctly parse branch commits

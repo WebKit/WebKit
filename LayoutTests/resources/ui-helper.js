@@ -864,6 +864,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static setSelectedColorForColorPicker(red, green, blue)
+    {
+        const selectColorScript = `uiController.setSelectedColorForColorPicker(${red}, ${green}, ${blue})`;
+        return new Promise(resolve => testRunner.runUIScript(selectColorScript, resolve));
+    }
+
     static enterText(text)
     {
         const escapedText = text.replace(/`/g, "\\`");

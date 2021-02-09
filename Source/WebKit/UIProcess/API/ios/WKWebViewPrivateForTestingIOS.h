@@ -49,6 +49,7 @@
 - (void)_dismissFilePicker;
 - (void)selectFormAccessoryPickerRow:(int)rowIndex;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
+- (void)setSelectedColorForColorPicker:(UIColor *)color;
 
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect;
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler;

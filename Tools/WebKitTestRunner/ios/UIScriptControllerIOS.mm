@@ -1143,6 +1143,12 @@ bool UIScriptControllerIOS::isShowingDataListSuggestions() const
     return foundDataListSuggestionsPickerView;
 }
 
+void UIScriptControllerIOS::setSelectedColorForColorPicker(double red, double green, double blue)
+{
+    UIColor *color = [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
+    [webView() setSelectedColorForColorPicker:color];
+}
+
 void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifier)
 {
     TestController::singleton().setKeyboardInputModeIdentifier(toWTFString(identifier));

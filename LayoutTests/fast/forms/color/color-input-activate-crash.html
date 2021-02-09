@@ -14,7 +14,8 @@
             return;
 
         var input = document.getElementById('colorInput');
-        await UIHelper.activateElementAndWaitForInputSession(input);
+        await UIHelper.activateElement(input);
+        await UIHelper.ensurePresentationUpdate();
         document.getElementById('result').innerHTML = 'PASS: Test did not crash';
         testRunner.notifyDone();
     }

@@ -129,6 +129,7 @@ private:
     void completeBackSwipe(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned, JSValueRef) override;
+    void setSelectedColorForColorPicker(double, double, double) override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
     void toggleCapsLock(JSValueRef) override;
     bool keyboardIsAutomaticallyShifted() const override;

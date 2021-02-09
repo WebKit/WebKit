@@ -3196,6 +3196,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 #if ENABLE(INPUT_TYPE_COLOR)
         else if (element.isColorControl()) {
             information.elementType = InputType::Color;
+            information.colorValue = element.valueAsColor();
 #if ENABLE(DATALIST_ELEMENT)
             information.suggestedColors = element.suggestedColors();
 #endif

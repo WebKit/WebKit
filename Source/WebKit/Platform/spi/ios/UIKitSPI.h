@@ -93,6 +93,7 @@
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
+#import <UIKit/_UISheetPresentationController.h>
 
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
@@ -931,6 +932,17 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
 @end
 
+@interface _UISheetDetent : NSObject
+@property (class, nonatomic, readonly) _UISheetDetent *_mediumDetent;
+@property (class, nonatomic, readonly) _UISheetDetent *_largeDetent;
+@end
+
+@interface _UISheetPresentationController : UIPresentationController
+@property (nonatomic, copy, setter=_setDetents:) NSArray<_UISheetDetent *> *_detents;
+@property (nonatomic, setter=_setWantsBottomAttachedInCompactHeight:) BOOL _wantsBottomAttachedInCompactHeight;
+@property (nonatomic, setter=_setWidthFollowsPreferredContentSizeWhenBottomAttached:) BOOL _widthFollowsPreferredContentSizeWhenBottomAttached;
+@end
+
 @class BKSAnimationFenceHandle;
 
 @interface UIWindow ()
@@ -1397,6 +1409,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface UIDevice ()
 @property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;
+@end
+
+@interface UIColorPickerViewController ()
+@property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
 WTF_EXTERN_C_BEGIN

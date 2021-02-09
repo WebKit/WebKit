@@ -1,3 +1,81 @@
+2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use UIColorPickerViewController for color inputs
+        https://bugs.webkit.org/show_bug.cgi?id=221572
+        <rdar://problem/72183130>
+
+        Reviewed by Sam Weinig.
+
+        UIColorPickerViewController was added in iOS 14, while WebKit still
+        uses a custom color picker. To stay consistent with the rest of the
+        platform, this patch drops the custom color picker and adopts
+        UIColorPickerViewController for <input type=color> on iOS.
+
+        Test: fast/forms/ios/choose-color-from-color-picker.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Added SPI declarations for _UISheetPresentationController and
+        UIColorPickerViewController.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Added colorValue member to avoid parsing the input's value
+        in the UIProcess.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView setSelectedColorForColorPicker:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _elementTypeRequiresAccessoryView:]):
+
+        The new color picker does not appear as a keyboard input view.
+
+        (-[WKContentView updateFocusedElementValueAsColor:]):
+        (-[WKContentView setSelectedColorForColorPicker:]):
+        * UIProcess/ios/forms/WKFormColorControl.h:
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPicker initWithView:]):
+        (-[WKColorPicker selectColor:]):
+
+        Note that the delegate method is not called when programmatically
+        setting the selected color.
+
+        (-[WKColorPicker focusedElementSuggestedColors]):
+
+        Suggested colors from a <datalist> element are displayed in the
+        favorites view.
+
+        (-[WKColorPicker updateColorPickerState]):
+        (-[WKColorPicker configurePresentation]):
+
+        On iPad, the color picker is displayed a popover. On iPhone, the picker
+        is displayed as a half-sheet, and can be dragged up into a fullscreen
+        view.
+
+        (-[WKColorPicker controlBeginEditing]):
+        (-[WKColorPicker controlEndEditing]):
+        (-[WKColorPicker presentationControllerDidDismiss:]):
+        (-[WKColorPicker colorPickerViewControllerDidSelectColor:]):
+        (-[WKColorPicker colorPickerViewControllerDidFinish:]):
+        (-[WKFormColorControl initWithView:]):
+        (-[WKFormColorControl selectColor:]):
+        * UIProcess/ios/forms/WKFormColorPicker.h: Removed.
+        * UIProcess/ios/forms/WKFormColorPicker.mm: Removed.
+        * UIProcess/ios/forms/WKFormSelectPicker.h:
+
+        Build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandler instead of DrawToPDFCallback

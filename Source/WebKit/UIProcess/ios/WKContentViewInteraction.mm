@@ -2031,6 +2031,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+#endif
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Date:
     case WebKit::InputType::Month:
@@ -2044,10 +2047,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 #endif
         return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     }
-#if ENABLE(INPUT_TYPE_COLOR)
-    case WebKit::InputType::Color:
-#endif
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     default:
         return YES;
     }
@@ -3090,6 +3089,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     switch (type) {
     case WebKit::InputType::None:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+#endif
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
@@ -3114,9 +3116,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::Week:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case WebKit::InputType::Color:
-#endif
         return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     }
 }
@@ -4562,6 +4561,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     _page->setFocusedElementValue(value);
     _focusedElementInformation.value = value;
+}
+
+- (void)updateFocusedElementValueAsColor:(UIColor *)value
+{
+    WebCore::Color color(value.CGColor);
+    String valueAsString = WebCore::serializationForHTML(color);
+
+    _page->setFocusedElementValue(valueAsString);
+    _focusedElementInformation.value = valueAsString;
+    _focusedElementInformation.colorValue = color;
 }
 
 - (void)accessoryTab:(BOOL)isNext
@@ -9306,6 +9315,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return [(WKFormSelectControl *)_inputPeripheral selectFormAccessoryHasCheckedItemAtRow:rowIndex];
 #endif
     return NO;
+}
+
+- (void)setSelectedColorForColorPicker:(UIColor *)color
+{
+    if ([_inputPeripheral isKindOfClass:[WKFormColorControl class]])
+        [(WKFormColorControl *)_inputPeripheral selectColor:color];
 }
 
 - (NSString *)textContentTypeForTesting

@@ -1961,7 +1961,6 @@
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E50620922542102000C43091 /* ContactsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E50620912542102000C43091 /* ContactsUISPI.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
-		E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */; };
 		E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */; };
 		E55CD20024D08D8F0042DB9C /* WebDateTimePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1FC24D0880B0042DB9C /* WebDateTimePicker.h */; };
 		E55CD20324D09F1F0042DB9C /* WebDateTimePickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */; };
@@ -5773,8 +5772,6 @@
 		E50620912542102000C43091 /* ContactsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsUISPI.h; sourceTree = "<group>"; };
 		E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionPicker.h; sourceTree = "<group>"; };
 		E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionPicker.cpp; sourceTree = "<group>"; };
-		E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormColorPicker.h; path = ios/forms/WKFormColorPicker.h; sourceTree = "<group>"; };
-		E548EBD021015F0E00BE3C32 /* WKFormColorPicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormColorPicker.mm; path = ios/forms/WKFormColorPicker.mm; sourceTree = "<group>"; };
 		E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionsDropdown.cpp; sourceTree = "<group>"; };
 		E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimeChooser.h; sourceTree = "<group>"; };
 		E55CD1F424CF747D0042DB9C /* WebDateTimeChooser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDateTimeChooser.cpp; sourceTree = "<group>"; };
@@ -11059,8 +11056,6 @@
 				2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */,
 				E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */,
 				E5CB07DB20E1678F0022C183 /* WKFormColorControl.mm */,
-				E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */,
-				E548EBD021015F0E00BE3C32 /* WKFormColorPicker.mm */,
 				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
 				CE70EE5C22442BD000E0AF0F /* WKFormPeripheralBase.h */,
 				CE70EE5A22442BB300E0AF0F /* WKFormPeripheralBase.mm */,
@@ -12425,7 +12420,6 @@
 				51489CC7237237800044E68A /* WKFindResultInternal.h in Headers */,
 				2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */,
 				E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */,
-				E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				CE70EE5D22442BD000E0AF0F /* WKFormPeripheralBase.h in Headers */,
 				C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */,

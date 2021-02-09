@@ -1,3 +1,25 @@
+2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use UIColorPickerViewController for color inputs
+        https://bugs.webkit.org/show_bug.cgi?id=221572
+        <rdar://problem/72183130>
+
+        Reviewed by Sam Weinig.
+
+        Added a test which displays the new color picker and verifies that
+        selecting a color updates the corresponding input's value.
+
+        * fast/forms/color/color-input-activate-crash.html:
+
+        Replaced call to activateElementAndWaitForInputSession with
+        activateElement and ensurePresentationUpdate, since tapping on a
+        color input no longer presents a keyboard input view.
+
+        * fast/forms/ios/choose-color-from-color-picker-expected.txt: Added.
+        * fast/forms/ios/choose-color-from-color-picker.html: Added.
+        * resources/ui-helper.js:
+        (UIHelper.setSelectedColorForColorPicker):
+
 2021-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r271660): Unable to interact with page after long-pressing image on images.google.com
