@@ -32,9 +32,10 @@ namespace JSC {
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(EvalExecutable) };
 
-EvalExecutable::EvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, NeedsClassFieldInitializer needsClassFieldInitializer)
+EvalExecutable::EvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
     : Base(globalObject->vm().evalExecutableStructure.get(), globalObject->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType, NoIntrinsic)
     , m_needsClassFieldInitializer(static_cast<unsigned>(needsClassFieldInitializer))
+    , m_privateBrandRequirement(static_cast<unsigned>(privateBrandRequirement))
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
 }

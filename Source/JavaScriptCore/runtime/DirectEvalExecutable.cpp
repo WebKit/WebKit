@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject, const SourceCode& source, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ, const VariableEnvironment* privateNames, ECMAMode ecmaMode)
+DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject, const SourceCode& source, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ, const PrivateNameEnvironment* privateNameEnvironment, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -44,7 +44,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
         return nullptr;
     }
 
-    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, ecmaMode.isStrict(), derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType);
+    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, ecmaMode.isStrict(), derivedContextType, needsClassFieldInitializer, privateBrandRequirement, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType);
     executable->finishCreation(vm);
 
     ParserError error;
@@ -52,7 +52,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
 
     // We don't bother with CodeCache here because direct eval uses a specialized DirectEvalCodeCache.
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlockForDirectEval(vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ, privateNames);
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlockForDirectEval(vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ, privateNameEnvironment);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());
@@ -67,10 +67,10 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
     return executable;
 }
 
-DirectEvalExecutable::DirectEvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType)
-    : EvalExecutable(globalObject, source, inStrictContext, derivedContextType, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType, needsClassFieldInitializer)
+DirectEvalExecutable::DirectEvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType)
+    : EvalExecutable(globalObject, source, inStrictContext, derivedContextType, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType, needsClassFieldInitializer, privateBrandRequirement)
 {
-    ASSERT(needsClassFieldInitializer == NeedsClassFieldInitializer::No || derivedContextType == DerivedContextType::DerivedConstructorContext);
+    ASSERT((needsClassFieldInitializer == NeedsClassFieldInitializer::No && privateBrandRequirement == PrivateBrandRequirement::None) || derivedContextType == DerivedContextType::DerivedConstructorContext);
 }
 
 } // namespace JSC

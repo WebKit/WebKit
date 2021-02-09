@@ -254,7 +254,7 @@ template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
     static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
 };
 
-UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM&, DirectEvalExecutable*, const SourceCode&, JSParserStrictMode, JSParserScriptMode, OptionSet<CodeGenerationMode>, ParserError&, EvalContextType, const TDZEnvironment* variablesUnderTDZ, const VariableEnvironment* parentScopePrivateNames);
+UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM&, DirectEvalExecutable*, const SourceCode&, JSParserStrictMode, JSParserScriptMode, OptionSet<CodeGenerationMode>, ParserError&, EvalContextType, const TDZEnvironment* variablesUnderTDZ, const PrivateNameEnvironment*);
 UnlinkedProgramCodeBlock* recursivelyGenerateUnlinkedCodeBlockForProgram(VM&, const SourceCode&, JSParserStrictMode, JSParserScriptMode, OptionSet<CodeGenerationMode>, ParserError&, EvalContextType);
 UnlinkedModuleProgramCodeBlock* recursivelyGenerateUnlinkedCodeBlockForModuleProgram(VM&, const SourceCode&, JSParserStrictMode, JSParserScriptMode, OptionSet<CodeGenerationMode>, ParserError&, EvalContextType);
 

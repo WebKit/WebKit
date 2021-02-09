@@ -69,6 +69,10 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
         createRareDataIfNecessary(holdLock(cellLock()));
         m_rareData->m_needsClassFieldInitializer = static_cast<unsigned>(NeedsClassFieldInitializer::Yes);
     }
+    if (info.privateBrandRequirement() == PrivateBrandRequirement::Needed) {
+        createRareDataIfNecessary(holdLock(cellLock()));
+        m_rareData->m_privateBrandRequirement = static_cast<unsigned>(PrivateBrandRequirement::Needed);
+    }
 }
 
 void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

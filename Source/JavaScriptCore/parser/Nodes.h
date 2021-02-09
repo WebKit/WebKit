@@ -721,7 +721,7 @@ namespace JSC {
     enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
     class PropertyNode final : public ParserArenaFreeable {
     public:
-        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32, Private = 64 };
+        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32, PrivateField = 64, PrivateMethod = 128 };
 
         PropertyNode(const Identifier&, ExpressionNode*, Type, SuperBinding, ClassElementTag);
         PropertyNode(ExpressionNode*, Type, SuperBinding, ClassElementTag);
@@ -740,7 +740,7 @@ namespace JSC {
         bool isInstanceClassField() const { return isInstanceClassProperty() && !needsSuperBinding(); }
         bool isStaticClassField() const { return isStaticClassProperty() && !needsSuperBinding(); }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
-        bool isPrivate() const { return m_type & Private; }
+        bool isPrivate() const { return m_type & (PrivateField | PrivateMethod); }
         bool hasComputedName() const { return m_expression; }
         bool isComputedClassField() const { return isClassField() && hasComputedName(); }
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
@@ -760,7 +760,7 @@ namespace JSC {
         const Identifier* m_name;
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
-        unsigned m_type : 7;
+        unsigned m_type;
         unsigned m_needsSuperBinding : 1;
         static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
         unsigned m_classElementTag : 2;
@@ -838,7 +838,7 @@ namespace JSC {
         bool m_subscriptHasAssignments;
     };
 
-    enum class DotType { Name, PrivateField };
+    enum class DotType { Name, PrivateMember };
     class BaseDotNode : public ExpressionNode {
     public:
         BaseDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType);
@@ -846,7 +846,7 @@ namespace JSC {
         ExpressionNode* base() const { return m_base; }
         const Identifier& identifier() const { return m_ident; }
         DotType type() const { return m_type; }
-        bool isPrivateField() const { return m_type == DotType::PrivateField; }
+        bool isPrivateMember() const { return m_type == DotType::PrivateMember; }
 
         RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base, RefPtr<RegisterID>& thisValue);
         RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base);
@@ -870,7 +870,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
         bool isLocation() const final { return true; }
-        bool isPrivateLocation() const override { return m_type == DotType::PrivateField; }
+        bool isPrivateLocation() const override { return m_type == DotType::PrivateMember; }
         bool isDotAccessorNode() const final { return true; }
     };
 
@@ -2161,6 +2161,9 @@ namespace JSC {
         void setEcmaName(const Identifier& ecmaName) { m_ecmaName = ecmaName; }
         const Identifier& ecmaName() { return m_ident.isEmpty() ? m_ecmaName : m_ident; }
 
+        void setPrivateBrandRequirement(PrivateBrandRequirement privateBrandRequirement) { m_privateBrandRequirement = static_cast<unsigned>(privateBrandRequirement); }
+        PrivateBrandRequirement privateBrandRequirement() { return static_cast<PrivateBrandRequirement>(m_privateBrandRequirement); }
+
         FunctionMode functionMode() { return m_functionMode; }
 
         int functionNameStart() const { return m_functionNameStart; }
@@ -2209,6 +2212,7 @@ namespace JSC {
         unsigned m_constructorKind : 2;
         unsigned m_needsClassFieldInitializer : 1;
         unsigned m_isArrowFunctionBodyExpression : 1;
+        unsigned m_privateBrandRequirement : 1;
         SourceParseMode m_parseMode;
         FunctionMode m_functionMode;
         Identifier m_ident;

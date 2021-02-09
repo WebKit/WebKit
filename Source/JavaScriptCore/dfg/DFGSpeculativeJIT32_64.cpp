@@ -2606,6 +2606,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CheckPrivateBrand: {
+        compileCheckPrivateBrand(node);
+        break;
+    }
+
+    case SetPrivateBrand: {
+        compileSetPrivateBrand(node);
+        break;
+    }
+
     case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
@@ -4241,6 +4251,8 @@ void SpeculativeJIT::compile(Node* node)
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case FilterDeleteByStatus:
+    case FilterCheckPrivateBrandStatus:
+    case FilterSetPrivateBrandStatus:
         m_interpreter.filterICStatus(node);
         noResult(node);
         break;

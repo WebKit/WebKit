@@ -1388,6 +1388,8 @@ private:
         case PutByVal:
         case PutPrivateName:
         case PutPrivateNameById:
+        case SetPrivateBrand:
+        case CheckPrivateBrand:
         case PutClosureVar:
         case PutInternalField:
         case PutToArguments:
@@ -1454,6 +1456,8 @@ private:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case FilterDeleteByStatus:
+        case FilterCheckPrivateBrandStatus:
+        case FilterSetPrivateBrandStatus:
         case ClearCatchLocals:
         case DataViewSet:
         case InvalidationPoint:

@@ -246,8 +246,32 @@ public:
 private:
     JSValueRegs m_base;
     JSValueRegs m_result;
-    JSValueRegs m_;
 
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
+};
+
+class JITPrivateBrandAccessGenerator : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITPrivateBrandAccessGenerator() { }
+
+    JITPrivateBrandAccessGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs brand);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+    
+    void generateFastPath(MacroAssembler&);
+
+private:
     MacroAssembler::Label m_start;
     MacroAssembler::PatchableJump m_slowPathJump;
 };

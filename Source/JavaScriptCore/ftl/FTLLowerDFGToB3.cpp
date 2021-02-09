@@ -961,6 +961,12 @@ private:
         case InByVal:
             compileInByVal();
             break;
+        case CheckPrivateBrand:
+            compileCheckPrivateBrand();
+            break;
+        case SetPrivateBrand:
+            compileSetPrivateBrand();
+            break;
         case HasOwnProperty:
             compileHasOwnProperty();
             break;
@@ -1638,6 +1644,8 @@ private:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case FilterDeleteByStatus:
+        case FilterCheckPrivateBrandStatus:
+        case FilterSetPrivateBrandStatus:
             compileFilterICStatus();
             break;
         case DateGetInt32OrNaN:
@@ -4081,6 +4089,93 @@ private:
             m_out.appendTo(continuation, lastNext);
             setJSValue(m_out.phi(Int64, cellResult, notCellResult));
         }
+    }
+
+    void compilePrivateBrandAccess(LValue base, LValue brand, AccessType accessType)
+    {
+        Node* node = m_node;
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->appendSomeRegister(base);
+        patchpoint->appendSomeRegister(brand);
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+        State* state = &m_ftlState;
+        bool baseIsCell = abstractValue(m_node->child1()).isType(SpecCell);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(node->origin.semantic);
+
+            // This is the direct exit target for operation calls.
+            Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+            // This is the exit for call IC's created by the IC for getters. We don't have
+            // to do anything weird other than call this, since it will associate the exit with
+            // the callsite index.
+            exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+            GPRReg baseGPR = params[0].gpr();
+            GPRReg brandGPR = params[1].gpr();
+
+            auto generator = Box<JITPrivateBrandAccessGenerator>::create(
+                jit.codeBlock(), node->origin.semantic, callSiteIndex, accessType,
+                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(brandGPR));
+
+            CCallHelpers::Jump notCell;
+            if (!baseIsCell)
+                notCell = jit.branchIfNotCell(baseGPR);
+
+            generator->generateFastPath(jit);
+            CCallHelpers::Label done = jit.label();
+
+            params.addLatePath([=] (CCallHelpers& jit) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                auto appropriatePrivateAccessFunction = [=] (AccessType type) -> decltype(&operationCheckPrivateBrandOptimize) {
+                    switch (type) {
+                    case AccessType::CheckPrivateBrand:
+                        return operationCheckPrivateBrandOptimize;
+                    case AccessType::SetPrivateBrand:
+                        return operationSetPrivateBrandOptimize;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        return nullptr;
+                    }
+                };
+
+                if (notCell.isSet())
+                    notCell.link(&jit);
+                generator->slowPathJump().link(&jit);
+                CCallHelpers::Label slowPathBegin = jit.label();
+                CCallHelpers::Call slowPathCall = callOperation(
+                    *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                    exceptions.get(), appropriatePrivateAccessFunction(accessType), InvalidGPRReg,
+                    jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                    CCallHelpers::TrustedImmPtr(generator->stubInfo()), baseGPR, brandGPR).call();
+                jit.jump().linkTo(done, &jit);
+
+                generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    generator->finalize(linkBuffer, linkBuffer);
+                });
+            });
+        });
+    }
+
+    void compileCheckPrivateBrand()
+    {
+        compilePrivateBrandAccess(lowJSValue(m_node->child1()), lowSymbol(m_node->child2()), AccessType::CheckPrivateBrand);
+    }
+
+    void compileSetPrivateBrand()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
+        compilePrivateBrandAccess(lowCell(m_node->child1()), lowSymbol(m_node->child2()), AccessType::SetPrivateBrand);
     }
 
     void compilePutByIdWithThis()

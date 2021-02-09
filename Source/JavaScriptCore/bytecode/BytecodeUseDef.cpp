@@ -229,6 +229,8 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     USES(OpGetByVal, base, property)
     USES(OpGetPrivateName, base, property)
     USES(OpPutPrivateName, base, property, value)
+    USES(OpSetPrivateBrand, base, brand)
+    USES(OpCheckPrivateBrand, base, brand)
     USES(OpInByVal, base, property)
     USES(OpOverridesHasInstance, constructor, hasInstanceValue)
     USES(OpInstanceof, value, prototype)
@@ -397,6 +399,8 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instru
     case op_put_by_val:
     case op_put_by_val_direct:
     case op_put_private_name:
+    case op_set_private_brand:
+    case op_check_private_brand:
     case op_put_internal_field:
     case op_define_data_property:
     case op_define_accessor_property:

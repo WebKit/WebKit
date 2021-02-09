@@ -321,7 +321,7 @@ ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t depthOff
     return op;
 }
 
-void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, TDZEnvironment& result, VariableEnvironment& privateNames)
+void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, TDZEnvironment& result, PrivateNameEnvironment& privateNameEnvironment)
 {
     for (; scope; scope = scope->next()) {
         if (!scope->isLexicalScope() && !scope->isCatchScope())
@@ -340,8 +340,9 @@ void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, TDZEnvironment& re
             result.add(iter->key);
 
         if (symbolTable->hasPrivateNames()) {
-            for (auto name : symbolTable->privateNames())
-                privateNames.usePrivateName(name);    
+            auto privateNames = symbolTable->privateNames();
+            for (auto end = privateNames.end(), iter = privateNames.begin(); iter != end; ++iter)
+                privateNameEnvironment.add(iter->key, iter->value);
         }
     }
 }

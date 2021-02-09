@@ -1010,6 +1010,112 @@ void repatchInByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject*
         ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInById);
 }
 
+static InlineCacheAction tryCacheCheckPrivateBrand(
+    JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, CacheableIdentifier brandID,
+    StructureStubInfo& stubInfo)
+{
+    VM& vm = globalObject->vm();
+    AccessGenerationResult result;
+    Identifier ident = Identifier::fromUid(vm, brandID.uid());
+
+    {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
+
+        Structure* structure = base->structure(vm);
+
+        InlineCacheAction action = actionForCell(vm, base);
+        if (action != AttemptToCache)
+            return action;
+
+        bool isBaseProperty = true;
+        LOG_IC((ICEvent::CheckPrivateBrandAddAccessCase, structure->classInfo(), ident, isBaseProperty));
+
+        std::unique_ptr<AccessCase> newCase = AccessCase::createCheckPrivateBrand(vm, codeBlock, brandID, structure);
+
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+
+        if (result.generatedSomeCode()) {
+            LOG_IC((ICEvent::CheckPrivateBrandReplaceWithJump, structure->classInfo(), ident, isBaseProperty));
+
+            RELEASE_ASSERT(result.code());
+            InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+        }
+    }
+
+    fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchCheckPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, CacheableIdentifier brandID, StructureStubInfo& stubInfo)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    if (tryCacheCheckPrivateBrand(globalObject, codeBlock, baseObject, brandID, stubInfo) == GiveUpOnCache)
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationCheckPrivateBrandGeneric);
+}
+
+static InlineCacheAction tryCacheSetPrivateBrand(
+    JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, Structure* oldStructure, CacheableIdentifier brandID,
+    StructureStubInfo& stubInfo)
+{
+    VM& vm = globalObject->vm();
+    AccessGenerationResult result;
+    Identifier ident = Identifier::fromUid(vm, brandID.uid());
+
+    {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
+        
+        ASSERT(oldStructure);
+
+        if (oldStructure->isDictionary())
+            return RetryCacheLater;
+
+        InlineCacheAction action = actionForCell(vm, base);
+        if (action != AttemptToCache)
+            return action;
+        
+        Structure* newStructure = Structure::setBrandTransitionFromExistingStructureConcurrently(oldStructure, brandID.uid());
+        if (!newStructure)
+            return RetryCacheLater;
+        if (newStructure->isDictionary())
+            return GiveUpOnCache;
+        ASSERT(newStructure->previousID() == oldStructure);
+        ASSERT(newStructure->transitionKind() == TransitionKind::SetBrand);
+        ASSERT(newStructure->isObject());
+        
+        bool isBaseProperty = true;
+        LOG_IC((ICEvent::SetPrivateBrandAddAccessCase, oldStructure->classInfo(), ident, isBaseProperty));
+
+        std::unique_ptr<AccessCase> newCase = AccessCase::createSetPrivateBrand(vm, codeBlock, brandID, oldStructure, newStructure);
+
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
+
+        if (result.generatedSomeCode()) {
+            LOG_IC((ICEvent::SetPrivateBrandReplaceWithJump, oldStructure->classInfo(), ident, isBaseProperty));
+            
+            RELEASE_ASSERT(result.code());
+            InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+        }
+    }
+
+    fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchSetPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, Structure* oldStructure, CacheableIdentifier brandID, StructureStubInfo& stubInfo)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    if (tryCacheSetPrivateBrand(globalObject, codeBlock, baseObject, oldStructure,  brandID, stubInfo) == GiveUpOnCache)
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationSetPrivateBrandGeneric);
+}
+
 static InlineCacheAction tryCacheInstanceOf(
     JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo,
     bool wasFound)
@@ -1583,6 +1689,18 @@ void resetInByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 void resetInstanceOf(StructureStubInfo& stubInfo)
 {
     resetPatchableJump(stubInfo);
+}
+
+void resetCheckPrivateBrand(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+{
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationCheckPrivateBrandOptimize);
+    InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation);
+}
+
+void resetSetPrivateBrand(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+{
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationSetPrivateBrandOptimize);
+    InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation);
 }
 
 MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM& vm, CodeSpecializationKind kind, JSObject* callee)

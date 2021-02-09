@@ -70,11 +70,12 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
 
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(function->usesEval(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(function->usesEval(), kind == CodeForConstruct, executable->privateBrandRequirement(), functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
 
     auto parentScopeTDZVariables = executable->parentScopeTDZVariables();
+    PrivateNameEnvironment parentPrivateNameEnvironment = executable->parentPrivateNameEnvironment();
     ECMAMode ecmaMode = executable->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
-    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, parentScopeTDZVariables, ecmaMode);
+    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, parentScopeTDZVariables, &parentPrivateNameEnvironment, ecmaMode);
 
     if (error.isValid())
         return nullptr;
@@ -82,7 +83,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     return result;
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, Optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor)
     : Base(vm, structure)
     , m_firstLineOffset(node->firstLine() - parentSource.firstLine().oneBasedInt())
     , m_isInStrictContext(node->isInStrictContext())
@@ -103,6 +104,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_typeProfilingStartOffset(node->functionKeywordStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_parameterCount(node->parameterCount())
+    , m_privateBrandRequirement(static_cast<unsigned>(privateBrandRequirement))
     , m_features(0)
     , m_sourceParseMode(node->parseMode())
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
@@ -122,12 +124,15 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     ASSERT(m_scriptMode == static_cast<unsigned>(scriptMode));
     ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
     ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
+    ASSERT(m_privateBrandRequirement == static_cast<unsigned>(privateBrandRequirement));
     ASSERT(!(m_isBuiltinDefaultClassConstructor && constructorKind() == ConstructorKind::None));
     ASSERT(!m_needsClassFieldInitializer || (isClassConstructorFunction() || derivedContextType == DerivedContextType::DerivedConstructorContext));
     if (!node->classSource().isNull())
         setClassSource(node->classSource());
     if (parentScopeTDZVariables)
         ensureRareData().m_parentScopeTDZVariables = WTFMove(parentScopeTDZVariables);
+    if (parentPrivateNameEnvironment)
+        ensureRareData().m_parentPrivateNameEnvironment = WTFMove(*parentPrivateNameEnvironment);
 }
 
 UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable()

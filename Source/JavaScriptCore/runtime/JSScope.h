@@ -27,12 +27,12 @@
 
 #include "GetPutInfo.h"
 #include "JSObject.h"
+#include "VariableEnvironment.h"
 
 namespace JSC {
 
 class ScopeChainIterator;
 class SymbolTable;
-class VariableEnvironment;
 class WatchpointSet;
 
 using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
@@ -62,7 +62,7 @@ public:
     static bool hasConstantScope(ResolveType);
     static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);
 
-    static void collectClosureVariablesUnderTDZ(JSScope*, TDZEnvironment& result, VariableEnvironment& privateNames);
+    static void collectClosureVariablesUnderTDZ(JSScope*, TDZEnvironment& result, PrivateNameEnvironment&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

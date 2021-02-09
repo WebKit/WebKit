@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BrandedStructure.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
@@ -61,7 +62,12 @@ inline Structure* Structure::createStructure(VM& vm)
 inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(vm.structureStructure);
-    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, previous, deferred);
+    Structure* newStructure;
+    if (previous->isBrandedStructure())
+        newStructure = new (NotNull, allocateCell<BrandedStructure>(vm.heap)) BrandedStructure(vm, jsCast<BrandedStructure*>(previous), deferred);
+    else
+        newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, previous, deferred);
+
     newStructure->finishCreation(vm, previous);
     return newStructure;
 }
@@ -181,6 +187,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
         case TransitionKind::PropertyAttributeChange:
             break;
         case TransitionKind::PropertyDeletion:
+        case TransitionKind::SetBrand:
             continue;
         default:
             ASSERT_NOT_REACHED();

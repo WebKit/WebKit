@@ -1242,10 +1242,15 @@
 		8612E4CD152389EC00C836BE /* MatchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8612E4CB1522918400C836BE /* MatchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86158AB3155C8B4000B45C9C /* PropertyName.h in Headers */ = {isa = PBXBuildFile; fileRef = 86158AB2155C8B3F00B45C9C /* PropertyName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		861816771FB7924200ECC4EC /* BigIntObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 861816761FB7922F00ECC4EC /* BigIntObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		861AF60725D18C9D000B63E1 /* BrandedStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 861AF60625D18C9D000B63E1 /* BrandedStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		862553D216136E1A009F17D0 /* JSProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 862553CF16136AA5009F17D0 /* JSProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */; };
+		86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */; };
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		863FBC5A25B093B900F6C930 /* WasmValueLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 863FBC5825B093B900F6C930 /* WasmValueLocation.h */; };
 		865A30F1135007E100CDB49E /* JSCJSValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 865A30F0135007E100CDB49E /* JSCJSValueInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		865DA0C525B8957400875772 /* SetPrivateBrandVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */; };
+		865DA0C825B8960C00875772 /* SetPrivateBrandStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */; };
 		866739D213BFDE710023D87C /* BigInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D013BFDE710023D87C /* BigInteger.h */; };
 		866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D113BFDE710023D87C /* Uint16WithFraction.h */; };
 		86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B4112DB8A8100A9FE7B /* YarrSyntaxChecker.h */; };
@@ -4140,8 +4145,13 @@
 		86158AB2155C8B3F00B45C9C /* PropertyName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyName.h; sourceTree = "<group>"; };
 		861816761FB7922F00ECC4EC /* BigIntObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigIntObject.h; sourceTree = "<group>"; };
 		861816781FB7931300ECC4EC /* BigIntObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BigIntObject.cpp; sourceTree = "<group>"; };
+		861AF60625D18C9D000B63E1 /* BrandedStructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrandedStructure.h; sourceTree = "<group>"; };
 		862553CE16136AA5009F17D0 /* JSProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProxy.cpp; sourceTree = "<group>"; };
 		862553CF16136AA5009F17D0 /* JSProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSProxy.h; sourceTree = "<group>"; };
+		86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandVariant.h; sourceTree = "<group>"; };
+		86281EF125B6165E00367004 /* CheckPrivateBrandVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckPrivateBrandVariant.cpp; sourceTree = "<group>"; };
+		86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandStatus.h; sourceTree = "<group>"; };
+		86281EF525B61B0600367004 /* CheckPrivateBrandStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckPrivateBrandStatus.cpp; sourceTree = "<group>"; };
 		863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerCodeRef.h; sourceTree = "<group>"; };
 		863C6D981521111200585E4E /* YarrCanonicalizeUCS2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrCanonicalizeUCS2.cpp; path = yarr/YarrCanonicalizeUCS2.cpp; sourceTree = "<group>"; };
 		863C6D991521111200585E4E /* YarrCanonicalize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrCanonicalize.h; path = yarr/YarrCanonicalize.h; sourceTree = "<group>"; };
@@ -4152,6 +4162,11 @@
 		8640923B156EED3B00566CC2 /* ARM64Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARM64Registers.h; sourceTree = "<group>"; };
 		8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM64.h; sourceTree = "<group>"; };
 		865A30F0135007E100CDB49E /* JSCJSValueInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCJSValueInlines.h; sourceTree = "<group>"; };
+		865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetPrivateBrandVariant.h; sourceTree = "<group>"; };
+		865DA0C625B8959E00875772 /* SetPrivateBrandVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetPrivateBrandVariant.cpp; sourceTree = "<group>"; };
+		865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetPrivateBrandStatus.h; sourceTree = "<group>"; };
+		865DA0C925B8962A00875772 /* SetPrivateBrandStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetPrivateBrandStatus.cpp; sourceTree = "<group>"; };
+		8664967A25D1DD1200516B36 /* BrandedStructure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BrandedStructure.cpp; sourceTree = "<group>"; };
 		866739D013BFDE710023D87C /* BigInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigInteger.h; sourceTree = "<group>"; };
 		866739D113BFDE710023D87C /* Uint16WithFraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint16WithFraction.h; sourceTree = "<group>"; };
 		86704B4012DB8A8100A9FE7B /* YarrSyntaxChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrSyntaxChecker.cpp; path = yarr/YarrSyntaxChecker.cpp; sourceTree = "<group>"; };
@@ -7156,6 +7171,8 @@
 				704FD35305697E6D003DBED9 /* BooleanObject.h */,
 				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
 				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
+				8664967A25D1DD1200516B36 /* BrandedStructure.cpp */,
+				861AF60625D18C9D000B63E1 /* BrandedStructure.h */,
 				9E72940A190F0514001A91B5 /* BundlePath.h */,
 				9E729409190F0306001A91B5 /* BundlePath.mm */,
 				0FB7F38B15ED8E3800F167B2 /* Butterfly.h */,
@@ -8416,6 +8433,10 @@
 				627673221B680C1E00FD9F2E /* CallMode.h */,
 				0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */,
 				0F3B7E2519A11B8000D9BC56 /* CallVariant.h */,
+				86281EF525B61B0600367004 /* CheckPrivateBrandStatus.cpp */,
+				86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */,
+				86281EF125B6165E00367004 /* CheckPrivateBrandVariant.cpp */,
+				86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */,
@@ -8550,6 +8571,10 @@
 				0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */,
 				0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */,
 				0FF60AC016740F8100029779 /* ReduceWhitespace.h */,
+				865DA0C925B8962A00875772 /* SetPrivateBrandStatus.cpp */,
+				865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */,
+				865DA0C625B8959E00875772 /* SetPrivateBrandVariant.cpp */,
+				865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */,
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
 				0FB438A219270B1D00E1FBC9 /* StructureSet.cpp */,
@@ -9276,6 +9301,7 @@
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				9B4694391F97439E00CCB3F9 /* BooleanPrototype.h in Headers */,
 				996B73191BDA068000331B84 /* BooleanPrototype.lut.h in Headers */,
+				861AF60725D18C9D000B63E1 /* BrandedStructure.h in Headers */,
 				FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */,
 				DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
@@ -9341,6 +9367,8 @@
 				FEC160322339E9F900A04CB8 /* CellSize.h in Headers */,
 				0F1C3DDA1BBCE09E00E523E4 /* CellState.h in Headers */,
 				5338E2A72396EFFB00C61BAD /* CheckpointOSRExitSideState.h in Headers */,
+				86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */,
+				86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				0FE050261AA9095600D33B33 /* ClonedArguments.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* CLoopStack.h in Headers */,
@@ -10392,6 +10420,8 @@
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
+				865DA0C825B8960C00875772 /* SetPrivateBrandStatus.h in Headers */,
+				865DA0C525B8957400875772 /* SetPrivateBrandVariant.h in Headers */,
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,

@@ -1094,6 +1094,101 @@ JSC_DEFINE_JIT_OPERATION(operationDirectPutByValGeneric, void, (JSGlobalObject* 
     directPutByVal(globalObject, asObject(baseValue), subscript, value, byValInfo, ecmaMode);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationSetPrivateBrandOptimize, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBaseValue, EncodedJSValue encodedBrand))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue brand = JSValue::decode(encodedBrand);
+
+    ASSERT(baseValue.isObject());
+    ASSERT(brand.isSymbol());
+
+    JSObject* baseObject = asObject(baseValue);
+    Structure* oldStructure = baseObject->structure(vm);
+    baseObject->setPrivateBrand(globalObject, brand);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (CacheableIdentifier::isCacheableIdentifierCell(brand)) {
+        CacheableIdentifier identifier = CacheableIdentifier::createFromCell(brand.asCell());
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+            repatchSetPrivateBrand(globalObject, codeBlock, baseObject, oldStructure, identifier, *stubInfo);
+    }
+
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSetPrivateBrandGeneric, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBaseValue, EncodedJSValue encodedBrand))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue brand = JSValue::decode(encodedBrand);
+
+    if (stubInfo)
+        stubInfo->tookSlowPath = true;
+
+    ASSERT(baseValue.isObject());
+    ASSERT(brand.isSymbol());
+
+    JSObject* baseObject = asObject(baseValue);
+    baseObject->setPrivateBrand(globalObject, brand);
+    RETURN_IF_EXCEPTION(scope, void());
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCheckPrivateBrandOptimize, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBaseValue, EncodedJSValue encodedBrand))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue brand = JSValue::decode(encodedBrand);
+
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    ASSERT(brand.isSymbol());
+
+    baseObject->checkPrivateBrand(globalObject, brand);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (CacheableIdentifier::isCacheableIdentifierCell(brand)) {
+        CacheableIdentifier identifier = CacheableIdentifier::createFromCell(brand.asCell());
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+            repatchCheckPrivateBrand(globalObject, codeBlock, baseObject, identifier, *stubInfo);
+    }
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCheckPrivateBrandGeneric, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBaseValue, EncodedJSValue encodedBrand))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue brand = JSValue::decode(encodedBrand);
+
+    stubInfo->tookSlowPath = true;
+
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    ASSERT(brand.isSymbol());
+
+    baseObject->checkPrivateBrand(globalObject, brand);
+    RETURN_IF_EXCEPTION(scope, void());
+}
+
 JSC_DEFINE_JIT_OPERATION(operationPutPrivateNameOptimize, void, (JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, PrivateFieldPutKind putKind))
 {
     VM& vm = globalObject->vm();
@@ -2276,6 +2371,8 @@ ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFr
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     JSObject* base = baseValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
     PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
     base->getPrivateField(globalObject, fieldName, slot);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -2382,7 +2479,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (J
         return JSValue::encode(slot.getValue(globalObject, fieldName));
     }
 
-    return JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, fieldName));
+    RELEASE_AND_RETURN(scope, JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, fieldName)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))

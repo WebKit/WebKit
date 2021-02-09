@@ -544,6 +544,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpPutByValDirect)
         LINK(OpPutPrivateName)
 
+        LINK(OpSetPrivateBrand)
+        LINK(OpCheckPrivateBrand)
+
         LINK(OpNewArray)
         LINK(OpNewArrayWithSize)
         LINK(OpNewArrayBuffer, arrayAllocationProfile)
@@ -1336,6 +1339,33 @@ void CodeBlock::finalizeLLIntInlineCaches()
             metadata.m_offset = 0;
             metadata.m_newStructureID = 0;
             metadata.m_property.clear();
+        });
+
+        m_metadata->forEach<OpSetPrivateBrand>([&] (auto& metadata) {
+            StructureID oldStructureID = metadata.m_oldStructureID;
+            StructureID newStructureID = metadata.m_newStructureID;
+            JSCell* brand = metadata.m_brand.get();
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                && (!brand || vm.heap.isMarked(brand))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID))))
+                return;
+
+            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt set_private_brand transition.");
+            metadata.m_oldStructureID = 0;
+            metadata.m_newStructureID = 0;
+            metadata.m_brand.clear();
+        });
+
+        m_metadata->forEach<OpCheckPrivateBrand>([&] (auto& metadata) {
+            StructureID structureID = metadata.m_structureID;
+            JSCell* brand = metadata.m_brand.get();
+            if ((!structureID || vm.heap.isMarked(vm.heap.structureIDTable().get(structureID)))
+                && (!brand || vm.heap.isMarked(brand)))
+                return;
+
+            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt set_private_brand transition.");
+            metadata.m_structureID = 0;
+            metadata.m_brand.clear();
         });
 
         m_metadata->forEach<OpToThis>([&] (auto& metadata) {

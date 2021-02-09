@@ -250,6 +250,8 @@ bool doesGC(Graph& graph, Node* node)
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case FilterDeleteByStatus:
+    case FilterCheckPrivateBrandStatus:
+    case FilterSetPrivateBrandStatus:
     case DateGetInt32OrNaN:
     case DateGetTime:
     case DataViewGetInt:
@@ -327,6 +329,8 @@ bool doesGC(Graph& graph, Node* node)
     case PutPrivateNameById:
     case GetPrivateName:
     case GetPrivateNameById:
+    case SetPrivateBrand:
+    case CheckPrivateBrand:
     case PutStack:
     case PutToArguments:
     case RegExpExec:

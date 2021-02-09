@@ -294,6 +294,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_super_sampler_end:
     case op_get_private_name:
     case op_put_private_name:
+    case op_set_private_brand:
+    case op_check_private_brand:
         return CanCompileAndInline;
 
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.

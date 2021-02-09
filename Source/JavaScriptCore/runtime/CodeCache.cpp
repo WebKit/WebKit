@@ -71,13 +71,13 @@ static void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unl
 }
 
 template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
-UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, DerivedContextType derivedContextType, bool isArrowFunctionContext, const TDZEnvironment* variablesUnderTDZ = nullptr, const VariableEnvironment* parentScopePrivateNames = nullptr, ExecutableType* executable = nullptr)
+UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, DerivedContextType derivedContextType, bool isArrowFunctionContext, const TDZEnvironment* variablesUnderTDZ = nullptr, const PrivateNameEnvironment* privateNameEnvironment = nullptr, ExecutableType* executable = nullptr)
 {
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     bool isInsideOrdinaryFunction = executable && executable->isInsideOrdinaryFunction();
 
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType, nullptr, parentScopePrivateNames, nullptr, isInsideOrdinaryFunction);
+        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType, nullptr, privateNameEnvironment, nullptr, isInsideOrdinaryFunction);
 
     if (!rootNode)
         return nullptr;
@@ -94,9 +94,12 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     bool usesEval = rootNode->features() & EvalFeature;
     ECMAMode ecmaMode = rootNode->features() & StrictModeFeature ? ECMAMode::strict() : ECMAMode::sloppy();
     NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
-    if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>)
+    PrivateBrandRequirement privateBrandRequirement = PrivateBrandRequirement::None;
+    if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>) {
         needsClassFieldInitializer = executable->needsClassFieldInitializer();
-    ExecutableInfo executableInfo(usesEval, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
+        privateBrandRequirement = executable->privateBrandRequirement();
+    }
+    ExecutableInfo executableInfo(usesEval, false, privateBrandRequirement, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
@@ -108,7 +111,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     RefPtr<TDZEnvironmentLink> parentVariablesUnderTDZ;
     if (variablesUnderTDZ)
         parentVariablesUnderTDZ = TDZEnvironmentLink::create(vm.m_compactVariableMap->get(*variablesUnderTDZ), nullptr);
-    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, parentVariablesUnderTDZ, ecmaMode);
+    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, parentVariablesUnderTDZ, privateNameEnvironment, ecmaMode);
 
     if (error.isValid())
         return nullptr;
@@ -117,14 +120,14 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
 }
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
-UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ = nullptr, const VariableEnvironment* parentScopePrivateNames = nullptr)
+UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ = nullptr, const PrivateNameEnvironment* privateNameEnvironment = nullptr)
 {
-    return generateUnlinkedCodeBlockImpl<UnlinkedCodeBlockType, ExecutableType>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, executable->derivedContextType(), executable->isArrowFunctionContext(), variablesUnderTDZ, parentScopePrivateNames, executable);
+    return generateUnlinkedCodeBlockImpl<UnlinkedCodeBlockType, ExecutableType>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, executable->derivedContextType(), executable->isArrowFunctionContext(), variablesUnderTDZ, privateNameEnvironment, executable);
 }
 
-UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM& vm, DirectEvalExecutable* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ, const VariableEnvironment* parentScopePrivateNames)
+UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM& vm, DirectEvalExecutable* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ, const PrivateNameEnvironment* privateNameEnvironment)
 {
-    return generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ, parentScopePrivateNames);
+    return generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ, privateNameEnvironment);
 }
 
 template <class UnlinkedCodeBlockType>
@@ -248,7 +251,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     // The Function constructor only has access to global variables, so no variables will be under TDZ unless they're
     // in the global lexical environment, which we always TDZ check accesses from.
     ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, nullptr, DerivedContextType::None, NeedsClassFieldInitializer::No);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, nullptr, WTF::nullopt, DerivedContextType::None, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
 
     if (!source.provider()->sourceURLDirective().isNull())
         functionExecutable->setSourceURLDirective(source.provider()->sourceURLDirective());

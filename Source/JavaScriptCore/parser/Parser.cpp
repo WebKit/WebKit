@@ -2870,6 +2870,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     classScope->setIsLexicalScope();
     classScope->preventVarDeclarations();
     classScope->setStrictMode();
+    bool declaresPrivateMethod = false;
     next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
@@ -2989,16 +2990,22 @@ parseMethod:
             break;
         case PRIVATENAME: {
             ASSERT(Options::usePrivateClassFields());
-            JSToken token = m_token;
             ident = m_token.m_data.ident;
             if (!Options::usePrivateStaticClassFields())
                 failIfTrue(tag == ClassElementTag::Static, "Static class element cannot be private");
             failIfTrue(isGetter || isSetter, "Cannot parse class method with private name");
             ASSERT(ident);
             next();
-            failIfTrue(matchAndUpdate(OPENPAREN, token), "Cannot parse class method with private name");
-            semanticFailIfTrue(classScope->declarePrivateName(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private field twice");
-            type = static_cast<PropertyNode::Type>(type | PropertyNode::Private);
+            if (Options::usePrivateMethods() && match(OPENPAREN)) {
+                semanticFailIfTrue(classScope->declarePrivateMethod(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
+                declaresPrivateMethod = true;
+                type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateMethod);
+                break;
+            }
+
+            failIfTrue(match(OPENPAREN), "Cannot parse class method with private name");
+            semanticFailIfTrue(classScope->declarePrivateField(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private field twice");
+            type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateField);
             break;
         }
         default:
@@ -3084,10 +3091,19 @@ parseMethod:
     info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
+    if (declaresPrivateMethod) {
+        Identifier privateBrandIdentifier = m_vm.propertyNames->builtinNames().privateBrandPrivateName();
+        DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateBrandIdentifier, true);
+        ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+        classScope->useVariable(&privateBrandIdentifier, false);
+        classScope->addClosedVariableCandidateUnconditionally(privateBrandIdentifier.impl());
+    }
+
     if (Options::usePrivateClassFields()) {
         // Fail if there are no parent private name scopes and any used-but-undeclared private names.
         semanticFailIfFalse(copyUndeclaredPrivateNamesToOuterScope(), "Cannot reference undeclared private names");
     }
+
     auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
@@ -5165,7 +5181,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
                     m_parserState.lastPrivateName = ident;
                     currentScope()->useVariable(ident, false);
-                    type = DotType::PrivateField;
+                    type = DotType::PrivateMember;
                     m_token.m_type = IDENT;
                 }
                 matchOrFail(IDENT, "Expected a property name after ", optionalChainBase ? "'?.'" : "'.'");

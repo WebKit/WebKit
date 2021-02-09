@@ -30,6 +30,7 @@
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
 #include "CacheableIdentifierInlines.h"
+#include "CheckPrivateBrandStatus.h"
 #include "DFGAbstractInterpreter.h"
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DOMJITGetterSetter.h"
@@ -47,6 +48,7 @@
 #include "MathCommon.h"
 #include "NumberConstructor.h"
 #include "PutByIdStatus.h"
+#include "SetPrivateBrandStatus.h"
 #include "StringObject.h"
 #include "StructureCache.h"
 #include "StructureRareDataInlines.h"
@@ -4079,6 +4081,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case CheckPrivateBrand:
+    case SetPrivateBrand:
     case PutPrivateName: {
         clobberWorld();
         break;
@@ -4409,6 +4413,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case FilterDeleteByStatus:
+    case FilterCheckPrivateBrandStatus:
+    case FilterSetPrivateBrandStatus:
     case ClearCatchLocals:
         break;
 
@@ -4596,6 +4602,21 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
             node->deleteByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
+
+    case FilterCheckPrivateBrandStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->checkPrivateBrandStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+
+    case FilterSetPrivateBrandStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->setPrivateBrandStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+
 
     default:
         RELEASE_ASSERT_NOT_REACHED();

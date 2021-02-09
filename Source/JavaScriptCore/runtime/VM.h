@@ -465,6 +465,7 @@ public:
     IsoSubspace structureChainSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
+    IsoSubspace brandedStructureSpace;
     IsoSubspace symbolTableSpace;
 
 #define DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(name) \

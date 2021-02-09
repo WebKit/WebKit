@@ -1,3 +1,38 @@
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private methods
+        https://bugs.webkit.org/show_bug.cgi?id=194434
+
+        Reviewed by Filip Pizlo.
+
+        * stress/private-brand-installed-after-super-call-from-arrow-function.js: Added.
+        * stress/private-brand-installed-after-super-call-from-eval.js: Added.
+        * stress/private-method-brand-check.js: Added.
+        * stress/private-method-change-attribute-from-branded-structure.js: Added.
+        * stress/private-method-change-prototype-from-branded-structure.js: Added.
+        * stress/private-method-check-private-brand-ic.js: Added.
+        * stress/private-method-check-structure-miss.js: Added.
+        * stress/private-method-comparison.js: Added.
+        * stress/private-method-delete-property-from-branded-structure.js: Added.
+        * stress/private-method-extends-brand-check.js: Added.
+        * stress/private-method-get-and-call.js: Added.
+        * stress/private-method-invalid-multiple-brand-installation.js: Added.
+        * stress/private-method-invalidate-compiled-with-constant-symbol.js: Added.
+        * stress/private-method-nested-class.js: Added.
+        * stress/private-method-on-sealed-objects.js: Added.
+        * stress/private-method-on-uncacheable-dictionary.js: Added.
+        * stress/private-method-polymorphic-with-constant-symbol.js: Added.
+        * stress/private-method-set-brand-should-have-write-barrier.js: Added.
+        * stress/private-method-untyped-use.js: Added.
+        * stress/private-method-with-uncacheable-dictionary-transition.js: Added.
+        * stress/private-methods-inline-cache.js: Added.
+        * stress/private-methods-megamorphic-ic.js: Added.
+        * stress/private-methods-on-proxy.js: Added.
+        * stress/private-methods-poly-ic-multiple-classes.js: Added.
+        * stress/private-methods-poly-ic-single-class.js: Added.
+        * stress/private-names-available-on-direct-eval.js: Added.
+        * test262/config.yaml:
+
 2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()

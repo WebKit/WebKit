@@ -273,6 +273,7 @@ private:
                 break;
             }
 
+            case SetPrivateBrand:
             case PutById:
             case PutByIdFlush:
             case PutByIdDirect:

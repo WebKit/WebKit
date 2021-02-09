@@ -1815,6 +1815,47 @@ llintOpWithMetadata(op_put_private_name, OpPutPrivateName, macro (size, get, dis
     dispatch()
 end)
 
+llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, dispatch, metadata, return)
+    get(m_base, t3)
+    loadConstantOrVariableCell(size, t3, t0, .opSetPrivateBrandSlow)
+    get(m_brand, t3)
+    loadConstantOrVariableCell(size, t3, t1, .opSetPrivateBrandSlow)
+    metadata(t5, t2)
+    loadi OpSetPrivateBrand::Metadata::m_oldStructureID[t5], t2
+    bineq t2, JSCell::m_structureID[t0], .opSetPrivateBrandSlow
+
+    loadp OpSetPrivateBrand::Metadata::m_brand[t5], t3
+    bpneq t3, t1, .opSetPrivateBrandSlow
+
+    loadi OpSetPrivateBrand::Metadata::m_newStructureID[t5], t1
+    storei t1, JSCell::m_structureID[t0]
+    writeBarrierOnOperand(size, get, m_base)
+    dispatch()
+
+.opSetPrivateBrandSlow:
+    callSlowPath(_llint_slow_path_set_private_brand)
+    dispatch()
+end)
+
+llintOpWithMetadata(op_check_private_brand, OpCheckPrivateBrand, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t2)
+    get(m_base, t3)
+    loadConstantOrVariableCell(size, t3, t0, .opCheckPrivateBrandSlow)
+    get(m_brand, t3)
+    loadConstantOrVariableCell(size, t3, t1, .opCheckPrivateBrandSlow)
+
+    loadp OpCheckPrivateBrand::Metadata::m_brand[t5], t3
+    bqneq t3, t1, .opCheckPrivateBrandSlow
+
+    loadi OpCheckPrivateBrand::Metadata::m_structureID[t5], t2
+    bineq t2, JSCell::m_structureID[t0], .opCheckPrivateBrandSlow
+    dispatch()
+
+.opCheckPrivateBrandSlow:
+    callSlowPath(_llint_slow_path_check_private_brand)
+    dispatch()
+end)
+
 macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro contiguousPutByVal(storeCallback)

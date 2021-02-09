@@ -266,6 +266,13 @@ public:
         return NeedsClassFieldInitializer::No;
     }
 
+    PrivateBrandRequirement privateBrandRequirement() const
+    {
+        if (m_rareData)
+            return static_cast<PrivateBrandRequirement>(m_rareData->m_privateBrandRequirement);
+        return PrivateBrandRequirement::None;
+    }
+
     void dump(PrintStream&) const;
 
     BytecodeLivenessAnalysis& livenessAnalysis(CodeBlock* codeBlock)
@@ -407,6 +414,7 @@ public:
         RefCountedArray<ConstantIdentifierSetEntry> m_constantIdentifierSets;
 
         unsigned m_needsClassFieldInitializer : 1;
+        unsigned m_privateBrandRequirement : 1;
     };
 
     int outOfLineJumpOffset(InstructionStream::Offset);

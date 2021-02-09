@@ -588,6 +588,28 @@ op :put_private_name,
         newStructureID: StructureID,
     }
 
+op :set_private_brand,
+    args: {
+        base: VirtualRegister,
+        brand: VirtualRegister,
+    },
+    metadata: {
+        oldStructureID: StructureID,
+        newStructureID: StructureID,
+        brand: WriteBarrier[JSCell],
+    }
+
+op :check_private_brand,
+    args: {
+        base: VirtualRegister,
+        brand: VirtualRegister,
+    },
+    metadata: {
+        structureID: StructureID,
+        brand: WriteBarrier[JSCell],
+    }
+    
+
 op :put_by_val,
     args: {
         base: VirtualRegister,
