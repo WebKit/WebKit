@@ -1,3 +1,21 @@
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make JSON.parse faster by using table for fast string parsing
+        https://bugs.webkit.org/show_bug.cgi?id=221593
+
+        Reviewed by Ryosuke Niwa and Geoffrey Garen.
+
+        We use Latin1 table for quickly checking whether a character is safe for the fast path string parsing in JSON.
+        This offers 1-3% improvement in Kraken json-parse-financial test.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser<CharType>::Lexer::lexString):
+        * runtime/LiteralParser.h:
+
 2021-02-08  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Add `CSS.setLayoutContextTypeChangedMode` for getting information about all layout contexts

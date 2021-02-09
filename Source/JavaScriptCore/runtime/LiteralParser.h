@@ -33,28 +33,31 @@
 
 namespace JSC {
 
-typedef enum { StrictJSON, NonStrictJSON, JSONP } ParserMode;
+enum ParserMode : uint8_t { StrictJSON, NonStrictJSON, JSONP };
 
-enum JSONPPathEntryType {
+enum JSONPPathEntryType : uint8_t {
     JSONPPathEntryTypeDeclareVar, // var pathEntryName = JSON
     JSONPPathEntryTypeDot, // <prior entries>.pathEntryName = JSON
     JSONPPathEntryTypeLookup, // <prior entries>[pathIndex] = JSON
     JSONPPathEntryTypeCall // <prior entries>(JSON)
 };
 
-enum ParserState { StartParseObject, StartParseArray, StartParseExpression, 
-                   StartParseStatement, StartParseStatementEndStatement, 
-                   DoParseObjectStartExpression, DoParseObjectEndExpression,
-                   DoParseArrayStartExpression, DoParseArrayEndExpression };
-enum TokenType { TokLBracket, TokRBracket, TokLBrace, TokRBrace, 
-                 TokString, TokIdentifier, TokNumber, TokColon, 
-                 TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
-                 TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError };
-    
+enum ParserState : uint8_t {
+    StartParseObject, StartParseArray, StartParseExpression,
+    StartParseStatement, StartParseStatementEndStatement,
+    DoParseObjectStartExpression, DoParseObjectEndExpression,
+    DoParseArrayStartExpression, DoParseArrayEndExpression };
+
+enum TokenType : uint8_t {
+    TokLBracket, TokRBracket, TokLBrace, TokRBrace,
+    TokString, TokIdentifier, TokNumber, TokColon,
+    TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
+    TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError };
+
 struct JSONPPathEntry {
-    JSONPPathEntryType m_type;
     Identifier m_pathEntryName;
     int m_pathIndex;
+    JSONPPathEntryType m_type;
 };
 
 struct JSONPData {
