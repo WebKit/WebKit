@@ -1,5 +1,41 @@
 2021-02-09  Philippe Normand  <pnormand@igalia.com>
 
+        [GLib] Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221199
+
+        Reviewed by Carlos Garcia Campos.
+
+        Expose a new Permission Request object to the public WPE and GTK APIs, allowing the
+        application to defer the decision of using a given EME MediaKeySystem to the user's
+        approval.
+
+        Covered by new API test.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.cpp: Added.
+        (webkitMediaKeySystemPermissionRequestAllow):
+        (webkitMediaKeySystemPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkitMediaKeySystemPermissionRequestDispose):
+        (webkit_media_key_system_permission_request_class_init):
+        (webkitMediaKeySystemPermissionRequestCreate):
+        (webkit_media_key_system_permission_get_name):
+        * UIProcess/API/glib/WebKitMediaKeySystemPermissionRequestPrivate.h: Added.
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+        * UIProcess/API/gtk/WebKitMediaKeySystemPermissionRequest.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/WebKitMediaKeySystemPermissionRequest.h: Added.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/docs/wpe-docs.sgml:
+
+2021-02-09  Philippe Normand  <pnormand@igalia.com>
+
         Permission request API for MediaKeySystem access support
         https://bugs.webkit.org/show_bug.cgi?id=221187
 
