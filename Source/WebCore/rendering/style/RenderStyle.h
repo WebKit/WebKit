@@ -513,6 +513,12 @@ public:
             return aspectRatioWidth() / aspectRatioHeight();
         return aspectRatioHeight() / aspectRatioWidth();
     }
+    BoxSizing boxSizingForAspectRatio() const
+    {
+        if (aspectRatioType() == AspectRatioType::AutoAndRatio)
+            return BoxSizing::ContentBox;
+        return boxSizing();
+    }
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
