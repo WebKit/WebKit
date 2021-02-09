@@ -1,3 +1,20 @@
+2021-02-09  Daniel Kolesa  <dkolesa@igalia.com>
+
+        Allow icecream toolchain override in flatpakutils
+        https://bugs.webkit.org/show_bug.cgi?id=221605
+
+        Reviewed by Philippe Normand.
+
+        This allows the user to specify a custom icecream toolchain.
+        Usually you will not want to do this, but it is useful e.g. when
+        you have a machine in your cluster that does not have a compiler
+        in the SDK. You can either force the whole version string by using
+        ICECC_VERSION_OVERRIDE, or append to the original string with
+        ICECC_VERSION_APPEND.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-02-09  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Geolocation API tests are flaky timeout instead of failure

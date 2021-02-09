@@ -830,12 +830,16 @@ class WebkitFlatpak:
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
             toolchain_name = os.environ.get("CC", "gcc")
             try:
-                toolchain_path = self.icc_version[toolchain_name]
+                toolchain_path = os.environ.get("ICECC_VERSION_OVERRIDE", self.icc_version[toolchain_name])
             except KeyError:
                 Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r")
                 return 1
-            if not os.path.isfile(toolchain_path):
-                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", toolchain_path)
+            if "ICECC_VERSION_APPEND" in os.environ:
+                toolchain_path += ","
+                toolchain_path += os.environ["ICECC_VERSION_APPEND"]
+            native_toolchain = toolchain_path.split(",")[0]
+            if not os.path.isfile(native_toolchain):
+                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", native_toolchain)
                 return 1
             sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
