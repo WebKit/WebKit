@@ -1,3 +1,20 @@
+2021-02-09  Martin Robinson  <mrobinson@webkit.org>
+
+        Implement scroll-snap-stop for scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=197744
+        <rdar://problem/50708356>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-stop-valid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Allow sending modifier keys in test_driver.send_keys()

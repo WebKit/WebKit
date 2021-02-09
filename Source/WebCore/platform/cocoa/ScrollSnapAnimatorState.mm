@@ -100,13 +100,6 @@ float ScrollSnapAnimatorState::targetOffsetForStartOffset(ScrollEventAxis axis, 
     return clampTo<float>(startOffset, 0, maxScrollOffset);
 }
 
-template<typename T>
-TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
-{
-    ts << "start: " << range.start << " end: " << range.end;
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)
 {
     ts << "ScrollSnapAnimatorState";

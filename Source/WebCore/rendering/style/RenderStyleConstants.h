@@ -26,6 +26,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;
@@ -1127,6 +1128,11 @@ enum class ScrollSnapAxisAlignType : uint8_t {
     Center,
     End
 };
+
+enum class ScrollSnapStop : uint8_t {
+    Normal,
+    Always,
+};
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)
@@ -1284,6 +1290,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 #if ENABLE(CSS_SCROLL_SNAP)
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
+WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStrictness);
 #endif
 WTF::TextStream& operator<<(WTF::TextStream&, SpeakAs);
@@ -1315,3 +1322,15 @@ WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 
 } // namespace WebCore
+
+#if ENABLE(CSS_SCROLL_SNAP)
+namespace WTF {
+template<> struct EnumTraits<WebCore::ScrollSnapStop> {
+    using values = EnumValues<
+        WebCore::ScrollSnapStop,
+        WebCore::ScrollSnapStop::Normal,
+        WebCore::ScrollSnapStop::Always
+    >;
+};
+}
+#endif

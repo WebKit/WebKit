@@ -91,13 +91,8 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     WEBCORE_EXPORT const ScrollSnapOffsetsInfo<LayoutUnit>* snapOffsetInfo() const;
     virtual void updateSnapOffsets() { };
-    void setHorizontalSnapOffsets(const Vector<LayoutUnit>&);
-    void setVerticalSnapOffsets(const Vector<LayoutUnit>&);
-    void setHorizontalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>&);
-    void setVerticalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>&);
+    void setScrollSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>&);
     void clearSnapOffsets();
-    void clearHorizontalSnapOffsets();
-    void clearVerticalSnapOffsets();
     unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
     void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
     unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }

@@ -196,11 +196,10 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         }
     }
 
-    bool scrollMarginChanged =
-        oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
-    bool scrollAlignChanged =
-        oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
-    if (scrollMarginChanged || scrollAlignChanged) {
+    bool scrollMarginChanged = oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
+    bool scrollAlignChanged = oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
+    bool scrollSnapStopChanged = oldStyle && oldStyle->scrollSnapStop() != newStyle.scrollSnapStop();
+    if (scrollMarginChanged || scrollAlignChanged || scrollSnapStopChanged) {
         auto* scrollSnapBox = enclosingScrollableContainerForSnapping();
         if (scrollSnapBox && scrollSnapBox->layer()) {
             const RenderStyle& style = scrollSnapBox->style();
@@ -210,6 +209,8 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
                     scrollableArea->updateScrollSnapState();
                 }
                 if (scrollSnapBox->isBody() || scrollSnapBox->isDocumentElementRenderer())
+                    scrollSnapBox->view().frameView().updateSnapOffsets();
+                    scrollSnapBox->view().frameView().updateScrollSnapState();
                     scrollSnapBox->view().frameView().updateScrollingCoordinatorScrollSnapProperties();
             }
         }

@@ -6989,6 +6989,16 @@
                 "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-snap-margin-inline-end"
             }
         },
+        "scroll-snap-stop": {
+            "codegen-properties": {
+                "converter": "ScrollSnapStop",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
+            }
+        },
         "shape-outside": {
             "codegen-properties": {
                 "aliases": [

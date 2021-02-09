@@ -2498,6 +2498,11 @@ ScrollSnapAlign RenderStyle::initialScrollSnapAlign()
     return { };
 }
 
+ScrollSnapStop RenderStyle::initialScrollSnapStop()
+{
+    return ScrollSnapStop::Normal;
+}
+
 const ScrollSnapType RenderStyle::scrollSnapType() const
 {
     return m_rareNonInheritedData->scrollSnapType;
@@ -2508,6 +2513,11 @@ const ScrollSnapAlign& RenderStyle::scrollSnapAlign() const
     return m_rareNonInheritedData->scrollSnapAlign;
 }
 
+ScrollSnapStop RenderStyle::scrollSnapStop() const
+{
+    return m_rareNonInheritedData->scrollSnapStop;
+}
+
 void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 {
     SET_VAR(m_rareNonInheritedData, scrollSnapType, type);
@@ -2516,6 +2526,11 @@ void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
 {
     SET_VAR(m_rareNonInheritedData, scrollSnapAlign, alignment);
+}
+
+void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
+{
+    SET_VAR(m_rareNonInheritedData, scrollSnapStop, stop);
 }
 
 bool RenderStyle::hasSnapPosition() const

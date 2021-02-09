@@ -450,6 +450,7 @@ imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
 # WebKit1 frames use native scrollbars causing these tests to fail.
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 
 ### END OF (2) Failures without bug reports

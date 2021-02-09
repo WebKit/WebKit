@@ -3847,10 +3847,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyScrollPaddingInline:
             return getCSSPropertyValuesFor2SidesShorthand(scrollPaddingInlineShorthand());
 #if ENABLE(CSS_SCROLL_SNAP)
-        case CSSPropertyScrollSnapType:
-            return valueForScrollSnapType(style.scrollSnapType());
         case CSSPropertyScrollSnapAlign:
             return valueForScrollSnapAlignment(style.scrollSnapAlign());
+        case CSSPropertyScrollSnapStop:
+            return CSSPrimitiveValue::create(style.scrollSnapStop());
+        case CSSPropertyScrollSnapType:
+            return valueForScrollSnapType(style.scrollSnapType());
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)

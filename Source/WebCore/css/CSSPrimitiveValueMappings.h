@@ -5407,6 +5407,34 @@ template<> inline CSSPrimitiveValue::operator ScrollSnapAxisAlignType() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapStop snapStop)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (snapStop) {
+    case ScrollSnapStop::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case ScrollSnapStop::Always:
+        m_value.valueID = CSSValueAlways;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ScrollSnapStop() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return ScrollSnapStop::Normal;
+    case CSSValueAlways:
+        return ScrollSnapStop::Always;
+    default:
+        ASSERT_NOT_REACHED();
+        return ScrollSnapStop::Normal;
+    }
+}
+
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)

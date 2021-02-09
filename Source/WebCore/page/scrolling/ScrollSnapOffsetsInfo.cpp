@@ -79,13 +79,13 @@ static void indicesOfNearestSnapOffsetRanges(LayoutType offset, const Vector<Scr
 }
 
 template <typename LayoutType>
-static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<LayoutType>& snapOffsets, unsigned& lowerIndex, unsigned& upperIndex)
+static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<SnapOffset<LayoutType>>& snapOffsets, unsigned& lowerIndex, unsigned& upperIndex)
 {
     lowerIndex = 0;
     upperIndex = snapOffsets.size() - 1;
     while (lowerIndex < upperIndex - 1) {
         int middleIndex = (lowerIndex + upperIndex) / 2;
-        auto middleOffset = snapOffsets[middleIndex];
+        auto middleOffset = snapOffsets[middleIndex].offset;
         if (offset == middleOffset) {
             upperIndex = middleIndex;
             lowerIndex = middleIndex;
@@ -100,10 +100,47 @@ static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<LayoutTy
 }
 
 template <typename LayoutType>
-static std::pair<LayoutType, unsigned> closestSnapOffsetWithOffsetsAndRanges(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestinationOffset, float velocity, Optional<LayoutType> originalOffsetForDirectionalSnapping)
+static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(const Vector<SnapOffset<LayoutType>>& snapOffsets, LayoutType scrollOriginOffset, LayoutType scrollDestinationOffset)
+{
+    LayoutType difference = scrollDestinationOffset - scrollOriginOffset;
+    if (!difference)
+        return WTF::nullopt;
+
+    unsigned searchStartOffset = 0;
+    size_t iteration = 1;
+    if (difference < 0) {
+        searchStartOffset = snapOffsets.size() - 1;
+        iteration = -1;
+    }
+
+    auto isPast = [difference](LayoutType mark, LayoutType candidate) {
+        return (difference > 0 && candidate > mark) || (difference < 0 && candidate < mark);
+    };
+
+    for (size_t i = searchStartOffset; i >= 0 && i < snapOffsets.size(); i += iteration) {
+        auto offset = snapOffsets[i].offset;
+        if (isPast(scrollDestinationOffset, offset))
+            break;
+        if (snapOffsets[i].stop != ScrollSnapStop::Always)
+            continue;
+        if (isPast(scrollOriginOffset, offset))
+            return i;
+    }
+
+    return WTF::nullopt;
+}
+
+template <typename LayoutType>
+static std::pair<LayoutType, unsigned> closestSnapOffsetWithOffsetsAndRanges(const Vector<SnapOffset<LayoutType>>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestinationOffset, float velocity, Optional<LayoutType> originalOffsetForDirectionalSnapping)
 {
     if (snapOffsets.isEmpty())
         return std::make_pair(scrollDestinationOffset, invalidSnapOffsetIndex);
+
+    if (originalOffsetForDirectionalSnapping.hasValue()) {
+        auto firstSnapStopOffsetIndex = findFirstSnapStopOffsetBetweenOriginAndDestination(snapOffsets, *originalOffsetForDirectionalSnapping, scrollDestinationOffset);
+        if (firstSnapStopOffsetIndex.hasValue())
+            return std::make_pair(snapOffsets[*firstSnapStopOffsetIndex].offset, *firstSnapStopOffsetIndex);
+    }
 
     unsigned lowerSnapOffsetRangeIndex;
     unsigned upperSnapOffsetRangeIndex;
@@ -111,17 +148,17 @@ static std::pair<LayoutType, unsigned> closestSnapOffsetWithOffsetsAndRanges(con
     if (lowerSnapOffsetRangeIndex == upperSnapOffsetRangeIndex && upperSnapOffsetRangeIndex != invalidSnapOffsetIndex)
         return std::make_pair(scrollDestinationOffset, invalidSnapOffsetIndex);
 
-    if (scrollDestinationOffset <= snapOffsets.first())
-        return std::make_pair(snapOffsets.first(), 0u);
+    if (scrollDestinationOffset <= snapOffsets.first().offset)
+        return std::make_pair(snapOffsets.first().offset, 0u);
 
-    if (scrollDestinationOffset >= snapOffsets.last())
-        return std::make_pair(snapOffsets.last(), snapOffsets.size() - 1);
+    if (scrollDestinationOffset >= snapOffsets.last().offset)
+        return std::make_pair(snapOffsets.last().offset, snapOffsets.size() - 1);
 
     unsigned lowerIndex;
     unsigned upperIndex;
     indicesOfNearestSnapOffsets<LayoutType>(scrollDestinationOffset, snapOffsets, lowerIndex, upperIndex);
-    LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
-    LayoutType upperSnapPosition = snapOffsets[upperIndex];
+    LayoutType lowerSnapPosition = snapOffsets[lowerIndex].offset;
+    LayoutType upperSnapPosition = snapOffsets[upperIndex].offset;
     if (!std::abs(velocity)) {
         bool isCloserToLowerSnapPosition = scrollDestinationOffset - lowerSnapPosition <= upperSnapPosition - scrollDestinationOffset;
         return isCloserToLowerSnapPosition ? std::make_pair(lowerSnapPosition, lowerIndex) : std::make_pair(upperSnapPosition, upperIndex);
@@ -182,14 +219,7 @@ static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUni
     }
 }
 
-template<typename T>
-TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
-{
-    ts << "start: " << range.start << " end: " << range.end;
-    return ts;
-}
-
-static void computeAxisProximitySnapOffsetRanges(const Vector<LayoutUnit>& snapOffsets, Vector<ScrollOffsetRange<LayoutUnit>>& offsetRanges, LayoutUnit scrollPortAxisLength)
+static void computeAxisProximitySnapOffsetRanges(const Vector<SnapOffset<LayoutUnit>>& snapOffsets, Vector<ScrollOffsetRange<LayoutUnit>>& offsetRanges, LayoutUnit scrollPortAxisLength)
 {
     // This is an arbitrary choice for what it means to be "in proximity" of a snap offset. We should play around with
     // this and see what feels best.
@@ -206,8 +236,8 @@ static void computeAxisProximitySnapOffsetRanges(const Vector<LayoutUnit>& snapO
     // with to see what feels best.
     LayoutUnit proximityDistance { ratioOfScrollPortAxisLengthToBeConsideredForProximity * scrollPortAxisLength };
     for (size_t index = 1; index < snapOffsets.size(); ++index) {
-        auto startOffset = snapOffsets[index - 1] + proximityDistance;
-        auto endOffset = snapOffsets[index] - proximityDistance;
+        auto startOffset = snapOffsets[index - 1].offset + proximityDistance;
+        auto endOffset = snapOffsets[index].offset - proximityDistance;
         if (startOffset < endOffset)
             offsetRanges.append({ startOffset, endOffset });
     }
@@ -222,12 +252,16 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         return;
     }
 
-    Vector<LayoutUnit> verticalSnapOffsets;
-    Vector<LayoutUnit> horizontalSnapOffsets;
-    Vector<ScrollOffsetRange<LayoutUnit>> verticalSnapOffsetRanges;
-    Vector<ScrollOffsetRange<LayoutUnit>> horizontalSnapOffsetRanges;
-    HashSet<float> seenVerticalSnapOffsets;
-    HashSet<float> seenHorizontalSnapOffsets;
+    auto addOrUpdateStopForSnapOffset = [](HashMap<float, SnapOffset<LayoutUnit>>& offsets, SnapOffset<LayoutUnit> newOffset)
+    {
+        // If the offset already exists, we ensure that it has ScrollSnapStop::Always, when appropriate.
+        auto addResult = offsets.add(newOffset.offset, newOffset);
+        if (newOffset.stop == ScrollSnapStop::Always)
+            addResult.iterator->value.stop = ScrollSnapStop::Always;
+    };
+
+    HashMap<float, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
+    HashMap<float, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
     bool hasHorizontalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::XAxis || scrollSnapType.axis == ScrollSnapAxis::Inline;
     bool hasVerticalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::YAxis || scrollSnapType.axis == ScrollSnapAxis::Block;
 
@@ -255,49 +289,52 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollMargin(), InsetOrOutset::Outset);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
         auto alignment = child->style().scrollSnapAlign();
+        auto stop = child->style().scrollSnapStop();
         if (hasHorizontalSnapOffsets && alignment.x != ScrollSnapAxisAlignType::None) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), alignment.x, scrollerIsRTL) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), alignment.x, scrollerIsRTL);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
-            if (!seenHorizontalSnapOffsets.contains(absoluteScrollOffset)) {
-                seenHorizontalSnapOffsets.add(absoluteScrollOffset);
-                horizontalSnapOffsets.append(absoluteScrollOffset);
-            }
+            addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, { absoluteScrollOffset, stop });
         }
         if (hasVerticalSnapOffsets && alignment.y != ScrollSnapAxisAlignType::None) {
             auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), alignment.y, false) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), alignment.y, false);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
-            if (!seenVerticalSnapOffsets.contains(absoluteScrollOffset)) {
-                seenVerticalSnapOffsets.add(absoluteScrollOffset);
-                verticalSnapOffsets.append(absoluteScrollOffset);
-            }
+            addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, { absoluteScrollOffset, stop });
         }
     }
 
+    auto compareSnapOffsets = [](const SnapOffset<LayoutUnit>& a, const SnapOffset<LayoutUnit>& b)
+    {
+        return a.offset < b.offset;
+    };
+
+    Vector<SnapOffset<LayoutUnit>> horizontalSnapOffsets = copyToVector(horizontalSnapOffsetsMap.values());
+    Vector<ScrollOffsetRange<LayoutUnit>> horizontalSnapOffsetRanges;
     if (!horizontalSnapOffsets.isEmpty()) {
-        std::sort(horizontalSnapOffsets.begin(), horizontalSnapOffsets.end());
+        std::sort(horizontalSnapOffsets.begin(), horizontalSnapOffsets.end(), compareSnapOffsets);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
             computeAxisProximitySnapOffsetRanges(horizontalSnapOffsets, horizontalSnapOffsetRanges, scrollSnapPort.width());
 
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offsets: " << horizontalSnapOffsets);
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offset ranges: " << horizontalSnapOffsetRanges);
+    }
 
-        scrollableArea.setHorizontalSnapOffsets(horizontalSnapOffsets);
-        scrollableArea.setHorizontalSnapOffsetRanges(horizontalSnapOffsetRanges);
-    } else
-        scrollableArea.clearHorizontalSnapOffsets();
-
+    Vector<SnapOffset<LayoutUnit>> verticalSnapOffsets = copyToVector(verticalSnapOffsetsMap.values());
+    Vector<ScrollOffsetRange<LayoutUnit>> verticalSnapOffsetRanges;
     if (!verticalSnapOffsets.isEmpty()) {
-        std::sort(verticalSnapOffsets.begin(), verticalSnapOffsets.end());
+        std::sort(verticalSnapOffsets.begin(), verticalSnapOffsets.end(), compareSnapOffsets);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
             computeAxisProximitySnapOffsetRanges(verticalSnapOffsets, verticalSnapOffsetRanges, scrollSnapPort.height());
 
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offsets: " << verticalSnapOffsets);
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offset ranges: " << verticalSnapOffsetRanges);
+    }
 
-        scrollableArea.setVerticalSnapOffsets(verticalSnapOffsets);
-        scrollableArea.setVerticalSnapOffsetRanges(verticalSnapOffsetRanges);
-    } else
-        scrollableArea.clearVerticalSnapOffsets();
+    scrollableArea.setScrollSnapOffsetInfo({
+        horizontalSnapOffsets,
+        verticalSnapOffsets,
+        horizontalSnapOffsetRanges,
+        verticalSnapOffsetRanges
+    });
 }
 
 static float convertOffsetUnit(LayoutUnit input, float deviceScaleFactor)
@@ -313,12 +350,12 @@ static LayoutUnit convertOffsetUnit(float input, float /* scaleFactor */)
 template <typename InputType, typename OutputType>
 static ScrollSnapOffsetsInfo<OutputType> convertOffsetInfo(const ScrollSnapOffsetsInfo<InputType>& input, float scaleFactor = 0.0)
 {
-    auto convertOffsets = [scaleFactor](const Vector<InputType>& input)
+    auto convertOffsets = [scaleFactor](const Vector<SnapOffset<InputType>>& input)
     {
-        Vector<OutputType> output;
+        Vector<SnapOffset<OutputType>> output;
         output.reserveInitialCapacity(input.size());
         for (auto& offset : input)
-            output.uncheckedAppend(convertOffsetUnit(offset, scaleFactor));
+            output.uncheckedAppend({ convertOffsetUnit(offset.offset, scaleFactor), offset.stop });
         return output;
     };
 

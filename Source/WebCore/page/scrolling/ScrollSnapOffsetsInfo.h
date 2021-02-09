@@ -32,7 +32,6 @@
 #include "StyleScrollSnapPoints.h"
 #include <utility>
 #include <wtf/Vector.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,6 +39,12 @@ class LayoutRect;
 class ScrollableArea;
 class RenderBox;
 class RenderStyle;
+
+template <typename T>
+struct SnapOffset {
+    T offset;
+    ScrollSnapStop stop;
+};
 
 template <typename T>
 struct ScrollOffsetRange {
@@ -50,8 +55,8 @@ struct ScrollOffsetRange {
 template <typename T>
 struct ScrollSnapOffsetsInfo {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    Vector<T> horizontalSnapOffsets;
-    Vector<T> verticalSnapOffsets;
+    Vector<SnapOffset<T>> horizontalSnapOffsets;
+    Vector<SnapOffset<T>> verticalSnapOffsets;
 
     // Snap offset ranges represent non-empty ranges of scroll offsets in which scrolling may rest after scroll snapping.
     // These are used in two cases: (1) for proximity scroll snapping, where portions of areas between adjacent snap offsets
@@ -70,7 +75,7 @@ struct ScrollSnapOffsetsInfo {
         return horizontalSnapOffsets.isEmpty() && verticalSnapOffsets.isEmpty();
     }
 
-    Vector<T> offsetsForAxis(ScrollEventAxis axis) const
+    Vector<SnapOffset<T>> offsetsForAxis(ScrollEventAxis axis) const
     {
         return axis == ScrollEventAxis::Vertical ? verticalSnapOffsets : horizontalSnapOffsets;
     }
@@ -100,6 +105,21 @@ const unsigned invalidSnapOffsetIndex = UINT_MAX;
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates);
+
+template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
+{
+    ts << offset.offset;
+    if (offset.stop == ScrollSnapStop::Always)
+        ts << " (always)";
+    return ts;
+}
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
+{
+    ts << "start: " << range.start << " end: " << range.end;
+    return ts;
+}
 
 }; // namespace WebCore
 

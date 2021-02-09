@@ -136,6 +136,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType;
     ScrollSnapAlign scrollSnapAlign;
+    ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
 #endif
 
     unsigned overscrollBehaviorX : 2; // OverscrollBehavior

@@ -751,6 +751,7 @@ public:
     bool hasSnapPosition() const;
     const ScrollSnapType scrollSnapType() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
+    ScrollSnapStop scrollSnapStop() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1293,6 +1294,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(const ScrollSnapType);
     void setScrollSnapAlign(const ScrollSnapAlign&);
+    void setScrollSnapStop(const ScrollSnapStop);
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1699,6 +1701,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
+    static ScrollSnapStop initialScrollSnapStop();
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)

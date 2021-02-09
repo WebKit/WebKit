@@ -4637,7 +4637,7 @@ MockContentFilterSettings& Internals::mockContentFilterSettings()
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snapOffsets)
+static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
 {
     bool justStarting = true;
 
@@ -4648,7 +4648,10 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
         else
             justStarting = false;
 
-        builder.appendNumber(coordinate.toUnsigned());
+        builder.appendNumber(coordinate.offset.toUnsigned());
+        if (coordinate.stop == ScrollSnapStop::Always)
+            builder.appendLiteral(" (always)");
+
     }
     builder.appendLiteral(" }");
 }
