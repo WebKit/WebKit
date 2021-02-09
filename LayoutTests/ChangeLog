@@ -1,3 +1,13 @@
+2021-02-09  Youenn Fablet  <youenn@apple.com>
+
+        MediaStream-backed video elements should not compute the mediaType based on track muted states
+        https://bugs.webkit.org/show_bug.cgi?id=221601
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-enter-background-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-enter-background.html: Added.
+
 2021-02-09  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/inspector/ convert PHP to Python
