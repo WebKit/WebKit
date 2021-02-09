@@ -48,7 +48,7 @@ function test()
             InspectorTest.log("Loading first-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("ScriptLoad"),
-                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.php?name=FirstPartyResource&value=PASS")`),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.py?name=FirstPartyResource&value=PASS")`),
             ]);
 
             InspectorTest.log("Getting cookies after first-party resource load...");
@@ -74,7 +74,7 @@ function test()
             InspectorTest.log("Loading first-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("FrameLoad"),
-                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.php?name=FirstPartyFrame&value=PASS")`),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.py?name=FirstPartyFrame&value=PASS")`),
             ]);
 
             InspectorTest.log("Getting cookies after first-party resource load...");
@@ -100,7 +100,7 @@ function test()
             InspectorTest.log("Loading third-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("ScriptLoad"),
-                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.php?name=ThirdPartyResourceWithITP&value=FAIL")`),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyResourceWithITP&value=FAIL")`),
             ]);
 
             InspectorTest.log("Getting cookies after third-party resource load...");
@@ -120,7 +120,7 @@ function test()
             InspectorTest.log("Loading third-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("FrameLoad"),
-                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.php?name=ThirdPartyFrameWithITP&value=FAIL")`),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyFrameWithITP&value=FAIL")`),
             ]);
 
             InspectorTest.log("Getting cookies after third-party resource load...");
@@ -148,7 +148,7 @@ function test()
             InspectorTest.log("Loading third-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("ScriptLoad"),
-                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.php?name=ThirdPartyResourceWithoutITP&value=PASS")`),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyResourceWithoutITP&value=PASS")`),
             ]);
 
             InspectorTest.log("Getting cookies after third-party resource load...");
@@ -174,7 +174,7 @@ function test()
             InspectorTest.log("Loading third-party resource...");
             await Promise.all([
                 InspectorTest.awaitEvent("FrameLoad"),
-                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.php?name=ThirdPartyFrameWithoutITP&value=PASS")`),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyFrameWithoutITP&value=PASS")`),
             ]);
 
             InspectorTest.log("Getting cookies after third-party resource load...");

@@ -12,7 +12,7 @@ function createImageRequest() {
 
 function createRedirectRequest(delay) {
     let iframe = document.createElement("iframe");
-    iframe.src = `resources/delay.php?delay=${delay}`;
+    iframe.src = `resources/delay.py?delay=${delay}`;
     document.body.appendChild(iframe);
 }
 

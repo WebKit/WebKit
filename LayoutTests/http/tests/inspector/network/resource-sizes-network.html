@@ -52,7 +52,7 @@ function test()
     addResourceSizeTest(suite, {
         name: "Resource.Size.Network.text.gzipped",
         description: "Sizes of a gzipped text resource",
-        url: "resources/gzipped-lorem.php?" + Math.random(),
+        url: "resources/gzipped-lorem.py?" + Math.random(),
         statusCode: 200,
         compressed: true,
         responseSource: WI.Resource.ResponseSource.Network,
@@ -62,7 +62,7 @@ function test()
     addResourceSizeTest(suite, {
         name: "Resource.Size.Network.text.gzipped.no-content-length",
         description: "Sizes of a gzipped text resource without a content-length attribute.",
-        url: "resources/gzipped-lorem-no-content-length.php?" + Math.random(),
+        url: "resources/gzipped-lorem-no-content-length.py?" + Math.random(),
         statusCode: 200,
         compressed: true,
         responseSource: WI.Resource.ResponseSource.Network,
@@ -82,7 +82,7 @@ function test()
     addResourceSizeTest(suite, {
         name: "Resource.Size.Network.404",
         description: "Sizes of a 404 response.",
-        url: "resources/404.php?" + Math.random(),
+        url: "resources/404.py?" + Math.random(),
         statusCode: 404,
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,

@@ -5,15 +5,15 @@
 <script src="../resources/inspector-test.js"></script>
 <script>
 function triggerBeaconWith204Response() {
-    navigator.sendBeacon("resources/beacon.php?status=204");
+    navigator.sendBeacon("resources/beacon.py?status=204");
 }
 
 function triggerBeaconWith404Response() {
-    navigator.sendBeacon("resources/beacon.php?status=404");
+    navigator.sendBeacon("resources/beacon.py?status=404");
 }
 
 function triggerBeaconWithData() {
-    navigator.sendBeacon("resources/beacon.php", "SENDING-DATA");
+    navigator.sendBeacon("resources/beacon.py", "SENDING-DATA");
 }
 
 // ----

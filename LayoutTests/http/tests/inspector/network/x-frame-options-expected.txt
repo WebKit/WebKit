@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/inspector/network/resources/x-frame-options.php?option=DENY' in a frame because it set 'X-Frame-Options' to 'DENY'.
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/inspector/network/resources/x-frame-options.py?option=DENY' in a frame because it set 'X-Frame-Options' to 'DENY'.
 Tests for various X-Frame-Options headers.
 
 

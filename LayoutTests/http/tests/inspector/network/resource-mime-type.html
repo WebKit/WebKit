@@ -180,7 +180,7 @@ function test()
 
     addTestCase({
         name: "Resource.MIMEType.XHR.json",
-        expression: `loadXHRWithURL("resources/json.php")`,
+        expression: `loadXHRWithURL("resources/json.py")`,
         type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,
@@ -230,7 +230,7 @@ function test()
 
     addTestCase({
         name: "Resource.MIMEType.Fetch.json",
-        expression: `loadFetchWithURL("resources/json.php")`,
+        expression: `loadFetchWithURL("resources/json.py")`,
         type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,
@@ -280,7 +280,7 @@ function test()
 
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.json",
-        expression: `loadDocumentWithURL("resources/json.php")`,
+        expression: `loadDocumentWithURL("resources/json.py")`,
         type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,

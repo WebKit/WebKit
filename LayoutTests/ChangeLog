@@ -1,3 +1,54 @@
+2021-02-09  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/inspector/ convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221140
+        <rdar://problem/73758592>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/inspector/network/beacon-type.html:
+        * http/tests/inspector/network/fetch-response-body-304.html:
+        * http/tests/inspector/network/fetch-response-body.html:
+        * http/tests/inspector/network/intercept-request-properties-expected.txt:
+        * http/tests/inspector/network/intercept-request-properties.html:
+        * http/tests/inspector/network/ping-type.html:
+        * http/tests/inspector/network/resource-mime-type.html:
+        * http/tests/inspector/network/resource-request-headers.html:
+        * http/tests/inspector/network/resource-sizes-network.html:
+        * http/tests/inspector/network/resource-timing.html:
+        * http/tests/inspector/network/resources/404.php: Removed.
+        * http/tests/inspector/network/resources/404.py: Added.
+        * http/tests/inspector/network/resources/basic-auth.php: Removed.
+        * http/tests/inspector/network/resources/basic-auth.py: Added.
+        * http/tests/inspector/network/resources/beacon.php: Removed.
+        * http/tests/inspector/network/resources/beacon.py: Added.
+        * http/tests/inspector/network/resources/delay.php: Removed.
+        * http/tests/inspector/network/resources/delay.py: Added.
+        * http/tests/inspector/network/resources/echo.php: Removed.
+        * http/tests/inspector/network/resources/echo.py: Added.
+        * http/tests/inspector/network/resources/fetch-cachable.php: Removed.
+        * http/tests/inspector/network/resources/fetch-cachable.py: Added.
+        * http/tests/inspector/network/resources/gzipped-lorem-no-content-length.php: Removed.
+        * http/tests/inspector/network/resources/gzipped-lorem-no-content-length.py: Added.
+        * http/tests/inspector/network/resources/gzipped-lorem.php: Removed.
+        * http/tests/inspector/network/resources/gzipped-lorem.py: Added.
+        * http/tests/inspector/network/resources/intercept-echo.php: Removed.
+        * http/tests/inspector/network/resources/intercept-echo.py: Added.
+        * http/tests/inspector/network/resources/json.php: Removed.
+        * http/tests/inspector/network/resources/json.py: Added.
+        * http/tests/inspector/network/resources/ping.php: Removed.
+        * http/tests/inspector/network/resources/ping.py: Added.
+        * http/tests/inspector/network/resources/redirect.php: Removed.
+        * http/tests/inspector/network/resources/redirect.py: Added.
+        * http/tests/inspector/network/resources/x-frame-options.php: Removed.
+        * http/tests/inspector/network/resources/x-frame-options.py: Added.
+        * http/tests/inspector/network/x-frame-options-expected.txt:
+        * http/tests/inspector/network/x-frame-options.html:
+        * http/tests/inspector/network/xhr-response-body.html:
+        * http/tests/inspector/page/get-cookies.html:
+        * http/tests/inspector/page/resources/set-cookie.php: Removed.
+        * http/tests/inspector/page/resources/set-cookie.py: Added.
+
 2021-02-09  Philippe Normand  <pnormand@igalia.com>
 
         Permission request API for MediaKeySystem access support
