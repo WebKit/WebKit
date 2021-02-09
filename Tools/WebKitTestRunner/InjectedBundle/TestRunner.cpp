@@ -2084,11 +2084,6 @@ void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
     postSynchronousPageMessage("setIsSpeechRecognitionPermissionGranted", granted);
 }
 
-void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
-{
-    postSynchronousPageMessage("setIsMediaKeySystemPermissionGranted", granted);
-}
-
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WTR

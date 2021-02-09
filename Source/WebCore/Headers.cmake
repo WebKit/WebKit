@@ -24,9 +24,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/contact-picker/ContactsRequestData.h
 
     Modules/encryptedmedia/CDMClient.h
-    Modules/encryptedmedia/MediaKeySystemClient.h
-    Modules/encryptedmedia/MediaKeySystemController.h
-    Modules/encryptedmedia/MediaKeySystemRequest.h
 
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h

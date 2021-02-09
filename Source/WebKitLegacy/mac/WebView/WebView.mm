@@ -85,7 +85,6 @@
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
-#import "WebMediaKeySystemClient.h"
 #import "WebNSDataExtras.h"
 #import "WebNSDataExtrasPrivate.h"
 #import "WebNSDictionaryExtras.h"
@@ -1568,9 +1567,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 #if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS_FAMILY)
     WebCore::provideDeviceOrientationTo(*_private->page, *new WebDeviceOrientationClient(self));
-#endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    WebCore::provideMediaKeySystemTo(*_private->page, *new WebMediaKeySystemClient());
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

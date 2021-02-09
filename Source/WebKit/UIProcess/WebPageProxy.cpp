@@ -8275,27 +8275,6 @@ void WebPageProxy::clearUserMediaState()
 #endif
 }
 
-void WebPageProxy::requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
-{
-#if ENABLE(MEDIA_STREAM)
-    MESSAGE_CHECK(m_process, m_process->webFrame(frameID));
-
-    auto origin = API::SecurityOrigin::create(topLevelDocumentOriginData.securityOrigin());
-    auto request = mediaKeySystemPermissionRequestManager().createRequestForFrame(mediaKeySystemID, frameID, topLevelDocumentOriginData.securityOrigin(), keySystem);
-    m_uiClient->decidePolicyForMediaKeySystemPermissionRequest(*this, origin, keySystem, [request = WTFMove(request)](bool allowed) {
-        if (allowed)
-            request->allow();
-        else
-            request->deny();
-    });
-#else
-    UNUSED_PARAM(mediaKeySystemID);
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(topLevelDocumentOriginData);
-    UNUSED_PARAM(keySystem);
-#endif
-}
-
 #if ENABLE(DEVICE_ORIENTATION)
 void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameID, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
@@ -8306,23 +8285,13 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 }
 #endif
 
-
 #if ENABLE(IMAGE_EXTRACTION)
+
 void WebPageProxy::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
 {
     pageClient().requestImageExtraction(imageData, WTFMove(completionHandler));
 }
-#endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermissionRequestManager()
-{
-    if (m_mediaKeySystemPermissionRequestManager)
-        return *m_mediaKeySystemPermissionRequestManager;
-
-    m_mediaKeySystemPermissionRequestManager = makeUnique<MediaKeySystemPermissionRequestManagerProxy>(*this);
-    return *m_mediaKeySystemPermissionRequestManager;
-}
 #endif
 
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
@@ -10450,11 +10419,6 @@ void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifie
 #else
     completionHandler(false);
 #endif
-}
-
-void WebPageProxy::requestMediaKeySystemPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
-{
-    completionHandler(true);
 }
 
 #if ENABLE(MEDIA_STREAM)
