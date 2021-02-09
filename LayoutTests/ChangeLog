@@ -1,3 +1,21 @@
+2021-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Unable to interact with page after long-pressing image on images.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=221584
+        <rdar://problem/74073581>
+
+        Reviewed by Andy Estes.
+
+        Add a new layout test that (sometimes) exercises the problem. Given the nature of the bug, it doesn't seem
+        possible to write a test that reproduces the bug 100% of the time. See WebKit ChangeLog for more details.
+
+        * fast/events/touch/ios/tap-after-long-press-on-image-expected.txt: Added.
+        * fast/events/touch/ios/tap-after-long-press-on-image.html: Added.
+        * resources/ui-helper.js:
+        (UIHelper.EventStreamBuilder.prototype.wait):
+
+        Add a helper to simply increment the time offset when building an event stream.
+
 2021-02-09  Youenn Fablet  <youenn@apple.com>
 
         MediaStream-backed video elements should not compute the mediaType based on track muted states

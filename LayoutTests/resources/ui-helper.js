@@ -1527,6 +1527,11 @@ UIHelper.EventStreamBuilder = class {
         return this;
     }
 
+    wait(duration) {
+        this.currentTimeOffset += duration;
+        return this;
+    }
+
     move(x, y, duration = 0) {
         const previousTimeOffset = this.currentTimeOffset;
         this.currentTimeOffset += duration;

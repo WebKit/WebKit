@@ -1795,6 +1795,18 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
         [gesture setDefaultPrevented:preventNativeGestures];
 }
 
+- (BOOL)_isTouchStartDeferringGesture:(WKDeferringGestureRecognizer *)gesture
+{
+    return gesture == _touchStartDeferringGestureRecognizerForSyntheticTapGestures || gesture == _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures
+        || gesture == _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
+}
+
+- (BOOL)_isTouchEndDeferringGesture:(WKDeferringGestureRecognizer *)gesture
+{
+    return gesture == _touchEndDeferringGestureRecognizerForSyntheticTapGestures || gesture == _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures
+        || gesture == _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
+}
+
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
 static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius, CGFloat borderRadiusScale)
@@ -7370,6 +7382,28 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return ![self gestureRecognizer:deferringGestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
 }
 
+- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndTouchesWithEvent:(UIEvent *)event
+{
+    if (deferringGestureRecognizer.state != UIGestureRecognizerStatePossible)
+        return;
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (_page->isHandlingPreventableTouchStart() && [self _isTouchStartDeferringGesture:deferringGestureRecognizer])
+        return;
+
+    if (_page->isHandlingPreventableTouchEnd() && [self _isTouchEndDeferringGesture:deferringGestureRecognizer])
+        return;
+#endif
+
+    if ([_touchEventGestureRecognizer state] == UIGestureRecognizerStatePossible)
+        return;
+
+    // In the case where the touch event gesture recognizer has failed or ended already and we are not in the middle of handling
+    // an asynchronous (but preventable) touch event, this is our last chance to lift the gesture "gate" by failing the deferring
+    // gesture recognizer.
+    deferringGestureRecognizer.state = UIGestureRecognizerStateFailed;
+}
+
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -10039,6 +10073,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (!strongSelf)
             return;
         [strongSelf _removeContextMenuViewIfPossible];
+        [strongSelf->_webView _didDismissContextMenu];
     }];
 }
 

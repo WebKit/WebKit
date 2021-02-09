@@ -1,3 +1,59 @@
+2021-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Unable to interact with page after long-pressing image on images.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=221584
+        <rdar://problem/74073581>
+
+        Reviewed by Andy Estes.
+
+        After long pressing on an image with an active touchend event listener, it's possible to sometimes get stuck in
+        a state where further interaction with the page is impossible, due to all gesture recognizers (except for the
+        touchend deferral gestures) remaining in either Failed or Ended state.
+
+        When presenting the context menu with a long press, the touch event gesture transitions to Failed state due to
+        the active touch being cancelled. Normally, this invokes `-_webTouchEventsRecognized:` with all touch points
+        being released, which allows us to "lift" the deferred gesture gate by failing any deferring gesture recognizers
+        that are still in Possible state (i.e. deferring native gestures).
+
+        However, it's possible for touch deferring gestures (in particular, the touchend deferrer) introduced in r271660
+        to end (i.e. call `-touchesEnded:withEvent:`) before the touch event gesture gets a chance to call
+        `-_webTouchEventsRecognized:`. In this scenario, the touch end deferral gesture remains in Possible state, and
+        prevents the touch event gesture from subsequently firing its action (`-_webTouchEventsRecognized:`), presumably
+        because UIKit is waiting for all other gestures in the same subgraph as the touch event gesture recognizer to
+        Fail.
+
+        This effectively results in a gesture "deadlock", since the web touch event gesture recognizer won't call
+        `-_webTouchEventsRecognized:` until the touch end deferring gesture has failed, and the touch end deferring
+        gesture won't fail until `-_webTouchEventsRecognized:` is called. To fix this, we restore a bit of logic that
+        was removed with r271193, such that we allow our deferring gesture recognizers to transition to Failed state
+        underneath `-touchesEnded:withEvent:`, as long it's [1] not actively deferring any native gestures, and [2] the
+        web touch event gesture has already failed, so we aren't expecting a subsequent call to
+        `-_webTouchEventsRecognized:` until the deferring gesture has failed.
+
+        Note that this check for the touch event gesture recognizer's state (condition [2] above) is necessary to
+        prevent the touchend deferring gesture from failing prematurely (i.e. right before we're about to dispatch
+        preventable `touchend` events).
+
+        Test: fast/events/touch/ios/tap-after-long-press-on-image.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _isTouchStartDeferringGesture:]):
+        (-[WKContentView _isTouchEndDeferringGesture:]):
+        (-[WKContentView deferringGestureRecognizer:didEndTouchesWithEvent:]):
+
+        Add a delegate hook when a deferring gesture's ends touches; use this hook in `WKContentView` to "lift" the
+        gesture gate if needed, in the case where the touch event gesture recognizer has already failed and we can't
+        expect `-_webTouchEventsRecognized:` to be called with all touch points released.
+
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+
+        Add a missing call to `-[WKWebView _didDismissContextMenu]` here to make `UIHelper.waitForContextMenuToHide()`
+        actually work with image and link context menus in WebKitTestRunner.
+
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer touchesEnded:withEvent:]):
+
 2021-02-09  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, tvOS build fix after r272573
