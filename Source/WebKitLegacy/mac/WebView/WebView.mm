@@ -1520,6 +1520,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::SocketProvider::create(),
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
+        _private->group->userContentController(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
@@ -1551,7 +1552,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
-    pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     _private->page = new WebCore::Page(WTFMove(pageConfiguration));
     storageProvider->setPage(*_private->page);
@@ -1796,6 +1796,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::SocketProvider::create(),
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
+        _private->group->userContentController(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
@@ -1816,7 +1817,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
-    pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 

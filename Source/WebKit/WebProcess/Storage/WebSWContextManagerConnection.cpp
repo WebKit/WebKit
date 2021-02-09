@@ -99,13 +99,11 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
 #else
     , m_userAgent(standardUserAgent())
 #endif
+    , m_userContentController(WebUserContentController::getOrCreate(initializationData.userContentControllerIdentifier))
 {
-    if (initializationData.userContentControllerIdentifier) {
-        m_userContentController = WebUserContentController::getOrCreate(*initializationData.userContentControllerIdentifier);
 #if ENABLE(CONTENT_EXTENSIONS)
-        m_userContentController->addContentRuleLists(WTFMove(initializationData.contentRuleLists));
+    m_userContentController->addContentRuleLists(WTFMove(initializationData.contentRuleLists));
 #endif
-    }
 
     updatePreferencesStore(store);
     WebProcess::singleton().disableTermination();
