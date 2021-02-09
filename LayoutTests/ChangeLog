@@ -1,3 +1,16 @@
+2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Allow sending modifier keys in test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221466
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add specific -expected.txt file for Mac platform. Meta key is detected differently than in other platforms,
+        also event.ctrlKey and other are not being set from the test (they work fine when checking that manually).
+
+        * platform/ios/TestExpectations: Skip test as it's timing out in iOS.
+        * platform/mac/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-expected.txt: Added.
+
 2021-02-08  Rob Buis  <rbuis@igalia.com>
 
         Make auto && <ratio> use content box-sizing

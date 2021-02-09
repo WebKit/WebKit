@@ -164,6 +164,10 @@ window.test_driver_internal.send_keys = function(element, keys)
         0xE013: 'upArrow',
         0xE014: 'rightArrow',
         0xE015: 'downArrow',
+        0xE008: 'leftShift',
+        0xE009: 'leftControl',
+        0xE00A: 'leftAlt',
+        0xE03D: 'leftMeta',
     };
 
     function convertSeleniumKeyCode(key)

@@ -1,3 +1,17 @@
+2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Allow sending modifier keys in test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221466
+
+        Reviewed by Carlos Garcia Campos.
+
+        Created new test that checks that modifier keys can be sent by test_driver.send_keys()
+        and properly handled on "keydown" event.
+
+        * web-platform-tests/resources/testdriver-vendor.js: Add modifier keys' codes.
+        * web-platform-tests/uievents/keyboard/modifier-keys-expected.txt: Added.
+        * web-platform-tests/uievents/keyboard/modifier-keys.html: Added.
+
 2021-02-08  Imanol Fernandez  <ifernandez@igalia.com>
 
         WebXRSystem::RequestSession with 'viewer' as a required feature should succeed

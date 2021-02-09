@@ -1,0 +1,7 @@
+Target
+
+FAIL Check sending Shift key assert_equals: expected true but got false
+FAIL Check sending Control key assert_equals: expected true but got false
+FAIL Check sending Alt key assert_equals: expected true but got false
+FAIL Check sending Meta key assert_equals: expected "Meta" but got "leftMeta"
+

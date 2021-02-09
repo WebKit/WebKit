@@ -157,6 +157,10 @@ static int getGDKKeySymForKeyRef(WKStringRef keyRef, unsigned location, guint* m
         return GDK_KEY_Alt_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightAlt"))
         return GDK_KEY_Alt_R;
+    if (WKStringIsEqualToUTF8CString(keyRef, "leftMeta"))
+        return GDK_KEY_Meta_L;
+    if (WKStringIsEqualToUTF8CString(keyRef, "rightMeta"))
+        return GDK_KEY_Meta_R;
     if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
         return GDK_KEY_Left;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightArrow"))

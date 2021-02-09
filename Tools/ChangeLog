@@ -1,3 +1,13 @@
+2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Allow sending modifier keys in test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221466
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::getGDKKeySymForKeyRef): Add support for meta key.
+
 2021-02-08  Sam Sneddon  <gsnedders@apple.com>
 
         Move layout_test_runner.Worker._update_test_input to LayoutTestRunner
