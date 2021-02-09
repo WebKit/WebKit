@@ -39,11 +39,6 @@ SetPrivateBrandVariant::SetPrivateBrandVariant(CacheableIdentifier identifier, S
 
 SetPrivateBrandVariant::~SetPrivateBrandVariant() { }
 
-SetPrivateBrandVariant::SetPrivateBrandVariant(const SetPrivateBrandVariant& other)
-{
-    *this = other;
-}
-
 bool SetPrivateBrandVariant::attemptToMerge(const SetPrivateBrandVariant& other)
 {
     if (!!m_identifier != !!other.m_identifier)

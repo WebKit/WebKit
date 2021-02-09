@@ -1,5 +1,18 @@
 2021-02-09  Caio Lima  <ticaiolima@gmail.com>
 
+        Fix warning introduced by r272580
+        https://bugs.webkit.org/show_bug.cgi?id=221612
+
+        Unreviewd, update test262/config.yaml
+
+        * test262/config.yaml:
+
+        Since `class-methods-private` also includes private accessors tests,
+        we should enable it only after https://bugs.webkit.org/show_bug.cgi?id=194435
+        gets closed.
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
         [ESNext] Implement private methods
         https://bugs.webkit.org/show_bug.cgi?id=194434
 

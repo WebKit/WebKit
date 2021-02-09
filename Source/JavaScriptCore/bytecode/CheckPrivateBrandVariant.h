@@ -41,8 +41,6 @@ public:
 
     ~CheckPrivateBrandVariant();
 
-    CheckPrivateBrandVariant(const CheckPrivateBrandVariant&);
-
     const StructureSet& structureSet() const { return m_structureSet; }
     StructureSet& structureSet() { return m_structureSet; }
 

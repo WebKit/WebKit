@@ -1,5 +1,17 @@
 2021-02-09  Caio Lima  <ticaiolima@gmail.com>
 
+        Fix warning introduced by r272580
+        https://bugs.webkit.org/show_bug.cgi?id=221612
+
+        Unreviewed build fixes.
+
+        * bytecode/CheckPrivateBrandVariant.cpp:
+        * bytecode/CheckPrivateBrandVariant.h:
+        * bytecode/SetPrivateBrandVariant.cpp:
+        * bytecode/SetPrivateBrandVariant.h:
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
         [ESNext] Implement private methods
         https://bugs.webkit.org/show_bug.cgi?id=194434
 

@@ -38,11 +38,6 @@ CheckPrivateBrandVariant::CheckPrivateBrandVariant(CacheableIdentifier identifie
 
 CheckPrivateBrandVariant::~CheckPrivateBrandVariant() { }
 
-CheckPrivateBrandVariant::CheckPrivateBrandVariant(const CheckPrivateBrandVariant& other)
-{
-    *this = other;
-}
-
 bool CheckPrivateBrandVariant::attemptToMerge(const CheckPrivateBrandVariant& other)
 {
     if (!!m_identifier != !!other.m_identifier)
