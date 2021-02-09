@@ -84,7 +84,7 @@ private:
     WebXRRenderingContext m_context;
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };
-    bool m_isCompositionDisabled { false };
+    bool m_isCompositionEnabled { true };
 
     struct {
         RefPtr<WebGLFramebuffer> object;
