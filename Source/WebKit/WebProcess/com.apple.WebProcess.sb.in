@@ -1195,12 +1195,16 @@
 )
 #endif
 
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+(deny mach-lookup
     (with telemetry-backtrace)
-#endif
     (global-name-regex #"^com.apple.distributed_notifications")
 )
+#else
+(allow mach-lookup
+    (global-name-regex #"^com.apple.distributed_notifications")
+)
+#endif
 
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
