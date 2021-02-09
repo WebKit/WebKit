@@ -1,3 +1,10 @@
+2021-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build with the latest SDK.
+
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPicker selectColor:]):
+
 2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use UIColorPickerViewController for color inputs

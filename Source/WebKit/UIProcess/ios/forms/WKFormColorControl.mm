@@ -65,7 +65,9 @@
 - (void)selectColor:(UIColor *)color
 {
     [_colorPickerViewController setSelectedColor:color];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [self colorPickerViewControllerDidSelectColor:_colorPickerViewController.get()];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -145,10 +147,12 @@
 
 #pragma mark UIColorPickerViewControllerDelegate
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)colorPickerViewControllerDidSelectColor:(UIColorPickerViewController *)viewController
 {
     [_view updateFocusedElementValueAsColor:viewController.selectedColor];
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)colorPickerViewControllerDidFinish:(UIColorPickerViewController *)viewController
 {
