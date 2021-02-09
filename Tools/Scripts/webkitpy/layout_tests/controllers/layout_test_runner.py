@@ -92,9 +92,12 @@ class LayoutTestRunner(object):
         all_shards = self._sharder.shard_tests(test_inputs, child_process_count, self._options.fully_parallel)
         return min(child_process_count, len(all_shards))
 
-    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, retrying):
+    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, retrying, device_type=None):
         self._expectations = expectations
-        self._test_inputs = test_inputs
+        self._test_inputs = []
+        for test_input in test_inputs:
+            self._update_test_input(test_input, device_type)
+            self._test_inputs.append(test_input)
 
         self._retrying = retrying
 
@@ -137,6 +140,15 @@ class LayoutTestRunner(object):
             raise
 
         return run_results
+
+    def _update_test_input(self, test_input, device_type=None):
+        if test_input.reference_files is None:
+            # Lazy initialization.
+            test_input.reference_files = self._port.reference_files(test_input.test_name, device_type=device_type)
+        if test_input.reference_files:
+            test_input.should_run_pixel_test = True
+        else:
+            test_input.should_run_pixel_test = self._port.should_run_as_pixel_test(test_input)
 
     def _worker_factory(self, worker_connection):
         results_directory = self._results_directory
@@ -292,15 +304,6 @@ class Worker(object):
 
         self._finished_test_group(test_inputs)
 
-    def _update_test_input(self, test_input):
-        if test_input.reference_files is None:
-            # Lazy initialization.
-            test_input.reference_files = self._port.reference_files(test_input.test_name, device_type=self._port.target_host(self._worker_number).device_type)
-        if test_input.reference_files:
-            test_input.should_run_pixel_test = True
-        else:
-            test_input.should_run_pixel_test = self._port.should_run_as_pixel_test(test_input)
-
     def _run_test(self, test_input, shard_name):
         self._batch_count += 1
 
@@ -309,7 +312,6 @@ class Worker(object):
             self._batch_count = 0
             stop_when_done = True
 
-        self._update_test_input(test_input)
         test_timeout_sec = self._timeout(test_input)
         start = time.time()
         self._caller.post('started_test', test_input, test_timeout_sec)
