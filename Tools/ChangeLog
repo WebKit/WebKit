@@ -1,3 +1,12 @@
+2021-02-08  Stephanie Lewis  <slewis@apple.com>
+
+        <rdar://problem/70402593> Motionmark failed to start webserver
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder.__enter__):
+
 2021-02-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r272485.
