@@ -153,7 +153,7 @@ public:
     void setIsInProcessCache(bool);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
-    void enableServiceWorkers(const Optional<UserContentControllerIdentifier>&);
+    void enableServiceWorkers(const UserContentControllerIdentifier&);
     void disableServiceWorkers();
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
