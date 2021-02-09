@@ -55,5 +55,7 @@
 	</dict>
 	<key>NSColorPreferLocalNotifications</key>
 	<integer>1</integer>
+	<key>CTIgnoreUserFonts</key>
+	<true/>
 </dict>
 </plist>
