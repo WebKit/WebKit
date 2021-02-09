@@ -101,7 +101,7 @@ void AVOutputDeviceMenuControllerTargetPicker::currentDeviceDidChange()
         client()->currentDeviceChanged();
 }
 
-void AVOutputDeviceMenuControllerTargetPicker::showPlaybackTargetPicker(NSView *, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
+void AVOutputDeviceMenuControllerTargetPicker::showPlaybackTargetPicker(NSView *, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance, bool)
 {
     if (!client() || m_showingMenu)
         return;

@@ -775,6 +775,17 @@ UseGPUProcessForWebGLEnabled:
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
 
+# FIXME: Remove once <rdar://73830961> has been fixed
+UseiTunesAVOutputContext:
+  type: bool
+  humanReadableName: "Use iTunes AVOutputContext"
+  humanReadableDescription: "Use iTunes AVOutputContext"
+  webcoreBinding: none
+  condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
+  defaultValue:
+    WebKit:
+      default: true
+
 WebAPIStatisticsEnabled:
   type: bool
   humanReadableName: "Web API Statistics"

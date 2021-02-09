@@ -49,7 +49,7 @@ public:
     void devicePickerWasDismissed();
 
 private:
-    void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
+    void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext) final;
     void startingMonitoringPlaybackTargets() final;
     void stopMonitoringPlaybackTargets() final;
     void invalidatePlaybackTargets() final;
@@ -58,7 +58,7 @@ private:
 
     AVRoutePickerView *devicePicker();
     AVRouteDetector *routeDetector();
-    AVOutputContext * outputContextInternal();
+    AVOutputContext * outputContextInternal(bool);
     bool hasActiveRoute() const;
 
     RetainPtr<AVRouteDetector> m_routeDetector;

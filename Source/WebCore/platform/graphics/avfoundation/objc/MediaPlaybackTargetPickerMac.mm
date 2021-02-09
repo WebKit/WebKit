@@ -86,9 +86,9 @@ AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()
     return *m_routePicker;
 }
 
-void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(PlatformView* view, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(PlatformView* view, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext)
 {
-    routePicker().showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance);
+    routePicker().showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance, useiTunesAVOutputContext);
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()

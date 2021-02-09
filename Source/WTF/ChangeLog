@@ -1,3 +1,13 @@
+2021-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add internal preference to control how AVOutputContext is allocated
+        https://bugs.webkit.org/show_bug.cgi?id=221583
+        <rdar://73830632>
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs should have an opaque origin
