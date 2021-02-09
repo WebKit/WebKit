@@ -58,6 +58,7 @@ static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSes
             { MediaSessionAction::Nexttrack, PlatformMediaSession::PreviousTrackCommand },
             { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
             { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
+            { MediaSessionAction::Skipad, PlatformMediaSession::NextTrackCommand },
         };
     }());
 
@@ -116,7 +117,9 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     if (handler) {
         ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
         m_actionHandlers.set(action, handler);
-        PlatformMediaSessionManager::sharedManager().addSupportedCommand(platformCommandForMediaSessionAction(action));
+        auto platformCommand = platformCommandForMediaSessionAction(action);
+        if (platformCommand != PlatformMediaSession::NoCommand)
+            PlatformMediaSessionManager::sharedManager().addSupportedCommand(platformCommand);
     } else {
         if (m_actionHandlers.contains(action)) {
             ALWAYS_LOG(LOGIDENTIFIER, "removing ", action);
