@@ -1,3 +1,29 @@
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Synthesize range responses if needed in WebCoreNSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebCore/ParsedContentRange.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::clientCertServer):
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::testVideoBytes):
+        (TestWebKitAPI::runVideoTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::HTTPResponse::HTTPResponse):
+        (TestWebKitAPI::HTTPServer::HTTPResponse::HTTPResponse): Deleted.
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::RequestData::RequestData):
+        (TestWebKitAPI::appendToVector):
+        (TestWebKitAPI::HTTPServer::parsePath):
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        (TestWebKitAPI::HTTPResponse::bodyFromString):
+        (TestWebKitAPI::HTTPResponse::serialize):
+
 2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use UIColorPickerViewController for color inputs

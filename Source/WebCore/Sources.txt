@@ -2122,6 +2122,7 @@ platform/network/NetworkStateNotifier.cpp
 platform/network/NetworkStorageSession.cpp
 platform/network/ParsedContentRange.cpp
 platform/network/ParsedContentType.cpp
+platform/network/ParsedRequestRange.cpp
 platform/network/ProtectionSpaceBase.cpp
 platform/network/ProxyServer.cpp
 platform/network/ResourceErrorBase.cpp

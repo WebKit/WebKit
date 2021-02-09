@@ -1180,7 +1180,7 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
         return;
     }
     // PlatformMediaResource owns the PlatformMediaResourceClient
-    resource->setClient(makeUnique<RemoteMediaResourceProxy>(connection(), *resource, remoteMediaResourceIdentifier));
+    resource->setClient(adoptRef(*new RemoteMediaResourceProxy(connection(), *resource, remoteMediaResourceIdentifier)));
     m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));
 
     completionHandler();

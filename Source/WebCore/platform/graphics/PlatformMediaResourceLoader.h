@@ -41,7 +41,7 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 
-class PlatformMediaResourceClient {
+class PlatformMediaResourceClient : public RefCounted<PlatformMediaResourceClient> {
 public:
     virtual ~PlatformMediaResourceClient() = default;
 
@@ -81,11 +81,11 @@ public:
     virtual void stop() { }
     virtual bool didPassAccessControlCheck() const { return false; }
 
-    void setClient(std::unique_ptr<PlatformMediaResourceClient>&& client) { m_client = WTFMove(client); }
+    void setClient(RefPtr<PlatformMediaResourceClient>&& client) { m_client = WTFMove(client); }
     PlatformMediaResourceClient* client() { return m_client.get(); }
 
 protected:
-    std::unique_ptr<PlatformMediaResourceClient> m_client;
+    RefPtr<PlatformMediaResourceClient> m_client;
 };
 
 } // namespace WebCore
