@@ -1,5 +1,13 @@
 2021-02-09  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, tvOS build fix after r272573
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForSpeechRecognition): That ifdef was
+        updated by mistake in r272573.
+
+2021-02-09  Philippe Normand  <pnormand@igalia.com>
+
         [GLib] Permission request API for MediaKeySystem access support
         https://bugs.webkit.org/show_bug.cgi?id=221199
 

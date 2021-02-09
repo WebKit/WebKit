@@ -10441,7 +10441,7 @@ void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCo
 
 void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(MEDIA_STREAM)
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
     if (!captureDevice)
         completionHandler(false);
