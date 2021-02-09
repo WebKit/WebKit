@@ -1076,23 +1076,20 @@
 #endif
     (ipc-posix-name-regex #"^AudioIO"))
 
-;; Still actively in use
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with report) (with telemetry-backtrace)
-#endif
 #if !ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+(allow mach-lookup
     (global-name "com.apple.coreservices.launchservicesd")
-#endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
-    (global-name "com.apple.tccd.system")
-#endif
-    (global-name "com.apple.trustd.agent")
 )
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
-    (with report)
+    (global-name "com.apple.tccd.system")
+)
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
+(allow mach-lookup
     (global-name "com.apple.mobileassetd")
 )
 #endif
