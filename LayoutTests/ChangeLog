@@ -1,3 +1,15 @@
+2021-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r272426.
+
+        Caused test failures / flakiness
+
+        Reverted changeset:
+
+        "Remove GPUProcess flag in MediaRecorder tests"
+        https://bugs.webkit.org/show_bug.cgi?id=221401
+        https://trac.webkit.org/changeset/272426
+
 2021-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Implement scroll-snap-stop for scroll snapping

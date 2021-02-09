@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ WebRTCPlatformCodecsInGPUProcessEnabled=false ] -->
 <!doctype html>
 <html>
 <head>
@@ -7,6 +6,7 @@
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
     <script src="../common/canvas-tests.js"></script>
+    <link rel="stylesheet" href="../common/canvas-tests.css">
 </head>
 <body>
 <div>
@@ -53,17 +53,7 @@
     }
 
     async_test(t => {
-        const ac = new AudioContext();
-        const osc = ac.createOscillator();
-        const dest = ac.createMediaStreamDestination();
-        const audio = dest.stream;
-        osc.connect(dest);
-
         const video = createVideoStream();
-        assert_equals(video.getAudioTracks().length, 0, "video mediastream starts with no audio track");
-        assert_equals(audio.getAudioTracks().length, 1, "audio mediastream starts with one audio track");
-        video.addTrack(audio.getAudioTracks()[0]);
-        assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
         const recorder = new MediaRecorder(video);
         let mode = 0;
 
@@ -73,32 +63,7 @@
             assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
             assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
             assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
-            player.src = window.URL.createObjectURL(blobEvent.data);
-            const resFrame = document.getElementById("frame");
-            const resContext = resFrame.getContext('2d');
-
-            player.oncanplay = t.step_func(() => {
-                assert_greater_than(player.duration, 0.1, 'the duration should be greater than 100ms');
-                player.play();
-            });
-            player.onplay = () => {
-                player.pause();
-                player.currentTime = 0.05;
-            };
-            player.onseeked = t.step_func(() => {
-                resContext.drawImage(player, 0, 0);
-                if (!mode) {
-                    _assertPixelApprox(resFrame, 25, 25, 255, 0, 0, 255, "25, 25", "255, 0, 0, 255", 50);
-                    _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 50);
-                    mode = 1;
-                    player.currentTime = Math.min(1.5, player.duration - 0.05);
-                } else {
-                    _assertPixelApprox(resFrame, 20, 20, 0, 255, 0, 255, "20, 20", "0, 255, 0, 255", 50);
-                    _assertPixelApprox(resFrame, 199, 199, 0, 255, 0, 255, "199, 199", "0, 255, 0, 255", 50);
-                    t.done();
-                }
-            });
-            player.load();
+            t.done();
         });
         drawStartTime = Date.now();
         doRedImageDraw();
@@ -107,7 +72,7 @@
         setTimeout(() => {
             recorder.stop();
         }, 2000);
-    }, 'MediaRecorder can successfully record the video for a audio-video stream');
+    }, 'Verify MediaRecorder is working in GPUProcess');
 
 </script>
 </body>
