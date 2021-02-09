@@ -381,7 +381,6 @@ enum class WebContentMode : uint8_t;
 typedef GenericCallback<API::Data*> DataCallback;
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<const String&> StringCallback;
-typedef GenericCallback<bool> BoolCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
@@ -2164,7 +2163,6 @@ private:
     void voidCallback(CallbackID);
     void dataCallback(const IPC::DataReference&, CallbackID);
     void imageCallback(const ShareableBitmap::Handle&, CallbackID);
-    void boolCallback(bool result, CallbackID);
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, CallbackID);

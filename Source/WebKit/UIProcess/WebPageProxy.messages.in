@@ -167,7 +167,6 @@ messages -> WebPageProxy {
     DataCallback(IPC::SharedBufferDataReference resultData, WebKit::CallbackID callbackID)
     ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
     StringCallback(String resultString, WebKit::CallbackID callbackID)
-    BoolCallback(bool result, WebKit::CallbackID callbackID)
     InvalidateStringCallback(WebKit::CallbackID callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin, WebKit::CallbackID callbackID)
     UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)

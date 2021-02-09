@@ -67,7 +67,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    using TouchEventQueue = Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>;
+    using TouchEventQueue = Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>;
     void takeQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
 #endif
 
@@ -84,7 +84,8 @@ private:
     // Message handlers
     void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, Optional<CallbackID>);
+    void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, CompletionHandler<void(bool)>&&);
+    void touchEventWithoutCallback(WebCore::PageIdentifier, const WebTouchEvent&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);

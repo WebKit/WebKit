@@ -2928,7 +2928,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         if (isTouchEnd)
             ++m_handlingPreventableTouchEndCount;
 
-        Function<void(bool, CallbackBase::Error)> completionHandler = [this, protectedThis = makeRef(*this), event](bool handled, CallbackBase::Error error) {
+        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, protectedThis = makeRef(*this), event] (bool handled) {
             bool didFinishDeferringTouchStart = false;
             ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
             if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
@@ -2939,12 +2939,9 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
             if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
                 didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
 
-            bool handledOrFailedWithError = handled || error != CallbackBase::Error::None || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
+            bool handledOrFailedWithError = handled || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
             if (!isHandlingPreventableTouchStart())
                 m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = false;
-
-            if (error == CallbackBase::Error::ProcessExited)
-                return;
 
             didReceiveEvent(event.type(), handledOrFailedWithError);
             pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
@@ -2954,10 +2951,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
 
             if (didFinishDeferringTouchEnd)
                 pageClient().doneDeferringTouchEnd(handledOrFailedWithError);
-        };
-
-        auto callbackID = m_callbacks.put(WTFMove(completionHandler), m_process->throttler().backgroundActivity("WebPageProxy::handlePreventableTouchEvent"_s));
-        send(Messages::EventDispatcher::TouchEvent(m_webPageID, event, callbackID), 0);
+        });
         return;
     }
 
@@ -2993,7 +2987,7 @@ void WebPageProxy::handleUnpreventableTouchEvent(const NativeWebTouchEvent& even
     if (touchEventsTrackingType == TrackingType::NotTracking)
         return;
 
-    send(Messages::EventDispatcher::TouchEvent(m_webPageID, event, WTF::nullopt), 0);
+    send(Messages::EventDispatcher::TouchEventWithoutCallback(m_webPageID, event), 0);
 
     if (event.allTouchPointsAreReleased()) {
         m_touchAndPointerEventTracking.reset();
@@ -7126,17 +7120,6 @@ void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, Callbac
         return;
 
     callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
-}
-
-void WebPageProxy::boolCallback(bool result, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<BoolCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(result);
 }
 
 void WebPageProxy::imageCallback(const ShareableBitmap::Handle& bitmapHandle, CallbackID callbackID)

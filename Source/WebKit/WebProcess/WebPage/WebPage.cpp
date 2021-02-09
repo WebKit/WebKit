@@ -3067,13 +3067,14 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
+bool WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
-    handled = handleTouchEvent(touchEvent, m_page.get());
+    bool handled = handleTouchEvent(touchEvent, m_page.get());
     updatePotentialTapSecurityOrigin(touchEvent, handled);
+    return handled;
 }
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
@@ -3088,10 +3089,9 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<
 
     EventDispatcher::TouchEventQueue queuedEvents;
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
-    dispatchAsynchronousTouchEvents(queuedEvents);
+    dispatchAsynchronousTouchEvents(WTFMove(queuedEvents));
 
-    bool handled = true;
-    dispatchTouchEvent(touchEvent, handled);
+    bool handled = dispatchTouchEvent(touchEvent);
 
     if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
         reply(handled);
@@ -6133,7 +6133,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IOS_TOUCH_EVENTS)
     EventDispatcher::TouchEventQueue queuedEvents;
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
-    cancelAsynchronousTouchEvents(queuedEvents);
+    cancelAsynchronousTouchEvents(WTFMove(queuedEvents));
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 

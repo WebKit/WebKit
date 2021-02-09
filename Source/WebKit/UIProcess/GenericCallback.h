@@ -157,7 +157,6 @@ static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGen
 typedef GenericCallback<> VoidCallback;
 typedef GenericCallback<const Vector<WebCore::IntRect>&, double, WebCore::FloatBoxExtent> ComputedPagesCallback;
 typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
-typedef GenericCallback<bool> BoolCallback;
 
 template<typename T>
 void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Error error)

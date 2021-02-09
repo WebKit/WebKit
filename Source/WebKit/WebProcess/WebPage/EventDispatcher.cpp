@@ -192,7 +192,12 @@ void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, Touch
     destinationQueue = m_touchEvents.take(webPage.identifier());
 }
 
-void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEvent& touchEvent, Optional<CallbackID> callbackID)
+void EventDispatcher::touchEventWithoutCallback(PageIdentifier pageID, const WebTouchEvent& touchEvent)
+{
+    this->touchEvent(pageID, touchEvent, nullptr);
+}
+
+void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
     bool updateListWasEmpty;
     {
@@ -200,16 +205,16 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEv
         updateListWasEmpty = m_touchEvents.isEmpty();
         auto addResult = m_touchEvents.add(pageID, TouchEventQueue());
         if (addResult.isNewEntry)
-            addResult.iterator->value.append({ touchEvent, callbackID });
+            addResult.iterator->value.append({ touchEvent, WTFMove(completionHandler) });
         else {
             auto& queuedEvents = addResult.iterator->value;
             ASSERT(!queuedEvents.isEmpty());
             auto& lastEventAndCallback = queuedEvents.last();
             // Coalesce touch move events.
-            if (touchEvent.type() == WebEvent::TouchMove && lastEventAndCallback.first.type() == WebEvent::TouchMove && !callbackID && !lastEventAndCallback.second)
-                queuedEvents.last() = { touchEvent, WTF::nullopt };
+            if (touchEvent.type() == WebEvent::TouchMove && lastEventAndCallback.first.type() == WebEvent::TouchMove && !completionHandler && !lastEventAndCallback.second)
+                queuedEvents.last() = { touchEvent, nullptr };
             else
-                queuedEvents.append({ touchEvent, callbackID });
+                queuedEvents.append({ touchEvent, WTFMove(completionHandler) });
         }
     }
 
@@ -231,8 +236,8 @@ void EventDispatcher::dispatchTouchEvents()
     }
 
     for (auto& slot : localCopy) {
-        if (WebPage* webPage = WebProcess::singleton().webPage(slot.key))
-            webPage->dispatchAsynchronousTouchEvents(slot.value);
+        if (auto* webPage = WebProcess::singleton().webPage(slot.key))
+            webPage->dispatchAsynchronousTouchEvents(WTFMove(slot.value));
     }
 }
 #endif
