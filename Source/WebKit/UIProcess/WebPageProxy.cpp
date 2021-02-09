@@ -7161,17 +7161,6 @@ void WebPageProxy::invalidateStringCallback(CallbackID callbackID)
     callback->invalidate();
 }
 
-void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, double totalScaleFactorForPrinting, const FloatBoxExtent& computedPageMargin, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ComputedPagesCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(pageRects, totalScaleFactorForPrinting, computedPageMargin);
-}
-
 void WebPageProxy::unsignedCallback(uint64_t result, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<UnsignedCallback>(callbackID);
@@ -8545,17 +8534,10 @@ void WebPageProxy::endPrinting()
     send(Messages::WebPage::EndPrinting(), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
-void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Ref<ComputedPagesCallback>&& callback)
+uint64_t WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback->invalidate();
-        return;
-    }
-
-    auto callbackID = callback->callbackID();
-    m_callbacks.put(WTFMove(callback));
     m_isInPrintingMode = true;
-    send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), printingSendOptions(m_isPerformingDOMPrintOperation));
+    return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
 #if PLATFORM(COCOA)

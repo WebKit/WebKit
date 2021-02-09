@@ -361,15 +361,14 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    auto callback = WebKit::ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, WebKit::CallbackBase::Error) {
+    auto callback = [context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin) {
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
-    });
-    _expectedComputedPagesCallback = callback->callbackID().toInteger();
+    };
+    _expectedComputedPagesCallback = _webFrame->page()->computePagesForPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
-    _webFrame->page()->computePagesForPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
     return YES;
 }
 

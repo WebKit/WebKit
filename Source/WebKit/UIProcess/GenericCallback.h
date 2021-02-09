@@ -155,7 +155,6 @@ static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGen
 }
 
 typedef GenericCallback<> VoidCallback;
-typedef GenericCallback<const Vector<WebCore::IntRect>&, double, WebCore::FloatBoxExtent> ComputedPagesCallback;
 typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 
 template<typename T>
