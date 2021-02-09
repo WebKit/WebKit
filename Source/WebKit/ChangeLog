@@ -1,5 +1,25 @@
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Use CompletionHandler instead of NowPlayingInfoCallback
+        https://bugs.webkit.org/show_bug.cgi?id=221617
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _requestActiveNowPlayingSessionInfo:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo): Deleted.
+        (WebKit::WebPageProxy::nowPlayingInfoCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::requestActiveNowPlayingSessionInfo):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Synthesize range responses if needed in WebCoreNSURLSession
         https://bugs.webkit.org/show_bug.cgi?id=221072
 

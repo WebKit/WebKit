@@ -1742,7 +1742,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(CallbackID);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
     RetainPtr<NSData> accessibilityRemoteTokenData() const;
     void accessibilityTransferRemoteToken(RetainPtr<NSData>);
 #endif

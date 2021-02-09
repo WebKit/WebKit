@@ -405,10 +405,6 @@ struct QueuedTouchEvents {
 typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
 #endif
 
-#if PLATFORM(COCOA)
-typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 class WebDateTimePicker;
 #endif
@@ -1465,8 +1461,7 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&&);
-    void nowPlayingInfoCallback(bool, bool, const String&, double, double, uint64_t, CallbackID);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
 #endif
 
 #if PLATFORM(MAC)

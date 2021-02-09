@@ -9237,32 +9237,6 @@ bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
 #endif
 }
 
-#if PLATFORM(COCOA)
-void WebPageProxy::requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&& callback)
-{
-    if (!hasRunningProcess()) {
-        callback->invalidate();
-        return;
-    }
-
-    auto callbackID = callback->callbackID();
-    m_callbacks.put(WTFMove(callback));
-
-    send(Messages::WebPage::RequestActiveNowPlayingSessionInfo(callbackID));
-}
-
-void WebPageProxy::nowPlayingInfoCallback(bool hasActiveSession, bool registeredAsNowPlayingApplication, const String& title, double duration, double elapsedTime, uint64_t uniqueIdentifier, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<NowPlayingInfoCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
-}
-#endif
-
 void WebPageProxy::handleAutoplayEvent(WebCore::AutoplayEvent event, OptionSet<AutoplayEventFlags> flags)
 {
     m_uiClient->handleAutoplayEvent(*this, event, flags);

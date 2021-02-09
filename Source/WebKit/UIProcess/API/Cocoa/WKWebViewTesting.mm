@@ -85,12 +85,9 @@
         return;
     }
 
-    auto handler = makeBlockPtr(callback);
-    auto localCallback = WebKit::NowPlayingInfoCallback::create([handler](bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackBase::Error) {
+    _page->requestActiveNowPlayingSessionInfo([handler = makeBlockPtr(callback)] (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier) {
         handler(active, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
     });
-
-    _page->requestActiveNowPlayingSessionInfo(WTFMove(localCallback));
 }
 
 - (BOOL)_scrollingUpdatesDisabledForTesting

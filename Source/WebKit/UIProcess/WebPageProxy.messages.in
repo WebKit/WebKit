@@ -190,9 +190,6 @@ messages -> WebPageProxy {
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
 #endif
-#if PLATFORM(COCOA)
-    NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
-#endif
 
     PageScaleFactorDidChange(double scaleFactor)
     PluginScaleFactorDidChange(double zoomFactor)
