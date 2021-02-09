@@ -66,12 +66,9 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     if (measureWithEndSpace)
         ++to;
     float width = 0;
-    if (inlineTextBox.canUseSimplifiedContentMeasuring()) {
-        if (font.isFixedPitch())
-            width = fixedPitchWidth(text, style, from, to, contentLogicalLeft);
-        else
-            width = font.widthForSimpleText(StringView(text).substring(from, to - from));
-    } else {
+    if (inlineTextBox.canUseSimplifiedContentMeasuring())
+        width = font.widthForSimpleText(StringView(text).substring(from, to - from));
+    else {
         auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
         WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
         if (tabWidth)
@@ -82,25 +79,6 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return width;
-}
-
-InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
-{
-    RELEASE_ASSERT(to <= text.length());
-    auto& font = style.fontCascade();
-    auto monospaceCharacterWidth = font.spaceWidth();
-    float width = 0;
-    for (auto i = from; i < to; ++i) {
-        auto character = text[i];
-        if (character >= ' ' || character == '\n')
-            width += monospaceCharacterWidth;
-        else if (character == '\t')
-            width += style.collapseWhiteSpace() ? monospaceCharacterWidth : font.tabWidth(style.tabSize(), contentLogicalLeft + width);
-
-        if (i > from && (character == ' ' || character == '\t' || character == '\n'))
-            width += font.wordSpacing();
-    }
     return width;
 }
 
