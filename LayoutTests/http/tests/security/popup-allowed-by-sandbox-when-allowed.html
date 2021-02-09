@@ -11,6 +11,6 @@ if (window.testRunner) {
   src="data:text/html,
        <script>
        var win = window.open('data:text/html,<script>if (window.testRunner) testRunner.notifyDone();<\/script>', '_blank');
-       alert(win ? 'PASS' : 'FAIL');
+       console.log(win ? 'PASS' : 'FAIL');
        </script>"
   ></iframe>

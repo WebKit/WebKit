@@ -180,7 +180,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             obj->returnErrorFromNewStream = TRUE;
         else if (strcasecmp(argn[i], "src") == 0 &&
                  strcasecmp(argv[i], "data:application/x-webkit-test-netscape,alertwhenloaded") == 0)
-            executeScript(obj, "alert('Plugin Loaded!')");
+            executeScript(obj, "console.log('Plugin Loaded!')");
         else if (strcasecmp(argn[i], "src") == 0 &&
                  strcasecmp(argv[i], "data:application/x-webkit-test-netscape,logifloaded") == 0) {
             for (int j = 0; j < argc; j++) {

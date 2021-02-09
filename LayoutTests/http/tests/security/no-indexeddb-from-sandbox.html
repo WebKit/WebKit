@@ -8,12 +8,12 @@ if (window.testRunner)
              var db = window.webkitIndexedDB;
              try {
                  db.open('test');
-                 alert('FAIL: db.open() should throw a SECURITY_ERR in a sandbox.');
+                 console.log('FAIL: db.open() should throw a SECURITY_ERR in a sandbox.');
              } catch (e) {
                  if (e.code === DOMException.SECURITY_ERR)
-                     alert('PASS: db.open() threw a SECURITY_ERR!');
+                     console.log('PASS: db.open() threw a SECURITY_ERR!');
                  else
-                     alert('FAIL: db.open() threw a ' + e.name);
+                     console.log('FAIL: db.open() threw a ' + e.name);
              }
          </script>"
      ></iframe>

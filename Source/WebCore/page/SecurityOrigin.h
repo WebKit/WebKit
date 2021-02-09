@@ -95,6 +95,8 @@ public:
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from
     // another SecurityOrigin.
+    // This method implements the "same origin-domain" algorithm from the HTML Standard:
+    // https://html.spec.whatwg.org/#same-origin-domain
     WEBCORE_EXPORT bool canAccess(const SecurityOrigin&) const;
 
     // Returns true if this SecurityOrigin can read content retrieved from

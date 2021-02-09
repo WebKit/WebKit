@@ -38,7 +38,7 @@ function onpopup() {
 <body onload="test()">
 <select onchange="onpopup()" id="control1"><option value="0">abcd</option><option value="0">efgh</option></select>
 If the pop-up was not blocked then there will be an PASS message. Otherwise, the test fails.
-<form id="form" action="data:text/html,<script>alert('PASSED')</script>" target="target">
+<form id="form" action="data:text/html,<script>console.log('PASSED')</script>" target="target">
 <input id="control2" type="submit" value="Submit to new window"/>
 </form>
 <form id="form2" action="data:text/html,<b>hello!</b><script>window.testRunner && testRunner.notifyDone()</script>" target="panel">

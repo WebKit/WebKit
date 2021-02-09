@@ -18,7 +18,7 @@ window.onmessage = function(evt)
         resetCookiesAndNotifyDone();
         return;
     } else
-        alert("Unknown message.");
+        console.log("Unknown message.");
 }
 
 function sortCookie(cookie)
@@ -31,7 +31,7 @@ function sortCookie(cookie)
 var stage = 1;
 function showCookies()
 {
-    alert("Test stage " + stage++ + " document.cookie is: " + sortCookie(document.cookie));
+    console.log("Test stage " + stage++ + " document.cookie is: " + sortCookie(document.cookie));
     parent.window.postMessage("done", "*");
 }
 
@@ -39,15 +39,15 @@ function sendXHR(queryCommand)
 {
     var baseurl = "http://localhost:8000/cookies/resources/cookie-utility.php";
     var url = queryCommand ? baseurl + "?queryfunction=" + queryCommand : baseurl;
-    alert(url);
+    console.log(url);
     var req = new XMLHttpRequest();
     req.open('GET', url, false);
     req.send();
 
     if (req.status == 200)
-        alert("XHR response - " + req.responseText);
+        console.log("XHR response - " + req.responseText);
     else
-        alert("xhr error");
+        console.log("xhr error");
     
     parent.window.postMessage("done", "*");    
 }

@@ -1,3 +1,111 @@
+2021-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Disallow alert/confirm/prompt in cross-origin-domain subframes
+        https://bugs.webkit.org/show_bug.cgi?id=221568
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage and update existing tests to stop using alert() in cross-origin iframes.
+
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame-expected.txt:
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame.html:
+        * fast/events/popup-when-select-change-expected.txt:
+        * fast/events/popup-when-select-change.html:
+        * fast/events/resize-subframe-expected.txt:
+        * fast/events/resize-subframe.html:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts-expected.txt:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts.html:
+        * fast/frames/resources/navigate-top-by-name-to-fail.html:
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-denied-expected.txt:
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+        * http/tests/history/cross-origin-replace-history-object-child-expected.txt:
+        * http/tests/history/cross-origin-replace-history-object-expected.txt:
+        * http/tests/history/resources/cross-origin-replaces-history-object-child-iframe.html:
+        * http/tests/history/resources/cross-origin-replaces-history-object-iframe.html:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/plugins/third-party-cookie-accept-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-inside-csp-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.html:
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.js:
+        (catch):
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.html:
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.js:
+        (catch):
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php:
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.php:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades-expected.txt:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrades-mixed-content-expected.txt:
+        * http/tests/security/cross-origin-js-prompt-forbidden-expected.txt: Added.
+        * http/tests/security/cross-origin-js-prompt-forbidden.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-websocket.html:
+        * http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt:
+        * http/tests/security/resources/cross-origin-js-prompt-forbidden.html: Added.
+        * http/tests/security/same-origin-different-domain-js-prompt-forbidden-expected.txt: Added.
+        * http/tests/security/same-origin-different-domain-js-prompt-forbidden.html: Added.
+        * http/tests/security/xssAuditor/base-href-control-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-direct-expected.txt:
+        * http/tests/security/xssAuditor/base-href-expected.txt:
+        * http/tests/security/xssAuditor/base-href-null-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe2-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe3-expected.txt:
+        * http/tests/security/xssAuditor/base-href-scheme-relative-expected.txt:
+        * http/tests/security/xssAuditor/cached-frame-expected.txt:
+        * http/tests/security/xssAuditor/cached-frame.html:
+        * http/tests/security/xssAuditor/cookie-injection-expected.txt:
+        * http/tests/security/xssAuditor/data-urls-work-expected.txt:
+        * http/tests/security/xssAuditor/data-urls-work.html:
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-innerHTML.html:
+        * http/tests/security/xssAuditor/form-action-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-button-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-input-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-safe-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-safe.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes.html:
+        * http/tests/security/xssAuditor/property-inject-expected.txt:
+        * http/tests/security/xssAuditor/property-inject.html:
+        * http/tests/security/xssAuditor/resources/base-href/really-safe-script.js:
+        * http/tests/security/xssAuditor/resources/base-href/safe-script.js:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/resources/javascript-link-safe.html:
+        * http/tests/security/xssAuditor/resources/nph-cached.pl:
+        * http/tests/security/xssAuditor/resources/safe-script-noquotes.js:
+        * http/tests/security/xssAuditor/resources/safe-script.js:
+        * http/tests/security/xssAuditor/resources/script-tag-safe2.html:
+        * http/tests/security/xssAuditor/script-tag-near-start-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-near-start.html:
+        * http/tests/security/xssAuditor/script-tag-safe2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-safe2.html:
+        * http/tests/security/xssAuditor/script-tag-safe3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-safe3.html:
+        * http/tests/security/xssAuditor/script-tag-src-redirect-safe-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment.html:
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades-expected.txt:
+
 2021-02-09  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Test media/track/audio-track-add-remove.html crashes on debug bots

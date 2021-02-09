@@ -5,18 +5,18 @@ window.jsTestIsAsync = true;
 var ws;
 
 function onSocketOpened() {
-    alert("WebSocket connection opened.");
+    console.log("WebSocket connection opened.");
     finishJSTest();
 }
 
 function onSocketError() {
-    alert("WebSocket connection failed.");
+    console.log("WebSocket connection failed.");
     ws.close();
     finishJSTest();
 }
 
 function onSocketClosed() {
-    alert("WebSocket closed.");
+    console.log("WebSocket closed.");
     finishJSTest();
 }
 
@@ -26,7 +26,7 @@ try {
     ws.onerror = onSocketError;
     ws.onclose = onSocketClosed;
 } catch (e) {
-    alert("Test failed: exception thrown");
+    console.log("Test failed: exception thrown");
     finishJSTest();
 }
 </script>

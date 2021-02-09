@@ -5,5 +5,5 @@ if (window.testRunner)
 <iframe sandbox="allow-scripts allow-modals"
         src="data:text/html,<script>
             window.name='alert2';
-            alert(top.alert2 === window ? 'PASS' : 'FAIL');
+            console.log(top.alert2 === window ? 'PASS' : 'FAIL');
             </script>"></iframe>

@@ -1,3 +1,3 @@
-ALERT: Plugin Loaded!
-ALERT: Plugin Loaded!
+CONSOLE MESSAGE: Plugin Loaded!
+CONSOLE MESSAGE: Plugin Loaded!
 

@@ -105,14 +105,14 @@ if ($cgi->param('q2')) {
 }
 if ($cgi->param('showAction')) {
     print "<script>\n";
-    print "    alert('Form action set to ' + document.forms[0].action);\n";
+    print "    console.log('Form action set to ' + document.forms[0].action);\n";
     print "</script>\n";
 }
 if ($cgi->param('showFormaction')) {
     print "<script>\n";
     print "    var e = document.querySelector('[formaction]');\n";
     print "    if (e)\n";
-    print "        alert('formaction present on ' + e.nodeName + ' with value of ' + e.getAttribute('formaction'));\n";
+    print "        console.log('formaction present on ' + e.nodeName + ' with value of ' + e.getAttribute('formaction'));\n";
     print "</script>\n";
 }
 if ($cgi->param('dumpElementBySelector')) {
@@ -126,7 +126,7 @@ if ($cgi->param('dumpElementBySelector')) {
     print "        }\n";
     print "        document.getElementById('console').innerText = log;\n";
     print "    } else\n";
-    print "        alert('No element matched the given selector.');\n";
+    print "        console.log('No element matched the given selector.');\n";
     print "</script>\n";
 }
 if ($cgi->param('notifyDone')) {
@@ -139,7 +139,7 @@ if ($cgi->param('enable-full-block') || $cgi->param('enable-full-block-report') 
     print "<p>If you see this message then the test FAILED.</p>\n";
 }
 if ($cgi->param('alert-cookie')) {
-    print "<script>if (/xssAuditorTestCookie/.test(document.cookie)) { alert('FAIL: ' + document.cookie); document.cookie = 'xssAuditorTestCookie=remove; max-age=-1'; } else alert('PASS');</script>\n";
+    print "<script>if (/xssAuditorTestCookie/.test(document.cookie)) { console.log('FAIL: ' + document.cookie); document.cookie = 'xssAuditorTestCookie=remove; max-age=-1'; } else console.log('PASS');</script>\n";
 }
 if ($cgi->param('echo-report')) {
     print "<script src=/security/contentSecurityPolicy/resources/go-to-echo-report.php?test=" . $cgi->param('test') . "></script>\n";

@@ -1,4 +1,4 @@
-ALERT: /XSS/
+CONSOLE MESSAGE: /XSS/
 We allow direct injections into base tags to reduce false positives.
 
 

@@ -19,9 +19,9 @@ function runTest() {
     eventSender.mouseUp();
 
     if (document.getElementById("dragme").parentNode.tagName == "SPAN" && document.getElementById("dragme").src.length > 10)
-        alert("PASS");
+        console.log("PASS");
     else
-        alert("FAIL");
+        console.log("FAIL");
 
     testRunner.notifyDone();
 }
