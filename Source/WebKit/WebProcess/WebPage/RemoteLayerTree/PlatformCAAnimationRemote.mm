@@ -937,7 +937,8 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
 
     ts.dumpProperty("fillMode", animation.fillMode);
     ts.dumpProperty("valueFunction", animation.valueFunction);
-    ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunction);
+    if (animation.timingFunction)
+        ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunction);
 
     if (animation.autoReverses)
         ts.dumpProperty("autoReverses", animation.autoReverses);
