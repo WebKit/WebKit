@@ -362,8 +362,8 @@ public:
             if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
                 auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
                 jitCode->argumentFlushFormats().reserveInitialCapacity(codeBlock()->numParameters());
-                for (unsigned i = codeBlock()->numParameters(); i--;)
-                    jitCode->argumentFlushFormats().append(m_graph.m_argumentFormats[0][i]);
+                for (int i = 0; i < codeBlock()->numParameters(); ++i)
+                    jitCode->argumentFlushFormats().uncheckedAppend(m_graph.m_argumentFormats[0][i]);
             } else {
                 for (unsigned i = codeBlock()->numParameters(); i--;) {
                     MethodOfGettingAValueProfile profile(&m_graph.m_profiledBlock->valueProfileForArgument(i));
