@@ -36,6 +36,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -172,6 +173,19 @@ static CGRect viewRectForWindowRect(CGRect, PlatformWebView::WebViewSizingMode);
             [webView _endAnimatedResize];
 
         [webView _didEndRotation];
+    }];
+}
+
+- (void)presentViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void(^)(void))completion
+{
+    auto weakWebView = WeakObjCPtr<TestRunnerWKWebView>(WTR::TestController::singleton().mainWebView()->platformView());
+    [super presentViewController:viewController animated:animated completion:[weakWebView, completion = makeBlockPtr(completion), viewController = retainPtr(viewController)] {
+        if (completion)
+            completion();
+
+        auto strongWebView = weakWebView.get();
+        if (WTR::TestController::singleton().mainWebView()->platformView() == strongWebView)
+            [strongWebView _didPresentViewController:viewController.get()];
     }];
 }
 

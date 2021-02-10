@@ -1,3 +1,18 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Enable `QuickboardControllerForTextInputEnabled`, on relevant versions of watchOS.
+
+        * fast/forms/watchos/delete-content-in-text-field.html:
+        * fast/forms/watchos/edit-text-field-calls-injected-bundle.html:
+        * fast/forms/watchos/form-control-label-text.html:
+        * fast/forms/watchos/time-picker-value-change.html:
+        * fast/forms/watchos/username-text-content-type.html:
+
 2021-02-10  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/css convert PHP to Python

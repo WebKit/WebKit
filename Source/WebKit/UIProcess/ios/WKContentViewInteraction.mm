@@ -167,6 +167,10 @@
 #import "WKWebEvent.h"
 #endif
 
+#if PLATFORM(WATCHOS)
+#import "PepperUICoreSPI.h"
+#endif
+
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
@@ -187,9 +191,14 @@ static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerReg
 #endif
 
 #if PLATFORM(WATCHOS)
+#if HAVE(QUICKBOARD_CONTROLLER)
+@interface WKContentView (QuickboardControllerSupport) <PUICQuickboardControllerDelegate>
+@end
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+
 @interface WKContentView (WatchSupport) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
-#endif
+#endif // PLATFORM(WATCHOS)
 
 static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContext;
 
@@ -3445,9 +3454,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [self _inheritedInteractionTintColor];
 }
 
-- (void)_updateInteractionTintColor
+- (void)_updateInteractionTintColor:(UITextInputTraits *)traits
 {
-    [_traits _setColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
+    [traits _setColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
 }
 
 - (void)tintColorDidChange
@@ -3457,7 +3466,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
     if (shouldUpdateTextSelection)
         [_textInteractionAssistant deactivateSelection];
-    [self _updateInteractionTintColor];
+    [self _updateInteractionTintColor:_traits.get()];
     if (shouldUpdateTextSelection)
         [_textInteractionAssistant activateSelection];
 }
@@ -5164,45 +5173,49 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return _traits.get();
 #endif
 
-    [_traits setSecureTextEntry:_focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry]];
-    [_traits setShortcutConversionType:_focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
+    [self _updateTextInputTraits:_traits.get()];
+    return _traits.get();
+}
+
+- (void)_updateTextInputTraits:(id <UITextInputTraits>)traits
+{
+    traits.secureTextEntry = _focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry];
 
     switch (_focusedElementInformation.enterKeyHint) {
     case WebCore::EnterKeyHint::Enter:
-        [_traits setReturnKeyType:UIReturnKeyDefault];
+        traits.returnKeyType = UIReturnKeyDefault;
         break;
     case WebCore::EnterKeyHint::Done:
-        [_traits setReturnKeyType:UIReturnKeyDone];
+        traits.returnKeyType = UIReturnKeyDone;
         break;
     case WebCore::EnterKeyHint::Go:
-        [_traits setReturnKeyType:UIReturnKeyGo];
+        traits.returnKeyType = UIReturnKeyGo;
         break;
     case WebCore::EnterKeyHint::Next:
-        [_traits setReturnKeyType:UIReturnKeyNext];
+        traits.returnKeyType = UIReturnKeyNext;
         break;
     case WebCore::EnterKeyHint::Search:
-        [_traits setReturnKeyType:UIReturnKeySearch];
+        traits.returnKeyType = UIReturnKeySearch;
         break;
     case WebCore::EnterKeyHint::Send:
-        [_traits setReturnKeyType:UIReturnKeySend];
+        traits.returnKeyType = UIReturnKeySend;
         break;
     default: {
         if (!_focusedElementInformation.formAction.isEmpty())
-            [_traits setReturnKeyType:_focusedElementInformation.elementType == WebKit::InputType::Search ? UIReturnKeySearch : UIReturnKeyGo];
+            traits.returnKeyType = _focusedElementInformation.elementType == WebKit::InputType::Search ? UIReturnKeySearch : UIReturnKeyGo;
     }
     }
 
-    if (_focusedElementInformation.elementType == WebKit::InputType::Password || _focusedElementInformation.elementType == WebKit::InputType::Email || _focusedElementInformation.elementType == WebKit::InputType::URL || _focusedElementInformation.formAction.contains("login")) {
-        [_traits setAutocapitalizationType:UITextAutocapitalizationTypeNone];
-        [_traits setAutocorrectionType:UITextAutocorrectionTypeNo];
-    } else {
-        [_traits setAutocapitalizationType:toUITextAutocapitalize(_focusedElementInformation.autocapitalizeType)];
-        [_traits setAutocorrectionType:_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
-    }
+    BOOL disableAutocorrectAndAutocapitalize = _focusedElementInformation.elementType == WebKit::InputType::Password || _focusedElementInformation.elementType == WebKit::InputType::Email
+        || _focusedElementInformation.elementType == WebKit::InputType::URL || _focusedElementInformation.formAction.contains("login");
+    if ([traits respondsToSelector:@selector(setAutocapitalizationType:)])
+        traits.autocapitalizationType = disableAutocorrectAndAutocapitalize ? UITextAutocapitalizationTypeNone : toUITextAutocapitalize(_focusedElementInformation.autocapitalizeType);
+    if ([traits respondsToSelector:@selector(setAutocorrectionType:)])
+        traits.autocorrectionType = disableAutocorrectAndAutocapitalize ? UITextAutocorrectionTypeNo : (_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo);
 
     if (!_focusedElementInformation.isSpellCheckingEnabled) {
-        [_traits setSmartQuotesType:UITextSmartQuotesTypeNo];
-        [_traits setSmartDashesType:UITextSmartDashesTypeNo];
+        traits.smartQuotesType = UITextSmartQuotesTypeNo;
+        traits.smartDashesType = UITextSmartDashesTypeNo;
     }
 
     switch (_focusedElementInformation.inputMode) {
@@ -5210,19 +5223,19 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebCore::InputMode::Unspecified:
         switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::Phone:
-            [_traits setKeyboardType:UIKeyboardTypePhonePad];
+            traits.keyboardType = UIKeyboardTypePhonePad;
             break;
         case WebKit::InputType::URL:
-            [_traits setKeyboardType:UIKeyboardTypeURL];
+            traits.keyboardType = UIKeyboardTypeURL;
             break;
         case WebKit::InputType::Email:
-            [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
+            traits.keyboardType = UIKeyboardTypeEmailAddress;
             break;
         case WebKit::InputType::Number:
-            [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
+            traits.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
             break;
         case WebKit::InputType::NumberPad:
-            [_traits setKeyboardType:UIKeyboardTypeNumberPad];
+            traits.keyboardType = UIKeyboardTypeNumberPad;
             break;
         case WebKit::InputType::None:
         case WebKit::InputType::ContentEditable:
@@ -5240,66 +5253,75 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 #if ENABLE(INPUT_TYPE_COLOR)
         case WebKit::InputType::Color:
 #endif
-            [_traits setKeyboardType:UIKeyboardTypeDefault];
+            traits.keyboardType = UIKeyboardTypeDefault;
         }
         break;
     case WebCore::InputMode::Text:
-        [_traits setKeyboardType:UIKeyboardTypeDefault];
+        traits.keyboardType = UIKeyboardTypeDefault;
         break;
     case WebCore::InputMode::Telephone:
-        [_traits setKeyboardType:UIKeyboardTypePhonePad];
+        traits.keyboardType = UIKeyboardTypePhonePad;
         break;
     case WebCore::InputMode::Url:
-        [_traits setKeyboardType:UIKeyboardTypeURL];
+        traits.keyboardType = UIKeyboardTypeURL;
         break;
     case WebCore::InputMode::Email:
-        [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
+        traits.keyboardType = UIKeyboardTypeEmailAddress;
         break;
     case WebCore::InputMode::Numeric:
-        [_traits setKeyboardType:UIKeyboardTypeNumberPad];
+        traits.keyboardType = UIKeyboardTypeNumberPad;
         break;
     case WebCore::InputMode::Decimal:
-        [_traits setKeyboardType:UIKeyboardTypeDecimalPad];
+        traits.keyboardType = UIKeyboardTypeDecimalPad;
         break;
     case WebCore::InputMode::Search:
-        [_traits setKeyboardType:UIKeyboardTypeWebSearch];
+        traits.keyboardType = UIKeyboardTypeWebSearch;
         break;
     }
 
-    [_traits setTextContentType:contentTypeFromFieldName(_focusedElementInformation.autofillFieldName)];
-
-    switch (_focusedElementInformation.elementType) {
-    case WebKit::InputType::ContentEditable:
-    case WebKit::InputType::TextArea:
-        [_traits setIsSingleLineDocument:NO];
-        break;
-#if ENABLE(INPUT_TYPE_COLOR)
-    case WebKit::InputType::Color:
+#if PLATFORM(WATCHOS)
+    traits.textContentType = self.textContentTypeForQuickboard;
+#else
+    traits.textContentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName);
 #endif
-    case WebKit::InputType::Date:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Drawing:
-    case WebKit::InputType::Email:
-    case WebKit::InputType::Month:
-    case WebKit::InputType::Number:
-    case WebKit::InputType::NumberPad:
-    case WebKit::InputType::Password:
-    case WebKit::InputType::Phone:
-    case WebKit::InputType::Search:
-    case WebKit::InputType::Select:
-    case WebKit::InputType::Text:
-    case WebKit::InputType::Time:
-    case WebKit::InputType::URL:
-    case WebKit::InputType::Week:
-        [_traits setIsSingleLineDocument:YES];
-        break;
-    case WebKit::InputType::None:
-        break;
+
+    auto privateTraits = (id <UITextInputTraits_Private>)traits;
+    if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)]) {
+        switch (_focusedElementInformation.elementType) {
+        case WebKit::InputType::ContentEditable:
+        case WebKit::InputType::TextArea:
+            privateTraits.isSingleLineDocument = NO;
+            break;
+#if ENABLE(INPUT_TYPE_COLOR)
+        case WebKit::InputType::Color:
+#endif
+        case WebKit::InputType::Date:
+        case WebKit::InputType::DateTimeLocal:
+        case WebKit::InputType::Drawing:
+        case WebKit::InputType::Email:
+        case WebKit::InputType::Month:
+        case WebKit::InputType::Number:
+        case WebKit::InputType::NumberPad:
+        case WebKit::InputType::Password:
+        case WebKit::InputType::Phone:
+        case WebKit::InputType::Search:
+        case WebKit::InputType::Select:
+        case WebKit::InputType::Text:
+        case WebKit::InputType::Time:
+        case WebKit::InputType::URL:
+        case WebKit::InputType::Week:
+            privateTraits.isSingleLineDocument = YES;
+            break;
+        case WebKit::InputType::None:
+            break;
+        }
     }
 
-    [self _updateInteractionTintColor];
+    if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
+        privateTraits.shortcutConversionType = _focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault;
 
-    return _traits.get();
+    if ([traits isKindOfClass:UITextInputTraits.class])
+        [self _updateInteractionTintColor:(UITextInputTraits *)traits];
 }
 
 - (UITextInteractionAssistant *)interactionAssistant
@@ -6445,6 +6467,31 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [self setInputDelegate:nil];
 }
 
+#if HAVE(QUICKBOARD_CONTROLLER)
+
+- (RetainPtr<PUICQuickboardController>)_createQuickboardController:(UIViewController *)presentingViewController
+{
+    auto quickboardController = adoptNS([[PUICQuickboardController alloc] init]);
+
+    auto suggestions = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:[_formInputSession suggestions].count]);
+    for (UITextSuggestion *suggestion in [_formInputSession suggestions])
+        [suggestions addObject:suggestion.inputText];
+
+    auto context = adoptNS([[PUICTextInputContext alloc] init]);
+    [self _updateTextInputTraits:context.get()];
+    [context setSuggestions:suggestions.get()];
+    [context setInitialText:_focusedElementInformation.value];
+    [context setAcceptsEmoji:YES];
+    [quickboardController setQuickboardPresentingViewController:presentingViewController];
+    [quickboardController setExcludedFromScreenCapture:[context isSecureTextEntry]];
+    [quickboardController setTextInputContext:context.get()];
+    [quickboardController setDelegate:self];
+
+    return quickboardController;
+}
+
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+
 - (void)presentViewControllerForCurrentFocusedElement
 {
     [self dismissAllInputViewControllers:NO];
@@ -6471,12 +6518,23 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         break;
     case WebKit::InputType::None:
         break;
-    default:
+    default: {
+#if HAVE(QUICKBOARD_CONTROLLER)
+        if (_page->preferences().quickboardControllerForTextInputEnabled()) {
+            _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
+            break;
+        }
+#endif
         _presentedFullScreenInputViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
         break;
     }
+    }
 
-    ASSERT(_presentedFullScreenInputViewController);
+#if HAVE(QUICKBOARD_CONTROLLER)
+    ASSERT_IMPLIES(_presentedQuickboardController, !_presentedFullScreenInputViewController);
+    ASSERT_IMPLIES(_presentedFullScreenInputViewController, !_presentedQuickboardController);
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+    ASSERT(self._isPresentingFullScreenInputView);
     ASSERT(presentingViewController);
 
     if (!prefersModalPresentation && [presentingViewController isKindOfClass:[UINavigationController class]])
@@ -6484,19 +6542,33 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     else
         _inputNavigationViewControllerForFullScreenInputs = nil;
 
-    // Present the input view controller on an existing navigation stack, if possible. If there is no navigation stack we can use, fall back to presenting modally.
-    // This is because the HI specification (for certain scenarios) calls for navigation-style view controller presentation, but WKWebView can't make any guarantees
-    // about clients' view controller hierarchies, so we can only try our best to avoid presenting modally. Clients can implicitly opt in to specced behavior by using
-    // UINavigationController to present the web view.
-    if (_inputNavigationViewControllerForFullScreenInputs)
-        [_inputNavigationViewControllerForFullScreenInputs pushViewController:_presentedFullScreenInputViewController.get() animated:YES];
-    else
-        [presentingViewController presentViewController:_presentedFullScreenInputViewController.get() animated:YES completion:nil];
+    RetainPtr<UIViewController> controller;
+    if (_presentedFullScreenInputViewController) {
+        // Present the input view controller on an existing navigation stack, if possible. If there is no navigation stack we can use, fall back to presenting modally.
+        // This is because the HI specification (for certain scenarios) calls for navigation-style view controller presentation, but WKWebView can't make any guarantees
+        // about clients' view controller hierarchies, so we can only try our best to avoid presenting modally. Clients can implicitly opt in to specced behavior by using
+        // UINavigationController to present the web view.
+        if (_inputNavigationViewControllerForFullScreenInputs)
+            [_inputNavigationViewControllerForFullScreenInputs pushViewController:_presentedFullScreenInputViewController.get() animated:YES];
+        else
+            [presentingViewController presentViewController:_presentedFullScreenInputViewController.get() animated:YES completion:nil];
+        controller = _presentedFullScreenInputViewController.get();
+    }
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if (_presentedQuickboardController) {
+        [_presentedQuickboardController present];
+        controller = [presentingViewController presentedViewController];
+    }
+#endif // HAVE(QUICKBOARD_CONTROLLER)
 
     // Presenting a fullscreen input view controller fully obscures the web view. Without taking this token, the web content process will get backgrounded.
     _page->process().startBackgroundActivityForFullscreenInput();
 
-    [presentingViewController.transitionCoordinator animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller = _presentedFullScreenInputViewController] (id <UIViewControllerTransitionCoordinatorContext>) {
+    // FIXME: PUICQuickboardController does not present its view controller immediately, since it asynchronously
+    // establishes a connection to QuickboardViewService before presenting the remote view controller.
+    // Fixing this requires a version of `-[PUICQuickboardController present]` that takes a completion handler.
+    [presentingViewController.transitionCoordinator animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] (id <UIViewControllerTransitionCoordinatorContext>) {
         auto strongWebView = weakWebView.get();
         id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
         if ([uiDelegate respondsToSelector:@selector(_webView:didPresentFocusedElementViewController:)])
@@ -6504,25 +6576,49 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     }];
 }
 
+- (BOOL)_isPresentingFullScreenInputView
+{
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if (_presentedQuickboardController)
+        return YES;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+    return _presentedFullScreenInputViewController;
+}
+
 - (void)dismissAllInputViewControllers:(BOOL)animated
 {
-    auto navigationController = WTFMove(_inputNavigationViewControllerForFullScreenInputs);
-    auto presentedController = WTFMove(_presentedFullScreenInputViewController);
+    auto navigationController = std::exchange(_inputNavigationViewControllerForFullScreenInputs, nil);
 
-    if (!presentedController)
+    if (!self._isPresentingFullScreenInputView) {
+        ASSERT(!navigationController);
         return;
+    }
 
-    if ([navigationController viewControllers].lastObject == presentedController.get())
-        [navigationController popViewControllerAnimated:animated];
-    else
-        [presentedController dismissViewControllerAnimated:animated completion:nil];
+    if (auto controller = std::exchange(_presentedFullScreenInputViewController, nil)) {
+        if ([navigationController viewControllers].lastObject == controller.get())
+            [navigationController popViewControllerAnimated:animated];
+        else
+            [controller dismissViewControllerAnimated:animated completion:nil];
 
-    [[presentedController transitionCoordinator] animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller = presentedController] (id <UIViewControllerTransitionCoordinatorContext>) {
-        auto strongWebView = weakWebView.get();
-        id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
-        if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
-            [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:controller.get()];
-    }];
+        [[controller transitionCoordinator] animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] (id <UIViewControllerTransitionCoordinatorContext>) {
+            auto strongWebView = weakWebView.get();
+            id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
+            if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
+                [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:controller.get()];
+        }];
+    }
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if (auto controller = std::exchange(_presentedQuickboardController, nil)) {
+        auto presentedViewController = retainPtr([controller quickboardPresentingViewController].presentedViewController);
+        [controller dismissWithCompletion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), presentedViewController] {
+            auto strongWebView = weakWebView.get();
+            id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
+            if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
+                [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:presentedViewController.get()];
+        }];
+    }
+#endif // HAVE(QUICKBOARD_CONTROLLER)
 
     if (_shouldRestoreFirstResponderStatusAfterLosingFocus) {
         _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
@@ -6688,6 +6784,23 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
     return self.focusedSelectElementOptions[index].isSelected;
 }
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+
+#pragma mark - PUICQuickboardControllerDelegate
+
+- (void)quickboardController:(PUICQuickboardController *)controller textInputValueDidChange:(NSAttributedString *)attributedText
+{
+    _page->setTextAsync(attributedText.string);
+    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:controller];
+}
+
+- (void)quickboardControllerTextInputValueCancelled:(PUICQuickboardController *)controller
+{
+    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:controller];
+}
+
+#endif // HAVE(QUICKBOARD_CONTROLLER)
 
 #endif // PLATFORM(WATCHOS)
 
@@ -8641,7 +8754,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if PLATFORM(WATCHOS)
 
-- (void)dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:(PUICQuickboardViewController *)quickboard
+- (void)dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:(id)controller
 {
     BOOL shouldRevealFocusOverlay = NO;
     // In the case where there's nothing the user could potentially do besides dismiss the overlay, we can just automatically without asking the delegate.
@@ -8662,12 +8775,40 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     } else
         _page->blurFocusedElement();
 
+    bool shouldDismissViewController = [controller isKindOfClass:UIViewController.class]
+#if HAVE(QUICKBOARD_CONTROLLER)
+        && !_presentedQuickboardController
+#endif
+        && controller != _presentedFullScreenInputViewController;
     // The Quickboard view controller passed into this delegate method is not necessarily the view controller we originally presented;
     // this happens in the case when the user chooses an input method (e.g. scribble) and a new Quickboard view controller is presented.
-    if (quickboard != _presentedFullScreenInputViewController)
-        [quickboard dismissViewControllerAnimated:YES completion:nil];
+    if (shouldDismissViewController)
+        [(UIViewController *)controller dismissViewControllerAnimated:YES completion:nil];
 
-    [self dismissAllInputViewControllers:quickboard == _presentedFullScreenInputViewController];
+    [self dismissAllInputViewControllers:controller == _presentedFullScreenInputViewController];
+}
+
+- (UITextContentType)textContentTypeForQuickboard
+{
+    switch (_focusedElementInformation.elementType) {
+    case WebKit::InputType::Password:
+        return UITextContentTypePassword;
+    case WebKit::InputType::URL:
+        return UITextContentTypeURL;
+    case WebKit::InputType::Email:
+        return UITextContentTypeEmailAddress;
+    case WebKit::InputType::Phone:
+        return UITextContentTypeTelephoneNumber;
+    default:
+        // The element type alone is insufficient to infer content type; fall back to autofill data.
+        if (auto contentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName))
+            return contentType;
+
+        if (_focusedElementInformation.isAutofillableUsernameField)
+            return UITextContentTypeUsername;
+
+        return nil;
+    }
 }
 
 #pragma mark - PUICQuickboardViewControllerDelegate
@@ -8765,25 +8906,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller
 {
-    switch (_focusedElementInformation.elementType) {
-    case WebKit::InputType::Password:
-        return UITextContentTypePassword;
-    case WebKit::InputType::URL:
-        return UITextContentTypeURL;
-    case WebKit::InputType::Email:
-        return UITextContentTypeEmailAddress;
-    case WebKit::InputType::Phone:
-        return UITextContentTypeTelephoneNumber;
-    default:
-        // The element type alone is insufficient to infer content type; fall back to autofill data.
-        if (NSString *contentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName))
-            return contentType;
-
-        if (_focusedElementInformation.isAutofillableUsernameField)
-            return UITextContentTypeUsername;
-
-        return nil;
-    }
+    return self.textContentTypeForQuickboard;
 }
 
 - (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller
@@ -9281,11 +9404,23 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)_simulateTextEntered:(NSString *)text
 {
 #if PLATFORM(WATCHOS)
-    if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+    if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]]) {
         [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() enterText:text];
-#else
+        return;
+    }
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if (_presentedQuickboardController) {
+        id <PUICQuickboardControllerDelegate> delegate = [_presentedQuickboardController delegate];
+        ASSERT(delegate == self);
+        auto string = adoptNS([[NSAttributedString alloc] initWithString:text]);
+        [delegate quickboardController:_presentedQuickboardController.get() textInputValueDidChange:string.get()];
+        return;
+    }
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+#endif // PLATFORM(WATCHOS)
+
     [self insertText:text];
-#endif
 }
 
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
@@ -9338,7 +9473,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         return [self textContentTypeForListViewController:(WKTextInputListViewController *)_presentedFullScreenInputViewController.get()];
-#endif
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if (_presentedQuickboardController)
+        return [_presentedQuickboardController textInputContext].textContentType;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+#endif // PLATFORM(WATCHOS)
     return self.textInputTraits.textContentType;
 }
 
@@ -9353,10 +9492,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (NSString *)formInputLabel
 {
 #if PLATFORM(WATCHOS)
-    if (_presentedFullScreenInputViewController)
-        return [self inputLabelTextForViewController:(id)_presentedFullScreenInputViewController.get()];
-#endif
+    return [self inputLabelTextForViewController:_presentedFullScreenInputViewController.get()];
+#else
     return nil;
+#endif
 }
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute

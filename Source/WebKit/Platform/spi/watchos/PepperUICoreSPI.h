@@ -55,6 +55,11 @@
 #import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>
 #endif
 
+#if HAVE(QUICKBOARD_CONTROLLER)
+#import <PepperUICore/PUICQuickboardController.h>
+#import <PepperUICore/PUICQuickboardRemoteViewController.h>
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 NS_ASSUME_NONNULL_BEGIN

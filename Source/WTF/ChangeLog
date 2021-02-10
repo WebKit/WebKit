@@ -1,3 +1,14 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Add a new internal setting. See other ChangeLogs for more detail.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-02-09  Devin Rousso  <drousso@apple.com>
 
         [iOS] Add support for the language/subtitle tracks button using `UIMenu`

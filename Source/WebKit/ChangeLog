@@ -1,3 +1,99 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Refactor text input on watchOS to use `PUICQuickboardController`, instead of custom WebKit subclasses of
+        `PUICQuickboardListViewController`. This new API serves the same purpose as the current list view controller
+        subclass, by providing a view that offers options to dictate, scribble, and choose text suggestions. See below
+        for more details.
+
+        For the time being, this new `PUICQuickboardController` doesn't provide a way to render a custom header view
+        for us to show the domain name; to avoid introducing a security or privacy bug in the interim, guard this behind
+        a WebKit-exposed runtime-enabled setting that's off by default. We can remove this setting and instead just use
+        the `HAVE(QUICKBOARD_CONTROLLER)` build-time flag once support for the custom header view is complete.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+
+        Include a couple of new headers if `HAVE(QUICKBOARD_CONTROLLER)` is set.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add a `_presentedQuickboardController` instance variable if `HAVE(QUICKBOARD_CONTROLLER)` is set.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Add protocol conformance to `PUICQuickboardControllerDelegate`.
+
+        (-[WKContentView _updateInteractionTintColor:]):
+        (-[WKContentView tintColorDidChange]):
+
+        Refactor this to take `UITextInputTraits`, instead of using `_traits`.
+
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView _updateTextInputTraits:]):
+
+        Refactor this to modify the given set of text input traits given current focused element information state,
+        rather than operating on the `_traits` instance variable. This refactoring allows us to share logic when setting
+        up text input traits on both iOS and watchOS; in the former case, we're setting up a set of cached `_traits` on
+        the content view, but in the latter case, we're modifying a newly created `PUICTextInputContext` that we'll then
+        set on the `PUICQuickboardController`.
+
+        (-[WKContentView _createQuickboardController:]):
+
+        Add a helper method to create and return a new `PUICQuickboardController` that's suitable for the current
+        focused element's state.
+
+        (-[WKContentView presentViewControllerForCurrentFocusedElement]):
+
+        Present the view controller for the focused element, by either using a custom WebKit-owned
+        `PUICQuickboardListViewController` subclass, or by using a new `PUICQuickboardController` with a custom text
+        input context. Note that in the latter case, we may not be able to invoke the UI delegate hook
+        `-_webView:didPresentFocusedElementViewController:`, since the presenting view controller's transition
+        coordinator may not have been created yet in the scenario where we're spinning up the Quickboard view service
+        for the first time, since the call to establish the XPC connection is asynchronous in PepperUICore, and we don't
+        attempt to present the remote view controller until the connection is established. This makes it so that we
+        can't rely on the `-didPresentFocusedElementViewController:` hook in WebKitTestRunner to know when a
+        `PUICQuickboardController` has finished presenting.
+
+        To work around this, we teach the test harness to override `-presentViewController:animated:completion:` and
+        call into the test runner's `WKWebView` subclass when a remote quickboard controller is done presenting. In the
+        longer term, we will require SPI from PepperUICore to present a `PUICQuickboardController` with a completion
+        block.
+
+        (-[WKContentView _isPresentingFullScreenInputView]):
+
+        A "full screen input view" for the focused element is now present if either `_presentedQuickboardController` is
+        set, or `_presentedFullScreenInputViewController` is set.
+
+        (-[WKContentView dismissAllInputViewControllers:]):
+
+        Dismiss either the currently presented `_presentedQuickboardController` or
+        `_presentedFullScreenInputViewController`, and invoke the UI delegate method
+        `-_webView:didDismissFocusedElementViewController:` when finished.
+
+        (-[WKContentView quickboardController:textInputValueDidChange:]):
+        (-[WKContentView quickboardControllerTextInputValueCancelled:]):
+        (-[WKContentView dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:]):
+        (-[WKContentView textContentTypeForQuickboard]):
+
+        Refactor `-_updateTextInputTraits:` to call a helper method (`-textContentTypeForQuickboard`) on watchOS to
+        convert the current focused element information to a `UITextContentType`.
+
+        (-[WKContentView textContentTypeForListViewController:]):
+        (-[WKContentView _simulateTextEntered:]):
+        (-[WKContentView textContentTypeForTesting]):
+        (-[WKContentView formInputLabel]):
+
+        Update a few internal testing hooks to handle the case where we have a `_presentedQuickboardController` instead
+        of a `_presentedFullScreenInputViewController`.
+
+        (-[WKContentView _updateInteractionTintColor]): Deleted.
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        (-[WKTextInputListViewController additionalTrayButtons]): Suppress a deprecation warning.
+
 2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Replace ChangeLog entry I accidentally deleted in r272657

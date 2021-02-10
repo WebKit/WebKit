@@ -121,6 +121,13 @@ class WebPageProxy;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 
+#if PLATFORM(WATCHOS)
+@class PUICQuickboardViewController;
+#if HAVE(QUICKBOARD_CONTROLLER)
+@class PUICQuickboardController;
+#endif
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
 #endif
@@ -452,12 +459,15 @@ private:
 
 #if PLATFORM(WATCHOS)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
-    RetainPtr<UIViewController> _presentedFullScreenInputViewController;
+#if HAVE(QUICKBOARD_CONTROLLER)
+    RetainPtr<PUICQuickboardController> _presentedQuickboardController;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+    RetainPtr<PUICQuickboardViewController> _presentedFullScreenInputViewController;
     RetainPtr<UINavigationController> _inputNavigationViewControllerForFullScreenInputs;
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
     BlockPtr<void()> _activeFocusedStateRetainBlock;
-#endif
+#endif // PLATFORM(WATCHOS)
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;

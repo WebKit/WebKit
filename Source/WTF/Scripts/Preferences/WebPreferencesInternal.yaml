@@ -599,6 +599,17 @@ PrefixedWebAudioEnabled:
     WebCore:
       default: false
 
+QuickboardControllerForTextInputEnabled:
+  type: bool
+  humanReadableName: "Quickboard controller"
+  humanReadableDescription: "Enable quickboard controller for text input"
+  condition: HAVE(QUICKBOARD_CONTROLLER)
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 ResourceLoadSchedulingEnabled:
   type: bool
   humanReadableName: "Resource Load Scheduling"

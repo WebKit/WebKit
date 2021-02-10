@@ -1,3 +1,31 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Make some small tweaks to WebKitTestRunner in support of using `PUICQuickboardController` for text input.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+
+        Adjust the test harness on watchOS to link against PepperUICore, so that we can reference the
+        `PUICQuickboardViewController` and `PUICQuickboardRemoteViewController` classes below.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (isQuickboardViewController):
+        (-[TestRunnerWKWebView _didPresentViewController:]):
+
+        Override `-presentViewController:animated:completion:` on the view controller below, and call this new method
+        on the `TestRunnerWKWebView` when a view controller is finished presenting. We need to do this to ensure that
+        the input view presentation callbacks continue to work after adopting `PUICQuickboardController`; see WebKit
+        ChangeLog for more details.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[PlatformWebViewController presentViewController:animated:completion:]):
+
 2021-02-10  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build-step to run build.webkit.org new unit-tests
