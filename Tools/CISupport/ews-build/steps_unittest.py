@@ -47,7 +47,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
-                   RunBuildWebKitOrgOldUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
+                   RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
                    RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
@@ -758,42 +758,6 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed build.webkit.org unit tests')
-        return self.runStep()
-
-
-class TestRunBuildWebKitOrgOldUnitTests(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(RunBuildWebKitOrgOldUnitTests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
-                        timeout=120,
-                        logEnviron=False,
-                        command=['python', 'steps_unittest_old.py'],
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Passed build.webkit.org old unit tests')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(RunBuildWebKitOrgOldUnitTests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
-                        timeout=120,
-                        logEnviron=False,
-                        command=['python', 'steps_unittest_old.py'],
-                        )
-            + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed build.webkit.org old unit tests')
         return self.runStep()
 
 

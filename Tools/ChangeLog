@@ -1,3 +1,27 @@
+2021-02-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Remove old build.webkit.org unit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=221678
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        (ServicesFactory.__init__):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestTestsFactory.test_services_factory):
+        * CISupport/ews-build/steps.py:
+        (ReRunWebKitPerlTests.evaluateCommand):
+        (RunBuildWebKitOrgOldUnitTests): Deleted.
+        (RunBuildWebKitOrgOldUnitTests.__init__): Deleted.
+        (RunBuildWebKitOrgOldUnitTests.getResultSummary): Deleted.
+        * CISupport/ews-build/steps_unittest.py:
+        (TestRunBuildWebKitOrgUnitTests.test_failure):
+        (TestRunBuildWebKitOrgOldUnitTests): Deleted.
+        (TestRunBuildWebKitOrgOldUnitTests.setUp): Deleted.
+        (TestRunBuildWebKitOrgOldUnitTests.tearDown): Deleted.
+        (TestRunBuildWebKitOrgOldUnitTests.test_success): Deleted.
+        (TestRunBuildWebKitOrgOldUnitTests.test_failure): Deleted.
+
 2021-02-10  Patrick Griffis  <pgriffis@igalia.com>
 
         Update status in contributors.json
