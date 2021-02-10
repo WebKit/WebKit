@@ -1,3 +1,13 @@
+2021-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r272628): [macOS] TestWebKitAPI.WKWebView.SnapshotImageError is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=221702
+
+        I got a little carried away with my error reduction.  This one needs an error.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+
 2021-02-10  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Expired reports get sent at the same time after a session restart
