@@ -7156,7 +7156,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-#if ENABLE(DEVELOPER_MODE) || !defined(NDEBUG)
+#if !defined(NDEBUG)
         // Setting a scriptURL allows the source to be debuggable in the inspector.
         URL scriptURL = URL({ }, "mediaControlsScript"_s);
 #else
