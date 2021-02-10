@@ -1,3 +1,15 @@
+2021-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Optionally build Cog as external project and replacement for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=221518
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformWPE.cmake: Produce uninstalled pkg-config files for wpe-webkit and web-extension
+        libraries. Also populate the JSC ForwardedHeaders path during the build.
+        * wpe/wpe-web-extension-uninstalled.pc.in: Added.
+        * wpe/wpe-webkit-uninstalled.pc.in: Added.
+
 2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Simplify ResourceRequest and ResourceResponse

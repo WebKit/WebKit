@@ -1,3 +1,25 @@
+2021-02-06  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Optionally build Cog as external project and replacement for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=221518
+
+        Reviewed by Adrian Perez de Castro.
+
+        By passing `-DENABLE_COG=ON` during the WPE build, the Cog browser is now built as an
+        external project. The repository is cloned in Tools/wpe/cog and the code can be edited
+        there.
+
+        The run-minibrowser --wpe script will now first try to execute cog and fallback to
+        MiniBrowser if it wasn't found. Cog is also a MiniBrowser, but with some additional
+        features, see https://github.com/Igalia/cog for more informations.
+
+        * PlatformWPE.cmake: Configure Cog as an external project in developer builds.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.run_minibrowser): First check for cog, fallback to MiniBrowser if not found.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Set pkg-config path to lookup libraries in the WebKit's
+        build directory as well.
+
 2021-02-09  Devin Rousso  <drousso@apple.com>
 
         [iOS] Add support for the language/subtitle tracks button using `UIMenu`

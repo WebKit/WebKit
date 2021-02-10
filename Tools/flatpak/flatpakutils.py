@@ -726,6 +726,7 @@ class WebkitFlatpak:
                 "--share=ipc",
                 "--share=network",
                 "--socket=pulseaudio",
+                "--socket=session-bus",
                 "--socket=system-bus",
                 "--socket=wayland",
                 "--socket=x11",
@@ -873,6 +874,13 @@ class WebkitFlatpak:
             "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path),
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
+
+        pkg_config_path = flatpak_env.get("PKG_CONFIG_PATH")
+        if pkg_config_path:
+            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
+        else:
+            pkg_config_path = self.build_path
+        flatpak_env["PKG_CONFIG_PATH"] = pkg_config_path
 
         env_file = os.path.join(self.build_root, 'flatpak-env.json')
         if not os.path.exists(env_file):

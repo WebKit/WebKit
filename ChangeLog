@@ -1,3 +1,13 @@
+2021-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Optionally build Cog as external project and replacement for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=221518
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsWPE.cmake: New variable for JSC forwarded headers path, useful
+        uninstalled builds of projects depending on JSC.
+
 2021-02-09  Jonathan Bedard  <jbedard@apple.com>
 
         AX: introduction.md broken architecture.png link

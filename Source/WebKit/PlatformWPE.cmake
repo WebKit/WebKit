@@ -10,10 +10,13 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_JSC_DIR})
 
 configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
 configure_file(wpe/wpe-webkit.pc.in ${WPE_PKGCONFIG_FILE} @ONLY)
 configure_file(wpe/wpe-web-extension.pc.in ${WPEWebExtension_PKGCONFIG_FILE} @ONLY)
+configure_file(wpe/wpe-webkit-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}-uninstalled.pc @ONLY)
+configure_file(wpe/wpe-web-extension-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 
@@ -53,10 +56,18 @@ add_custom_command(
     VERBATIM
 )
 
+add_custom_command(
+    OUTPUT ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
+    DEPENDS ${JAVASCRIPTCORE_DIR}/API/glib/
+    COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
+    VERBATIM
+)
+
 add_custom_target(webkitwpe-fake-api-headers
     DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/wpe
             ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
             ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
+            ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
 )
 
 list(APPEND WebKit_DEPENDENCIES
