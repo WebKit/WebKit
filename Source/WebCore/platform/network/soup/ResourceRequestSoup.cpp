@@ -36,6 +36,60 @@
 
 namespace WebCore {
 
+static inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return SOUP_MESSAGE_PRIORITY_VERY_LOW;
+    case ResourceLoadPriority::Low:
+        return SOUP_MESSAGE_PRIORITY_LOW;
+    case ResourceLoadPriority::Medium:
+        return SOUP_MESSAGE_PRIORITY_NORMAL;
+    case ResourceLoadPriority::High:
+        return SOUP_MESSAGE_PRIORITY_HIGH;
+    case ResourceLoadPriority::VeryHigh:
+        return SOUP_MESSAGE_PRIORITY_VERY_HIGH;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRegistry) const
+{
+    auto uri = createSoupURI();
+    if (!uri)
+        return nullptr;
+
+    auto soupMessage = adoptGRef(soup_message_new_from_uri(httpMethod().ascii().data(), uri.get()));
+
+    soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(priority()));
+
+    updateSoupMessageHeaders(soupMessage->request_headers);
+
+    auto firstParty = urlToSoupURI(firstPartyForCookies());
+    if (firstParty)
+        soup_message_set_first_party(soupMessage.get(), firstParty.get());
+
+#if SOUP_CHECK_VERSION(2, 69, 90)
+    if (!isSameSiteUnspecified()) {
+        if (isSameSite()) {
+            auto siteForCookies = urlToSoupURI(m_url);
+            soup_message_set_site_for_cookies(soupMessage.get(), siteForCookies.get());
+        }
+        soup_message_set_is_top_level_navigation(soupMessage.get(), isTopSite());
+    }
+#endif
+
+    if (!acceptEncoding())
+        soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_DECODER);
+    if (!allowCookies())
+        soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
+
+    updateSoupMessageBody(soupMessage.get(), blobRegistry);
+
+    return soupMessage;
+}
+
 void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegistryImpl& blobRegistry) const
 {
     auto* formData = httpBody();
@@ -75,32 +129,6 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));
 }
 
-void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
-{
-    updateSoupMessageHeaders(soupMessage->request_headers);
-
-    GUniquePtr<SoupURI> firstParty = urlToSoupURI(firstPartyForCookies());
-    if (firstParty)
-        soup_message_set_first_party(soupMessage, firstParty.get());
-
-#if SOUP_CHECK_VERSION(2, 69, 90)
-    if (!isSameSiteUnspecified()) {
-        if (isSameSite()) {
-            GUniquePtr<SoupURI> siteForCookies = urlToSoupURI(m_url);
-            soup_message_set_site_for_cookies(soupMessage, siteForCookies.get());
-        }
-        soup_message_set_is_top_level_navigation(soupMessage, isTopSite());
-    }
-#endif
-
-    soup_message_set_flags(soupMessage, m_soupFlags);
-
-    if (!acceptEncoding())
-        soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_DECODER);
-    if (!allowCookies())
-        soup_message_disable_feature(soupMessage, SOUP_TYPE_COOKIE_JAR);
-}
-
 void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
 {
     const HTTPHeaderMap& headers = httpHeaderFields();
@@ -120,56 +148,6 @@ void ResourceRequest::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeade
     const char* headerValue;
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
         m_httpHeaderFields.set(String(headerName), String(headerValue));
-}
-
-void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage, BlobRegistryImpl& blobRegistry) const
-{
-    g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().ascii().data(), NULL);
-
-    GUniquePtr<SoupURI> uri = createSoupURI();
-    soup_message_set_uri(soupMessage, uri.get());
-
-    updateSoupMessageMembers(soupMessage);
-    updateSoupMessageBody(soupMessage, blobRegistry);
-}
-
-void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
-{
-    bool shouldPortBeResetToZero = m_url.port() && !m_url.port().value();
-    m_url = soupURIToURL(soup_message_get_uri(soupMessage));
-
-    // SoupURI cannot differeniate between an explicitly specified port 0 and
-    // no port specified.
-    if (shouldPortBeResetToZero)
-        m_url.setPort(0);
-
-    m_httpMethod = String(soupMessage->method);
-
-    updateFromSoupMessageHeaders(soupMessage->request_headers);
-
-    if (soupMessage->request_body->data)
-        m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
-
-    if (SoupURI* firstParty = soup_message_get_first_party(soupMessage))
-        m_firstPartyForCookies = soupURIToURL(firstParty);
-
-#if SOUP_CHECK_VERSION(2, 69, 90)
-    setIsTopSite(soup_message_get_is_top_level_navigation(soupMessage));
-
-    if (SoupURI* siteForCookies = soup_message_get_site_for_cookies(soupMessage))
-        setIsSameSite(areRegistrableDomainsEqual(soupURIToURL(siteForCookies), m_url));
-    else
-        m_sameSiteDisposition = SameSiteDisposition::Unspecified;
-#else
-    m_sameSiteDisposition = SameSiteDisposition::Unspecified;
-#endif
-
-    m_soupFlags = soup_message_get_flags(soupMessage);
-
-#if SOUP_CHECK_VERSION(2, 71, 0)
-    m_acceptEncoding = !soup_message_is_feature_disabled(soupMessage, SOUP_TYPE_CONTENT_DECODER);
-    m_allowCookies = !soup_message_is_feature_disabled(soupMessage, SOUP_TYPE_COOKIE_JAR);
-#endif
 }
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()

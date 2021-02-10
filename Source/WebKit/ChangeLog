@@ -1,3 +1,27 @@
+2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Simplify ResourceRequest and ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=221543
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use new ResourceRequest and ResourceResponse API.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Use ResourceRequest::createSoupMessage().
+        (WebKit::NetworkDataTaskSoup::didSendRequest): Use ResourceResponse passing the SoupMessage and sniffed content type.
+        (WebKit::NetworkDataTaskSoup::didRequestNextPart): Create a ResourceResponse passing the url, content type,
+        expected length and text encoding. Then call ResourceResponse::updateFromSoupMessageHeaders() to set the headers.
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::createWebSocketTask): Use ResourceRequest::createSoupMessage() and pass the
+        ResourceRequest to WebSocketTask constructor.
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::WebSocketTask): Save the ResourceRequest and then just call
+        ResourceRequest::updateFromSoupMessageHeaders() to update the headers after the response has been sent by libsoup.
+        (WebKit::WebSocketTask::didConnect): Use ResourceResponse constructor with the SoupMessage directly.
+        (WebKit::WebSocketTask::didFail): Ditto.
+        * NetworkProcess/soup/WebSocketTaskSoup.h:
+
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandler instead of ApplicationManifestCallback
