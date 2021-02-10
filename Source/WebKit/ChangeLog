@@ -1,3 +1,23 @@
+2021-02-10  Sam Weinig  <weinig@apple.com>
+
+        Workaround some order dependent issues by parenting remote layers before applying other properties
+        https://bugs.webkit.org/show_bug.cgi?id=221585
+
+        Reviewed by Simon Fraser.
+
+        This runs the updateChildren (renamed to applyHierarchyUpdates for consistency) part of
+        the RemoteLayerTreePropertyApplier for all the transaction changes prior to running the
+        rest of applyProperties to work around some downstream bugs that currently require parented
+        layers to work. This likely won't be required forever, but it should be harmless to do.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        (WebKit::RemoteLayerTreePropertyApplier::applyHierarchyUpdates):
+        (WebKit::RemoteLayerTreePropertyApplier::updateChildren): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+
 2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts

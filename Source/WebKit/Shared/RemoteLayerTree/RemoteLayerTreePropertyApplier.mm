@@ -279,7 +279,6 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     applyPropertiesToLayer(node.layer(), layerTreeHost, properties, layerContentsType);
-    updateChildren(node, properties, relatedLayers);
     updateMask(node, properties, relatedLayers);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged)
@@ -292,8 +291,10 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     if (!properties.changedProperties.contains(RemoteLayerTreeTransaction::ChildrenChanged))
         return;
 
@@ -341,6 +342,8 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
 #endif
         return childNode->layer();
     }).get();
+
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
