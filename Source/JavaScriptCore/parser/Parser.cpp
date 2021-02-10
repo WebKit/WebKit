@@ -230,8 +230,17 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
             parameters = parseFunctionParameters(context, functionInfo);
 
         if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !hasError()) {
-            // The only way we could have an error while reparsing is if we run out of stack space.
-            RELEASE_ASSERT(match(ARROWFUNCTION), m_token.m_type, static_cast<uint8_t>(parseMode), m_lexer->currentOffset(), m_lexer->codeLength());
+            // FIXME:
+            // Logically, this should be an assert, since we already successfully parsed the arrow
+            // function when syntax checking. So logically, we should see the arrow token here.
+            // But we're seeing crashes in the wild when making this an assert. Instead, we'll just
+            // handle it as an error in release builds, and an assert on debug builds, with the hopes
+            // of fixing it in the future.
+            // https://bugs.webkit.org/show_bug.cgi?id=221633
+            if (UNLIKELY(!match(ARROWFUNCTION))) {
+                ASSERT_NOT_REACHED();
+                return makeUnexpected("Parser error"_s);
+            }
             next();
             isArrowFunctionBodyExpression = !match(OPENBRACE);
         }

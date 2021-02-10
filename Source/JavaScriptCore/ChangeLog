@@ -1,3 +1,22 @@
+2021-02-10  Saam Barati  <sbarati@apple.com>
+
+        Don't crash when reparsing an arrow function and the parsing invariant is broken
+        https://bugs.webkit.org/show_bug.cgi?id=221632
+        <rdar://71874091>
+
+        Reviewed by Tadeu Zagallo and Mark Lam.
+
+        We have code where we assert that when reparsing an arrow function,
+        we see the '=>' token after parsing the parameters. Since we already
+        parsed the arrow function before, this assertion makes sense. But somehow,
+        this is leading to crashes on real websites. We don't know why this invariant
+        is being broken. I'm changing this to a debug assert, and we're tracking
+        the full fix in:
+        https://bugs.webkit.org/show_bug.cgi?id=221633
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+
 2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] C++ iteration should support fast iterator protocol
