@@ -408,7 +408,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 - (BOOL)isNull
 {
 #if !CPU(ADDRESS64)
-    return JSValueIsNull([_context JSGlobalContextRef], m_value);
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isNull();
 #endif
@@ -417,7 +417,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 - (BOOL)isBoolean
 {
 #if !CPU(ADDRESS64)
-    return JSValueIsBoolean([_context JSGlobalContextRef], m_value);
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isBoolean();
 #endif
@@ -426,7 +426,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 - (BOOL)isNumber
 {
 #if !CPU(ADDRESS64)
-    return JSValueIsNumber([_context JSGlobalContextRef], m_value);
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isNumber();
 #endif
@@ -435,7 +435,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 - (BOOL)isString
 {
 #if !CPU(ADDRESS64)
-    return JSValueIsString([_context JSGlobalContextRef], m_value);
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isString();
 #endif
