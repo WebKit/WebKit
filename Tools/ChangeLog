@@ -1,3 +1,18 @@
+2021-02-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build-step to run build.webkit.org new unit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=219454
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (RunBuildWebKitOrgOldUnitTests): Renamed.
+        (RunBuildWebKitOrgUnitTests): Build step to run build.webkit.org new unit-tests.
+        * CISupport/ews-build/steps_unittest.py: Added unit-tests.
+        * CISupport/ews-build/factories.py:
+        (ServicesFactory.__init__): Added the new build-step, also change the step order slightly.
+        * CISupport/ews-build/factories_unittest.py:
+
 2021-02-10  Brent Fulgham  <bfulgham@apple.com>
 
         Create stub methods to support finer-grained control over loading

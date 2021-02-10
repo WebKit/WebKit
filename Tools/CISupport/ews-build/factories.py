@@ -28,7 +28,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    CheckPatchStatusOnEWSQueues, CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FindModifiedChangeLogs, InstallGtkDependencies,
                    InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
-                   RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
+                   RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildWebKitOrgOldUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
                    ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection)
@@ -245,10 +245,11 @@ class WPEFactory(Factory):
 class ServicesFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(RunBuildWebKitOrgUnitTests())
+        self.addStep(RunBuildWebKitOrgOldUnitTests())
         self.addStep(RunEWSUnitTests())
         self.addStep(RunEWSBuildbotCheckConfig())
         self.addStep(RunResultsdbpyTests())
-        self.addStep(RunBuildWebKitOrgUnitTests())
 
 
 class CommitQueueFactory(factory.BuildFactory):

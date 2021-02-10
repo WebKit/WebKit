@@ -1196,7 +1196,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
         return shell.ShellCommand.evaluateCommand(self, cmd)
 
 
-class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
+class RunBuildWebKitOrgOldUnitTests(shell.ShellCommand):
     name = 'build-webkit-old-unit-tests'
     description = ['build-webkit-unit-tests running']
     command = ['python', 'steps_unittest_old.py']
@@ -1208,6 +1208,24 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
         if self.results == SUCCESS:
             return {u'step': u'Passed build.webkit.org old unit tests'}
         return {u'step': u'Failed build.webkit.org old unit tests'}
+
+
+class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
+    name = 'build-webkit-org-unit-tests'
+    description = ['build-webkit-unit-tests running']
+    command = ['python3', 'runUnittests.py', 'build-webkit-org']
+
+    def __init__(self, **kwargs):
+        super(RunBuildWebKitOrgUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.workerEnvironment['USE_BUILDBOT_VERSION2'] = 'True'
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Passed build.webkit.org unit tests'}
+        return {u'step': u'Failed build.webkit.org unit tests'}
 
 
 class RunEWSUnitTests(shell.ShellCommand):
