@@ -1,3 +1,19 @@
+2021-02-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline table tests after r272100 and garden some a11 failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
+        Updates after r272100.
+        * platform/glib/fast/table/005-expected.txt: Renamed from LayoutTests/platform/gtk/fast/table/005-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1224-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1224-expected.txt.
+        * platform/wpe/fast/table/005-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1224-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/wpe/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+
 2021-02-09  Devin Rousso  <drousso@apple.com>
 
         [iOS] Add support for the language/subtitle tracks button using `UIMenu`

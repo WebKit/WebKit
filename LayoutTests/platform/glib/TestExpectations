@@ -260,6 +260,9 @@ webkit.org/b/221022 accessibility/keyevents-for-actions-mimic-real-key-events.ht
 webkit.org/b/221447 accessibility/aria-current.html [ Failure ]
 webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [ Timeout ]
 
+webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
+webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
