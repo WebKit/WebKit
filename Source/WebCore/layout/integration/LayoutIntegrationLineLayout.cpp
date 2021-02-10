@@ -409,6 +409,12 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     return { Layout::BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
 }
 
+LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
+{
+    // FIXME: This doesn't contain overflow.
+    return enclosingBorderBoxRectFor(renderInline);
+}
+
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_boxTree.rendererForLayoutBox(layoutBox);

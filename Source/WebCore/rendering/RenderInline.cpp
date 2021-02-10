@@ -773,6 +773,11 @@ LayoutRect RenderInline::culledInlineVisualOverflowBoundingBox() const
 
 LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
+        return layout->visualOverflowBoundingBoxRectFor(*this);
+#endif
+
     if (!alwaysCreateLineBoxes())
         return culledInlineVisualOverflowBoundingBox();
 
@@ -849,7 +854,19 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
     // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().styleType() == PseudoId::FirstLetter || hasSelfPaintingLayer());
 
-    if (!firstLineBoxIncludingCulling() && !continuation())
+    auto knownEmpty = [&] {
+        if (firstLineBoxIncludingCulling())
+            return false;
+        if (continuation())
+            return false;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (LayoutIntegration::LineLayout::containing(*this))
+            return false;
+#endif
+        return true;
+    };
+
+    if (knownEmpty())
         return LayoutRect();
 
     LayoutRect repaintRect(linesVisualOverflowBoundingBox());
