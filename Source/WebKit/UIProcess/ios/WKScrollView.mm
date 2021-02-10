@@ -35,7 +35,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
 #endif
 
@@ -159,7 +159,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [self _configureDigitalCrownScrolling];
 #endif
 
@@ -429,6 +429,10 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         gestureRecognizer.allowedTouchTypes = @[];
 }
 
+#endif // PLATFORM(WATCHOS)
+
+#if HAVE(PEPPER_UI_CORE)
+
 - (void)_configureDigitalCrownScrolling
 {
     self.showsVerticalScrollIndicator = NO;
@@ -446,7 +450,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return targetOffset;
 }
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)
 
 @end
 

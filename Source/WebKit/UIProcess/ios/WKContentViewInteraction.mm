@@ -167,7 +167,7 @@
 #import "WKWebEvent.h"
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
 #endif
 
@@ -190,7 +190,7 @@ static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerReg
 @end
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 #if HAVE(QUICKBOARD_CONTROLLER)
 @interface WKContentView (QuickboardControllerSupport) <PUICQuickboardControllerDelegate>
 @end
@@ -198,7 +198,7 @@ static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerReg
 
 @interface WKContentView (WatchSupport) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
 
 static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContext;
 
@@ -3068,7 +3068,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textInteractionAssistant willStartScrollingOrZooming];
     _page->setIsScrollingOrZooming(true);
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [_focusedFormControlView disengageFocusedFormControlNavigation];
 #endif
 }
@@ -3090,7 +3090,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     [self _resetPanningPreventionFlags];
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [_focusedFormControlView engageFocusedFormControlNavigation];
 #endif
 }
@@ -5279,7 +5279,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         break;
     }
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     traits.textContentType = self.textContentTypeForQuickboard;
 #else
     traits.textContentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName);
@@ -6101,7 +6101,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
                 if (activityStateChanges && activityStateChanges != WebCore::ActivityState::IsFocused)
                     return YES;
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
                 if (_isChangingFocus && ![_focusedFormControlView isHidden])
                     return YES;
 #else
@@ -6193,7 +6193,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     _inputPeripheral = createInputPeripheralWithView(_focusedElementInformation.elementType, self);
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [self addFocusedFormControlOverlay];
     if (!_isChangingFocus)
         [self presentViewControllerForCurrentFocusedElement];
@@ -6222,7 +6222,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     [self _updateAccessory];
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if (_isChangingFocus)
         [_focusedFormControlView reloadData:YES];
 #endif
@@ -6273,7 +6273,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     [self _hideKeyboard];
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [self dismissAllInputViewControllers:YES];
     if (!_isChangingFocus)
         [self removeFocusedFormControlOverlay];
@@ -6433,13 +6433,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)reloadContextViewForPresentedListViewController
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() reloadContextView];
 #endif
 }
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 - (void)addFocusedFormControlOverlay
 {
@@ -6802,11 +6802,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 #endif // HAVE(QUICKBOARD_CONTROLLER)
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
 
 - (void)_wheelChangedWithEvent:(UIEvent *)event
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_focusedFormControlView handleWheelEvent:event])
         return;
 #endif
@@ -8752,7 +8752,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 - (void)dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:(id)controller
 {
@@ -8925,7 +8925,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     return _focusedElementInformation.elementType != WebKit::InputType::Password;
 }
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
 - (void)_lookupGestureRecognized:(UIGestureRecognizer *)gestureRecognizer
@@ -9403,7 +9403,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_simulateTextEntered:(NSString *)text
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]]) {
         [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() enterText:text];
         return;
@@ -9418,7 +9418,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return;
     }
 #endif // HAVE(QUICKBOARD_CONTROLLER)
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
 
     [self insertText:text];
 }
@@ -9444,7 +9444,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKSelectMenuListViewController class]])
         [(WKSelectMenuListViewController *)_presentedFullScreenInputViewController.get() selectItemAtIndex:rowIndex];
 #else
@@ -9455,7 +9455,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
 {
-#if !PLATFORM(WATCHOS)
+#if !HAVE(PEPPER_UI_CORE)
     if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
         return [(WKFormSelectControl *)_inputPeripheral selectFormAccessoryHasCheckedItemAtRow:rowIndex];
 #endif
@@ -9470,14 +9470,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (NSString *)textContentTypeForTesting
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         return [self textContentTypeForListViewController:(WKTextInputListViewController *)_presentedFullScreenInputViewController.get()];
 #if HAVE(QUICKBOARD_CONTROLLER)
     if (_presentedQuickboardController)
         return [_presentedQuickboardController textInputContext].textContentType;
 #endif // HAVE(QUICKBOARD_CONTROLLER)
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
     return self.textInputTraits.textContentType;
 }
 
@@ -9491,7 +9491,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (NSString *)formInputLabel
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     return [self inputLabelTextForViewController:_presentedFullScreenInputViewController.get()];
 #else
     return nil;
@@ -9500,7 +9500,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
 #else

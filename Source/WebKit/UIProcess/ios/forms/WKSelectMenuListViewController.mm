@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSelectMenuListViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "UIKitSPI.h"
 #import <wtf/RetainPtr.h>
@@ -277,4 +277,4 @@ typedef NS_ENUM(NSInteger, PUICQuickboardListSection) {
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

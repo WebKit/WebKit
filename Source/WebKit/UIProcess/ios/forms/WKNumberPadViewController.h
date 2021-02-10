@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "WKNumberPadView.h"
 #import "WKTextInputListViewController.h"
@@ -37,4 +37,4 @@
 
 @end
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)

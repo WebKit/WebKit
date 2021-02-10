@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKDatePickerViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/RetainPtr.h>
@@ -689,4 +689,4 @@ struct EraAndYear {
 @end
 
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)

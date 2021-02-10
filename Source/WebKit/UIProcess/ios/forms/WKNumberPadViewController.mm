@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKNumberPadViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "UIKitSPI.h"
 #import "WKNumberPadView.h"
@@ -264,4 +264,4 @@ static CGFloat inputLabelFontSize()
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

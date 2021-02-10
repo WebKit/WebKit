@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTextInputListViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "WKNumberPadViewController.h"
 #import <wtf/RetainPtr.h>
@@ -209,4 +209,4 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

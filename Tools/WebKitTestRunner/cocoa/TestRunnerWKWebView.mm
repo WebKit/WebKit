@@ -49,7 +49,7 @@
 @end
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
 #endif
 
@@ -531,14 +531,14 @@ IGNORE_WARNINGS_END
 
 static bool isQuickboardViewController(UIViewController *viewController)
 {
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     if ([viewController isKindOfClass:PUICQuickboardViewController.class])
         return true;
 #if HAVE(QUICKBOARD_CONTROLLER)
     if ([viewController isKindOfClass:PUICQuickboardRemoteViewController.class])
         return true;
 #endif // HAVE(QUICKBOARD_CONTROLLER)
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
     return false;
 }
 

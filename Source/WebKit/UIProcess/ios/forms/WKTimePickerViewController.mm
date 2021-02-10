@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTimePickerViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "ClockKitSPI.h"
 #import "UIKitSPI.h"
@@ -146,4 +146,4 @@ static NSString *timePickerDateFormat = @"HH:mm";
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

@@ -1,5 +1,16 @@
 2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Use HAVE(PEPPER_UI_CORE) instead of PLATFORM(WATCHOS) to guard code that uses PepperUICore
+        https://bugs.webkit.org/show_bug.cgi?id=221679
+
+        Reviewed by Tim Horton.
+
+        Add the `HAVE(PEPPER_UI_CORE)` compile-time flag.
+
+        * wtf/PlatformHave.h:
+
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [watchOS] Adopt PUICQuickboardController for text input
         https://bugs.webkit.org/show_bug.cgi?id=221649
 

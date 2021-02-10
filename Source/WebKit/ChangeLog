@@ -1,3 +1,52 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use HAVE(PEPPER_UI_CORE) instead of PLATFORM(WATCHOS) to guard code that uses PepperUICore
+        https://bugs.webkit.org/show_bug.cgi?id=221679
+
+        Reviewed by Tim Horton.
+
+        Use `HAVE(PEPPER_UI_CORE)` instead of `PLATFORM(WATCHOS)` in code that depends on PepperUICore, either directly
+        or indirectly. While technically equivalent, the former is more semantically precise. Common examples of this
+        include dependencies on Quickboard for text input, or PepperUICore category extensions on common UIKit classes
+        (e.g. digital crown support in `WKScrollView.mm`). No change in behavior.
+
+        Inspired by <https://bugs.webkit.org/show_bug.cgi?id=221649#c2>.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView _updateTextInputTraits:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView reloadContextViewForPresentedListViewController]):
+        (-[WKContentView _wheelChangedWithEvent:]):
+        (-[WKContentView _simulateTextEntered:]):
+        (-[WKContentView selectFormAccessoryPickerRow:]):
+        (-[WKContentView selectFormAccessoryHasCheckedItemAtRow:]):
+        (-[WKContentView textContentTypeForTesting]):
+        (-[WKContentView formInputLabel]):
+        (-[WKContentView setTimePickerValueToHour:minute:]):
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+        * UIProcess/ios/forms/WKDatePickerViewController.h:
+        * UIProcess/ios/forms/WKDatePickerViewController.mm:
+        * UIProcess/ios/forms/WKFocusedFormControlView.h:
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm:
+        * UIProcess/ios/forms/WKNumberPadView.h:
+        * UIProcess/ios/forms/WKNumberPadView.mm:
+        * UIProcess/ios/forms/WKNumberPadViewController.h:
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        * UIProcess/ios/forms/WKQuickboardListViewController.h:
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.h:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        * UIProcess/ios/forms/WKTextInputListViewController.h:
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        * UIProcess/ios/forms/WKTimePickerViewController.h:
+        * UIProcess/ios/forms/WKTimePickerViewController.mm:
+
 2021-02-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r272628): [macOS] TestWebKitAPI.WKWebView.SnapshotImageError is consistently failing

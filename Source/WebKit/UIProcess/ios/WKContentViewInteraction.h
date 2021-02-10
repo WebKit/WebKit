@@ -121,7 +121,7 @@ class WebPageProxy;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 @class PUICQuickboardViewController;
 #if HAVE(QUICKBOARD_CONTROLLER)
 @class PUICQuickboardController;
@@ -457,7 +457,7 @@ private:
     BOOL _hasSetUpAppHighlightMenus;
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
 #if HAVE(QUICKBOARD_CONTROLLER)
     RetainPtr<PUICQuickboardController> _presentedQuickboardController;
@@ -467,7 +467,7 @@ private:
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
     BlockPtr<void()> _activeFocusedStateRetainBlock;
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;

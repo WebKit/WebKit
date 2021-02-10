@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKQuickboardListViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import <wtf/RetainPtr.h>
 
@@ -210,4 +210,4 @@ void configureStatusBarForController(PUICQuickboardViewController *controller, i
     [item commitChangesAnimated:NO];
 }
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)
