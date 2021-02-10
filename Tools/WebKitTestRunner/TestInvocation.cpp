@@ -1360,11 +1360,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "setIsMediaKeySystemPermissionGranted")) {
-        TestController::singleton().setIsMediaKeySystemPermissionGranted(booleanValue(messageBody));
-        return nullptr;
-    }
-
     ASSERT_NOT_REACHED();
     return nullptr;
 }

@@ -356,9 +356,6 @@ public:
     void completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef);
     void setIsSpeechRecognitionPermissionGranted(bool);
 
-    void completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef);
-    void setIsMediaKeySystemPermissionGranted(bool);
-
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -650,8 +647,6 @@ private:
 #endif
 
     bool m_isSpeechRecognitionPermissionGranted { false };
-
-    bool m_isMediaKeySystemPermissionGranted { true };
 };
 
 } // namespace WTR

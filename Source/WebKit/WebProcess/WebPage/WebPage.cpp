@@ -46,7 +46,6 @@
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
 #include "Logging.h"
-#include "MediaKeySystemPermissionRequestManager.h"
 #include "MediaPlaybackState.h"
 #include "MediaRecorderProvider.h"
 #include "NetscapePlugin.h"
@@ -105,7 +104,6 @@
 #include "WebKeyboardEvent.h"
 #include "WebLoaderStrategy.h"
 #include "WebMediaKeyStorageManager.h"
-#include "WebMediaKeySystemClient.h"
 #include "WebMediaStrategy.h"
 #include "WebMouseEvent.h"
 #include "WebNotificationClient.h"
@@ -476,9 +474,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager { makeUniqueRef<UserMediaPermissionRequestManager>(*this) }
 #endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    , m_mediaKeySystemPermissionRequestManager { makeUniqueRef<MediaKeySystemPermissionRequestManager>(*this) }
-#endif
     , m_pageScrolledHysteresis([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisDuration)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
@@ -658,9 +653,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 #if ENABLE(MEDIA_STREAM)
     WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));
-#endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    WebCore::provideMediaKeySystemTo(*m_page.get(), *new WebMediaKeySystemClient(*this));
 #endif
 
     m_page->setControlledByAutomation(parameters.controlledByAutomation);
@@ -4535,18 +4527,6 @@ void WebPage::captureDevicesChanged()
     m_userMediaPermissionRequestManager->captureDevicesChanged();
 }
 
-#endif
-
-#if ENABLE(ENCRYPTED_MEDIA)
-void WebPage::mediaKeySystemWasGranted(uint64_t mediaKeySystemID, CompletionHandler<void()>&& completionHandler)
-{
-    m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasGranted(mediaKeySystemID, WTFMove(completionHandler));
-}
-
-void WebPage::mediaKeySystemWasDenied(uint64_t mediaKeySystemID, String&& message)
-{
-    m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasDenied(mediaKeySystemID, WTFMove(message));
-}
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
