@@ -1,3 +1,13 @@
+2021-02-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early February 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=221701
+
+        Unreviewed non-unified build fixes.
+
+        * bytecode/IterationModeMetadata.h:
+        * bytecode/SetPrivateBrandStatus.h:
+
 2021-02-10  Mark Lam  <mark.lam@apple.com>
 
         We should not static_assert on an ENABLE() macro.

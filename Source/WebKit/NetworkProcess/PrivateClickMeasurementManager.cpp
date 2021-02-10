@@ -37,6 +37,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 

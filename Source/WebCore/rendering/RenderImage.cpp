@@ -49,6 +49,7 @@
 #include "LayoutIntegrationRunIterator.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderLayoutState.h"

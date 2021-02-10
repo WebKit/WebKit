@@ -39,6 +39,7 @@ namespace JSC {
 
 class AccessCase;
 class CodeBlock;
+class StructureSet;
 class StructureStubInfo;
 
 class SetPrivateBrandStatus final {
