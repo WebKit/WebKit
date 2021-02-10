@@ -1097,7 +1097,7 @@
 		539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 539930C722AD3B9A0051CDE2 /* WeakObjectRefConstructor.h */; };
 		539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */; };
 		539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */; };
-		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; };
+		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B601EC2034B8C5006BE667 /* JSCast.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B601EB2034B8C5006BE667 /* JSCast.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -1,3 +1,18 @@
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] C++ iteration should support fast iterator protocol
+        https://bugs.webkit.org/show_bug.cgi?id=221526
+
+        Reviewed by Alexey Shvayka.
+
+        * microbenchmarks/map-constructor.js: Added.
+        (test):
+        * stress/map-constructor-hole-throw.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (values.__proto__.return):
+        (Map.prototype):
+
 2021-02-09  Caio Lima  <ticaiolima@gmail.com>
 
         Fix warning introduced by r272580

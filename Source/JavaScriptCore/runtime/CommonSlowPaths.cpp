@@ -34,6 +34,7 @@
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
+#include "IteratorOperations.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
@@ -863,37 +864,19 @@ ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(CallFrame* callFrame, c
     JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
     auto& iterator = GET(bytecode.m_iterator);
 
-    auto prepareForFastArrayIteration = [&] {
-        if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
-            return IterationMode::Generic;
-
-        // This is correct because we just checked the watchpoint is still valid.
-        JSFunction* symbolIteratorFunction = jsDynamicCast<JSFunction*>(vm, symbolIterator);
-        if (!symbolIteratorFunction)
-            return IterationMode::Generic; 
-
-        // We don't want to allocate the values function just to check if it's the same as our function at so we use the concurrent accessor.
-        // FIXME: This only works for arrays from the same global object as ourselves but we should be able to support any pairing.
-        if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
-            return IterationMode::Generic;
-
+    if (getIterationMode(vm, globalObject, iterable, symbolIterator) == IterationMode::FastArray) {
         // We should be good to go.
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
         GET(bytecode.m_next) = JSValue();
         auto* iteratedObject = jsCast<JSObject*>(iterable);
         iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), iteratedObject, IterationKind::Values);
         PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorProfile);
-        return IterationMode::FastArray;
-    };
-
-    if (iterable.inherits<JSArray>(vm)) {
-        if (prepareForFastArrayIteration() == IterationMode::FastArray)
-            return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastArray));
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastArray)));
     }
 
     // Return to the bytecode to try in generic mode.
     metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::Generic;
-    return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
+    return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::Generic)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_narrow)

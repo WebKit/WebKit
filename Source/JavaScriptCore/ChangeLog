@@ -1,3 +1,35 @@
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] C++ iteration should support fast iterator protocol
+        https://bugs.webkit.org/show_bug.cgi?id=221526
+
+        Reviewed by Alexey Shvayka.
+
+        This patch adds fast iteration protocol support in C++ iteration (forEachIterable).
+        In JS, we have op_iterator_open / op_iterator_next to iterate array quickly.
+        But we do not use this feature in C++ forEachIterable. In this patch we integrate
+        the same (or a bit more efficient since we can avoid creating JSArrayIterator) mechanism
+        so that iteration in C++ gets faster for normal arrays.
+
+        We observed 1.9x faster in Map creation with arrays.
+
+                                        ToT                     Patched
+
+            map-constructor       35.7446+-0.2354     ^     18.7516+-0.4534        ^ definitely 1.9062x faster
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iteratorOpenTryFastImpl):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorClose):
+        (JSC::prepareForFastArrayIteration):
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+        * runtime/JSArrayIterator.h:
+
 2021-02-09  Caio Lima  <ticaiolima@gmail.com>
 
         Fix warning introduced by r272580

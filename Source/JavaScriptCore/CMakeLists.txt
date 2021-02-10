@@ -562,6 +562,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Instruction.h
     bytecode/InstructionStream.h
     bytecode/InternalFunctionAllocationProfile.h
+    bytecode/IterationModeMetadata.h
     bytecode/JumpTable.h
     bytecode/LLIntCallLinkInfo.h
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
@@ -927,6 +928,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSArrayBufferPrototype.h
     runtime/JSArrayBufferView.h
     runtime/JSArrayBufferViewInlines.h
+    runtime/JSArrayIterator.h
     runtime/JSBigInt.h
     runtime/JSCConfig.h
     runtime/JSCInlines.h

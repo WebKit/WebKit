@@ -613,7 +613,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(JSGlobalObject* globalObject, Call
         array->putDirectIndex(globalObject, i, entry);
         if (UNLIKELY(scope.exception())) {
             scope.release();
-            iteratorClose(globalObject, iterationRecord);
+            iteratorClose(globalObject, iterationRecord.iterator);
             break;
         }
     }
