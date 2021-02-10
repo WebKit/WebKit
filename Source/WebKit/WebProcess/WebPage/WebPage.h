@@ -1259,7 +1259,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void getApplicationManifest(CallbackID);
+    void getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&&);
     void didFinishLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&);
 #endif
 
@@ -2190,7 +2190,7 @@ private:
     HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
+    HashMap<uint64_t, CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>> m_applicationManifestFetchCallbackMap;
 #endif
 
     OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;

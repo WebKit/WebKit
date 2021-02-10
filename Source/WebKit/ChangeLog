@@ -1,5 +1,27 @@
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Use CompletionHandler instead of ApplicationManifestCallback
+        https://bugs.webkit.org/show_bug.cgi?id=221627
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetApplicationManifest_b):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getApplicationManifestWithCompletionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getApplicationManifest):
+        (WebKit::WebPageProxy::applicationManifestCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getApplicationManifest):
+        (WebKit::WebPage::didFinishLoadingApplicationManifest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Use CompletionHandler instead of DataCallback
         https://bugs.webkit.org/show_bug.cgi?id=221639
 

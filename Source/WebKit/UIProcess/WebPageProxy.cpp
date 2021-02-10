@@ -7167,17 +7167,6 @@ void WebPageProxy::dispatchDidUpdateEditorState()
 
 #endif
 
-#if ENABLE(APPLICATION_MANIFEST)
-void WebPageProxy::applicationManifestCallback(const Optional<WebCore::ApplicationManifest>& manifestOrNull, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ApplicationManifestCallback>(callbackID);
-    if (!callback)
-        return;
-
-    callback->performCallbackWithReturnValue(manifestOrNull);
-}
-#endif
-
 inline API::DiagnosticLoggingClient* WebPageProxy::effectiveDiagnosticLoggingClient(ShouldSample shouldSample)
 {
     // Diagnostic logging is disabled for ephemeral sessions for privacy reasons.
@@ -9841,16 +9830,9 @@ Ref<API::Attachment> WebPageProxy::ensureAttachment(const String& identifier)
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(APPLICATION_MANIFEST)
-void WebPageProxy::getApplicationManifest(Function<void(const Optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(WTF::nullopt, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getApplicationManifest"_s));
-    m_loadDependentStringCallbackIDs.add(callbackID);
-    send(Messages::WebPage::GetApplicationManifest(callbackID));
+    sendWithAsyncReply(Messages::WebPage::GetApplicationManifest(), WTFMove(callback));
 }
 #endif
 

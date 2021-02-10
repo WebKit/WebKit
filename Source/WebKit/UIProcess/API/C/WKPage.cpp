@@ -2900,7 +2900,7 @@ ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block)
 {
 #if ENABLE(APPLICATION_MANIFEST)
-    toImpl(page)->getApplicationManifest([block](const Optional<WebCore::ApplicationManifest> &manifest, CallbackBase::Error) {
+    toImpl(page)->getApplicationManifest([block](const Optional<WebCore::ApplicationManifest>& manifest) {
         block();
     });
 #else // ENABLE(APPLICATION_MANIFEST)

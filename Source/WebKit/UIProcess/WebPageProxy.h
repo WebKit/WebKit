@@ -397,10 +397,6 @@ struct QueuedTouchEvents {
 };
 #endif
 
-#if ENABLE(APPLICATION_MANIFEST)
-typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 class WebDateTimePicker;
 #endif
@@ -1635,7 +1631,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void getApplicationManifest(Function<void(const Optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
+    void getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&&);
 #endif
 
     WebPreferencesStore preferencesStore() const;
@@ -2161,9 +2157,6 @@ private:
     void voidCallback(CallbackID);
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
-#if ENABLE(APPLICATION_MANIFEST)
-    void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
-#endif
 #if PLATFORM(MAC)
     void didUpdateRenderingAfterCommittingLoad();
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);

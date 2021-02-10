@@ -571,7 +571,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    GetApplicationManifest(WebKit::CallbackID callbackID)
+    GetApplicationManifest() -> (Optional<WebCore::ApplicationManifest> manifest) Async
 #endif
 
     SetDefersLoading(bool defersLoading)

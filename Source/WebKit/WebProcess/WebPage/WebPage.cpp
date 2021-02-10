@@ -995,6 +995,13 @@ WebPage::~WebPage()
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
         completionHandler(false);
+    
+#if ENABLE(APPLICATION_MANIFEST)
+    for (auto& completionHandler : m_applicationManifestFetchCallbackMap.values()) {
+        if (completionHandler)
+            completionHandler(WTF::nullopt);
+    }
+#endif
 }
 
 IPC::Connection* WebPage::messageSenderConnection() const
@@ -6941,30 +6948,24 @@ RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const Str
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(APPLICATION_MANIFEST)
-void WebPage::getApplicationManifest(CallbackID callbackID)
+void WebPage::getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&& completionHandler)
 {
-    ASSERT(callbackID.isValid());
     Document* mainFrameDocument = m_mainFrame->coreFrame()->document();
     DocumentLoader* loader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
-
-    if (!loader) {
-        send(Messages::WebPageProxy::ApplicationManifestCallback(WTF::nullopt, callbackID));
-        return;
-    }
+    if (!loader)
+        return completionHandler(WTF::nullopt);
 
     auto coreCallbackID = loader->loadApplicationManifest();
-    if (!coreCallbackID) {
-        send(Messages::WebPageProxy::ApplicationManifestCallback(WTF::nullopt, callbackID));
-        return;
-    }
+    if (!coreCallbackID)
+        return completionHandler(WTF::nullopt);
 
-    m_applicationManifestFetchCallbackMap.add(coreCallbackID, callbackID.toInteger());
+    m_applicationManifestFetchCallbackMap.add(coreCallbackID, WTFMove(completionHandler));
 }
 
 void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const Optional<WebCore::ApplicationManifest>& manifest)
 {
-    auto callbackID = CallbackID::fromInteger(m_applicationManifestFetchCallbackMap.take(coreCallbackID));
-    send(Messages::WebPageProxy::ApplicationManifestCallback(manifest, callbackID));
+    if (auto callback = m_applicationManifestFetchCallbackMap.take(coreCallbackID))
+        callback(manifest);
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 

@@ -2566,8 +2566,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler
 {
 #if ENABLE(APPLICATION_MANIFEST)
-    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest, WebKit::CallbackBase::Error error) {
-        UNUSED_PARAM(error);
+    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
             if (manifest) {
                 auto apiManifest = API::ApplicationManifest::create(*manifest);

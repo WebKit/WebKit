@@ -166,9 +166,6 @@ messages -> WebPageProxy {
     VoidCallback(WebKit::CallbackID callbackID)
     StringCallback(String resultString, WebKit::CallbackID callbackID)
     InvalidateStringCallback(WebKit::CallbackID callbackID)
-#if ENABLE(APPLICATION_MANIFEST)
-    ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
-#endif
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
