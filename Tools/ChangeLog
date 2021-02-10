@@ -1,3 +1,9 @@
+2021-02-10  Ruben Turcios  <rubent_22@apple.com>
+
+        Adding self to contributor.json file. 
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r272507.
