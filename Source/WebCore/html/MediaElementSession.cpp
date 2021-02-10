@@ -128,7 +128,6 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     , m_logIdentifier(element.logIdentifier())
 #endif
 {
-    addedMediaUsageManagerSessionIfNecessary();
 }
 
 MediaElementSession::~MediaElementSession()
@@ -140,7 +139,7 @@ MediaElementSession::~MediaElementSession()
 #endif
 }
 
-void MediaElementSession::addedMediaUsageManagerSessionIfNecessary()
+void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
 {
 #if ENABLE(MEDIA_USAGE)
     if (m_haveAddedMediaUsageManagerSession)
@@ -221,7 +220,6 @@ void MediaElementSession::inActiveDocumentChanged()
 {
     m_elementIsHiddenBecauseItWasRemovedFromDOM = !m_element.inActiveDocument();
     scheduleClientDataBufferingCheck();
-    addedMediaUsageManagerSessionIfNecessary();
 }
 
 void MediaElementSession::scheduleClientDataBufferingCheck()
@@ -1169,7 +1167,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     m_mediaUsageInfo = WTFMove(usage);
 
 #if ENABLE(MEDIA_USAGE)
-    ASSERT(m_haveAddedMediaUsageManagerSession);
+    addMediaUsageManagerSessionIfNecessary();
     page->chrome().client().updateMediaUsageManagerSessionState(mediaSessionIdentifier(), *m_mediaUsageInfo);
 #endif
 }

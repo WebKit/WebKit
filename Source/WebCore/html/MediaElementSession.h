@@ -199,7 +199,7 @@ private:
     void clientDataBufferingTimerFired();
     void updateClientDataBuffering();
 
-    void addedMediaUsageManagerSessionIfNecessary();
+    void addMediaUsageManagerSessionIfNecessary();
 
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
