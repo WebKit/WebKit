@@ -1,3 +1,23 @@
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r269017): Speedometer2 1% regression
+        https://bugs.webkit.org/show_bug.cgi?id=221640
+
+        Reviewed by Mark Lam.
+
+        Reverting r269017, r269478, and r272095 because of Speedometer2 ~1% regression.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        * wtf/HashTraits.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        * wtf/MetaAllocator.h:
+
 2021-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add internal preference to control how AVOutputContext is allocated

@@ -307,8 +307,8 @@ void MetaAllocator::addFreeSpace(FreeSpacePtr start, size_t sizeInBytes)
 {
     FreeSpacePtr end = start + sizeInBytes;
 
-    auto leftNeighbor = m_freeSpaceEndAddressMap.find(start);
-    auto rightNeighbor = m_freeSpaceStartAddressMap.find(end);
+    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator leftNeighbor = m_freeSpaceEndAddressMap.find(start);
+    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator rightNeighbor = m_freeSpaceStartAddressMap.find(end);
 
     if (leftNeighbor != m_freeSpaceEndAddressMap.end()) {
         // We have something we can coalesce with on the left. Remove it from the tree, and

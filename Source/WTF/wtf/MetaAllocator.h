@@ -193,8 +193,8 @@ private:
     unsigned m_logPageSize;
     
     Tree m_freeSpaceSizeMap;
-    HashMap<FreeSpacePtr, FreeSpaceNode*, DefaultHash<FreeSpacePtr>, HardenedHashTraits<HashTraits<FreeSpacePtr>>> m_freeSpaceStartAddressMap;
-    HashMap<FreeSpacePtr, FreeSpaceNode*, DefaultHash<FreeSpacePtr>, HardenedHashTraits<HashTraits<FreeSpacePtr>>> m_freeSpaceEndAddressMap;
+    HashMap<FreeSpacePtr, FreeSpaceNode*> m_freeSpaceStartAddressMap;
+    HashMap<FreeSpacePtr, FreeSpaceNode*> m_freeSpaceEndAddressMap;
     HashMap<uintptr_t, size_t> m_pageOccupancyMap;
     
     size_t m_bytesAllocated;
