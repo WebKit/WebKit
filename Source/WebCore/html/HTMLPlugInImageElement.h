@@ -47,7 +47,6 @@ public:
     
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document&);
-    void finishCreating();
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 

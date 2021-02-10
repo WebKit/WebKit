@@ -55,9 +55,7 @@ inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document
 
 Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document)
 {
-    auto result = adoptRef(*new HTMLEmbedElement(tagName, document));
-    result->finishCreating();
-    return result;
+    return adoptRef(*new HTMLEmbedElement(tagName, document));
 }
 
 Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)

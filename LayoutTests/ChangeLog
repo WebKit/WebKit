@@ -1,3 +1,15 @@
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Do not schedule update on embed creation
+        https://bugs.webkit.org/show_bug.cgi?id=221375
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this.
+
+        * plugins/embed-creation-crash-expected.txt: Added.
+        * plugins/embed-creation-crash.html: Added.
+
 2021-02-10  Lauro Moura  <lmoura@igalia.com>
 
         [ATK] Support focusable-inside-hidden test

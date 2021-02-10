@@ -64,11 +64,6 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
 {
 }
 
-void HTMLPlugInImageElement::finishCreating()
-{
-    scheduleUpdateForAfterStyleResolution();
-}
-
 HTMLPlugInImageElement::~HTMLPlugInImageElement()
 {
     if (m_needsDocumentActivationCallbacks)
