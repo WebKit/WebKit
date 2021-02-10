@@ -1,3 +1,13 @@
+2021-02-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Pass in sane content width values to InlineContentBreaker
+        https://bugs.webkit.org/show_bug.cgi?id=221628
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/letter-spacing-produces-nan-width-expected.txt: Added.
+        * fast/text/letter-spacing-produces-nan-width.html: Added.
+
 2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts

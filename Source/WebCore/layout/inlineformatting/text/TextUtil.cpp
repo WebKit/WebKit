@@ -47,8 +47,10 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned 
 {
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
-    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
-        return inlineTextItem.style().fontCascade().spaceWidth();
+    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
+        auto spaceWidth = inlineTextItem.style().fontCascade().spaceWidth();
+        return std::isnan(spaceWidth) ? 0.0f : std::isinf(spaceWidth) ? maxInlineLayoutUnit() : spaceWidth;
+    }
     return TextUtil::width(inlineTextItem.inlineTextBox(), from, to, contentLogicalLeft);
 }
 
@@ -79,7 +81,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return width;
+    return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
 }
 
 TextUtil::SplitData TextUtil::split(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
