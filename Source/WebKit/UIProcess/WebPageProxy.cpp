@@ -7295,19 +7295,6 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     }
 }
 
-#if PLATFORM(GTK)
-void WebPageProxy::printFinishedCallback(const ResourceError& printError, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<PrintFinishedCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(API::Error::create(printError).ptr());
-}
-#endif
-
 void WebPageProxy::focusedFrameChanged(const Optional<FrameIdentifier>& frameID)
 {
     if (!frameID) {
@@ -8576,17 +8563,15 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printIn
     send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #elif PLATFORM(GTK)
-void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Ref<PrintFinishedCallback>&& callback)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(API::Error*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback->invalidate();
-        return;
-    }
-
-    auto callbackID = callback->callbackID();
-    m_callbacks.put(WTFMove(callback));
+    auto callbackWrapper = [callback = WTFMove(callback)] (const WebCore::ResourceError& error) mutable {
+        if (error.isNull())
+            return callback(nullptr);
+        callback(API::Error::create(error).ptr());
+    };
     m_isInPrintingMode = true;
-    send(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo, callbackID), printingSendOptions(m_isPerformingDOMPrintOperation));
+    sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callbackWrapper), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #endif
 

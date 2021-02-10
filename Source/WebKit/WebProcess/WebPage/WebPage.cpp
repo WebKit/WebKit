@@ -5242,21 +5242,17 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 }
 
 #elif PLATFORM(GTK)
-void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CallbackID callbackID)
+void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler)
 {
     beginPrinting(frameID, printInfo);
     if (m_printContext && m_printOperation) {
-        m_printOperation->startPrint(m_printContext.get(), callbackID);
+        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (const WebCore::ResourceError& error) mutable {
+            m_printOperation = nullptr;
+            completionHandler(error);
+        });
         return;
     }
-
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
-}
-
-void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, CallbackID callbackID)
-{
-    send(Messages::WebPageProxy::PrintFinishedCallback(error, callbackID));
-    m_printOperation = nullptr;
+    completionHandler({ });
 }
 #endif
 

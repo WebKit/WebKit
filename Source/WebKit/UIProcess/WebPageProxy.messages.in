@@ -184,9 +184,6 @@ messages -> WebPageProxy {
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
 #endif
-#if PLATFORM(GTK)
-    PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
-#endif
 
     PageScaleFactorDidChange(double scaleFactor)
     PluginScaleFactorDidChange(double zoomFactor)

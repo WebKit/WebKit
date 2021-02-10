@@ -981,8 +981,7 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::DataReference&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
-    void didFinishPrintOperation(const WebCore::ResourceError&, CallbackID);
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
 #endif
 
     void addResourceRequest(unsigned long, const WebCore::ResourceRequest&);

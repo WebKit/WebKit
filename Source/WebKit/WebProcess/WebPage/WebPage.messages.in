@@ -408,7 +408,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DrawToPDF(WebCore::FrameIdentifier frameID, Optional<WebCore::FloatRect> rect) -> (IPC::DataReference data) Async
 #endif
 #if PLATFORM(GTK)
-    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
+    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebCore::ResourceError error) Async
 #endif
 
     # Media

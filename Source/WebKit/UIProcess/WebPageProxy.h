@@ -188,6 +188,7 @@ namespace API {
 class Attachment;
 class ContentWorld;
 class ContextMenuClient;
+class Error;
 class FindClient;
 class FindMatchesClient;
 class FormClient;
@@ -384,10 +385,6 @@ typedef GenericCallback<const String&> StringCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
-#endif
-
-#if PLATFORM(GTK)
-typedef GenericCallback<API::Error*> PrintFinishedCallback;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1301,7 +1298,7 @@ public:
     std::pair<size_t, uint64_t> computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const IPC::DataReference&)>&&);
 #endif
 #elif PLATFORM(GTK)
-    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, Ref<PrintFinishedCallback>&&);
+    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(API::Error*)>&&);
 #endif
 
     PageLoadState& pageLoadState() { return m_pageLoadState; }
@@ -2178,9 +2175,6 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
 
     void updateStringForFind(const String&);
-#endif
-#if PLATFORM(GTK)
-    void printFinishedCallback(const WebCore::ResourceError&, CallbackID);
 #endif
 
     void focusedFrameChanged(const Optional<WebCore::FrameIdentifier>&);
