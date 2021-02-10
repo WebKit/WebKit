@@ -36,28 +36,13 @@
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
+#include "AudioFileReaderCocoa.h"
 #include "FloatConversion.h"
+#include "Logging.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
-
-static AudioBufferList* createAudioBufferList(size_t numberOfBuffers)
-{
-    size_t bufferListSize = sizeof(AudioBufferList) - sizeof(AudioBuffer);
-    bufferListSize += numberOfBuffers * sizeof(AudioBuffer);
-
-    AudioBufferList* bufferList = static_cast<AudioBufferList*>(calloc(1, bufferListSize));
-    if (bufferList)
-        bufferList->mNumberBuffers = numberOfBuffers;
-
-    return bufferList;
-}
-
-static void destroyAudioBufferList(AudioBufferList* bufferList)
-{
-    free(bufferList);
-}
 
 AudioFileReader::AudioFileReader(const char* filePath)
     : m_data(nullptr)
@@ -190,8 +175,13 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     float* bufferR = 0;
     
     // Setup AudioBufferList in preparation for reading
-    AudioBufferList* bufferList = createAudioBufferList(numberOfChannels);
+    AudioBufferList* bufferList = tryCreateAudioBufferList(numberOfChannels);
+    if (!bufferList) {
+        RELEASE_LOG_FAULT(WebAudio, "tryCreateAudioBufferList(%ld) returned null", numberOfChannels);
+        return nullptr;
+    }
 
+    RELEASE_ASSERT(bufferList->mNumberBuffers == numberOfChannels);
     if (mixToMono && numberOfChannels == 2) {
         bufL.resize(numberOfFrames);
         bufR.resize(numberOfFrames);
@@ -206,14 +196,22 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
         bufferList->mBuffers[1].mDataByteSize = numberOfFrames * sizeof(float);
         bufferList->mBuffers[1].mData = bufferR;
     } else {
-        ASSERT(!mixToMono || numberOfChannels == 1);
+        RELEASE_ASSERT(!mixToMono || numberOfChannels == 1);
 
         // for True-stereo (numberOfChannels == 4)
         for (size_t i = 0; i < numberOfChannels; ++i) {
             bufferList->mBuffers[i].mNumberChannels = 1;
             bufferList->mBuffers[i].mDataByteSize = numberOfFrames * sizeof(float);
             bufferList->mBuffers[i].mData = audioBus->channel(i)->mutableData();
+            ASSERT(bufferList->mBuffers[i].mData);
         }
+    }
+
+    if (!validateAudioBufferList(bufferList)) {
+        RELEASE_LOG_FAULT(WebAudio, "Generated buffer in AudioFileReader::createBus() did not pass validation");
+        ASSERT_NOT_REACHED();
+        destroyAudioBufferList(bufferList);
+        return nullptr;
     }
 
     // Read from the file (or in-memory version)
