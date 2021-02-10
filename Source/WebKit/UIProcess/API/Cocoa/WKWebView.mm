@@ -2086,6 +2086,32 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     return wrapper(_page->loadRequest(request, policy));
 }
 
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, response.MIMEType, response.textEncodingName, request.URL.absoluteString));
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"];
+
+    return [self loadSimulatedRequest:request withResponse:response responseData:data];
+}
+
+- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
+{
+    auto URL = request.URL;
+
+    if (![URL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
+
+    if (![readAccessURL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
+
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())

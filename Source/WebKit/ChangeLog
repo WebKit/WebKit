@@ -1,3 +1,22 @@
+2021-02-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Create stub methods to support finer-grained control over loading
+        https://bugs.webkit.org/show_bug.cgi?id=221430
+        <rdar://problem/73999547>
+
+        Reviewed by Geoffrey Garen.
+
+        Create three new WebKit Cocoa methods that accept NSURLRequest, rather than URL. This allows
+        us to pass additional hints to the networking subsystem.
+
+        Tested with new API Tests.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadSimulatedRequest:withResponse:responseData:]):
+        (-[WKWebView loadSimulatedRequest:withResponseHTMLString:]):
+        (-[WKWebView loadFileRequest:allowingReadAccessToURL:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-02-10  Sam Weinig  <weinig@apple.com>
 
         Workaround some order dependent issues by parenting remote layers before applying other properties

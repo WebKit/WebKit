@@ -1,3 +1,15 @@
+2021-02-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Create stub methods to support finer-grained control over loading
+        https://bugs.webkit.org/show_bug.cgi?id=221430
+        <rdar://problem/73999547>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm: Added.
+        (TEST):
+
 2021-02-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening TestResources failures after r272636
