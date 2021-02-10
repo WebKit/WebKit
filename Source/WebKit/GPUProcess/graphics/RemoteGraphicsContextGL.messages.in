@@ -34,9 +34,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted {
 #endif
     void EnsureExtensionEnabled(String extension)
     void NotifyMarkContextChanged()
+    void SynthesizeGLError(uint32_t error)
+    void GetError() -> (uint32_t returnValue) Synchronous
 
     void SetFailNextGPUStatusCheck()
-    void SynthesizeGLError(uint32_t error)
     void MoveErrorsToSyntheticErrorList() -> (bool returnValue) Synchronous
     void ActiveTexture(uint32_t texture)
     void AttachShader(uint32_t program, uint32_t shader)
@@ -99,7 +100,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted {
     void GetInteger64i(uint32_t pname, uint32_t index) -> (int64_t returnValue) Synchronous
     void GetProgrami(uint32_t program, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetBooleanv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<bool> value) Synchronous
-    void GetError() -> (uint32_t returnValue) Synchronous
     void GetFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetProgramInfoLog(uint32_t arg0) -> (String returnValue) Synchronous
     void GetRenderbufferParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous

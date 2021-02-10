@@ -56,7 +56,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(const WebCore::GraphicsContextG
     m_context->addClient(*this);
     String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
     String requestableExtensions = m_context->getString(ExtensionsGL::REQUESTABLE_EXTENSIONS_ANGLE);
-    send(Messages::RemoteGraphicsContextGLProxy::WasCreated(extensions, requestableExtensions), m_graphicsContextGLIdentifier);
+    send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, extensions, requestableExtensions), m_graphicsContextGLIdentifier);
 }
 
 RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
@@ -116,6 +116,16 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
     completionHandler();
 }
 #endif
+
+void RemoteGraphicsContextGL::synthesizeGLError(uint32_t error)
+{
+    m_context->synthesizeGLError(static_cast<GCGLenum>(error));
+}
+
+void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(static_cast<uint32_t>(m_context->getError()));
+}
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 {

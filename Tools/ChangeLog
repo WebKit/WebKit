@@ -1,3 +1,19 @@
+2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=221396
+
+        Reviewed by Simon Fraser.
+
+        Generate calls to lose the context on timeouts.
+
+        Generate the send calls as calls to the helper functions to send the
+        messages. The helper functions will provide the non-changing arguments.
+
+        Move few messages to be implemented by hand.
+
+        * Scripts/generate-gpup-webgl:
+
 2021-02-06  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Optionally build Cog as external project and replacement for MiniBrowser

@@ -26,6 +26,7 @@ var simpleColorFragmentShader = [
 
 var wtu = WebGLTestUtils;
 var gl;
+window.jsTestIsAsync = true;
 
 if (window.initNonKhronosFramework)
     window.initNonKhronosFramework(false);
@@ -41,7 +42,12 @@ function makeCanvas() {
     return canvas;
 }
 
-function runTest() {
+async function webGLContextLost(canvas)
+{
+    return new Promise(resolve => canvas.addEventListener("webglcontextlost", resolve));
+}
+
+async function runTest() {
 
     debug("");
     debug("Test drawArrays.");
@@ -65,6 +71,7 @@ function runTest() {
     if (window.internals)
         window.internals.failNextGPUStatusCheck(gl);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
 
@@ -96,6 +103,7 @@ function runTest() {
     if (window.internals)
         window.internals.failNextGPUStatusCheck(gl);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    await webGLContextLost(canvas)
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
 
@@ -122,6 +130,7 @@ function runTest() {
     if (window.internals)
         window.internals.failNextGPUStatusCheck(gl);
     ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 10);
+    await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
 
@@ -154,13 +163,16 @@ function runTest() {
     if (window.internals)
         window.internals.failNextGPUStatusCheck(gl);
     ext.drawElementsInstancedANGLE(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0, 8);
+    await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
 
     finishTest();
 }
 
-window.addEventListener("load", runTest, false);
+runTest();
+var successfullyParsed = true;
+
 </script>
 <body>
 </body>

@@ -90,6 +90,8 @@ protected:
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
+    void getError(CompletionHandler<void(uint32_t)>&&);
+    void synthesizeGLError(uint32_t error);
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 

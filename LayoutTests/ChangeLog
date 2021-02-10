@@ -1,3 +1,20 @@
+2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=221396
+
+        Reviewed by Simon Fraser.
+
+        Fix the lose-context-on-status-failure.html. The test was using
+        an internal function to lose the context and then synchronously
+        checking that the context was lost. With GPU process this is not
+        possible, so check after normal Canvas webglcontextlost event.
+
+        Enable the test for --use-gpu-process.
+
+        * fast/canvas/webgl/lose-context-on-status-failure.html:
+        * gpu-process/TestExpectations:
+
 2021-02-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Import & update latest WPT flexbox tests

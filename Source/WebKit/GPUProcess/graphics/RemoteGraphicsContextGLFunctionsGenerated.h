@@ -29,10 +29,6 @@
     {
         m_context->setFailNextGPUStatusCheck();
     }
-    void synthesizeGLError(uint32_t error)
-    {
-        m_context->synthesizeGLError(error);
-    }
     void moveErrorsToSyntheticErrorList(CompletionHandler<void(bool)>&& completionHandler)
     {
         bool returnValue = { };
@@ -320,12 +316,6 @@
         Vector<GCGLboolean, 4> value(static_cast<size_t>(valueSize), 0);
         m_context->getBooleanv(pname, value);
         completionHandler(IPC::ArrayReference<bool>(reinterpret_cast<bool*>(value.data()), value.size()));
-    }
-    void getError(CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        GCGLenum returnValue = { };
-        returnValue = m_context->getError();
-        completionHandler(returnValue);
     }
     void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {

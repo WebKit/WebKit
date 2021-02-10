@@ -99,6 +99,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted {{
 #endif
     void EnsureExtensionEnabled(String extension)
     void NotifyMarkContextChanged()
+    void SynthesizeGLError(uint32_t error)
+    void GetError() -> (uint32_t returnValue) Synchronous
 {}
 }}
 
@@ -585,22 +587,24 @@ class webkit_ipc_cpp_proxy_impl(object):
         in_exprs = ", ".join([str(i) for i in self.in_exprs])
         out_exprs = ", ".join(str(o) for o in self.out_exprs)
         is_async = self.return_type.is_void() and len(out_exprs) == 0
+        self.call_stmts += [ "if (!isContextLost()) {" ]
         if is_async:
             self.call_stmts += [
-                f"send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}), m_graphicsContextGLIdentifier);",
+                f"    auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
             ]
         else:
-            send_result = ""
-            if self.post_call_stmts: 
-                send_result = "auto sendResult = "
-                self.post_call_stmts = [
-                    "if (sendResult)" + (" {" if len(self.post_call_stmts) > 1 else "")
-                ] + ["    " + s for s in self.post_call_stmts] + [
-                    ("}" if len(self.post_call_stmts) > 1 else "")
-                ]
             self.call_stmts += [
-                f"{send_result}sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}), Messages::RemoteGraphicsContextGL::{self.msg_name}::Reply({out_exprs}), m_graphicsContextGLIdentifier, 10_s);",
+                f"    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}), Messages::RemoteGraphicsContextGL::{self.msg_name}::Reply({out_exprs}));"
             ]
+        self.call_stmts += [
+            "    if (!sendResult)",
+            "        markContextLost();",
+        ]
+        if self.post_call_stmts:
+            self.call_stmts += ["    else {"] if len(self.post_call_stmts) > 1 else [ "    else"]
+            self.post_call_stmts = [ "    " + l for l in self.post_call_stmts ]
+            self.post_call_stmts += [ "    }" ] if len(self.post_call_stmts) > 1 else []
+        self.post_call_stmts += [ "}" ]
 
 
     def process_in_args(self, in_args: List[cpp_arg]):
@@ -621,8 +625,8 @@ class webkit_ipc_cpp_proxy_impl(object):
                 self.out_exprs += [e]
                 self.post_call_stmts += [
                     #fmt: off
-                    f"if ({o.name})",
-                    f"    *{o.name} = {webkit_ipc_convert_expr(e, value_type)};"
+                    f"    if ({o.name})",
+                    f"        *{o.name} = {webkit_ipc_convert_expr(e, value_type)};"
                     #fmt: on
                 ]
             elif o.type.is_span():
@@ -634,7 +638,7 @@ class webkit_ipc_cpp_proxy_impl(object):
                 if o.type.is_dynamic_span():
                     self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.bufSize")]
                 self.post_call_stmts += [
-                    f"memcpy({o.name}.data, {v.name}.data(), {o.name}.bufSize * sizeof({str(webkit_ipc_type.get_contained_type())}));"
+                    f"    memcpy({o.name}.data, {v.name}.data(), {o.name}.bufSize * sizeof({str(webkit_ipc_type.get_contained_type())}));"
                 ]
             else:
                 self.out_exprs += [cpp_expr(o.type, o.name)]
