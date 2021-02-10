@@ -1340,6 +1340,17 @@ MediaContentTypesRequiringHardwareSupport:
     WebCore:
       default: '""'
 
+MediaControlsContextMenusEnabled:
+  type: bool
+  condition: ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: false
+
 MediaControlsScaleWithPageZoom:
   type: bool
   defaultValue:

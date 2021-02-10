@@ -1,0 +1,21 @@
+This test checks that the tracks panel doesn't show any track as selected if all the text tracks for a media element are marked as "hidden".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+
+=== Initial state ===
+
+[x] Off
+[-] Auto (Recommended)
+[-] English Subtitles
+[-] French Subtitles
+[-] German Subtitles
+[-] Spanish Subtitles
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

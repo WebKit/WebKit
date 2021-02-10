@@ -100,6 +100,7 @@
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
@@ -7294,6 +7295,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [self _removeContextMenuViewIfPossible];
 }
 
+- (void)actionSheetAssistantDidShowContextMenu:(WKActionSheetAssistant *)assistant
+{
+    [_webView _didShowContextMenu];
+}
+
+- (void)actionSheetAssistantDidDismissContextMenu:(WKActionSheetAssistant *)assistant
+{
+    [_webView _didDismissContextMenu];
+}
+
 #endif // USE(UICONTEXTMENU)
 
 - (BOOL)_shouldUseContextMenus
@@ -8934,6 +8945,15 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+- (void)_showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler
+{
+    [_actionSheetAssistant showMediaControlsContextMenu:WTFMove(targetFrame) items:WTFMove(items) completionHandler:WTFMove(completionHandler)];
+}
+
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if HAVE(UI_POINTER_INTERACTION)
 
 - (void)setUpPointerInteraction
@@ -9367,7 +9387,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
 {
     if ([userInterfaceItem isEqualToString:@"actionSheet"])
-        return @{ userInterfaceItem: [_actionSheetAssistant currentAvailableActionTitles] };
+        return @{ userInterfaceItem: [_actionSheetAssistant currentlyAvailableActionTitles] };
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"contextMenu"]) {
@@ -9387,6 +9407,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         } };
     }
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    if ([userInterfaceItem isEqualToString:@"mediaControlsContextMenu"])
+        return @{ userInterfaceItem: [_actionSheetAssistant currentlyAvailableMediaControlsContextMenuItems] };
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
     if ([userInterfaceItem isEqualToString:@"fileUploadPanelMenu"]) {
         if (!_fileUploadPanel)

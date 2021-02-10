@@ -103,6 +103,22 @@ function showTracksPanel(shadowRoot, continuation)
     });
 }
 
+function getTracksContextMenu()
+{
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`
+        (function() {
+            function scriptCompleteWithContextMenu() {
+                uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('mediaControlsContextMenu')));
+            }
+            if (!uiController.isShowingContextMenu)
+                uiController.didShowContextMenuCallback = scriptCompleteWithContextMenu;
+            else
+                scriptCompleteWithContextMenu();
+        })();`, (result) => resolve(JSON.parse(result).mediaControlsContextMenu));
+    });
+}
+
 function finishMediaControlsTest()
 {
     if (scheduler)

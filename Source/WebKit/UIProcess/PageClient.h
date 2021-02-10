@@ -42,6 +42,7 @@
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/InputMode.h>
+#include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/CompletionHandler.h>
@@ -91,6 +92,7 @@ namespace WebCore {
 class Color;
 class Cursor;
 class FloatQuad;
+class FloatRect;
 class Region;
 class TextIndicator;
 class WebMediaSessionManager;
@@ -517,6 +519,10 @@ public:
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    virtual void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(WebCore::MediaControlsContextMenuItem::invalidID); }
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;

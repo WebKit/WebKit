@@ -1,0 +1,32 @@
+Clicking on a track in the tracks panel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+media.audioTracks[0].enabled = true
+media.audioTracks[1].enabled = false
+media.audioTracks[2].enabled = false
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+
+Clicking on the tracks button
+Clicking on second audio track in tracks panel
+
+Obtained change event on media audio tracks
+media.audioTracks[0].enabled = false
+media.audioTracks[1].enabled = true
+media.audioTracks[2].enabled = false
+
+Clicking on the tracks button
+Clicking on third audio track in tracks panel
+
+Obtained change event on media audio tracks
+media.audioTracks[0].enabled = false
+media.audioTracks[1].enabled = false
+media.audioTracks[2].enabled = true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -39,6 +39,7 @@
 #include "Icon.h"
 #include "ImageBuffer.h"
 #include "InputMode.h"
+#include "MediaControlsContextMenuItem.h"
 #include "MediaProducer.h"
 #include "PointerCharacteristics.h"
 #include "PopupMenu.h"
@@ -556,6 +557,10 @@ public:
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(Element&) { }
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    virtual void showMediaControlsContextMenu(FloatRect&&, Vector<MediaControlsContextMenuItem>&&, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(MediaControlsContextMenuItem::invalidID); }
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 protected:
     virtual ~ChromeClient() = default;

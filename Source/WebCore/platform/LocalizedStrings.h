@@ -298,7 +298,6 @@ namespace WebCore {
 
     String clickToExitFullScreenText();
 
-    String textTrackSubtitlesText();
     String textTrackOffMenuItemText();
     String textTrackAutomaticMenuItemText();
     String textTrackNoLabelText();

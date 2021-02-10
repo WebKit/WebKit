@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<script src="../../resources/media-controls-utils.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 300px;" controls autoplay muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description(`This test checks that the tracks contextmenu doesn't show any track as selected if all the text tracks for a media element are marked as "hidden".`);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Setting mode to 'hidden' for all text tracks via JavaScript...");
+            Array.from(media.textTracks).forEach(track => track.mode = "hidden");
+
+            debug("Tapping tracks button...");
+            let [contextmenu] = await Promise.all([
+                getTracksContextMenu(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            debug(JSON.stringify(contextmenu, null, 2));
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

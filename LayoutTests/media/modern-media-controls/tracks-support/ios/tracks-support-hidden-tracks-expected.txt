@@ -1,0 +1,58 @@
+This test checks that the tracks contextmenu doesn't show any track as selected if all the text tracks for a media element are marked as "hidden".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Setting mode to 'hidden' for all text tracks via JavaScript...
+Tapping tracks button...
+[
+  {
+    "children": [
+      {
+        "title": "Languages",
+        "children": [
+          {
+            "title": "English Sound",
+            "checked": true
+          },
+          {
+            "title": "French Sound"
+          },
+          {
+            "title": "Spanish Sound"
+          }
+        ]
+      },
+      {
+        "title": "Subtitles",
+        "children": [
+          {
+            "title": "Off",
+            "checked": true
+          },
+          {
+            "title": "Auto (Recommended)"
+          },
+          {
+            "title": "English Subtitles"
+          },
+          {
+            "title": "French Subtitles"
+          },
+          {
+            "title": "German Subtitles"
+          },
+          {
+            "title": "Spanish Subtitles"
+          }
+        ]
+      }
+    ]
+  }
+]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

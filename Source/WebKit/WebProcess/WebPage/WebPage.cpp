@@ -7192,6 +7192,13 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
 
 #endif // ENABLE(IMAGE_EXTRACTION)
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::ShowMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items)), completionHandler);
+}
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if !PLATFORM(IOS_FAMILY)
 
 void WebPage::animationDidFinishForElement(const WebCore::Element&)

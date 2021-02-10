@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script src="../../resources/media-controls-utils.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 300px;" controls autoplay muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Ensure that clicking the tracks button when the tracks contextmenu is shown makes the contextmenu hide.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Tapping tracks button...");
+            await Promise.all([
+                UIHelper.waitForContextMenuToShow(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            debug("Context menu shown.");
+
+            debug("Tapping tracks button...");
+            await Promise.all([
+                UIHelper.waitForContextMenuToHide(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            debug("Context menu hidden.");
+
+            debug("Tapping tracks button...");
+            await Promise.all([
+                UIHelper.waitForContextMenuToShow(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            debug("Context menu shown.");
+
+            debug("Tapping tracks button...");
+            await Promise.all([
+                UIHelper.waitForContextMenuToHide(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            debug("Context menu hidden.");
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

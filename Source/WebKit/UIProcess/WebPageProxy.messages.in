@@ -235,6 +235,10 @@ messages -> WebPageProxy {
     RequestImageExtraction(WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    ShowMediaControlsContextMenu(WebCore::FloatRect targetFrame, Vector<WebCore::MediaControlsContextMenuItem> items) -> (WebCore::MediaControlsContextMenuItem::ID selectedItemID) Async
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if HAVE(TOUCH_BAR)
     SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
     SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)

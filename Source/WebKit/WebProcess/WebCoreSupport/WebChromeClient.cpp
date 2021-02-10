@@ -1440,4 +1440,13 @@ void WebChromeClient::requestImageExtraction(Element& element)
 
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
+{
+    m_page.showMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items), WTFMove(completionHandler));
+}
+
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 } // namespace WebKit

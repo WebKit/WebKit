@@ -1,3 +1,70 @@
+2021-02-09  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Add support for the language/subtitle tracks button using `UIMenu`
+        https://bugs.webkit.org/show_bug.cgi?id=221594
+        <rdar://problem/74129129>
+
+        Reviewed by Eric Carlson and Wenson Hsieh.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::showMediaControlsContextMenu): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::showMediaControlsContextMenu): Added.
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showMediaControlsContextMenu): Added.
+        Send the given `MediaControlsContextMenuItem`s to the UIProcess for the `UIMenu`.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showMediaControlsContextMenu): Added.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showMediaControlsContextMenu): Added.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistantDidShowContextMenu:]): Added.
+        (-[WKContentView actionSheetAssistantDidDismissContextMenu:]): Added.
+        (-[WKContentView _showMediaControlsContextMenu:items:completionHandler:]): Added.
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+        Pass the given `MediaControlsContextMenuItem`s to the `WKActionSheetAssistant`.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant dealloc]):
+        (-[WKActionSheetAssistant _removeContextMenuInteractions]): Added.
+        (-[WKActionSheetAssistant _ensureDataDetectorContextMenuInteraction]): Added.
+        (-[WKActionSheetAssistant _ensureMediaControlsContextMenuInteraction]): Added.
+        (-[WKActionSheetAssistant hasContextMenuInteraction]):
+        (-[WKActionSheetAssistant showDataDetectorsUIForPositionInformation:]):
+        (-[WKActionSheetAssistant _uiMenuElementsForMediaControlContextMenuItems:]): Added.
+        (-[WKActionSheetAssistant showMediaControlsContextMenu:items:completionHandler:]): Added.
+        (-[WKActionSheetAssistant contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:willDisplayMenuForConfiguration:animator:]): Added.
+        (-[WKActionSheetAssistant contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKActionSheetAssistant _contextMenuInteraction:overrideSuggestedActionsForConfiguration:]):
+        (-[WKActionSheetAssistant _contentsOfContextMenuItem:]): Added.
+        (-[WKActionSheetAssistant currentlyAvailableActionTitles]): Added.
+        (-[WKActionSheetAssistant currentlyAvailableMediaControlsContextMenuItems]): Added.
+        (-[WKActionSheetAssistant currentAvailableActionTitles]): Deleted.
+        (-[WKActionSheetAssistant removeContextMenuInteraction]): Deleted.
+        (-[WKActionSheetAssistant ensureContextMenuInteraction]): Deleted.
+        Instead of assuming that the only `UIContextMenuInteraction` is for data detectors, check
+        the given `interaction` to see if it's the data detector interaction before doing any work.
+        This allows the media controls `UIContextMenuInteraction` to exist side-by-side and use the
+        `WKActionSheetAssistant` as its delegate too (especially since it's not possible for both
+        contextmenus to be active at the same time). Present the media controls contextmenu without
+        a preview (it uses an empty `UIView` for proper sizing) at the location provided. Selecting
+        a `UIAction` will send the `MediaControlsContextMenuItem::ID` back to the WebProcess.
+        Also add support for
+         - `UIScriptController.prototype.contentsOfUserInterfaceItem`
+         - `UIScriptController.prototype.didShowContextMenuCallback`
+         - `UIScriptController.prototype.didDismissContextMenuCallback`
+        for usage in the added `LayoutTests/media/modern-media-controls/tracks-support/ios/` tests.
+
 2021-02-09  Chris Dumez  <cdumez@apple.com>
 
         Make sure we are no longer show the previous page when running a JS prompt

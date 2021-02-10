@@ -58,6 +58,7 @@
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -78,6 +79,7 @@ class TextStream;
 namespace WebCore {
 class Color;
 class FloatQuad;
+class FloatRect;
 class IntSize;
 class SelectionRect;
 struct ContactInfo;
@@ -672,6 +674,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+- (void)_showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 - (BOOL)_formControlRefreshEnabled;

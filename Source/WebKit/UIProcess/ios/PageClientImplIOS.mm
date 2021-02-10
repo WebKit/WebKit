@@ -966,6 +966,13 @@ void PageClientImpl::setMouseEventPolicy(WebCore::MouseEventPolicy policy)
 #endif
 }
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+void PageClientImpl::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
+{
+    [m_contentView _showMediaControlsContextMenu:WTFMove(targetFrame) items:WTFMove(items) completionHandler:WTFMove(completionHandler)];
+}
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 void PageClientImpl::handleAsynchronousCancelableScrollEvent(UIScrollView *scrollView, UIScrollEvent *scrollEvent, void (^completion)(BOOL handled))
 {

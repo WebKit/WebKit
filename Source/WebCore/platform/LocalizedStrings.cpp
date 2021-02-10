@@ -1078,11 +1078,6 @@ String clickToExitFullScreenText()
     return WEB_UI_STRING("Click to Exit Full Screen", "Message to display in browser window when in webkit full screen mode.");
 }
 
-String textTrackSubtitlesText()
-{
-    return WEB_UI_STRING("Subtitles", "Menu section heading for subtitles");
-}
-
 String textTrackOffMenuItemText()
 {
     return WEB_UI_STRING("Off", "Menu item label for the track that represents disabling closed captions");

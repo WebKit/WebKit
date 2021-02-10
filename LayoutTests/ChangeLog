@@ -1,3 +1,48 @@
+2021-02-09  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Add support for the language/subtitle tracks button using `UIMenu`
+        https://bugs.webkit.org/show_bug.cgi?id=221594
+        <rdar://problem/74129129>
+
+        Reviewed by Eric Carlson and Wenson Hsieh.
+
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (getTracksContextMenu): Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api-expected.txt: Added.
+        Duplicate existing `TracksSupport` tests to test for similar results but using the new iOS path.
+
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-auto-text-track.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-auto-text-track-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-hidden-tracks.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-hidden-tracks-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-off-text-track.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-off-text-track-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api-expected.txt.
+        * platform/mac/TestExpectations:
+        Moved existing `TracksSupport` tests to a `mac` subfolder so they can be skipped on iOS.
+
 2021-02-09  Andres Gonzalez  <andresg_22@apple.com>
 
         Descendants of row and column headers should expose the aria-sort attribute.

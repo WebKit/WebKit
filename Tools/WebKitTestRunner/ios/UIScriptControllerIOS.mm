@@ -1034,29 +1034,37 @@ JSObjectRef UIScriptControllerIOS::rectForMenuAction(JSStringRef jsAction) const
 
 WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) const
 {
-    UIWindow *windowForButton = nil;
-    UIButton *buttonForAction = nil;
-    UIView *calloutBar = UICalloutBar.activeCalloutBar;
-    if (!calloutBar.window)
-        return { };
+    UIView *viewForAction = nil;
+    UIWindow *window = webView().window;
 
-    for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
-        NSString *buttonTitle = [button titleForState:UIControlStateNormal];
-        if (!buttonTitle.length)
-            continue;
+    if (UIView *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window) {
+        for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
+            NSString *buttonTitle = [button titleForState:UIControlStateNormal];
+            if (!buttonTitle.length)
+                continue;
 
-        if (![buttonTitle isEqualToString:(__bridge NSString *)action])
-            continue;
+            if (![buttonTitle isEqualToString:(__bridge NSString *)action])
+                continue;
 
-        buttonForAction = button;
-        windowForButton = calloutBar.window;
-        break;
+            viewForAction = button;
+            break;
+        }
     }
 
-    if (!buttonForAction)
+    if (!viewForAction) {
+        for (UILabel *label in findAllViewsInHierarchyOfType(window, UILabel.class)) {
+            if (![label.text isEqualToString:(__bridge NSString *)action])
+                continue;
+
+            viewForAction = label;
+            break;
+        }
+    }
+
+    if (!viewForAction)
         return { };
 
-    CGRect rectInRootViewCoordinates = [buttonForAction convertRect:buttonForAction.bounds toView:platformContentView()];
+    CGRect rectInRootViewCoordinates = [viewForAction convertRect:viewForAction.bounds toView:platformContentView()];
     return WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height);
 }
 
