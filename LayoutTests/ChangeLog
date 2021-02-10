@@ -1,3 +1,16 @@
+2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Some privateClickMeasurement might output the information in different order depending on platform
+        https://bugs.webkit.org/show_bug.cgi?id=221406
+
+        Reviewed by Michael Catanzaro.
+
+        The script conversionReport.php iterates the HTTP headers to show the information, but header's order can be
+        different for different platforms. We could just check every value we want to show to make sure we always
+        provide them in the same order.
+
+        * http/tests/privateClickMeasurement/resources/conversionReport.php:
+
 2021-02-10  Rob Buis  <rbuis@igalia.com>
 
         Do not schedule update on embed creation
