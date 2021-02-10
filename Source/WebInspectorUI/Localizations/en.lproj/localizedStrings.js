@@ -703,6 +703,8 @@ localizedStrings["Go to variable"] = "Go to variable";
 localizedStrings["Grammar"] = "Grammar";
 /* Name of Graphics Tab */
 localizedStrings["Graphics Tab Name"] = "Graphics";
+/* CSS Grid layout section name */
+localizedStrings["Grid @ Elements details sidebar"] = "Grid";
 localizedStrings["Group"] = "Group";
 /* Dropdown option inside the popover used to creating an audit group. */
 localizedStrings["Group @ Audit Tab Navigation Sidebar"] = "Group";
@@ -1029,6 +1031,8 @@ localizedStrings["PDF"] = "PDF";
 localizedStrings["PNG"] = "PNG";
 localizedStrings["Page"] = "Page";
 localizedStrings["Page Issue"] = "Page Issue";
+/* Heading for list of grid nodes */
+localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
 localizedStrings["Page navigated at %s"] = "Page navigated at %s";
 localizedStrings["Page reloaded at %s"] = "Page reloaded at %s";
 /* Paint (render) phase timeline records */

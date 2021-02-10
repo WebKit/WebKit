@@ -45,7 +45,7 @@ function test()
                 changeElementDisplayValue("gridToNonGrid", "block"),
             ]);
 
-            InspectorTest.expectEqual(domNode.layoutContextType, undefined, "Layout context should now be `undefined`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should now be `null`.");
         }
     });
 
@@ -54,7 +54,7 @@ function test()
         description: "Change a non-grid to a grid.",
         selector: "#nonGridToGrid",
         async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, undefined, "Layout context should be `undefined`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should be `null`.");
 
             await Promise.all([
                 domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),

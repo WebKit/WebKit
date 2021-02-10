@@ -52,7 +52,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._shadowRootType = payload.shadowRootType;
         this._computedRole = null;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
-        this._layoutContextType = payload.layoutContextType;
+        this._layoutContextType = null;
 
         if (this._nodeType === Node.DOCUMENT_NODE)
             this.ownerDocument = this;
@@ -154,6 +154,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         if (this.isMediaElement())
             WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+
+        // Setting layoutContextType to anything other than null will dispatch an event.
+        this.layoutContextType = payload.layoutContextType;
     }
 
     // Static
@@ -250,7 +253,10 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     set layoutContextType(layoutContextType)
     {
-        console.assert(layoutContextType !== this._layoutContextType);
+        layoutContextType ||= null;
+        if (layoutContextType === this._layoutContextType)
+            return;
+
         this._layoutContextType = layoutContextType;
         this.dispatchEventToListeners(WI.DOMNode.Event.LayoutContextTypeChanged);
     }
@@ -259,6 +265,8 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         console.assert(!this._destroyed, this);
         this._destroyed = true;
+
+        this.layoutContextType = null;
     }
 
     computedRole()

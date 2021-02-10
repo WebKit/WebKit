@@ -1,3 +1,62 @@
+2021-02-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Display all CSS grids on page in Layout panel
+        https://bugs.webkit.org/show_bug.cgi?id=221145
+        <rdar://problem/73764515>
+
+        Reviewed by Devin Rousso.
+
+        Show a list of CSS Grid containers in the Layout sidebar panel of the Elements Tab.
+        Whenever grid nodes are added to or removed from the page, the list is updated.
+
+        Clicking on a checkbox next to a grid node toggles the Grid overlay for that node.
+        Changing the color of the swatch next to a grid node updates the color of the overlay if it is visible.
+
+        Add OverlayManager to mediate showing and hiding Grid overlays.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Controllers/OverlayManager.js: Added.
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.get nodesWithGridOverlay):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.hideGridOverlay):
+        `OverlayManager` is a singleton used to show and hide overlays for nodes on the inspected page.
+        It maintains state of all overlays that are visible on the page. It fires events when they are shown or hidden.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.set layoutContextType):
+        (WI.DOMNode.prototype.markDestroyed):
+        Whenever a node is removed from the DOM, its `layoutContextType` property changes to `null`.
+        This dispatches a `WI.DOMNode.Event.LayoutContextTypeChanged` event which is handled in `CSSGridSection`
+        to refresh the list of grid node containers on the page.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype.set nodeStyles):
+        * UserInterface/Views/CSSGridSection.css: Added.
+        (.css-grid-section .node-link):
+        (.css-grid-section .heading):
+        * UserInterface/Views/CSSGridSection.js: Added.
+        (WI.CSSGridSection):
+        (WI.CSSGridSection.prototype.attached):
+        (WI.CSSGridSection.prototype.detached):
+        (WI.CSSGridSection.prototype.initialLayout):
+        (WI.CSSGridSection.prototype.layout):
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection.prototype._handleLayoutContextTypeChanged):
+        (WI.CSSGridSection.prototype._refreshGridNodeSet):
+        `CSSGridSection` is a new `View` under `LayoutDetailsSidebarPanel`.
+        It holds a list of grid nodes on the page and a set of configuration options
+        to pass when showing the Grid overlay (upcoming in separate patch).
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css: Added.
+        (.details-section.layout-css-grid > .content > .group > .row > .css-grid-section):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+
 2021-02-09  Devin Rousso  <drousso@apple.com>
 
         [Cocoa] rename `ENGINEERING_BUILD` to `ENABLE_DEVELOPER_MODE` to match other platforms

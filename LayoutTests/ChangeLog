@@ -1,3 +1,17 @@
+2021-02-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Display all CSS grids on page in Layout panel
+        https://bugs.webkit.org/show_bug.cgi?id=221145
+        <rdar://problem/73764515>
+
+        Reviewed by Devin Rousso.
+
+        DOMNode.layoutContextType is null when not defined.
+        Update layout test and corresponding expected result.
+
+        * inspector/css/nodeLayoutContextTypeChanged-expected.txt:
+        * inspector/css/nodeLayoutContextTypeChanged.html:
+
 2021-02-10  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Paint invalidation for inline element style changes
