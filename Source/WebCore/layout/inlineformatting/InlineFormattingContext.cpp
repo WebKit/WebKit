@@ -526,13 +526,16 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
             if (lineRun.isInlineBoxStart()) {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                formattingState.addLineRun({ lineIndex, layoutBox, lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry), lineRun.expansion(), { } });
+                auto inlineBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+                formattingState.addLineRun({ lineIndex, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { } });
                 inlineBoxStartSet.add(&layoutBox);
-                // FIXME: Add enclosing top and bottom support.
+                enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, inlineBoxLogicalRect.top());
                 continue;
             }
             if (lineRun.isInlineBoxEnd()) {
                 inlineBoxEndSet.add(&layoutBox);
+                auto inlineBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, formattingState.boxGeometry(layoutBox));
+                enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, inlineBoxLogicalRect.bottom());
                 continue;
             }
             ASSERT(lineRun.isWordBreakOpportunity());
