@@ -1741,7 +1741,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
     [options setTimeout:@10];
 
     auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
-    [panel makeCredentialWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
+    [panel makeCredentialWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
 
         EXPECT_NULL(response);
@@ -1761,7 +1761,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
     uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
     NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
-    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
@@ -1775,7 +1775,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
     auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
     [panel setDelegate:delegate.get()];
 
-    [panel makeCredentialWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
+    [panel makeCredentialWithChallenge:nsHash.get() origin:@"example.com" options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
         cleanUpKeychain("example.com");
 
@@ -1783,6 +1783,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
         EXPECT_NULL(error);
 
         EXPECT_NOT_NULL(response);
+        EXPECT_WK_STREQ([response.clientDataJSON base64EncodedStringWithOptions:0], "eyJjaGFsbGVuZ2UiOiJBUUlEQkFFQ0F3UUJBZ01FQVFJREJBRUNBd1FCQWdNRUFRSURCQUVDQXdRIiwib3JpZ2luIjoiZXhhbXBsZS5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0=");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
         EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
@@ -1878,7 +1879,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
     [options setTimeout:@120];
 
     auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
-    [panel getAssertionWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+    [panel getAssertionWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
 
         EXPECT_NULL(response);
@@ -1908,13 +1909,14 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
     auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
     [panel setDelegate:delegate.get()];
 
-    [panel getAssertionWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+    [panel getAssertionWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
         cleanUpKeychain("");
 
         EXPECT_NULL(error);
 
         EXPECT_NOT_NULL(response);
+        EXPECT_WK_STREQ([response.clientDataJSON base64EncodedStringWithOptions:0], "eyJjaGFsbGVuZ2UiOiJBUUlEQkFFQ0F3UUJBZ01FQVFJREJBRUNBd1FCQWdNRUFRSURCQUVDQXdRIiwib3JpZ2luIjoiIiwidHlwZSI6IndlYmF1dGhuLmNyZWF0ZSJ9");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
         EXPECT_WK_STREQ([response.authenticatorData base64EncodedStringWithOptions:0], "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFUFAAAAAA==");

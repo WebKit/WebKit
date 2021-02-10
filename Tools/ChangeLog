@@ -1,3 +1,14 @@
+2021-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Produce ClientDataJSON in the SPI
+        https://bugs.webkit.org/show_bug.cgi?id=221623
+        <rdar://problem/71509394>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-10  Ruben Turcios  <rubent_22@apple.com>
 
         Adding self to contributor.json file. 

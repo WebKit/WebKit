@@ -1,3 +1,43 @@
+2021-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Produce ClientDataJSON in the SPI
+        https://bugs.webkit.org/show_bug.cgi?id=221623
+        <rdar://problem/71509394>
+
+        Reviewed by Brent Fulgham.
+
+        Instead of asking the clients of the SPI to pre-calculate the ClientDataJSON hash for us, we do
+        that in the SPI space ourselves.
+
+        Covered by API tests.
+
+        * UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponse.mm:
+        (-[_WKAuthenticatorAssertionResponse initWithClientDataJSON:rawId:extensions:authenticatorData:signature:userHandle:]):
+        (-[_WKAuthenticatorAssertionResponse initWithRawId:extensions:authenticatorData:signature:userHandle:]): Deleted.
+        * UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.mm:
+        (-[_WKAuthenticatorAttestationResponse initWithClientDataJSON:rawId:extensions:attestationObject:]):
+        (-[_WKAuthenticatorAttestationResponse initWithRawId:extensions:attestationObject:]): Deleted.
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponse.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponse.mm:
+        (-[_WKAuthenticatorResponse initWithClientDataJSON:rawId:extensions:]):
+        (-[_WKAuthenticatorResponse initWithRawId:extensions:]): Deleted.
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponseInternal.h:
+        Adds a field to return the JSON serialized bytes for the ClientDataJSON.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (produceClientDataJson):
+        (produceClientDataJsonHash):
+        (wkAuthenticatorAttestationResponse):
+        (-[_WKWebAuthenticationPanel makeCredentialWithChallenge:origin:options:completionHandler:]):
+        (wkAuthenticatorAssertionResponse):
+        (-[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel makeCredentialWithHash:options:completionHandler:]): Deleted.
+        (-[_WKWebAuthenticationPanel getAssertionWithHash:options:completionHandler:]): Deleted.
+        Modifies the SPI to accept a challenge and an origin to calculate the ClientDataJSON.
+
 2021-02-10  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early February 2021 edition

@@ -33,11 +33,12 @@
     RetainPtr<_WKAuthenticationExtensionsClientOutputs> _extensions;
 }
 
-- (instancetype)initWithRawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions
+- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions
 {
     if (!(self = [super init]))
         return nil;
 
+    _clientDataJSON = clientDataJSON;
     _rawId = rawId;
     _extensions = extensions;
     return self;

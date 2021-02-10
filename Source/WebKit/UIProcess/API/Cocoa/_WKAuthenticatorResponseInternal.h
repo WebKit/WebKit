@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKAuthenticatorResponse ()
 
-- (instancetype)initWithRawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions;
+- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions;
 
 @end
 
