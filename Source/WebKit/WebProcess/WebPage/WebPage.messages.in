@@ -210,15 +210,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetContentsAsAttributedString() -> (struct WebCore::AttributedString result) Async
 #endif
 #if ENABLE(MHTML)
-    GetContentsAsMHTMLData(WebKit::CallbackID callbackID)
+    GetContentsAsMHTMLData() -> (IPC::SharedBufferDataReference data) Async
 #endif
-    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
-    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL, WebKit::CallbackID callbackID)
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::SharedBufferDataReference dataReference) Async
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (IPC::SharedBufferDataReference dataReference) Async
     GetRenderTreeExternalRepresentation(WebKit::CallbackID callbackID)
     GetSelectionOrContentsAsString(WebKit::CallbackID callbackID)
-    GetSelectionAsWebArchiveData(WebKit::CallbackID callbackID)
+    GetSelectionAsWebArchiveData() -> (IPC::DataReference data) Async
     GetSourceForFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
-    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::DataReference dataReference) Async
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, Optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details) Async
 
@@ -400,7 +400,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) Async
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) Async
-    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (IPC::DataReference data) Async
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
     DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (IPC::DataReference data) Async

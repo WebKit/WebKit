@@ -1,5 +1,50 @@
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Use CompletionHandler instead of DataCallback
+        https://bugs.webkit.org/show_bug.cgi?id=221639
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetMainResourceData):
+        (WKFrameGetResourceData):
+        (WKFrameGetWebArchive):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSelectionAsWebArchiveData):
+        (WKPageDrawPagesToPDF):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView createWebArchiveDataWithCompletionHandler:]):
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::getWebArchive):
+        (WebKit::WebFrameProxy::getMainResourceData):
+        (WebKit::WebFrameProxy::getResourceData):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::CompletionHandler<void):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+        (WebKit::WebPageProxy::dataCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsMHTMLData):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Use CompletionHandler instead of PrintFinishedCallback
         https://bugs.webkit.org/show_bug.cgi?id=221643
 

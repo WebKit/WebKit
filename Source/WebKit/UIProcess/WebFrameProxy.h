@@ -103,9 +103,9 @@ public:
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
 
-    void getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getMainResourceData(Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getResourceData(API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getWebArchive(CompletionHandler<void(API::Data*)>&&);
+    void getMainResourceData(CompletionHandler<void(API::Data*)>&&);
+    void getResourceData(API::URL*, CompletionHandler<void(API::Data*)>&&);
 
     void didStartProvisionalLoad(const URL&);
     void didExplicitOpen(URL&&, String&& mimeType);

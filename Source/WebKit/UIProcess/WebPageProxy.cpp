@@ -4153,16 +4153,17 @@ void WebPageProxy::getSamplingProfilerOutput(WTF::Function<void (const String&, 
     send(Messages::WebPage::GetSamplingProfilerOutput(callbackID));
 }
 
-#if ENABLE(MHTML)
-void WebPageProxy::getContentsAsMHTMLData(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+static CompletionHandler<void(const IPC::DataReference& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
+    return [callback = WTFMove(callback)] (const IPC::DataReference& data) mutable {
+        callback(API::Data::create(data).get());
+    };
+}
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getContentsAsMHTMLData"_s));
-    send(Messages::WebPage::GetContentsAsMHTMLData(callbackID));
+#if ENABLE(MHTML)
+void WebPageProxy::getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebPage::GetContentsAsMHTMLData(), toAPIDataCallback(WTFMove(callback)));
 }
 #endif
 
@@ -4177,48 +4178,28 @@ void WebPageProxy::getSelectionOrContentsAsString(WTF::Function<void (const Stri
     send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID));
 }
 
-void WebPageProxy::getSelectionAsWebArchiveData(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionAsWebArchiveData"_s));
-    send(Messages::WebPage::GetSelectionAsWebArchiveData(callbackID));
+    sendWithAsyncReply(Messages::WebPage::GetSelectionAsWebArchiveData(), toAPIDataCallback(WTFMove(callback)));
 }
 
-void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess() || !frame) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getMainResourceDataOfFrame"_s));
-    send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID));
+    if (!frame)
+        return callback(nullptr);
+    sendWithAsyncReply(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID()), toAPIDataCallback(WTFMove(callback)));
 }
 
-void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* resourceURL, Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getResourceDataFromFrame(WebFrameProxy& frame, API::URL* resourceURL, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getResourceDataFromFrame"_s));
-    send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID));
+    sendWithAsyncReply(Messages::WebPage::GetResourceDataFromFrame(frame.frameID(), resourceURL->string()), toAPIDataCallback(WTFMove(callback)));
 }
 
-void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getWebArchiveOfFrame"_s));
-    send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID));
+    if (!frame)
+        return callback(nullptr);
+    sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID()), toAPIDataCallback(WTFMove(callback)));
 }
 
 void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
@@ -7144,15 +7125,6 @@ void WebPageProxy::voidCallback(CallbackID callbackID)
     callback->performCallback();
 }
 
-void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<DataCallback>(callbackID);
-    if (!callback)
-        return;
-
-    callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
-}
-
 void WebPageProxy::stringCallback(const String& resultString, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<StringCallback>(callbackID);
@@ -8551,16 +8523,9 @@ uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& pr
     return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
-void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, Ref<DataCallback>&& callback)
+uint64_t WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback->invalidate();
-        return;
-    }
-    
-    auto callbackID = callback->callbackID();
-    m_callbacks.put(WTFMove(callback));
-    send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), printingSendOptions(m_isPerformingDOMPrintOperation));
+    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(API::Error*)>&& callback)

@@ -1478,15 +1478,8 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _page->getWebArchiveOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            completionHandlerBlock(wrapper(*data), nil);
+    _page->getWebArchiveOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        completionHandler(wrapper(data), nil);
     });
 }
 
@@ -2526,15 +2519,8 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _page->getMainResourceDataOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            completionHandlerBlock(wrapper(*data), nil);
+    _page->getMainResourceDataOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        completionHandler(wrapper(*data), nil);
     });
 }
 

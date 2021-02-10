@@ -342,13 +342,8 @@ struct ResourceGetDataAsyncData {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResourceGetDataAsyncData)
 
-static void resourceDataCallback(API::Data* wkData, CallbackBase::Error error, GTask* task)
+static void resourceDataCallback(API::Data* wkData, GTask* task)
 {
-    if (error != CallbackBase::Error::None) {
-        // This fails when the page is closed or frame is destroyed, so we can just cancel the operation.
-        g_task_return_new_error(task, G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
-        return;
-    }
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     data->webData = wkData;
     if (!wkData->bytes())
@@ -375,13 +370,13 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
     GRefPtr<GTask> task = adoptGRef(g_task_new(resource, cancellable, callback, userData));
     g_task_set_task_data(task.get(), createResourceGetDataAsyncData(), reinterpret_cast<GDestroyNotify>(destroyResourceGetDataAsyncData));
     if (resource->priv->isMainResource)
-        resource->priv->frame->getMainResourceData([task = WTFMove(task)](API::Data* data, CallbackBase::Error error) {
-            resourceDataCallback(data, error, task.get());
+        resource->priv->frame->getMainResourceData([task = WTFMove(task)](API::Data* data) {
+            resourceDataCallback(data, task.get());
         });
     else {
         String url = String::fromUTF8(resource->priv->uri.data());
-        resource->priv->frame->getResourceData(API::URL::create(url).ptr(), [task = WTFMove(task)](API::Data* data, CallbackBase::Error error) {
-            resourceDataCallback(data, error, task.get());
+        resource->priv->frame->getResourceData(API::URL::create(url).ptr(), [task = WTFMove(task)](API::Data* data) {
+            resourceDataCallback(data, task.get());
         });
     }
 }

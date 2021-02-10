@@ -380,7 +380,6 @@ enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
-typedef GenericCallback<API::Data*> DataCallback;
 typedef GenericCallback<const String&> StringCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -1127,15 +1126,15 @@ public:
     void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
 
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&&);
 #endif
-    void getMainResourceDataOfFrame(WebFrameProxy*, Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getResourceDataFromFrame(WebFrameProxy*, API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getMainResourceDataOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
+    void getResourceDataFromFrame(WebFrameProxy&, API::URL*, CompletionHandler<void(API::Data*)>&&);
     void getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&&);
     void getSelectionOrContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSelectionAsWebArchiveData(Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&&);
     void getSourceForFrame(WebFrameProxy*, WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getWebArchiveOfFrame(WebFrameProxy*, Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getWebArchiveOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
     void runJavaScriptInMainFrame(WebCore::RunJavaScriptParameters&&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, API::ContentWorld&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
@@ -1292,7 +1291,7 @@ public:
     uint64_t computePagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
 #if PLATFORM(COCOA)
     uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
-    void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
+    uint64_t drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(IOS_FAMILY)
     std::pair<size_t, uint64_t> computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const IPC::DataReference&)>&&);
@@ -2160,7 +2159,6 @@ private:
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
     void voidCallback(CallbackID);
-    void dataCallback(const IPC::DataReference&, CallbackID);
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
 #if ENABLE(APPLICATION_MANIFEST)

@@ -278,7 +278,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
     _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    auto callback = WebKit::DataCallback::create([context](API::Data* data, WebKit::CallbackBase::Error) {
+    auto callback = [context](API::Data* data) {
         ASSERT(RunLoop::isMain());
 
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
@@ -293,13 +293,10 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
             view->_expectedPrintCallback = 0;
             view->_printingCallbackCondition.notifyOne();
         }
-    });
-    _expectedPrintCallback = callback->callbackID().toInteger();
-
+    };
+    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
-    context->callbackID = callback->callbackID().toInteger();
-
-    _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    context->callbackID = _expectedPrintCallback;
 }
 
 static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, IPCCallbackContext* context)

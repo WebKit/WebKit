@@ -969,7 +969,7 @@ public:
 
 #if PLATFORM(COCOA)
     void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
-    void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CallbackID);
+    void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::DataReference&)>&&);
     void drawPagesToPDFImpl(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
 #endif
 
@@ -1585,15 +1585,15 @@ private:
     void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(CallbackID);
+    void getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback);
 #endif
-    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CallbackID);
-    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CallbackID);
+    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
+    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
     void getRenderTreeExternalRepresentation(CallbackID);
     void getSelectionOrContentsAsString(CallbackID);
-    void getSelectionAsWebArchiveData(CallbackID);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&&);
     void getSourceForFrame(WebCore::FrameIdentifier, CallbackID);
-    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CallbackID);
+    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::DataReference&)>&&);
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);

@@ -3627,9 +3627,9 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
 }
 
 #if ENABLE(MHTML)
-void WebPage::getContentsAsMHTMLData(CallbackID callbackID)
+void WebPage::getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
-    send(Messages::WebPageProxy::DataCallback({ MHTMLArchive::generateMHTMLData(m_page.get()) }, callbackID));
+    callback({ MHTMLArchive::generateMHTMLData(m_page.get()) });
 }
 #endif
 
@@ -3649,7 +3649,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void WebPage::getSelectionAsWebArchiveData(CallbackID callbackID)
+void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3657,12 +3657,12 @@ void WebPage::getSelectionAsWebArchiveData(CallbackID callbackID)
         data = LegacyWebArchive::createFromSelection(frame)->rawDataRepresentation();
 #endif
 
-    IPC::SharedBufferDataReference dataReference;
+    IPC::DataReference dataReference;
 #if PLATFORM(COCOA)
     if (data)
         dataReference = { CFDataGetBytePtr(data.get()), static_cast<size_t>(CFDataGetLength(data.get())) };
 #endif
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
 void WebPage::getSelectionOrContentsAsString(CallbackID callbackID)
@@ -3683,7 +3683,7 @@ void WebPage::getSourceForFrame(FrameIdentifier frameID, CallbackID callbackID)
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
-void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CallbackID callbackID)
+void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3698,7 +3698,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CallbackID cal
     IPC::SharedBufferDataReference dataReference;
     if (buffer)
         dataReference = { *buffer };
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
 static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
@@ -3714,7 +3714,7 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CallbackID callbackID)
+void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3725,10 +3725,10 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     IPC::SharedBufferDataReference dataReference;
     if (buffer)
         dataReference = { *buffer };
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CallbackID callbackID)
+void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3738,12 +3738,12 @@ void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CallbackID callbackI
     UNUSED_PARAM(frameID);
 #endif
 
-    IPC::SharedBufferDataReference dataReference;
+    IPC::DataReference dataReference;
 #if PLATFORM(COCOA)
     if (data)
         dataReference = { CFDataGetBytePtr(data.get()), static_cast<size_t>(CFDataGetLength(data.get())) };
 #endif
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
 void WebPage::forceRepaintWithoutCallback()
@@ -5184,11 +5184,11 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     completionHandler(handle);
 }
 
-void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CallbackID callbackID)
+void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
-    send(Messages::WebPageProxy::DataCallback({ CFDataGetBytePtr(pdfPageData.get()), static_cast<size_t>(CFDataGetLength(pdfPageData.get())) }, callbackID));
+    callback({ CFDataGetBytePtr(pdfPageData.get()), static_cast<size_t>(CFDataGetLength(pdfPageData.get())) });
 }
 
 void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)

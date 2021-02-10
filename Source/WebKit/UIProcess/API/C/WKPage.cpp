@@ -2568,13 +2568,17 @@ void WKPageGetSamplingProfilerOutput(WKPageRef pageRef, void* context, WKPageGet
 
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
-    toImpl(pageRef)->getSelectionAsWebArchiveData(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getSelectionAsWebArchiveData([context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 }
 
 void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
 {
 #if ENABLE(MHTML)
-    toImpl(pageRef)->getContentsAsMHTMLData(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getContentsAsMHTMLData([context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(context);
@@ -2654,7 +2658,9 @@ void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo
 #if PLATFORM(COCOA)
 void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
 {
-    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, [context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 }
 #endif
 
