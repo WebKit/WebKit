@@ -1,3 +1,15 @@
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Rename testcase to indicate hang
+        https://bugs.webkit.org/show_bug.cgi?id=221375
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename testcase to indicate hang rather than crash.
+
+        * plugins/embed-creation-hang-expected.txt: Renamed from LayoutTests/plugins/embed-creation-crash-expected.txt.
+        * plugins/embed-creation-hang.html: Renamed from LayoutTests/plugins/embed-creation-crash.html.
+
 2021-02-10  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Display all CSS grids on page in Layout panel
