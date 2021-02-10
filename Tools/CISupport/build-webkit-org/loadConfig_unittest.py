@@ -27,9 +27,7 @@ import json
 import os
 import unittest
 
-USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
-if USE_BUILDBOT_VERSION2:
-    import loadConfig
+import loadConfig
 
 class ConfigDotJSONTest(unittest.TestCase):
     def get_config(self):

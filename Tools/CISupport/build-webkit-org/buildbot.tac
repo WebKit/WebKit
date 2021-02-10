@@ -1,15 +1,10 @@
 import os
 
-USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
-
 from twisted.application import service
 from buildbot.master import BuildMaster
 
 basedir = '.'
-if USE_BUILDBOT_VERSION2:
-    configfile = r'master_buildbot2.cfg'
-else:
-    configfile = r'master.cfg'
+configfile = r'master_buildbot2.cfg'
 rotateLength = 50000000
 maxRotatedFiles = 20
 umask = 0o022

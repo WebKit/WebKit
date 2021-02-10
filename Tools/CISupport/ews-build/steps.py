@@ -1205,7 +1205,6 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
         super(RunBuildWebKitOrgUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def start(self):
-        self.workerEnvironment['USE_BUILDBOT_VERSION2'] = 'True'
         return shell.ShellCommand.start(self)
 
     def getResultSummary(self):

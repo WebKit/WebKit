@@ -738,7 +738,6 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
                         timeout=120,
                         logEnviron=False,
                         command=['python3', 'runUnittests.py', 'build-webkit-org'],
-                        env={'USE_BUILDBOT_VERSION2': 'True'},
                         )
             + 0,
         )
@@ -752,7 +751,6 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
                         timeout=120,
                         logEnviron=False,
                         command=['python3', 'runUnittests.py', 'build-webkit-org'],
-                        env={'USE_BUILDBOT_VERSION2': 'True'},
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
