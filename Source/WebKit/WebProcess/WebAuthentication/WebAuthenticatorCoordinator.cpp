@@ -38,10 +38,8 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/AuthenticatorResponseData.h>
-#include <WebCore/Frame.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
-#include <WebCore/Quirks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
@@ -69,15 +67,18 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     if (!webFrame)
         return;
 
-    auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
+    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
+    if (!processingUserGesture)
+        m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events."_s);
+
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
+        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
 
     if (!isWebBrowser())
         return;
-    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
+    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, processingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, RequestCompletionHandler&& handler)
@@ -86,15 +87,18 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
     if (!webFrame)
         return;
 
-    auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
+    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
+    if (!processingUserGesture)
+        m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.get' within user activated events."_s);
+
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
+        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
 
     if (!isWebBrowser())
         return;
-    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, isProcessingUserGesture), WTFMove(handler));
+    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, processingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
@@ -107,17 +111,6 @@ void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(
     if (!isWebBrowser())
         return;
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
-}
-
-bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, const FrameIdentifier& frameID)
-{
-    bool needsQuirk = frame.document() && frame.document()->quirks().shouldBypassUserGestureRequirementForWebAuthn();
-    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia() || (!m_requireUserGesture && needsQuirk);
-    if (!processingUserGesture)
-        m_webPage.addConsoleMessage(frameID, MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' within user activated events."_s);
-
-    m_requireUserGesture = true;
-    return processingUserGesture;
 }
 
 } // namespace WebKit
