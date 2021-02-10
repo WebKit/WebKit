@@ -1,3 +1,21 @@
+2021-02-10  Mark Lam  <mark.lam@apple.com>
+
+        We should not static_assert on an ENABLE() macro.
+        https://bugs.webkit.org/show_bug.cgi?id=221714
+        rdar://74197896
+
+        Reviewed by Yusuke Suzuki.
+
+        This is because the ENABLE() macro reduces to a macro expression
+        `(defined ENABLE_##WTF_FEATURE && ENABLE_##WTF_FEATURE)` which is not a C++
+        expression that a static_assert can evaluate.
+
+        * llint/LLIntData.cpp:
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+
 2021-02-10  Saam Barati  <sbarati@apple.com>
 
         Don't crash when reparsing an arrow function and the parsing invariant is broken
