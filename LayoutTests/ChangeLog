@@ -1,3 +1,20 @@
+2021-02-10  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/css convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221511
+        <rdar://problem/74049585>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/css/font-face-src-loading.html:
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html:
+        * http/tests/css/resources/500.php: Removed.
+        * http/tests/css/resources/500.py: Added.
+        * http/tests/css/resources/webfont-request.php: Removed.
+        * http/tests/css/resources/webfont-request.py: Added.
+        (getRequestCount):
+        (setRequestCount):
+
 2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r263255): Text styles without an explicit language tag do not honor the system language
