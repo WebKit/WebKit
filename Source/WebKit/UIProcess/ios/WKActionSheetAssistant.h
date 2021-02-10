@@ -31,6 +31,7 @@
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
 class FloatRect;

@@ -43,7 +43,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
 #import <wtf/CompletionHandler.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
