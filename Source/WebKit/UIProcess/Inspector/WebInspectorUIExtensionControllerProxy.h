@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -50,6 +51,7 @@ public:
     void registerExtension(const InspectorExtensionID&, const String& displayName, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void unregisterExtension(const InspectorExtensionID&, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
+    void evaluateScriptForExtension(const InspectorExtensionID&, const String& scriptSource, const Optional<URL>& frameURL, const Optional<URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&&);
 
     // Notifications.
     void inspectorFrontendLoaded();

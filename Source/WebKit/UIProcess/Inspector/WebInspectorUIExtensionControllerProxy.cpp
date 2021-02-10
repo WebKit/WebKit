@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,6 +107,33 @@ void WebInspectorUIExtensionControllerProxy::createTabForExtension(const Inspect
         }
 
         weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::CreateTabForExtension { extensionID, tabName, tabIconURL, sourceURL }, WTFMove(completionHandler));
+    });
+}
+
+void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const InspectorExtensionID& extensionID, const String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&& completionHandler)
+{
+    whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis || !weakThis->m_inspectorPage) {
+            completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
+            return;
+        }
+
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension {extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const Optional<WebCore::ExceptionDetails>& details, const Optional<InspectorExtensionError> error) mutable {
+            if (error) {
+                completionHandler(makeUnexpected(error.value()));
+                return;
+            }
+
+            if (details) {
+                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                return completionHandler({ returnedValue });
+            }
+
+            Vector<uint8_t> data;
+            data.reserveInitialCapacity(dataReference.size());
+            data.append(dataReference.data(), dataReference.size());
+            completionHandler({ { API::SerializedScriptValue::adopt(WTFMove(data)).ptr() } });
+        });
     });
 }
 

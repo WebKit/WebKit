@@ -1,3 +1,24 @@
+2021-02-10  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for evaluating script on the inspected page via _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=221567
+        <rdar://71208534>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds InspectorFrontendAPI.evaluateScriptForExtension().
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.evaluateScriptForExtension):
+        Translate arguments into a corresponding RuntimeAgent.evaluate invocation.
+        The parameters are not yet implemented, and will be filled in by a subsequent patch.
+
+        * UserInterface/Models/WebInspectorExtension.js: Add new error enum value.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.evaluateScriptForExtension):
+        Plumbing.
+
 2021-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Do not differentiate between Release and Production via ENABLE_DEVELOPER_MODE

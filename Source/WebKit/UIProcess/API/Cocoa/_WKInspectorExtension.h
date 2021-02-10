@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,19 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
  * @param completionHandler The completion handler to be called when creating a tab succeeds or fails.
  */
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError * _Nullable, NSString * _Nullable inspectorTabID))completionHandler;
+
+/**
+ * @abstract Evaluates JavaScript in the context of the inspected page on behalf of the _WKInspectorExtension.
+ * @param scriptSource The JavaScript code to be evaluated.
+ * @param frameURL URL for the frame in which to evaluate the script. If nil is passed, the main frame will be used.
+ * @param contextSecurityOrigin If specified, evaluate the script in the content script context of a different security origin.
+ * @param usesContentScriptContext If YES, evaluate the script in the context of the extension's content scripts.
+ * @param completionHandler A block to invoke when the operation completes or fails.
+ * @discussion The completionHandler is passed an NSJSONSerialization-compatible NSObject representing the evaluation result, or an error.
+ * scriptSource is treated as a top-level evaluation. By default, the script is evaluated in the inspected page's script context.
+ * The inspected page ultimately controls its execution context and the result of this evaluation. Thus, the result shall be treated as untrusted input.
+ */
+- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError * _Nullable, NSDictionary * _Nullable result))completionHandler;
 
 @property (readonly, nonatomic) NSString *extensionID;
 

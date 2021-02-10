@@ -1,3 +1,56 @@
+2021-02-10  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for evaluating script on the inspected page via _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=221567
+        <rdar://71208534>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds a new method to _WKInspectorExtension which is used to implement
+        `browser.devtools.inspectedWindow.eval` in the Web Extensions API.
+
+        * Shared/InspectorExtensionTypes.h:
+        * Shared/InspectorExtensionTypes.cpp:
+        (WebKit::inspectorExtensionErrorToString):
+        Add enum value NotImplemented.
+
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::evaluateScript):
+        Plumbing.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (nsErrorFromExceptionDetails):
+        Move this helper up near the top as it is now exposed via <WebKit/WKWebViewInternal.h>.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension evaluateScript:frameURL:contextSecurityOrigin:useContentScriptContext:completionHandler:]):
+        Add new method to evaluate script in the inspected page. The semantics of the parameters
+        are intended to match those of `browser.devtools.inspectedWindow.eval`.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension):
+        Plumbing.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+        Add new message for evaluateScript.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::parseInspectorExtensionErrorFromEvaluationResult):
+        Support the new error enum value.
+
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        (WebKit::WebInspectorUIExtensionController::createTabForExtension):
+        Drive-by, simplify this by passing the EvaluationResult value without unwrapping.
+
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+        This is the meat of the patch. Call out to InspectorFrontendAPI.evaluateScriptForExtension.
+        Inspect the return value and invoke the completion handler with the result or an error.
+
 2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL IPC messages are delivered out of order

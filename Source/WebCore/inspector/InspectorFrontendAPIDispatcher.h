@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,18 +33,21 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
-class JSGlobalObject;
 class JSValue;
 }
 
 namespace WebCore {
 
+class DOMPromise;
+class JSDOMGlobalObject;
 class Page;
 struct ExceptionDetails;
 
-class InspectorFrontendAPIDispatcher final : public RefCounted<InspectorFrontendAPIDispatcher> {
+class InspectorFrontendAPIDispatcher final
+    : public RefCounted<InspectorFrontendAPIDispatcher>
+    , public CanMakeWeakPtr<InspectorFrontendAPIDispatcher> {
 public:
-    enum class EvaluationError { ExecutionSuspended, ContextDestroyed };
+    enum class EvaluationError { ExecutionSuspended, ContextDestroyed, InternalError };
     using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
     using EvaluationResult = Expected<ValueOrException, EvaluationError>;
     using EvaluationResultHandler = CompletionHandler<void(EvaluationResult)>;
@@ -75,19 +78,21 @@ public:
 
     WEBCORE_EXPORT void evaluateExpressionForTesting(const String&);
     
-    // Convenience method to obtain a JSGlobalObject for the frontend page.
+    // Convenience method to obtain a JSDOMGlobalObject for the frontend page.
     // This is used to convert between C++ values and frontend JSC::JSValue objects.
-    WEBCORE_EXPORT JSC::JSGlobalObject* frontendGlobalObject();
+    WEBCORE_EXPORT JSDOMGlobalObject* frontendGlobalObject();
 private:
     WEBCORE_EXPORT InspectorFrontendAPIDispatcher(Page&);
 
     void evaluateOrQueueExpression(const String&, EvaluationResultHandler&& handler = { });
     void evaluateQueuedExpressions();
     void invalidateQueuedExpressions();
+    void invalidatePendingResponses();
     ValueOrException evaluateExpression(const String&);
 
     WeakPtr<Page> m_frontendPage;
     Vector<std::pair<String, EvaluationResultHandler>> m_queuedEvaluations;
+    HashMap<Ref<DOMPromise>, EvaluationResultHandler> m_pendingResponses;
     bool m_frontendLoaded { false };
     bool m_suspended { false };
 };
