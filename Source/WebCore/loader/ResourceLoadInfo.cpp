@@ -119,7 +119,7 @@ bool ResourceLoadInfo::isThirdParty() const
     Ref<SecurityOrigin> mainDocumentSecurityOrigin = SecurityOrigin::create(mainDocumentURL);
     Ref<SecurityOrigin> resourceSecurityOrigin = SecurityOrigin::create(resourceURL);
 
-    return !mainDocumentSecurityOrigin->canAccess(resourceSecurityOrigin.get());
+    return !mainDocumentSecurityOrigin->isSameOriginDomain(resourceSecurityOrigin.get());
 }
     
 ResourceFlags ResourceLoadInfo::getResourceFlags() const

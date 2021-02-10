@@ -1112,7 +1112,7 @@ void DOMWindow::alert(const String& message)
         return;
     }
 
-    if (!document()->securityOrigin().canAccess(document()->topDocument().securityOrigin())) {
+    if (!document()->securityOrigin().isSameOriginDomain(document()->topDocument().securityOrigin())) {
         printErrorMessage("Use of window.alert is not allowed in different origin-domain iframes.");
         return;
     }
@@ -1145,7 +1145,7 @@ bool DOMWindow::confirmForBindings(const String& message)
         return false;
     }
 
-    if (!document()->securityOrigin().canAccess(document()->topDocument().securityOrigin())) {
+    if (!document()->securityOrigin().isSameOriginDomain(document()->topDocument().securityOrigin())) {
         printErrorMessage("Use of window.confirm is not allowed in different origin-domain iframes.");
         return false;
     }
@@ -1178,7 +1178,7 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
         return String();
     }
 
-    if (!document()->securityOrigin().canAccess(document()->topDocument().securityOrigin())) {
+    if (!document()->securityOrigin().isSameOriginDomain(document()->topDocument().securityOrigin())) {
         printErrorMessage("Use of window.prompt is not allowed in different origin-domain iframes.");
         return String();
     }
@@ -1933,7 +1933,7 @@ bool DOMWindow::isSameSecurityOriginAsMainFrame() const
 
     Document* mainFrameDocument = frame->mainFrame().document();
 
-    if (mainFrameDocument && document()->securityOrigin().canAccess(mainFrameDocument->securityOrigin()))
+    if (mainFrameDocument && document()->securityOrigin().isSameOriginDomain(mainFrameDocument->securityOrigin()))
         return true;
 
     return false;
@@ -2386,7 +2386,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow, I
     if (activeWindowURL.isNull())
         return String();
 
-    ASSERT(!activeWindow.document()->securityOrigin().canAccess(document()->securityOrigin()));
+    ASSERT(!activeWindow.document()->securityOrigin().isSameOriginDomain(document()->securityOrigin()));
 
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
     SecurityOrigin& activeOrigin = activeWindow.document()->securityOrigin();
@@ -2447,7 +2447,7 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& ur
 
         // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
         // Can we name the SecurityOrigin function better to make this more clear?
-        if (activeWindow.document()->securityOrigin().canAccess(document()->securityOrigin()))
+        if (activeWindow.document()->securityOrigin().isSameOriginDomain(document()->securityOrigin()))
             return false;
     }
 

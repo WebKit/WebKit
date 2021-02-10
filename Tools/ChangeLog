@@ -1,3 +1,16 @@
+2021-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Rename SecurityOrigin's canAccess() to isSameOriginDomain() to match HTML specification naming
+        https://bugs.webkit.org/show_bug.cgi?id=221630
+
+        Reviewed by Geoffrey Garen.
+
+        Rename SecurityOrigin's canAccess() to isSameOriginDomain() to match HTML specification naming:
+        - https://html.spec.whatwg.org/#same-origin-domain
+
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix Catalina build.

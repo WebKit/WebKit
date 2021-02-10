@@ -494,7 +494,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
             return true;
 
         const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin.canAccess(ancestorSecurityOrigin))
+        if (activeSecurityOrigin.isSameOriginDomain(ancestorSecurityOrigin))
             return true;
         
         // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
@@ -3212,7 +3212,7 @@ bool Document::isLayoutTimerActive() const
 
 bool Document::supportsPaintTiming() const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled() && securityOrigin().canAccess(topOrigin());
+    return RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled() && securityOrigin().isSameOriginDomain(topOrigin());
 }
 
 // https://w3c.github.io/paint-timing/#ref-for-mark-paint-timing
@@ -3330,7 +3330,7 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
     if (Page* page = this->page())
         alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
 
-    if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+    if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
         alignmentInterval = std::max(alignmentInterval, DOMTimer::nonInteractedCrossOriginFrameAlignmentInterval());
 
     return alignmentInterval;
@@ -3620,7 +3620,7 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
 
     // Only prevent cross-site navigations.
     auto* targetDocument = targetFrame.document();
-    if (targetDocument && (targetDocument->securityOrigin().canAccess(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
+    if (targetDocument && (targetDocument->securityOrigin().isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
         return false;
 
     return true;
@@ -6178,7 +6178,7 @@ void Document::initContentSecurityPolicy()
     if (!isPluginDocument())
         return;
     auto* openerFrame = m_frame->loader().opener();
-    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().canAccess(securityOrigin()));
+    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().isSameOriginDomain(securityOrigin()));
     if (!shouldInhert)
         return;
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
@@ -6669,7 +6669,7 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
 
-        if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+        if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
             m_scriptedAnimationController->addThrottlingReason(ThrottlingReason::NonInteractedCrossOriginFrame);
     }
 
@@ -7805,7 +7805,7 @@ void Document::updateIntersectionObservations()
             ASSERT(index != notFound);
             auto& registration = targetRegistrations[index];
 
-            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().canAccess(securityOrigin());
+            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().isSameOriginDomain(securityOrigin());
             auto intersectionState = computeIntersectionState(*frameView, *observer, *target, isSameOriginObservation);
 
             float intersectionRatio = 0;

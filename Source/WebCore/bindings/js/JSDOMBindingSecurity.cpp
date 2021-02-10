@@ -52,7 +52,7 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
 
     DOMWindow& active = activeDOMWindow(*lexicalGlobalObject);
 
-    if (active.document()->securityOrigin().canAccess(targetDocument->securityOrigin()))
+    if (active.document()->securityOrigin().isSameOriginDomain(targetDocument->securityOrigin()))
         return true;
 
     switch (reportingOption) {

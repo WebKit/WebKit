@@ -411,7 +411,7 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame* frame, Document& access
     // If the current lexicalGlobalObject is null we should use the accessing document for the security check.
     if (!lexicalGlobalObject) {
         auto* targetDocument = frame ? frame->document() : nullptr;
-        return targetDocument && accessingDocument.securityOrigin().canAccess(targetDocument->securityOrigin());
+        return targetDocument && accessingDocument.securityOrigin().isSameOriginDomain(targetDocument->securityOrigin());
     }
 
     return BindingSecurity::shouldAllowAccessToFrame(lexicalGlobalObject, frame);
@@ -812,7 +812,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 {
     ASSERT(url.protocolIsJavaScript());
 
-    if (requesterSecurityOrigin && !requesterSecurityOrigin->canAccess(m_frame.document()->securityOrigin()))
+    if (requesterSecurityOrigin && !requesterSecurityOrigin->isSameOriginDomain(m_frame.document()->securityOrigin()))
         return;
 
     if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url().string(), eventHandlerPosition().m_line))

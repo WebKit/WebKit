@@ -359,7 +359,7 @@ NS_ASSUME_NONNULL_END
 - (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin &)origin
 {
     for (auto& responseOrigin : _origins) {
-        if (!origin.canAccess(*responseOrigin))
+        if (!origin.isSameOriginDomain(*responseOrigin))
             return true;
     }
     return false;

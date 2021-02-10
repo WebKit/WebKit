@@ -1128,7 +1128,7 @@ void DocumentLoader::stopLoadingForPolicyChange()
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isUnique() && parent.securityOrigin().canAccess(document.securityOrigin());
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isUnique() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
 }
 #endif
 

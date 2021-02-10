@@ -215,7 +215,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
     }
 
     auto& document = element->document();
-    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().canAccess(document.securityOrigin())) {
+    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().isSameOriginDomain(document.securityOrigin())) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
         return false;
     }

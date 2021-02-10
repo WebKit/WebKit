@@ -3187,7 +3187,7 @@ bool FrameView::safeToPropagateScrollToParent() const
     if (!parentDocument)
         return false;
 
-    return document->securityOrigin().canAccess(parentDocument->securityOrigin());
+    return document->securityOrigin().isSameOriginDomain(parentDocument->securityOrigin());
 }
 
 void FrameView::scrollToAnchor()

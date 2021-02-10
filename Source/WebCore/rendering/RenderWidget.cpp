@@ -224,7 +224,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
 {
     if (paintInfo.requireSecurityOriginAccessForWidgets) {
         if (auto contentDocument = frameOwnerElement().contentDocument()) {
-            if (!document().securityOrigin().canAccess(contentDocument->securityOrigin()))
+            if (!document().securityOrigin().isSameOriginDomain(contentDocument->securityOrigin()))
                 return;
         }
     }

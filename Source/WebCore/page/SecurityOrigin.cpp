@@ -269,7 +269,7 @@ bool SecurityOrigin::isSecure(const URL& url)
     return false;
 }
 
-bool SecurityOrigin::canAccess(const SecurityOrigin& other) const
+bool SecurityOrigin::isSameOriginDomain(const SecurityOrigin& other) const
 {
     if (m_universalAccess)
         return true;
@@ -356,7 +356,7 @@ bool SecurityOrigin::canReceiveDragData(const SecurityOrigin& dragInitiator) con
     if (this == &dragInitiator)
         return true;
 
-    return canAccess(dragInitiator);
+    return isSameOriginDomain(dragInitiator);
 }
 
 // This is a hack to allow keep navigation to http/https feeds working. To remove this

@@ -3039,7 +3039,7 @@ void Element::focus(SelectionRestorationMode restorationMode, FocusDirection dir
 
     if (Page* page = document->page()) {
         auto& frame = *document->frame();
-        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().canAccess(document->securityOrigin()))
+        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
         // Focus and change event handlers can cause us to lose our last ref.

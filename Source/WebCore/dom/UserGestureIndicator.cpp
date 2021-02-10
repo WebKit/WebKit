@@ -67,7 +67,7 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
     auto& documentOrigin = document->securityOrigin();
     for (auto* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         auto* frameDocument = frame->document();
-        if (frameDocument && documentOrigin.canAccess(frameDocument->securityOrigin()))
+        if (frameDocument && documentOrigin.isSameOriginDomain(frameDocument->securityOrigin()))
             m_documentsImpactedByUserGesture.add(*frameDocument);
     }
 }
