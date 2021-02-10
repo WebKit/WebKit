@@ -70,6 +70,7 @@
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
+#import "Theme.h"
 #import "UTIUtilities.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -2142,6 +2143,9 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
 // progress bar is repainted.
 constexpr Seconds progressAnimationRepeatInterval = 33_ms;
 
+constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
+constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
+
 Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress& renderProgress) const
 {
     if (!renderProgress.settings().iOSFormControlRefreshEnabled())
@@ -2176,6 +2180,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
 
     float barWidth;
     float barLeft = rect.x();
+    float alpha = 1.0f;
 
     if (renderProgress.isDeterminate()) {
         barWidth = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackRect.width();
@@ -2183,23 +2188,33 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
         if (!renderProgress.style().isLeftToRightDirection())
             barLeft = trackRect.maxX() - barWidth;
     } else {
-        barWidth = 0.25f * trackRect.width();
-
         Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
         float position = fmodf(elapsed.value(), 1.0f);
-        float offset = position * (trackRect.width() + barWidth);
-
         bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
-        if (reverseDirection)
-            barLeft = trackRect.maxX() - offset;
-        else
-            barLeft -= barWidth - offset;
 
-        context.clipRoundedRect(roundedTrackRect);
+        if (Theme::singleton().userPrefersReducedMotion()) {
+            barWidth = trackRect.width();
+
+            float difference = position * (reducedMotionProgressAnimationMaxOpacity - reducedMotionProgressAnimationMinOpacity);
+            if (reverseDirection)
+                alpha = reducedMotionProgressAnimationMaxOpacity - difference;
+            else
+                alpha = reducedMotionProgressAnimationMinOpacity + difference;
+        } else {
+            barWidth = 0.25f * trackRect.width();
+
+            float offset = position * (trackRect.width() + barWidth);
+            if (reverseDirection)
+                barLeft = trackRect.maxX() - offset;
+            else
+                barLeft -= barWidth - offset;
+
+            context.clipRoundedRect(roundedTrackRect);
+        }
     }
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor);
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor.colorWithAlphaByte(alpha * 255.0f));
 
     return false;
 }
