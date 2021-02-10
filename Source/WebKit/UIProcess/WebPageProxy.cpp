@@ -7116,17 +7116,6 @@ void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, Callbac
     callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
 }
 
-void WebPageProxy::imageCallback(const ShareableBitmap::Handle& bitmapHandle, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ImageCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(bitmapHandle);
-}
-
 void WebPageProxy::stringCallback(const String& resultString, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<StringCallback>(callbackID);
@@ -8523,16 +8512,9 @@ uint64_t WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const Print
 }
 
 #if PLATFORM(COCOA)
-void WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, Ref<ImageCallback>&& callback)
+uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback->invalidate();
-        return;
-    }
-    
-    auto callbackID = callback->callbackID();
-    m_callbacks.put(WTFMove(callback));
-    send(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize, callbackID), printingSendOptions(m_isPerformingDOMPrintOperation));
+    return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
 void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, Ref<DataCallback>&& callback)
@@ -8980,15 +8962,9 @@ void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
 }
 #endif
 
-void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, WTF::Function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, CompletionHandler<void(const ShareableBitmap::Handle&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(ShareableBitmap::Handle(), CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::takeSnapshot"_s));
-    send(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options, callbackID));
+    sendWithAsyncReply(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options), WTFMove(callback));
 }
 
 void WebPageProxy::navigationGestureDidBegin()

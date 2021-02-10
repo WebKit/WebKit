@@ -840,26 +840,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page->stopLoading();
 }
 
-#if USE(APPKIT)
-static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
-{
-    switch (error) {
-    case WebKit::CallbackBase::Error::None:
-        ASSERT_NOT_REACHED();
-        return WKErrorUnknown;
-
-    case WebKit::CallbackBase::Error::Unknown:
-        return WKErrorUnknown;
-
-    case WebKit::CallbackBase::Error::ProcessExited:
-        return WKErrorWebContentProcessTerminated;
-
-    case WebKit::CallbackBase::Error::OwnerWasInvalidated:
-        return WKErrorWebViewInvalidated;
-    }
-}
-#endif
-
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
@@ -1094,13 +1074,7 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
-    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error errorCode) {
-        if (errorCode != WebKit::CallbackBase::Error::None) {
-            auto error = createNSError(callbackErrorCode(errorCode));
-            handler(nil, error.get());
-            return;
-        }
-
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle) {
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);

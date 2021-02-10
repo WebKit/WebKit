@@ -540,17 +540,15 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
                 _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                auto callback = WebKit::ImageCallback::create([context](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
+                auto callback = [context](const WebKit::ShareableBitmap::Handle& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(imageHandle, context);
-                });
-                _latestExpectedPreviewCallback = callback->callbackID().toInteger();
+                };
+                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
-                context->callbackID = callback->callbackID().toInteger();
-
-                _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                context->callbackID = _latestExpectedPreviewCallback;
                 return;
             }
         }

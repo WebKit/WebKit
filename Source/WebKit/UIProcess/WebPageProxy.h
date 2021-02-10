@@ -1293,7 +1293,7 @@ public:
     void endPrinting();
     uint64_t computePagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
 #if PLATFORM(COCOA)
-    void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, Ref<ImageCallback>&&);
+    uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
     void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(IOS_FAMILY)
@@ -1427,7 +1427,7 @@ public:
 
     void signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&, CompletionHandler<void(String)>&&);
 
-    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, WTF::Function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>&&);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -2156,7 +2156,6 @@ private:
 
     void voidCallback(CallbackID);
     void dataCallback(const IPC::DataReference&, CallbackID);
-    void imageCallback(const ShareableBitmap::Handle&, CallbackID);
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
 #if ENABLE(APPLICATION_MANIFEST)

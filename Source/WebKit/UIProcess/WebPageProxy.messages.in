@@ -165,7 +165,6 @@ messages -> WebPageProxy {
     # Callback messages
     VoidCallback(WebKit::CallbackID callbackID)
     DataCallback(IPC::SharedBufferDataReference resultData, WebKit::CallbackID callbackID)
-    ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
     StringCallback(String resultString, WebKit::CallbackID callbackID)
     InvalidateStringCallback(WebKit::CallbackID callbackID)
 #if ENABLE(APPLICATION_MANIFEST)

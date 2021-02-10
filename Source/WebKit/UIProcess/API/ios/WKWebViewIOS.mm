@@ -3088,26 +3088,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return;
     }
 
-    void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
-    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
-        if (imageHandle.isNull()) {
-            copiedCompletionHandler(nullptr);
-            [copiedCompletionHandler release];
-            return;
-        }
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [completionHandler = makeBlockPtr(completionHandler)](const WebKit::ShareableBitmap::Handle& imageHandle) {
+        if (imageHandle.isNull())
+            return completionHandler(nil);
 
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
 
-        if (!bitmap) {
-            copiedCompletionHandler(nullptr);
-            [copiedCompletionHandler release];
-            return;
-        }
+        if (!bitmap)
+            return completionHandler(nil);
 
-        RetainPtr<CGImageRef> cgImage;
-        cgImage = bitmap->makeCGImage();
-        copiedCompletionHandler(cgImage.get());
-        [copiedCompletionHandler release];
+        completionHandler(bitmap->makeCGImage().get());
     });
 }
 

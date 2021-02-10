@@ -1,5 +1,33 @@
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Use CompletionHandler instead of ImageCallback
+        https://bugs.webkit.org/show_bug.cgi?id=221626
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView requestSnapshot]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * UIProcess/GenericCallback.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawRectToImage):
+        (WebKit::WebPageProxy::takeSnapshot):
+        (WebKit::WebPageProxy::imageCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPreview:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::WebPage::drawRectToImage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Use CompletionHandler instead of UnsignedCallback
         https://bugs.webkit.org/show_bug.cgi?id=221631
 

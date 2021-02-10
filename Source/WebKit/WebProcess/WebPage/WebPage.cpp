@@ -2425,7 +2425,7 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CallbackID callbackID)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
     SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
     snapshotOptions |= SnapshotOptionsShareable;
@@ -2436,7 +2436,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
     if (image)
         image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
-    send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
+    completionHandler(handle);
 }
 
 RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
@@ -5134,7 +5134,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect
     completionHandler(IPC::DataReference(CFDataGetBytePtr(pdfData.get()), CFDataGetLength(pdfData.get())));
 }
 
-void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CallbackID callbackID)
+void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
@@ -5152,7 +5152,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
         auto bitmap = ShareableBitmap::createShareable(imageSize, { });
         if (!bitmap) {
             ASSERT_NOT_REACHED();
-            return;
+            return completionHandler({ });
         }
         auto graphicsContext = bitmap->createGraphicsContext();
         if (graphicsContext) {
@@ -5181,7 +5181,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     if (image)
         image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
-    send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
+    completionHandler(handle);
 }
 
 void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CallbackID callbackID)

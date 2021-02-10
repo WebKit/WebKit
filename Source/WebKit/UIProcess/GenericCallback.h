@@ -155,7 +155,6 @@ static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGen
 }
 
 typedef GenericCallback<> VoidCallback;
-typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 
 template<typename T>
 void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Error error)
