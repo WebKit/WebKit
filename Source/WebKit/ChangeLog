@@ -1,3 +1,90 @@
+2021-02-09  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Run ImageDecoderAVFObjC in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221317
+
+        Reviewed by Jer Noble.
+
+        This patch adds the support to run `ImageDecoderAVFObjC` in the GPU process when the
+        "GPU Process: Media" preference is on. The `RemoteImageDecoderAVF` running in the Web
+        process forwards video data to the `RemoteImageDecoderAVFProxy` running in the GPU process,
+        which parses the data and returns frame information ("hasAlpha" and "duration") to the
+        Web process. `RemoteImageDecoderAVFProxy` will generate (decode) frames (images) after
+        receiving requests from `RemoteImageDecoderAVF`. The decoded frames are transferred to
+        the Web process through IOSurfaces, and the frames will be cached in the Web process.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::imageDecoderAVFProxy):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp: Added.
+        (WebKit::RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy):
+        (WebKit::RemoteImageDecoderAVFProxy::createDecoder):
+        (WebKit::RemoteImageDecoderAVFProxy::deleteDecoder):
+        (WebKit::RemoteImageDecoderAVFProxy::encodedDataStatusChanged):
+        (WebKit::RemoteImageDecoderAVFProxy::setExpectedContentSize):
+        (WebKit::RemoteImageDecoderAVFProxy::setData):
+        (WebKit::RemoteImageDecoderAVFProxy::createFrameImageAtIndex):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h: Added.
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in: Added.
+
+        * Scripts/webkit/messages.py:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp: Added.
+        (WebKit::RemoteImageDecoderAVF::RemoteImageDecoderAVF):
+        (WebKit::RemoteImageDecoderAVF::~RemoteImageDecoderAVF):
+        (WebKit::RemoteImageDecoderAVF::gpuProcessConnection const):
+        (WebKit::RemoteImageDecoderAVF::canDecodeType):
+        (WebKit::RemoteImageDecoderAVF::supportsMediaType):
+        (WebKit::RemoteImageDecoderAVF::encodedDataStatus const):
+        (WebKit::RemoteImageDecoderAVF::setEncodedDataStatusChangeCallback):
+        (WebKit::RemoteImageDecoderAVF::size const):
+        (WebKit::RemoteImageDecoderAVF::frameCount const):
+        (WebKit::RemoteImageDecoderAVF::repetitionCount const):
+        (WebKit::RemoteImageDecoderAVF::uti const):
+        (WebKit::RemoteImageDecoderAVF::filenameExtension const):
+        (WebKit::RemoteImageDecoderAVF::frameSizeAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameIsCompleteAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameMetadataAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameDurationAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameHasAlphaAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameAllowSubsamplingAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::frameBytesAtIndex const):
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+        (WebKit::RemoteImageDecoderAVF::setExpectedContentSize):
+        (WebKit::RemoteImageDecoderAVF::setData):
+        (WebKit::RemoteImageDecoderAVF::clearFrameBufferCache):
+        (WebKit::RemoteImageDecoderAVF::encodedDataStatusChanged):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.h: Added.
+
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp: Added.
+        (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+        (WebKit::RemoteImageDecoderAVFManager::deleteRemoteImageDecoder):
+        (WebKit::RemoteImageDecoderAVFManager::RemoteImageDecoderAVFManager):
+        (WebKit::RemoteImageDecoderAVFManager::~RemoteImageDecoderAVFManager):
+        (WebKit::RemoteImageDecoderAVFManager::supplementName):
+        (WebKit::RemoteImageDecoderAVFManager::gpuProcessConnection const):
+        (WebKit::RemoteImageDecoderAVFManager::setUseGPUProcess):
+        (WebKit::RemoteImageDecoderAVFManager::encodedDataStatusChanged):
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.h: Added.
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.messages.in: Added.
+
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp: Fix unified build failures.
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h: Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+
 2021-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add internal preference to control how AVOutputContext is allocated

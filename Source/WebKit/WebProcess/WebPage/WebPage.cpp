@@ -347,6 +347,9 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMFactory.h"
 #endif
+#if HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVFManager.h"
+#endif
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
@@ -3849,6 +3852,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     // FIXME: useGPUProcessForMediaEnabled should be a RuntimeEnabledFeature since it's global.
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#if HAVE(AVASSETREADER)
+    WebProcess::singleton().supplement<RemoteImageDecoderAVFManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#endif
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType));
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);

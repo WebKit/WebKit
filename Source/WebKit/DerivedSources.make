@@ -182,6 +182,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/media/RemoteAudioSourceProviderManager \
 	WebProcess/GPU/media/RemoteCDMInstance \
 	WebProcess/GPU/media/RemoteCDMInstanceSession \
+	WebProcess/GPU/media/RemoteImageDecoderAVFManager \
 	WebProcess/GPU/media/RemoteLegacyCDMSession \
 	WebProcess/GPU/media/SourceBufferPrivateRemote \
 	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
@@ -241,6 +242,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/webrtc/RemoteMediaRecorder \
 	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer \
 	GPUProcess/GPUProcess \
+	GPUProcess/media/RemoteImageDecoderAVFProxy \
 	GPUProcess/media/RemoteLegacyCDMSessionProxy \
 	GPUProcess/media/RemoteLegacyCDMFactoryProxy \
 	GPUProcess/media/RemoteAudioSessionProxy \

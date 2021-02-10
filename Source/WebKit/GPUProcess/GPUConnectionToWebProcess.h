@@ -54,6 +54,7 @@ class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
 class RemoteCDMFactoryProxy;
+class RemoteImageDecoderAVFProxy;
 class RemoteLegacyCDMFactoryProxy;
 class RemoteMediaEngineConfigurationFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
@@ -102,13 +103,16 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
-#if ENABLE(GPU_PROCESS)
+
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
-#endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return *m_remoteMediaPlayerManagerProxy; }
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
+#endif
+
+#if HAVE(AVASSETREADER)
+    RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
 
     void terminateWebProcess();
@@ -221,9 +225,11 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
 #endif
-#if ENABLE(GPU_PROCESS)
-    std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+#if HAVE(AVASSETREADER)
+    std::unique_ptr<RemoteImageDecoderAVFProxy> m_imageDecoderAVFProxy;
 #endif
+
+    std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
 };
 
 } // namespace WebKit

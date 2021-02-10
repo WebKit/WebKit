@@ -2964,6 +2964,20 @@
 		1D32F8A623A8601900B1EA6A /* RemoteMediaResourceManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaResourceManager.messages.in; sourceTree = "<group>"; };
 		1D3AB04D23AB0072005C1FF0 /* RemoteMediaResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceLoader.h; sourceTree = "<group>"; };
 		1D3AB04E23AB009B005C1FF0 /* RemoteMediaResourceLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResourceLoader.cpp; sourceTree = "<group>"; };
+		1D47657825CB3AF6007AF312 /* RemoteImageDecoderAVF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageDecoderAVF.h; sourceTree = "<group>"; };
+		1D47657925CB3AF6007AF312 /* RemoteImageDecoderAVF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageDecoderAVF.cpp; sourceTree = "<group>"; };
+		1D47658425CCA416007AF312 /* RemoteImageDecoderAVFProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageDecoderAVFProxy.h; sourceTree = "<group>"; };
+		1D47658525CCA416007AF312 /* RemoteImageDecoderAVFProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageDecoderAVFProxy.cpp; sourceTree = "<group>"; };
+		1D47658C25CCA698007AF312 /* RemoteImageDecoderAVFProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteImageDecoderAVFProxy.messages.in; sourceTree = "<group>"; };
+		1D47658F25CCCE92007AF312 /* RemoteImageDecoderAVFProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteImageDecoderAVFProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659025CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteImageDecoderAVFProxyMessages.h; path = DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659125CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteImageDecoderAVFProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659825CDF649007AF312 /* RemoteImageDecoderAVFManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteImageDecoderAVFManager.messages.in; sourceTree = "<group>"; };
+		1D47659925CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteImageDecoderAVFManagerMessages.h; path = DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659A25CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteImageDecoderAVFManagerMessagesReplies.h; path = DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659B25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteImageDecoderAVFManagerMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D47659F25CF5740007AF312 /* RemoteImageDecoderAVFManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageDecoderAVFManager.h; sourceTree = "<group>"; };
+		1D4765A025CF5740007AF312 /* RemoteImageDecoderAVFManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageDecoderAVFManager.cpp; sourceTree = "<group>"; };
 		1D4D736B23A9DF5500717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RemoteMediaResourceManagerMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessages.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessagesReplies.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2973,7 +2987,7 @@
 		1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceManager.h; sourceTree = "<group>"; };
 		1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResourceManager.cpp; sourceTree = "<group>"; };
 		1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKShareSheet.mm; sourceTree = "<group>"; };
-		1DD2A636255DE67500FF7B6F /* MediaSourcePrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MediaSourcePrivateRemote.cpp; path = /Volumes/Data/webkit/OpenSource/Source/WebKit/WebProcess/GPU/media/MediaSourcePrivateRemote.cpp; sourceTree = "<absolute>"; };
+		1DD2A636255DE67500FF7B6F /* MediaSourcePrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourcePrivateRemote.cpp; sourceTree = "<group>"; };
 		1DD2A637255DE67500FF7B6F /* MediaSourcePrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivateRemote.h; sourceTree = "<group>"; };
 		1DD2A639255DE6D100FF7B6F /* SourceBufferPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivateRemote.h; sourceTree = "<group>"; };
 		1DD2A63A255DE6D100FF7B6F /* SourceBufferPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBufferPrivateRemote.cpp; sourceTree = "<group>"; };
@@ -5975,6 +5989,11 @@
 				CDAC20BD23FC2F740021DEE3 /* RemoteCDMInstanceSession.h */,
 				CD46617F240104580047CA35 /* RemoteCDMInstanceSession.messages.in */,
 				CDAC20BC23FC2F740021DEE3 /* RemoteCDMInstanceSessionIdentifier.h */,
+				1D47657925CB3AF6007AF312 /* RemoteImageDecoderAVF.cpp */,
+				1D47657825CB3AF6007AF312 /* RemoteImageDecoderAVF.h */,
+				1D4765A025CF5740007AF312 /* RemoteImageDecoderAVFManager.cpp */,
+				1D47659F25CF5740007AF312 /* RemoteImageDecoderAVFManager.h */,
+				1D47659825CDF649007AF312 /* RemoteImageDecoderAVFManager.messages.in */,
 				CDE554EB24058183008A3DDB /* RemoteLegacyCDM.cpp */,
 				CDE554EA24058183008A3DDB /* RemoteLegacyCDM.h */,
 				CDE554E324058114008A3DDB /* RemoteLegacyCDMFactory.cpp */,
@@ -6039,6 +6058,9 @@
 				CDAC208323FB21340021DEE3 /* RemoteCDMProxy.cpp */,
 				CDAC208223FB21340021DEE3 /* RemoteCDMProxy.h */,
 				CDAC208623FB21580021DEE3 /* RemoteCDMProxy.messages.in */,
+				1D47658525CCA416007AF312 /* RemoteImageDecoderAVFProxy.cpp */,
+				1D47658425CCA416007AF312 /* RemoteImageDecoderAVFProxy.h */,
+				1D47658C25CCA698007AF312 /* RemoteImageDecoderAVFProxy.messages.in */,
 				CDE5551D2405A3B7008A3DDB /* RemoteLegacyCDMFactoryProxy.cpp */,
 				CDE5551C2405A3B7008A3DDB /* RemoteLegacyCDMFactoryProxy.h */,
 				CDE5551B2405A3B7008A3DDB /* RemoteLegacyCDMFactoryProxy.messages.in */,
@@ -10806,6 +10828,12 @@
 				CDAC20EF23FC38390021DEE3 /* RemoteCDMProxyMessageReceiver.cpp */,
 				CDAC20F423FC383A0021DEE3 /* RemoteCDMProxyMessages.h */,
 				CDAC20F023FC38390021DEE3 /* RemoteCDMProxyMessagesReplies.h */,
+				1D47659B25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessageReceiver.cpp */,
+				1D47659925CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessages.h */,
+				1D47659A25CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h */,
+				1D47658F25CCCE92007AF312 /* RemoteImageDecoderAVFProxyMessageReceiver.cpp */,
+				1D47659025CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h */,
+				1D47659125CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessagesReplies.h */,
 				0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */,
 				0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */,
 				CDE555292406B896008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp */,
@@ -11865,6 +11893,12 @@
 				CDAC20B423FB58F20021DEE3 /* RemoteCDMInstanceProxy.h in Headers */,
 				CDAC20CA23FC2F750021DEE3 /* RemoteCDMInstanceSession.h in Headers */,
 				CDAC20C923FC2F750021DEE3 /* RemoteCDMInstanceSessionIdentifier.h in Headers */,
+				1D4765A125CF5740007AF312 /* RemoteImageDecoderAVFManager.h in Headers */,
+				1D47659C25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessages.h in Headers */,
+				1D47659D25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h in Headers */,
+				1D47658625CCA416007AF312 /* RemoteImageDecoderAVFProxy.h in Headers */,
+				1D47659325CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h in Headers */,
+				1D47659425CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessagesReplies.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,

@@ -217,10 +217,8 @@ void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBu
         auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @( m_hardwareDecoderEnabled ) };
 
         NSDictionary *attributes;
-        if (m_mode == OpenGL)
-            attributes = @{ (__bridge NSString*)kCVPixelBufferIOSurfacePropertiesKey: @{ /* empty dictionary */ } };
-        else {
-            ASSERT(m_mode == RGB);
+        attributes = @{ (__bridge NSString*)kCVPixelBufferIOSurfacePropertiesKey: @{ /* empty dictionary */ } };
+        if (m_mode == RGB) {
             attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
         }
         VTDecompressionSessionRef decompressionSessionOut = nullptr;

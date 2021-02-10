@@ -186,6 +186,15 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLMessagesRepl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFManagerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteImageDecoderAVFProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessagesReplies.h

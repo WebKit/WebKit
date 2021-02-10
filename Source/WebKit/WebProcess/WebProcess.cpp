@@ -198,6 +198,11 @@
 #include "AudioSessionRoutingArbitrator.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVF.h"
+#include <WebCore/ImageDecoder.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
@@ -271,6 +276,10 @@ WebProcess::WebProcess()
 
 #if ENABLE(GPU_PROCESS)
     addSupplement<RemoteMediaPlayerManager>();
+#endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+    addSupplement<RemoteImageDecoderAVFManager>();
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
@@ -1938,7 +1947,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     else
         LegacyCDM::resetFactories();
 #endif
-    
+
     if (useGPUProcessForMedia)
         ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
     else

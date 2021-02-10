@@ -56,7 +56,54 @@ public:
         Optional<IntSize> densityCorrectedSize;
     };
 
+    struct FrameInfo {
+        bool hasAlpha;
+        Seconds duration;
+
+        template<class Encoder>
+        void encode(Encoder& encoder) const
+        {
+            encoder << hasAlpha;
+            encoder << duration;
+        }
+
+        template<class Decoder>
+        static Optional<FrameInfo> decode(Decoder& decoder)
+        {
+            Optional<bool> hasAlpha;
+            decoder >> hasAlpha;
+            if (!hasAlpha)
+                return WTF::nullopt;
+
+            Optional<Seconds> duration;
+            decoder >> duration;
+            if (!duration)
+                return WTF::nullopt;
+
+            return {{
+                *hasAlpha,
+                *duration
+            }};
+        }
+    };
+
     static bool supportsMediaType(MediaType);
+
+#if ENABLE(GPU_PROCESS)
+    using SupportsMediaTypeFunc = WTF::Function<bool(MediaType)>;
+    using CanDecodeTypeFunc = WTF::Function<bool(const String&)>;
+    using CreateImageDecoderFunc = WTF::Function<RefPtr<ImageDecoder>(SharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
+
+    struct ImageDecoderFactory {
+        SupportsMediaTypeFunc supportsMediaType;
+        CanDecodeTypeFunc canDecodeType;
+        CreateImageDecoderFunc createImageDecoder;
+    };
+
+    WEBCORE_EXPORT static void installFactory(ImageDecoderFactory&&);
+    WEBCORE_EXPORT static void resetFactories();
+    WEBCORE_EXPORT static void clearFactories();
+#endif
 
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
 

@@ -106,6 +106,11 @@
 #include "RemoteLegacyCDMSessionProxyMessages.h"
 #endif
 
+#if HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVFProxy.h"
+#include "RemoteImageDecoderAVFProxyMessages.h"
+#endif
+
 #if ENABLE(GPU_PROCESS)
 #include "RemoteMediaEngineConfigurationFactoryProxy.h"
 #include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
@@ -295,6 +300,16 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 }
 #endif
 
+#if HAVE(AVASSETREADER)
+RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
+{
+    if (!m_imageDecoderAVFProxy)
+        m_imageDecoderAVFProxy = makeUnique<RemoteImageDecoderAVFProxy>(*this);
+
+    return *m_imageDecoderAVFProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
     auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&]() {
@@ -468,6 +483,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         mediaEngineConfigurationFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
+#if HAVE(AVASSETREADER)
+    if (decoder.messageReceiverName() == Messages::RemoteImageDecoderAVFProxy::messageReceiverName()) {
+        imageDecoderAVFProxy().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
@@ -518,6 +539,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
         legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+#if HAVE(AVASSETREADER)
+    if (decoder.messageReceiverName() == Messages::RemoteImageDecoderAVFProxy::messageReceiverName()) {
+        imageDecoderAVFProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }
 #endif
