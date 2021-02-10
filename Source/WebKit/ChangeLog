@@ -1,3 +1,59 @@
+2021-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we are no longer show the previous page when running a JS prompt
+        https://bugs.webkit.org/show_bug.cgi?id=215782
+        <rdar://problem/67698601>
+
+        Reviewed by Simon Fraser.
+
+        Make sure we are no longer show the previous page when running a JS prompt.
+        If we have not yet done a layer tree commit since the last load commit, then
+        we are likely still showing the previous page. If we are asked to run a JS
+        prompt / alert / confirm at this point, it would be confusing to still show
+        the previous page. In order to address the issue, we now make the view blank
+        in such scenario (ideally, we'd have painted the new page but this is
+        currently not a trivial thing to do).
+
+        To make the view blank, the approach chosen was to add a blank overlay view
+        on top of the content. This overlay view gets taken down as soon as we
+        paint the view again.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _hasBlankOverlay]):
+        (-[WKWebView _setHasBlankOverlay:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::setHasBlankOverlay):
+        * UIProcess/Cocoa/WKBlankOverlayView.h: Added.
+        * UIProcess/Cocoa/WKBlankOverlayView.mm: Added.
+        (-[WKBlankOverlayView initWithFrame:]):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::setHasBlankOverlay):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFirstLayerTreeCommitAfterCommittingLoad):
+        (WebKit::WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::didUpdateRenderingAfterCommittingLoad):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::didUpdateRendering):
+
 2021-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandler instead of ImageCallback

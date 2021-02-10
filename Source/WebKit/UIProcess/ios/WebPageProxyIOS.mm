@@ -338,9 +338,10 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     themeColorChanged(layerTreeTransaction.themeColor());
     pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
 
-    if (!m_hasReceivedLayerTreeTransactionAfterDidCommitLoad) {
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
-            m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = true;
+            m_hasUpdatedRenderingAfterDidCommitLoad = true;
+            stopMakingViewBlankDueToLackOfRenderingUpdate();
             m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
         }
     }

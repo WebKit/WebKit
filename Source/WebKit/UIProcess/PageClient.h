@@ -512,6 +512,8 @@ public:
 
     virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
 
+    virtual void setHasBlankOverlay(bool) { }
+
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
 #endif
