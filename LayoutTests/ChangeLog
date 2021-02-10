@@ -1,3 +1,19 @@
+2021-02-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Descendants of row and column headers should expose the aria-sort attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=221590
+
+        Reviewed by Chris Fleizach.
+
+        Expanded this test to include the case where the header contains a child
+        element that must also expose the aria-sort attribute inherited from its
+        parent.
+
+        * accessibility/aria-sort-expected.txt:
+        * accessibility/aria-sort.html:
+        * accessibility/ios-simulator/aria-sort-ios-expected.txt:
+        * accessibility/ios-simulator/aria-sort-ios.html:
+
 2021-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r272426.
