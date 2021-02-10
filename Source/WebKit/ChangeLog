@@ -1,3 +1,22 @@
+2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL IPC messages are delivered out of order
+        https://bugs.webkit.org/show_bug.cgi?id=221488
+
+        Reviewed by Chris Dumez.
+
+        Sync messages are delivered before earlier async messages, if some other
+        WebKit part waits on sync replies.
+
+        No new tests, makes the existing WebGL --use-gpu-process tests a bit less
+        flakey.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        Mark all async messages with IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply.
+        There are no messages in the receiver message list that would make sense
+        to be delivered out of order.
+
 2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use HAVE(PEPPER_UI_CORE) instead of PLATFORM(WATCHOS) to guard code that uses PepperUICore

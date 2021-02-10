@@ -54,7 +54,7 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection&
 {
     gpuProcessConnection.addClient(*this);
     gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
-    connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attrs, m_graphicsContextGLIdentifier), 0);
+    connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attrs, m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
@@ -235,7 +235,7 @@ void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
     if (auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr)) {
         gpuProcessConnection->removeClient(*this);
         gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
-        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     ASSERT(isContextLost());
 }

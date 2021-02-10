@@ -334,7 +334,7 @@ protected:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
-        connection().send(WTFMove(message), m_graphicsContextGLIdentifier.toUInt64());
+        connection().send(WTFMove(message), m_graphicsContextGLIdentifier.toUInt64(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         return true;
     }
     template<typename T>
