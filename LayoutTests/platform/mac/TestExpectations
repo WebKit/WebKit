@@ -1856,7 +1856,11 @@ media/controls-styling.html [ Skip ]
 
 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Pass Failure ]
 
+# These tests fail due to slight differences in font rendering.
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-003.xhtml [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-004.xhtml [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ ImageOnlyFailure ]
 
 webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failure ]
 

@@ -1,0 +1,28 @@
+
+FAIL table 1 assert_equals:
+<div class="container">
+  <div class="left">
+  </div>
+  <table style="width:100%" data-expected-width="100">
+    <tbody><tr><td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+  </tr></tbody></table>
+</div>
+width expected 100 but got 200
+FAIL table 2 assert_equals:
+<div class="container">
+  <div class="left">
+  </div>
+  <table style="width:70%; flex-basis: 200px" data-expected-width="100">
+    <tbody><tr><td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+    <td data-expected-width="20"><div class="spacer"></div><div class="spacer"></div></td>
+  </tr></tbody></table>
+</div>
+width expected 100 but got 140
+

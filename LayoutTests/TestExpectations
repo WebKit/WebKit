@@ -1195,6 +1195,17 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-direction-row-reverse.h
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/align-self-015.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-003.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/canvas-dynamic-change-001.html [ Failure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-015.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-vertical-align.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-002.html [ ImageOnlyFailure ]
+webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/stretch-input-in-column.html [ ImageOnlyFailure ]
 
 # grid layout tests
 imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010.html [ Pass Failure ]
@@ -3918,7 +3929,6 @@ webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-eleme
 webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ ImageOnlyFailure ]
 webkit.org/b/210144 imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html [ ImageOnlyFailure ]
 webkit.org/b/210478 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-006.html [ ImageOnlyFailure ]
-webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-005.xht [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-007.xht [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-001.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-002.html [ ImageOnlyFailure ]
@@ -3927,6 +3937,141 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-014.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-auto.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.html [ ImageOnlyFailure ]
+
+# Static position alignment in Flexbox.
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-003.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-005.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-007.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-003.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-005.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-007.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-003.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-004.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-safe-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-005.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-002.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-margin-002.html [ ImageOnlyFailure ]
+
+# Tables as flex items.
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width-3.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-flex-cross-size.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-percent-width-cell-001.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-width.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-item-flex-percentage-width.html [ ImageOnlyFailure ]
+
+# SVGs as flex items.
+webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-002.html [ ImageOnlyFailure ]
+webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-003.html [ ImageOnlyFailure ]
+
+# Writing modes in flexbox.
+webkit.org/b/221475 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-writing-mode-013.html [ ImageOnlyFailure ]
+webkit.org/b/221475 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-writing-mode-014.html [ ImageOnlyFailure ]
+webkit.org/b/221475 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-writing-mode-015.html [ ImageOnlyFailure ]
+
+# justify-content in flexbox.
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-001a.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-001b.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-003.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-005.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-006.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-006.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-001.xhtml [ ImageOnlyFailure ]
+
+# align-content in flexbox.
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_center.html [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_flex-end.html [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_flex-start.html [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_space-around.html [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_space-between.html [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_stretch.html [ ImageOnlyFailure ]
+
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-002.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-005.xhtml [ ImageOnlyFailure ]
+
+# align baseline in flexbox.
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-baseline.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001b.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-007.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-008.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change-nested.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change.html [ ImageOnlyFailure ]
+
+# flex-basis:content.
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-001a.html [ ImageOnlyFailure ]
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-001b.html [ ImageOnlyFailure ]
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002a.html [ ImageOnlyFailure ]
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002b.html [ ImageOnlyFailure ]
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html [ ImageOnlyFailure ]
+webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html [ ImageOnlyFailure ]
+
+# break request in flexbox.
+webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-horiz-001a.html [ ImageOnlyFailure ]
+webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-horiz-001b.html [ ImageOnlyFailure ]
+webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-vert-001a.html [ ImageOnlyFailure ]
+webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-vert-001b.html [ ImageOnlyFailure ]
+
+# min-size:auto in flexbox.
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002a.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002c.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-002a.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-002c.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-026.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-029.html [ ImageOnlyFailure ]
+webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-015.html [ ImageOnlyFailure ]
+
+# visibility:collapse in flex items.
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-baseline-001.html [ ImageOnlyFailure ]
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-horiz-001.html [ ImageOnlyFailure ]
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-horiz-002.html [ ImageOnlyFailure ]
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-horiz-003.html [ ImageOnlyFailure ]
+
+# Painting order in flexbox
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml [ ImageOnlyFailure ]
+
+# Misc elements as flex items.
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001.xhtml [ ImageOnlyFailure ]
 
 # Newly imported Canvas WPT tests that are failing.
 imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure Pass ]
@@ -4600,3 +4745,4 @@ webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ ImageOnlyFailure ] # Invalid test, percentages are not allowed for color(xyz).
 
 webkit.org/b/218496 http/tests/loading/redirect-with-no-location-crash.html [ Skip ]
+

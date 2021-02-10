@@ -1,0 +1,4 @@
+aaa bbb aaa bbb aaa bbb
+
+FAIL The bottom of each pair of boxes should be the same assert_equals: expected 166 but got 106
+

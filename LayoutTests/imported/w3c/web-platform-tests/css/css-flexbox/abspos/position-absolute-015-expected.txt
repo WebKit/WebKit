@@ -1,0 +1,5 @@
+
+FAIL #abspos 1 assert_equals:
+<div style="background: cyan; margin: 20px; position: absolute; width: 30px; height: 40px;" data-offset-x="150" id="abspos"></div>
+offsetLeft expected 150 but got 190
+

@@ -1,3 +1,23 @@
+2021-02-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import & update latest WPT flexbox tests
+        https://bugs.webkit.org/show_bug.cgi?id=221484
+
+        Reviewed by Rob Buis.
+
+        Sync'ed our local copy to latest upstream data.
+
+        * TestExpectations: Added new failing tests with bugs.
+        * platform/glib/TestExpectations: Removed a couple of tests that are working fine after import.
+        * platform/ios/TestExpectations: Added new failing tests with bugs.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-012-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-012-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-013-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-013-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001-expected.txt: Added.
+        * platform/mac-catalina-wk1/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/mac/TestExpectations: Added new failing tests with bugs.
+
 2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Some privateClickMeasurement might output the information in different order depending on platform
