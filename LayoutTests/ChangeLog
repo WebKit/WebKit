@@ -1,3 +1,16 @@
+2021-02-10  Lauro Moura  <lmoura@igalia.com>
+
+        [ATK] Support focusable-inside-hidden test
+        https://bugs.webkit.org/show_bug.cgi?id=221646
+
+        Reviewed by Chris Fleizach.
+
+        ATK uses a different field for the description. (See r201216 and
+        r201072).
+
+        * accessibility/focusable-inside-hidden.html: Add check for ATK.
+        * platform/glib/accessibility/focusable-inside-hidden-expected.txt: Added.
+
 2021-02-09  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline table tests after r272100 and garden some a11 failures.
