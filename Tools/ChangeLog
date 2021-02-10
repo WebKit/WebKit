@@ -1,3 +1,11 @@
+2021-02-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening TestResources failures after r272636
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts
