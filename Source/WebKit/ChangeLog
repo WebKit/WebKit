@@ -1,5 +1,11 @@
 2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Replace ChangeLog entry I accidentally deleted in r272657
+
+        Unreviewed.
+
+2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Revert r272586 because we're not ready yet
 
         We're still trying to figure out the right way to trigger this behavior.
@@ -848,6 +854,22 @@
         (WebKit::WebPage::computePagesForPrintingiOS):
         (WebKit::WebPage::drawToPDFiOS):
         (WebKit::WebPage::computePagesForPrintingAndDrawToPDF): Deleted.
+
+2021-02-09  Per Arne  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the fonts service
+        https://bugs.webkit.org/show_bug.cgi?id=221610
+        <rdar://problem/69168609>
+
+        Reviewed by Brent Fulgham.
+
+        By setting the Info.plist key CTIgnoreUserFonts to true, mach-lookup to the fonts service in the WebContent process can
+        be denied on macOS.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/com.apple.WebProcess.sb.in:
 
 2021-02-09  Per Arne  <pvollan@apple.com>
 
