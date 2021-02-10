@@ -152,6 +152,7 @@ public:
 #endif
 
     NetworkLoadScheduler& networkLoadScheduler();
+    PrivateClickMeasurementManager& privateClickMeasurement() { return *m_privateClickMeasurement; }
 
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -179,7 +180,7 @@ protected:
     Optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
-    UniqueRef<PrivateClickMeasurementManager> m_privateClickMeasurement;
+    std::unique_ptr<PrivateClickMeasurementManager> m_privateClickMeasurement;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 

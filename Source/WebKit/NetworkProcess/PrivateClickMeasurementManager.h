@@ -67,7 +67,7 @@ public:
     void startTimer(Seconds);
 
 private:
-    void clearSentAttributions(Vector<PrivateClickMeasurement>&&);
+    void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
     void firePendingAttributionRequests();

@@ -91,7 +91,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
 #endif
-    , m_privateClickMeasurement(makeUniqueRef<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
 {
@@ -120,15 +119,15 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
+    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID);
     m_privateClickMeasurement->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;
         // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
         new PingLoad(m_networkProcess, m_sessionID, WTFMove(loadParameters), WTFMove(completionHandler));
     });
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 #endif
 }
 
@@ -304,54 +303,54 @@ void NetworkSession::resetCNAMEDomainData()
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& privateClickMeasurement)
+void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)
 {
-    m_privateClickMeasurement->storeUnattributed(WTFMove(privateClickMeasurement));
+    privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement));
 }
 
 void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    m_privateClickMeasurement->handleAttribution(WTFMove(attributionTriggerData), requestURL, redirectRequest);
+    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, redirectRequest);
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
 {
-    m_privateClickMeasurement->toString(WTFMove(completionHandler));
+    privateClickMeasurement().toString(WTFMove(completionHandler));
 }
 
 void NetworkSession::clearPrivateClickMeasurement()
 {
-    m_privateClickMeasurement->clear();
+    privateClickMeasurement().clear();
 }
 
 void NetworkSession::clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&& domain)
 {
-    m_privateClickMeasurement->clearForRegistrableDomain(WTFMove(domain));
+    privateClickMeasurement().clearForRegistrableDomain(WTFMove(domain));
 }
 
 void NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
 {
-    m_privateClickMeasurement->setOverrideTimerForTesting(value);
+    privateClickMeasurement().setOverrideTimerForTesting(value);
 }
 
 void NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    m_privateClickMeasurement->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+    privateClickMeasurement().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
 void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url)
 {
-    m_privateClickMeasurement->setConversionURLForTesting(WTFMove(url));
+    privateClickMeasurement().setConversionURLForTesting(WTFMove(url));
 }
 
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 {
-    m_privateClickMeasurement->markAllUnattributedAsExpiredForTesting();
+    privateClickMeasurement().markAllUnattributedAsExpiredForTesting();
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediately()
 {
-    m_privateClickMeasurement->startTimer(0_s);
+    privateClickMeasurement().startTimer(0_s);
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)

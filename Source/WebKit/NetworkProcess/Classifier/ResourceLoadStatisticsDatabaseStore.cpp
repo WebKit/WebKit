@@ -116,10 +116,6 @@ constexpr auto clearPrevalentResourceQuery = "UPDATE ObservedDomains SET isPreva
 constexpr auto updateGrandfatheredQuery = "UPDATE ObservedDomains SET grandfathered = ? WHERE registrableDomain = ?"_s;
 constexpr auto updateIsScheduledForAllButCookieDataRemovalQuery = "UPDATE ObservedDomains SET isScheduledForAllButCookieDataRemoval = ? WHERE registrableDomain = ?"_s;
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
-constexpr auto updateAttributionsEarliestTimeToSendQuery = "UPDATE AttributedPrivateClickMeasurement as c SET "
-    "earliestTimeToSend = (SELECT MAX(0.0, newTime) FROM (SELECT (earliestTimeToSend - ?) as newTime FROM "
-    "AttributedPrivateClickMeasurement as d WHERE c.sourceSiteDomainID = d.sourceSiteDomainID AND c.attributeOnSiteDomainID = "
-    "d.attributeOnSiteDomainID))"_s;
 
 // SELECT Queries
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
@@ -139,7 +135,7 @@ constexpr auto getAllSubStatisticsUnderDomainQuery = "SELECT topFrameDomainID FR
     "UNION ALL SELECT topFrameDomainID FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"
     "UNION ALL SELECT toDomainID FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
 constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
-constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement"_s;
+constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement ORDER BY earliestTimeToSend"_s;
 constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
 constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
 
@@ -3237,24 +3233,21 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
     return builder.toString();
 }
 
-void ResourceLoadStatisticsDatabaseStore::clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&& attributions)
+void ResourceLoadStatisticsDatabaseStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attribution)
 {
-    for (auto& attribution : attributions) {
-        auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
-        auto attributeOnSiteDomainID = domainID(attribution.attributeOnSite().registrableDomain);
+    auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
+    auto attributeOnSiteDomainID = domainID(attribution.attributeOnSite().registrableDomain);
 
-        if (!sourceSiteDomainID || !attributeOnSiteDomainID)
-            return;
+    if (!sourceSiteDomainID || !attributeOnSiteDomainID)
+        return;
 
-        SQLiteStatement clearAttributedStatement(m_database, "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s);
-        if (clearAttributedStatement.prepare() != SQLITE_OK
-            || clearAttributedStatement.bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-            || clearAttributedStatement.bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK
-            || clearAttributedStatement.step() != SQLITE_DONE) {
-            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearSentAttributions failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
-        }
-        clearAttributedStatement.reset();
+    SQLiteStatement clearAttributedStatement(m_database, "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s);
+    if (clearAttributedStatement.prepare() != SQLITE_OK
+        || clearAttributedStatement.bindInt(1, *sourceSiteDomainID) != SQLITE_OK
+        || clearAttributedStatement.bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK
+        || clearAttributedStatement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearSentAttribution failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
     }
 }
 

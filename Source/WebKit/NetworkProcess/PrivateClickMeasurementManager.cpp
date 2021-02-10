@@ -178,14 +178,14 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     });
 }
 
-void PrivateClickMeasurementManager::clearSentAttributions(Vector<PrivateClickMeasurement>&& sentConversions)
+void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasurement&& sentConversion)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearSentAttributions(WTFMove(sentConversions));
+        resourceLoadStatistics->clearSentAttribution(WTFMove(sentConversion));
 #endif
 }
 
@@ -201,8 +201,8 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 
     resourceLoadStatistics->allAttributedPrivateClickMeasurement([this] (auto&& attributions) {
         auto nextTimeToFire = Seconds::infinity();
-        Vector<PrivateClickMeasurement> sentAttributions;
-        
+        bool hasSentAttribution = false;
+
         for (auto& attribution : attributions) {
             auto earliestTimeToSend = attribution.earliestTimeToSend();
             if (!earliestTimeToSend) {
@@ -212,16 +212,28 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 
             auto now = WallTime::now();
             if (*earliestTimeToSend <= now || m_isRunningTest || debugModeEnabled()) {
+                if (hasSentAttribution) {
+                    // We've already sent an attribution this round. We should send additional overdue attributions at
+                    // a random time between 15 and 30 minutes to avoid a burst of simultaneous attributions. If debug
+                    // mode is enabled, this should be every minute for easy testing.
+                    auto interval = debugModeEnabled() ? 1_min : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
+                    startTimer(interval);
+                    return;
+                }
+
                 fireConversionRequest(attribution);
-                sentAttributions.append(WTFMove(attribution));
+                clearSentAttribution(WTFMove(attribution));
+                hasSentAttribution = true;
                 continue;
             }
 
             auto seconds = *earliestTimeToSend - now;
             nextTimeToFire = std::min(nextTimeToFire, seconds);
+
+            // Attributions are sorted by earliestTimeToSend, so the first time we hit this there can be no further attributions
+            // due for reporting, and nextTimeToFire is the minimum earliestTimeToSend value for any pending attribution.
+            break;
         }
-        
-        clearSentAttributions(WTFMove(sentAttributions));
 
         if (nextTimeToFire < Seconds::infinity())
             startTimer(nextTimeToFire);

@@ -1,3 +1,66 @@
+2021-02-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Expired reports get sent at the same time after a session restart
+        https://bugs.webkit.org/show_bug.cgi?id=221555
+        <rdar://problem/73724816>
+
+        Reviewed by John Wilander.
+
+        Since PCM data is now persisted, we need to address the case of a
+        session-restart after 24-48+ hours. We should not send all overdue
+        attributions in the same burst in case multiple have the same destination
+        and could identify a user cross-site.
+
+        This patch kicks off the timer to fire pending attributions on session-start
+        and sends one report at a time. If more than one overdue report exists
+        at any time, we schedule the timer for a random interval between 15 and
+        30 minutes.
+
+        In theory this could result in some attributions never being sent if a
+        user keeps quitting and restarting a session. In practice this is
+        probably unlikely. Protecting the user's privacy is a hard requirement,
+        so we think possible starvation of some reports is the right tradeoff.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttributions): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::clearSentAttribution):
+        (WebKit::WebResourceLoadStatisticsStore::clearSentAttributions): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        Remove unused SQLite query. Update the query to sort attributed PCM
+        by earliestTimeToSend, which seems important now that we send only
+        one overdue report at a time. Change the clearSentAttributions
+        function to take only a single attribution.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        Convert m_privateClickMeasurement to a unique_ptr so we can wait to
+        create it after WebResourceLoadStatisticsStore is created. This ensures
+        that the call to create the SQLite database will run on a
+        background thread before we try to collect overdue PCM attributions. 
+
+        (WebKit::NetworkSession::storePrivateClickMeasurement):
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        (WebKit::NetworkSession::dumpPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WebKit::NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkSession::setPrivateClickMeasurementConversionURLForTesting):
+        (WebKit::NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkSession::firePrivateClickMeasurementTimerImmediately):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequest):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        Drive-by fixes to add protectedThis and check if PrivateClickMeasurementManager
+        is still alive when this lambda is called.
+
 2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Adopt PUICQuickboardController for text input
