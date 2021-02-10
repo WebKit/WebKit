@@ -4016,15 +4016,9 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
     send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount));
 }
 
-void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, Function<void(uint64_t, CallbackBase::Error)>&& callback)
+void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback(0, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::replaceMatches"_s));
-    send(Messages::WebPage::ReplaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, callbackID));
+    sendWithAsyncReply(Messages::WebPage::ReplaceMatches(WTFMove(matchIndices), replacementText, selectionOnly), WTFMove(callback));
 }
 
 void WebPageProxy::launchInitialProcessIfNecessary()
@@ -7161,18 +7155,6 @@ void WebPageProxy::invalidateStringCallback(CallbackID callbackID)
     callback->invalidate();
 }
 
-void WebPageProxy::unsignedCallback(uint64_t result, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<UnsignedCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        // this can validly happen if a load invalidated the callback, though
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(result);
-}
-
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     updateEditorState(editorState);
@@ -8952,15 +8934,9 @@ void WebPageProxy::getSelectedRangeAsync(CompletionHandler<void(const EditingRan
     sendWithAsyncReply(Messages::WebPage::GetSelectedRangeAsync(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, WTF::Function<void (uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& callbackFunction)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(0, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::characterIndexForPointAsync"_s));
-    send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID));
+    sendWithAsyncReply(Messages::WebPage::CharacterIndexForPointAsync(point), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& callbackFunction)

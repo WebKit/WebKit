@@ -4267,35 +4267,25 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     _usingGestureForSelection = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
-    RetainPtr<WKContentView> view = self;
-
-    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view, selectionHandler] {
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;
-        [selectionHandler release];
     });
 }
 
 - (void)beginSelectionInDirection:(UITextDirection)direction completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
-
-    _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler = makeBlockPtr(completionHandler)] (bool endIsMoving) {
         selectionHandler(endIsMoving);
-        [selectionHandler release];
     });
 }
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
-    
     auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
         selectionHandler(endIsMoving);
-        [selectionHandler release];
     });
 }
 
@@ -4304,7 +4294,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;

@@ -4417,10 +4417,10 @@ void WebPage::countStringMatches(const String& string, OptionSet<FindOptions> op
     findController().countStringMatches(string, options, maxMatchCount);
 }
 
-void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)
+void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     auto numberOfReplacements = findController().replaceMatches(matchIndices, replacementText, selectionOnly);
-    send(Messages::WebPageProxy::UnsignedCallback(numberOfReplacements, callbackID));
+    completionHandler(numberOfReplacements);
 }
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
@@ -5593,14 +5593,14 @@ void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>
     completionHandler(EditingRange::fromRange(frame, frame.selection().selection().toNormalizedRange()));
 }
 
-void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
+void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent,  HitTestRequest::AllowChildFrameContent };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
     auto editingRange = EditingRange::fromRange(frame, range);
-    send(Messages::WebPageProxy::UnsignedCallback(editingRange.location, callbackID));
+    completionHandler(editingRange.location);
 }
 
 void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& completionHandler)

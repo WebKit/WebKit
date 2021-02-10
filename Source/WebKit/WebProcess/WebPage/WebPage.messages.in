@@ -75,9 +75,9 @@ messages -> WebPage LegacyReceiver {
     SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, enum:uint8_t WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement) -> () Async
     MoveSelectionAtBoundaryWithDirection(enum:uint8_t WebCore::TextGranularity granularity, enum:uint8_t WebCore::SelectionDirection direction) -> () Async
     SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement) -> () Async
-    BeginSelectionInDirection(enum:uint8_t WebCore::SelectionDirection direction, WebKit::CallbackID callbackID)
-    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor, WebKit::CallbackID callbackID)
-    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    BeginSelectionInDirection(enum:uint8_t WebCore::SelectionDirection direction) -> (bool endIsMoving) Async
+    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor) -> (bool endIsMoving) Async
+    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement) -> (bool endIsMoving) Async
     RequestDictationContext() -> (String selectedText, String textBefore, String textAfter) Async
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
@@ -306,7 +306,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     IndicateFindMatch(uint32_t matchIndex)
     HideFindUI()
     CountStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
-    ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly, WebKit::CallbackID callbackID)
+    ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly) -> (uint64_t numberOfReplacements) Async
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
 
@@ -457,7 +457,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     HasMarkedText() -> (bool hasMarkedText) Async
     GetMarkedRangeAsync() -> (struct WebKit::EditingRange range) Async
     GetSelectedRangeAsync() -> (struct WebKit::EditingRange range) Async
-    CharacterIndexForPointAsync(WebCore::IntPoint point, WebKit::CallbackID callbackID);
+    CharacterIndexForPointAsync(WebCore::IntPoint point) -> (uint64_t location) Async
     FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range) -> (WebCore::IntRect rect, struct WebKit::EditingRange actualRange) Async
     SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, Vector<WebCore::CompositionHighlight> highlights, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)
     ConfirmCompositionAsync()

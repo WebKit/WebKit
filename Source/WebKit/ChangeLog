@@ -1,3 +1,39 @@
+2021-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandler instead of UnsignedCallback
+        https://bugs.webkit.org/show_bug.cgi?id=221631
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::characterIndexForPoint):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::replaceMatches):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::unsignedCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView beginSelectionInDirection:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::beginSelectionInDirection):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient replaceMatches:withString:inSelectionOnly:resultCollector:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::replaceMatches):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::beginSelectionInDirection):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+
 2021-02-09  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Run ImageDecoderAVFObjC in the GPU Process

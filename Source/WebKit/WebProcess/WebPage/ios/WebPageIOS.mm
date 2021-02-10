@@ -2156,22 +2156,20 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, W
 
 }
 
-void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, CallbackID callbackID)
+void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_selectionAnchor = direction == SelectionDirection::Left ? Start : End;
-    send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
+    completionHandler(m_selectionAnchor == Start);
 }
 
-void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CallbackID callbackID)
+void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&& callback)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     auto position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
     auto newRange = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
     
-    if (position.isNull() || !m_initialSelection || !newRange) {
-        send(Messages::WebPageProxy::UnsignedCallback(false, callbackID));
-        return;
-    }
+    if (position.isNull() || !m_initialSelection || !newRange)
+        return callback(false);
 
     auto initialSelectionStartPosition = makeDeprecatedLegacyPosition(m_initialSelection->start);
     auto initialSelectionEndPosition = makeDeprecatedLegacyPosition(m_initialSelection->end);
@@ -2186,18 +2184,16 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&
     if (auto range = makeSimpleRange(selectionStart, selectionEnd))
         frame.selection().setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
-    send(Messages::WebPageProxy::UnsignedCallback(selectionStart == initialSelectionStartPosition, callbackID));
+    callback(selectionStart == initialSelectionStartPosition);
 }
 
-void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, CallbackID callbackID)
+void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, CompletionHandler<void(bool)>&& callback)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     auto position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
-    if (position.isNull()) {
-        send(Messages::WebPageProxy::UnsignedCallback(false, callbackID));
-        return;
-    }
+    if (position.isNull())
+        return callback(false);
 
     VisiblePosition selectionStart;
     VisiblePosition selectionEnd;
@@ -2235,7 +2231,7 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     if (auto range = makeSimpleRange(selectionStart, selectionEnd))
         frame.selection().setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
-    send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
+    callback(m_selectionAnchor == Start);
 }
 
 void WebPage::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)

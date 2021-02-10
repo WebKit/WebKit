@@ -168,7 +168,6 @@ messages -> WebPageProxy {
     ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
     StringCallback(String resultString, WebKit::CallbackID callbackID)
     InvalidateStringCallback(WebKit::CallbackID callbackID)
-    UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
 #if ENABLE(APPLICATION_MANIFEST)
     ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
 #endif
