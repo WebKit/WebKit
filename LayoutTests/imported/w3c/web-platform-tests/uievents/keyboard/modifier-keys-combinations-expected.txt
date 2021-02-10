@@ -1,0 +1,7 @@
+Target
+
+PASS Check sending "Shift + y" key combination
+PASS Check sending "Control + y" key combination
+PASS Check sending "Alt + y" key combination
+PASS Check sending "Meta + y" key combination
+

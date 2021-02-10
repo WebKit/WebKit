@@ -155,42 +155,46 @@ window.test_driver_internal.send_keys = function(element, keys)
 
     // https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.keys.html
     // FIXME: Add more cases.
-    // FIXME: Add the support for modifier keys.
     const SeleniumCharCodeToEventSenderKey = {
-        0xE003: 'delete',
-        0xE004: '\t',
-        0xE00D: ' ',
-        0xE012: 'leftArrow',
-        0xE013: 'upArrow',
-        0xE014: 'rightArrow',
-        0xE015: 'downArrow',
-        0xE008: 'leftShift',
-        0xE009: 'leftControl',
-        0xE00A: 'leftAlt',
-        0xE03D: 'leftMeta',
+        0xE003: { key: 'delete' },
+        0xE004: { key: '\t' },
+        0xE00D: { key: ' ' },
+        0xE012: { key: 'leftArrow' },
+        0xE013: { key: 'upArrow' },
+        0xE014: { key: 'rightArrow' },
+        0xE015: { key: 'downArrow' },
+        0xE008: { key: 'leftShift', modifier: 'shiftKey' },
+        0xE009: { key: 'leftControl', modifier: 'ctrlKey' },
+        0xE00A: { key: 'leftAlt', modifier: 'altKey' },
+        0xE03D: { key: 'leftMeta', modifier: 'metaKey' },
     };
 
     function convertSeleniumKeyCode(key)
     {
         const code = key.charCodeAt(0);
-        return SeleniumCharCodeToEventSenderKey[code] || key;
+        return SeleniumCharCodeToEventSenderKey[code] || { key: key };
     }
 
     const keyList = [];
-    for (const key of keys)
-        keyList.push(convertSeleniumKeyCode(key));
+    const modifiers = [];
+    for (const key of keys) {
+        let convertedKey = convertSeleniumKeyCode(key);
+        keyList.push(convertedKey.key);
+        if (convertedKey.modifier)
+          modifiers.push(convertedKey.modifier);
+    }
 
     if (testRunner.isIOSFamily && testRunner.isWebKit2) {
         return new Promise((resolve) => {
             testRunner.runUIScript(`
                 const keyList = JSON.parse('${JSON.stringify(keyList)}');
                 for (const key of keyList)
-                    uiController.keyDown(key);`, resolve);
+                    uiController.keyDown(key, modifiers);`, resolve);
         });
     }
 
     for (const key of keyList)
-        eventSender.keyDown(key);
+        eventSender.keyDown(key, modifiers);
     return Promise.resolve();
 }
 

@@ -1,7 +1,7 @@
 Target
 
-FAIL Check sending Shift key assert_equals: expected true but got false
-FAIL Check sending Control key assert_equals: expected true but got false
-FAIL Check sending Alt key assert_equals: expected true but got false
+PASS Check sending Shift key
+PASS Check sending Control key
+PASS Check sending Alt key
 FAIL Check sending Meta key assert_equals: expected "Meta" but got "leftMeta"
 
