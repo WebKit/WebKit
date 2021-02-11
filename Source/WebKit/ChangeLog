@@ -1,3 +1,17 @@
+2021-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r269824) IOSurface allocation failure causes crash in RemoteLayerBackingStore::display()
+        https://bugs.webkit.org/show_bug.cgi?id=221729
+        rdar://72651289
+
+        Reviewed by Tim Horton.
+
+        The refactoring in r269824 dropped a null check on the front buffer surface (IOSurface allocation
+        can fail when the process reaches a hardcoded limit). Restore the null check.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+
 2021-02-10  Peng Liu  <peng.liu6@apple.com>
 
         Remove MediaSourcePrivateClient::monitorSourceBuffers()
