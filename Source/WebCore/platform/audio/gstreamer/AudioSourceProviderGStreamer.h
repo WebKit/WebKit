@@ -22,6 +22,7 @@
 #if ENABLE(WEB_AUDIO) && ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "AudioSourceProvider.h"
+#include "AudioSourceProviderClient.h"
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
 #include <gst/gst.h>
@@ -61,7 +62,7 @@ public:
 
     void provideInput(AudioBus*, size_t framesToProcess) override;
     void setClient(AudioSourceProviderClient*) override;
-    const AudioSourceProviderClient* client() const { return m_client; }
+    const AudioSourceProviderClient* client() const { return m_client.get(); }
 
     void handleNewDeinterleavePad(GstPad*);
     void deinterleavePadsConfigured();
@@ -78,7 +79,7 @@ private:
     };
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     GRefPtr<GstElement> m_audioSinkBin;
-    AudioSourceProviderClient* m_client;
+    WeakPtr<AudioSourceProviderClient> m_client;
     int m_deinterleaveSourcePads;
     GstAdapter* m_frontLeftAdapter;
     GstAdapter* m_frontRightAdapter;

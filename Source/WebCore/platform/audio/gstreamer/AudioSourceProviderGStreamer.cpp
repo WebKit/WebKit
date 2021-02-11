@@ -228,12 +228,12 @@ GstFlowReturn AudioSourceProviderGStreamer::handleAudioBuffer(GstAppSink* sink)
     return GST_FLOW_OK;
 }
 
-void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* client)
+void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClient)
 {
-    if (m_client == client)
+    if (client() == newClient)
         return;
 
-    m_client = client;
+    m_client = makeWeakPtr(newClient);
 
     if (m_pipeline)
         gst_element_set_state(m_pipeline.get(), m_client ? GST_STATE_PLAYING : GST_STATE_NULL);

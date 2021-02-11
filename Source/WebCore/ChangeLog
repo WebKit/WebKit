@@ -1,3 +1,18 @@
+2021-02-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Make m_client WeakPtr in AudioSourceProviderGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=217952
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/audio/AudioSourceProviderClient.h: Turned into
+        CanMakeWeakPtr.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::setClient): Adapt to use
+        WeakPtr.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h: Turned
+        m_client into WeakPtr.
+
 2020-11-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] AudioSourceProvider can potentially invoke an already-freed client
