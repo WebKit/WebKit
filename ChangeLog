@@ -1,3 +1,16 @@
+2021-02-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Enable hidden visibility on JSCOnly
+        https://bugs.webkit.org/show_bug.cgi?id=221726
+
+        Reviewed by Yusuke Suzuki.
+
+        Turn on hidden visibility for all *NIX ports of JSCOnly. To properly export the symbols
+        from WTF/bmalloc OBJECT libraries are used. This requires CMake 3.12 or later to
+        function properly.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2021-02-10  Christopher Reid  <chris.reid@sony.com>
 
         [PlayStation] Add initial RESOURCE_USAGE implementation
