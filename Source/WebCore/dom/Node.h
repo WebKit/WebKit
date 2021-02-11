@@ -295,6 +295,8 @@ public:
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return hasNodeFlag(NodeFlag::IsEditingText); }
 
+    bool isDocumentFragmentForInnerOuterHTML() const { return hasNodeFlag(NodeFlag::IsDocumentFragmentForInnerOuterHTML); }
+
     void setChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     void clearChildNeedsStyleRecalc();
 
@@ -528,10 +530,10 @@ protected:
         IsInShadowTree = 1 << 11,
         HasEventTargetData = 1 << 12,
         // UnusedFlag = 1 << 13,
-        // UnusedFlag = 1 << 14,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
+        IsDocumentFragmentForInnerOuterHTML = 1 << 14, // DocumentFragment
         IsEditingText = 1 << 15, // Text
         HasFocusWithin = 1 << 16, // Element
         IsLink = 1 << 17,

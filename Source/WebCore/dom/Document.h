@@ -1326,6 +1326,8 @@ public:
     void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = makeWeakPtr(templateDocumentHost); }
     Document* templateDocumentHost() { return m_templateDocumentHost.get(); }
 
+    Ref<DocumentFragment> documentFragmentForInnerOuterHTML();
+
     void didAssociateFormControl(Element&);
     bool hasDisabledFieldsetElement() const { return m_disabledFieldsetElementsCount; }
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
@@ -1968,6 +1970,8 @@ private:
 
     RefPtr<Document> m_templateDocument;
     WeakPtr<Document> m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
+
+    RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
 
     Ref<CSSFontSelector> m_fontSelector;
 

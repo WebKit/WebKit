@@ -82,6 +82,16 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
 {
     auto children = collectChildNodes(*this);
 
+    if (UNLIKELY(isDocumentFragmentForInnerOuterHTML())) {
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+        RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
+        ASSERT(!weakPtrFactory().isInitialized());
+        while (RefPtr<Node> child = m_firstChild)
+            removeBetween(nullptr, child->nextSibling(), *child);
+        document().incDOMTreeVersion();
+        return children;
+    }
+
     if (source == ChildChange::Source::API) {
         ChildListMutationScope mutation(*this);
         for (auto& child : children) {
