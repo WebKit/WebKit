@@ -1065,6 +1065,9 @@
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
 (allow ipc-posix-shm-read-data
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry)
+#endif
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
     (ipc-posix-name-regex #"^WebKit Test-"))
