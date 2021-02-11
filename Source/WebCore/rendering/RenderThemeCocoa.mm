@@ -30,7 +30,7 @@
 #import "HTMLInputElement.h"
 #import "RenderText.h"
 #import <algorithm>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 
 #if ENABLE(VIDEO)
 #import "LocalizedStrings.h"

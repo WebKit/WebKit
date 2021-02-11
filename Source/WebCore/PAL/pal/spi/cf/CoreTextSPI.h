@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,7 +146,7 @@ bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 bool CTFontIsSystemUIFont(CTFontRef);
 CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
-CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption option, CFIndex *coveredLength);
+CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption, CFIndex *coveredLength);
 CTFontRef CTFontCopyPhysicalFont(CTFontRef);
 CTFontSymbolicTraits CTFontGetPhysicalSymbolicTraits(CTFontRef);
 

@@ -31,7 +31,7 @@
 #include "Font.h"
 
 #if PLATFORM(COCOA)
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #endif
 #include "CachedFont.h"
 #include "CharacterProperties.h"

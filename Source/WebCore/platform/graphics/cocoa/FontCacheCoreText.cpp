@@ -31,7 +31,7 @@
 #include "FontFamilySpecificationCoreText.h"
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 
 #include <CoreText/SFNTLayoutTypes.h>
 

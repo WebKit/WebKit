@@ -32,7 +32,7 @@
 #import "WKNumberPadViewController.h"
 
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>

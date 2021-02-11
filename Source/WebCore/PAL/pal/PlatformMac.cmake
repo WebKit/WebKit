@@ -17,6 +17,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cf/CFUtilitiesSPI.h
     spi/cf/CoreAudioSPI.h
     spi/cf/CoreMediaSPI.h
+    spi/cf/CoreTextSPI.h
 
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
@@ -31,7 +32,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/AudioToolboxSPI.h
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CommonCryptoSPI.h
-    spi/cocoa/CoreTextSPI.h
     spi/cocoa/DataDetectorsCoreSPI.h
     spi/cocoa/IOKitSPI.h
     spi/cocoa/IOPMLibSPI.h

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FontDescription.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/AtomString.h>

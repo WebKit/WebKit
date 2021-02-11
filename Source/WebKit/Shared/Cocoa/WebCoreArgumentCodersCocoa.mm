@@ -34,7 +34,7 @@
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCustomPlatformData.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIFont.h>

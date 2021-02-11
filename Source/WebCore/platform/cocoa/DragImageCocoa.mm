@@ -42,8 +42,8 @@
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "WebKitNSImageExtras.h"
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>

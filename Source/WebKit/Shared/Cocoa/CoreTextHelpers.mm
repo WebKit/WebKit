@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CoreTextHelpers.h"
 
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {

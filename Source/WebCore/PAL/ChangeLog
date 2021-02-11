@@ -1,3 +1,18 @@
+2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move pal/spi/cocoa/CoreTextSPI.h to pal/spi/cf/CoreTextSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=221683
+
+        Reviewed by Simon Fraser.
+
+        Core Text has a C API, and doesn't depend on UIKit/AppKit. It also exists on Windows,
+        where there is no Cocoa. And pal/spi/cf already includes things like CoreAudioSPI.h
+        and CoreVideoSPI.h
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/spi/cf/CoreTextSPI.h: Renamed from Source/WebCore/PAL/pal/spi/cocoa/CoreTextSPI.h.
+
 2021-02-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Connect MediaSession with MediaRemote and NowPlaying

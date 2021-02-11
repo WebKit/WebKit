@@ -329,7 +329,7 @@
 #if PLATFORM(COCOA)
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
