@@ -47,6 +47,10 @@ public:
         virtual void audioOutputDeviceChanged() = 0;
     };
 
+    using CreationFunction = Function<Ref<AudioHardwareListener>(AudioHardwareListener::Client&)>;
+    WEBCORE_EXPORT static void setCreationFunction(CreationFunction&&);
+    WEBCORE_EXPORT static void resetCreationFunction();
+
     WEBCORE_EXPORT static Ref<AudioHardwareListener> create(Client&);
     virtual ~AudioHardwareListener() = default;
     
@@ -61,7 +65,7 @@ public:
     BufferSizeRange supportedBufferSizes() const { return m_supportedBufferSizes; }
 
 protected:
-    AudioHardwareListener(Client&);
+    WEBCORE_EXPORT AudioHardwareListener(Client&);
 
     void setHardwareActivity(AudioHardwareActivityType activity) { m_activity = activity; }
     void setSupportedBufferSizes(BufferSizeRange sizes) { m_supportedBufferSizes = sizes; }

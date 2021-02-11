@@ -308,6 +308,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::PDFPluginIdentifier',
         'WebKit::PlaybackSessionContextIdentifier',
         'WebKit::RemoteAudioDestinationIdentifier',
+        'WebKit::RemoteAudioHardwareListenerIdentifier',
         'WebKit::RemoteAudioSessionIdentifier',
         'WebKit::RemoteCDMIdentifier',
         'WebKit::RemoteCDMInstanceIdentifier',

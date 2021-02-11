@@ -694,6 +694,7 @@ LibWebRTCCodecsMessageReceiver.cpp
 MessageArgumentDescriptions.cpp @no-unify
 MessageNames.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
+RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp
 RemoteAudioSessionProxyMessageReceiver.cpp
 RemoteAudioMediaStreamTrackRendererManagerMessageReceiver.cpp

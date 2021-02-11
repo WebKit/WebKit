@@ -26,14 +26,44 @@
 #include "config.h"
 #include "AudioHardwareListener.h"
 
+#include <wtf/Function.h>
+#include <wtf/NeverDestroyed.h>
+
+#if PLATFORM(MAC)
+#include "AudioHardwareListenerMac.h"
+#endif
+
 namespace WebCore {
 
-#if !PLATFORM(MAC)
+static AudioHardwareListener::CreationFunction& audioHardwareListenerCreationFunction()
+{
+    static NeverDestroyed<AudioHardwareListener::CreationFunction> creationFunction;
+    return creationFunction;
+}
+
+void AudioHardwareListener::setCreationFunction(CreationFunction&& function)
+{
+    audioHardwareListenerCreationFunction() = WTFMove(function);
+}
+
+void AudioHardwareListener::resetCreationFunction()
+{
+    audioHardwareListenerCreationFunction() = [] (AudioHardwareListener::Client& client) {
+#if PLATFORM(MAC)
+        return AudioHardwareListenerMac::create(client);
+#else
+        return adoptRef(*new AudioHardwareListener(client));
+#endif
+    };
+}
+
 Ref<AudioHardwareListener> AudioHardwareListener::create(Client& client)
 {
-    return adoptRef(*new AudioHardwareListener(client));
+    if (!audioHardwareListenerCreationFunction())
+        resetCreationFunction();
+
+    return audioHardwareListenerCreationFunction()(client);
 }
-#endif
 
 AudioHardwareListener::AudioHardwareListener(Client& client)
     : m_client(client)

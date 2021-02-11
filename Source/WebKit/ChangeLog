@@ -1,3 +1,47 @@
+2021-02-10  Jer Noble  <jer.noble@apple.com>
+
+        Move AudioHardwareListener into the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221455
+
+        Reviewed by Eric Carlson.
+
+        Add a new Remote pair of classes, RemoteAudioHardwareListener/Proxy.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createAudioHardwareListener):
+        (WebKit::GPUConnectionToWebProcess::releaseAudioHardwareListener):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp: 
+        (WebKit::RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeActive):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeInactive):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioOutputDeviceChanged):
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.h: 
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.cpp: Added.
+        (WebKit::RemoteAudioHardwareListener::create):
+        (WebKit::RemoteAudioHardwareListener::RemoteAudioHardwareListener):
+        (WebKit::RemoteAudioHardwareListener::~RemoteAudioHardwareListener):
+        (WebKit::RemoteAudioHardwareListener::gpuProcessConnectionDidClose):
+        (WebKit::RemoteAudioHardwareListener::audioHardwareDidBecomeActive):
+        (WebKit::RemoteAudioHardwareListener::audioHardwareDidBecomeInactive):
+        (WebKit::RemoteAudioHardwareListener::audioOutputDeviceChanged):
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.h:
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.messages.in:
+        * WebProcess/GPU/media/RemoteAudioHardwareListenerIdentifier.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+
 2021-02-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Update - [ASCAppleIDCredential initWithUser:...] to match the latest SPI

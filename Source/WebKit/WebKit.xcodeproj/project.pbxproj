@@ -5490,6 +5490,15 @@
 		CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FullscreenTouchSecheuristic.h; path = ios/fullscreen/FullscreenTouchSecheuristic.h; sourceTree = "<group>"; };
 		CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FullscreenTouchSecheuristic.cpp; path = ios/fullscreen/FullscreenTouchSecheuristic.cpp; sourceTree = "<group>"; };
+		CD20CE6E25CC90510069B542 /* RemoteAudioHardwareListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListener.h; sourceTree = "<group>"; };
+		CD20CE6F25CC90510069B542 /* RemoteAudioHardwareListener.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListener.cpp; sourceTree = "<group>"; };
+		CD20CE7125CC92E80069B542 /* RemoteAudioHardwareListener.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioHardwareListener.messages.in; sourceTree = "<group>"; };
+		CD20CE7325CC96500069B542 /* RemoteAudioHardwareListenerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerIdentifier.h; sourceTree = "<group>"; };
+		CD20CE7425CC999F0069B542 /* RemoteAudioHardwareListenerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerProxy.h; sourceTree = "<group>"; };
+		CD20CE7525CC999F0069B542 /* RemoteAudioHardwareListenerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListenerProxy.cpp; sourceTree = "<group>"; };
+		CD20CE7725CD2B9D0069B542 /* RemoteAudioHardwareListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListenerMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD20CE7825CD2B9D0069B542 /* RemoteAudioHardwareListenerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerMessagesReplies.h; sourceTree = "<group>"; };
+		CD20CE7925CD2B9E0069B542 /* RemoteAudioHardwareListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerMessages.h; sourceTree = "<group>"; };
 		CD3EEF3125799618006563BB /* RemoteMediaEngineConfigurationFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaEngineConfigurationFactory.h; sourceTree = "<group>"; };
 		CD3EEF3225799618006563BB /* RemoteMediaEngineConfigurationFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaEngineConfigurationFactory.cpp; sourceTree = "<group>"; };
 		CD3EEF3325799717006563BB /* RemoteMediaEngineConfigurationFactoryProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaEngineConfigurationFactoryProxy.h; sourceTree = "<group>"; };
@@ -5967,6 +5976,10 @@
 				1DF29018257F202F003C28AF /* MediaSourcePrivateRemote.messages.in */,
 				9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */,
 				9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */,
+				CD20CE6F25CC90510069B542 /* RemoteAudioHardwareListener.cpp */,
+				CD20CE6E25CC90510069B542 /* RemoteAudioHardwareListener.h */,
+				CD20CE7125CC92E80069B542 /* RemoteAudioHardwareListener.messages.in */,
+				CD20CE7325CC96500069B542 /* RemoteAudioHardwareListenerIdentifier.h */,
 				CDBB49F5240D8AC60017C292 /* RemoteAudioSession.cpp */,
 				CDBB49F4240D8AC60017C292 /* RemoteAudioSession.h */,
 				CDD5356F240DD34300F7B8C4 /* RemoteAudioSession.messages.in */,
@@ -6040,6 +6053,8 @@
 				9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */,
 				9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */,
 				9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */,
+				CD20CE7525CC999F0069B542 /* RemoteAudioHardwareListenerProxy.cpp */,
+				CD20CE7425CC999F0069B542 /* RemoteAudioHardwareListenerProxy.h */,
 				CDBB49F7240D8C950017C292 /* RemoteAudioSessionProxy.cpp */,
 				CDBB49F6240D8C950017C292 /* RemoteAudioSessionProxy.h */,
 				CDBB49F8240D8D530017C292 /* RemoteAudioSessionProxy.messages.in */,
@@ -10809,6 +10824,9 @@
 				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
 				1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */,
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
+				CD20CE7725CD2B9D0069B542 /* RemoteAudioHardwareListenerMessageReceiver.cpp */,
+				CD20CE7925CD2B9E0069B542 /* RemoteAudioHardwareListenerMessages.h */,
+				CD20CE7825CD2B9D0069B542 /* RemoteAudioHardwareListenerMessagesReplies.h */,
 				CDD53576240DDE0700F7B8C4 /* RemoteAudioSessionMessageReceiver.cpp */,
 				CDD53575240DDE0700F7B8C4 /* RemoteAudioSessionMessages.h */,
 				CDD53574240DDE0700F7B8C4 /* RemoteAudioSessionMessagesReplies.h */,

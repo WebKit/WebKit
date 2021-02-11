@@ -109,11 +109,6 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
     return outputDeviceProperty;
 }
 
-Ref<AudioHardwareListener> AudioHardwareListener::create(Client& client)
-{
-    return AudioHardwareListenerMac::create(client);
-}
-
 Ref<AudioHardwareListenerMac> AudioHardwareListenerMac::create(Client& client)
 {
     return adoptRef(*new AudioHardwareListenerMac(client));

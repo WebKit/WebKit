@@ -178,6 +178,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/webrtc/SampleBufferDisplayLayer \
 	WebProcess/GPU/media/MediaPlayerPrivateRemote \
 	WebProcess/GPU/media/MediaSourcePrivateRemote \
+	WebProcess/GPU/media/RemoteAudioHardwareListener \
 	WebProcess/GPU/media/RemoteAudioSession \
 	WebProcess/GPU/media/RemoteAudioSourceProviderManager \
 	WebProcess/GPU/media/RemoteCDMInstance \

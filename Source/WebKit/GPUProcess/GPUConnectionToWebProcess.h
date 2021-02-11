@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "MessageReceiverMap.h"
+#include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 
@@ -50,6 +51,7 @@ namespace WebKit {
 class GPUProcess;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
+class RemoteAudioHardwareListenerProxy;
 class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
@@ -156,6 +158,9 @@ private:
     void ensureMediaSessionHelper();
 #endif
 
+    void createAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
+    void releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
+
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
@@ -230,6 +235,9 @@ private:
 #endif
 
     std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+
+    using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
+    RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
 };
 
 } // namespace WebKit

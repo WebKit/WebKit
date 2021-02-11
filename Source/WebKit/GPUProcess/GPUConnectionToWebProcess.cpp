@@ -37,6 +37,7 @@
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
+#include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -403,6 +404,20 @@ RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngi
     return *m_mediaEngineConfigurationFactoryProxy;
 }
 #endif
+
+void GPUConnectionToWebProcess::createAudioHardwareListener(RemoteAudioHardwareListenerIdentifier identifier)
+{
+    auto addResult = m_remoteAudioHardwareListenerMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteAudioHardwareListenerProxy>(*this, WTFMove(identifier));
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier identifier)
+{
+    bool found = m_remoteAudioHardwareListenerMap.remove(identifier);
+    ASSERT_UNUSED(found, found);
+}
 
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {

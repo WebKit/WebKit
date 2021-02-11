@@ -28,6 +28,7 @@ GPUProcess/graphics/DisplayListReaderHandle.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
+GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
@@ -585,6 +586,7 @@ WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/MediaSourcePrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
+WebProcess/GPU/media/RemoteAudioHardwareListener.cpp
 WebProcess/GPU/media/RemoteAudioSession.cpp
 WebProcess/GPU/media/RemoteCDM.cpp
 WebProcess/GPU/media/RemoteCDMFactory.cpp

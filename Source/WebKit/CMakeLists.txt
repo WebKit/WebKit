@@ -222,6 +222,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy
     WebProcess/GPU/graphics/RemoteRenderingBackendProxy
 
+    WebProcess/GPU/media/RemoteAudioHardwareListener
     WebProcess/GPU/media/MediaPlayerPrivateRemote
     WebProcess/GPU/media/MediaSourcePrivateRemote
     WebProcess/GPU/media/RemoteAudioSession

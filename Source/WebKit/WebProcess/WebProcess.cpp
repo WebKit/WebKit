@@ -43,6 +43,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
 #include "ProcessAssertion.h"
+#include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
@@ -1952,6 +1953,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
     else
         MediaEngineConfigurationFactory::resetFactories();
+
+    if (useGPUProcessForMedia)
+        WebCore::AudioHardwareListener::setCreationFunction([this] (WebCore::AudioHardwareListener::Client& client) { return RemoteAudioHardwareListener::create(client, *this); });
+    else
+        WebCore::AudioHardwareListener::resetCreationFunction();
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

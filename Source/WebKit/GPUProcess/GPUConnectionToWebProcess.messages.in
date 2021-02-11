@@ -40,6 +40,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #if ENABLE(VP9)
     EnableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 #endif
+    CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
+    ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)
