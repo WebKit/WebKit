@@ -30,6 +30,12 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         super();
 
         this._gridOverlayForNodeMap = new Map;
+
+        WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
+        WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
+        WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
+        WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
+        WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
     }
 
     // Public
@@ -39,7 +45,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         return Array.from(this._gridOverlayForNodeMap.keys());
     }
 
-    showGridOverlay(domNode, {color, showLineNames, showLineNumbers, showExtendedGridLines, showTrackSizes, showAreaNames} = {})
+    showGridOverlay(domNode, {color} = {})
     {
         console.assert(!domNode.destroyed, domNode);
         if (domNode.destroyed)
@@ -54,11 +60,11 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         let commandArguments = {
             nodeId: domNode.id,
             gridColor: color.toProtocol(),
-            showLineNames: !!showLineNames,
-            showLineNumbers: !!showLineNumbers,
-            showExtendedGridLines: !!showExtendedGridLines,
-            showTrackSizes: !!showTrackSizes,
-            showAreaNames: !!showAreaNames,
+            showLineNames: WI.settings.gridOverlayShowLineNames.value,
+            showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
+            showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
+            showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
+            showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
         };
         target.DOMAgent.showGridOverlay.invoke(commandArguments);
 
@@ -83,6 +89,16 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         target.DOMAgent.hideGridOverlay(domNode.id);
 
         this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
+    }
+
+    // Private
+
+    _handleGridSettingChanged(event)
+    {
+        for (let [domNode, overlay] of this._gridOverlayForNodeMap) {
+            // Refresh all shown overlays. Latest settings values will be used.
+            this.showGridOverlay(domNode, {color: overlay.color});
+        }
     }
 };
 

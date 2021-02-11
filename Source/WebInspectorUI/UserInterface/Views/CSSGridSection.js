@@ -67,6 +67,15 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-link-list");
+
+        let settingsGroup = new WI.SettingsGroup(WI.UIString("Grid Overlay Settings", "Page Overlay Settings @ Layout Panel Section Header", "Heading for list of grid overlay settings"));
+        this.element.append(settingsGroup.element);
+
+        settingsGroup.addSetting(WI.settings.gridOverlayShowLineNumbers, WI.UIString("Show line numbers", "Show line numbers @ Layers Panel Grid Overlay Setting", "Label for option to toggle the line numbers setting for CSS grid overlays"));
+        settingsGroup.addSetting(WI.settings.gridOverlayShowLineNames, WI.UIString("Show line names", "Show line names @ Layers Panel Grid Overlay Setting", "Label for option to toggle the line names setting for CSS grid overlays"));
+        settingsGroup.addSetting(WI.settings.gridOverlayShowExtendedGridLines, WI.UIString("Show extended lines", "Show extended lines @ Layers Panel Grid Overlay Setting", "Label for option to toggle the extended lines setting for CSS grid overlays"));
+        settingsGroup.addSetting(WI.settings.gridOverlayShowAreaNames, WI.UIString("Show area names", "Show area names @ Layers Panel Grid Overlay Setting", "Label for option to toggle the area names setting for CSS grid overlays"));
+        settingsGroup.addSetting(WI.settings.gridOverlayShowTrackSizes, WI.UIString("Show track sizes", "Show track sizes @ Layers Panel Grid Overlay Setting", "Label for option to toggle the track sizes setting for CSS grid overlays"));
     }
 
     layout()

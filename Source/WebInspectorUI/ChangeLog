@@ -1,3 +1,26 @@
+2021-02-11  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Add settings UI for CSS Grid overlay
+        https://bugs.webkit.org/show_bug.cgi?id=221556
+        <rdar://problem/74100005>
+
+        Reviewed by Devin Rousso.
+
+        Add UI to toggle configuration options for the CSS Grid overlay.
+        When an option's value changes, all shown overlays are refreshed.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype._handleGridSettingChanged):
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-link,):
+        (.css-grid-section :is(.heading, .title)):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+
 2021-02-10  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for evaluating script on the inspected page via _WKInspectorExtension
