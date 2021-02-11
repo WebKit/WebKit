@@ -1,3 +1,17 @@
+2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add more Selenium key codes for test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221674
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add more Selenium key codes (https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.keys.html).
+        Not all of them are added, only the ones that are supported in eventSender.keyDown().
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt: Updated expectations
+        as this test was using the code for ENTER.
+        * web-platform-tests/resources/testdriver-vendor.js:
+
 2021-02-11  Ziran Sun  <zsun@igalia.com>
 
         the nested grid container which has replaced item with 'max-height' has wrong width(0px).

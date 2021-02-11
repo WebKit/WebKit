@@ -1,3 +1,12 @@
+2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add more Selenium key codes for test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221674
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt.
+
 2021-02-11  Youenn Fablet  <youenn@apple.com>
 
         Remove GPUProcess flag in MediaRecorder tests
