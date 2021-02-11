@@ -2313,9 +2313,14 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     context.fillRoundedRect(innerBorder, controlBackgroundColor);
 
     double valueRatio = renderSlider.valueRatio();
-    if (isHorizontal)
-        trackClip.setWidth(trackClip.width() * valueRatio);
-    else {
+    if (isHorizontal) {
+        double newWidth = trackClip.width() * valueRatio;
+
+        if (!box.style().isLeftToRightDirection())
+            trackClip.move(trackClip.width() - newWidth, 0);
+
+        trackClip.setWidth(newWidth);
+    } else {
         float height = trackClip.height();
         trackClip.setHeight(height * valueRatio);
         trackClip.setY(trackClip.y() + height - trackClip.height());

@@ -1,3 +1,17 @@
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Range inputs have an incorrect RTL appearance
+        https://bugs.webkit.org/show_bug.cgi?id=221758
+        <rdar://problem/74236993>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a reference mismatch test to verify that a range input with
+        dir="rtl" has a distinct appearance from a standard range input.
+
+        * fast/forms/ios/form-control-refresh/range/rtl-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/range/rtl-appearance.html: Added.
+
 2021-02-11  Sergio Villar Senin  <svillar@igalia.com> and Imanol Fernandez  <ifernandez@igalia.com>
 
         Complete XRSession::requestAnimationFrame implementation
