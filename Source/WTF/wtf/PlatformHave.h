@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -872,4 +872,14 @@
 
 #if PLATFORM(WATCHOS)
 #define HAVE_PEPPER_UI_CORE 1
+#endif
+
+#if PLATFORM(COCOA)
+#define HAVE_CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_ITUR_2020_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_ROMMRGB_COLOR_SPACE 1
+#define HAVE_CORE_GRAPHICS_XYZ_COLOR_SPACE 1
 #endif

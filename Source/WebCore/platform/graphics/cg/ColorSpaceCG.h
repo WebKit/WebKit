@@ -31,45 +31,104 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
-WEBCORE_EXPORT CGColorSpaceRef a98RGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef proPhotoRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef rec2020ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef xyzD50ColorSpaceRef();
 
-static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
+#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef adobeRGB1998ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef ITUR_2020ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef linearSRGBColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef ROMMRGBColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef xyzColorSpaceRef();
+#endif
+
+static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:
-        return a98RGBColorSpaceRef();
+#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
+        return adobeRGB1998ColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::DisplayP3:
+#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
         return displayP3ColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::Lab:
+#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
         return labColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::LinearSRGB:
-        return linearRGBColorSpaceRef();
+#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
+        return linearSRGBColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::ProPhotoRGB:
-        return proPhotoRGBColorSpaceRef();
+#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
+        return ROMMRGBColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::Rec2020:
-        return rec2020ColorSpaceRef();
+#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
+        return ITUR_2020ColorSpaceRef();
+#else
+        return nullptr;
+#endif
     case ColorSpace::SRGB:
         return sRGBColorSpaceRef();
     case ColorSpace::XYZ_D50:
-        return xyzD50ColorSpaceRef();
+#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+        return xyzColorSpaceRef();
+#else
+        return nullptr;
+#endif
     }
     ASSERT_NOT_REACHED();
-    return sRGBColorSpaceRef();
+    return nullptr;
 }
 
+// NOTE: Since this function is for *destination* color spaces whose callers always expect a non-null color space, this function is guaranteed to return non-null, unlike cachedNullableCGColorSpace().
 static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case DestinationColorSpace::LinearSRGB:
-        return linearRGBColorSpaceRef();
+    case DestinationColorSpace::LinearSRGB: {
+#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
+        return linearSRGBColorSpaceRef();
+#else
+        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
+        return sRGBColorSpaceRef();
+#endif
+    }
     case DestinationColorSpace::SRGB:
         return sRGBColorSpaceRef();
     }

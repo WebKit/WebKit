@@ -1,3 +1,13 @@
+2021-02-11  Sam Weinig  <weinig@apple.com>
+
+        Returning sRGB from CG color space functions on failure is too error prone
+        https://bugs.webkit.org/show_bug.cgi?id=221676
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+        Add specific macros for color spaces supported by Core Graphics.
+
 2021-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reduce the overhead of DocumentFragment in innerHTML & outerHTML

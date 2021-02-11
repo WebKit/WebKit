@@ -33,101 +33,6 @@
 
 namespace WebCore {
 
-CGColorSpaceRef a98RGBColorSpaceRef()
-{
-    static CGColorSpaceRef a98RGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        a98RGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
-#else
-        a98RGBColorSpace = sRGBColorSpaceRef();
-#endif
-    });
-    return a98RGBColorSpace;
-}
-
-CGColorSpaceRef displayP3ColorSpaceRef()
-{
-    static CGColorSpaceRef displayP3ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
-#else
-        displayP3ColorSpace = sRGBColorSpaceRef();
-#endif
-    });
-    return displayP3ColorSpace;
-}
-
-CGColorSpaceRef extendedSRGBColorSpaceRef()
-{
-    static CGColorSpaceRef extendedSRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        CGColorSpaceRef colorSpace = nullptr;
-#if PLATFORM(COCOA)
-        colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
-#endif
-        // If there is no support for extended sRGB, fall back to sRGB.
-        if (!colorSpace)
-            colorSpace = sRGBColorSpaceRef();
-
-        extendedSRGBColorSpace = colorSpace;
-    });
-    return extendedSRGBColorSpace;
-}
-
-CGColorSpaceRef labColorSpaceRef()
-{
-    // FIXME: Add support for conversion to Lab on supported platforms.
-    return sRGBColorSpaceRef();
-}
-
-CGColorSpaceRef linearRGBColorSpaceRef()
-{
-    static CGColorSpaceRef linearRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(WIN)
-        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-        linearRGBColorSpace = sRGBColorSpaceRef();
-#else
-        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
-#endif
-    });
-    return linearRGBColorSpace;
-}
-
-CGColorSpaceRef proPhotoRGBColorSpaceRef()
-{
-    static CGColorSpaceRef proPhotoRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        proPhotoRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceROMMRGB);
-#else
-        proPhotoRGBColorSpace = sRGBColorSpaceRef();
-#endif
-    });
-    return proPhotoRGBColorSpace;
-}
-
-CGColorSpaceRef rec2020ColorSpaceRef()
-{
-    static CGColorSpaceRef rec2020ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        rec2020ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020);
-#else
-        rec2020ColorSpace = sRGBColorSpaceRef();
-#endif
-    });
-    return rec2020ColorSpace;
-}
-
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     static CGColorSpaceRef sRGBColorSpace;
@@ -148,19 +53,104 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBColorSpace;
 }
 
-CGColorSpaceRef xyzD50ColorSpaceRef()
+#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
+CGColorSpaceRef adobeRGB1998ColorSpaceRef()
 {
-    static CGColorSpaceRef xyzD50ColorSpace;
+    static CGColorSpaceRef adobeRGB1998ColorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        xyzD50ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericXYZ);
-#else
-        xyzD50ColorSpace = sRGBColorSpaceRef();
-#endif
+        adobeRGB1998ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
+        ASSERT(adobeRGB1998ColorSpace);
     });
-    return xyzD50ColorSpace;
+    return adobeRGB1998ColorSpace;
 }
+#endif
+
+#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
+CGColorSpaceRef displayP3ColorSpaceRef()
+{
+    static CGColorSpaceRef displayP3ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+        ASSERT(displayP3ColorSpace);
+    });
+    return displayP3ColorSpace;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+CGColorSpaceRef extendedSRGBColorSpaceRef()
+{
+    static CGColorSpaceRef extendedSRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        extendedSRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
+        ASSERT(extendedSRGBColorSpace);
+    });
+    return extendedSRGBColorSpace;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
+CGColorSpaceRef ITUR_2020ColorSpaceRef()
+{
+    static CGColorSpaceRef ITUR2020ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        ITUR2020ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020);
+        ASSERT(ITUR2020ColorSpace);
+    });
+    return ITUR2020ColorSpace;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
+CGColorSpaceRef labColorSpaceRef()
+{
+    // FIXME: Add support for conversion to Lab on supported platforms.
+    return nullptr;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
+CGColorSpaceRef linearSRGBColorSpaceRef()
+{
+    static CGColorSpaceRef linearRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
+        ASSERT(linearRGBColorSpace);
+    });
+    return linearRGBColorSpace;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
+CGColorSpaceRef ROMMRGBColorSpaceRef()
+{
+    static CGColorSpaceRef ROMMRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        ROMMRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceROMMRGB);
+        ASSERT(ROMMRGBColorSpace);
+    });
+    return ROMMRGBColorSpace;
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+CGColorSpaceRef xyzColorSpaceRef()
+{
+    static CGColorSpaceRef xyzColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        xyzColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericXYZ);
+        ASSERT(xyzColorSpace);
+    });
+    return xyzColorSpace;
+}
+#endif
 
 }
 
