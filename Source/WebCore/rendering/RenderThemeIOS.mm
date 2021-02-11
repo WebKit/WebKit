@@ -453,6 +453,18 @@ void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
     }
 }
 
+LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
+{
+    // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
+    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart) {
+        float width = std::min(paintRect.width(), paintRect.height());
+        float height = width;
+        return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
+    }
+
+    return paintRect;
+}
+
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
     if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
@@ -2050,7 +2062,7 @@ constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
 
 constexpr auto menulistButtonColor = SRGBA<uint8_t> { 97, 172, 255 };
 
-bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;
@@ -2108,7 +2120,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     return false;
 }
 
-bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;

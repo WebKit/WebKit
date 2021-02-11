@@ -72,6 +72,8 @@ private:
 
     LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
 
+    LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const override;
+
     int baselinePosition(const RenderBox&) const override;
 
     bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const override;
@@ -112,8 +114,8 @@ private:
     void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 
