@@ -1,3 +1,15 @@
+2021-02-11  Sam Weinig  <weinig@apple.com>
+
+        Rework RGB color types to be more declarative to reduce code duplication and make progress toward better automatic conversion
+        https://bugs.webkit.org/show_bug.cgi?id=221677
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkitColorToWebCoreColor):
+        Update to specify SRGBA<float>, which is now required due to lack of deduction guides through
+        type aliases.
+
 2021-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Crash when UI-side compositing is enabled on macOS

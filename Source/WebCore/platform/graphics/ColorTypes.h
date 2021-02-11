@@ -26,28 +26,22 @@
 #pragma once
 
 #include "ColorComponents.h"
+#include "ColorMatrix.h"
 #include "ColorModels.h"
+#include "ColorTransferFunctions.h"
 
 namespace WebCore {
 
 enum class WhitePoint { D50, D65 };
 
-template<typename> struct A98RGB;
-template<typename> struct DisplayP3;
-template<typename> struct ExtendedSRGBA;
+template<typename, typename> struct BoundedGammaEncoded;
+template<typename, typename> struct BoundedLinearEncoded;
+template<typename, typename> struct ExtendedGammaEncoded;
+template<typename, typename> struct ExtendedLinearEncoded;
 template<typename> struct HSLA;
 template<typename> struct HWBA;
 template<typename> struct LCHA;
 template<typename> struct Lab;
-template<typename> struct LinearA98RGB;
-template<typename> struct LinearDisplayP3;
-template<typename> struct LinearExtendedSRGBA;
-template<typename> struct LinearProPhotoRGB;
-template<typename> struct LinearRec2020;
-template<typename> struct LinearSRGBA;
-template<typename> struct ProPhotoRGB;
-template<typename> struct Rec2020;
-template<typename> struct SRGBA;
 template<typename, WhitePoint> struct XYZA;
 
 // MARK: Make functions.
@@ -191,10 +185,12 @@ constexpr bool operator!=(const ColorType& a, const ColorType& b)
 
 // MARK: - RGB Color Types.
 
-template<template<typename> class C, typename T, typename M> struct RGBAType : ColorWithAlphaHelper<C<T>> {
+template<typename T, typename D, typename ColorType, typename M, typename TF> struct RGBAType : ColorWithAlphaHelper<ColorType> {
     using ComponentType = T;
     using Model = M;
-    
+    using TransferFunction = TF;
+    static constexpr WhitePoint whitePoint = D::whitePoint;
+
     constexpr RGBAType(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
         : red { red }
         , green { green }
@@ -215,102 +211,166 @@ template<template<typename> class C, typename T, typename M> struct RGBAType : C
     T alpha;
 };
 
-template<template<typename> class ColorType, typename T, typename M> constexpr ColorComponents<T> asColorComponents(const RGBAType<ColorType, T, M>& c)
+template<typename T, typename D, typename ColorType, typename M, typename TF> constexpr ColorComponents<T> asColorComponents(const RGBAType<T, D, ColorType, M, TF>& c)
 {
     return { c.red, c.green, c.blue, c.alpha };
 }
 
 
-template<typename T> struct A98RGB : RGBAType<A98RGB, T, RGBModel<T>> {
-    using RGBAType<A98RGB, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearA98RGB<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
+template<typename T, typename D>
+struct BoundedGammaEncoded : RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>> {
+    using RGBAType<T, D, BoundedGammaEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>>::RGBAType;
 
-template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
-    using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearDisplayP3<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+    using LinearCounterpart = BoundedLinearEncoded<T, D>;
+    using ExtendedCounterpart = ExtendedGammaEncoded<T, D>;
 };
-template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
-template<typename T> struct ExtendedSRGBA : RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>> {
-    using RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearExtendedSRGBA<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> ExtendedSRGBA(T, T, T, T) -> ExtendedSRGBA<T>;
+template<typename T, typename D>
+struct BoundedLinearEncoded : RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>> {
+    using RGBAType<T, D, BoundedLinearEncoded<T, D>, RGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Clamped>>::RGBAType;
 
-template<typename T> struct LinearA98RGB : RGBAType<LinearA98RGB, T, RGBModel<T>> {
-    using RGBAType<LinearA98RGB, T, RGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = A98RGB<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> LinearA98RGB(T, T, T, T) -> LinearA98RGB<T>;
+    static constexpr auto linearToXYZ = D::linearToXYZ;
+    static constexpr auto xyzToLinear = D::xyzToLinear;
 
-template<typename T> struct LinearDisplayP3 : RGBAType<LinearDisplayP3, T, RGBModel<T>> {
-    using RGBAType<LinearDisplayP3, T, RGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = DisplayP3<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+    using GammaEncodedCounterpart = BoundedGammaEncoded<T, D>;
+    using ExtendedCounterpart = ExtendedLinearEncoded<T, D>;
 };
-template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
 
-template<typename T> struct LinearExtendedSRGBA : RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>> {
-    using RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = ExtendedSRGBA<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> LinearExtendedSRGBA(T, T, T, T) -> LinearExtendedSRGBA<T>;
+template<typename T, typename D>
+struct ExtendedGammaEncoded : RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>> {
+    using RGBAType<T, D, ExtendedGammaEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>>::RGBAType;
 
-template<typename T> struct LinearProPhotoRGB : RGBAType<LinearProPhotoRGB, T, RGBModel<T>> {
-    using RGBAType<LinearProPhotoRGB, T, RGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = ProPhotoRGB<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
+    using LinearCounterpart = ExtendedLinearEncoded<T, D>;
+    using BoundedCounterpart = BoundedGammaEncoded<T, D>;
+    using Reference = LinearCounterpart;
 };
-template<typename T> LinearProPhotoRGB(T, T, T, T) -> LinearProPhotoRGB<T>;
 
-template<typename T> struct LinearRec2020 : RGBAType<LinearRec2020, T, RGBModel<T>> {
-    using RGBAType<LinearRec2020, T, RGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = Rec2020<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> LinearRec2020(T, T, T, T) -> LinearRec2020<T>;
+template<typename T, typename D>
+struct ExtendedLinearEncoded : RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>> {
+    using RGBAType<T, D, ExtendedLinearEncoded<T, D>, ExtendedRGBModel<T>, typename D::template TransferFunction<TransferFunctionMode::Unclamped>>::RGBAType;
 
-template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> {
-    using RGBAType<LinearSRGBA, T, RGBModel<T>>::RGBAType;
-    using GammaEncodedCounterpart = SRGBA<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
+    static constexpr auto linearToXYZ = D::linearToXYZ;
+    static constexpr auto xyzToLinear = D::xyzToLinear;
 
-template<typename T> struct ProPhotoRGB : RGBAType<ProPhotoRGB, T, RGBModel<T>> {
-    using RGBAType<ProPhotoRGB, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearProPhotoRGB<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
+    using GammaEncodedCounterpart = ExtendedGammaEncoded<T, D>;
+    using BoundedCounterpart = BoundedLinearEncoded<T, D>;
+    using Reference = XYZA<T, D::whitePoint>;
 };
-template<typename T> ProPhotoRGB(T, T, T, T) -> ProPhotoRGB<T>;
 
-template<typename T> struct Rec2020 : RGBAType<Rec2020, T, RGBModel<T>> {
-    using RGBAType<Rec2020, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearRec2020<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
-};
-template<typename T> Rec2020(T, T, T, T) -> Rec2020<T>;
+template<typename T> struct SRGBADescriptor {
+    template<TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
 
-template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
-    using RGBAType<SRGBA, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearSRGBA<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    static constexpr ColorMatrix<3, 3> xyzToLinear {
+         3.2409699419045226f,  -1.537383177570094f,   -0.4986107602930034f,
+        -0.9692436362808796f,   1.8759675015077202f,   0.04155505740717559f,
+         0.05563007969699366f, -0.20397695888897652f,  1.0569715142428786f
+    };
+    static constexpr ColorMatrix<3, 3> linearToXYZ {
+        0.41239079926595934f, 0.357584339383878f,   0.1804807884018343f,
+        0.21263900587151027f, 0.715168678767756f,   0.07219231536073371f,
+        0.01933081871559182f, 0.11919477979462598f, 0.9505321522496607f
+    };
 };
-template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
+
+template<typename T> using SRGBA = BoundedGammaEncoded<T, SRGBADescriptor<T>>;
+template<typename T> using LinearSRGBA = BoundedLinearEncoded<T, SRGBADescriptor<T>>;
+template<typename T> using ExtendedSRGBA = ExtendedGammaEncoded<T, SRGBADescriptor<T>>;
+template<typename T> using LinearExtendedSRGBA = ExtendedLinearEncoded<T, SRGBADescriptor<T>>;
+
+
+template<typename T> struct A98RGBDescriptor {
+    template<TransferFunctionMode Mode> using TransferFunction = A98RGBTransferFunction<T, Mode>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    static constexpr ColorMatrix<3, 3> xyzToLinear {
+         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
+    };
+    static constexpr ColorMatrix<3, 3> linearToXYZ {
+        0.5766690429101305f,   0.1855582379065463f,   0.1882286462349947f,
+        0.29734497525053605f,  0.6273635662554661f,   0.07529145849399788f,
+        0.02703136138641234f,  0.07068885253582723f,  0.9913375368376388f
+    };
+};
+
+template<typename T> using A98RGB = BoundedGammaEncoded<T, A98RGBDescriptor<T>>;
+template<typename T> using LinearA98RGB = BoundedLinearEncoded<T, A98RGBDescriptor<T>>;
+
+
+template<typename T> struct DisplayP3Descriptor {
+    template<TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    static constexpr ColorMatrix<3, 3> xyzToLinear {
+         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
+    };
+    static constexpr ColorMatrix<3, 3> linearToXYZ {
+        0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
+        0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
+        0.0f,                0.0451133818589026f, 1.043944368900976f
+    };
+};
+
+template<typename T> using DisplayP3 = BoundedGammaEncoded<T, DisplayP3Descriptor<T>>;
+template<typename T> using LinearDisplayP3 = BoundedLinearEncoded<T, DisplayP3Descriptor<T>>;
+
+
+template<typename T> struct ProPhotoRGBDescriptor {
+    template<TransferFunctionMode Mode> using TransferFunction = ProPhotoRGBTransferFunction<T, Mode>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D50;
+
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    static constexpr ColorMatrix<3, 3> xyzToLinear {
+         1.3457989731028281f,  -0.25558010007997534f,  -0.05110628506753401f,
+        -0.5446224939028347f,   1.5082327413132781f,    0.02053603239147973f,
+         0.0f,                  0.0f,                   1.2119675456389454f
+    };
+    static constexpr ColorMatrix<3, 3> linearToXYZ {
+        0.7977604896723027f,  0.13518583717574031f,  0.0313493495815248f,
+        0.2880711282292934f,  0.7118432178101014f,   0.00008565396060525902f,
+        0.0f,                 0.0f,                  0.8251046025104601f
+    };
+};
+
+template<typename T> using ProPhotoRGB = BoundedGammaEncoded<T, ProPhotoRGBDescriptor<T>>;
+template<typename T> using LinearProPhotoRGB = BoundedLinearEncoded<T, ProPhotoRGBDescriptor<T>>;
+
+
+template<typename T> struct Rec2020Descriptor {
+    template<TransferFunctionMode Mode> using TransferFunction = Rec2020TransferFunction<T, Mode>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    static constexpr ColorMatrix<3, 3> xyzToLinear {
+         1.7166511879712674f,   -0.35567078377639233f, -0.25336628137365974f,
+        -0.6666843518324892f,    1.6164812366349395f,   0.01576854581391113f,
+         0.017639857445310783f, -0.042770613257808524f, 0.9421031212354738f
+    };
+    static constexpr ColorMatrix<3, 3> linearToXYZ {
+        0.6369580483012914f, 0.14461690358620832f,  0.1688809751641721f,
+        0.2627002120112671f, 0.6779980715188708f,   0.05930171646986196f,
+        0.000000000000000f,  0.028072693049087428f, 1.060985057710791f
+    };
+};
+
+template<typename T> using Rec2020 = BoundedGammaEncoded<T, Rec2020Descriptor<T>>;
+template<typename T> using LinearRec2020 = BoundedLinearEncoded<T, Rec2020Descriptor<T>>;
+
 
 // MARK: - Lab Color Type.
 
 template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
     using Model = LabModel<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D50;
+    using Reference =  XYZA<T, whitePoint>;
 
     constexpr Lab(T lightness, T a, T b, T alpha = AlphaTraits<T>::opaque)
         : lightness { lightness }
@@ -342,7 +402,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const Lab<T>
 template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
     using ComponentType = T;
     using Model = LCHModel<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D50>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D50;
+    using Reference = Lab<T>;
 
     constexpr LCHA(T lightness, T chroma, T hue, T alpha = AlphaTraits<T>::opaque)
         : lightness { lightness }
@@ -375,7 +436,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const LCHA<T
 template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     using ComponentType = T;
     using Model = HSLModel<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    using Reference = SRGBA<T>;
 
     constexpr HSLA(T hue, T saturation, T lightness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }
@@ -407,7 +469,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T
 template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
     using ComponentType = T;
     using Model = HWBModel<T>;
-    using ReferenceXYZ = XYZA<T, WhitePoint::D65>;
+    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    using Reference = SRGBA<T>;
 
     constexpr HWBA(T hue, T whiteness, T blackness, T alpha = AlphaTraits<T>::opaque)
         : hue { hue }

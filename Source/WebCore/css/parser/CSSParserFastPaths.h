@@ -31,13 +31,12 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ColorTypes.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSValue;
-
-template<typename> struct SRGBA;
 
 struct CSSParserContext;
 
