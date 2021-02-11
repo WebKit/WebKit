@@ -5044,13 +5044,6 @@ void HTMLMediaElement::mediaPlayerEngineUpdated()
     m_droppedVideoFrames = 0;
 #endif
 
-#if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode) {
-        if (auto* provider = audioSourceProvider())
-            provider->setClient(m_audioSourceNode);
-    }
-#endif
-
     m_havePreparedToPlay = false;
 
     scheduleMediaEngineWasUpdated();
@@ -5070,8 +5063,12 @@ void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine()
 {
     ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode)
+    if (m_audioSourceNode) {
+        if (auto* provider = audioSourceProvider())
+            provider->setClient(m_audioSourceNode);
+
         m_audioSourceNode->processLock().unlock();
+    }
 #endif
 }
 

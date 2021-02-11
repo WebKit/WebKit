@@ -1,3 +1,14 @@
+2021-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [GPUP] <audio> won't load when URL ends with .php causing some tests to time out
+        https://bugs.webkit.org/show_bug.cgi?id=221695
+
+        Reviewed by Eric Carlson.
+
+        Unskip tests that are no longer timing out.
+
+        * gpu-process/TestExpectations:
+
 2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Some checkboxes and radio buttons are clipped on top

@@ -377,12 +377,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interfa
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
 
-# webkit.org/b/221695
-http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Timeout ]
-http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Timeout ]
-http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Timeout ]
-http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Timeout ]
-
 webgl/1.0.3/conformance/canvas/canvas-test.html [ Failure ]
 webgl/1.0.3/conformance/canvas/draw-static-webgl-to-multiple-canvas-test.html [ Failure ]
 webgl/1.0.3/conformance/canvas/draw-webgl-to-canvas-test.html [ Failure ]

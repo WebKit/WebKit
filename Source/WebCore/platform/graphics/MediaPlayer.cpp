@@ -577,7 +577,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     if (m_private) {
 #if ENABLE(MEDIA_SOURCE)
         if (m_mediaSource)
-            m_private->load(m_url, m_contentType, m_mediaSource.get());
+            m_private->load(m_url, m_contentMIMETypeWasInferredFromExtension ? ContentType() : m_contentType, m_mediaSource.get());
         else
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -585,7 +585,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             m_private->load(*m_mediaStream);
         else
 #endif
-        m_private->load(m_url, m_contentType, m_keySystem);
+        m_private->load(m_url, m_contentMIMETypeWasInferredFromExtension ? ContentType() : m_contentType, m_keySystem);
     } else {
         m_private = makeUnique<NullMediaPlayerPrivate>(this);
         if (!m_activeEngineIdentifier && installedMediaEngines().size() > 1 && nextBestMediaEngine(m_currentMediaEngine))
