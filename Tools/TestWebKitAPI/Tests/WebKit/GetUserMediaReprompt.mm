@@ -85,7 +85,7 @@ static int numberOfPrompts = 0;
 @implementation GetUserMediaRepromptTestView
 - (BOOL)haveStream:(BOOL)expected
 {
-    int retryCount = 10;
+    int retryCount = 1000;
     while (retryCount--) {
         auto result = [self stringByEvaluatingJavaScript:@"haveStream()"];
         if (result.boolValue == expected)

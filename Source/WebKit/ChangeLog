@@ -1,3 +1,19 @@
+2021-02-11  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Enable Audio Capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=221400
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing API tests, in particular TestWebKitAPI.WebKit.OnDeviceChangeCrash.
+
+        * WebKit/UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        We need to synchronously fill the granted requests, otherwise there is a risk that
+        the granted requests will be cleared (on page close for instance) and then later filled
+        for the page that was gone.
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+
 2021-02-11  Sam Weinig  <weinig@apple.com>
 
         Rework RGB color types to be more declarative to reduce code duplication and make progress toward better automatic conversion
