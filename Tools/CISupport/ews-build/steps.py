@@ -334,23 +334,13 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     jsc_paths = [
+        '.*jsc.*',
+        '.*javascriptcore.*',
         'JSTests/',
-        'Source/JavaScriptCore/',
         'Source/WTF/',
         'Source/bmalloc/',
-        'Makefile',
-        'Makefile.shared',
-        'Source/Makefile',
-        'Source/Makefile.shared',
+        '.*Makefile.*',
         'Tools/Scripts/build-webkit',
-        'Tools/Scripts/build-jsc',
-        'Tools/Scripts/jsc-stress-test-helpers/',
-        'Tools/Scripts/run-jsc',
-        'Tools/Scripts/run-jsc-benchmarks',
-        'Tools/Scripts/run-jsc-stress-tests',
-        'Tools/Scripts/run-javascriptcore-tests',
-        'Tools/Scripts/run-layout-jsc',
-        'Tools/Scripts/update-javascriptcore-test-results',
         'Tools/Scripts/webkitdirs.pm',
     ]
 
