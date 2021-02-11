@@ -60,7 +60,7 @@ void RemoteCaptureSampleManager::setConnection(IPC::Connection* connection)
         m_connection->addThreadMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName(), this);
 }
 
-void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeMediaSource>&& source)
+void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& source)
 {
     ASSERT(WTF::isMainRunLoop());
     setConnection(source->connection());
@@ -82,7 +82,7 @@ void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdenti
     });
 }
 
-void RemoteCaptureSampleManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
+void RemoteCaptureSampleManager::didUpdateSourceConnection(RemoteRealtimeAudioSource& source)
 {
     ASSERT(WTF::isMainRunLoop());
     setConnection(source.connection());
@@ -117,7 +117,7 @@ void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSou
     iterator->value->audioSamplesAvailable(time, numberOfFrames);
 }
 
-RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeMediaSource>&& source)
+RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)
     : m_source(WTFMove(source))
     , m_ringBuffer(makeUnique<CARingBuffer>())
 {

@@ -582,7 +582,8 @@ WebProcess/ApplePay/cocoa/WebPaymentCoordinatorCocoa.mm
 
 WebProcess/cocoa/PlaybackSessionManager.mm
 WebProcess/cocoa/RemoteCaptureSampleManager.cpp
-WebProcess/cocoa/RemoteRealtimeMediaSource.cpp
+WebProcess/cocoa/RemoteRealtimeAudioSource.cpp
+WebProcess/cocoa/RemoteRealtimeVideoSource.cpp
 WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoFullscreenManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm

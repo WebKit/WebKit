@@ -48,31 +48,30 @@ namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
+class RemoteRealtimeVideoSource : public WebCore::RealtimeMediaSource
 #if ENABLE(GPU_PROCESS)
     , public GPUProcessConnection::Client
 #endif
 {
 public:
     static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
-    ~RemoteRealtimeMediaSource();
+    ~RemoteRealtimeVideoSource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
     IPC::Connection* connection();
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
-    void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings&);
+    void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
 
     void captureStopped();
     void captureFailed() final;
 
     void remoteVideoSampleAvailable(WebCore::RemoteVideoSample&&);
-    void remoteAudioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
 
 private:
-    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // RealtimeMediaSource
     void startProducingData() final;
@@ -100,7 +99,6 @@ private:
     void didFail(String&& errorMessage);
     void setAsReady();
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
-    Ref<RealtimeMediaSource> cloneVideoSource();
 
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     UserMediaCaptureManager& m_manager;

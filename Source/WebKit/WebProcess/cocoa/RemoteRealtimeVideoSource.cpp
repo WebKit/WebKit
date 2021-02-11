@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RemoteRealtimeMediaSource.h"
+#include "RemoteRealtimeVideoSource.h"
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
@@ -46,32 +46,16 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeMediaSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
-    auto source = adoptRef(*new RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
-    manager.addSource(source.copyRef());
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
+    manager.addVideoSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-static inline RealtimeMediaSource::Type sourceTypeFromDeviceType(CaptureDevice::DeviceType deviceType)
-{
-    switch (deviceType) {
-    case CaptureDevice::DeviceType::Microphone:
-        return RealtimeMediaSource::Type::Audio;
-    case CaptureDevice::DeviceType::Camera:
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        return RealtimeMediaSource::Type::Video;
-    case CaptureDevice::DeviceType::Speaker:
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-    }
-    return RealtimeMediaSource::Type::None;
-}
-
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(sourceTypeFromDeviceType(device.type()), WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
     , m_identifier(identifier)
     , m_manager(manager)
     , m_device(device)
@@ -79,28 +63,13 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifi
 {
     if (constraints)
         m_constraints = *constraints;
-
-    switch (m_device.type()) {
-    case CaptureDevice::DeviceType::Microphone:
 #if PLATFORM(IOS_FAMILY)
-        RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
-#endif
-        break;
-    case CaptureDevice::DeviceType::Camera:
-#if PLATFORM(IOS_FAMILY)
+    if (m_device.type() == CaptureDevice::DeviceType::Camera)
         RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
 #endif
-        break;
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        break;
-    case CaptureDevice::DeviceType::Speaker:
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-    }
 }
 
-void RemoteRealtimeMediaSource::createRemoteMediaSource()
+void RemoteRealtimeVideoSource::createRemoteMediaSource()
 {
     connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
         if (!succeeded) {
@@ -116,39 +85,25 @@ void RemoteRealtimeMediaSource::createRemoteMediaSource()
     });
 }
 
-RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource()
+RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
 {
     if (m_shouldCaptureInGPUProcess)
         WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 
-    switch (m_device.type()) {
-    case CaptureDevice::DeviceType::Microphone:
 #if PLATFORM(IOS_FAMILY)
-        RealtimeMediaSourceCenter::singleton().audioCaptureFactory().unsetActiveSource(*this);
-#endif
-        break;
-    case CaptureDevice::DeviceType::Camera:
-#if PLATFORM(IOS_FAMILY)
+    if (m_device.type() == CaptureDevice::DeviceType::Camera)
         RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
 #endif
-        break;
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        break;
-    case CaptureDevice::DeviceType::Speaker:
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-    }
 }
 
-void RemoteRealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& callback)
+void RemoteRealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
     if (m_isReady)
         return callback(WTFMove(m_errorMessage));
     m_callback = WTFMove(callback);
 }
 
-void RemoteRealtimeMediaSource::didFail(String&& errorMessage)
+void RemoteRealtimeVideoSource::didFail(String&& errorMessage)
 {
     m_isReady = true;
     m_errorMessage = WTFMove(errorMessage);
@@ -156,57 +111,38 @@ void RemoteRealtimeMediaSource::didFail(String&& errorMessage)
         m_callback(m_errorMessage);
 }
 
-void RemoteRealtimeMediaSource::setAsReady()
+void RemoteRealtimeVideoSource::setAsReady()
 {
     m_isReady = true;
     if (m_callback)
         m_callback({ });
 }
 
-Ref<RealtimeMediaSource> RemoteRealtimeMediaSource::clone()
-{
-    switch (type()) {
-    case RealtimeMediaSource::Type::Video:
-        return cloneVideoSource();
-    case RealtimeMediaSource::Type::Audio:
-        break;
-    case RealtimeMediaSource::Type::None:
-        ASSERT_NOT_REACHED();
-    }
-    return *this;
-}
-
-Ref<RealtimeMediaSource> RemoteRealtimeMediaSource::cloneVideoSource()
+Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
 {
     auto identifier = RealtimeMediaSourceIdentifier::generate();
     if (!connection()->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, identifier }, 0))
         return *this;
 
-    auto cloneSource = adoptRef(*new RemoteRealtimeMediaSource(identifier, m_device, &m_constraints, String { m_settings.label().string() }, deviceIDHashSalt(), m_manager, m_shouldCaptureInGPUProcess));
+    auto cloneSource = adoptRef(*new RemoteRealtimeVideoSource(identifier, m_device, &m_constraints, String { m_settings.label().string() }, deviceIDHashSalt(), m_manager, m_shouldCaptureInGPUProcess));
     cloneSource->setSettings(RealtimeMediaSourceSettings { m_settings });
-    m_manager.addSource(cloneSource.copyRef());
+    m_manager.addVideoSource(cloneSource.copyRef());
     return cloneSource;
 }
 
-void RemoteRealtimeMediaSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
+void RemoteRealtimeVideoSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
 {
     m_capabilities = WTFMove(capabilities);
 }
 
-void RemoteRealtimeMediaSource::setSettings(RealtimeMediaSourceSettings&& settings)
+void RemoteRealtimeVideoSource::setSettings(RealtimeMediaSourceSettings&& settings)
 {
     auto changed = m_settings.difference(settings);
     m_settings = WTFMove(settings);
     notifySettingsDidChangeObservers(changed);
 }
 
-void RemoteRealtimeMediaSource::remoteAudioSamplesAvailable(const WTF::MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
-{
-    ASSERT(!isMainThread());
-    audioSamplesAvailable(time, data, description, size);
-}
-
-void RemoteRealtimeMediaSource::remoteVideoSampleAvailable(RemoteVideoSample&& remoteSample)
+void RemoteRealtimeVideoSource::remoteVideoSampleAvailable(RemoteVideoSample&& remoteSample)
 {
     ASSERT(type() == Type::Video);
 
@@ -229,7 +165,7 @@ void RemoteRealtimeMediaSource::remoteVideoSampleAvailable(RemoteVideoSample&& r
     RealtimeMediaSource::videoSampleAvailable(*sampleRef);
 }
 
-IPC::Connection* RemoteRealtimeMediaSource::connection()
+IPC::Connection* RemoteRealtimeVideoSource::connection()
 {
     ASSERT(isMainThread());
 #if ENABLE(GPU_PROCESS)
@@ -239,94 +175,84 @@ IPC::Connection* RemoteRealtimeMediaSource::connection()
     return WebProcess::singleton().parentProcessConnection();
 }
 
-void RemoteRealtimeMediaSource::startProducingData()
+void RemoteRealtimeVideoSource::startProducingData()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
 }
 
-void RemoteRealtimeMediaSource::stopProducingData()
+void RemoteRealtimeVideoSource::stopProducingData()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 
-bool RemoteRealtimeMediaSource::setShouldApplyRotation(bool shouldApplyRotation)
+bool RemoteRealtimeVideoSource::setShouldApplyRotation(bool shouldApplyRotation)
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { m_identifier, shouldApplyRotation }, 0);
     return true;
 }
 
-const WebCore::RealtimeMediaSourceCapabilities& RemoteRealtimeMediaSource::capabilities()
+const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
 {
     return m_capabilities;
 }
 
-void RemoteRealtimeMediaSource::applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
+void RemoteRealtimeVideoSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
 {
     m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
     // FIXME: Use sendAsyncWithReply.
     connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
 
-void RemoteRealtimeMediaSource::applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
+void RemoteRealtimeVideoSource::applyConstraintsSucceeded(RealtimeMediaSourceSettings&& settings)
 {
-    setSettings(WebCore::RealtimeMediaSourceSettings(settings));
+    setSettings(WTFMove(settings));
 
     auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
     callback({ });
 }
 
-void RemoteRealtimeMediaSource::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
+void RemoteRealtimeVideoSource::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
 {
     auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
     callback(ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
 }
 
-void RemoteRealtimeMediaSource::hasEnded()
+void RemoteRealtimeVideoSource::hasEnded()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_identifier }, 0);
-    m_manager.removeSource(m_identifier);
+    m_manager.removeAudioSource(m_identifier);
 }
 
-void RemoteRealtimeMediaSource::captureStopped()
+void RemoteRealtimeVideoSource::captureStopped()
 {
     stop();
     hasEnded();
 }
 
-void RemoteRealtimeMediaSource::captureFailed()
+void RemoteRealtimeVideoSource::captureFailed()
 {
     RealtimeMediaSource::captureFailed();
     hasEnded();
 }
 
-void RemoteRealtimeMediaSource::stopBeingObserved()
+void RemoteRealtimeVideoSource::stopBeingObserved()
 {
     m_hasRequestedToEnd = true;
     connection()->send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { m_identifier }, 0);
 }
 
-void RemoteRealtimeMediaSource::requestToEnd(Observer& observer)
+void RemoteRealtimeVideoSource::requestToEnd(Observer& observer)
 {
-    switch (type()) {
-    case Type::Audio:
-        RealtimeMediaSource::requestToEnd(observer);
-        break;
-    case Type::Video:
-        stopBeingObserved();
-        break;
-    case Type::None:
-        ASSERT_NOT_REACHED();
-    }
+    stopBeingObserved();
 }
 
 #if ENABLE(GPU_PROCESS)
-void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     ASSERT(m_shouldCaptureInGPUProcess);
     if (isEnded() || m_hasRequestedToEnd)
         return;
 
-    m_manager.didUpdateSourceConnection(*this);
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.
     if (isProducingData())

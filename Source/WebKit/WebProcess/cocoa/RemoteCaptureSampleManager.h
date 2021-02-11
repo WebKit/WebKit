@@ -29,7 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include "RemoteRealtimeMediaSource.h"
+#include "RemoteRealtimeAudioSource.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
@@ -45,10 +45,10 @@ public:
     RemoteCaptureSampleManager();
     ~RemoteCaptureSampleManager();
 
-    void addSource(Ref<RemoteRealtimeMediaSource>&&);
+    void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
-    void didUpdateSourceConnection(RemoteRealtimeMediaSource&);
+    void didUpdateSourceConnection(RemoteRealtimeAudioSource&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -65,13 +65,13 @@ private:
     class RemoteAudio {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        explicit RemoteAudio(Ref<RemoteRealtimeMediaSource>&&);
+        explicit RemoteAudio(Ref<RemoteRealtimeAudioSource>&&);
 
         void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
         void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
 
     private:
-        Ref<RemoteRealtimeMediaSource> m_source;
+        Ref<RemoteRealtimeAudioSource> m_source;
         WebCore::CAAudioStreamDescription m_description;
         std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;

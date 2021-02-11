@@ -43,7 +43,8 @@ class RemoteVideoSample;
 
 namespace WebKit {
 
-class RemoteRealtimeMediaSource;
+class RemoteRealtimeAudioSource;
+class RemoteRealtimeVideoSource;
 class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver {
@@ -57,9 +58,13 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess);
 
-    void addSource(Ref<RemoteRealtimeMediaSource>&&);
-    void removeSource(WebCore::RealtimeMediaSourceIdentifier);
-    void didUpdateSourceConnection(RemoteRealtimeMediaSource&);
+    void addAudioSource(Ref<RemoteRealtimeAudioSource>&&);
+    void removeAudioSource(WebCore::RealtimeMediaSourceIdentifier);
+
+    void addVideoSource(Ref<RemoteRealtimeVideoSource>&&);
+    void removeVideoSource(WebCore::RealtimeMediaSourceIdentifier);
+
+    RemoteCaptureSampleManager& remoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
 
 private:
     // WebCore::RealtimeMediaSource factories
@@ -122,22 +127,21 @@ private:
     // Messages::UserMediaCaptureManager
     void captureFailed(WebCore::RealtimeMediaSourceIdentifier);
     void sourceStopped(WebCore::RealtimeMediaSourceIdentifier);
-    void sourceEnded(WebCore::RealtimeMediaSourceIdentifier identifier) { removeSource(identifier); }
+    void sourceEnded(WebCore::RealtimeMediaSourceIdentifier);
     void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted);
-    void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, const WebCore::RealtimeMediaSourceSettings&);
+    void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void remoteVideoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
-    void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, const WebCore::RealtimeMediaSourceSettings&);
+    void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 
-    Ref<WebCore::RealtimeMediaSource> cloneVideoSource(RemoteRealtimeMediaSource&);
-
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeMediaSource>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeAudioSource>> m_audioSources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeVideoSource>> m_videoSources;
     WebProcess& m_process;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;
     AudioFactory m_audioFactory;
     VideoFactory m_videoFactory;
     DisplayFactory m_displayFactory;
-    RemoteCaptureSampleManager m_remoteAudioCaptureSampleManager;
+    RemoteCaptureSampleManager m_remoteCaptureSampleManager;
 };
 
 } // namespace WebKit

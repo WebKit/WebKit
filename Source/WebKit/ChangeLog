@@ -1,3 +1,94 @@
+2021-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Split RemoteRealtimeMediaSource in two audio-specific and video-specific classes
+        https://bugs.webkit.org/show_bug.cgi?id=221608
+
+        Reviewed by Eric Carlson.
+
+        Split RemoteRealtimeMediaSource in RemoteRealtimeAudioSource and RemoteRealtimeVideoSource.
+        This will allow RemoteRealtimeVideoSource to become a RealtimeVideoCaptureSource in a follow-up
+        to properly handle fan-out to multiple clones with various frame rates and resolutions.
+        This also allows removing differences of behaviors between audio and video classes.
+
+        No change of behavior.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::addSource):
+        (WebKit::RemoteCaptureSampleManager::didUpdateSourceConnection):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::RemoteAudio):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp: Added.
+        (WebKit::RemoteRealtimeAudioSource::create):
+        (WebKit::RemoteRealtimeAudioSource::RemoteRealtimeAudioSource):
+        (WebKit::RemoteRealtimeAudioSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource):
+        (WebKit::RemoteRealtimeAudioSource::whenReady):
+        (WebKit::RemoteRealtimeAudioSource::didFail):
+        (WebKit::RemoteRealtimeAudioSource::setAsReady):
+        (WebKit::RemoteRealtimeAudioSource::setCapabilities):
+        (WebKit::RemoteRealtimeAudioSource::setSettings):
+        (WebKit::RemoteRealtimeAudioSource::remoteAudioSamplesAvailable):
+        (WebKit::RemoteRealtimeAudioSource::connection):
+        (WebKit::RemoteRealtimeAudioSource::startProducingData):
+        (WebKit::RemoteRealtimeAudioSource::stopProducingData):
+        (WebKit::RemoteRealtimeAudioSource::capabilities):
+        (WebKit::RemoteRealtimeAudioSource::applyConstraints):
+        (WebKit::RemoteRealtimeAudioSource::applyConstraintsSucceeded):
+        (WebKit::RemoteRealtimeAudioSource::applyConstraintsFailed):
+        (WebKit::RemoteRealtimeAudioSource::hasEnded):
+        (WebKit::RemoteRealtimeAudioSource::captureStopped):
+        (WebKit::RemoteRealtimeAudioSource::captureFailed):
+        (WebKit::RemoteRealtimeAudioSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h: Copied from Source/WebKit/WebProcess/cocoa/RemoteRealtimeMediaSource.h.
+        (WebKit::RemoteRealtimeAudioSource::identifier const):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp: Renamed from Source/WebKit/WebProcess/cocoa/RemoteRealtimeMediaSource.cpp.
+        (WebKit::RemoteRealtimeVideoSource::create):
+        (WebKit::RemoteRealtimeVideoSource::RemoteRealtimeVideoSource):
+        (WebKit::RemoteRealtimeVideoSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource):
+        (WebKit::RemoteRealtimeVideoSource::whenReady):
+        (WebKit::RemoteRealtimeVideoSource::didFail):
+        (WebKit::RemoteRealtimeVideoSource::setAsReady):
+        (WebKit::RemoteRealtimeVideoSource::clone):
+        (WebKit::RemoteRealtimeVideoSource::setCapabilities):
+        (WebKit::RemoteRealtimeVideoSource::setSettings):
+        (WebKit::RemoteRealtimeVideoSource::remoteVideoSampleAvailable):
+        (WebKit::RemoteRealtimeVideoSource::connection):
+        (WebKit::RemoteRealtimeVideoSource::startProducingData):
+        (WebKit::RemoteRealtimeVideoSource::stopProducingData):
+        (WebKit::RemoteRealtimeVideoSource::setShouldApplyRotation):
+        (WebKit::RemoteRealtimeVideoSource::capabilities):
+        (WebKit::RemoteRealtimeVideoSource::applyConstraints):
+        (WebKit::RemoteRealtimeVideoSource::applyConstraintsSucceeded):
+        (WebKit::RemoteRealtimeVideoSource::applyConstraintsFailed):
+        (WebKit::RemoteRealtimeVideoSource::hasEnded):
+        (WebKit::RemoteRealtimeVideoSource::captureStopped):
+        (WebKit::RemoteRealtimeVideoSource::captureFailed):
+        (WebKit::RemoteRealtimeVideoSource::stopBeingObserved):
+        (WebKit::RemoteRealtimeVideoSource::requestToEnd):
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h: Renamed from Source/WebKit/WebProcess/cocoa/RemoteRealtimeMediaSource.h.
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::addAudioSource):
+        (WebKit::UserMediaCaptureManager::removeAudioSource):
+        (WebKit::UserMediaCaptureManager::addVideoSource):
+        (WebKit::UserMediaCaptureManager::removeVideoSource):
+        (WebKit::UserMediaCaptureManager::sourceStopped):
+        (WebKit::UserMediaCaptureManager::sourceEnded):
+        (WebKit::UserMediaCaptureManager::captureFailed):
+        (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+        (WebKit::UserMediaCaptureManager::sourceSettingsChanged):
+        (WebKit::UserMediaCaptureManager::remoteVideoSampleAvailable):
+        (WebKit::UserMediaCaptureManager::applyConstraintsSucceeded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsFailed):
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        (WebKit::UserMediaCaptureManager::remoteCaptureSampleManager):
+
 2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Webpage translation] Add support for the -_translate: action on WKContentView
