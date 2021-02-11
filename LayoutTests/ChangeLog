@@ -1,3 +1,15 @@
+2021-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ Big Sur ] imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=221681
+
+        Unreviewed test gardening.
+
+        Consolidate test baselines for mac since the result is the same across configurations.
+
+        * platform/mac-catalina/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Renamed from LayoutTests/platform/mac-catalina-wk1/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt.
+
 2021-02-10  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS] animations/keyframe-pseudo-shadow.html is flakey failing.
