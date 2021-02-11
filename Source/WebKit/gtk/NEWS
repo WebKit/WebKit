@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.30.5
+================
+
+What's new in WebKitGTK 2.30.5?
+
+  - Bring back the WebKitPluginProcess intallation that was removed by mistake.
+  - Fix RunLoop objects leaked in worker threads.
+  - Fix aarch64 llint build with JIT disabled.
+  - Use Internet Explorer quirk for Google Docs.
+
+================
 WebKitGTK 2.30.4
 ================
 

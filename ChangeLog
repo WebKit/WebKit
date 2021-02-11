@@ -1,3 +1,9 @@
+2021-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.5 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2021-01-19  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
