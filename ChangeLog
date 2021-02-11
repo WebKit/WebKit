@@ -1,3 +1,12 @@
+2021-02-10  Christopher Reid  <chris.reid@sony.com>
+
+        [PlayStation] Add initial RESOURCE_USAGE implementation
+        https://bugs.webkit.org/show_bug.cgi?id=221706
+
+        Reviewed by Ross Kirsling.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2021-02-10  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Optionally build Cog as external project and replacement for MiniBrowser
