@@ -325,6 +325,8 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     setSearchingForNode(ignored, false, nullptr, false);
     hideHighlight();
 
+    m_overlay->clearAllGridOverlays();
+
     m_instrumentingAgents.setPersistentDOMAgent(nullptr);
     m_documentRequested = false;
     reset();
