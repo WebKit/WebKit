@@ -1,3 +1,14 @@
+2021-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [ MacOS Debug wk2] imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=221731
+        <rdar://problem/74213595>
+
+        Unreviewed, skip animation & layout worklets tests since we do not support those and it is
+        causing those tests to be flaky.
+
+        * TestExpectations:
+
 2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Range inputs have an incorrect RTL appearance

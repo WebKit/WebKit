@@ -389,8 +389,6 @@ imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJS
 imported/w3c/web-platform-tests/streams/writable-streams/error.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/wasm/webapi/rejected-arg.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
@@ -4680,10 +4678,14 @@ fast/shadow-dom/ios/ [ Skip ]
 # Requires WK2 TestRunner
 fullscreen/full-screen-enter-while-exiting.html [ Skip ]
 
+# Animation / Layout workets are not supported
+imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html [ Skip ]
+imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html [ Skip ]
+imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html [ Skip ]
+imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html [ Skip ]
+imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ Skip ]
+
 # These tests are all flaky
-imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-classic.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-module.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-external-classic.html [ Pass Failure ]
