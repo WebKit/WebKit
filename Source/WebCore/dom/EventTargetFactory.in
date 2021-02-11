@@ -49,6 +49,7 @@ SpeechRecognition
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 TextTrack conditional=VIDEO
 TextTrackCue conditional=VIDEO
+TextTrackCueGeneric conditional=VIDEO
 TextTrackList conditional=VIDEO
 VideoTrackList conditional=VIDEO
 VisualViewport

@@ -1,3 +1,13 @@
+2021-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Non unified build fixes for mid February 2021
+        https://bugs.webkit.org/show_bug.cgi?id=221749
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+
 2021-02-11  Youenn Fablet  <youenn@apple.com>
 
         Split RemoteRealtimeMediaSource in two audio-specific and video-specific classes

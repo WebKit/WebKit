@@ -30,6 +30,7 @@
 
 #include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"

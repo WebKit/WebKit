@@ -28,13 +28,17 @@
 #include "Worker.h"
 
 #include "ContentSecurityPolicy.h"
+#include "DedicatedWorkerGlobalScope.h"
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "PlatformStrategies.h"
+#if ENABLE(WEB_RTC)
 #include "RTCRtpScriptTransform.h"
+#include "RTCRtpScriptTransformer.h"
+#endif
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScopeProxy.h"

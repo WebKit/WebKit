@@ -1792,8 +1792,16 @@ set(WebCoreTestSupport_IDL_FILES
 )
 
 list(APPEND WebCoreTestSupport_SOURCES
-    platform/mock/PlatformSpeechSynthesizerMock.cpp
+    dom/AbstractRange.cpp
 
+    inspector/InspectorFrontendClientLocal.cpp
+
+    platform/graphics/HEVCUtilities.cpp
+    platform/graphics/VP9Utilities.cpp
+
+    platform/mediarecorder/MediaRecorderPrivateMock.cpp
+
+    platform/mock/PlatformSpeechSynthesizerMock.cpp
     platform/mock/mediasource/MockBox.cpp
     platform/mock/mediasource/MockMediaPlayerMediaSource.cpp
     platform/mock/mediasource/MockMediaSourcePrivate.cpp

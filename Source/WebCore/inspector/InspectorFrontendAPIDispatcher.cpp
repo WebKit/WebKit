@@ -35,6 +35,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include <JavaScriptCore/FrameTracers.h>
+#include <JavaScriptCore/JSPromise.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -182,7 +183,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
     }
         
     auto& vm = globalObject->vm();
-    auto* castedPromise = jsDynamicCast<JSPromise*>(vm, result.value());
+    auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(vm, result.value());
     if (!castedPromise) {
         // Simple case: result is NOT a promise, just return the JSValue.
         optionalResultHandler(result);
