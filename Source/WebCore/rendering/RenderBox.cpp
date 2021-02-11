@@ -662,7 +662,13 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
 
     if (!styleToUse.logicalMaxWidth().isUndefined())
         logicalWidth = std::min(logicalWidth, computeLogicalWidthInFragmentUsing(MaxSize, styleToUse.logicalMaxWidth(), availableWidth, cb, fragment));
-    return std::max(logicalWidth, computeLogicalWidthInFragmentUsing(MinSize, styleToUse.logicalMinWidth(), availableWidth, cb, fragment));
+    auto minLength = styleToUse.logicalMinWidth();
+    if (styleToUse.hasAspectRatio() && styleToUse.logicalWidth().isAuto() && minLength.isAuto() && styleToUse.overflowInlineDirection() == Overflow::Visible) {
+        // Make sure we actually used the aspect ratio.
+        if (shouldComputeLogicalWidthFromAspectRatio())
+            minLength = Length(MinContent);
+    }
+    return std::max(logicalWidth, computeLogicalWidthInFragmentUsing(MinSize, minLength, availableWidth, cb, fragment));
 }
 
 LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, Optional<LayoutUnit> intrinsicContentHeight) const
@@ -672,7 +678,10 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, O
         if (Optional<LayoutUnit> maxH = computeLogicalHeightUsing(MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight))
             logicalHeight = std::min(logicalHeight, maxH.value());
     }
-    if (Optional<LayoutUnit> computedLogicalHeight = computeLogicalHeightUsing(MinSize, styleToUse.logicalMinHeight(), intrinsicContentHeight))
+    auto logicalMinHeight = styleToUse.logicalMinHeight();
+    if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && styleToUse.overflowBlockDirection() == Overflow::Visible)
+        logicalMinHeight = Length(*intrinsicContentHeight, Fixed);
+    if (Optional<LayoutUnit> computedLogicalHeight = computeLogicalHeightUsing(MinSize, logicalMinHeight, intrinsicContentHeight))
         return std::max(logicalHeight, computedLogicalHeight.value());
     return logicalHeight;
 }
@@ -3787,9 +3796,15 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 {
     ASSERT(widthType == MinSize || widthType == MainOrPreferredSize || !logicalWidth.isAuto());
     auto originalLogicalWidthType = logicalWidth.type();
-    if (widthType == MinSize && logicalWidth.isAuto())
-        logicalWidth = Length(0, Fixed);
-    else if (widthType == MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
+    if (widthType == MinSize && logicalWidth.isAuto()) {
+        if (shouldComputeLogicalWidthFromAspectRatio()) {
+            LayoutUnit minLogicalWidth;
+            LayoutUnit maxLogicalWidth;
+            computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+            logicalWidth = Length(minLogicalWidth, Fixed);
+        } else
+            logicalWidth = Length(0, Fixed);
+    } else if (widthType == MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
         logicalWidth = Length(computeLogicalWidthFromAspectRatio(), Fixed);
     else if (logicalWidth.isIntrinsic())
         logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, containerLogicalWidth, bordersPlusPadding) - bordersPlusPadding, Fixed);
@@ -4060,7 +4075,8 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     }
 
     // Calculate constraint equation values for 'min-height' case.
-    if (!styleToUse.logicalMinHeight().isZero() || styleToUse.logicalMinHeight().isIntrinsic()) {
+    Length logicalMinHeight = styleToUse.logicalMinHeight();
+    if (logicalMinHeight.isAuto() || !logicalMinHeight.isZero() || logicalMinHeight.isIntrinsic()) {
         LogicalExtentComputedValues minValues;
 
         computePositionedLogicalHeightUsing(MinSize, styleToUse.logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
@@ -4125,8 +4141,12 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
                                                     LogicalExtentComputedValues& computedValues) const
 {
     ASSERT(heightType == MinSize || heightType == MainOrPreferredSize || !logicalHeightLength.isAuto());
-    if (heightType == MinSize && logicalHeightLength.isAuto())
-        logicalHeightLength = Length(0, Fixed);
+    if (heightType == MinSize && logicalHeightLength.isAuto()) {
+        if (shouldComputeLogicalHeightFromAspectRatio())
+            logicalHeightLength = Length(logicalHeight, Fixed);
+        else
+            logicalHeightLength = Length(0, Fixed);
+    }
 
     // 'top' and 'bottom' cannot both be 'auto' because 'top would of been
     // converted to the static position in computePositionedLogicalHeight()
