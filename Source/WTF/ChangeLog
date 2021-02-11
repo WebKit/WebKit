@@ -1,3 +1,24 @@
+2021-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce string copies when converting from NSString/CFStringRef to WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=221766
+
+        Reviewed by Geoff Garen.
+
+        This reduces the string copies from two to one which should speed up many things.
+        The cost is that for non-Latin1-encodable strings of length less than 1024, we now do an allocation
+        and a reallocation, whereas before we were doing just one allocation.  I think even in this case, though,
+        the cost of a reallocation should be comparable to the cost of doing a double string copy,
+        and the benefit of reducing a string copy everywhere is compelling.
+
+        I also reduced duplicate code by combining the CF and NS implementations.
+
+        * wtf/text/WTFString.h:
+        * wtf/text/cf/StringCF.cpp:
+        (WTF::String::String):
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String): Deleted.
+
 2021-02-11  Sam Weinig  <weinig@apple.com>
 
         Returning sRGB from CG color space functions on failure is too error prone
