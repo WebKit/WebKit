@@ -1,3 +1,91 @@
+2021-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using GenericCallback from WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=221653
+
+        Reviewed by Chris Dumez.
+
+        There are still two uses in the DrawingAreaProxy implementations, but those are quite tangled and deserve their own patch.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::updateAttributes):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (CompletionHandler<void):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        (WKPageGetBytecodeProfile):
+        (WKPageGetSamplingProfilerOutput):
+        (WTF::Function<void): Deleted.
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::updateFromSerializedRepresentation):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]):
+        (-[WKWebView _getContentsOfAllFramesAsStringWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment setFileWrapper:contentType:completion:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::startSpeaking):
+        * UIProcess/GenericCallback.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getSamplingProfilerOutput):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::installActivityStateChangeCompletionHandler):
+        (WebKit::WebPageProxy::insertAttachment):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::didInsertAttachmentWithIdentifier):
+        (WebKit::WebPageProxy::clearLoadDependentCallbacks): Deleted.
+        (WebKit::WebPageProxy::voidCallback): Deleted.
+        (WebKit::WebPageProxy::stringCallback): Deleted.
+        (WebKit::WebPageProxy::invalidateStringCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shareForWebView:]):
+        (-[WKContentView _defineForWebView:]):
+        (-[WKContentView accessibilityRetrieveSpeakSelectionContent]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applyAutocorrection):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient getSelectedText:]):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::getContentsAsString):
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        (WebKit::WebPage::getSelectionOrContentsAsString):
+        (WebKit::WebPage::getSourceForFrame):
+        (WebKit::WebPage::getBytecodeProfile):
+        (WebKit::WebPage::getSamplingProfilerOutput):
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applyAutocorrection):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacks):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+
 2021-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r269824) IOSurface allocation failure causes crash in RemoteLayerBackingStore::display()

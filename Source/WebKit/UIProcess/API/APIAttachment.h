@@ -55,7 +55,7 @@ public:
     enum class InsertionState : uint8_t { NotInserted, Inserted };
 
     const WTF::String& identifier() const { return m_identifier; }
-    void updateAttributes(Function<void(WebKit::CallbackBase::Error)>&&);
+    void updateAttributes(CompletionHandler<void()>&&);
 
     void invalidate();
     bool isValid() const { return !!m_webPage; }

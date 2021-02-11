@@ -187,7 +187,7 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
         return;
 
     setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    m_webPage->updateAttachmentAttributes(*this, [] (auto) { });
+    m_webPage->updateAttachmentAttributes(*this, [] { });
 }
 
 void Attachment::setFileWrapperGenerator(Function<RetainPtr<NSFileWrapper>(void)>&& fileWrapperGenerator)

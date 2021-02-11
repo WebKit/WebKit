@@ -3162,9 +3162,7 @@ void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled,
 void WebViewImpl::startSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    m_page->getSelectionOrContentsAsString([](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    m_page->getSelectionOrContentsAsString([](const String& string) {
         if (!string)
             return;
 
