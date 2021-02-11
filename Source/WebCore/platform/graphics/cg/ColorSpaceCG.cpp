@@ -33,75 +33,47 @@
 
 namespace WebCore {
 
-CGColorSpaceRef sRGBColorSpaceRef()
+template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef namedColorSpace()
 {
-    static CGColorSpaceRef sRGBColorSpace;
+    static CGColorSpaceRef colorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-#if PLATFORM(WIN)
-        // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
-        // causing a crash under those conditions. Since the default color space in Windows
-        // is sRGB, this all works out nicely.
-        // FIXME: Is this still needed? rdar://problem/15213515 was fixed.
-        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-        if (!sRGBColorSpace)
-            sRGBColorSpace = CGColorSpaceCreateDeviceRGB();
-#else
-        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-#endif // PLATFORM(WIN)
+        colorSpace = CGColorSpaceCreateWithName(colorSpaceNameGlobalConstant);
+        ASSERT(colorSpace);
     });
-    return sRGBColorSpace;
+    return colorSpace;
+}
+
+CGColorSpaceRef sRGBColorSpaceRef()
+{
+    return namedColorSpace<kCGColorSpaceSRGB>();
 }
 
 #if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
 CGColorSpaceRef adobeRGB1998ColorSpaceRef()
 {
-    static CGColorSpaceRef adobeRGB1998ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        adobeRGB1998ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
-        ASSERT(adobeRGB1998ColorSpace);
-    });
-    return adobeRGB1998ColorSpace;
+    return namedColorSpace<kCGColorSpaceAdobeRGB1998>();
 }
 #endif
 
 #if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
 CGColorSpaceRef displayP3ColorSpaceRef()
 {
-    static CGColorSpaceRef displayP3ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
-        ASSERT(displayP3ColorSpace);
-    });
-    return displayP3ColorSpace;
+    return namedColorSpace<kCGColorSpaceDisplayP3>();
 }
 #endif
 
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
-    static CGColorSpaceRef extendedSRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        extendedSRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
-        ASSERT(extendedSRGBColorSpace);
-    });
-    return extendedSRGBColorSpace;
+    return namedColorSpace<kCGColorSpaceExtendedSRGB>();
 }
 #endif
 
 #if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
 CGColorSpaceRef ITUR_2020ColorSpaceRef()
 {
-    static CGColorSpaceRef ITUR2020ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        ITUR2020ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020);
-        ASSERT(ITUR2020ColorSpace);
-    });
-    return ITUR2020ColorSpace;
+    return namedColorSpace<kCGColorSpaceITUR_2020>();
 }
 #endif
 
@@ -116,39 +88,21 @@ CGColorSpaceRef labColorSpaceRef()
 #if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
 CGColorSpaceRef linearSRGBColorSpaceRef()
 {
-    static CGColorSpaceRef linearRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
-        ASSERT(linearRGBColorSpace);
-    });
-    return linearRGBColorSpace;
+    return namedColorSpace<kCGColorSpaceLinearSRGB>();
 }
 #endif
 
 #if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
 CGColorSpaceRef ROMMRGBColorSpaceRef()
 {
-    static CGColorSpaceRef ROMMRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        ROMMRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceROMMRGB);
-        ASSERT(ROMMRGBColorSpace);
-    });
-    return ROMMRGBColorSpace;
+    return namedColorSpace<kCGColorSpaceROMMRGB>();
 }
 #endif
 
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
 CGColorSpaceRef xyzColorSpaceRef()
 {
-    static CGColorSpaceRef xyzColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        xyzColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericXYZ);
-        ASSERT(xyzColorSpace);
-    });
-    return xyzColorSpace;
+    return namedColorSpace<kCGColorSpaceGenericXYZ>();
 }
 #endif
 
