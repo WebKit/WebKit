@@ -36,6 +36,7 @@ import urllib
 
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
 BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
+COMMITS_INFO_URL = 'https://commits.webkit.org/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -1124,3 +1125,56 @@ class ExtractTestResults(master.MasterShellCommand):
     def finished(self, result):
         self.addCustomURLs()
         return master.MasterShellCommand.finished(self, result)
+
+
+class ShowIdentifier(shell.ShellCommand):
+    name = 'show-identifier'
+    identifier_re = '^Identifier: (.*)$'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        revision = self.getProperty('got_revision')
+        self.setCommand(['python', 'Tools/Scripts/git-webkit', 'find', 'r{}'.format(revision)])
+        return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc != SUCCESS:
+            return rc
+
+        log_text = self.log_observer.getStdout()
+        match = re.search(self.identifier_re, log_text, re.MULTILINE)
+        if match:
+            identifier = match.group(1)
+            self.setProperty('identifier', identifier)
+            step = self.getLastBuildStepByName(CheckOutSource.name)
+            if not step:
+                step = self
+            step.addURL('Updated to {}'.format(identifier), self.url_for_identifier(identifier))
+            self.descriptionDone = 'Identifier: {}'.format(identifier)
+        else:
+            self.descriptionDone = 'Failed to find identifier'
+        return rc
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    def url_for_identifier(self, identifier):
+        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to find identifier'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS

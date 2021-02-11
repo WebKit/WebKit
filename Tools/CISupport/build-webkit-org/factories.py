@@ -31,6 +31,7 @@ class Factory(factory.BuildFactory):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model))
         self.addStep(CheckOutSource())
+        self.addStep(ShowIdentifier())
         if not (platform == "jsc-only"):
             self.addStep(KillOldProcesses())
         self.addStep(CleanBuildIfScheduled())

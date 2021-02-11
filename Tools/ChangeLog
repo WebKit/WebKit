@@ -1,5 +1,30 @@
 2021-02-11  Aakash Jain  <aakash_jain@apple.com>
 
+        build.webkit.org should display commit identifier in builds
+        https://bugs.webkit.org/show_bug.cgi?id=221730
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (ExtractTestResults.finished):
+        (ShowIdentifier): build-step to show commit identifier.
+        (ShowIdentifier.__init__):
+        (ShowIdentifier.start):
+        (ShowIdentifier.evaluateCommand):
+        (ShowIdentifier.getLastBuildStepByName):
+        (ShowIdentifier.url_for_identifier):
+        (ShowIdentifier.getResultSummary): Display custom failure message.
+        (ShowIdentifier.hideStepIf): Hide this step if successful.
+        * CISupport/build-webkit-org/steps_unittest.py:
+        (BuildStepMixinAdditions.executedSteps): filter wasn't working as expected with python 3, replaced 
+        with list comprehension.
+        (TestShowIdentifier): Added unit-tests.
+        (TestShowIdentifier.test_success):
+        (TestShowIdentifier.test_failure):
+        * CISupport/build-webkit-org/factories.py: Added ShowIdentifier build step.
+
+2021-02-11  Aakash Jain  <aakash_jain@apple.com>
+
         JSC EWSes should be triggered by change in any jsc file
         https://bugs.webkit.org/show_bug.cgi?id=221756
 

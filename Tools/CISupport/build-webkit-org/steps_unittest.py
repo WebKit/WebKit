@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -106,7 +106,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
 
     @property
     def executedSteps(self):
-        return filter(lambda step: not step.stopped, self.previous_steps)
+        return [step for step in self.previous_steps if not step.stopped]
 
     def setProperty(self, name, value, source='Unknown'):
         self.properties.setProperty(name, value, source)
@@ -495,4 +495,43 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )
         self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        return self.runStep()
+
+
+class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('got_revision', '272692')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
+            ExpectShell.log('stdio', stdout='Identifier: 233939@trunk') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233939@trunk')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('identifier'), '233939@trunk')
+        return rc
+
+    def test_failure(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('got_revision', '272692')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
         return self.runStep()
