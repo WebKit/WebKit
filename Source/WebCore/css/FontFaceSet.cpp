@@ -92,7 +92,7 @@ RefPtr<FontFace> FontFaceSet::Iterator::next()
 {
     if (m_index == m_target->size())
         return nullptr;
-    return m_target->backing()[m_index++].wrapper();
+    return m_target->backing()[m_index++].wrapper(m_target->scriptExecutionContext());
 }
 
 FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)
@@ -161,7 +161,7 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
     bool waiting = false;
 
     for (auto& face : matchingFaces) {
-        pendingPromise->faces.append(face.get().wrapper());
+        pendingPromise->faces.append(face.get().wrapper(scriptExecutionContext()));
         if (face.get().status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;

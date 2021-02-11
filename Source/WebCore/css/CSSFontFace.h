@@ -53,6 +53,7 @@ class Document;
 class FontDescription;
 class Font;
 class FontFace;
+class ScriptExecutionContext;
 enum class ExternalResourceDownloadPolicy;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
@@ -145,7 +146,7 @@ public:
     bool rangesMatchCodePoint(UChar32) const;
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
-    Ref<FontFace> wrapper();
+    Ref<FontFace> wrapper(ScriptExecutionContext*);
     void setWrapper(FontFace&);
     FontFace* existingWrapper();
 
@@ -164,8 +165,6 @@ public:
 
     bool hasSVGFontFaceSource() const;
     void setErrorState();
-
-    Document* document() const;
 
 private:
     CSSFontFace(CSSFontSelector*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);

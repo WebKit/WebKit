@@ -429,12 +429,14 @@ void CSSFontFace::initializeWrapper()
     m_mayBePurged = false;
 }
 
-Ref<FontFace> CSSFontFace::wrapper()
+Ref<FontFace> CSSFontFace::wrapper(ScriptExecutionContext* context)
 {
-    if (m_wrapper)
+    if (m_wrapper) {
+        ASSERT(m_wrapper->scriptExecutionContext() == context);
         return *m_wrapper.get();
+    }
 
-    auto wrapper = FontFace::create(*this);
+    auto wrapper = FontFace::create(context, *this);
     m_wrapper = makeWeakPtr(wrapper.get());
     initializeWrapper();
     return wrapper;
@@ -452,11 +454,6 @@ void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
 
     // We should never add sources in the middle of loading.
     ASSERT(!m_sourcesPopulated);
-}
-
-Document* CSSFontFace::document() const
-{
-    return m_fontSelector ? m_fontSelector->document() : nullptr;
 }
 
 auto CSSFontFace::fontLoadTiming() const -> FontLoadTiming
