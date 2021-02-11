@@ -130,13 +130,14 @@ public:
         Type m_type { Type::InlineBox };
     };
 
-    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit logicalWidth, size_t numberOfRuns);
+    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
     InlineLayoutUnit logicalHeight() const { return logicalSize().height(); }
     InlineLayoutPoint logicalTopLeft() const { return logicalRect().topLeft(); }
     InlineLayoutSize logicalSize() const { return logicalRect().size(); }
+    InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
 
@@ -175,6 +176,7 @@ private:
 
 private:
     InlineRect m_logicalRect;
+    InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasContent { false };
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
