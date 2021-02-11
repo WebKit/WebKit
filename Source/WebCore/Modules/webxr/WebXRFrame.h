@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "DOMHighResTimeStamp.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -46,14 +47,20 @@ public:
     static Ref<WebXRFrame> create(Ref<WebXRSession>&&);
     ~WebXRFrame();
 
-    const WebXRSession& session() const;
+    const WebXRSession& session() const { return m_session.get(); }
 
     RefPtr<WebXRViewerPose> getViewerPose(const WebXRReferenceSpace&);
     RefPtr<WebXRPose> getPose(const WebXRSpace&, const WebXRSpace&);
 
-private:
-    WebXRFrame(Ref<WebXRSession>&&);
+    void setTime(DOMHighResTimeStamp time) { m_time = time; }
+    void setActive(bool active) { m_active = active; }
+    bool isActive() const { return m_active; }
 
+private:
+    explicit WebXRFrame(Ref<WebXRSession>&&);
+
+    bool m_active { false };
+    DOMHighResTimeStamp m_time;
     Ref<WebXRSession> m_session;
 };
 

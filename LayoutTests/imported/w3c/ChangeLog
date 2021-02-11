@@ -1,3 +1,14 @@
+2021-02-11  Sergio Villar Senin  <svillar@igalia.com> and Imanol Fernandez  <ifernandez@igalia.com>
+
+        Complete XRSession::requestAnimationFrame implementation
+        https://bugs.webkit.org/show_bug.cgi?id=220979
+
+        Reviewed by Youenn Fablet.
+
+        Enable XRSession RAF tests.
+
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt: Added.
+
 2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Add more Selenium key codes for test_driver.send_keys()

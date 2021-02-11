@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class HTMLCanvasElement;
 class IntSize;
 class WebGLFramebuffer;
 class WebGLRenderingContext;
@@ -73,6 +74,10 @@ public:
     static double getNativeFramebufferScaleFactor(const WebXRSession&);
 
     const WebXRSession& session() { return m_session; }
+
+    bool isCompositionEnabled() const { return m_isCompositionEnabled; }
+
+    HTMLCanvasElement* canvas() const;
 
 private:
     WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
