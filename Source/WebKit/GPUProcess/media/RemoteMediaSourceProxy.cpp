@@ -77,10 +77,12 @@ void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
     m_connectionToWebProcess.connection().send(Messages::MediaSourcePrivateRemote::SeekToTime(time), m_identifier);
 }
 
+#if USE(GSTREAMER)
 void RemoteMediaSourceProxy::monitorSourceBuffers()
 {
     notImplemented();
 }
+#endif
 
 #if !RELEASE_LOG_DISABLED
 void RemoteMediaSourceProxy::setLogIdentifier(const void*)

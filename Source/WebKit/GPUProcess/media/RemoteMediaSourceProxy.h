@@ -65,7 +65,9 @@ public:
     MediaTime duration() const final;
     std::unique_ptr<WebCore::PlatformTimeRanges> buffered() const final;
     void seekToTime(const MediaTime&) final;
+#if USE(GSTREAMER)
     void monitorSourceBuffers() final;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void*) final;

@@ -83,7 +83,11 @@ public:
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
-    void monitorSourceBuffers() override;
+#if USE(GSTREAMER)
+    void monitorSourceBuffers() final;
+#else
+    void monitorSourceBuffers();
+#endif
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     Ref<TimeRanges> seekable();
     ExceptionOr<void> setLiveSeekableRange(double start, double end);

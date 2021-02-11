@@ -123,7 +123,6 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC*, Uint8Array*);
 #endif
-    void monitorSourceBuffers();
     void removeSourceBuffer(SourceBufferPrivate*);
 
     void setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC*);

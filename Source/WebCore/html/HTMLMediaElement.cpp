@@ -2898,6 +2898,7 @@ void HTMLMediaElement::seekInternal(const MediaTime& time)
 
 void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM)
 {
+    INFO_LOG(LOGIDENTIFIER, "time = ", inTime, ", negativeTolerance = ", negativeTolerance, ", positiveTolerance = ", positiveTolerance);
     // 4.8.10.9 Seeking
     MediaTime time = inTime;
 

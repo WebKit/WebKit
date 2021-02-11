@@ -164,6 +164,8 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 
 void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded)
 {
+    DEBUG_LOG(LOGIDENTIFIER);
+
     // Resolve the changes in TrackBuffers' buffered ranges
     // into the SourceBuffer's buffered ranges
     updateBufferedFromTrackBuffers(isEnded);
