@@ -48,6 +48,7 @@
 #include "RemoteMediaRecorderMessages.h"
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
+#include "RemoteRemoteCommandListenerProxy.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
@@ -416,6 +417,20 @@ void GPUConnectionToWebProcess::createAudioHardwareListener(RemoteAudioHardwareL
 void GPUConnectionToWebProcess::releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier identifier)
 {
     bool found = m_remoteAudioHardwareListenerMap.remove(identifier);
+    ASSERT_UNUSED(found, found);
+}
+
+void GPUConnectionToWebProcess::createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
+{
+    auto addResult = m_remoteRemoteCommandListenerMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteRemoteCommandListenerProxy>(*this, WTFMove(identifier));
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
+{
+    bool found = m_remoteRemoteCommandListenerMap.remove(identifier);
     ASSERT_UNUSED(found, found);
 }
 

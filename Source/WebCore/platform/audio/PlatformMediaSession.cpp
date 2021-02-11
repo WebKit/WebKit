@@ -291,7 +291,7 @@ bool PlatformMediaSession::canReceiveRemoteControlCommands() const
     return m_client.canReceiveRemoteControlCommands();
 }
 
-void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     ALWAYS_LOG(LOGIDENTIFIER, command);
 

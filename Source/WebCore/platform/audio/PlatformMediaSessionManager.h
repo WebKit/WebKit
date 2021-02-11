@@ -147,7 +147,7 @@ public:
     WEBCORE_EXPORT void removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
     bool hasAudioCaptureSource(PlatformMediaSession::AudioCaptureSource& source) const { return m_audioCaptureSources.contains(source); }
 
-    WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
+    WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
 
     bool isInterrupted() const { return m_interrupted; }
     bool hasNoSession() const;

@@ -430,7 +430,7 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
     updateSessionState();
 }
 
-void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     PlatformMediaSession* activeSession = currentSession();
     if (!activeSession || !activeSession->canReceiveRemoteControlCommands())

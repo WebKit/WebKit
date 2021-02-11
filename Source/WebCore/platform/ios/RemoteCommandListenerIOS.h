@@ -33,6 +33,7 @@ namespace WebCore {
 
 class RemoteCommandListenerIOS final : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerIOS> {
 public:
+    static std::unique_ptr<RemoteCommandListenerIOS> create(RemoteCommandListenerClient&);
     RemoteCommandListenerIOS(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListenerIOS();
 

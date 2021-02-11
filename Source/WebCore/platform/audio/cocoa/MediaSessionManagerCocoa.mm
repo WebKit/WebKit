@@ -153,8 +153,10 @@ void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
 void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 {
     m_taskQueue.enqueueTask([this] () mutable {
-        if (m_remoteCommandListener)
+        if (m_remoteCommandListener) {
+            m_remoteCommandListener->setSupportsSeeking(computeSupportsSeeking());
             m_remoteCommandListener->updateSupportedCommands();
+        }
 
         updateNowPlayingInfo();
 

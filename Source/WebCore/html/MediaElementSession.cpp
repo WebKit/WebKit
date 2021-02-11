@@ -1026,7 +1026,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 }
 
 #if ENABLE(MEDIA_SESSION)
-void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument* argument)
+void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
     auto* window = m_element.document().domWindow();
     auto* session = window ? &NavigatorMediaSession::mediaSession(window->navigator()) : nullptr;
@@ -1056,16 +1056,16 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
         if (!argument)
             return;
         actionDetails.action = MediaSessionAction::Seekto;
-        actionDetails.seekTime = argument->asDouble;
+        actionDetails.seekTime = *argument;
         break;
     case SkipForwardCommand:
         if (argument)
-            actionDetails.seekOffset = argument->asDouble;
+            actionDetails.seekOffset = *argument;
         actionDetails.action = MediaSessionAction::Seekforward;
         break;
     case SkipBackwardCommand:
         if (argument)
-            actionDetails.seekOffset = argument->asDouble;
+            actionDetails.seekOffset = *argument;
         actionDetails.action = MediaSessionAction::Seekbackward;
         break;
     case NextTrackCommand:

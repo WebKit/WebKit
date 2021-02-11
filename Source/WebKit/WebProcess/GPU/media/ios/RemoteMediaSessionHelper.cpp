@@ -139,14 +139,14 @@ void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo su
 {
     RefPtr<MediaPlaybackTarget> targetObject;
     if (targetContext.type() == MediaPlaybackTargetContext::AVOutputContextType)
-        targetObject = WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext());
+        m_playbackTarget = WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext());
     else {
         ASSERT_NOT_REACHED();
         return;
     }
 
     for (auto& client : m_clients)
-        client.activeVideoRouteDidChange(supportsAirPlayVideo, targetObject.copyRef().releaseNonNull());
+        client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
 }
 
 }

@@ -47,6 +47,7 @@
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
+#include "RemoteRemoteCommandListener.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -122,6 +123,7 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RemoteCommandListener.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -1958,6 +1960,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         WebCore::AudioHardwareListener::setCreationFunction([this] (WebCore::AudioHardwareListener::Client& client) { return RemoteAudioHardwareListener::create(client, *this); });
     else
         WebCore::AudioHardwareListener::resetCreationFunction();
+
+    if (useGPUProcessForMedia)
+        WebCore::RemoteCommandListener::setCreationFunction([this] (WebCore::RemoteCommandListenerClient& client) { return RemoteRemoteCommandListener::create(client, *this); });
+    else
+        WebCore::RemoteCommandListener::resetCreationFunction();
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

@@ -191,8 +191,7 @@ bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC:
 
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
 {
-    const PlatformMediaSession::RemoteCommandArgument value { argument ? *argument : 0 };
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument ? &value : nullptr);
+    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
 }
 
 void GPUProcessConnection::updateParameters(const WebPageCreationParameters& parameters)

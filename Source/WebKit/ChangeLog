@@ -1,3 +1,47 @@
+2021-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][GPUP] Move RemoteCommandListener into the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221732
+
+        Reviewed by Eric Carlson.
+
+        Add a new Remote/Proxy class pair to facilitate RemoteCommandListener being
+        created in the GPU Process.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRemoteCommandListener):
+        (WebKit::GPUConnectionToWebProcess::releaseRemoteCommandListener):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp:
+        (WebKit::RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy):
+        (WebKit::RemoteRemoteCommandListenerProxy::didReceiveRemoteControlCommand):
+        (WebKit::RemoteRemoteCommandListenerProxy::updateSupportedCommands):
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.h:
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.messages.in:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveRemoteCommand):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.cpp: Added.
+        (WebKit::RemoteRemoteCommandListener::create):
+        (WebKit::RemoteRemoteCommandListener::RemoteRemoteCommandListener):
+        (WebKit::RemoteRemoteCommandListener::~RemoteRemoteCommandListener):
+        (WebKit::RemoteRemoteCommandListener::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRemoteCommandListener::didReceiveRemoteControlCommand):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.h:
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.messages.in:
+        * WebProcess/GPU/media/RemoteRemoteCommandListenerIdentifier.h:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        (WebKit::RemoteMediaSessionHelper::activeVideoRouteDidChange):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+
 2021-02-11  Darin Adler  <darin@apple.com>
 
         [Cocoa] IPC decoder is using decoded size to allocate memory for an array

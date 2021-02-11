@@ -142,15 +142,11 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& sess
         return false;
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
-    if (!m_playbackTarget) {
-        m_playbackTarget = MediaPlaybackTargetCocoa::create();
-        m_playbackTargetSupportsAirPlayVideo = m_playbackTarget->supportsRemoteVideoPlayback();
-    }
-
-    ALWAYS_LOG(LOGIDENTIFIER, "Playback Target Supports AirPlay Video = ", m_playbackTargetSupportsAirPlayVideo);
-    if (m_playbackTargetSupportsAirPlayVideo)
-        session.setPlaybackTarget(*m_playbackTarget.copyRef());
-    session.setShouldPlayToPlaybackTarget(m_playbackTargetSupportsAirPlayVideo);
+    auto playbackTargetSupportsAirPlayVideo = MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
+    ALWAYS_LOG(LOGIDENTIFIER, "Playback Target Supports AirPlay Video = ", playbackTargetSupportsAirPlayVideo);
+    if (auto target = MediaSessionHelper::sharedHelper().playbackTarget(); target && playbackTargetSupportsAirPlayVideo)
+        session.setPlaybackTarget(*target);
+    session.setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
 #endif
 
     providePresentingApplicationPIDIfNecessary();

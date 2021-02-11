@@ -175,7 +175,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-    void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument* = nullptr) final;
+    void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument& = WTF::nullopt) final;
 #endif
 
 private:

@@ -79,12 +79,15 @@ public:
     bool activeVideoRouteSupportsAirPlayVideo() const { return m_activeVideoRouteSupportsAirPlayVideo; }
     bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; }
 
+    MediaPlaybackTarget* playbackTarget() const { return m_playbackTarget.get(); }
+
 protected:
     WeakHashSet<MediaSessionHelperClient> m_clients;
     uint32_t m_monitoringWirelessRoutesCount { 0 };
     bool m_isExternalOutputDeviceAvailable { false };
     bool m_activeVideoRouteSupportsAirPlayVideo { false };
     bool m_isPlayingToAutomotiveHeadUnit { false };
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
 };
 
 }

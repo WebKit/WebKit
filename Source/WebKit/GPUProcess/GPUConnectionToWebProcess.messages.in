@@ -42,6 +42,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #endif
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
+    CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+    ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)

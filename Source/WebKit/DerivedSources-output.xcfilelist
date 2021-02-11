@@ -247,6 +247,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSourceProxyMessagesRepli
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRemoteCommandListenerProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessagesReplies.h

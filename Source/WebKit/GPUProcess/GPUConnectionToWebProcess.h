@@ -32,6 +32,7 @@
 #include "MessageReceiverMap.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
+#include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 
 #include <WebCore/LibWebRTCEnumTraits.h>
@@ -63,6 +64,7 @@ class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteMediaSessionHelperProxy;
+class RemoteRemoteCommandListenerProxy;
 class RemoteRenderingBackend;
 class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
@@ -160,6 +162,8 @@ private:
 
     void createAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
     void releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
+    void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
+    void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -238,6 +242,8 @@ private:
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
+    using RemoteRemoteCommandListenerMap = HashMap<RemoteRemoteCommandListenerIdentifier, std::unique_ptr<RemoteRemoteCommandListenerProxy>>;
+    RemoteRemoteCommandListenerMap m_remoteRemoteCommandListenerMap;
 };
 
 } // namespace WebKit

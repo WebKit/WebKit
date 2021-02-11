@@ -1861,6 +1861,8 @@
 		CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1131DB7D7ED0014A2DE /* FullscreenClient.h */; };
 		CD78E1171DB7DC0A0014A2DE /* APIFullscreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */; };
 		CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD8252DE25D4916C00862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */; };
+		CD8252E225D4919100862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */; };
 		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
 		CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */; };
 		CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */; };
@@ -5550,6 +5552,19 @@
 		CD78E1131DB7D7ED0014A2DE /* FullscreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullscreenClient.h; sourceTree = "<group>"; };
 		CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFullscreenClient.h; sourceTree = "<group>"; };
 		CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFullscreenDelegate.h; sourceTree = "<group>"; };
+		CD8252D125D464AB00862FD8 /* RemoteRemoteCommandListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListener.h; sourceTree = "<group>"; };
+		CD8252D225D464AB00862FD8 /* RemoteRemoteCommandListener.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListener.cpp; sourceTree = "<group>"; };
+		CD8252D325D464BF00862FD8 /* RemoteRemoteCommandListener.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRemoteCommandListener.messages.in; sourceTree = "<group>"; };
+		CD8252D425D4651000862FD8 /* RemoteRemoteCommandListenerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerIdentifier.h; sourceTree = "<group>"; };
+		CD8252D525D4763100862FD8 /* RemoteRemoteCommandListenerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerProxy.h; sourceTree = "<group>"; };
+		CD8252D625D4763100862FD8 /* RemoteRemoteCommandListenerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListenerProxy.cpp; sourceTree = "<group>"; };
+		CD8252D725D4765900862FD8 /* RemoteRemoteCommandListenerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRemoteCommandListenerProxy.messages.in; sourceTree = "<group>"; };
+		CD8252D825D4915300862FD8 /* RemoteRemoteCommandListenerProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerProxyMessagesReplies.h; sourceTree = "<group>"; };
+		CD8252D925D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerProxyMessages.h; sourceTree = "<group>"; };
+		CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListenerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD8252DF25D4918400862FD8 /* RemoteRemoteCommandListenerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerMessagesReplies.h; sourceTree = "<group>"; };
+		CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListenerMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD8252E125D4918500862FD8 /* RemoteRemoteCommandListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerMessages.h; sourceTree = "<group>"; };
 		CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackBoardServicesSPI.h; sourceTree = "<group>"; };
 		CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionManager.mm; sourceTree = "<group>"; };
 		CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManager.h; sourceTree = "<group>"; };
@@ -6032,6 +6047,10 @@
 				1D32F89D23A84C5B00B1EA6A /* RemoteMediaResourceProxy.cpp */,
 				1D32F89B23A84BA600B1EA6A /* RemoteMediaResourceProxy.h */,
 				1DD2A646255F32B100FF7B6F /* RemoteMediaSourceIdentifier.h */,
+				CD8252D125D464AB00862FD8 /* RemoteRemoteCommandListener.h */,
+				CD8252D225D464AB00862FD8 /* RemoteRemoteCommandListener.cpp */,
+				CD8252D325D464BF00862FD8 /* RemoteRemoteCommandListener.messages.in */,
+				CD8252D425D4651000862FD8 /* RemoteRemoteCommandListenerIdentifier.h */,
 				1DD2A63A255DE6D100FF7B6F /* SourceBufferPrivateRemote.cpp */,
 				1DD2A639255DE6D100FF7B6F /* SourceBufferPrivateRemote.h */,
 				1DD2A66F25622F1100FF7B6F /* SourceBufferPrivateRemote.messages.in */,
@@ -6112,6 +6131,9 @@
 				1DD2A63F255E3F1F00FF7B6F /* RemoteMediaSourceProxy.cpp */,
 				1DD2A63E255E3F1F00FF7B6F /* RemoteMediaSourceProxy.h */,
 				1DD2A64A2560F54C00FF7B6F /* RemoteMediaSourceProxy.messages.in */,
+				CD8252D525D4763100862FD8 /* RemoteRemoteCommandListenerProxy.h */,
+				CD8252D625D4763100862FD8 /* RemoteRemoteCommandListenerProxy.cpp */,
+				CD8252D725D4765900862FD8 /* RemoteRemoteCommandListenerProxy.messages.in */,
 				1DD2A6682561F68400FF7B6F /* RemoteSourceBufferIdentifier.h */,
 				1DD2A643255E3F3D00FF7B6F /* RemoteSourceBufferProxy.cpp */,
 				1DD2A642255E3F3D00FF7B6F /* RemoteSourceBufferProxy.h */,
@@ -10892,6 +10914,12 @@
 				1DD2A661256122F100FF7B6F /* RemoteMediaSourceProxyMessagesReplies.h */,
 				1AC1338318590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp */,
 				1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */,
+				CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */,
+				CD8252E125D4918500862FD8 /* RemoteRemoteCommandListenerMessages.h */,
+				CD8252DF25D4918400862FD8 /* RemoteRemoteCommandListenerMessagesReplies.h */,
+				CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */,
+				CD8252D925D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessages.h */,
+				CD8252D825D4915300862FD8 /* RemoteRemoteCommandListenerProxyMessagesReplies.h */,
 				0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */,
 				0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */,
 				1DD2A66B2562021E00FF7B6F /* RemoteSourceBufferProxyMessageReceiver.cpp */,
@@ -13770,6 +13798,7 @@
 				51F060E11654318500F3281E /* NetworkRTCMonitorMessageReceiver.cpp in Sources */,
 				4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */,
 				51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */,
+				CD8252DE25D4916C00862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp in Sources */,
 				31F060E11654318500F3281C /* NetworkSocketChannelMessageReceiver.cpp in Sources */,
 				5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */,
 				2D92A790212B6AD400F493FD /* NPIdentifierData.cpp in Sources */,
@@ -13911,6 +13940,7 @@
 				2D11B78D2126A283006F8878 /* UnifiedSource31-mm.mm in Sources */,
 				2D11B78F2126A283006F8878 /* UnifiedSource32-mm.mm in Sources */,
 				2D11B7902126A283006F8878 /* UnifiedSource32.cpp in Sources */,
+				CD8252E225D4919100862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp in Sources */,
 				2D11B7912126A283006F8878 /* UnifiedSource33-mm.mm in Sources */,
 				2D11B7922126A283006F8878 /* UnifiedSource33.cpp in Sources */,
 				2D11B7942126A283006F8878 /* UnifiedSource34.cpp in Sources */,

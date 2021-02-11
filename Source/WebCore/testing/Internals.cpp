@@ -4305,7 +4305,7 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
     else
         return Exception { InvalidAccessError };
 
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(command, &parameter);
+    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(command, parameter);
     return { };
 }
 

@@ -288,10 +288,10 @@ void MediaSessionHelperiOS::activeAudioRouteDidChange(bool shouldPause)
 
 void MediaSessionHelperiOS::activeVideoRouteDidChange()
 {
-    auto playbackTarget = MediaPlaybackTargetCocoa::create();
-    m_activeVideoRouteSupportsAirPlayVideo = playbackTarget->supportsRemoteVideoPlayback();
+    m_playbackTarget = MediaPlaybackTargetCocoa::create();
+    m_activeVideoRouteSupportsAirPlayVideo = m_playbackTarget->supportsRemoteVideoPlayback();
     for (auto& client : m_clients)
-        client.activeVideoRouteDidChange(m_activeVideoRouteSupportsAirPlayVideo ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No, playbackTarget.copyRef());
+        client.activeVideoRouteDidChange(m_activeVideoRouteSupportsAirPlayVideo ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No, *m_playbackTarget);
 }
 #endif
 

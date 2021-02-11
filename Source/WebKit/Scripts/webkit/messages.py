@@ -317,6 +317,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::RemoteLegacyCDMSessionIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
         'WebKit::RemoteMediaSourceIdentifier',
+        'WebKit::RemoteRemoteCommandListenerIdentifier',
         'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RenderingBackendIdentifier',
         'WebKit::RTCDecoderIdentifier',

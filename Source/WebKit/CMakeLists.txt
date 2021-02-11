@@ -138,6 +138,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteMediaPlayerProxy
     GPUProcess/media/RemoteMediaResourceManager
     GPUProcess/media/RemoteMediaSourceProxy
+    GPUProcess/media/RemoteRemoteCommandListenerProxy
     GPUProcess/media/RemoteSourceBufferProxy
 
     GPUProcess/webrtc/LibWebRTCCodecsProxy
@@ -230,6 +231,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/media/RemoteCDMInstance
     WebProcess/GPU/media/RemoteCDMInstanceSession
     WebProcess/GPU/media/RemoteLegacyCDMSession
+    WebProcess/GPU/media/RemoteRemoteCommandListener
     WebProcess/GPU/media/SourceBufferPrivateRemote
 
     WebProcess/GPU/webrtc/LibWebRTCCodecs

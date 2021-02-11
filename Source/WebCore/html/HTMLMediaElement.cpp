@@ -7515,7 +7515,7 @@ MediaSessionIdentifier HTMLMediaElement::mediaSessionUniqueIdentifier() const
     return m_mediaSession->mediaSessionIdentifier();
 }
 
-void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
@@ -7544,18 +7544,18 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
         break;
     case PlatformMediaSession::SkipForwardCommand:
         if (argument)
-            offset = argument->asDouble;
+            offset = *argument;
         handleSeekToPlaybackPosition(offset);
         break;
     case PlatformMediaSession::SkipBackwardCommand:
         if (argument)
-            offset = argument->asDouble;
+            offset = *argument;
         handleSeekToPlaybackPosition(0 - offset);
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument);
         if (argument)
-            handleSeekToPlaybackPosition(argument->asDouble);
+            handleSeekToPlaybackPosition(*argument);
         break;
     default:
         { } // Do nothing

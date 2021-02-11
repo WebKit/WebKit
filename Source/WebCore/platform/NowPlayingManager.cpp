@@ -35,22 +35,12 @@ namespace WebCore {
 NowPlayingManager::NowPlayingManager() = default;
 NowPlayingManager::~NowPlayingManager() = default;
 
-void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument* argument)
+void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     ASSERT(m_nowPlayingInfo);
 
-    if (!m_client)
-        return;
-
-    Optional<double> value;
-    if (argument)
-        value = argument->asDouble;
-    m_client->didReceiveRemoteControlCommand(type, value);
-}
-
-bool NowPlayingManager::supportsSeeking() const
-{
-    return m_nowPlayingInfo && m_nowPlayingInfo->supportsSeeking;
+    if (m_client)
+        m_client->didReceiveRemoteControlCommand(type, argument);
 }
 
 void NowPlayingManager::clearNowPlayingInfoClient(Client& client)
@@ -72,6 +62,7 @@ void NowPlayingManager::setNowPlayingInfo(Client& client, NowPlayingInfo&& nowPl
     if (!m_remoteCommandListener)
         m_remoteCommandListener = RemoteCommandListener::create(*this);
 
+    m_remoteCommandListener->setSupportsSeeking(nowPlayingInfo.supportsSeeking);
     m_client = makeWeakPtr(client);
     m_nowPlayingInfo = WTFMove(nowPlayingInfo);
 
