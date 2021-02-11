@@ -291,7 +291,9 @@
             </div>
         </div>
         <p>The CSS for the above container is:</p>
-        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-points-x: repeat(100%);</pre>
+        <pre>scroll-snap-type: x mandatory;</pre>
+        <p>The CSS for each of the container&rsquo;s children is:</p>
+        <pre>scroll-snap-align: start;</pre>
 
         <!-- Scroll snapping container using coordinates -->
         <a name="scroll-snap-2"></a>
@@ -349,9 +351,9 @@
             </div>
         </div>
         <p>The CSS for the above container is:</p>
-        <pre>-webkit-scroll-snap-type: mandatory;</pre>
+        <pre>scroll-snap-type: x mandatory;</pre>
         <p>The CSS for each of the container&rsquo;s children is:</p>
-        <pre>-webkit-scroll-snap-coordinate: 0% 0%;</pre>
+        <pre>scroll-snap-align: start;</pre>
 
         <!-- Centered scroll snapping container using coordinates -->
         <a name="scroll-snap-3"></a>
@@ -409,9 +411,9 @@
             </div>
         </div>
         <p>The CSS for the above container is:</p>
-        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;</pre>
+        <pre>scroll-snap-type: x mandatory;</pre>
         <p>The CSS for each of the container&rsquo;s children is:</p>
-        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+        <pre>scroll-snap-align: center;</pre>
 
         <!-- Centered scroll snapping container in 2D -->
         <a name="scroll-snap-4"></a>
@@ -423,9 +425,9 @@
             <img src="images/13.png"/><img src="images/14.png"/><img src="images/15.png"/><img src="images/16.png"/>
         </div>
         <p>The CSS for the above container is:</p>
-        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;</pre>
+        <pre>scroll-snap-type: both mandatory;</pre>
         <p>The CSS for each of the container&rsquo;s children is:</p>
-        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+        <pre>scroll-snap-align: center;</pre>
 
         <!-- Centered scroll snapping container in 2D, rotated -->
         <a name="scroll-snap-5"></a>
@@ -437,9 +439,9 @@
             <img src="images/13.png"/><img src="images/14.png"/><img src="images/15.png"/><img src="images/16.png"/>
         </div>
         <p>The CSS for the above container is:</p>
-        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;<br>-webkit-transform: rotate(30deg);</pre>
+        <pre>scroll-snap-type: both mandatory;<br>transform: rotate(30deg);</pre>
         <p>The CSS for each of the container&rsquo;s children is:</p>
-        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+        <pre>scroll-snap-align: center;</pre>
 
         <p id="nasa">Images from <a target="_blank" href="https://www.nasa.gov/multimedia/imagegallery/iotd.html">NASA&rsquo;s image of the day gallery</a>.</p>
     </body>
