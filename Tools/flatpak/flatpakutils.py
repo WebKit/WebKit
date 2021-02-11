@@ -882,20 +882,10 @@ class WebkitFlatpak:
             pkg_config_path = self.build_path
         flatpak_env["PKG_CONFIG_PATH"] = pkg_config_path
 
-        env_file = os.path.join(self.build_root, 'flatpak-env.json')
-        if not os.path.exists(env_file):
-            with open(env_file, 'w') as f:
-                json.dump(dict(flatpak_env), f, indent=2)
-        else:
-            env_file = None
-
         try:
             return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
         except KeyboardInterrupt:
             return 0
-        finally:
-            if env_file is not None and os.path.exists(env_file):
-                os.remove(env_file)
 
         return 0
 

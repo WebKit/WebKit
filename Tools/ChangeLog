@@ -1,3 +1,19 @@
+2021-02-11  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Support multiple builds running at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=221711
+
+        Reviewed by Philippe Normand.
+
+        Instead of writing the environment to a file, read the --setenv
+        arguments from the --args file descriptor passed to webkit-bwrap like
+        bwrap itself would do.
+
+        * flatpak/flatpakutils.py: Do not write the env file anymore
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap: Read the environment from the args file
+        descriptor.
+
 2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Webpage translation] Add support for the -_translate: action on WKContentView

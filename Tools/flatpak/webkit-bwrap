@@ -20,11 +20,29 @@
 import os
 import itertools
 import shlex
+import stat
 import sys
 import tempfile
 import json
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
+
+def read_lines(fd: int):
+    new_fd = os.dup(fd)
+    pos = os.lseek(fd, 0, os.SEEK_CUR)
+    try:
+        with os.fdopen(new_fd, 'r') as handle:
+            data = handle.read()
+            lines = data.split('\x00')
+            for line in lines:
+                yield line
+    except Exception as e:
+        print("Error reading brwap arguments", file=sys.stderr)
+        print(e, file=sys.stderr)
+    finally:
+        os.lseek(fd, pos, os.SEEK_SET)
+
+
 
 def main(args: list) -> int:
     tmpdir = tempfile.gettempdir()
@@ -37,9 +55,21 @@ def main(args: list) -> int:
         "/run/shm": "/dev/shm",
     }
 
+    args_idx = args.index('--args')
+    arg_fd = int(args[args_idx + 1])
+
+    lines = read_lines(arg_fd)
+
     environ = {}
-    with open(os.path.join(build_root, 'flatpak-env.json')) as f:
-        environ = json.load(f)
+    while True:
+        try:
+            arg = next(lines)
+            if arg == '--setenv':
+                key = next(lines)
+                value = next(lines)
+                environ[key] = value
+        except StopIteration:
+            break
 
     flatpak_user_dir = environ.get("WEBKIT_FLATPAK_USER_DIR")
     if flatpak_user_dir:
