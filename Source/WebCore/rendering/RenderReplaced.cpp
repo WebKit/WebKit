@@ -792,4 +792,10 @@ bool RenderReplaced::isContentLikelyVisibleInViewport()
     return visibleRect.intersects(contentRect);
 }
 
+bool RenderReplaced::needsPreferredWidthsRecalculation() const
+{
+    // If the height is a percentage and the width is auto, then the containingBlocks's height changing can cause this node to change it's preferred width because it maintains aspect ratio.
+    return hasRelativeLogicalHeight() && style().logicalWidth().isAuto();
+}
+
 }

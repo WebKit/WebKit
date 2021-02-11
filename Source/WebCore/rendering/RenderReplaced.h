@@ -45,6 +45,7 @@ public:
     RoundedRect roundedContentBoxRect() const;
     
     bool isContentLikelyVisibleInViewport();
+    bool needsPreferredWidthsRecalculation() const override;
 
 protected:
     RenderReplaced(Element&, RenderStyle&&);
