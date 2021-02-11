@@ -33,6 +33,7 @@
 namespace WebCore {
 class NotificationPermissionCallback;
 class ScriptExecutionContext;
+class VoidCallback;
 } // namespace WebCore
 
 namespace WebKit {

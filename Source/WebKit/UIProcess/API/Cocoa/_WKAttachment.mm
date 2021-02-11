@@ -32,7 +32,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -140,9 +139,14 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     // from the SPI client, the corresponding file path of the data is unknown, if it even exists at all.
     _attachment->setFilePath({ });
     _attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    _attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] {
-        if (capturedBlock)
+    _attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] (auto error) {
+        if (!capturedBlock)
+            return;
+
+        if (error == WebKit::CallbackBase::Error::None)
             capturedBlock(nil);
+        else
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:UnspecifiedAttachmentErrorCode userInfo:nil]);
     });
 }
 

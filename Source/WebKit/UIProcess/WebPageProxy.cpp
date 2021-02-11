@@ -2016,12 +2016,10 @@ void WebPageProxy::dispatchActivityStateChange()
 
     auto activityStateChangeID = m_activityStateChangeWantsSynchronousReply ? takeNextActivityStateChangeID() : static_cast<ActivityStateChangeID>(ActivityStateChangeAsynchronous);
 
-    if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty()) {
-        sendWithAsyncReply(Messages::WebPage::SetActivityState(m_activityState, activityStateChangeID), [callbacks = std::exchange(m_nextActivityStateChangeCallbacks, { })] () mutable {
-            for (auto& callback : callbacks)
-                callback();
-        });
-    }
+    if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty())
+        send(Messages::WebPage::SetActivityState(m_activityState, activityStateChangeID, m_nextActivityStateChangeCallbacks));
+
+    m_nextActivityStateChangeCallbacks.clear();
 
     // This must happen after the SetActivityState message is sent, to ensure the page visibility event can fire.
     updateThrottleState();
@@ -4079,19 +4077,39 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
     });
 }
 
-void WebPageProxy::getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetRenderTreeExternalRepresentation(), WTFMove(callback));
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getRenderTreeExternalRepresentation"_s));
+    send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID));
 }
 
-void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetSourceForFrame(frame->frameID()), WTFMove(callback));
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSourceForFrame"_s));
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID));
 }
 
-void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includesChildFrames, CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetContentsAsString(includesChildFrames), WTFMove(callback));
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getContentsAsString"_s));
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    send(Messages::WebPage::GetContentsAsString(includesChildFrames, callbackID));
 }
 
 #if PLATFORM(COCOA)
@@ -4111,14 +4129,28 @@ void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& c
     sendWithAsyncReply(Messages::WebPage::GetAllFrames(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetBytecodeProfile(), WTFMove(callback));
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getBytecodeProfile"_s));
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    send(Messages::WebPage::GetBytecodeProfile(callbackID));
 }
 
-void WebPageProxy::getSamplingProfilerOutput(CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetSamplingProfilerOutput(), WTFMove(callback));
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSamplingProfilerOutput"_s));
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    send(Messages::WebPage::GetSamplingProfilerOutput(callbackID));
 }
 
 static CompletionHandler<void(const IPC::DataReference& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
@@ -4135,9 +4167,15 @@ void WebPageProxy::getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&& 
 }
 #endif
 
-void WebPageProxy::getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::getSelectionOrContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::GetSelectionOrContentsAsString(), callback);
+    if (!hasRunningProcess()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionOrContentsAsString"_s));
+    send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID));
 }
 
 void WebPageProxy::getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&& callback)
@@ -4542,6 +4580,15 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         m_provisionalPage = nullptr;
 }
 
+void WebPageProxy::clearLoadDependentCallbacks()
+{
+    HashSet<CallbackID> loadDependentStringCallbackIDs = WTFMove(m_loadDependentStringCallbackIDs);
+    for (auto& callbackID : loadDependentStringCallbackIDs) {
+        if (auto callback = m_callbacks.take<StringCallback>(callbackID))
+            callback->invalidate();
+    }
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 static OptionSet<CrossSiteNavigationDataTransfer::Flag> checkIfNavigationContainsDataTransfer(const SecurityOriginData requesterOrigin, const ResourceRequest& currentRequest)
 {
@@ -4615,6 +4662,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     // FIXME: A load going on in one frame shouldn't affect text editing in other frames on the page.
     pageClient().resetSecureInputState();
 #endif
+
+    clearLoadDependentCallbacks();
 
     frame->didCommitLoad(mimeType, webCertificateInfo, containsPluginDocument);
 
@@ -4777,6 +4826,8 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
         navigation = navigationState().navigation(navigationID);
+
+    clearLoadDependentCallbacks();
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -7063,6 +7114,45 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
+void WebPageProxy::voidCallback(CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<VoidCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallback();
+}
+
+void WebPageProxy::stringCallback(const String& resultString, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<StringCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        // this can validly happen if a load invalidated the callback, though
+        return;
+    }
+
+    m_loadDependentStringCallbackIDs.remove(callbackID);
+
+    callback->performCallbackWithReturnValue(resultString.impl());
+}
+
+void WebPageProxy::invalidateStringCallback(CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<StringCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        // this can validly happen if a load invalidated the callback, though
+        return;
+    }
+
+    m_loadDependentStringCallbackIDs.remove(callbackID);
+
+    callback->invalidate();
+}
+
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     updateEditorState(editorState);
@@ -7465,6 +7555,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         error = CallbackBase::Error::ProcessExited;
         break;
     }
+
+    m_callbacks.invalidate(error);
+    m_loadDependentStringCallbackIDs.clear();
 
     for (auto& editCommand : std::exchange(m_editCommandSet, { }))
         editCommand->invalidate();
@@ -9140,14 +9233,18 @@ void WebPageProxy::didEndMagnificationGesture()
 
 #endif
 
-void WebPageProxy::installActivityStateChangeCompletionHandler(CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::installActivityStateChangeCompletionHandler(Function<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler();
         return;
     }
 
-    m_nextActivityStateChangeCallbacks.append(WTFMove(completionHandler));
+    auto voidCallback = VoidCallback::create([completionHandler = WTFMove(completionHandler)] (auto) {
+        completionHandler();
+    }, m_process->throttler().backgroundActivity("WebPageProxy::installActivityStateChangeCompletionHandler"_s));
+    auto callbackID = m_callbacks.put(WTFMove(voidCallback));
+    m_nextActivityStateChangeCallbacks.append(callbackID);
 }
 
 void WebPageProxy::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
@@ -9521,20 +9618,32 @@ RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& iden
     return m_attachmentIdentifierToAttachmentMap.get(identifier);
 }
 
-void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, CompletionHandler<void()>&& callback)
+void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Function<void(CallbackBase::Error)>&& callback)
 {
+    if (!hasRunningProcess()) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
     auto attachmentIdentifier = attachment->identifier();
-    sendWithAsyncReply(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType()), WTFMove(callback));
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::insertAttachment"_s));
+    send(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType(), callbackID));
     m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
 }
 
-void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
+void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, Function<void(CallbackBase::Error)>&& callback)
 {
+    if (!hasRunningProcess()) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
     IPC::SharedBufferDataReference dataReference;
     if (auto data = attachment.enclosingImageData())
         dataReference = { *data };
 
-    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference)), WTFMove(callback));
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::updateAttachmentAttributes"_s));
+    send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference), callbackID));
 }
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
@@ -9690,7 +9799,7 @@ void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, c
     pageClient().didInsertAttachment(attachment.get(), source);
 
     if (!attachment->isEmpty() && hasEnclosingImage)
-        updateAttachmentAttributes(attachment.get(), [] { });
+        updateAttachmentAttributes(attachment.get(), [] (auto) { });
 }
 
 void WebPageProxy::didRemoveAttachmentWithIdentifier(const String& identifier)

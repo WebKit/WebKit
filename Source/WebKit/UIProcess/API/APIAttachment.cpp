@@ -49,15 +49,15 @@ Attachment::~Attachment()
 {
 }
 
-void Attachment::updateAttributes(CompletionHandler<void()>&& callback)
+void Attachment::updateAttributes(Function<void(WebKit::CallbackBase::Error)>&& callback)
 {
     if (!m_webPage) {
-        callback();
+        callback(WebKit::CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
     if (m_webPage->willUpdateAttachmentAttributes(*this) == WebKit::WebPageProxy::ShouldUpdateAttachmentAttributes::No) {
-        callback();
+        callback(WebKit::CallbackBase::Error::None);
         return;
     }
 

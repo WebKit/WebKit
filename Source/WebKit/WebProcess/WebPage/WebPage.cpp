@@ -923,7 +923,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     if (m_activityState != parameters.activityState)
-        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
+        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
 
@@ -3362,7 +3362,7 @@ void WebPage::visibilityDidChange()
     }
 }
 
-void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
+void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& callbackIDs)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
 
@@ -3381,7 +3381,7 @@ void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, Act
     for (auto* pluginView : m_pluginViews)
         pluginView->activityStateDidChange(changed);
 
-    m_drawingArea->activityStateDidChange(changed, activityStateChangeID, WTFMove(callback));
+    m_drawingArea->activityStateDidChange(changed, activityStateChangeID, callbackIDs);
     WebProcess::singleton().pageActivityStateDidChange(m_identifier, changed);
 
     if (changed & ActivityState::IsInWindow)
@@ -3608,12 +3608,12 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
     runJavaScript(webFrame, WTFMove(parameters), worldData.first, WTFMove(completionHandler));
 }
 
-void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
+void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CallbackID callbackID)
 {
     switch (includeChildFrames) {
     case ContentAsStringIncludesChildFrames::No: {
         String resultString = m_mainFrame->contentsAsString();
-        callback(resultString);
+        send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
         break;
     }
     case ContentAsStringIncludesChildFrames::Yes: {
@@ -3627,7 +3627,7 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
             }
         }
 
-        callback(builder.toString());
+        send(Messages::WebPageProxy::StringCallback(builder.toString(), callbackID));
         break;
     }
     }
@@ -3640,9 +3640,10 @@ void WebPage::getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBuf
 }
 #endif
 
-void WebPage::getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&& callback)
+void WebPage::getRenderTreeExternalRepresentation(CallbackID callbackID)
 {
-    callback(renderTreeExternalRepresentation());
+    String resultString = renderTreeExternalRepresentation();
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 static Frame* frameWithSelection(Page* page)
@@ -3671,22 +3672,22 @@ void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::Dat
     callback(dataReference);
 }
 
-void WebPage::getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&& callback)
+void WebPage::getSelectionOrContentsAsString(CallbackID callbackID)
 {
     WebFrame* focusedOrMainFrame = WebFrame::fromCoreFrame(m_page->focusController().focusedOrMainFrame());
     String resultString = focusedOrMainFrame->selectionAsString();
     if (resultString.isEmpty())
         resultString = focusedOrMainFrame->contentsAsString();
-    callback(resultString);
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
-void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(const String&)>&& callback)
+void WebPage::getSourceForFrame(FrameIdentifier frameID, CallbackID callbackID)
 {
     String resultString;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
        resultString = frame->source();
 
-    callback(resultString);
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
@@ -6437,29 +6438,33 @@ void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Fram
     }
 }
 
-void WebPage::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)
+void WebPage::getBytecodeProfile(CallbackID callbackID)
 {
-    if (LIKELY(!commonVM().m_perBytecodeProfiler))
-        return callback({ });
+    if (LIKELY(!commonVM().m_perBytecodeProfiler)) {
+        send(Messages::WebPageProxy::StringCallback(String(), callbackID));
+        return;
+    }
 
     String result = commonVM().m_perBytecodeProfiler->toJSON();
     ASSERT(result.length());
-    callback(result);
+    send(Messages::WebPageProxy::StringCallback(result, callbackID));
 }
 
-void WebPage::getSamplingProfilerOutput(CompletionHandler<void(const String&)>&& callback)
+void WebPage::getSamplingProfilerOutput(CallbackID callbackID)
 {
 #if ENABLE(SAMPLING_PROFILER)
     SamplingProfiler* samplingProfiler = commonVM().samplingProfiler();
-    if (!samplingProfiler)
-        return callback({ });
+    if (!samplingProfiler) {
+        send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
+        return;
+    }
 
     StringPrintStream result;
     samplingProfiler->reportTopFunctions(result);
     samplingProfiler->reportTopBytecodes(result);
-    callback(result.toString());
+    send(Messages::WebPageProxy::StringCallback(result.toString(), callbackID));
 #else
-    callback({ });
+    send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
 #endif
 }
 
@@ -6905,21 +6910,21 @@ void WebPage::voicesDidChange()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPage::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&& callback)
+void WebPage::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().insertAttachment(identifier, WTFMove(fileSize), fileName, contentType);
-    callback();
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CompletionHandler<void()>&& callback)
+void WebPage::updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CallbackID callbackID)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
         attachment->updateAttributes(WTFMove(fileSize), contentType, fileName);
         attachment->updateEnclosingImageWithData(contentType, SharedBuffer::create(enclosingImageData.data(), enclosingImageData.size()));
     }
-    callback();
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
 void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
