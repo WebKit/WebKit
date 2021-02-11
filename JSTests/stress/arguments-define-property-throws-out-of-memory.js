@@ -14,10 +14,10 @@ function shouldThrow(func, errorMessage) {
 }
 
 function foo() {
-    Object.freeze(arguments);
+    Object.defineProperty(arguments, '0', {value: s});
 }
 
-let s = [0.1].toLocaleString().padEnd(2**31-1, 'ab');
+let s = [0.1].toLocaleString().padEnd(2 ** 31 - 1, 'ab');
 
 shouldThrow(() => {
     foo(s);

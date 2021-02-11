@@ -715,12 +715,13 @@ bool setIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
         if (level == IntegrityLevel::Sealed)
             desc.setConfigurable(false);
         else {
-            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, desc);
+            PropertyDescriptor currentDesc;
+            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, currentDesc);
             RETURN_IF_EXCEPTION(scope, false);
             if (!hasPropertyDescriptor)
                 continue;
 
-            if (desc.isDataDescriptor())
+            if (!currentDesc.isAccessorDescriptor())
                 desc.setWritable(false);
 
             desc.setConfigurable(false);
