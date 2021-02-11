@@ -293,7 +293,7 @@ static String genericFamily(const String& locale, HashMap<String, String>& map, 
 {
     return map.ensure(locale, [&] {
         auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, locale.createCFString().get()));
-        auto value = adoptCF(dynamic_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
+        auto value = adoptCF(checked_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
         return String { value.get() };
     }).iterator->value;
 }
