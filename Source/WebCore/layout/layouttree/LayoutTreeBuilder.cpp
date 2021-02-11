@@ -406,18 +406,22 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            if (inlineLevelBox.isRootInlineBox())
-                stream << "Root inline box";
-            else if (inlineLevelBox.isAtomicInlineLevelBox())
-                stream << "Atomic inline level box";
-            else if (inlineLevelBox.isLineBreakBox())
-                stream << "Line break box";
-            else if (inlineLevelBox.isInlineBox())
-                stream << "Generic inline box";
-            else
-                stream << "Generic inline level box";
+            auto logicalRect = InlineRect { };
             auto& layoutBox = inlineLevelBox.layoutBox();
-            auto logicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, layoutState.geometryForBox(layoutBox));
+            if (inlineLevelBox.isRootInlineBox()) {
+                stream << "Root inline box";
+                logicalRect = lineBox.logicalRectForRootInlineBox();
+            } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
+                stream << "Atomic inline level box";
+                logicalRect = lineBox.logicalMarginRectForAtomicInlineLevelBox(layoutBox);
+            } else if (inlineLevelBox.isLineBreakBox()) {
+                stream << "Line break box";
+                logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
+            } else if (inlineLevelBox.isInlineBox()) {
+                stream << "Inline box";
+                logicalRect = lineBox.logicalRectForInlineBox(layoutBox, layoutState.geometryForBox(layoutBox));
+            } else
+                stream << "Generic inline level box";
             stream
                 << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")"

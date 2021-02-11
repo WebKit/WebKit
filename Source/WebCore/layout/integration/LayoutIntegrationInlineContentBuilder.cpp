@@ -341,7 +341,7 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
                 continue;
             auto& layoutBox = inlineLevelBox->layoutBox();
             auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-            auto inlineBoxRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+            auto inlineBoxRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
             inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect });

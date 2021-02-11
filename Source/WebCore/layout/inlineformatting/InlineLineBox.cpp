@@ -106,7 +106,7 @@ void LineBox::addInlineLevelBox(std::unique_ptr<InlineLevelBox>&& inlineLevelBox
 
 InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 {
-    ASSERT(run.isText() || run.isLineBreak());
+    ASSERT(run.isText() || run.isSoftLineBreak());
     auto* parentInlineBox = &inlineLevelBoxForLayoutBox(run.layoutBox().parent());
     ASSERT(parentInlineBox->isInlineBox());
     auto& fontMetrics = parentInlineBox->style().fontMetrics();
@@ -121,30 +121,46 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     return { runlogicalTop, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
-InlineRect LineBox::logicalMarginRectForInlineLevelBox(const Box& layoutBox, const BoxGeometry& boxGeometry) const
+InlineRect LineBox::logicalRectForLineBreakBox(const Box& layoutBox) const
 {
-    auto logicalRect = [&] {
-        auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
-        auto inlineBoxLogicalRect = inlineBox->logicalRect();
-        if (inlineBox->hasLineBoxRelativeAlignment())
-            return inlineBoxLogicalRect;
+    ASSERT(layoutBox.isLineBreakBox());
+    return logicalRectForInlineLevelBox(layoutBox);
+}
 
-        if (&layoutBox.parent() == &m_rootInlineBox->layoutBox()) {
-            inlineBoxLogicalRect.moveVertically(m_rootInlineBox->logicalTop());
-            return inlineBoxLogicalRect;
-        }
+InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.isInlineLevelBox() || layoutBox.isLineBreakBox());
+    // Inline level boxes are relative to their parent unless the vertical alignment makes them relative to the line box (e.g. top, bottom).
+    auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
+    auto inlineBoxLogicalRect = inlineBox->logicalRect();
+    if (inlineBox->hasLineBoxRelativeAlignment())
+        return inlineBoxLogicalRect;
 
-        auto inlineBoxAbsolutelogicalTop = inlineBoxLogicalRect.top();
-        while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
-            inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
-            ASSERT(inlineBox->isInlineBox());
-            inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
-        }
-        return InlineRect { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
-    }();
-    if (!layoutBox.isInlineBox())
-        return logicalRect;
+    // Fast path for inline level boxes on the root inline box (e.g <div><img></div>).
+    if (&layoutBox.parent() == &m_rootInlineBox->layoutBox()) {
+        inlineBoxLogicalRect.moveVertically(m_rootInlineBox->logicalTop());
+        return inlineBoxLogicalRect;
+    }
 
+    // e.g <div><span><img></span></div>
+    auto inlineBoxAbsolutelogicalTop = inlineBoxLogicalRect.top();
+    while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
+        inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
+        ASSERT(inlineBox->isInlineBox());
+        inlineBoxAbsolutelogicalTop += inlineBox->logicalTop();
+    }
+    return InlineRect { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
+}
+
+InlineRect LineBox::logicalMarginRectForAtomicInlineLevelBox(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.isAtomicInlineLevelBox());
+    return logicalRectForInlineLevelBox(layoutBox);
+}
+
+InlineRect LineBox::logicalRectForInlineBox(const Box& layoutBox, const BoxGeometry& boxGeometry) const
+{
+    auto logicalRect = logicalRectForInlineLevelBox(layoutBox);
     // This logical rect is as tall as the "text" content is. Let's adjust with vertical border and padding -vertical margin is ignored.
     auto verticalBorderAndPadding = boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu);
     logicalRect.expandVertically(verticalBorderAndPadding);
