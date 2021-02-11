@@ -48,7 +48,7 @@ class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
+class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -70,7 +70,6 @@ public:
 
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
 
-    void fontLoaded();
     void fontCacheInvalidated() final;
 
     bool isEmpty() const;
@@ -91,6 +90,10 @@ public:
 
     void loadPendingFonts();
 
+    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    void ref() final { FontSelector::ref(); }
+    void deref() final { FontSelector::deref(); }
+
 private:
     explicit CSSFontSelector(Document&);
 
@@ -98,8 +101,11 @@ private:
 
     void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 
-    void fontModified();
+    // CSSFontFace::Client
+    void fontLoaded(CSSFontFace&) final;
+    void fontStyleUpdateNeeded(CSSFontFace&) final;
 
+    void fontModified();
     void fontLoadingTimerFired();
 
     // ActiveDOMObject

@@ -1,3 +1,15 @@
+2021-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove another use of FontSelector from within CSSFontFace
+        https://bugs.webkit.org/show_bug.cgi?id=221071
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-loading-multiple-documents-expected.html: Added.
+        * fast/text/font-loading-multiple-documents.html: Added.
+        * fast/text/font-loading-multiple-sets-expected.txt: Added.
+        * fast/text/font-loading-multiple-sets.html: Added.
+
 2021-02-10  Rob Buis  <rbuis@igalia.com>
 
         Use event loop to set title

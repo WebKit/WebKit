@@ -248,7 +248,7 @@ void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascade
         face->opportunisticallyStartFontDataURLLoading(*this);
 }
 
-void CSSFontSelector::fontLoaded()
+void CSSFontSelector::fontLoaded(CSSFontFace&)
 {
     dispatchInvalidationCallbacks();
 }
@@ -257,6 +257,12 @@ void CSSFontSelector::fontModified()
 {
     if (!m_creatingFont && !m_buildIsUnderway)
         dispatchInvalidationCallbacks();
+}
+
+void CSSFontSelector::fontStyleUpdateNeeded(CSSFontFace&)
+{
+    if (document())
+        document()->updateStyleIfNeeded();
 }
 
 void CSSFontSelector::fontCacheInvalidated()

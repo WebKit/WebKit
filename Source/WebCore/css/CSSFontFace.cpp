@@ -58,8 +58,8 @@ template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients,
     for (auto* client : clients)
         clientsCopy.uncheckedAppend(*client);
 
-    for (auto* client : clients)
-        callback(*client);
+    for (auto& client : clientsCopy)
+        callback(client);
 }
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document* document, bool isInitiatingElementInUserAgentShadowTree)
@@ -93,6 +93,8 @@ CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssCo
     : CSSFontFace(fontSelector && fontSelector->document() ? &fontSelector->document()->settings() : nullptr, cssConnection, wrapper, isLocalFallback)
 {
     m_fontSelector = makeWeakPtr(fontSelector); // FIXME: Ideally this data member would go away (https://bugs.webkit.org/show_bug.cgi?id=208351).
+    if (fontSelector)
+        addClient(*fontSelector);
 }
 
 CSSFontFace::CSSFontFace(const Settings* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
@@ -351,9 +353,6 @@ void CSSFontFace::fontLoadEventOccurred()
     // when a source is failed or succeeded before we have asked it to load.
     if (m_sourcesPopulated)
         pump(ExternalResourceDownloadPolicy::Forbid);
-
-    if (m_fontSelector)
-        m_fontSelector->fontLoaded();
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontLoaded(*this);
@@ -682,8 +681,9 @@ bool CSSFontFace::purgeable() const
 
 void CSSFontFace::updateStyleIfNeeded()
 {
-    if (m_fontSelector && m_fontSelector->document())
-        m_fontSelector->document()->updateStyleIfNeeded();
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontStyleUpdateNeeded(*this);
+    });
 }
 
 bool CSSFontFace::hasSVGFontFaceSource() const
