@@ -200,7 +200,7 @@ MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
 MOCK comment
 
-Committed r9876: <https://trac.webkit.org/changeset/9876>
+Committed r9876: <https://commits.webkit.org/r9876>
 --- End comment ---
 
 """

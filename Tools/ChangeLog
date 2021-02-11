@@ -1,3 +1,22 @@
+2021-02-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use commits.webkit.org instead of trac
+        https://bugs.webkit.org/show_bug.cgi?id=221764
+        <rdar://problem/74242815>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        (view_revision_url): 
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest._test_check_test_expectations):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        (UpdateChangeLogsForRevertTest):
+
 2021-02-11  Aakash Jain  <aakash_jain@apple.com>
 
         build.webkit.org should display commit identifier in builds

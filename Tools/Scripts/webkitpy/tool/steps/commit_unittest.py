@@ -54,7 +54,7 @@ class CommitTest(unittest.TestCase):
         tool.executive = MockExecutive(should_log=True, should_throw_when_run=False)
         with OutputCapture(level=logging.INFO) as captured:
             step.run(state)
-        self.assertEqual(captured.root.log.getvalue(), 'Committed r49824: <https://trac.webkit.org/changeset/49824>\n')
+        self.assertEqual(captured.root.log.getvalue(), 'Committed r49824: <https://commits.webkit.org/r49824>\n')
 
         state = {
             "changed_files": ["platform/chromium/" + filename],
@@ -64,7 +64,7 @@ class CommitTest(unittest.TestCase):
         self.assertEqual(
             captured.root.log.getvalue(),
             '''MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/{}'], cwd=/mock-checkout
-Committed r49824: <https://trac.webkit.org/changeset/49824>
+Committed r49824: <https://commits.webkit.org/r49824>
 '''.format(filename),
         )
 
