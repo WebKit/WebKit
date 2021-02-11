@@ -1,3 +1,21 @@
+2021-02-11  David Kilzer  <ddkilzer@apple.com>
+
+        Remove unused WebKit::LocalStorageDatabaseTracker::deleteAllDatabases()
+        <https://webkit.org/b/221734>
+        <rdar://problem/74215959>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteAllDatabases): Delete.
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        (WebKit::LocalStorageDatabaseTracker::deleteAllDatabases): Delete.
+        - Remove this method since it's not used anywhere. This fixes a
+          missing symbol linker error for
+          WebCore::SQLiteFileSystem::deleteEmptyDatabaseDirectory() when
+          building WebKit.framework with dead code stripping turned off
+          since that method was not exported from WebCore.framework.
+
 2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new picker for <select multiple> elements
