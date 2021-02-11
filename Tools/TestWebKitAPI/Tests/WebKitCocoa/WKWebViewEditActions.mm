@@ -70,6 +70,14 @@
 
 @end
 
+#if PLATFORM(IOS_FAMILY)
+
+@interface WKWebView (InternalIOS)
+- (void)_translate:(id)sender;
+@end
+
+#endif // PLATFORM(IOS_FAMILY)
+
 namespace TestWebKitAPI {
 
 static RetainPtr<TestWKWebView> webViewForEditActionTesting(NSString *markup)
@@ -341,6 +349,21 @@ TEST(WKWebViewEditActions, SetFontFamily)
     EXPECT_WK_STREQ("20px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionStart:@"font-style"]);
+}
+
+TEST(WebKit, CanInvokeTranslateWithTextSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    EXPECT_FALSE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+
+    [webView collapseToEnd];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([webView canPerformAction:@selector(_translate:) withSender:nil]);
 }
 
 #else

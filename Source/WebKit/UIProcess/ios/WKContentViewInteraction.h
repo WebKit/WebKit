@@ -145,6 +145,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(_addShortcut) \
     M(_define) \
     M(_lookup) \
+    M(_translate) \
     M(_promptForReplace) \
     M(_share) \
     M(_showTextStyleOptions) \

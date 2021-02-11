@@ -803,6 +803,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface UIWebGeolocationPolicyDecider ()
 + (instancetype)sharedPolicyDecider;
 - (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id)listener;
+- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 @end
 
 typedef enum {
@@ -1316,8 +1317,8 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, readonly) NSInteger _gsModifierFlags;
 @end
 
-@interface UIWebGeolocationPolicyDecider (Staging_25963823)
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
+@interface UIWKTextInteractionAssistant (Staging_74209560)
+- (void)translate:(NSString *)text fromRect:(CGRect)presentationRect;
 @end
 
  @interface UIColor (IPI)

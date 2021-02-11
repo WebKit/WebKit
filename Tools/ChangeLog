@@ -1,3 +1,15 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Webpage translation] Add support for the -_translate: action on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=221713
+        <rdar://problem/73902020>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise `-canPerformAction:withSender:` with the new action.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+
 2021-02-10  Rob Buis  <rbuis@igalia.com>
 
         Use event loop to set title

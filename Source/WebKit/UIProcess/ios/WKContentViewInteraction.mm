@@ -3241,10 +3241,31 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     });
 }
 
+- (void)_translateForWebView:(id)sender
+{
+    _page->getSelectionOrContentsAsString([weakSelf = WeakObjCPtr<WKContentView>(self)] (const String& string, WebKit::CallbackBase::Error error) {
+        if (!weakSelf)
+            return;
+
+        if (error != WebKit::CallbackBase::Error::None || string.isEmpty())
+            return;
+
+        auto strongSelf = weakSelf.get();
+        if (strongSelf->_page->editorState().isMissingPostLayoutData)
+            return;
+
+        auto& selectionRects = strongSelf->_page->editorState().postLayoutData().selectionRects;
+        if (selectionRects.isEmpty())
+            return;
+
+        if ([strongSelf->_textInteractionAssistant respondsToSelector:@selector(translate:fromRect:)])
+            [strongSelf->_textInteractionAssistant translate:string fromRect:selectionRects.first().rect()];
+    });
+}
+
 - (void)_addShortcutForWebView:(id)sender
 {
-    if (_textInteractionAssistant)
-        [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
+    [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
 }
 
 - (NSString *)selectedText
@@ -3635,6 +3656,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
             return NO;
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
+
+    if (action == @selector(_translate:))
+        return !editorState.isInPasswordField && editorState.selectionIsRange;
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.

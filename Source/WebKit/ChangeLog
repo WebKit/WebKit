@@ -1,3 +1,32 @@
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Webpage translation] Add support for the -_translate: action on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=221713
+
+        Reviewed by Tim Horton.
+
+        Add another way to trigger web page translation on iOS, via the `-_translate:` selector.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add a new staged SPI declaration on `UIWKTextInteractionAssistant`. Additionally remove an old staging
+        declaration for a method in `UIWebGeolocationPolicyDecider`.
+
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _translateForWebView:]):
+
+        Grab the currently selected text and invoke the new method on `UIWKTextInteractionAssistant`.
+
+        (-[WKContentView _addShortcutForWebView:]):
+
+        Drive-by fix: remove an extraneous `nil` check.
+
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
+        Return `YES` if the selection is ranged, and we're not inside a password input.
+
 2021-02-10  Jer Noble  <jer.noble@apple.com>
 
         Move AudioHardwareListener into the GPU Process
