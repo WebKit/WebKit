@@ -149,6 +149,7 @@ InlineRect LineBox::logicalMarginRectForInlineLevelBox(const Box& layoutBox, con
     auto verticalBorderAndPadding = boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu);
     logicalRect.expandVertically(verticalBorderAndPadding);
     logicalRect.moveVertically(-(boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0_lu)));
+    // This is essentially margin box rect without the vertical margins.
     return logicalRect;
 }
 

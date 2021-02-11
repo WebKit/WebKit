@@ -562,8 +562,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 // This inline box showed up first on this line.
                 logicalRect.moveHorizontally(boxGeometry.marginStart());
                 boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
-                boxGeometry.setContentBoxHeight(logicalRect.height());
-                auto contentBoxWidth = logicalRect.width();
+                auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu));
+                boxGeometry.setContentBoxHeight(contentBoxHeight);
+                auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu));
                 if (inlineBoxEndSet.contains(&layoutBox)) {
                     // This is a single line inline box.
                     contentBoxWidth -= std::max(0_lu, boxGeometry.marginStart()) + std::max(0_lu, boxGeometry.marginEnd());
