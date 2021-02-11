@@ -60,7 +60,7 @@ def main(args: list) -> int:
 
     lines = read_lines(arg_fd)
 
-    environ = {}
+    environ = os.environ.copy()
     while True:
         try:
             arg = next(lines)

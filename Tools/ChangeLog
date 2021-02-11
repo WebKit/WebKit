@@ -1,3 +1,17 @@
+2021-02-11  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Fix env forwarding for older flatpak versions
+        https://bugs.webkit.org/show_bug.cgi?id=221757
+
+        Rubber-stamped by Philippe Normand.
+
+        Older flatpak versions (pre 1.10) might not have been patched for the
+        envvar CVE that triggered the new behavior and would still be
+        receiving the environment through envvars instead of the --args file
+        descriptor.
+
+        * flatpak/webkit-bwrap:
+
 2021-02-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
