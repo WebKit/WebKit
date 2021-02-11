@@ -1,3 +1,15 @@
+2021-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove GPUProcess flag in MediaRecorder tests
+        https://bugs.webkit.org/show_bug.cgi?id=221401
+
+        Reviewed by Eric Carlson.
+
+        We will remove http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html once rdar://problem/74043225 is fixed.
+
+        * http/wpt/mediarecorder/pause-recording.html:
+        Increase timer to cope with added latency introduced by IPC messaging.
+
 2021-02-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed test gardening.

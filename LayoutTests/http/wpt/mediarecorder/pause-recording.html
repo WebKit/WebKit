@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ WebRTCPlatformCodecsInGPUProcessEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +27,7 @@ promise_test(async (test) => {
     setTimeout(() => recorder.pause(), 50);
     setTimeout(() => recorder.resume(), 950);
 
-    await waitFor(1000);
+    await waitFor(2000);
     recorder.stop();
     const blob = await dataPromise;
 
@@ -36,7 +35,7 @@ promise_test(async (test) => {
     video1.src = url;
     await video1.play();
 
-    assert_less_than(video1.duration, 0.5);
+    assert_less_than(video1.duration, 1.5);
 
     URL.revokeObjectURL(url);
 }, "Pausing and resuming the recording should impact the video duration");
