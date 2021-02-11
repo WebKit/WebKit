@@ -1,3 +1,14 @@
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] AudioSourceProvider can potentially invoke an already-freed client
+        https://bugs.webkit.org/show_bug.cgi?id=217952
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::deinterleavePadsConfigured): Check the provider has
+        a client before setting up the audio format.
+
 2020-11-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Use Internet Explorer quirk for Google Docs
