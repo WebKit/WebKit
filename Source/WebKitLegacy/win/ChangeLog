@@ -1,3 +1,16 @@
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Use event loop to set title
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Reviewed by Darin Adler.
+
+        Adjust to API change.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::print):
+        * WebCoreSupport/WebChromeClient.h:
+
 2021-02-08  Brady Eidson  <beidson@apple.com>
 
         Make the UserContentController for ServiceWorker pages be non-optional.

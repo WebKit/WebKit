@@ -222,7 +222,7 @@ public:
     virtual void unavailablePluginButtonClicked(Element&, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags, const String& toolTip, TextDirection) = 0;
 
-    virtual void print(Frame&) = 0;
+    virtual void print(Frame&, const StringWithDirection&) = 0;
 
     virtual Color underlayColor() const { return Color(); }
 

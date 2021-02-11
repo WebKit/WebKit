@@ -276,7 +276,7 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     webkit_web_context_allow_tls_certificate_for_host(test->m_webContext.get(), test->certificate(), test->host());
     // The page should now load without errors.
     test->loadURI(kHttpsServer->getURIForPath("/test-tls/").data());
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);

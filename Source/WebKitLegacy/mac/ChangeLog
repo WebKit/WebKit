@@ -1,3 +1,16 @@
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Use event loop to set title
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Reviewed by Darin Adler.
+
+        Adjust to API change.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::print):
+
 2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Permission request API for MediaKeySystem access support
