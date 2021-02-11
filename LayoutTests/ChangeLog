@@ -1,3 +1,9 @@
+2021-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Replaced Failure by ImageOnlyFailure for a couple of tests I imported yesterday.
+
 2021-02-11  Rob Buis  <rbuis@igalia.com>
 
         Handle min-width/min-height:auto for aspect-ratio

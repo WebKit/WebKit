@@ -2613,8 +2613,8 @@ webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-alig
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-002.xhtml [ ImageOnlyFailure ]
 
 # min-width: auto issues.
-webkit.org/b/221600 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-003.html [ Failure ]
-webkit.org/b/221600 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-004.html [ Failure ]
+webkit.org/b/221600 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-003.html [ ImageOnlyFailure ]
+webkit.org/b/221600 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-004.html [ ImageOnlyFailure ]
 
 # Skip test because checkboxes/radio buttons don't behave the same on iOS
 fast/replaced/table-percent-height.html [ Skip ]
