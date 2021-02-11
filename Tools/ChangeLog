@@ -1,3 +1,17 @@
+2021-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
+        https://bugs.webkit.org/show_bug.cgi?id=221703
+
+        Reviewed by Michael Catanzaro.
+
+        GTK compiles JavaScriptCore as a SHARED library but the symbols from WTF are not being
+        properly exposed from it. Workaround this by linking WTF directly until GTK turns on
+        hidden visibility and properly exports symbols.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2021-02-11  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Support multiple builds running at the same time

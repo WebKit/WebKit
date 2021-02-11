@@ -1,3 +1,21 @@
+2021-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
+        https://bugs.webkit.org/show_bug.cgi?id=221703
+
+        Reviewed by Michael Catanzaro.
+
+        After r272484 which added an additional test for TestJavaScriptCore the PlayStation build
+        began failing with an unresolved symbol in bmalloc. On PlayStation both WTF and bmalloc
+        are linked into JavaScriptCore. That library was building successfully which implied that
+        WTF was being erroniously linked into TestJavaScriptCore.
+
+        Inside _WEBKIT_EXECUTABLE_LINK_FRAMEWORK there was an invalid conditional which was causing
+        WTF to be linked. Fixed the logic to ensure that if the requested framework is linked into
+        another framework that is being linked then it is not added to the linker.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2021-02-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Enable hidden visibility on JSCOnly

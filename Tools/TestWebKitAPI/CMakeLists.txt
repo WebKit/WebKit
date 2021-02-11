@@ -153,7 +153,6 @@ if (ENABLE_JAVASCRIPTCORE)
         ${CMAKE_BINARY_DIR}
         ${TESTWEBKITAPI_DIR}
         ${THIRDPARTY_DIR}/gtest/include
-        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     )
 
     WEBKIT_EXECUTABLE_DECLARE(TestJavaScriptCore)
