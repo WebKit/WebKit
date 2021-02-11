@@ -1,3 +1,17 @@
+2021-02-11  Darin Adler  <darin@apple.com>
+
+        [Cocoa] IPC decoder is using decoded size to allocate memory for an array
+        https://bugs.webkit.org/show_bug.cgi?id=221773
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeArrayInternal): As with other similar structures, such a Vector and
+        CFArray, don't use the size to preallocate space when decoding an NSArray. The
+        decoded size is potentially incorrect, which we will discover indirectly when
+        decoding the array elements; we can't safely use the size to make a choice about
+        allocating memory beforehand.
+
 2021-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Add telemetry for a likely-unused call to ipc-posix-shm-read-data 
