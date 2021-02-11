@@ -77,8 +77,10 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if ([view _formControlRefreshEnabled]) {
-        // FIXME: Add implementation for multi-select picker.
-        control = adoptNS([[WKSelectPicker alloc] initWithView:view]);
+        if (view.focusedElementInformation.isMultiSelect)
+            control = adoptNS([[WKSelectMultiplePicker alloc] initWithView:view]);
+        else
+            control = adoptNS([[WKSelectPicker alloc] initWithView:view]);
         return [super initWithView:view control:WTFMove(control)];
     }
 #endif

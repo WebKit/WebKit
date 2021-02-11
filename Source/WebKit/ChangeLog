@@ -1,3 +1,78 @@
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new picker for <select multiple> elements
+        https://bugs.webkit.org/show_bug.cgi?id=221636
+        <rdar://problem/72399337>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/forms/ios/form-control-refresh/select/select-multiple-picker.html
+
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.h:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPickerTableViewController initWithView:]):
+
+        The new picker is a table view with style UITableStyleInsetGrouped.
+
+        (-[WKSelectPickerTableViewController viewWillAppear:]):
+
+        Enable/disable the next/previous accessory buttons accordingly.
+
+        (-[WKSelectPickerTableViewController numberOfRowsInGroup:]):
+        (-[WKSelectPickerTableViewController numberOfSectionsInTableView:]):
+
+        There will always be at least one section, to display the empty message.
+        Adding groups will add more sections to the table view.
+
+        (-[WKSelectPickerTableViewController tableView:numberOfRowsInSection:]):
+        (-[WKSelectPickerTableViewController tableView:heightForHeaderInSection:]):
+
+        The header for the first section is an inset matching table view inset.
+
+        (-[WKSelectPickerTableViewController tableView:heightForFooterInSection:]):
+
+        An empty first section should not have a footer if there are more sections
+        after it. This can occur when the first option belongs to a group.
+
+        (-[WKSelectPickerTableViewController tableView:titleForHeaderInSection:]):
+        (-[WKSelectPickerTableViewController tableView:viewForFooterInSection:]):
+
+        Return nil so that the footer height is obeyed.
+
+        (-[WKSelectPickerTableViewController tableView:viewForHeaderInSection:]):
+
+        The header view displays the group name along with a button to collapse
+        the section.
+
+        (-[WKSelectPickerTableViewController collapseSection:]):
+
+        Collapsing sections is implemented by removing the corresponding rows
+        from the data source. The button is animated by changing its transform.
+
+        (-[WKSelectPickerTableViewController findItemIndexAt:]):
+        (-[WKSelectPickerTableViewController optionItemAtIndexPath:]):
+        (-[WKSelectPickerTableViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKSelectPickerTableViewController tableView:didSelectRowAtIndexPath:]):
+        (-[WKSelectPickerTableViewController next:]):
+        (-[WKSelectPickerTableViewController previous:]):
+        (-[WKSelectPickerTableViewController close:]):
+        (-[WKSelectMultiplePicker initWithView:]):
+        (-[WKSelectMultiplePicker configurePresentation]):
+
+        Display the picker as a half-sheet (that can be dragged up into a
+        fullscreen view) on iPhones, and as a popover on iPads.
+
+        (-[WKSelectMultiplePicker controlView]):
+        (-[WKSelectMultiplePicker controlBeginEditing]):
+        (-[WKSelectMultiplePicker controlEndEditing]):
+        (-[WKSelectMultiplePicker presentationControllerDidDismiss:]):
+        (-[WKSelectMultiplePicker _indexPathForRow:]):
+        (-[WKSelectMultiplePicker selectRow:inComponent:extendingSelection:]):
+
+        Added testing hook to support layout testing.
+
 2021-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa][GPUP] Move RemoteCommandListener into the GPU Process

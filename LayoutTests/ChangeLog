@@ -1,3 +1,17 @@
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new picker for <select multiple> elements
+        https://bugs.webkit.org/show_bug.cgi?id=221636
+        <rdar://problem/72399337>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test which selects options using the new multi-select picker.
+        Grouped, ungrouped, and disabled options are all tested.
+
+        * fast/forms/ios/form-control-refresh/select/select-multiple-picker-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/select-multiple-picker.html: Added.
+
 2021-02-11  Chris Dumez  <cdumez@apple.com>
 
         [GPUP] <audio> won't load when URL ends with .php causing some tests to time out

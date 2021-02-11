@@ -52,6 +52,10 @@
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
+@interface WKSelectMultiplePicker : NSObject <WKFormControl>
+- (instancetype)initWithView:(WKContentView *)view;
+@end
+
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)

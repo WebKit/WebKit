@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -695,6 +696,433 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
     [self removeContextMenuInteraction];
 #endif
+}
+
+@end
+
+static const CGFloat nextPreviousSpacerWidth = 6.0f;
+static const CGFloat sectionHeaderCollapseButtonSize = 14.0f;
+static const CGFloat sectionHeaderCollapseButtonTransitionDuration = 0.2f;
+static const CGFloat sectionHeaderFontSize = 22.0f;
+static const CGFloat sectionHeaderHeight = 36.0f;
+static const CGFloat sectionHeaderMargin = 16.0f;
+static const CGFloat selectPopoverLength = 320.0f;
+static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
+
+@interface WKSelectPickerTableViewController : UITableViewController
+@end
+
+@implementation WKSelectPickerTableViewController {
+    __weak WKContentView *_contentView;
+
+    NSInteger _numberOfSections;
+    RetainPtr<NSMutableSet<NSNumber *>> _collapsedSections;
+
+    RetainPtr<UIBarButtonItem> _previousButton;
+    RetainPtr<UIBarButtonItem> _nextButton;
+}
+
+- (id)initWithView:(WKContentView *)view
+{
+    if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped]))
+        return nil;
+
+    _contentView = view;
+
+    _previousButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.up"] style:UIBarButtonItemStylePlain target:self action:@selector(previous:)]);
+    auto nextPreviousSpacer = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:NULL]);
+    [nextPreviousSpacer setWidth:nextPreviousSpacerWidth];
+    _nextButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.down"] style:UIBarButtonItemStylePlain target:self action:@selector(next:)]);
+    auto closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close:)]);
+
+    self.navigationItem.leftBarButtonItems = @[ _previousButton.get(), nextPreviousSpacer.get(), _nextButton.get() ];
+    self.navigationItem.rightBarButtonItem = closeButton.get();
+
+    _collapsedSections = adoptNS([[NSMutableSet alloc] init]);
+
+    _numberOfSections = 1;
+    for (auto& option : _contentView.focusedSelectElementOptions) {
+        if (option.isGroup)
+            _numberOfSections++;
+    }
+
+    return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    [_previousButton setEnabled:_contentView.focusedElementInformation.hasPreviousNode];
+    [_nextButton setEnabled:_contentView.focusedElementInformation.hasNextNode];
+}
+
+- (NSInteger)numberOfRowsInGroup:(NSInteger)groupID
+{
+    NSInteger rowCount = 0;
+    for (auto& option : _contentView.focusedSelectElementOptions) {
+        if (option.isGroup)
+            continue;
+
+        if (option.parentGroupID == groupID)
+            rowCount++;
+
+        if (option.parentGroupID > groupID)
+            break;
+    }
+
+    return rowCount;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return _numberOfSections;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (_contentView.focusedSelectElementOptions.isEmpty())
+        return 1;
+
+    if ([_collapsedSections containsObject:@(section)])
+        return 0;
+
+    return [self numberOfRowsInGroup:section];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (!section)
+        return tableView.layoutMargins.left;
+
+    return sectionHeaderHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    if (!section && ![self numberOfRowsInGroup:0] && _numberOfSections > 1)
+        return CGFLOAT_MIN;
+
+    return tableView.layoutMargins.left;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (!section)
+        return nil;
+
+    NSInteger groupCount = 0;
+    for (auto& option : _contentView.focusedSelectElementOptions) {
+        if (!option.isGroup)
+            continue;
+
+        groupCount++;
+        if (option.isGroup && groupCount == section)
+            return option.text;
+    }
+
+    return nil;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return nil;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (!section)
+        return nil;
+
+    UIView *sectionView = [[[UIView alloc] init] autorelease];
+
+    UILabel *sectionLabel = [[[UILabel alloc] init] autorelease];
+    sectionLabel.text = [self tableView:tableView titleForHeaderInSection:section];
+    sectionLabel.textColor = UIColor.blackColor;
+    sectionLabel.font = [UIFont boldSystemFontOfSize:sectionHeaderFontSize];
+    sectionLabel.adjustsFontSizeToFitWidth = NO;
+    sectionLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    [sectionView addSubview:sectionLabel];
+
+    sectionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [NSLayoutConstraint activateConstraints:@[
+        [sectionLabel.leadingAnchor constraintEqualToAnchor:sectionView.leadingAnchor constant:sectionHeaderMargin],
+        [sectionLabel.topAnchor constraintEqualToAnchor:sectionView.topAnchor constant:0],
+    ]];
+
+    UIButton *collapseButton = [[[UIButton alloc] init] autorelease];
+    collapseButton.tag = section;
+    [collapseButton setImage:[UIImage systemImageNamed:@"chevron.down" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:sectionHeaderCollapseButtonSize weight:UIImageSymbolWeightSemibold]] forState:UIControlStateNormal];
+    [collapseButton addTarget:self action:@selector(collapseSection:) forControlEvents:UIControlEventTouchUpInside];
+    [sectionView addSubview:collapseButton];
+
+    if ([_collapsedSections containsObject:@(section)])
+        collapseButton.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+
+    collapseButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [NSLayoutConstraint activateConstraints:@[
+        [collapseButton.trailingAnchor constraintEqualToAnchor:sectionView.trailingAnchor constant:-sectionHeaderMargin],
+        [collapseButton.topAnchor constraintEqualToAnchor:sectionLabel.topAnchor constant:0],
+        [collapseButton.bottomAnchor constraintEqualToAnchor:sectionLabel.bottomAnchor constant:0],
+    ]];
+
+    return sectionView;
+}
+
+- (void)collapseSection:(UIButton *)button
+{
+    NSInteger section = button.tag;
+    NSInteger rowCount = [self numberOfRowsInGroup:section];
+
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:rowCount];
+    for (NSInteger i = 0; i < rowCount; i++)
+        [indexPaths addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+
+    NSNumber *object = @(section);
+    if ([_collapsedSections containsObject:object]) {
+        [_collapsedSections removeObject:object];
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+        [_collapsedSections addObject:object];
+        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    }
+
+    [UIView animateWithDuration:sectionHeaderCollapseButtonTransitionDuration animations:^{
+        if (CGAffineTransformEqualToTransform(button.transform, CGAffineTransformIdentity))
+            button.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+        else
+            button.transform = CGAffineTransformIdentity;
+    }];
+}
+
+- (NSInteger)findItemIndexAt:(NSIndexPath *)indexPath
+{
+    int optionIndex = 0;
+    int rowIndex = 0;
+
+    for (auto& option : _contentView.focusedSelectElementOptions) {
+        if (option.isGroup) {
+            rowIndex = 0;
+            continue;
+        }
+
+        if (option.parentGroupID == indexPath.section && rowIndex == indexPath.row)
+            return optionIndex;
+
+        optionIndex++;
+        rowIndex++;
+    }
+
+    return NSNotFound;
+}
+
+- (OptionItem *)optionItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger index = 0;
+    for (auto& option : _contentView.focusedSelectElementOptions) {
+        if (option.isGroup || option.parentGroupID != indexPath.section)
+            continue;
+
+        if (index == indexPath.row)
+            return &option;
+
+        index++;
+    }
+
+    return nil;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:optionCellReuseIdentifier];
+    if (!cell)
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:optionCellReuseIdentifier] autorelease];
+
+    if (_contentView.focusedSelectElementOptions.isEmpty()) {
+        cell.textLabel.enabled = NO;
+        cell.textLabel.text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list");
+        cell.userInteractionEnabled = NO;
+        cell.imageView.image = nil;
+        return cell;
+    }
+
+    auto option = [self optionItemAtIndexPath:indexPath];
+    if (!option)
+        return cell;
+
+    cell.textLabel.text = option->text;
+    cell.textLabel.enabled = !option->disabled;
+    cell.userInteractionEnabled = !option->disabled;
+
+    if (option->isSelected)
+        cell.imageView.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
+    else if (option->disabled)
+        cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.quaternaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    else
+        cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:NO];
+
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (!cell.textLabel.enabled)
+        return;
+
+    auto option = [self optionItemAtIndexPath:indexPath];
+    if (!option)
+        return;
+
+    if (!option->isSelected)
+        cell.imageView.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
+    else
+        cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+
+    [_contentView page]->setFocusedElementSelectedIndex([self findItemIndexAt:indexPath], true);
+    option->isSelected = !option->isSelected;
+}
+
+- (void)next:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+        auto strongContentView = weakContentView.get();
+        if (strongContentView)
+            [strongContentView accessoryTab:YES];
+    }];
+}
+
+- (void)previous:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+        auto strongContentView = weakContentView.get();
+        if (strongContentView)
+            [strongContentView accessoryTab:NO];
+    }];
+}
+
+- (void)close:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+        auto strongContentView = weakContentView.get();
+        if (strongContentView)
+            [strongContentView accessoryDone];
+    }];
+}
+
+@end
+
+@interface WKSelectMultiplePicker () <UIPopoverPresentationControllerDelegate>
+@end
+
+@implementation WKSelectMultiplePicker {
+    __weak WKContentView *_view;
+
+    RetainPtr<UINavigationController> _navigationController;
+    RetainPtr<WKSelectPickerTableViewController> _tableViewController;
+}
+
+- (instancetype)initWithView:(WKContentView *)view
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _view = view;
+    _tableViewController = adoptNS([[WKSelectPickerTableViewController alloc] initWithView:_view]);
+    _navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:_tableViewController.get()]);
+
+    return self;
+}
+
+- (void)configurePresentation
+{
+    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
+        [_navigationController setModalPresentationStyle:UIModalPresentationPopover];
+        [_navigationController setNavigationBarHidden:YES];
+        [_tableViewController setPreferredContentSize:CGSizeMake(selectPopoverLength, selectPopoverLength)];
+
+        UIPopoverPresentationController *presentationController = [_navigationController popoverPresentationController];
+        presentationController.delegate = self;
+        presentationController.sourceView = _view;
+        presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
+    } else {
+        [[_navigationController navigationBar] setBarTintColor:UIColor.systemGroupedBackgroundColor];
+
+        UIPresentationController *presentationController = [_navigationController presentationController];
+        presentationController.delegate = self;
+        if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
+            _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
+            sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
+            sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
+            sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
+        }
+    }
+}
+
+#pragma mark WKFormControl
+
+- (UIView *)controlView
+{
+    return nil;
+}
+
+- (void)controlBeginEditing
+{
+    [_view startRelinquishingFirstResponderToFocusedElement];
+
+    [self configurePresentation];
+    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view];
+    [presentingViewController presentViewController:_navigationController.get() animated:YES completion:nil];
+}
+
+- (void)controlEndEditing
+{
+    [_view stopRelinquishingFirstResponderToFocusedElement];
+    [_tableViewController dismissViewControllerAnimated:NO completion:nil];
+}
+
+#pragma mark UIPopoverPresentationControllerDelegate
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [_view accessoryDone];
+}
+
+#pragma mark WKTesting
+
+- (NSIndexPath *)_indexPathForRow:(NSInteger)rowIndex
+{
+    NSInteger currentSection = 0;
+    NSInteger currentRow = 0;
+    NSInteger totalRows = 0;
+
+    for (auto& option : _view.focusedSelectElementOptions) {
+        if (option.isGroup) {
+            currentSection++;
+            currentRow = 0;
+            continue;
+        }
+
+        if (totalRows == rowIndex)
+            return [NSIndexPath indexPathForRow:currentRow inSection:currentSection];
+
+        currentRow++;
+        totalRows++;
+    }
+
+    return nil;
+}
+
+- (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection
+{
+    NSIndexPath *indexPath = [self _indexPathForRow:rowIndex];
+    if (!indexPath)
+        return;
+
+    [[_tableViewController tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+    [_tableViewController tableView:[_tableViewController tableView] didSelectRowAtIndexPath:indexPath];
 }
 
 @end
