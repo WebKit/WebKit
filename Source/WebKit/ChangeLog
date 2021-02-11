@@ -1,3 +1,17 @@
+2021-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Update - [ASCAppleIDCredential initWithUser:...] to match the latest SPI
+        https://bugs.webkit.org/show_bug.cgi?id=221723
+        <rdar://problem/74038383>
+
+        Reviewed by Brent Fulgham.
+
+        No tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::dimissPresenter):
+
 2021-02-10  Rob Buis  <rbuis@igalia.com>
 
         Use event loop to set title
