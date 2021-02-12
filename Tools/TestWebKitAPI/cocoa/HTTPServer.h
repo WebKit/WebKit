@@ -35,10 +35,10 @@
 namespace TestWebKitAPI {
 
 class Connection;
-struct HTTPResponse;
 
 class HTTPServer {
 public:
+    struct HTTPResponse;
     struct RequestData;
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2 };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
@@ -53,7 +53,6 @@ public:
 
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
-    static String parsePath(const Vector<char>& request);
 
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&, RetainPtr<SecIdentityRef>&&, Optional<uint16_t> port);
@@ -82,20 +81,18 @@ private:
     RetainPtr<nw_connection_t> m_connection;
 };
 
-struct HTTPResponse {
+struct HTTPServer::HTTPResponse {
     enum class TerminateConnection { No, Yes };
-
-    HTTPResponse(Vector<uint8_t>&& body)
-        : body(WTFMove(body)) { }
+    
     HTTPResponse(const String& body)
-        : body(bodyFromString(body)) { }
-    HTTPResponse(HashMap<String, String>&& headerFields, const String& body)
+        : body(body) { }
+    HTTPResponse(HashMap<String, String>&& headerFields, String&& body)
         : headerFields(WTFMove(headerFields))
-        , body(bodyFromString(body)) { }
-    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, const String& body = { })
+        , body(WTFMove(body)) { }
+    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, String&& body = { })
         : statusCode(statusCode)
         , headerFields(WTFMove(headerFields))
-        , body(bodyFromString(body)) { }
+        , body(WTFMove(body)) { }
     HTTPResponse(TerminateConnection terminateConnection)
         : terminateConnection(terminateConnection) { }
 
@@ -104,14 +101,10 @@ struct HTTPResponse {
     HTTPResponse() = default;
     HTTPResponse& operator=(const HTTPResponse&) = default;
     HTTPResponse& operator=(HTTPResponse&&) = default;
-
-    enum class IncludeContentLength : bool { No, Yes };
-    Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes);
-    static Vector<uint8_t> bodyFromString(const String&);
-
+    
     unsigned statusCode { 200 };
     HashMap<String, String> headerFields;
-    Vector<uint8_t> body;
+    String body;
     TerminateConnection terminateConnection { TerminateConnection::No };
 };
 

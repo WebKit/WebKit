@@ -1412,7 +1412,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkingContext.h
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h
-    platform/network/ParsedRequestRange.h
     platform/network/ProtectionSpace.h
     platform/network/ProtectionSpaceBase.h
     platform/network/ProtectionSpaceHash.h

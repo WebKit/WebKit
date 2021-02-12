@@ -589,7 +589,7 @@ static HTTPServer clientCertServer()
         { "/5.png", { longString } },
         { "/6.png", { longString } },
         { "/redirectToError", { 301, {{ "Location", "/error" }} } },
-        { "/error", { HTTPResponse::TerminateConnection::Yes } },
+        { "/error", { HTTPServer::HTTPResponse::TerminateConnection::Yes } },
     }, HTTPServer::Protocol::Https, [] (auto, auto, auto certificateAllowed) {
         certificateAllowed(true);
     });

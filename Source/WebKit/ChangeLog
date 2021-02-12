@@ -1,3 +1,15 @@
+2021-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r272603.
+
+        Broke test, has room for improvement
+
+        Reverted changeset:
+
+        "Synthesize range responses if needed in WebCoreNSURLSession"
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+        https://trac.webkit.org/changeset/272603
+
 2021-02-11  Chris Dumez  <cdumez@apple.com>
 
         Review usage of adoptNS()
