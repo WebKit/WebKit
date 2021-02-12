@@ -1,3 +1,19 @@
+2021-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Review usage of adoptNS()
+        https://bugs.webkit.org/show_bug.cgi?id=221779
+
+        Reviewed by Alex Christensen.
+
+        Review usage of adoptNS():
+        1. Make sure we call adoptNS() as soon as we allocate the object instead of doing it later on, as this is less error-prone
+        2. Fix cases where we called adoptNS() but really should have retained instead of adopting
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
 2021-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Opus Codec support

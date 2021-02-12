@@ -506,9 +506,9 @@ void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnima
 {
     // Add the delegate
     if (!m_delegate) {
-        WebAnimationDelegate* webAnimationDelegate = [[WebAnimationDelegate alloc] init];
-        m_delegate = adoptNS(webAnimationDelegate);
+        auto webAnimationDelegate = adoptNS([[WebAnimationDelegate alloc] init]);
         [webAnimationDelegate setOwner:this];
+        m_delegate = WTFMove(webAnimationDelegate);
     }
     
     CAAnimation *propertyAnimation = static_cast<CAAnimation *>(downcast<PlatformCAAnimationCocoa>(animation).platformAnimation());
