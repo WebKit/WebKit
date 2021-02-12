@@ -198,13 +198,6 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
     return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
 }
 
-#if PLATFORM(IOS_FAMILY)
-void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&)
-{
-    // Muting is done by GPUProcess factory. We do not want to handle it here in case of track cloning.
-}
-#endif
-
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
 {
     return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, { }, m_manager, false)));

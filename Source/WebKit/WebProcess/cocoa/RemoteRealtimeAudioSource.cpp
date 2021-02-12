@@ -209,6 +209,14 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     if (isEnded())
         return;
 
+#if PLATFORM(IOS_FAMILY)
+    if (this != RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource()) {
+        // Track is muted and has no chance of being unmuted, let's end it.
+        captureFailed();
+        return;
+    }
+#endif
+
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(*this);
     m_isReady = false;
     createRemoteMediaSource();

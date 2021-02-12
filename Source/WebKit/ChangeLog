@@ -1,3 +1,25 @@
+2021-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Test landed flaky: [iOS] TestWebKitAPI.WebKit2.CrashGPUProcessWhileCapturing
+        https://bugs.webkit.org/show_bug.cgi?id=221331
+        <rdar://problem/73935129>
+
+        Reviewed by Eric Carlson.
+
+        Now that RemoteRealtimeVideoSource is a RealtimeVideoCaptureSource, we can register RemoteRealtimeVideoSource
+        to its factory so that it will be muted if another RemoteRealtimeVideoSource is created.
+        This is now possible as clones of the track will get the same underlying RemoteRealtimeVideoSource.
+        We can thus only recreate the active source when GPU process crashes.
+        Covered by test no longer flaky.
+
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::VideoFactory::setActiveSource): Deleted.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2021-02-12  Dean Jackson  <dino@apple.com>
 
         Unexpected ASSERT when touch events are dispatched on the main thread

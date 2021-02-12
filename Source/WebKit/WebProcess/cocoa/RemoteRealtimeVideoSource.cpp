@@ -264,6 +264,14 @@ void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     if (isEnded())
         return;
 
+#if PLATFORM(IOS_FAMILY)
+    if (m_device.type() == CaptureDevice::DeviceType::Camera && this != RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource()) {
+        // Track is muted and has no chance of being unmuted, let's end it.
+        captureFailed();
+        return;
+    }
+#endif
+
     m_isReady = false;
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.
