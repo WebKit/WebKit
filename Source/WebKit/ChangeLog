@@ -1,3 +1,22 @@
+2021-02-12  Dean Jackson  <dino@apple.com>
+
+        Unexpected ASSERT when touch events are dispatched on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=221832
+        <rdar://problem/74283856>
+
+        Reviewed by Sam Weinig.
+
+        The change in r272558 causes an ASSERT when running on iOS debug
+        builds. The touch event CompletionHandlers are created on the EventDispatcher
+        thread, but serviced on the main thread. We now need to state that this
+        is ok as we create the CompletionHandler.
+
+        This is covered by tests, but the EWS bots don't run iOS tests in
+        debug mode, and the internal bots hadn't caught up yet!
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync): Pass a CompletionHandlerCallThread into the constructor.
+
 2021-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Limit mech-register to required services
