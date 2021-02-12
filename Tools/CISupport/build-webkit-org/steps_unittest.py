@@ -511,15 +511,15 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('got_revision', '272692')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=120,
+                        timeout=600,
                         logEnviron=False,
                         command=['python', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
-            ExpectShell.log('stdio', stdout='Identifier: 233939@trunk') +
+            ExpectShell.log('stdio', stdout='Identifier: 233939@main') +
             0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233939@trunk')
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233939@main')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('identifier'), '233939@trunk')
+        self.assertEqual(self.getProperty('identifier'), '233939@main')
         return rc
 
     def test_failure(self):
@@ -527,7 +527,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('got_revision', '272692')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=120,
+                        timeout=600,
                         logEnviron=False,
                         command=['python', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +

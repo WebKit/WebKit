@@ -1,3 +1,15 @@
+2021-02-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] commit identifier should show main instead of trunk
+        https://bugs.webkit.org/show_bug.cgi?id=221798
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (ShowIdentifier.__init__): Increased timeout to 10 minutes (since first run might take a while).
+        (ShowIdentifier.evaluateCommand):
+        * CISupport/build-webkit-org/steps_unittest.py: Updated unit-tests.
+
 2021-02-12  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] Use identifiers when posting to bugzilla

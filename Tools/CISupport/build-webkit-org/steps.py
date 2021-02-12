@@ -1134,7 +1134,7 @@ class ShowIdentifier(shell.ShellCommand):
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=2 * 60, logEnviron=False, **kwargs)
+        shell.ShellCommand.__init__(self, timeout=10 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
@@ -1152,6 +1152,8 @@ class ShowIdentifier(shell.ShellCommand):
         match = re.search(self.identifier_re, log_text, re.MULTILINE)
         if match:
             identifier = match.group(1)
+            if identifier:
+                identifier = identifier.replace('trunk', 'main')
             self.setProperty('identifier', identifier)
             step = self.getLastBuildStepByName(CheckOutSource.name)
             if not step:
