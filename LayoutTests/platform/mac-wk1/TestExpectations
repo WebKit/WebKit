@@ -1240,3 +1240,5 @@ webkit.org/b/221300 [ BigSur ] imported/w3c/web-platform-tests/media-source/medi
 webkit.org/b/221300 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
 
 webkit.org/b/221369 [ BigSur+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
+
+webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]

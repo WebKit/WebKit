@@ -1,3 +1,12 @@
+2021-02-12  Amir Mark Jr  <amir_mark@apple.com>
+
+        REGRESSION (r272241) [MacOS wk1] imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html is flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=221347
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-02-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Another WPT test import
