@@ -49,6 +49,42 @@ static OptionSet<WebEvent::Modifier> modifiersForEventModifiers(unsigned eventMo
         modifiers.add(WebEvent::Modifier::AltKey);
     if (eventModifiers & wpe_input_keyboard_modifier_meta)
         modifiers.add(WebEvent::Modifier::MetaKey);
+
+    return modifiers;
+}
+
+static OptionSet<WebEvent::Modifier> modifiersForKeyboardEvent(struct wpe_input_keyboard_event* event)
+{
+    OptionSet<WebEvent::Modifier> modifiers = modifiersForEventModifiers(event->modifiers);
+
+    if (!event->pressed)
+        return modifiers;
+
+    // Handling of modifier masks in WPE is modelled after X. This code makes WPE to behave similar
+    // to other platforms and other browsers under X (see http://crbug.com/127142#c8).
+
+    switch (event->key_code) {
+    case WPE_KEY_Control_L:
+    case WPE_KEY_Control_R:
+        modifiers.add(WebEvent::Modifier::ControlKey);
+        break;
+    case WPE_KEY_Shift_L:
+    case WPE_KEY_Shift_R:
+        modifiers.add(WebEvent::Modifier::ShiftKey);
+        break;
+    case WPE_KEY_Alt_L:
+    case WPE_KEY_Alt_R:
+        modifiers.add(WebEvent::Modifier::AltKey);
+        break;
+    case WPE_KEY_Meta_L:
+    case WPE_KEY_Meta_R:
+        modifiers.add(WebEvent::Modifier::MetaKey);
+        break;
+    case WPE_KEY_Caps_Lock:
+        modifiers.add(WebEvent::Modifier::CapsLockKey);
+        break;
+    }
+
     return modifiers;
 }
 
@@ -90,7 +126,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         WTFMove(preeditUnderlines),
         WTFMove(preeditSelectionRange),
         isWPEKeyCodeFromKeyPad(event->key_code),
-        modifiersForEventModifiers(event->modifiers),
+        modifiersForKeyboardEvent(event),
         wallTimeForEventTime(event->time));
 }
 

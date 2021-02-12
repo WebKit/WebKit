@@ -143,6 +143,8 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 # Passing since r266083.
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ Pass ]
 
+fast/events/keyboardevent-modifier.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.

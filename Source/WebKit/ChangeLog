@@ -1,3 +1,19 @@
+2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPE] event.ctrlKey and other are false in keydown event
+        https://bugs.webkit.org/show_bug.cgi?id=221760
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is the same issue that was fixed for WebKitGTK in r272489.
+
+        Test: fast/events/keyboardevent-modifier.html
+
+        * Shared/libwpe/WebEventFactory.cpp:
+        (WebKit::modifiersForEventModifiers):
+        (WebKit::modifiersForKeyboardEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2021-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r272603.
