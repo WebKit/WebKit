@@ -1,3 +1,12 @@
+2021-02-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Delete unused Makefile
+        https://bugs.webkit.org/show_bug.cgi?id=221721
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/Makefile: Removed.
+
 2021-02-12  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPU process WebGL context toDataURL does not work for non-premultiplied contexts
