@@ -4,5 +4,5 @@ You should see two identical-looking lines, both with a radio button at the begi
 Text
 Text
 
-FAIL two radio button sizes are identical assert_equals: width should be equal expected 0 but got 12
+FAIL two radio button widths are identical assert_equals: width should be equal expected 0 but got 12
 

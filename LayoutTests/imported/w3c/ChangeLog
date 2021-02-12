@@ -1,3 +1,22 @@
+2021-02-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Another WPT test import
+        https://bugs.webkit.org/show_bug.cgi?id=221813
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-flexbox/flexbox-min-width-auto-005-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-min-width-auto-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-min-width-auto-006-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-min-width-auto-006.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-descendant-of-anonymous-flex-item-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-descendant-of-anonymous-flex-item.html: Added.
+        * web-platform-tests/css/css-flexbox/radiobutton-min-size-expected.txt: Updated expectations.
+        * web-platform-tests/css/css-flexbox/radiobutton-min-size.html: Updated.
+        * web-platform-tests/css/css-flexbox/support/40x20-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-02-11  Said Abou-Hallawa  <said@apple.com>
 
         Unreviewed, reverting r270578.
