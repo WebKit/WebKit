@@ -160,8 +160,8 @@ void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineForm
 {
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
     createDisplayNonRootInlineBoxes(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
 InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
@@ -306,7 +306,9 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 {
     auto& lines = inlineFormattingState.lines();
     auto& runs = inlineContent.runs;
+    auto& nonRootInlineBoxes = inlineContent.nonRootInlineBoxes;
     size_t runIndex = 0;
+    size_t inlineBoxIndex = 0;
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -316,8 +318,13 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
+        // Collect ink overflow from runs.
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
+        // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
+        while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex)
+            scrollableOverflowRect.unite(nonRootInlineBoxes[inlineBoxIndex++].rect());
+
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         auto enclosingTopAndBottom = line.enclosingTopAndBottom();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
