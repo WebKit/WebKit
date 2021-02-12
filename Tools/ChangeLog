@@ -1,5 +1,13 @@
 2021-02-11  Alex Christensen  <achristensen@webkit.org>
 
+        Make WebKitLegacy.CrossPartitionFileSchemeAccess stop timing out on EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=206956
+
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm:
+        This test times out sometimes, but only on bots. Let's kick the can down the road.
+
+2021-02-11  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, reverting r272603.
 
         Broke test, has room for improvement
