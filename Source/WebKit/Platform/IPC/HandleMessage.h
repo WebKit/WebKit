@@ -181,10 +181,10 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
         return;
     }
 
-    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::AsyncReply completionHandler = [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
         auto encoder = makeUnique<Encoder>(T::asyncMessageReplyName(), listenerID);
         T::send(WTFMove(encoder), WTFMove(connection), args...);
-    }, CompletionHandlerCallThread::MainThread };
+    };
     callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 
