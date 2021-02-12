@@ -13,7 +13,7 @@
             promise.then(
                 function (hasAccess) {
                     if (hasAccess && policyShouldGrantAccess)
-                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                        fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                             return response.json();
                         }).then(function(data) {
                             messageToTop("PASS Has storage access.", data);
@@ -21,7 +21,7 @@
                             console.log(error.message);
                         });
                     else if (!hasAccess && !policyShouldGrantAccess)
-                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                        fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                             return response.json();
                         }).then(function(data) {
                             messageToTop("PASS No storage access.", data);

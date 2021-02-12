@@ -1,3 +1,42 @@
+2021-02-12  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/storageAccess convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221720
+        <rdar://problem/74207513>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-ephemeral.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html:
+        * http/tests/storageAccess/resources/echo-incoming-cookies-as-json.php: Removed.
+        * http/tests/storageAccess/resources/echo-incoming-cookies-as-json.py: Added.
+        * http/tests/storageAccess/resources/get-cookies.php: Removed.
+        * http/tests/storageAccess/resources/get-cookies.py: Added.
+        * http/tests/storageAccess/resources/has-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/set-cookie.php: Removed.
+        * http/tests/storageAccess/resources/set-cookie.py: Added.
+
 2021-02-12  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Make accessibility/aria-modal-in-aria-hidden.html more robust

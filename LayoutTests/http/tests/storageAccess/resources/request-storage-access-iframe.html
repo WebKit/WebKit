@@ -24,7 +24,7 @@
         function receiveMessage(event) {
             if (event.origin === "http://127.0.0.1:8000") {
                 if (event.data.indexOf("reportBackCookies") !== -1) {
-                    fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                    fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                         return response.json();
                     }).then(function(data) {
                         messageToTop("PASS.", data);
@@ -61,7 +61,7 @@
                         && hasAccess
                         && (userShouldGrantAccess || !userShouldBeConsulted)
                         && policyShouldGrantAccess) {
-                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                        fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                             return response.json();
                         }).then(function(data) {
                             messageToTop("PASS Storage access was granted.", data);
@@ -75,7 +75,7 @@
                         if (originIsNull) {
                             messageToTop("PASS Storage access was denied for origin null.");
                         } else {
-                            fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                            fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                                 return response.json();
                             }).then(function(data) {
                                 messageToTop("PASS Storage access was denied.", data);

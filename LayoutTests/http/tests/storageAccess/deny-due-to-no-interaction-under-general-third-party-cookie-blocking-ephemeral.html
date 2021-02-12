@@ -55,7 +55,7 @@
             if (document.location.hash !== "#cookieSet") {
                 setEnableFeature(true, function() {
                     testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
-                        document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral.html#cookieSet";
+                        document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral.html#cookieSet";
                     });
                 });
             } else {

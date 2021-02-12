@@ -60,7 +60,7 @@
         function runTest() {
             if (document.location.hash !== "#cookieSet") {
                 setEnableFeature(true, function() {
-                    document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/aggregate-sorted-data-with-storage-access.html#cookieSet";
+                    document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/aggregate-sorted-data-with-storage-access.html#cookieSet";
                 });
             } else {
                 testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {

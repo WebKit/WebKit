@@ -25,7 +25,7 @@
         const statisticsUrl = "http://" + hostUnderTest;
         function runTest() {
             if (document.location.hash !== "#firstPartyCookieSet") {
-                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html#firstPartyCookieSet";
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html#firstPartyCookieSet";
             } else {
                 setEnableFeature(false, function () {
                     let iframeElement = document.createElement("iframe");
