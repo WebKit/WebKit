@@ -521,19 +521,19 @@ bool SVGSVGElement::hasIntrinsicHeight() const
 Length SVGSVGElement::intrinsicWidth() const
 {
     if (width().lengthType() == SVGLengthType::Percentage)
-        return Length(0, Fixed);
+        return Length(0, LengthType::Fixed);
 
     SVGLengthContext lengthContext(this);
-    return Length(width().value(lengthContext), Fixed);
+    return Length(width().value(lengthContext), LengthType::Fixed);
 }
 
 Length SVGSVGElement::intrinsicHeight() const
 {
     if (height().lengthType() == SVGLengthType::Percentage)
-        return Length(0, Fixed);
+        return Length(0, LengthType::Fixed);
 
     SVGLengthContext lengthContext(this);
-    return Length(height().value(lengthContext), Fixed);
+    return Length(height().value(lengthContext), LengthType::Fixed);
 }
 
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const

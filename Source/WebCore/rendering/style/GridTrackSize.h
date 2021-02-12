@@ -56,9 +56,9 @@ class GridTrackSize {
 public:
     GridTrackSize(const GridLength& length, GridTrackSizeType trackSizeType = LengthTrackSizing)
         : m_type(trackSizeType)
-        , m_minTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(Auto) : length)
-        , m_maxTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(Auto) : length)
-        , m_fitContentTrackBreadth(trackSizeType == FitContentTrackSizing ? length : GridLength(Length(Fixed)))
+        , m_minTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(LengthType::Auto) : length)
+        , m_maxTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(LengthType::Auto) : length)
+        , m_fitContentTrackBreadth(trackSizeType == FitContentTrackSizing ? length : GridLength(Length(LengthType::Fixed)))
     {
         ASSERT(trackSizeType == LengthTrackSizing || trackSizeType == FitContentTrackSizing);
         ASSERT(trackSizeType != FitContentTrackSizing || length.isLength());
@@ -69,7 +69,7 @@ public:
         : m_type(MinMaxTrackSizing)
         , m_minTrackBreadth(minTrackBreadth)
         , m_maxTrackBreadth(maxTrackBreadth)
-        , m_fitContentTrackBreadth(GridLength(Length(Fixed)))
+        , m_fitContentTrackBreadth(GridLength(Length(LengthType::Fixed)))
     {
         cacheMinMaxTrackBreadthTypes();
     }

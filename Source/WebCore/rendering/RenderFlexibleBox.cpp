@@ -570,9 +570,9 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const Rend
     // that here. (Compare code in LayoutBlock::computePreferredLogicalWidths)
     LayoutUnit borderAndPadding = child.borderAndPaddingLogicalWidth();
     if (child.style().logicalWidth().isAuto() && !child.hasAspectRatio()) {
-        if (size.type() == MinContent)
+        if (size.isMinContent())
             return child.minPreferredLogicalWidth() - borderAndPadding;
-        if (size.type() == MaxContent)
+        if (size.isMaxContent())
             return child.maxPreferredLogicalWidth() - borderAndPadding;
     }
     
@@ -1149,7 +1149,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
-        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).valueOr(0);
+        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
         ASSERT(contentSize >= 0);
         if (child.hasAspectRatio() && child.intrinsicSize().height() > 0)
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
@@ -1203,7 +1203,7 @@ Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const Re
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
     // as definite. We make up a percentage to check whether we have a definite size.
-    if (!childMainSizeIsDefinite(child, Length(0, Percent)))
+    if (!childMainSizeIsDefinite(child, Length(0, LengthType::Percent)))
         return WTF::nullopt;
 
     return child.hasOverridingLogicalHeight() ? Optional<LayoutUnit>(child.overridingContentLogicalHeight()) : WTF::nullopt;

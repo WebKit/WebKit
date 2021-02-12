@@ -49,12 +49,12 @@ namespace WebCore {
 void BasicShapeCenterCoordinate::updateComputedLength()
 {
     if (m_direction == TopLeft) {
-        m_computedLength = m_length.isUndefined() ? Length(0, Fixed) : m_length;
+        m_computedLength = m_length.isUndefined() ? Length(0, LengthType::Fixed) : m_length;
         return;
     }
 
     if (m_length.isUndefined()) {
-        m_computedLength = Length(100, Percent);
+        m_computedLength = Length(100, LengthType::Percent);
         return;
     }
     

@@ -3495,7 +3495,7 @@ void FrameView::performFixedWidthAutoSize()
 
     ASSERT(is<RenderElement>(*firstChild));
     auto& documentRenderer = downcast<RenderElement>(*firstChild);
-    documentRenderer.mutableStyle().setMaxWidth(Length(m_autoSizeConstraint.width(), Fixed));
+    documentRenderer.mutableStyle().setMaxWidth(Length(m_autoSizeConstraint.width(), LengthType::Fixed));
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
 
     Ref<FrameView> protectedThis(*this);

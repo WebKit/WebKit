@@ -989,9 +989,9 @@ void RenderThemeMac::setSizeFromFont(RenderStyle& style, const IntSize* sizes) c
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
     if (style.width().isIntrinsicOrAuto() && size.width() > 0)
-        style.setWidth(Length(size.width(), Fixed));
+        style.setWidth(Length(size.width(), LengthType::Fixed));
     if (style.height().isAuto() && size.height() > 0)
-        style.setHeight(Length(size.height(), Fixed));
+        style.setHeight(Length(size.height(), LengthType::Fixed));
 }
 
 void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize controlSize) const
@@ -1069,9 +1069,9 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) c
 {
     // Add a margin to place the button at end of the input field.
     if (style.isLeftToRightDirection())
-        style.setMarginRight(Length(-4, Fixed));
+        style.setMarginRight(Length(-4, LengthType::Fixed));
     else
-        style.setMarginLeft(Length(-4, Fixed));
+        style.setMarginLeft(Length(-4, LengthType::Fixed));
 }
 
 #endif
@@ -1606,7 +1606,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     style.resetPadding();
 
     // Height is locked to auto.
-    style.setHeight(Length(Auto));
+    style.setHeight(Length(LengthType::Auto));
 
     // White-space is locked to pre
     style.setWhiteSpace(WhiteSpace::Pre);
@@ -1683,7 +1683,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 15;
-    style.setMinHeight(Length(minHeight, Fixed));
+    style.setMinHeight(Length(minHeight, LengthType::Fixed));
 
     style.setLineHeight(RenderStyle::initialLineHeight());
 }
@@ -1929,15 +1929,15 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     setFontFromControlSize(style, controlSizeForFont(style));
 
     // Override height.
-    style.setHeight(Length(Auto));
+    style.setHeight(Length(LengthType::Auto));
     setSearchFieldSize(style);
 
     // Override padding size to match AppKit text positioning.
     const int padding = 1 * style.effectiveZoom();
-    style.setPaddingLeft(Length(padding, Fixed));
-    style.setPaddingRight(Length(padding, Fixed));
-    style.setPaddingTop(Length(padding, Fixed));
-    style.setPaddingBottom(Length(padding, Fixed));
+    style.setPaddingLeft(Length(padding, LengthType::Fixed));
+    style.setPaddingRight(Length(padding, LengthType::Fixed));
+    style.setPaddingTop(Length(padding, LengthType::Fixed));
+    style.setPaddingBottom(Length(padding, LengthType::Fixed));
 
     style.setBoxShadow(nullptr);
 }
@@ -2005,8 +2005,8 @@ const IntSize* RenderThemeMac::cancelButtonSizes() const
 void RenderThemeMac::adjustSearchFieldCancelButtonStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
-    style.setWidth(Length(size.width(), Fixed));
-    style.setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width(), LengthType::Fixed));
+    style.setHeight(Length(size.height(), LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
@@ -2021,8 +2021,8 @@ const int emptyResultsOffset = 9;
 void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width() - emptyResultsOffset, Fixed));
-    style.setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width() - emptyResultsOffset, LengthType::Fixed));
+    style.setHeight(Length(size.height(), LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
@@ -2034,8 +2034,8 @@ bool RenderThemeMac::paintSearchFieldDecorationPart(const RenderObject&, const P
 void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width(), Fixed));
-    style.setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width(), LengthType::Fixed));
+    style.setHeight(Length(size.height(), LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
@@ -2070,8 +2070,8 @@ bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderBox& box,
 void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width() + resultsArrowWidth, Fixed));
-    style.setHeight(Length(size.height(), Fixed));
+    style.setWidth(Length(size.width() + resultsArrowWidth, LengthType::Fixed));
+    style.setHeight(Length(size.height(), LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
@@ -2152,8 +2152,8 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) c
 {
     float zoomLevel = style.effectiveZoom();
     if (style.appearance() == SliderThumbHorizontalPart || style.appearance() == SliderThumbVerticalPart) {
-        style.setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
-        style.setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
+        style.setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), LengthType::Fixed));
+        style.setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), LengthType::Fixed));
     }
 }
 

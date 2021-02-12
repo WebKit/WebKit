@@ -50,23 +50,23 @@ FloatPoint floatPointForLengthPoint(const LengthPoint&, const FloatSize& maximum
 inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue)
 {
     switch (length.type()) {
-    case Fixed:
+    case LengthType::Fixed:
         return LayoutUnit(length.value());
-    case Percent:
+    case LengthType::Percent:
         // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
         return LayoutUnit(static_cast<float>(maximumValue * length.percent() / 100.0f));
-    case Calculated:
+    case LengthType::Calculated:
         return LayoutUnit(length.nonNanCalculatedValue(maximumValue));
-    case FillAvailable:
-    case Auto:
+    case LengthType::FillAvailable:
+    case LengthType::Auto:
         return 0;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FitContent:
+    case LengthType::Undefined:
         break;
     }
     ASSERT_NOT_REACHED();

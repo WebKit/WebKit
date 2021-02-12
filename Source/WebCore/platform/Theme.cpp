@@ -50,7 +50,7 @@ LengthSize Theme::controlSize(ControlPart, const FontCascade&, const LengthSize&
 
 LengthSize Theme::minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float) const
 {
-    return { { 0, Fixed }, { 0, Fixed } };
+    return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 }
 
 bool Theme::controlRequiresPreWhiteSpace(ControlPart) const

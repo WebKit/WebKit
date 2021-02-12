@@ -240,7 +240,7 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
             break;
         }
         case FilterOperation::BLUR: {
-            Length stdDeviation = Length(0, Fixed);
+            Length stdDeviation = Length(0, LengthType::Fixed);
             if (filterValue.length() >= 1)
                 stdDeviation = convertToFloatLength(firstValue, cssToLengthConversionData());
             if (stdDeviation.isUndefined())

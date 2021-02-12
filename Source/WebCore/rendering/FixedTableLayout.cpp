@@ -83,7 +83,7 @@ float FixedTableLayout::calcWidthArray()
     // iterate over all <col> elements
     unsigned nEffCols = m_table->numEffCols();
     m_width.resize(nEffCols);
-    m_width.fill(Length(Auto));
+    m_width.fill(Length(LengthType::Auto));
 
     unsigned currentEffectiveColumn = 0;
     for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
@@ -143,14 +143,14 @@ float FixedTableLayout::calcWidthArray()
         // RenderBox::computeLogicalWidthInFragmentUsing to compute the width.
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
             fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth);
-            logicalWidth.setValue(Fixed, fixedBorderBoxLogicalWidth);
+            logicalWidth.setValue(LengthType::Fixed, fixedBorderBoxLogicalWidth);
         }
 
         unsigned usedSpan = 0;
         while (usedSpan < span && currentColumn < nEffCols) {
             float eSpan = m_table->spanOfEffCol(currentColumn);
             // Only set if no col element has already set it.
-            if (m_width[currentColumn].isAuto() && logicalWidth.type() != Auto) {
+            if (m_width[currentColumn].isAuto() && logicalWidth.type() != LengthType::Auto) {
                 m_width[currentColumn] = logicalWidth;
                 m_width[currentColumn] *= eSpan / span;
                 usedWidth += fixedBorderBoxLogicalWidth * eSpan / span;

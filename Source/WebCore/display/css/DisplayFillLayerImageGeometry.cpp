@@ -99,8 +99,8 @@ static LayoutSize calculateImageIntrinsicDimensions(StyleImage* image, LayoutSiz
     // FIXME: Call computeIntrinsicDimensions().
     auto imageSize = image->imageSize(nullptr, 1);
     auto intrinsicRatio = imageSize;
-    Length intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
-    Length intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
+    Length intrinsicWidth = Length(intrinsicRatio.width(), LengthType::Fixed);
+    Length intrinsicHeight = Length(intrinsicRatio.height(), LengthType::Fixed);
 
     ASSERT(!intrinsicWidth.isPercentOrCalculated());
     ASSERT(!intrinsicHeight.isPercentOrCalculated());

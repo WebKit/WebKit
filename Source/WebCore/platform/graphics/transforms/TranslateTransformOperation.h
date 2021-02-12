@@ -35,7 +35,7 @@ class TranslateTransformOperation final : public TransformOperation {
 public:
     static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, OperationType type)
     {
-        return adoptRef(*new TranslateTransformOperation(tx, ty, Length(0, Fixed), type));
+        return adoptRef(*new TranslateTransformOperation(tx, ty, Length(0, LengthType::Fixed), type));
     }
 
     static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, OperationType type)

@@ -99,7 +99,7 @@ static TransformOperation::OperationType transformOperationType(CSSValueID type)
 
 Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(LengthType::Undefined);
 }
 
 bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)
@@ -179,8 +179,8 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
         case CSSValueTranslate:
         case CSSValueTranslateX:
         case CSSValueTranslateY: {
-            Length tx = Length(0, Fixed);
-            Length ty = Length(0, Fixed);
+            Length tx = Length(0, LengthType::Fixed);
+            Length ty = Length(0, LengthType::Fixed);
             if (transformValue.name() == CSSValueTranslateY)
                 ty = convertToFloatLength(&firstValue, conversionData);
             else {
@@ -198,14 +198,14 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
                 return false;
             }
 
-            operations.append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), transformOperationType(transformValue.name())));
+            operations.append(TranslateTransformOperation::create(tx, ty, Length(0, LengthType::Fixed), transformOperationType(transformValue.name())));
             break;
         }
         case CSSValueTranslateZ:
         case CSSValueTranslate3d: {
-            Length tx = Length(0, Fixed);
-            Length ty = Length(0, Fixed);
-            Length tz = Length(0, Fixed);
+            Length tx = Length(0, LengthType::Fixed);
+            Length ty = Length(0, LengthType::Fixed);
+            Length tz = Length(0, LengthType::Fixed);
             if (transformValue.name() == CSSValueTranslateZ)
                 tz = convertToFloatLength(&firstValue, conversionData);
             else if (transformValue.name() == CSSValueTranslateY)
@@ -322,13 +322,13 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             break;
         }
         case CSSValuePerspective: {
-            Length p = Length(0, Fixed);
+            Length p = Length(0, LengthType::Fixed);
             if (firstValue.isLength())
                 p = convertToFloatLength(&firstValue, conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
                 double val = firstValue.doubleValue();
-                p = val >= 0 ? Length(clampToPositiveInteger(val), Fixed) : Length(Undefined);
+                p = val >= 0 ? Length(clampToPositiveInteger(val), LengthType::Fixed) : Length(LengthType::Undefined);
             }
 
             if (p.isUndefined()) {
@@ -358,9 +358,9 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
         return nullptr;
 
     auto type = TransformOperation::TRANSLATE;
-    Length tx = Length(0, Fixed);
-    Length ty = Length(0, Fixed);
-    Length tz = Length(0, Fixed);
+    Length tx = Length(0, LengthType::Fixed);
+    Length ty = Length(0, LengthType::Fixed);
+    Length tz = Length(0, LengthType::Fixed);
     for (unsigned i = 0; i < valueList.length(); ++i) {
         auto* valueItem = valueList.itemWithoutBoundsCheck(i);
         if (!is<CSSPrimitiveValue>(valueItem))

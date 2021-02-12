@@ -805,8 +805,8 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
 static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 {
     const RenderStyle& style = renderer.style();
-    return (style.transformOriginX().type() == Fixed && style.transformOriginX().value())
-        || (style.transformOriginY().type() == Fixed && style.transformOriginY().value());
+    return (style.transformOriginX().isFixed() && style.transformOriginX().value())
+        || (style.transformOriginY().isFixed() && style.transformOriginY().value());
 }
 
 bool RenderLayerBacking::updateCompositedBounds()

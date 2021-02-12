@@ -1032,7 +1032,7 @@ public:
     void setListStyleImage(RefPtr<StyleImage>&&);
     void setListStylePosition(ListStylePosition v) { m_inheritedFlags.listStylePosition = static_cast<unsigned>(v); }
 
-    void resetMargin() { SET_VAR(m_surroundData, margin, LengthBox(Fixed)); }
+    void resetMargin() { SET_VAR(m_surroundData, margin, LengthBox(LengthType::Fixed)); }
     void setMarginTop(Length&& length) { SET_VAR(m_surroundData, margin.top(), WTFMove(length)); }
     void setMarginBottom(Length&& length) { SET_VAR(m_surroundData, margin.bottom(), WTFMove(length)); }
     void setMarginLeft(Length&& length) { SET_VAR(m_surroundData, margin.left(), WTFMove(length)); }
@@ -1425,7 +1425,7 @@ public:
 
     const Length& shapeMargin() const { return m_rareNonInheritedData->shapeMargin; }
     void setShapeMargin(Length&& shapeMargin) { SET_VAR(m_rareNonInheritedData, shapeMargin, WTFMove(shapeMargin)); }
-    static Length initialShapeMargin() { return Length(0, Fixed); }
+    static Length initialShapeMargin() { return Length(0, LengthType::Fixed); }
 
     float shapeImageThreshold() const { return m_rareNonInheritedData->shapeImageThreshold; }
     void setShapeImageThreshold(float);
@@ -1531,7 +1531,7 @@ public:
     static BorderStyle initialBorderStyle() { return BorderStyle::None; }
     static OutlineIsAuto initialOutlineStyleIsAuto() { return OutlineIsAuto::Off; }
     static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
-    static LengthSize initialBorderRadius() { return { { 0, Fixed }, { 0, Fixed } }; }
+    static LengthSize initialBorderRadius() { return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }; }
     static CaptionSide initialCaptionSide() { return CaptionSide::Top; }
     static ColumnAxis initialColumnAxis() { return ColumnAxis::Auto; }
     static ColumnProgression initialColumnProgression() { return ColumnProgression::Normal; }
@@ -1540,7 +1540,7 @@ public:
     static TextCombine initialTextCombine() { return TextCombine::None; }
     static TextOrientation initialTextOrientation() { return TextOrientation::Mixed; }
     static ObjectFit initialObjectFit() { return ObjectFit::Fill; }
-    static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, Percent), Length(50.0f, Percent)); }
+    static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, LengthType::Percent), Length(50.0f, LengthType::Percent)); }
     static EmptyCell initialEmptyCells() { return EmptyCell::Show; }
     static ListStylePosition initialListStylePosition() { return ListStylePosition::Outside; }
     static const AtomString& initialListStyleStringValue() { return nullAtom(); }
@@ -1557,21 +1557,21 @@ public:
     static unsigned short initialColumnRuleWidth() { return 3; }
     static float initialOutlineWidth() { return 3; }
     static float initialLetterSpacing() { return 0; }
-    static Length initialWordSpacing() { return Length(Fixed); }
+    static Length initialWordSpacing() { return Length(LengthType::Fixed); }
     static Length initialSize() { return Length(); }
     static Length initialMinSize() { return Length(); }
-    static Length initialMaxSize() { return Length(Undefined); }
+    static Length initialMaxSize() { return Length(LengthType::Undefined); }
     static Length initialOffset() { return Length(); }
     static Length initialRadius() { return Length(); }
-    static Length initialMargin() { return Length(Fixed); }
-    static Length initialPadding() { return Length(Fixed); }
-    static Length initialTextIndent() { return Length(Fixed); }
-    static Length initialZeroLength() { return Length(Fixed); }
-    static Length initialOneLength() { return Length(1, Fixed); }
+    static Length initialMargin() { return Length(LengthType::Fixed); }
+    static Length initialPadding() { return Length(LengthType::Fixed); }
+    static Length initialTextIndent() { return Length(LengthType::Fixed); }
+    static Length initialZeroLength() { return Length(LengthType::Fixed); }
+    static Length initialOneLength() { return Length(1, LengthType::Fixed); }
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
     // Returning -100% percent here means the line-height is not set.
-    static Length initialLineHeight() { return Length(-100.0f, Percent); }
+    static Length initialLineHeight() { return Length(-100.0f, LengthType::Percent); }
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
     static OptionSet<TextDecoration> initialTextDecoration() { return OptionSet<TextDecoration> { }; }
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
@@ -1596,7 +1596,7 @@ public:
     static StyleReflection* initialBoxReflect() { return 0; }
     static float initialFlexGrow() { return 0; }
     static float initialFlexShrink() { return 1; }
-    static Length initialFlexBasis() { return Length(Auto); }
+    static Length initialFlexBasis() { return Length(LengthType::Auto); }
     static int initialOrder() { return 0; }
     static StyleSelfAlignmentData initialJustifyItems() { return StyleSelfAlignmentData(ItemPosition::Legacy, OverflowAlignment::Default); }
     static StyleSelfAlignmentData initialSelfAlignment() { return StyleSelfAlignmentData(ItemPosition::Auto, OverflowAlignment::Default); }
@@ -1606,7 +1606,7 @@ public:
     static FlexWrap initialFlexWrap() { return FlexWrap::NoWrap; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
-    static Length initialMarqueeIncrement() { return Length(6, Fixed); }
+    static Length initialMarqueeIncrement() { return Length(6, LengthType::Fixed); }
     static MarqueeBehavior initialMarqueeBehavior() { return MarqueeBehavior::Scroll; }
     static MarqueeDirection initialMarqueeDirection() { return MarqueeDirection::Auto; }
     static UserModify initialUserModify() { return UserModify::ReadOnly; }
@@ -1639,8 +1639,8 @@ public:
     static GapLength initialColumnGap() { return GapLength(); }
     static GapLength initialRowGap() { return GapLength(); }
     static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
-    static Length initialTransformOriginX() { return Length(50.0f, Percent); }
-    static Length initialTransformOriginY() { return Length(50.0f, Percent); }
+    static Length initialTransformOriginX() { return Length(50.0f, LengthType::Percent); }
+    static Length initialTransformOriginY() { return Length(50.0f, LengthType::Percent); }
     static TransformBox initialTransformBox() { return TransformBox::ViewBox; }
     static RotateTransformOperation* initialRotate() { return nullptr; }
     static ScaleTransformOperation* initialScale() { return nullptr; }
@@ -1650,8 +1650,8 @@ public:
     static TransformStyle3D initialTransformStyle3D() { return TransformStyle3D::Flat; }
     static BackfaceVisibility initialBackfaceVisibility() { return BackfaceVisibility::Visible; }
     static float initialPerspective() { return 0; }
-    static Length initialPerspectiveOriginX() { return Length(50.0f, Percent); }
-    static Length initialPerspectiveOriginY() { return Length(50.0f, Percent); }
+    static Length initialPerspectiveOriginX() { return Length(50.0f, LengthType::Percent); }
+    static Length initialPerspectiveOriginY() { return Length(50.0f, LengthType::Percent); }
     static Color initialBackgroundColor() { return Color::transparentBlack; }
     static Color initialTextEmphasisColor() { return currentColor(); }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFill::Filled; }
@@ -1687,7 +1687,7 @@ public:
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-    static Length initialSpecifiedLineHeight() { return Length(-100.0f, Percent); }
+    static Length initialSpecifiedLineHeight() { return Length(-100.0f, LengthType::Percent); }
     static TextSizeAdjustment initialTextSizeAdjust() { return TextSizeAdjustment(); }
 #endif
 
@@ -1695,8 +1695,8 @@ public:
 
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
 
-    static Length initialScrollMargin() { return Length(Fixed); }
-    static Length initialScrollPadding() { return Length(Auto); }
+    static Length initialScrollMargin() { return Length(LengthType::Fixed); }
+    static Length initialScrollPadding() { return Length(LengthType::Auto); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
@@ -1723,8 +1723,8 @@ public:
 
     static GridAutoFlow initialGridAutoFlow() { return AutoFlowRow; }
 
-    static Vector<GridTrackSize> initialGridAutoColumns() { return { GridTrackSize(Length(Auto)) }; }
-    static Vector<GridTrackSize> initialGridAutoRows() { return { GridTrackSize(Length(Auto)) }; }
+    static Vector<GridTrackSize> initialGridAutoColumns() { return { GridTrackSize(Length(LengthType::Auto)) }; }
+    static Vector<GridTrackSize> initialGridAutoRows() { return { GridTrackSize(Length(LengthType::Auto)) }; }
 
     static NamedGridAreaMap initialNamedGridArea() { return NamedGridAreaMap(); }
     static size_t initialNamedGridAreaCount() { return 0; }
@@ -2203,7 +2203,7 @@ inline void RenderStyle::setBorderRadius(LengthSize&& size)
 
 inline void RenderStyle::setBorderRadius(const IntSize& size)
 {
-    setBorderRadius(LengthSize { { size.width(), Fixed }, { size.height(), Fixed } });
+    setBorderRadius(LengthSize { { size.width(), LengthType::Fixed }, { size.height(), LengthType::Fixed } });
 }
 
 inline bool RenderStyle::setZoom(float zoomLevel)

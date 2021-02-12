@@ -74,7 +74,7 @@ void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
 {
     childStyle.setFlexGrow(1.0f);
     // min-width: 0; is needed for correct shrinking.
-    childStyle.setMinWidth(Length(0, Fixed));
+    childStyle.setMinWidth(Length(0, LengthType::Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     childStyle.setMarginTop(Length());

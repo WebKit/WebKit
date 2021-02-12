@@ -47,7 +47,7 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
     if (blendToIdentity) {
         double p = floatValueForLength(m_p, 1);
         p = WebCore::blend(p, 1.0, progress); // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
-        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), Fixed));
+        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), LengthType::Fixed));
     }
     
     const PerspectiveTransformOperation* fromOp = downcast<PerspectiveTransformOperation>(from);
@@ -64,9 +64,9 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
 
     if (decomp.perspectiveZ) {
         double val = -1.0 / decomp.perspectiveZ;
-        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(val), Fixed));
+        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(val), LengthType::Fixed));
     }
-    return PerspectiveTransformOperation::create(Length(0, Fixed));
+    return PerspectiveTransformOperation::create(Length(0, LengthType::Fixed));
 }
 
 void PerspectiveTransformOperation::dump(TextStream& ts) const

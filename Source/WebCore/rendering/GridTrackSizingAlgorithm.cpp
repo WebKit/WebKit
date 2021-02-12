@@ -643,25 +643,25 @@ GridTrackSize GridTrackSizingAlgorithm::calculateGridTrackSize(GridTrackSizingDi
     ASSERT(wasSetup());
     // Collapse empty auto repeat tracks if auto-fit.
     if (m_grid.hasAutoRepeatEmptyTracks(direction) && m_grid.isEmptyAutoRepeatTrack(direction, translatedIndex))
-        return { Length(Fixed), LengthTrackSizing };
+        return { Length(LengthType::Fixed), LengthTrackSizing };
 
     auto& trackSize = rawGridTrackSize(direction, translatedIndex);
     if (trackSize.isFitContent())
-        return isRelativeGridLengthAsAuto(trackSize.fitContentTrackBreadth(), direction) ? GridTrackSize(Length(Auto), Length(MaxContent)) : trackSize;
+        return isRelativeGridLengthAsAuto(trackSize.fitContentTrackBreadth(), direction) ? GridTrackSize(Length(LengthType::Auto), Length(LengthType::MaxContent)) : trackSize;
 
     GridLength minTrackBreadth = trackSize.minTrackBreadth();
     GridLength maxTrackBreadth = trackSize.maxTrackBreadth();
     // If the logical width/height of the grid container is indefinite, percentage
     // values are treated as <auto>.
     if (isRelativeGridLengthAsAuto(trackSize.minTrackBreadth(), direction))
-        minTrackBreadth = Length(Auto);
+        minTrackBreadth = Length(LengthType::Auto);
     if (isRelativeGridLengthAsAuto(trackSize.maxTrackBreadth(), direction))
-        maxTrackBreadth = Length(Auto);
+        maxTrackBreadth = Length(LengthType::Auto);
 
     // Flex sizes are invalid as a min sizing function. However we still can have a flexible |minTrackBreadth|
     // if the track size is just a flex size (e.g. "1fr"), the spec says that in this case it implies an automatic minimum.
     if (minTrackBreadth.isFlex())
-        minTrackBreadth = Length(Auto);
+        minTrackBreadth = Length(LengthType::Auto);
 
     return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }

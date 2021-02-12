@@ -78,7 +78,7 @@ void DateTimeNumericFieldElement::adjustMinWidth(RenderStyle& style) const
         width = std::max(width, font.width(RenderBlock::constructTextRun(numberString, style)));
     }
 
-    style.setMinWidth({ width, Fixed });
+    style.setMinWidth({ width, LengthType::Fixed });
 }
 
 int DateTimeNumericFieldElement::maximum() const

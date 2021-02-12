@@ -107,7 +107,7 @@ Optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const 
     auto newStyle = RenderStyle::createPtr();
     newStyle->inheritFrom(*shadowHostStyle);
     newStyle->setFlexGrow(1);
-    newStyle->setMinWidth(Length { 0, Fixed }); // Needed for correct shrinking.
+    newStyle->setMinWidth(Length { 0, LengthType::Fixed }); // Needed for correct shrinking.
     newStyle->setDisplay(DisplayType::Block);
     newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
@@ -124,7 +124,7 @@ Optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const 
         // for the root element style, the parent element style, and the render view.
         auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EMS);
         int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, nullptr, 1.0, WTF::nullopt });
-        newStyle->setFlexBasis(Length { pixels, Fixed });
+        newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 
     return { WTFMove(newStyle) };

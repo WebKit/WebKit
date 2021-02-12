@@ -116,8 +116,8 @@ std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderVie
     PhaseScope scope(Phase::Type::TreeBuilding);
 
     auto rootStyle = RenderStyle::clone(renderView.style());
-    rootStyle.setLogicalWidth(Length(renderView.width(), Fixed));
-    rootStyle.setLogicalHeight(Length(renderView.height(), Fixed));
+    rootStyle.setLogicalWidth(Length(renderView.width(), LengthType::Fixed));
+    rootStyle.setLogicalHeight(Length(renderView.height(), LengthType::Fixed));
 
     auto rootLayoutBox = makeUnique<InitialContainingBlock>(WTFMove(rootStyle));
     auto& rootContainer = *rootLayoutBox;
@@ -237,8 +237,8 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
         } else {
             if (displayType == DisplayType::Block) {
                 if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {
-                    clonedStyle.setTop({ offset->height(), Fixed });
-                    clonedStyle.setLeft({ offset->width(), Fixed });
+                    clonedStyle.setTop({ offset->height(), LengthType::Fixed });
+                    clonedStyle.setLeft({ offset->width(), LengthType::Fixed });
                     childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
                 } else
                     childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));

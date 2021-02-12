@@ -40,9 +40,9 @@ RenderTreeBuilder::FullScreen::FullScreen(RenderTreeBuilder& builder)
 void RenderTreeBuilder::FullScreen::createPlaceholder(RenderFullScreen& renderer, std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
 {
     if (style->width().isAuto())
-        style->setWidth(Length(frameRect.width(), Fixed));
+        style->setWidth(Length(frameRect.width(), LengthType::Fixed));
     if (style->height().isAuto())
-        style->setHeight(Length(frameRect.height(), Fixed));
+        style->setHeight(Length(frameRect.height(), LengthType::Fixed));
 
     if (auto* placeHolder = renderer.placeholder()) {
         placeHolder->setStyle(WTFMove(*style));

@@ -350,8 +350,8 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) con
         return;
 
     int size = std::max(style.computedFontPixelSize(), 10U);
-    style.setWidth({ size, Fixed });
-    style.setHeight({ size, Fixed });
+    style.setWidth({ size, LengthType::Fixed });
+    style.setHeight({ size, LengthType::Fixed });
 }
 
 static CGPoint shortened(CGPoint start, CGPoint end, float width)
@@ -492,8 +492,8 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
         return;
 
     int size = std::max(style.computedFontPixelSize(), 10U);
-    style.setWidth({ size, Fixed });
-    style.setHeight({ size, Fixed });
+    style.setWidth({ size, LengthType::Fixed });
+    style.setHeight({ size, LengthType::Fixed });
     style.setBorderRadius({ size / 2, size / 2 });
 }
 
@@ -616,7 +616,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
         return;
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, Fixed }, { box.height() / 2, Fixed } });
+    style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, LengthType::Fixed }, { box.height() / 2, LengthType::Fixed } });
 }
 
 static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
@@ -634,7 +634,7 @@ static void adjustSelectListButtonStyle(RenderStyle& style, const Element& eleme
     applyCommonButtonPaddingToStyle(style, element);
 
     // Enforce "line-height: normal".
-    style.setLineHeight(Length(-100.0, Percent));
+    style.setLineHeight(Length(-100.0, LengthType::Percent));
 }
     
 class RenderThemeMeasureTextClient : public MeasureTextClient {
@@ -677,7 +677,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     if (maximumWidth > 0) {
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
-        style.setWidth(Length(width, Fixed));
+        style.setWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
 }
@@ -686,9 +686,9 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 {
     // Set the min-height to be at least MenuListMinHeight.
     if (style.height().isAuto())
-        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), Fixed));
+        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
     else
-        style.setMinHeight(Length(MenuListMinHeight, Fixed));
+        style.setMinHeight(Length(MenuListMinHeight, LengthType::Fixed));
 
     if (!element)
         return;
@@ -838,7 +838,7 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     int radius = static_cast<int>(kTrackRadius);
-    style.setBorderRadius({ { radius, Fixed }, { radius, Fixed } });
+    style.setBorderRadius({ { radius, LengthType::Fixed }, { radius, LengthType::Fixed } });
 }
 
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -930,12 +930,12 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
         return;
 
     // Enforce "border-radius: 50%".
-    style.setBorderRadius({ { 50, Percent }, { 50, Percent } });
+    style.setBorderRadius({ { 50, LengthType::Percent }, { 50, LengthType::Percent } });
 
     // Enforce a 16x16 size if no size is provided.
     if (style.width().isIntrinsicOrAuto() || style.height().isAuto()) {
-        style.setWidth({ kDefaultSliderThumbSize, Fixed });
-        style.setHeight({ kDefaultSliderThumbSize, Fixed });
+        style.setWidth({ kDefaultSliderThumbSize, LengthType::Fixed });
+        style.setHeight({ kDefaultSliderThumbSize, LengthType::Fixed });
     }
 }
 
@@ -1087,7 +1087,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
     if (style.width().isIntrinsicOrAuto() || style.height().isAuto())
-        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), Fixed));
+        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (style.appearance() == ColorWellPart)
