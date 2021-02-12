@@ -43,7 +43,7 @@ def main(argv):
 
 def load_repository(repository):
     if 'gitCheckout' in repository:
-        return GitRepository(name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'])
+        return GitRepository(name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'], git_branch=repository.get('branch'))
     return SVNRepository(name=repository['name'], svn_url=repository['url'], should_trust_certificate=repository.get('trustCertificate', False),
         use_server_auth=repository.get('useServerAuth', False), account_name_script_path=repository.get('accountNameFinderScript'))
 
@@ -192,11 +192,12 @@ class SVNRepository(Repository):
 
 class GitRepository(Repository):
 
-    def __init__(self, name, git_checkout, git_url):
+    def __init__(self, name, git_checkout, git_url, git_branch=None):
         assert(os.path.isdir(git_checkout))
         super(GitRepository, self).__init__(name)
         self._git_checkout = git_checkout
         self._git_url = git_url
+        self._git_branch = git_branch
         self._tokenized_hashes = []
 
     def fetch_next_commit(self, server_config, last_fetched):
@@ -245,7 +246,8 @@ class GitRepository(Repository):
 
     def _fetch_all_hashes(self):
         self._run_git_command(['pull', self._git_url])
-        lines = self._run_git_command(['log', '--all', '--date-order', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
+        scope = self._git_branch or '--all'
+        lines = self._run_git_command(['log', scope, '--date-order', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
         self._tokenized_hashes = [line.split() for line in lines]
 
     def _run_git_command(self, args):
