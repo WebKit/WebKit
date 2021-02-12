@@ -46,7 +46,7 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
     manager.addVideoSource(source.copyRef());
@@ -55,7 +55,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& 
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
     , m_identifier(identifier)
     , m_manager(manager)
     , m_device(device)
@@ -71,17 +71,23 @@ RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifi
 
 void RemoteRealtimeVideoSource::createRemoteMediaSource()
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
+    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
         if (!succeeded) {
             didFail(WTFMove(errorMessage));
             return;
         }
-        setName(String { settings.label().string() });
-        setSettings(WTFMove(settings));
-        setCapabilities(WTFMove(capabilities));
-        setAsReady();
+
         if (m_shouldCaptureInGPUProcess)
             WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+
+        setSize(size);
+        setFrameRate(frameRate);
+
+        setSettings(WTFMove(settings));
+        setCapabilities(WTFMove(capabilities));
+        setSupportedPresets(WTFMove(presets));
+
+        setAsReady();
     });
 }
 
@@ -113,21 +119,13 @@ void RemoteRealtimeVideoSource::didFail(String&& errorMessage)
 
 void RemoteRealtimeVideoSource::setAsReady()
 {
+    ASSERT(!m_isReady);
     m_isReady = true;
+
+    setName(String { m_settings.label().string() });
+
     if (m_callback)
         m_callback({ });
-}
-
-Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
-{
-    auto identifier = RealtimeMediaSourceIdentifier::generate();
-    if (!connection()->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, identifier }, 0))
-        return *this;
-
-    auto cloneSource = adoptRef(*new RemoteRealtimeVideoSource(identifier, m_device, &m_constraints, String { m_settings.label().string() }, deviceIDHashSalt(), m_manager, m_shouldCaptureInGPUProcess));
-    cloneSource->setSettings(RealtimeMediaSourceSettings { m_settings });
-    m_manager.addVideoSource(cloneSource.copyRef());
-    return cloneSource;
 }
 
 void RemoteRealtimeVideoSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
@@ -162,7 +160,20 @@ void RemoteRealtimeVideoSource::remoteVideoSampleAvailable(RemoteVideoSample&& r
         return;
     }
 
-    RealtimeMediaSource::videoSampleAvailable(*sampleRef);
+    if (m_sampleRotation != sampleRef->videoRotation()) {
+        m_sampleRotation = sampleRef->videoRotation();
+
+        auto size = this->size();
+        if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right) {
+            size = size.transposedSize();
+            m_settings.setWidth(size.width());
+            m_settings.setHeight(size.height());
+        }
+        scheduleDeferredTask([this] {
+            notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+        });
+    }
+    dispatchMediaSampleToObservers(*sampleRef);
 }
 
 IPC::Connection* RemoteRealtimeVideoSource::connection()
@@ -196,27 +207,6 @@ const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
     return m_capabilities;
 }
 
-void RemoteRealtimeVideoSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
-{
-    m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
-    // FIXME: Use sendAsyncWithReply.
-    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
-}
-
-void RemoteRealtimeVideoSource::applyConstraintsSucceeded(RealtimeMediaSourceSettings&& settings)
-{
-    setSettings(WTFMove(settings));
-
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
-    callback({ });
-}
-
-void RemoteRealtimeVideoSource::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
-{
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
-    callback(ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
-}
-
 void RemoteRealtimeVideoSource::hasEnded()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_identifier }, 0);
@@ -235,24 +225,46 @@ void RemoteRealtimeVideoSource::captureFailed()
     hasEnded();
 }
 
-void RemoteRealtimeVideoSource::stopBeingObserved()
+void RemoteRealtimeVideoSource::generatePresets()
 {
-    m_hasRequestedToEnd = true;
-    connection()->send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { m_identifier }, 0);
+    ASSERT(m_isReady);
 }
 
-void RemoteRealtimeVideoSource::requestToEnd(Observer& observer)
+void RemoteRealtimeVideoSource::setFrameRateWithPreset(double frameRate, RefPtr<VideoPreset> preset)
 {
-    stopBeingObserved();
+    MediaConstraints constraints;
+
+    constraints.isValid = true;
+    DoubleConstraint frameRateConstraint("frameRate"_s, MediaConstraintType::FrameRate);
+    frameRateConstraint.setIdeal(frameRate);
+    constraints.mandatoryConstraints.set(MediaConstraintType::FrameRate, frameRateConstraint);
+
+    if (preset) {
+        IntConstraint widthConstraint("width"_s, MediaConstraintType::Width);
+        widthConstraint.setIdeal(preset->size.width());
+        constraints.mandatoryConstraints.set(MediaConstraintType::Width, widthConstraint);
+
+        IntConstraint heightConstraint("height"_s, MediaConstraintType::Height);
+        heightConstraint.setIdeal(preset->size.height());
+        constraints.mandatoryConstraints.set(MediaConstraintType::Height, heightConstraint);
+    }
+
+    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
+}
+
+bool RemoteRealtimeVideoSource::prefersPreset(VideoPreset&)
+{
+    return true;
 }
 
 #if ENABLE(GPU_PROCESS)
 void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     ASSERT(m_shouldCaptureInGPUProcess);
-    if (isEnded() || m_hasRequestedToEnd)
+    if (isEnded())
         return;
 
+    m_isReady = false;
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.
     if (isProducingData())

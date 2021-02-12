@@ -40,11 +40,13 @@ class RealtimeVideoSource final
 public:
     static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source) { return adoptRef(*new RealtimeVideoSource(WTFMove(source))); }
 
+    Vector<VideoPresetData> presetsData() { return m_source->presetsData(); }
+
 private:
-    explicit RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&);
+    WEBCORE_EXPORT explicit RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&);
     ~RealtimeVideoSource();
 
-    // RealtimeMediaSiource
+    // RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
     bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
@@ -60,6 +62,8 @@ private:
     void monitorOrientation(OrientationNotifier& notifier) final { m_source->monitorOrientation(notifier); }
     bool interrupted() const final { return m_source->interrupted(); }
     bool isSameAs(RealtimeMediaSource& source) const final { return this == &source || m_source.ptr() == &source; }
+    void whenReady(CompletionHandler<void(String)>&&) final;
+    bool isVideoSource() const final { return true; }
 
     // RealtimeMediaSource::Observer
     void sourceMutedChanged() final;

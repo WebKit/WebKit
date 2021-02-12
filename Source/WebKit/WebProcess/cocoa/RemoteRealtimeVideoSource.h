@@ -29,8 +29,8 @@
 
 #include "GPUProcessConnection.h"
 #include <WebCore/CaptureDevice.h>
-#include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <WebCore/RealtimeVideoCaptureSource.h>
 #include <wtf/Deque.h>
 
 namespace IPC {
@@ -48,22 +48,19 @@ namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeVideoSource : public WebCore::RealtimeMediaSource
+class RemoteRealtimeVideoSource : public WebCore::RealtimeVideoCaptureSource
 #if ENABLE(GPU_PROCESS)
     , public GPUProcessConnection::Client
 #endif
 {
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    static Ref<WebCore::RealtimeVideoCaptureSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeVideoSource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
     IPC::Connection* connection();
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
-
-    void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
 
     void captureStopped();
     void captureFailed() final;
@@ -73,22 +70,24 @@ public:
 private:
     RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
-    // RealtimeMediaSource
+    // WebCore::RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
     bool isCaptureSource() const final { return true; }
     void beginConfiguration() final { }
     void commitConfiguration() final { }
     bool setShouldApplyRotation(bool /* shouldApplyRotation */) final;
-    void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
-    void requestToEnd(Observer&) final;
-    void stopBeingObserved() final;
     void hasEnded() final;
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final;
     void whenReady(CompletionHandler<void(String)>&&) final;
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_device.type(); }
-    Ref<RealtimeMediaSource> clone() final;
+
+    // WebCore::RealtimeVideoCaptureSource
+    void generatePresets() final;
+    WebCore::MediaSample::VideoRotation sampleRotation() const final { return m_sampleRotation; }
+    void setFrameRateWithPreset(double, RefPtr<WebCore::VideoPreset>) final;
+    bool prefersPreset(WebCore::VideoPreset&) final;
 
 #if ENABLE(GPU_PROCESS)
     // GPUProcessConnection::Client
@@ -110,10 +109,9 @@ private:
 
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 
-    Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
+    WebCore::MediaSample::VideoRotation m_sampleRotation { WebCore::MediaSample::VideoRotation::None };
     bool m_shouldCaptureInGPUProcess { false };
     bool m_isReady { false };
-    bool m_hasRequestedToEnd { false };
     String m_errorMessage;
     CompletionHandler<void(String)> m_callback;
 };

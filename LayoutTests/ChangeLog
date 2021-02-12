@@ -1,3 +1,17 @@
+2021-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Make RemoteRealtimeVideoSource a RealtimeVideoCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=221747
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/resources/getDisplayMedia-utils.js:
+        (async waitForHeight):
+        (async waitForWidth):
+        Updated to fail instead of timing out.
+        * fast/mediastream/resources/getUserMedia-helper.js:
+        Removing no longer needed code that made it impossible to run the tests in browser.
+
 2021-02-12  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Implement SetState DisplayList item

@@ -55,9 +55,6 @@ void RealtimeVideoCaptureSource::prepareToProduceData()
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
 #endif
-
-    if (size().isEmpty() && !m_defaultSize.isEmpty())
-        setSize(m_defaultSize);
 }
 
 const Vector<Ref<VideoPreset>>& RealtimeVideoCaptureSource::presets()
@@ -67,6 +64,13 @@ const Vector<Ref<VideoPreset>>& RealtimeVideoCaptureSource::presets()
 
     ASSERT(!m_presets.isEmpty());
     return m_presets;
+}
+
+Vector<VideoPresetData> RealtimeVideoCaptureSource::presetsData()
+{
+    return WTF::map(presets(), [](auto& preset) -> VideoPresetData {
+        return { preset->size, preset->frameRateRanges };
+    });
 }
 
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)

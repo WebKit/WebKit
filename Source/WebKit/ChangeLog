@@ -1,3 +1,38 @@
+2021-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Make RemoteRealtimeVideoSource a RealtimeVideoCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=221747
+
+        Reviewed by Eric Carlson.
+
+        All capture video sources are now deriving from RealtimeVideoCaptureSource.
+        This allows to expose a RealtimeVideoSource that can handle changes of resolution and frame rate in software as needed.
+        This also allows to better align audio and video sources on iOS: there will only be one running source at any given time.
+        Covered by existing tests.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::capabilities):
+        (WebKit::UserMediaCaptureManagerProxy::generatePresets):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeAudioSource::setAsReady):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::create):
+        (WebKit::RemoteRealtimeVideoSource::RemoteRealtimeVideoSource):
+        (WebKit::RemoteRealtimeVideoSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeVideoSource::setAsReady):
+        (WebKit::RemoteRealtimeVideoSource::remoteVideoSampleAvailable):
+        (WebKit::RemoteRealtimeVideoSource::setFrameRateWithPreset):
+        (WebKit::RemoteRealtimeVideoSource::prefersPreset):
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource):
+
 2021-02-12  Said Abou-Hallawa  <said@apple.com>
 
         Make Pattern hold a NativeImage instead of an Image

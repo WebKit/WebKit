@@ -71,12 +71,11 @@ RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifi
 
 void RemoteRealtimeAudioSource::createRemoteMediaSource()
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
+    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
         if (!succeeded) {
             didFail(WTFMove(errorMessage));
             return;
         }
-        setName(String { settings.label().string() });
         setSettings(WTFMove(settings));
         setCapabilities(WTFMove(capabilities));
         setAsReady();
@@ -112,7 +111,10 @@ void RemoteRealtimeAudioSource::didFail(String&& errorMessage)
 
 void RemoteRealtimeAudioSource::setAsReady()
 {
+    ASSERT(!m_isReady);
     m_isReady = true;
+
+    setName(String { m_settings.label().string() });
     if (m_callback)
         m_callback({ });
 }
@@ -208,6 +210,7 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
         return;
 
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(*this);
+    m_isReady = false;
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.
     if (isProducingData())

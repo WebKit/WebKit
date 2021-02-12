@@ -40,6 +40,7 @@
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/RealtimeVideoSource.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
@@ -238,10 +239,10 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_connectionProxy->removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>&& completionHandler)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, CreateSourceCallback&& completionHandler)
 {
     if (!m_connectionProxy->willStartCapture(device.type()))
-        return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { });
+        return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { }, { }, { }, 0);
 
     auto* constraints = mediaConstraints.isValid ? &mediaConstraints : nullptr;
 
@@ -267,8 +268,12 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 
     bool succeeded = !!sourceOrError;
     String invalidConstraints;
-    WebCore::RealtimeMediaSourceSettings settings;
-    WebCore::RealtimeMediaSourceCapabilities capabilities;
+    RealtimeMediaSourceSettings settings;
+    RealtimeMediaSourceCapabilities capabilities;
+    Vector<VideoPresetData> presets;
+    IntSize size;
+    double frameRate = 0;
+
     if (sourceOrError) {
         auto source = sourceOrError.source();
 #if !RELEASE_LOG_DISABLED
@@ -276,11 +281,20 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 #endif
         settings = source->settings();
         capabilities = source->capabilities();
+        if (source->isVideoSource()) {
+            auto& videoSource = static_cast<RealtimeVideoSource&>(source.get());
+            presets = videoSource.presetsData();
+            size = videoSource.size();
+            frameRate = videoSource.frameRate();
+        }
+
         ASSERT(!m_proxies.contains(id));
         m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
-    completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities));
+
+
+    completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities), WTFMove(presets), size, frameRate);
 }
 
 void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id)
@@ -300,9 +314,9 @@ void UserMediaCaptureManagerProxy::end(RealtimeMediaSourceIdentifier id)
     m_proxies.remove(id);
 }
 
-void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&& completionHandler)
+void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id, CompletionHandler<void(RealtimeMediaSourceCapabilities&&)>&& completionHandler)
 {
-    WebCore::RealtimeMediaSourceCapabilities capabilities;
+    RealtimeMediaSourceCapabilities capabilities;
     if (auto* proxy = m_proxies.get(id))
         capabilities = proxy->source().capabilities();
     completionHandler(WTFMove(capabilities));

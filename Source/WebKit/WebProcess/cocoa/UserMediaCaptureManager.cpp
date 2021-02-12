@@ -38,6 +38,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/RealtimeVideoSource.h>
 #include <wtf/Assertions.h>
 
 namespace WebKit {
@@ -158,15 +159,11 @@ void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdent
 {
     if (auto source = m_audioSources.get(id))
         source->applyConstraintsSucceeded(WTFMove(settings));
-    else if (auto source = m_videoSources.get(id))
-        source->applyConstraintsSucceeded(WTFMove(settings));
 }
 
 void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier id, String&& failedConstraint, String&& message)
 {
     if (auto source = m_audioSources.get(id))
-        source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
-    else if (auto source = m_videoSources.get(id))
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
@@ -198,7 +195,7 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
 
-    return RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -210,7 +207,7 @@ void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&
 
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
 {
-    return RemoteRealtimeVideoSource::create(device, constraints, { }, { }, m_manager, false);
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, { }, m_manager, false)));
 }
 
 }
