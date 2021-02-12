@@ -1,3 +1,18 @@
+2021-02-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Run additional webkitpy tests on Windows by default
+        https://bugs.webkit.org/show_bug.cgi?id=221851
+
+        Reviewed by Jonathan Bedard.
+
+        The tests in WebKit/Scripts and webkitpy.common.config pass on Windows.
+
+        The WebKit/Scripts tests are not run when using Cygwin. Without any port option its
+        the only way to differentiate WinCairo, which doesn't use Cygwin, and AppleWin, which
+        does.
+
+        * Scripts/webkitpy/test/main.py:
+
 2021-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r268421): TestWebKitAPI.WebKit.PreferenceChanges* tests are flaky failures

@@ -66,13 +66,14 @@ def main():
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
 
-    # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
-    if not (sys.platform.startswith('win') or sys.platform == 'cygwin'):
+    # AppleWin is the only platform that does not support Modern WebKit
+    # FIXME: Find a better way to detect this currently assuming cygwin means AppleWin
+    if sys.platform != 'cygwin':
         tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
-        tester.skip(('webkitpy.common.checkout', 'webkitpy.common.config', 'webkitpy.tool'), 'fail horribly on win32', 54526)
+        tester.skip(('webkitpy.common.checkout', 'webkitpy.tool'), 'fail horribly on win32', 54526)
 
     # Xcode tests are only relevant for Mac
     if not (sys.platform.startswith('darwin')):
