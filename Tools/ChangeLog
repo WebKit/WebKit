@@ -1,3 +1,16 @@
+2021-02-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Avoid hosting results on S3
+        https://bugs.webkit.org/show_bug.cgi?id=221822
+
+        Reviewed by Jonathan Bedard.
+
+        Reverts r271801, r272220 and r272399.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * CISupport/build-webkit-org/steps.py:
+        (ExtractTestResults.__init__):
+        (ExtractTestResults.resultDirectoryURL):
+
 2021-02-12  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit

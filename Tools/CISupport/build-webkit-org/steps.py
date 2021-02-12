@@ -41,7 +41,6 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
-S3_RESULTS_URL = '{}build.webkit.org-results/'.format(S3URL)
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 
@@ -1111,12 +1110,11 @@ class ExtractTestResults(master.MasterShellCommand):
         kwargs['logEnviron'] = False
         self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s).zip')
         self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s)')
-        kwargs['command'] = ['echo', 'Unzipping in background, it might take a while.']
+        kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def resultDirectoryURL(self):
-        path = self.resultDirectory.replace('public_html/results/', '') + '/'
-        return '{}{}'.format(S3_RESULTS_URL, path)
+        return self.resultDirectory.replace('public_html/', '/') + '/'
 
     def addCustomURLs(self):
         self.addURL("view layout test results", self.resultDirectoryURL() + "results.html")
