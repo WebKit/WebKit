@@ -3889,6 +3889,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(VORBIS) && PLATFORM(MAC)
     PlatformMediaSessionManager::setVorbisDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled());
 #endif
+
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)
