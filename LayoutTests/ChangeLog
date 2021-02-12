@@ -1,3 +1,13 @@
+2021-02-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Crash in InsertTextCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=213514
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/insert-in-orphaned-selection-crash-expected.txt: Added.
+        * editing/deleting/insert-in-orphaned-selection-crash.html: Added.
+
 2021-02-12  Youenn Fablet  <youenn@apple.com>
 
         Make RemoteRealtimeVideoSource a RealtimeVideoCaptureSource

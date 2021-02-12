@@ -797,7 +797,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
                 // FIXME: We probably shouldn't remove m_endTableRow unless it's fully selected, even if it is empty.
                 // We'll need to start adjusting the selection endpoints during deletion to know whether or not m_endTableRow
                 // was fully selected here.
-                CompositeEditCommand::removeNode(*m_endTableRow);
+                removeNodeUpdatingStates(*m_endTableRow, DoNotAssumeContentIsAlwaysEditable);
             }
         }
     }
