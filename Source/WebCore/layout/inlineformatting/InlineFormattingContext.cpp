@@ -575,14 +575,16 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             // Middle or end of the inline box. Let's stretch the box as needed.
-            logicalRect.expandHorizontally(-std::max(0_lu, boxGeometry.marginEnd()));
+            if (inlineBoxEndSet.contains(&layoutBox)) {
+                // The inline box ends on this line e.g. <span>fist<br>middle<br>last line</span>
+                logicalRect.expandHorizontally(-std::max(0_lu, boxGeometry.marginEnd()));
+            }
+            auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
+            enclosingBorderBoxRect.expandToContain(logicalRect);
+            boxGeometry.setLogicalLeft(enclosingBorderBoxRect.left());
 
-            auto enclosingRect = Rect { BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
-            enclosingRect.expandToContain(logicalRect);
-
-            boxGeometry.setLogicalLeft(enclosingRect.left());
-            boxGeometry.setContentBoxHeight(enclosingRect.height());
-            boxGeometry.setContentBoxWidth(enclosingRect.width());
+            boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu)));
+            boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu)));
         }
     };
     updateBoxGeometryForInlineBoxes();
