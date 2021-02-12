@@ -1,4 +1,14 @@
 =================
+WPE WebKit 2.30.5
+=================
+
+What's new in WPE WebKit 2.30.5?
+
+  - Fix RunLoop objects leaked in worker threads.
+  - Fix aarch64 llint build with JIT disabled.
+  - Use Internet Explorer quirk for Google Docs.
+
+=================
 WPE WebKit 2.30.4
 =================
 
