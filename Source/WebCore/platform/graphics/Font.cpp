@@ -30,7 +30,7 @@
 #include "config.h"
 #include "Font.h"
 
-#if USE(CORE_TEXT)
+#if PLATFORM(COCOA)
 #include <pal/spi/cf/CoreTextSPI.h>
 #endif
 
