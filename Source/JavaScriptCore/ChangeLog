@@ -1,3 +1,14 @@
+2021-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: "Show Extended Gridlines" option for grid overlay does not work
+        https://bugs.webkit.org/show_bug.cgi?id=221775
+
+        Reviewed by Devin Rousso.
+
+        Replace all mentions of "Gridlines" with "GridLines" (camelcase).
+
+        * inspector/protocol/DOM.json:
+
 2021-02-11  Mark Lam  <mark.lam@apple.com>
 
         CodeBlock::propagateTransitions() should also handle OpSetPrivateBrand's LLInt IC.

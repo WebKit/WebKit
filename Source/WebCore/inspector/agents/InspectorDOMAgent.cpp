@@ -1477,7 +1477,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::hideHighlight()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, Optional<bool>&& showLineNames, Optional<bool>&& showLineNumbers, Optional<bool>&& showExtendedGridlines, Optional<bool>&& showTrackSizes, Optional<bool>&& showAreaNames)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, Optional<bool>&& showLineNames, Optional<bool>&& showLineNumbers, Optional<bool>&& showExtendedGridLines, Optional<bool>&& showTrackSizes, Optional<bool>&& showAreaNames)
 {
     Protocol::ErrorString errorString;
     Node* node = assertNode(errorString, nodeId);
@@ -1492,7 +1492,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
     config.gridColor = *parsedColor;
     config.showLineNames = showLineNames.valueOr(false);
     config.showLineNumbers = showLineNumbers.valueOr(false);
-    config.showExtendedGridlines = showExtendedGridlines.valueOr(false);
+    config.showExtendedGridLines = showExtendedGridLines.valueOr(false);
     config.showTrackSizes = showTrackSizes.valueOr(false);
     config.showAreaNames = showAreaNames.valueOr(false);
 
