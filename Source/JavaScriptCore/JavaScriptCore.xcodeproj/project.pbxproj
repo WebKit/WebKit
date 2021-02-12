@@ -1951,6 +1951,7 @@
 		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; };
 		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; };
 		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; };
+		FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE476FF4207E85D50093CA2D /* JITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FE476FF3207E85D40093CA2D /* JITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD4223245E8700F136D0 /* JSCConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5290,6 +5291,7 @@
 		FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITLeftShiftGenerator.h; sourceTree = "<group>"; };
 		FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITRightShiftGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITRightShiftGenerator.h; sourceTree = "<group>"; };
+		FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootMarkReason.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
 		FE476FF3207E85D40093CA2D /* JITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCodeMap.h; sourceTree = "<group>"; };
 		FE48BD4223245E8700F136D0 /* JSCConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCConfig.h; sourceTree = "<group>"; };
@@ -6426,6 +6428,7 @@
 				0FBB73B61DEF3AAC002C009E /* PreventCollectionScope.h */,
 				0FD0E5EF1E46BF230006AB08 /* RegisterState.h */,
 				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
+				FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */,
 				0F2C63A91E4FA42C00C13839 /* RunningScope.h */,
 				0F4D8C761FCA3CF2001D32AC /* SimpleMarkingConstraint.cpp */,
 				0F4D8C771FCA3CF3001D32AC /* SimpleMarkingConstraint.h */,
@@ -10546,6 +10549,7 @@
 				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
+				FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */,
 				79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */,
 				0F6C73511AC9F99F00BE1682 /* VariableWriteFireDetail.h in Headers */,
 				0FE0502D1AA9095600D33B33 /* VarOffset.h in Headers */,

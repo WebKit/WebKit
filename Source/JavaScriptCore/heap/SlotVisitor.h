@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "HandleTypes.h"
 #include "IterationStatus.h"
 #include "MarkStack.h"
+#include "RootMarkReason.h"
 #include "VisitRaceKey.h"
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
@@ -57,23 +58,6 @@ class SlotVisitor {
     friend class Heap;
 
 public:
-    enum RootMarkReason {
-        None,
-        ConservativeScan,
-        StrongReferences,
-        ProtectedValues,
-        MarkListSet,
-        VMExceptions,
-        StrongHandles,
-        Debugger,
-        JITStubRoutines,
-        WeakSets,
-        Output,
-        DFGWorkLists,
-        CodeBlocks,
-        DOMGCOutput,
-    };
-
     SlotVisitor(Heap&, CString codeName);
     ~SlotVisitor();
 
@@ -289,7 +273,7 @@ private:
 
 class SetRootMarkReasonScope {
 public:
-    SetRootMarkReasonScope(SlotVisitor& visitor, SlotVisitor::RootMarkReason reason)
+    SetRootMarkReasonScope(SlotVisitor& visitor, RootMarkReason reason)
         : m_visitor(visitor)
         , m_previousReason(visitor.rootMarkReason())
     {
@@ -303,7 +287,7 @@ public:
 
 private:
     SlotVisitor& m_visitor;
-    SlotVisitor::RootMarkReason m_previousReason;
+    RootMarkReason m_previousReason;
 };
 
 } // namespace JSC

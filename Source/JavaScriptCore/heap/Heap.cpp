@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -2718,12 +2718,12 @@ void Heap::addCoreConstraints()
                 gatherJSStackRoots(conservativeRoots);
                 gatherScratchBufferRoots(conservativeRoots);
 
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::ConservativeScan);
                 slotVisitor.append(conservativeRoots);
             }
             if (Options::useJIT()) {
                 // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::JITStubRoutines);
                 m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
             }
             
@@ -2739,18 +2739,18 @@ void Heap::addCoreConstraints()
             scanExternalRememberedSet(m_vm, slotVisitor);
 #endif
             if (m_vm.smallStrings.needsToBeVisited(*m_collectionScope)) {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::StrongReferences);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::StrongReferences);
                 m_vm.smallStrings.visitStrongReferences(slotVisitor);
             }
             
             {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ProtectedValues);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::ProtectedValues);
                 for (auto& pair : m_protectedValues)
                     slotVisitor.appendUnbarriered(pair.key);
             }
             
             if (m_markListSet && m_markListSet->size()) {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::ConservativeScan);
                 MarkedArgumentBuffer::markLists(slotVisitor, *m_markListSet);
             }
 
@@ -2759,7 +2759,7 @@ void Heap::addCoreConstraints()
             });
 
             {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::VMExceptions);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::VMExceptions);
                 slotVisitor.appendUnbarriered(m_vm.exception());
                 slotVisitor.appendUnbarriered(m_vm.lastException());
             }
@@ -2769,7 +2769,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Sh", "Strong Handles",
         [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::StrongHandles);
+            SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::StrongHandles);
             m_handleSet.visitStrongHandles(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
@@ -2777,7 +2777,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "D", "Debugger",
         [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::Debugger);
+            SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::Debugger);
 
 #if ENABLE(SAMPLING_PROFILER)
             if (SamplingProfiler* samplingProfiler = m_vm.samplingProfiler()) {
@@ -2800,7 +2800,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Ws", "Weak Sets",
         [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::WeakSets);
+            SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::WeakSets);
             m_objectSpace.visitWeakSets(slotVisitor);
         },
         ConstraintVolatility::GreyedByMarking);
@@ -2811,7 +2811,7 @@ void Heap::addCoreConstraints()
             VM& vm = slotVisitor.vm();
 
             auto callOutputConstraint = [] (SlotVisitor& slotVisitor, HeapCell* heapCell, HeapCell::Kind) {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::Output);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::Output);
                 VM& vm = slotVisitor.vm();
                 JSCell* cell = static_cast<JSCell*>(heapCell);
                 cell->methodTable(vm)->visitOutputConstraints(cell, slotVisitor);
@@ -2833,7 +2833,7 @@ void Heap::addCoreConstraints()
         m_constraintSet->add(
             "Dw", "DFG Worklists",
             [this] (SlotVisitor& slotVisitor) {
-                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::DFGWorkLists);
+                SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::DFGWorkLists);
 
                 for (unsigned i = DFG::numberOfWorklists(); i--;)
                     DFG::existingWorklistForIndex(i).visitWeakReferences(slotVisitor);
@@ -2856,7 +2856,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Cb", "CodeBlocks",
         [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::CodeBlocks);
+            SetRootMarkReasonScope rootScope(slotVisitor, RootMarkReason::CodeBlocks);
             iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(
                 [&] (CodeBlock* codeBlock) {
                     // Visit the CodeBlock as a constraint only if it's black.

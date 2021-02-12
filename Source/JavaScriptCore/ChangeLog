@@ -1,3 +1,26 @@
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Move RootMarkReason out of SlotVisitor.
+        https://bugs.webkit.org/show_bug.cgi?id=221831
+
+        Reviewed by Tadeu Zagallo.
+
+        This will lessen the amount of diff needed for the GC verifier later.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/HeapAnalyzer.h:
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::analyzeEdge):
+        (JSC::rootTypeToString):
+        * heap/HeapSnapshotBuilder.h:
+        * heap/RootMarkReason.h: Added.
+        * heap/SlotVisitor.h:
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        * inspector/JSInjectedScriptHost.cpp:
+
 2021-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: "Show Extended Gridlines" option for grid overlay does not work

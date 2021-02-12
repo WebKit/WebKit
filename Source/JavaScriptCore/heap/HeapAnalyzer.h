@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SlotVisitor.h"
+#include "RootMarkReason.h"
 #include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +39,7 @@ public:
     virtual void analyzeNode(JSCell*) = 0;
 
     // A reference from one cell to another.
-    virtual void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason) = 0;
+    virtual void analyzeEdge(JSCell* from, JSCell* to, RootMarkReason) = 0;
     virtual void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName) = 0;
     virtual void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) = 0;
     virtual void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) = 0;

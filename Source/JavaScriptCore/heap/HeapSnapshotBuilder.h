@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,7 +119,7 @@ public:
     void analyzeNode(JSCell*) final;
 
     // A reference from one cell to another.
-    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason) final;
+    void analyzeEdge(JSCell* from, JSCell* to, RootMarkReason) final;
     void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName) final;
     void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) final;
     void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) final;
@@ -143,7 +143,7 @@ private:
     
     struct RootData {
         const char* reachabilityFromOpaqueRootReasons { nullptr };
-        SlotVisitor::RootMarkReason markReason { SlotVisitor::RootMarkReason::None };
+        RootMarkReason markReason { RootMarkReason::None };
     };
     
     HeapProfiler& m_profiler;

@@ -682,6 +682,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
     heap/RegisterState.h
+    heap/RootMarkReason.h
     heap/RunningScope.h
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h

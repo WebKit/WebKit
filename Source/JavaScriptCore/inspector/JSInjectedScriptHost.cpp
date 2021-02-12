@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -753,7 +753,7 @@ public:
 
     HashSet<JSCell*>& holders() { return m_holders; }
 
-    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason reason) final
+    void analyzeEdge(JSCell* from, JSCell* to, RootMarkReason reason) final
     {
         ASSERT(to);
         ASSERT(to->vm().heapProfiler()->activeHeapAnalyzer() == this);
@@ -773,14 +773,14 @@ public:
                 m_holders.add(from);
         }
 
-        if (reason == SlotVisitor::RootMarkReason::Debugger)
+        if (reason == RootMarkReason::Debugger)
             m_rootsToIgnore.add(to);
-        else if (!from || reason != SlotVisitor::RootMarkReason::None)
+        else if (!from || reason != RootMarkReason::None)
             m_rootsToInclude.add(to);
     }
-    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) final { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
-    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) final { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
-    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) final { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) final { analyzeEdge(from, to, RootMarkReason::None); }
+    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) final { analyzeEdge(from, to, RootMarkReason::None); }
+    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) final { analyzeEdge(from, to, RootMarkReason::None); }
 
     void analyzeNode(JSCell*) final { }
     void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) final { }
