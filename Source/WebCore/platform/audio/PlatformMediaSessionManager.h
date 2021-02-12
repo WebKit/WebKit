@@ -61,6 +61,8 @@ public:
     WEBCORE_EXPORT static bool webMFormatReaderEnabled();
     WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool);
     WEBCORE_EXPORT static bool vorbisDecoderEnabled();
+    WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
+    WEBCORE_EXPORT static bool opusDecoderEnabled();
 
     virtual ~PlatformMediaSessionManager() = default;
 
@@ -214,6 +216,9 @@ private:
 #endif
 #if ENABLE(VORBIS) && PLATFORM(MAC)
     static bool m_vorbisDecoderEnabled;
+#endif
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    static bool m_opusDecoderEnabled;
 #endif
 
 #if !RELEASE_LOG_DISABLED

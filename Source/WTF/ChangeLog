@@ -1,3 +1,16 @@
+2021-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add Experimental Opus Codec support
+        https://bugs.webkit.org/show_bug.cgi?id=221745
+
+        Reviewed by Eric Carlson.
+
+        Add a new experimental feature setting, disabled by default, controlling whether to
+        enable parsing of Opus tracks from WebM files.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Reduce string copies when converting from NSString/CFStringRef to WTF::String

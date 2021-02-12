@@ -38,7 +38,7 @@ bool isVorbisDecoderAvailable();
 RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t, const void*);
 
 bool isOpusDecoderAvailable();
-RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(size_t, const void*);
+RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(size_t, const void*, size_t, const void*);
 
 }
 

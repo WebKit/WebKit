@@ -3765,6 +3765,8 @@
 		CD381F292581591F0077DEC8 /* WebKitVP8Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */; };
 		CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */; };
 		CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */; };
+		CDC1F47625CF69EA0084CA16 /* opus_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47425CF69E40084CA16 /* opus_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDC1F47725CF6A640084CA16 /* opus_types.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47325CF69E40084CA16 /* opus_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDEBB4B624C019C400ADBD44 /* unknown_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46424C0191A00ADBD44 /* unknown_parser.cc */; };
 		CDEBB4B724C019C400ADBD44 /* master_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46F24C0191A00ADBD44 /* master_parser.cc */; };
 		CDEBB4B824C019C400ADBD44 /* block_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB47624C0191A00ADBD44 /* block_parser.cc */; };
@@ -8144,6 +8146,12 @@
 		CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitVP8Decoder.cpp; sourceTree = "<group>"; };
 		CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitDecoderReceiver.cpp; sourceTree = "<group>"; };
 		CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitDecoderReceiver.h; sourceTree = "<group>"; };
+		CDC1F47025CF69E40084CA16 /* opus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
+		CDC1F47125CF69E40084CA16 /* opus_multistream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_multistream.h; sourceTree = "<group>"; };
+		CDC1F47225CF69E40084CA16 /* opus_custom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_custom.h; sourceTree = "<group>"; };
+		CDC1F47325CF69E40084CA16 /* opus_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_types.h; sourceTree = "<group>"; };
+		CDC1F47425CF69E40084CA16 /* opus_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_defines.h; sourceTree = "<group>"; };
+		CDC1F47525CF69E40084CA16 /* opus_projection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_projection.h; sourceTree = "<group>"; };
 		CDEBB11924C0187400ADBD44 /* libwebm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwebm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEBB11E24C0189600ADBD44 /* libwebm.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libwebm.xcconfig; sourceTree = "<group>"; };
 		CDEBB40524C0191A00ADBD44 /* reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
@@ -12379,6 +12387,7 @@
 			isa = PBXGroup;
 			children = (
 				5CDD8CAC1E43C72300621E92 /* celt */,
+				CDC1F46F25CF69E40084CA16 /* include */,
 				5CDD8D5D1E43C7C700621E92 /* silk */,
 				5C4B4A921E42C522002651C8 /* src */,
 			);
@@ -15089,6 +15098,19 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		CDC1F46F25CF69E40084CA16 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				CDC1F47025CF69E40084CA16 /* opus.h */,
+				CDC1F47225CF69E40084CA16 /* opus_custom.h */,
+				CDC1F47425CF69E40084CA16 /* opus_defines.h */,
+				CDC1F47125CF69E40084CA16 /* opus_multistream.h */,
+				CDC1F47525CF69E40084CA16 /* opus_projection.h */,
+				CDC1F47325CF69E40084CA16 /* opus_types.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		CDEBB11F24C0191800ADBD44 /* libwebm */ = {
 			isa = PBXGroup;
 			children = (
@@ -15524,7 +15546,9 @@
 				5C4B4AB91E42C574002651C8 /* mlp.h in Headers */,
 				5CDD8D501E43C79C00621E92 /* modes.h in Headers */,
 				5CDD8E701E43C80C00621E92 /* NSQ.h in Headers */,
+				CDC1F47625CF69EA0084CA16 /* opus_defines.h in Headers */,
 				5C4B4AC11E42C574002651C8 /* opus_private.h in Headers */,
+				CDC1F47725CF6A640084CA16 /* opus_types.h in Headers */,
 				5CDD8D511E43C79C00621E92 /* os_support.h in Headers */,
 				5CDD8D531E43C79C00621E92 /* pitch.h in Headers */,
 				5CDD8E711E43C80C00621E92 /* pitch_est_defines.h in Headers */,
@@ -18772,6 +18796,7 @@
 				4131C1BF234B8A4A0028A615 /* ice_transport_internal.cc in Sources */,
 				4131C047234B898D0028A615 /* ifaddrs_android.cc in Sources */,
 				4131C05C234B898D0028A615 /* ifaddrs_converter.cc in Sources */,
+				41A6F6AD258952F0005B8AA6 /* ilbc_specific_functions.c in Sources */,
 				5C4B4C1C1E431F75002651C8 /* incoming_video_stream.cc in Sources */,
 				41433CF81F79B33400387B4D /* initialize.c in Sources */,
 				5CDD8A9A1E43C00F00621E92 /* input_audio_file.cc in Sources */,
@@ -19052,7 +19077,6 @@
 				4131C15A234B89E20028A615 /* rtc_certificate_generator.cc in Sources */,
 				4131C2EF234B8DC20028A615 /* rtc_error.cc in Sources */,
 				4131C470234C81B60028A615 /* rtc_event.cc in Sources */,
-				41A6F6AD258952F0005B8AA6 /* ilbc_specific_functions.c in Sources */,
 				4131C55B234C8B190028A615 /* rtc_event_alr_state.cc in Sources */,
 				4131C547234C8B190028A615 /* rtc_event_audio_network_adaptation.cc in Sources */,
 				4131C54A234C8B190028A615 /* rtc_event_audio_playout.cc in Sources */,

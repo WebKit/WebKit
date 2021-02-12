@@ -1,3 +1,14 @@
+2021-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add Experimental Opus Codec support
+        https://bugs.webkit.org/show_bug.cgi?id=221745
+
+        Reviewed by Eric Carlson.
+
+        Copy libopus headers into the libwebrtc header directory.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2021-02-05  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [CMake] Hide libwebrtc symbols

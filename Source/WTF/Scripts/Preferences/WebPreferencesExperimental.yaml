@@ -602,6 +602,18 @@ ModernUnprefixedWebAudioEnabled:
     WebCore:
       default: false
 
+OpusDecoderEnabled:
+  type: bool
+  humanReadableName: "Opus audio decoder"
+  humanReadableDescription: "Enable Opus audio decoder"
+  condition: ENABLE(OPUS)
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 OverscrollBehaviorEnabled:
   type: bool
   humanReadableName: "CSS Overscroll Behavior"

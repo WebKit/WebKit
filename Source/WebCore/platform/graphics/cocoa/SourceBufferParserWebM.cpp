@@ -1221,34 +1221,6 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
 {
     ASSERT(sampleCount);
 
-    if (!formatDescription()) {
-        if (!track().codec_private.is_present()) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("Audio track missing magic cookie");
-            return Skip(&reader, bytesRemaining);
-        }
-
-        RetainPtr<CMFormatDescriptionRef> formatDescription;
-        auto& privateData = track().codec_private.value();
-        if (codec() == CodecType::Vorbis)
-            formatDescription = createVorbisAudioFormatDescription(privateData.size(), privateData.data());
-        else if (codec() == CodecType::Opus)
-            formatDescription = createOpusAudioFormatDescription(privateData.size(), privateData.data());
-
-        if (!formatDescription) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("Failed to create format description from audio track header");
-            return Skip(&reader, bytesRemaining);
-        }
-
-        auto streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
-        if (!streamDescription) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioFormatDescriptionGetStreamBasicDescription failed");
-            return Skip(&reader, bytesRemaining);
-        }
-        m_packetDuration = CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
-
-        setFormatDescription(WTFMove(formatDescription));
-    }
-
     if (m_packetDescriptions.isEmpty()) {
         m_packetBytesRead = 0;
         m_byteOffset = metadata.position;
@@ -1268,6 +1240,34 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         // FIXME: We can't yet handle parsing a Frame that doesn't have all its memory available.
         if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock)
             return status;
+    }
+
+    if (!formatDescription()) {
+        if (!track().codec_private.is_present()) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Audio track missing magic cookie");
+            return Skip(&reader, bytesRemaining);
+        }
+
+        RetainPtr<CMFormatDescriptionRef> formatDescription;
+        auto& privateData = track().codec_private.value();
+        if (codec() == CodecType::Vorbis)
+            formatDescription = createVorbisAudioFormatDescription(privateData.size(), privateData.data());
+        else if (codec() == CodecType::Opus)
+            formatDescription = createOpusAudioFormatDescription(privateData.size(), privateData.data(), m_packetData.size(), m_packetData.data());
+
+        if (!formatDescription) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Failed to create format description from audio track header");
+            return Skip(&reader, bytesRemaining);
+        }
+
+        auto streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
+        if (!streamDescription) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioFormatDescriptionGetStreamBasicDescription failed");
+            return Skip(&reader, bytesRemaining);
+        }
+        m_packetDuration = CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
+
+        setFormatDescription(WTFMove(formatDescription));
     }
 
     m_packetDescriptions.append({ static_cast<int64_t>(packetDataOffset), 0, static_cast<UInt32>(metadata.size) });
