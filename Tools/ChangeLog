@@ -1,3 +1,16 @@
+2021-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit-patch] Use identifiers when posting to bugzilla (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=221724
+        <rdar://problem/74209525>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py:
+        (Svn): Keep track of the set of mock remotes.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn._cache_path): Change the cache path if we detect the current host is being mocked.
+
 2021-02-12  Aakash Jain  <aakash_jain@apple.com>
 
         Delete old build.webkit.org templates

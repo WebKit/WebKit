@@ -33,6 +33,7 @@ from webkitscmpy import Commit, Contributor, remote as scmremote
 
 class Svn(mocks.Requests):
     top = None
+    remotes = []
     REVISION_REQUEST_RE = re.compile(r'svn/rvr/(?P<revision>\d+)(/(?P<category>\S+))?$')
 
     def __init__(self, remote='svn.example.org/repository/webkit', datafile=None):
@@ -54,6 +55,7 @@ class Svn(mocks.Requests):
     def __enter__(self):
         super(Svn, self).__enter__()
 
+        self.remotes.append(self.hosts[0])
         cache_path = scmremote.Svn('http://{}'.format(self.remote))._cache_path
         if os.path.isfile(cache_path):
             with open(cache_path, 'r') as cache:
@@ -70,6 +72,7 @@ class Svn(mocks.Requests):
             with open(cache_path, 'w') as cache:
                 cache.write(self._cache_contents)
 
+        self.remotes.remove(self.hosts[0])
         super(Svn, self).__exit__(*args, **kwargs)
 
     def latest(self):
