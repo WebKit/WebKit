@@ -125,8 +125,8 @@ static CGPathRef createPathForGlyph(HDC hdc, Glyph glyph)
     return path;
 }
 
-void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, const GlyphBuffer& glyphBuffer,
-    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode smoothingMode)
+void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, const GlyphBufferGlyph* glyphs,
+    const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode smoothingMode)
 {
     CGContextRef cgContext = graphicsContext.platformContext();
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
@@ -192,19 +192,19 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
         CGContextSetTextPosition(cgContext, shadowTextX, shadowTextY);
-        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+        CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
         if (font.syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width() + font.syntheticBoldOffset(), point.y() + shadowOffset.height());
-            CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+            CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
         }
         graphicsContext.setFillColor(fillColor);
     }
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
-    CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+    CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
     if (font.syntheticBoldOffset()) {
         CGContextSetTextPosition(cgContext, point.x() + font.syntheticBoldOffset(), point.y());
-        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+        CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
     }
 
     if (hasSimpleShadow)
