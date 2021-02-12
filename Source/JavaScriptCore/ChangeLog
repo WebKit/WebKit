@@ -1,3 +1,13 @@
+2021-02-11  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock::propagateTransitions() should also handle OpSetPrivateBrand's LLInt IC.
+        https://bugs.webkit.org/show_bug.cgi?id=221787
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+
 2021-02-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         SetIntegrityLevel should call [[DefineOwnProperty]] with partial descriptor

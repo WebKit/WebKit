@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1133,12 +1133,11 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 StructureID newStructureID = metadata.m_newStructureID;
                 if (!oldStructureID || !newStructureID)
                     return;
-                Structure* oldStructure =
-                    vm.heap.structureIDTable().get(oldStructureID);
-                Structure* newStructure =
-                    vm.heap.structureIDTable().get(newStructureID);
-                if (vm.heap.isMarked(oldStructure))
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
+                if (vm.heap.isMarked(oldStructure)) {
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
                     visitor.appendUnbarriered(newStructure);
+                }
             });
 
             m_metadata->forEach<OpPutPrivateName>([&] (auto& metadata) {
@@ -1152,12 +1151,29 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 if (!vm.heap.isMarked(property))
                     return;
 
-                Structure* oldStructure =
-                    vm.heap.structureIDTable().get(oldStructureID);
-                Structure* newStructure =
-                    vm.heap.structureIDTable().get(newStructureID);
-                if (vm.heap.isMarked(oldStructure))
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
+                if (vm.heap.isMarked(oldStructure)) {
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
                     visitor.appendUnbarriered(newStructure);
+                }
+            });
+
+            m_metadata->forEach<OpSetPrivateBrand>([&] (auto& metadata) {
+                StructureID oldStructureID = metadata.m_oldStructureID;
+                StructureID newStructureID = metadata.m_newStructureID;
+                if (!oldStructureID || !newStructureID)
+                    return;
+
+                JSCell* brand = metadata.m_brand.get();
+                ASSERT(brand);
+                if (!vm.heap.isMarked(brand))
+                    return;
+
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
+                if (vm.heap.isMarked(oldStructure)) {
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
+                    visitor.appendUnbarriered(newStructure);
+                }
             });
         }
     }
