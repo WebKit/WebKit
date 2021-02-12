@@ -1,3 +1,25 @@
+2021-02-11  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Fix WPEQt tests after r272707
+        https://bugs.webkit.org/show_bug.cgi?id=220681
+
+        Reviewed by Carlos Garcia Campos.
+
+        Setting the title became async, so we must wait for it to be
+        processed.
+
+        Same patch as r271578, reapplying after original change was reapplied
+        in r272707.
+
+        * TestWebKitAPI/Tests/WPEQt/TestLoad.cpp:
+        (TestLoad::main):
+        * TestWebKitAPI/Tests/WPEQt/TestLoadHtml.cpp:
+        (TestLoadHtml::main):
+        * TestWebKitAPI/Tests/WPEQt/TestLoadRequest.cpp:
+        (TestLoadRequest::main):
+        * TestWebKitAPI/Tests/WPEQt/TestRunJavaScript.cpp:
+        (TestRunJavaScript::main):
+
 2021-02-11  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use commits.webkit.org instead of trac
