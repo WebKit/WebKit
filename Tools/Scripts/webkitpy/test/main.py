@@ -73,6 +73,11 @@ def main():
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.common.config', 'webkitpy.tool'), 'fail horribly on win32', 54526)
+
+    # Xcode tests are only relevant for Mac
+    if not (sys.platform.startswith('darwin')):
+        tester.skip(('webkitpy.xcode',), 'xcode is only valid on darwin', 221837)
+
     return not tester.run()
 
 

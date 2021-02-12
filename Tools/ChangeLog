@@ -1,3 +1,18 @@
+2021-02-12  Don Olmstead  <don.olmstead@sony.com>
+
+        webkitpy.xcode only relevant for darwin platforms
+        https://bugs.webkit.org/show_bug.cgi?id=221837
+
+        Reviewed by Jonathan Bedard.
+
+        The tests in webkitpy.xcode are Darwin specific and should only run on that platform.
+
+        This issue was discovered when running the tests with Python 3 on Windows which failed
+        a number of tests in the suite. These tests may run successfully on *nix platforms but
+        aren't actually relevant.
+
+        * Scripts/webkitpy/test/main.py:
+
 2021-02-12  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] Post both revision and identifier to bugzilla
