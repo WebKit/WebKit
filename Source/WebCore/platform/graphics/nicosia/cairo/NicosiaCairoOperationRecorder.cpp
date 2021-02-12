@@ -516,7 +516,6 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph
     auto xOffset = point.x();
     Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
     {
-        ASSERT(from + numGlyphs <= numGlyphs);
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
             cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
