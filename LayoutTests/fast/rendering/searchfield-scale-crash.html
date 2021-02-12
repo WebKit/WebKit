@@ -1,0 +1,32 @@
+<html>
+<head>
+<style>
+html,head,style {
+    -webkit-appearance: searchfield-results-decoration;
+    transform: scale(100);
+    writing-mode: vertical-rl;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = () => {
+    document.styleSheets[0].insertRule(`* { all: initial; }`);
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            document.querySelector('style').remove();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+};
+</script>
+</head>
+<body>
+This tests that we do not hit an assertion while rendering the page.
+PASS
+</body>
+</html>

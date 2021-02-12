@@ -1,3 +1,18 @@
+2021-02-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart() from large scale
+        https://bugs.webkit.org/show_bug.cgi?id=221635
+
+        Reviewed by Darin Adler.
+
+        Add a test with a very large value of scale that tests that
+        we do not trigger the assertion here.
+        Thanks to Ryosuke Niwa for help in cleaning up the test
+        and making it more reliable.
+
+        * fast/rendering/searchfield-scale-crash-expected.txt: Added.
+        * fast/rendering/searchfield-scale-crash.html: Added.
+
 2021-02-12  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/do-while-loop-break.html is a flaky failure

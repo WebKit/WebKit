@@ -2062,7 +2062,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderBox& box,
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
     localBounds.setLocation(paintingPos);
 
-    [[search searchButtonCell] drawWithFrame:localBounds inView:documentViewFor(box)];
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], inputBox, paintInfo, localBounds);
     [[search searchButtonCell] setControlView:nil];
     return false;
 }
