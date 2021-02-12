@@ -1,3 +1,15 @@
+2021-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Limit mech-register to required services
+        https://bugs.webkit.org/show_bug.cgi?id=221768
+        <rdar://problem/70350150>
+
+        Reviewed by Per Arne Vollan.
+
+        Limit mach-register to the two cases identified by telemetry.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-12  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit
