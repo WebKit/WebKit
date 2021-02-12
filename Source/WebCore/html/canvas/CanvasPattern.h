@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-class Image;
+class NativeImage;
 class Pattern;
 struct DOMMatrix2DInit;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
 public:
-    static Ref<CanvasPattern> create(Ref<Image>&&, bool repeatX, bool repeatY, bool originClean);
+    static Ref<CanvasPattern> create(Ref<NativeImage>&&, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();
 
     static bool parseRepetitionType(const String&, bool& repeatX, bool& repeatY);
@@ -51,7 +51,7 @@ public:
     ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
 
 private:
-    CanvasPattern(Ref<Image>&&, bool repeatX, bool repeatY, bool originClean);
+    CanvasPattern(Ref<NativeImage>&&, bool repeatX, bool repeatY, bool originClean);
 
     Ref<Pattern> m_pattern;
     bool m_originClean;

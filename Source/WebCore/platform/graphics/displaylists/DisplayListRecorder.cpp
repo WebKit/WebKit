@@ -85,9 +85,20 @@ static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& cha
     return true;
 }
 
+void Recorder::cacheNativeImage(NativeImage& image)
+{
+    if (m_delegate)
+        m_delegate->cacheNativeImage(image);
+    m_displayList.cacheNativeImage(image);
+}
+
 void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
 {
     if (!containsOnlyInlineStateChanges(changes, changeFlags)) {
+        if (auto pattern = changes.m_state.strokePattern)
+            cacheNativeImage(pattern->tileImage());
+        if (auto pattern = changes.m_state.fillPattern)
+            cacheNativeImage(pattern->tileImage());
         append<SetState>(changes.m_state, changeFlags);
         return;
     }
@@ -183,17 +194,13 @@ void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRec
 
 void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    if (m_delegate)
-        m_delegate->cacheNativeImage(image);
-    m_displayList.cacheNativeImage(image);
+    cacheNativeImage(image);
     append<DrawNativeImage>(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
 void Recorder::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    if (m_delegate)
-        m_delegate->cacheNativeImage(image);
-    m_displayList.cacheNativeImage(image);
+    cacheNativeImage(image);
     append<DrawPattern>(image.renderingResourceIdentifier(), imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 

@@ -254,9 +254,12 @@ public:
     static constexpr bool isDrawingItem = false;
 
     WEBCORE_EXPORT SetState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
-    WEBCORE_EXPORT SetState(const GraphicsContextStateChange&);
-    
-    const GraphicsContextStateChange& state() const { return m_state; }
+
+    const GraphicsContextStateChange& stateChange() const { return m_stateChange; }
+    const Pattern::Parameters& strokePatternParameters() const { return m_strokePattern.parameters; }
+    const Pattern::Parameters& fillPatternParameters() const { return m_fillPattern.parameters; }
+    RenderingResourceIdentifier strokePatternImageIdentifier() const { return m_strokePattern.tileImageIdentifier; }
+    RenderingResourceIdentifier fillPatternImageIdentifier() const { return m_fillPattern.tileImageIdentifier; }
 
     static void builderState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
@@ -265,19 +268,28 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<SetState> decode(Decoder&);
 
-    void apply(GraphicsContext&) const;
+    void apply(GraphicsContext&, NativeImage* strokePatternImage, NativeImage* fillPatternImage);
 
 private:
-    GraphicsContextStateChange m_state;
+    struct PatternData {
+        RenderingResourceIdentifier tileImageIdentifier;
+        Pattern::Parameters parameters;
+    };
+
+    WEBCORE_EXPORT SetState(const GraphicsContextStateChange&, const PatternData& strokePattern, const PatternData& fillPattern);
+
+    GraphicsContextStateChange m_stateChange;
+    PatternData m_strokePattern;
+    PatternData m_fillPattern;
 };
 
 template<class Encoder>
 void SetState::encode(Encoder& encoder) const
 {
-    auto changeFlags = m_state.m_changeFlags;
+    auto changeFlags = m_stateChange.m_changeFlags;
     encoder << changeFlags;
 
-    auto& state = m_state.m_state;
+    auto& state = m_stateChange.m_state;
 
     if (changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
         encoder << !!state.strokeGradient;
@@ -287,8 +299,10 @@ void SetState::encode(Encoder& encoder) const
 
     if (changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
         encoder << !!state.strokePattern;
-        if (state.strokePattern)
-            encoder << *state.strokePattern;
+        if (auto& pattern = state.strokePattern) {
+            encoder << pattern->tileImage().renderingResourceIdentifier();
+            encoder << pattern->parameters();
+        }
     }
 
     if (changeFlags.contains(GraphicsContextState::FillGradientChange)) {
@@ -299,8 +313,10 @@ void SetState::encode(Encoder& encoder) const
 
     if (changeFlags.contains(GraphicsContextState::FillPatternChange)) {
         encoder << !!state.fillPattern;
-        if (state.fillPattern)
-            encoder << *state.fillPattern;
+        if (auto& pattern = state.fillPattern) {
+            encoder << pattern->tileImage().renderingResourceIdentifier();
+            encoder << pattern->parameters();
+        }
     }
 
     if (changeFlags.contains(GraphicsContextState::ShadowChange)) {
@@ -366,6 +382,9 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     GraphicsContextStateChange stateChange;
     stateChange.m_changeFlags = *changeFlags;
 
+    PatternData strokePattern;
+    PatternData fillPattern;
+
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
         Optional<bool> hasStrokeGradient;
         decoder >> hasStrokeGradient;
@@ -388,11 +407,17 @@ Optional<SetState> SetState::decode(Decoder& decoder)
             return WTF::nullopt;
 
         if (hasStrokePattern.value()) {
-            auto strokePattern = Pattern::decode(decoder);
-            if (!strokePattern)
+            Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+            decoder >> renderingResourceIdentifier;
+            if (!renderingResourceIdentifier)
+                return WTF::nullopt;
+            
+            Optional<Pattern::Parameters> parameters;
+            decoder >> parameters;
+            if (!parameters)
                 return WTF::nullopt;
 
-            stateChange.m_state.strokePattern = WTFMove(*strokePattern);
+            strokePattern = { *renderingResourceIdentifier, *parameters };
         }
     }
 
@@ -418,11 +443,17 @@ Optional<SetState> SetState::decode(Decoder& decoder)
             return WTF::nullopt;
 
         if (hasFillPattern.value()) {
-            auto fillPattern = Pattern::decode(decoder);
-            if (!fillPattern)
+            Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+            decoder >> renderingResourceIdentifier;
+            if (!renderingResourceIdentifier)
                 return WTF::nullopt;
 
-            stateChange.m_state.fillPattern = WTFMove(*fillPattern);
+            Optional<Pattern::Parameters> parameters;
+            decoder >> parameters;
+            if (!parameters)
+                return WTF::nullopt;
+
+            fillPattern = { *renderingResourceIdentifier, *parameters };
         }
     }
 
@@ -583,7 +614,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         stateChange.m_state.shadowsIgnoreTransforms = *shadowsIgnoreTransforms;
     }
 
-    return { stateChange };
+    return {{ stateChange, strokePattern, fillPattern }};
 }
 
 class SetLineCap {

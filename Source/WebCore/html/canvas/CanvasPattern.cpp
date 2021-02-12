@@ -28,19 +28,19 @@
 
 #include "DOMMatrix2DInit.h"
 #include "DOMMatrixReadOnly.h"
-#include "Image.h"
+#include "NativeImage.h"
 #include "Pattern.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Ref<CanvasPattern> CanvasPattern::create(Ref<Image>&& image, bool repeatX, bool repeatY, bool originClean)
+Ref<CanvasPattern> CanvasPattern::create(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
 {
     return adoptRef(*new CanvasPattern(WTFMove(image), repeatX, repeatY, originClean));
 }
 
-CanvasPattern::CanvasPattern(Ref<Image>&& image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(Pattern::create(WTFMove(image), repeatX, repeatY))
+CanvasPattern::CanvasPattern(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
+    : m_pattern(Pattern::create(WTFMove(image), { repeatX, repeatY }))
     , m_originClean(originClean)
 {
 }

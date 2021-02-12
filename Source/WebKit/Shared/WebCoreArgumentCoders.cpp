@@ -1075,18 +1075,6 @@ static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Imag
     return decodeImage(decoder, image);
 }
 
-void ArgumentCoder<ImageHandle>::encode(Encoder& encoder, const ImageHandle& imageHandle)
-{
-    encodeOptionalImage(encoder, imageHandle.image.get());
-}
-
-bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHandle)
-{
-    if (!decodeOptionalImage(decoder, imageHandle.image))
-        return false;
-    return true;
-}
-
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
     encoder << font->origin();

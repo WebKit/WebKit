@@ -209,23 +209,29 @@ static TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
 }
 
 SetState::SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
-    : m_state(state, flags)
+    : m_stateChange(state, flags)
 {
 }
 
-SetState::SetState(const GraphicsContextStateChange& stateChange)
-    : m_state(stateChange)
+SetState::SetState(const GraphicsContextStateChange& stateChange, const PatternData& strokePattern, const PatternData& fillPattern)
+    : m_stateChange(stateChange)
+    , m_strokePattern(strokePattern)
+    , m_fillPattern(fillPattern)
 {
 }
 
-void SetState::apply(GraphicsContext& context) const
+void SetState::apply(GraphicsContext& context, NativeImage* strokePatternImage, NativeImage* fillPatternImage)
 {
-    m_state.apply(context);
+    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange) && strokePatternImage)
+        m_stateChange.m_state.strokePattern = Pattern::create(makeRef(*strokePatternImage), m_strokePattern.parameters);
+    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange) && fillPatternImage)
+        m_stateChange.m_state.fillPattern = Pattern::create(makeRef(*fillPatternImage), m_fillPattern.parameters);
+    m_stateChange.apply(context);
 }
 
 static TextStream& operator<<(TextStream& ts, const SetState& state)
 {
-    ts << state.state();
+    ts << state.stateChange();
     return ts;
 }
 

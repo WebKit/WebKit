@@ -171,6 +171,8 @@ private:
 
     WEBCORE_EXPORT void willAppendItemOfType(ItemType);
 
+    void cacheNativeImage(NativeImage&);
+
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;

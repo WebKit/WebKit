@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,24 +55,21 @@ static void patternReleaseCallback(void* info)
     });
 }
 
-CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTransformation) const
+CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTransform) const
 {
-    FloatRect tileRect = tileImage().rect();
+    FloatRect tileRect = { { }, tileImage().size() };
 
-    AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
+    AffineTransform patternTransform = userSpaceTransform * patternSpaceTransform();
     patternTransform.scaleNonUniform(1, -1);
     patternTransform.translate(0, -tileRect.height());
 
-    PlatformImagePtr platformImage;
-    if (auto nativeImage = tileImage().nativeImage())
-        platformImage = nativeImage->platformImage();
-    
+    PlatformImagePtr platformImage = tileImage().platformImage();
     if (!platformImage)
         return nullptr;
 
     // If we're repeating in both directions, we can use image-backed patterns
     // instead of custom patterns, and avoid tiling-edge pixel cracks.
-    if (m_repeatX && m_repeatY)
+    if (repeatX() && repeatY())
         return CGPatternCreateWithImage2(platformImage.get(), patternTransform, kCGPatternTilingConstantSpacing);
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also
@@ -80,8 +77,8 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
     // INT_MAX is almost correct, but there seems to be some number wrapping occurring making the fill
     // pattern is not filled correctly.
     // To make error of floating point less than 0.5, we use the half of the number of mantissa of float (1 << 22).
-    CGFloat xStep = m_repeatX ? tileRect.width() : (1 << 22);
-    CGFloat yStep = m_repeatY ? tileRect.height() : (1 << 22);
+    CGFloat xStep = repeatX() ? tileRect.width() : (1 << 22);
+    CGFloat yStep = repeatY() ? tileRect.height() : (1 << 22);
 
     // The pattern will release the CGImageRef when it's done rendering in patternReleaseCallback
     CGImageRef image = platformImage.leakRef();

@@ -1,3 +1,13 @@
+2021-02-12  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement SetState DisplayList item
+        https://bugs.webkit.org/show_bug.cgi?id=219468
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+        Unmark tests that are no longer crash.
+
 2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] event.ctrlKey and other are false in keydown event

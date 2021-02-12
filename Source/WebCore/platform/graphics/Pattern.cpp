@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,22 @@
 
 namespace WebCore {
 
-Ref<Pattern> Pattern::create(Ref<Image>&& tileImage, bool repeatX, bool repeatY)
+Ref<Pattern> Pattern::create(Ref<NativeImage>&& tileImage, const Parameters& parameters)
 {
-    return adoptRef(*new Pattern(WTFMove(tileImage), repeatX, repeatY));
+    return adoptRef(*new Pattern(WTFMove(tileImage), parameters));
 }
 
-Pattern::Pattern(Ref<Image>&& image, bool repeatX, bool repeatY)
+Pattern::Pattern(Ref<NativeImage>&& image, const Parameters& parameters)
     : m_tileImage(WTFMove(image))
-    , m_repeatX(repeatX)
-    , m_repeatY(repeatY)
+    , m_parameters(parameters)
 {
 }
 
 Pattern::~Pattern() = default;
 
-void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation)
+void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransform)
 {
-    m_patternSpaceTransformation = patternSpaceTransformation;
+    m_parameters.patternSpaceTransform = patternSpaceTransform;
 }
 
 }

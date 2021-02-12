@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
@@ -53,65 +53,61 @@ namespace WebCore {
 class AffineTransform;
 class GraphicsContext;
 class Image;
-class ImageHandle;
 
 class Pattern final : public RefCounted<Pattern> {
 public:
-    WEBCORE_EXPORT static Ref<Pattern> create(Ref<Image>&& tileImage, bool repeatX, bool repeatY);
+    struct Parameters {
+        Parameters(bool repeatX = true, bool repeatY = true, AffineTransform patternSpaceTransform = { })
+            : patternSpaceTransform(patternSpaceTransform)
+            , repeatX(repeatX)
+            , repeatY(repeatY)
+        {
+        }
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<Parameters> decode(Decoder&);
+        AffineTransform patternSpaceTransform;
+        bool repeatX;
+        bool repeatY;
+    };
+
+    WEBCORE_EXPORT static Ref<Pattern> create(Ref<NativeImage>&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    Image& tileImage() const { return m_tileImage.get(); }
+    NativeImage& tileImage() const { return m_tileImage.get(); }
+    const Parameters& parameters() const { return m_parameters; }
 
-    // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransformation'
+    // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
 #if !USE(DIRECT2D)
-    PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransformation) const;
+    PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
 #else
-    PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
+    PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransform) const;
 #endif
-    WEBCORE_EXPORT void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
-    const AffineTransform& patternSpaceTransform() const { return m_patternSpaceTransformation; };
-    bool repeatX() const { return m_repeatX; }
-    bool repeatY() const { return m_repeatY; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Ref<Pattern>> decode(Decoder&);
+    void setPatternSpaceTransform(const AffineTransform&);
+    const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
+    bool repeatX() const { return m_parameters.repeatX; }
+    bool repeatY() const { return m_parameters.repeatY; }
 
 private:
-    Pattern(Ref<Image>&&, bool repeatX, bool repeatY);
+    Pattern(Ref<NativeImage>&&, const Parameters&);
 
-    Ref<Image> m_tileImage;
-    AffineTransform m_patternSpaceTransformation;
-    bool m_repeatX;
-    bool m_repeatY;
+    Ref<NativeImage> m_tileImage;
+    Parameters m_parameters;
 };
 
 template<class Encoder>
-void Pattern::encode(Encoder& encoder) const
+void Pattern::Parameters::encode(Encoder& encoder) const
 {
-    ImageHandle imageHandle;
-    imageHandle.image = m_tileImage.ptr();
-    encoder << imageHandle;
-    encoder << m_patternSpaceTransformation;
-    encoder << m_repeatX;
-    encoder << m_repeatY;
+    encoder << patternSpaceTransform;
+    encoder << repeatX;
+    encoder << repeatY;
 }
 
 template<class Decoder>
-Optional<Ref<Pattern>> Pattern::decode(Decoder& decoder)
+Optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
 {
-    Optional<ImageHandle> imageHandle;
-    decoder >> imageHandle;
-    if (!imageHandle)
-        return WTF::nullopt;
-
-    Optional<AffineTransform> patternSpaceTransformation;
-    decoder >> patternSpaceTransformation;
-    if (!patternSpaceTransformation)
-        return WTF::nullopt;
-
-    Optional<bool> repeatX;
-    decoder >> repeatX;
-    if (!repeatX)
+    Optional<AffineTransform> patternSpaceTransform;
+    decoder >> patternSpaceTransform;
+    if (!patternSpaceTransform)
         return WTF::nullopt;
 
     Optional<bool> repeatY;
@@ -119,10 +115,12 @@ Optional<Ref<Pattern>> Pattern::decode(Decoder& decoder)
     if (!repeatY)
         return WTF::nullopt;
 
-    auto pattern = Pattern::create(imageHandle->image.releaseNonNull(), *repeatX, *repeatY);
-    pattern->setPatternSpaceTransform(*patternSpaceTransformation);
-    return pattern;
+    Optional<bool> repeatX;
+    decoder >> repeatX;
+    if (!repeatX)
+        return WTF::nullopt;
+
+    return {{ *repeatX, *repeatY, *patternSpaceTransform }};
 }
 
 } //namespace
-

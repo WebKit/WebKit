@@ -1,3 +1,16 @@
+2021-02-12  Said Abou-Hallawa  <said@apple.com>
+
+        Make Pattern hold a NativeImage instead of an Image
+        https://bugs.webkit.org/show_bug.cgi?id=221637
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ImageHandle>::encode): Deleted.
+        (IPC::ArgumentCoder<ImageHandle>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        Delete the encoding and decoding of Image since it is not used anymore
+
 2021-02-12  Antti Koivisto  <antti@apple.com>
 
         Increase network layout resource load priority for prioritized loads
