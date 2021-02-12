@@ -1,3 +1,20 @@
+2021-02-12  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Make accessibility/aria-modal-in-aria-hidden.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=221812
+
+        Reviewed by Zalan Bujtas.
+
+        It is very dependent on exact interactions between the internal testing API and the DOM.
+        It also seems to be partially testing a wrong thing (probably as workaround for above).
+
+        * accessibility/aria-modal-in-aria-hidden-expected.txt:
+        * accessibility/aria-modal-in-aria-hidden.html:
+
+        Do rendering update between every mutation and check, not just the last one.
+        Fix the middle test to use isIgnored too.
+        (isValid() is not even a function, it is a property, so this relied on getting null to pass)
+
 2021-02-12  Amir Mark Jr  <amir_mark@apple.com>
 
         REGRESSION (r272241) [MacOS wk1] imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html is flaky failure.

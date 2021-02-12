@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS accessibilityController.accessibleElementById('bgContent').isIgnored is false
-PASS !backgroundContent || !backgroundContent.isValid() is true
+PASS !backgroundContent || backgroundContent.isIgnored is true
 PASS accessibilityController.accessibleElementById('bgContent').isIgnored is false
 PASS successfullyParsed is true
 
