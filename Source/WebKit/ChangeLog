@@ -1,3 +1,19 @@
+2021-02-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [tvOS] Fix build failure in WKFormSelectPicker
+        https://bugs.webkit.org/show_bug.cgi?id=221839
+        <rdar://problem/74287348>
+
+        Reviewed by Wenson Hsieh.
+
+        UITableViewStyleInsetGrouped is not available on tvOS. Rather than
+        have two separate codepaths, we can just use UITableViewStyleGrouped
+        with sectionContentInsetFollowsLayoutMargins set to YES.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPickerTableViewController initWithView:]):
+
 2021-02-12  Youenn Fablet  <youenn@apple.com>
 
         Test landed flaky: [iOS] TestWebKitAPI.WebKit2.CrashGPUProcessWhileCapturing

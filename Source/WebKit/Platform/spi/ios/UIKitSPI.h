@@ -67,6 +67,7 @@
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
+#import <UIKit/UITableView_Private.h>
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextChecker_Private.h>
 #import <UIKit/UITextEffectsWindow.h>
@@ -461,6 +462,10 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 @end
 
 #endif // HAVE(UI_HOVER_EVENT_RESPONDABLE)
+
+@interface UITableView ()
+@property (nonatomic, getter=_sectionContentInsetFollowsLayoutMargins, setter=_setSectionContentInsetFollowsLayoutMargins:) BOOL sectionContentInsetFollowsLayoutMargins;
+@end
 
 @interface UITapGestureRecognizer ()
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;

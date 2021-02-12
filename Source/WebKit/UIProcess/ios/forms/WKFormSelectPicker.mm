@@ -724,8 +724,13 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (id)initWithView:(WKContentView *)view
 {
-    if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped]))
+    if (!(self = [super initWithStyle:UITableViewStyleGrouped]))
         return nil;
+
+    // Ideally, we would use UITableViewStyleInsetGrouped as the style, but it's unavailable
+    // on tvOS. To avoid a separate codepath for tvOS, we use UITableViewStyleGrouped with
+    // sectionContentInsetFollowsLayoutMargins set to YES.
+    [self.tableView _setSectionContentInsetFollowsLayoutMargins:YES];
 
     _contentView = view;
 
