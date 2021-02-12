@@ -1,3 +1,13 @@
+2021-02-11  Jonathan Bedard  <jbedard@apple.com>
+
+       [run-webkit-tests] Update PHP module configuration
+        https://bugs.webkit.org/show_bug.cgi?id=221776
+        <rdar://problem/74248860>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/conf/apache2.4-x-httpd.conf: Added.
+
 2021-02-11  Said Abou-Hallawa  <said@apple.com>
 
         Unreviewed, reverting r270578.

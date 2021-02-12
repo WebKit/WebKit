@@ -1,3 +1,16 @@
+2021-02-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Update PHP module configuration
+        https://bugs.webkit.org/show_bug.cgi?id=221776
+        <rdar://problem/74248860>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Optionally exclude PHP init directory.
+        * Scripts/webkitpy/port/base.py:
+        (Port._darwin_php_version): Add -x version.
+
 2021-02-11  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Fix WPEQt tests after r272707
