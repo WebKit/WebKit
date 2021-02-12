@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,9 +30,10 @@
 #include "config.h"
 #include "Font.h"
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
 #include <pal/spi/cf/CoreTextSPI.h>
 #endif
+
 #include "CachedFont.h"
 #include "CharacterProperties.h"
 #include "FontCache.h"

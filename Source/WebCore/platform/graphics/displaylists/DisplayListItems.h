@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -955,8 +955,6 @@ public:
 
 private:
     void computeBounds(const Font&);
-
-    GlyphBuffer generateGlyphBuffer(const Font&) const;
 
     RenderingResourceIdentifier m_fontIdentifier;
     Vector<GlyphBufferGlyph, 128> m_glyphs;

@@ -232,21 +232,18 @@ void GraphicsContextImplCairo::clearRect(const FloatRect& rect)
     Cairo::clearRect(m_platformContext, rect);
 }
 
-void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
+void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
 {
     if (!font.platformData().size())
         return;
 
     auto xOffset = point.x();
-    Vector<cairo_glyph_t> glyphs(numGlyphs);
+    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
     {
-        ASSERT(from + numGlyphs <= glyphBuffer.size());
-        auto* glyphsData = glyphBuffer.glyphs(from);
-        auto* advances = glyphBuffer.advances(from);
-
+        ASSERT(from + numGlyphs <= numGlyphs);
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
-            glyphs[i] = { glyphsData[i], xOffset, yOffset };
+            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
             xOffset += advances[i].width();
             yOffset += advances[i].height();
         }
@@ -260,7 +257,7 @@ void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& g
 
     auto& state = graphicsContext().state();
     Cairo::drawGlyphs(m_platformContext, Cairo::FillSource(state), Cairo::StrokeSource(state),
-        Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,
+        Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
         state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
         fontSmoothing);
 }

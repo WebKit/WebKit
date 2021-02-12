@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "FloatSize.h"
 #include "Glyph.h"
 #include <wtf/Vector.h>
@@ -41,6 +42,7 @@
 namespace WebCore {
 
 // The CG ports use the CG types directly, so an array of these types can be fed directly into CTFontShapeGlyphs().
+// When you write code that interacts with these types, use the functions below!
 #if USE(CG)
 using GlyphBufferGlyph = CGGlyph;
 using GlyphBufferAdvance = CGSize;

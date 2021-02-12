@@ -493,7 +493,7 @@ void CairoOperationRecorder::clearRect(const FloatRect& rect)
     append(createCommand<ClearRect>(rect));
 }
 
-void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
+void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
 {
     struct DrawGlyphs final : PaintingOperation, OperationData<Cairo::FillSource, Cairo::StrokeSource, Cairo::ShadowState, FloatPoint, RefPtr<cairo_scaled_font_t>, float, Vector<cairo_glyph_t>, float, TextDrawingModeFlags, float, FloatSize, Color, FontSmoothingMode> {
         virtual ~DrawGlyphs() = default;
@@ -514,15 +514,12 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBuffer& gly
         return;
 
     auto xOffset = point.x();
-    Vector<cairo_glyph_t> glyphs(numGlyphs);
+    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
     {
-        ASSERT(from + numGlyphs <= glyphBuffer.size());
-        auto* glyphsData = glyphBuffer.glyphs(from);
-        auto* advances = glyphBuffer.advances(from);
-
+        ASSERT(from + numGlyphs <= numGlyphs);
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
-            glyphs[i] = { glyphsData[i], xOffset, yOffset };
+            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
             xOffset += advances[i].width();
         }
     }
@@ -531,7 +528,7 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBuffer& gly
     append(createCommand<DrawGlyphs>(Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point,
         RefPtr<cairo_scaled_font_t>(font.platformData().scaledFont()),
-        font.syntheticBoldOffset(), WTFMove(glyphs), xOffset, state.textDrawingMode,
+        font.syntheticBoldOffset(), WTFMove(cairoGlyphs), xOffset, state.textDrawingMode,
         state.strokeThickness, state.shadowOffset, state.shadowColor, fontSmoothing));
 }
 

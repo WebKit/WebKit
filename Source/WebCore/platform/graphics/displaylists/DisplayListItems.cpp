@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -380,17 +380,9 @@ DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const G
     computeBounds(font);
 }
 
-inline GlyphBuffer DrawGlyphs::generateGlyphBuffer(const Font& font) const
-{
-    GlyphBuffer result;
-    for (size_t i = 0; i < m_glyphs.size(); ++i)
-        result.add(m_glyphs[i], font, m_advances[i], GlyphBuffer::noOffset);
-    return result;
-}
-
 void DrawGlyphs::apply(GraphicsContext& context, const Font& font) const
 {
-    context.drawGlyphs(font, generateGlyphBuffer(font), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
+    context.drawGlyphs(font, m_glyphs.data(), m_advances.data(), m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
 void DrawGlyphs::computeBounds(const Font& font)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L. All rights reserved.
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -524,9 +524,9 @@ LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, c
     GraphicsContextStateSaver stateSaver(info.context());
     info.context().clip(clipBounds);
 
-    GlyphBuffer buffer;
-    buffer.add(data.glyph, *data.font, advanceWidthForGlyph(data));
-    info.context().drawGlyphs(*data.font, buffer, 0, 1, origin, style.fontCascade().fontDescription().fontSmoothing());
+    // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
+    auto advance = makeGlyphBufferAdvance(advanceWidthForGlyph(data));
+    info.context().drawGlyphs(*data.font, &data.glyph, &advance, 1, origin, style.fontCascade().fontDescription().fontSmoothing());
 
     return glyphPaintRect;
 }
@@ -728,12 +728,12 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
     if (m_stretchType == StretchType::SizeVariant)
         glyphData.glyph = m_variantGlyph;
 
-    GlyphBuffer buffer;
-    buffer.add(glyphData.glyph, *glyphData.font, advanceWidthForGlyph(glyphData));
     LayoutPoint operatorTopLeft = paintOffset;
     FloatRect glyphBounds = boundsForGlyph(glyphData);
     LayoutPoint operatorOrigin { operatorTopLeft.x(), LayoutUnit(operatorTopLeft.y() - glyphBounds.y()) };
-    paintInfo.context().drawGlyphs(*glyphData.font, buffer, 0, 1, operatorOrigin, style.fontCascade().fontDescription().fontSmoothing());
+    // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
+    auto advance = makeGlyphBufferAdvance(advanceWidthForGlyph(glyphData));
+    paintInfo.context().drawGlyphs(*glyphData.font, &glyphData.glyph, &advance, 1, operatorOrigin, style.fontCascade().fontDescription().fontSmoothing());
 }
 
 }
