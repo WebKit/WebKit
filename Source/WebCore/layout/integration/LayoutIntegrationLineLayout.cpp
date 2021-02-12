@@ -405,8 +405,7 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (m_inlineContent->runs.isEmpty())
         return { };
 
-    auto boxGeometry = m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline));
-    return { Layout::BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
+    return Layout::BoxGeometry::borderBoxRect(m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline)));
 }
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
