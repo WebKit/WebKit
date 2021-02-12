@@ -217,7 +217,7 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     }
 #endif
 
-    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(*this);
+    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_isReady = false;
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.

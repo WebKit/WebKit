@@ -41,7 +41,7 @@ namespace WebCore {
 class CAAudioStreamDescription;
 class ImageTransferSessionVT;
 struct MediaConstraints;
-class RemoteVideoSample;
+class MediaSample;
 }
 
 namespace WebKit {
@@ -65,7 +65,7 @@ public:
     void captureStopped();
     void captureFailed() final;
 
-    void remoteVideoSampleAvailable(WebCore::RemoteVideoSample&&);
+    void videoSampleAvailable(WebCore::MediaSample&, WebCore::IntSize);
 
 private:
     RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
@@ -106,8 +106,6 @@ private:
 
     WebCore::CaptureDevice m_device;
     WebCore::MediaConstraints m_constraints;
-
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 
     WebCore::MediaSample::VideoRotation m_sampleRotation { WebCore::MediaSample::VideoRotation::None };
     bool m_shouldCaptureInGPUProcess { false };

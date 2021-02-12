@@ -29,6 +29,9 @@
 #include "Logging.h"
 #include "RemoteCaptureSampleManagerMessages.h"
 #include "SharedRingBufferStorage.h"
+#include "WebProcess.h"
+#include <WebCore/ImageTransferSessionVT.h>
+#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -43,6 +46,8 @@ RemoteCaptureSampleManager::RemoteCaptureSampleManager()
 
 RemoteCaptureSampleManager::~RemoteCaptureSampleManager()
 {
+    if (m_isRegisteredToParentProcessConnection)
+        WebProcess::singleton().parentProcessConnection()->removeThreadMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName());
     setConnection(nullptr);
 }
 
@@ -51,6 +56,14 @@ void RemoteCaptureSampleManager::setConnection(IPC::Connection* connection)
     if (m_connection == connection)
         return;
 
+    auto* parentConnection = WebProcess::singleton().parentProcessConnection();
+    if (connection == parentConnection) {
+        if (!m_isRegisteredToParentProcessConnection) {
+            m_isRegisteredToParentProcessConnection = true;
+            parentConnection->addThreadMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName(), this);
+        }
+        return;
+    }
     if (m_connection)
         m_connection->removeThreadMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName());
 
@@ -68,8 +81,21 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& sour
     dispatchToThread([this, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
 
-        ASSERT(!m_sources.contains(identifier));
-        m_sources.add(identifier, makeUnique<RemoteAudio>(WTFMove(source)));
+        ASSERT(!m_audioSources.contains(identifier));
+        m_audioSources.add(identifier, makeUnique<RemoteAudio>(WTFMove(source)));
+    });
+}
+
+void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& source)
+{
+    ASSERT(WTF::isMainRunLoop());
+    setConnection(source->connection());
+
+    dispatchToThread([this, source = WTFMove(source)]() mutable {
+        auto identifier = source->identifier();
+
+        ASSERT(!m_videoSources.contains(identifier));
+        m_videoSources.add(identifier, makeUnique<RemoteVideo>(WTFMove(source)));
     });
 }
 
@@ -77,15 +103,16 @@ void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdenti
 {
     ASSERT(WTF::isMainRunLoop());
     dispatchToThread([this, identifier] {
-        ASSERT(m_sources.contains(identifier));
-        m_sources.remove(identifier);
+        ASSERT(m_audioSources.contains(identifier) || m_videoSources.contains(identifier));
+        if (!m_audioSources.remove(identifier))
+            m_videoSources.remove(identifier);
     });
 }
 
-void RemoteCaptureSampleManager::didUpdateSourceConnection(RemoteRealtimeAudioSource& source)
+void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection* connection)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(source.connection());
+    setConnection(connection);
 }
 
 void RemoteCaptureSampleManager::dispatchToThread(Function<void()>&& callback)
@@ -97,8 +124,8 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
 {
     ASSERT(!WTF::isMainRunLoop());
 
-    auto iterator = m_sources.find(identifier);
-    if (iterator == m_sources.end()) {
+    auto iterator = m_audioSources.find(identifier);
+    if (iterator == m_audioSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for storageChanged", identifier.toUInt64());
         return;
     }
@@ -109,12 +136,24 @@ void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSou
 {
     ASSERT(!WTF::isMainRunLoop());
 
-    auto iterator = m_sources.find(identifier);
-    if (iterator == m_sources.end()) {
+    auto iterator = m_audioSources.find(identifier);
+    if (iterator == m_audioSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for audioSamplesAvailable", identifier.toUInt64());
         return;
     }
     iterator->value->audioSamplesAvailable(time, numberOfFrames);
+}
+
+void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample)
+{
+    ASSERT(!WTF::isMainRunLoop());
+
+    auto iterator = m_videoSources.find(identifier);
+    if (iterator == m_videoSources.end()) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
+        return;
+    }
+    iterator->value->videoSampleAvailable(WTFMove(sample));
 }
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)
@@ -147,6 +186,30 @@ void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime ti
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, time.timeValue());
 
     m_source->remoteAudioSamplesAvailable(time, *m_buffer, m_description, numberOfFrames);
+}
+
+RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Ref<RemoteRealtimeVideoSource>&& source)
+    : m_source(WTFMove(source))
+{
+}
+
+void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSample&& remoteSample)
+{
+    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
+        m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
+
+    if (!m_imageTransferSession) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample);
+    if (!sampleRef) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_source->videoSampleAvailable(*sampleRef, remoteSample.size());
 }
 
 }

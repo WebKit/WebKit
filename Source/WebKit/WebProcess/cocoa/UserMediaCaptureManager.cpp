@@ -94,9 +94,10 @@ void UserMediaCaptureManager::addAudioSource(Ref<RemoteRealtimeAudioSource>&& so
     m_audioSources.add(identifier, WTFMove(source));
 }
 
-void UserMediaCaptureManager::removeAudioSource(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManager::removeAudioSource(RealtimeMediaSourceIdentifier identifier)
 {
-    m_audioSources.remove(id);
+    ASSERT(m_audioSources.contains(identifier));
+    m_audioSources.remove(identifier);
 }
 
 void UserMediaCaptureManager::addVideoSource(Ref<RemoteRealtimeVideoSource>&& source)
@@ -106,23 +107,18 @@ void UserMediaCaptureManager::addVideoSource(Ref<RemoteRealtimeVideoSource>&& so
     m_videoSources.add(identifier, WTFMove(source));
 }
 
-void UserMediaCaptureManager::removeVideoSource(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManager::removeVideoSource(RealtimeMediaSourceIdentifier identifier)
 {
-    m_videoSources.remove(id);
-}
-
-void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier id)
-{
-    if (auto source = m_audioSources.get(id))
-        source->captureStopped();
-    else if (auto source = m_videoSources.get(id))
-        source->captureStopped();
-}
-
-void UserMediaCaptureManager::sourceEnded(WebCore::RealtimeMediaSourceIdentifier identifier)
-{
-    m_audioSources.remove(identifier);
+    ASSERT(m_videoSources.contains(identifier));
     m_videoSources.remove(identifier);
+}
+
+void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier identifier)
+{
+    if (auto source = m_audioSources.get(identifier))
+        source->captureStopped();
+    else if (auto source = m_videoSources.get(identifier))
+        source->captureStopped();
 }
 
 void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier id)
@@ -147,12 +143,6 @@ void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifie
         source->setSettings(WTFMove(settings));
     else if (auto source = m_videoSources.get(id))
         source->setSettings(WTFMove(settings));
-}
-
-void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier id, RemoteVideoSample&& sample)
-{
-    if (auto source = m_videoSources.get(id))
-        source->remoteVideoSampleAvailable(WTFMove(sample));
 }
 
 void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)

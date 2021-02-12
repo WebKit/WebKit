@@ -124,10 +124,8 @@ private:
     // Messages::UserMediaCaptureManager
     void captureFailed(WebCore::RealtimeMediaSourceIdentifier);
     void sourceStopped(WebCore::RealtimeMediaSourceIdentifier);
-    void sourceEnded(WebCore::RealtimeMediaSourceIdentifier);
     void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted);
     void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
-    void remoteVideoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 

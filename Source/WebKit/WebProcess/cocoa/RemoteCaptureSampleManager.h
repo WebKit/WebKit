@@ -30,12 +30,18 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "RemoteRealtimeAudioSource.h"
+#include "RemoteRealtimeVideoSource.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>
+
+namespace WebCore {
+class ImageTransferSessionVT;
+class RemoteVideoSample;
+}
 
 namespace WebKit {
 
@@ -46,9 +52,10 @@ public:
     ~RemoteCaptureSampleManager();
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
+    void addSource(Ref<RemoteRealtimeVideoSource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
-    void didUpdateSourceConnection(RemoteRealtimeAudioSource&);
+    void didUpdateSourceConnection(IPC::Connection*);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -59,6 +66,7 @@ private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
+    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
 
     void setConnection(IPC::Connection*);
 
@@ -77,11 +85,25 @@ private:
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     };
 
+    class RemoteVideo {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        explicit RemoteVideo(Ref<RemoteRealtimeVideoSource>&&);
+
+        void videoSampleAvailable(WebCore::RemoteVideoSample&&);
+
+    private:
+        Ref<RemoteRealtimeVideoSource> m_source;
+        std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+    };
+
+    bool m_isRegisteredToParentProcessConnection { false };
     Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;
 
     // background thread member
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteVideo>> m_videoSources;
 };
 
 } // namespace WebKit

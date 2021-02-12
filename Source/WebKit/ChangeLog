@@ -1,3 +1,37 @@
+2021-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Remote video capture samples should be processed in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=221201
+        <rdar://problem/73826816>
+
+        Reviewed by Eric Carlson.
+
+        Make RemoteRealtimeVideoSource register to RemoteCaptureSampleManager to get video samples from a background thread.
+        Make RemoteCaptureSampleManager able to handle incoming video samples in background thread like for audio.
+        Make UserMediaCaptureManagerProxy use RemoteCaptureSampleManager instead of UserMediaCaptureManager message.
+        Covered by existing tests.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::addSource):
+        (WebKit::RemoteCaptureSampleManager::removeSource):
+        (WebKit::RemoteCaptureSampleManager::audioStorageChanged):
+        (WebKit::RemoteCaptureSampleManager::audioSamplesAvailable):
+        (WebKit::RemoteCaptureSampleManager::videoSampleAvailable):
+        (WebKit::RemoteCaptureSampleManager::RemoteVideo::RemoteVideo):
+        (WebKit::RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::create):
+        (WebKit::RemoteRealtimeVideoSource::videoSampleAvailable):
+        (WebKit::RemoteRealtimeVideoSource::remoteVideoSampleAvailable): Deleted.
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::remoteVideoSampleAvailable): Deleted.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2021-02-12  Aditya Keerthi  <akeerthi@apple.com>
 
         [tvOS] Fix build failure in WKFormSelectPicker

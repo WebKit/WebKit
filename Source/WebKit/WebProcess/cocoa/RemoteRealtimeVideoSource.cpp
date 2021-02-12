@@ -35,7 +35,6 @@
 #include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
@@ -50,6 +49,7 @@ Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureD
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
     manager.addVideoSource(source.copyRef());
+    manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
@@ -140,28 +140,14 @@ void RemoteRealtimeVideoSource::setSettings(RealtimeMediaSourceSettings&& settin
     notifySettingsDidChangeObservers(changed);
 }
 
-void RemoteRealtimeVideoSource::remoteVideoSampleAvailable(RemoteVideoSample&& remoteSample)
+void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSize sampleSize)
 {
     ASSERT(type() == Type::Video);
 
-    setIntrinsicSize(remoteSample.size());
+    setIntrinsicSize(sampleSize);
 
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
-
-    if (!m_imageTransferSession) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample);
-    if (!sampleRef) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (m_sampleRotation != sampleRef->videoRotation()) {
-        m_sampleRotation = sampleRef->videoRotation();
+    if (m_sampleRotation != sample.videoRotation()) {
+        m_sampleRotation = sample.videoRotation();
 
         auto size = this->size();
         if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right) {
@@ -173,7 +159,7 @@ void RemoteRealtimeVideoSource::remoteVideoSampleAvailable(RemoteVideoSample&& r
             notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
         });
     }
-    dispatchMediaSampleToObservers(*sampleRef);
+    dispatchMediaSampleToObservers(sample);
 }
 
 IPC::Connection* RemoteRealtimeVideoSource::connection()
@@ -210,7 +196,8 @@ const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
 void RemoteRealtimeVideoSource::hasEnded()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_identifier }, 0);
-    m_manager.removeAudioSource(m_identifier);
+    m_manager.removeVideoSource(m_identifier);
+    m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 
 void RemoteRealtimeVideoSource::captureStopped()
@@ -272,6 +259,7 @@ void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     }
 #endif
 
+    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_isReady = false;
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.

@@ -168,7 +168,7 @@ private:
         } else
             remoteSample = RemoteVideoSample::create(sample);
         if (remoteSample)
-            m_connection->send(Messages::UserMediaCaptureManager::RemoteVideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
+            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)
