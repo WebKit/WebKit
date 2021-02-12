@@ -367,7 +367,11 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
         return frame->selection().associatedLiveRange().releaseNonNull();
     if (auto shadowAncestor = selectionShadowAncestor(frame))
         return createLiveRange(makeSimpleRange(*makeBoundaryPointBeforeNode(*shadowAncestor)));
-    return createLiveRange(*frame->selection().selection().firstRange());
+    auto simpleRange = frame->selection().selection().firstRange();
+    ASSERT(simpleRange); // selection is orphaned but this shouldn't happen.
+    if (!simpleRange)
+        return Exception { IndexSizeError };
+    return createLiveRange(*simpleRange);
 }
 
 void DOMSelection::removeAllRanges()
