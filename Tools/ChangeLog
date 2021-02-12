@@ -1,3 +1,17 @@
+2021-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Update pylint version
+        https://bugs.webkit.org/show_bug.cgi?id=221785
+
+        Reviewed by Jonathan Bedard.
+
+        Update pylint on Python 3 to version 2.6.0 which supports >=3.5.
+        
+        Update pylint on Python 2.7 to the last 0.x version, 0.28.0. The logilab packages are
+        specific to this version only so they are moved into the block. 
+
+        * Scripts/webkitpy/__init__.py:
+
 2021-02-11  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Update PHP module configuration

@@ -30,6 +30,14 @@ if sys.platform == 'darwin':
 from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
 
+if sys.version_info > (3, 4):
+    # Python >=3.5.*
+    AutoInstall.register(Package('pylint', Version(2, 6, 0)))
+else:
+    AutoInstall.register(Package('pylint', Version(0, 28, 0)))
+    AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
+    AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
+
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
 AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
@@ -41,8 +49,6 @@ AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
-AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
-AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
 AutoInstall.register(Package('more_itertools', Version(4, 2, 0), pypi_name='more-itertools'))
 AutoInstall.register(Package('mozprocess', Version(1, 2, 0)))
@@ -55,7 +61,6 @@ AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pyte
 # Pytest held to 3.x due to WPT webdriver compatibility
 AutoInstall.register(Package('pytest', Version(3, 6, 2), implicit_deps=['pytest_timeout']))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-AutoInstall.register(Package('pylint', Version(0, 25, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
