@@ -106,7 +106,7 @@ private:
 
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) override;
 

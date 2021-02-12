@@ -162,10 +162,6 @@ messages -> WebPageProxy {
     # Forms messages
     WillSubmitForm(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier sourceFrameID, Vector<std::pair<String, String>> textFieldValues, uint64_t listenerID, WebKit::UserData userData)
 
-    # Callback messages
-    VoidCallback(WebKit::CallbackID callbackID)
-    StringCallback(String resultString, WebKit::CallbackID callbackID)
-    InvalidateStringCallback(WebKit::CallbackID callbackID)
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)

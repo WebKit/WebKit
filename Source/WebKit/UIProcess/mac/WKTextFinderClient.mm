@@ -243,7 +243,7 @@ private:
 {
     void (^copiedCompletionHandler)(NSString *) = Block_copy(completionHandler);
 
-    _page->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string, WebKit::CallbackBase::Error) {
+    _page->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
         copiedCompletionHandler(string);
         Block_release(copiedCompletionHandler);
     });

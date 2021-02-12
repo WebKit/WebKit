@@ -82,7 +82,7 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
@@ -151,7 +151,7 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
-    Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
+    Vector<CompletionHandler<void()>> m_nextActivityStateChangeCallbacks;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;

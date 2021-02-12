@@ -3226,10 +3226,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 - (void)_shareForWebView:(id)sender
 {
     RetainPtr<WKContentView> view = self;
-    _page->getSelectionOrContentsAsString([view](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
-
+    _page->getSelectionOrContentsAsString([view](const String& string) {
         if (!view->_textInteractionAssistant || !string || view->_page->editorState().isMissingPostLayoutData)
             return;
 
@@ -3243,11 +3240,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_translateForWebView:(id)sender
 {
-    _page->getSelectionOrContentsAsString([weakSelf = WeakObjCPtr<WKContentView>(self)] (const String& string, WebKit::CallbackBase::Error error) {
+    _page->getSelectionOrContentsAsString([weakSelf = WeakObjCPtr<WKContentView>(self)] (const String& string) {
         if (!weakSelf)
             return;
 
-        if (error != WebKit::CallbackBase::Error::None || string.isEmpty())
+        if (string.isEmpty())
             return;
 
         auto strongSelf = weakSelf.get();
@@ -3829,9 +3826,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #endif
 
     RetainPtr<WKContentView> view = self;
-    _page->getSelectionOrContentsAsString([view](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    _page->getSelectionOrContentsAsString([view](const String& string) {
         if (!string)
             return;
 
@@ -3843,9 +3838,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 {
     RetainPtr<WKContentView> view = self;
     RetainPtr<WKWebView> webView = _webView.get();
-    _page->getSelectionOrContentsAsString([view, webView](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    _page->getSelectionOrContentsAsString([view, webView](const String& string) {
         [webView _accessibilityDidGetSpeakSelectionContent:string];
         if ([view respondsToSelector:@selector(accessibilitySpeakSelectionSetContent:)])
             [view accessibilitySpeakSelectionSetContent:string];
@@ -4411,7 +4404,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    _page->applyAutocorrection(correction, input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& string, auto error) {
+    _page->applyAutocorrection(correction, input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& string) {
         if (completion)
             completion(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:view->_autocorrectionData.textFirstRect lastCGRect:view->_autocorrectionData.textLastRect] : nil);
     });

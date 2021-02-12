@@ -2313,9 +2313,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     auto identifier = createCanonicalUUIDString();
     auto attachment = API::Attachment::create(identifier, *_page);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
+    _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] {
         if (capturedHandler)
-            capturedHandler(error == WebKit::CallbackBase::Error::None);
+            capturedHandler(true);
     });
 #if HAVE(QUICKLOOK_THUMBNAILING)
     _page->requestThumbnailWithFileWrapper(fileWrapper, identifier);
@@ -2561,25 +2561,15 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
-    auto handler = makeBlockPtr(completionHandler);
-
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler](String string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            handler(string, nil);
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler)](String string) {
+        handler(string, nil);
     });
 }
 
 - (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
-    auto handler = makeBlockPtr(completionHandler);
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler](String string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            handler(nil);
-        else
-            handler(string);
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler = makeBlockPtr(completionHandler)](String string) {
+        handler(string);
     });
 }
 

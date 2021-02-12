@@ -380,8 +380,6 @@ enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
-typedef GenericCallback<const String&> StringCallback;
-
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
 #endif
@@ -764,7 +762,7 @@ public:
     void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
-    void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
@@ -1114,22 +1112,22 @@ public:
     void didFailToFindString(const String&);
     void didFindStringMatches(const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection);
 
-    void getContentsAsString(ContentAsStringIncludesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&&);
+    void getContentsAsString(ContentAsStringIncludesChildFrames, CompletionHandler<void(const String&)>&&);
 #if PLATFORM(COCOA)
     void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
-    void getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
+    void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
 
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&&);
 #endif
     void getMainResourceDataOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
     void getResourceDataFromFrame(WebFrameProxy&, API::URL*, CompletionHandler<void(API::Data*)>&&);
-    void getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSelectionOrContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
+    void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
     void getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&&);
-    void getSourceForFrame(WebFrameProxy*, WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getSourceForFrame(WebFrameProxy*, CompletionHandler<void(const String&)>&&);
     void getWebArchiveOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
     void runJavaScriptInMainFrame(WebCore::RunJavaScriptParameters&&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, API::ContentWorld&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
@@ -1477,7 +1475,7 @@ public:
 
     bool scrollingUpdatesDisabledForTesting();
 
-    void installActivityStateChangeCompletionHandler(Function<void()>&&);
+    void installActivityStateChangeCompletionHandler(CompletionHandler<void()>&&);
 
 #if USE(UNIFIED_TEXT_CHECKING)
     void checkTextOfParagraph(const String& text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint, CompletionHandler<void(Vector<WebCore::TextCheckingResult>&&)>&&);
@@ -1615,8 +1613,8 @@ public:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;
-    void insertAttachment(Ref<API::Attachment>&&, Function<void(CallbackBase::Error)>&&);
-    void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
+    void insertAttachment(Ref<API::Attachment>&&, CompletionHandler<void()>&&);
+    void updateAttachmentAttributes(const API::Attachment&, CompletionHandler<void()>&&);
     void serializedAttachmentDataForIdentifiers(const Vector<String>&, CompletionHandler<void(Vector<WebCore::SerializedAttachmentData>&&)>&&);
     void registerAttachmentIdentifier(const String&);
     void didInvalidateDataForAttachment(API::Attachment&);
@@ -2153,10 +2151,6 @@ private:
     void discardQueuedMouseEvents();
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-
-    void voidCallback(CallbackID);
-    void stringCallback(const String&, CallbackID);
-    void invalidateStringCallback(CallbackID);
 #if PLATFORM(MAC)
     void didUpdateRenderingAfterCommittingLoad();
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
@@ -2232,8 +2226,6 @@ private:
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
-
-    void clearLoadDependentCallbacks();
 
     void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, SandboxExtension::HandleArray&&);
 
@@ -2483,9 +2475,6 @@ private:
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_credentialsMessenger;
 #endif
-
-    CallbackMap m_callbacks;
-    HashSet<CallbackID> m_loadDependentStringCallbackIDs;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 
@@ -2764,7 +2753,7 @@ private:
 
     OptionSet<WebCore::ActivityState::Flag> m_potentiallyChangedActivityStateFlags;
     bool m_activityStateChangeWantsSynchronousReply { false };
-    Vector<CallbackID> m_nextActivityStateChangeCallbacks;
+    Vector<CompletionHandler<void()>> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
 
