@@ -1,3 +1,27 @@
+2021-02-12  Antti Koivisto  <antti@apple.com>
+
+        Increase network layout resource load priority for prioritized loads
+        https://bugs.webkit.org/show_bug.cgi?id=221751
+
+        Reviewed by Geoffrey Garen.
+
+        Currently visibility based prioritization only affects resource load scheduler.
+        We should increase the priority passed to the network layer and so the server too.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::setPriority):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::reprioritizeRequest):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadScheduler.cpp:
+        (WebKit::NetworkLoadScheduler::HostContext::shouldDelayLowPriority const):
+        (WebKit::NetworkLoadScheduler::HostContext::schedule):
+        (WebKit::NetworkLoadScheduler::HostContext::unschedule):
+        (WebKit::NetworkLoadScheduler::HostContext::prioritize):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::setPriority):
+
 2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] event.ctrlKey and other are false in keydown event

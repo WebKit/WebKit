@@ -47,6 +47,7 @@ public:
 
 private:
     void start(NetworkLoad&);
+    bool shouldDelayLowPriority() const { return m_activeLoads.size() >= maximumActiveCountForLowPriority; }
 
     HashSet<NetworkLoad*> m_activeLoads;
     ListHashSet<NetworkLoad*> m_pendingLoads;
@@ -59,7 +60,7 @@ void NetworkLoadScheduler::HostContext::schedule(NetworkLoad& load)
         if (priority > WebCore::ResourceLoadPriority::Low)
             return true;
 
-        if (m_activeLoads.size() < maximumActiveCountForLowPriority)
+        if (!shouldDelayLowPriority())
             return true;
 
         return false;
@@ -80,7 +81,7 @@ void NetworkLoadScheduler::HostContext::unschedule(NetworkLoad& load)
 
     if (m_pendingLoads.isEmpty())
         return;
-    if (m_activeLoads.size() >= maximumActiveCountForLowPriority)
+    if (shouldDelayLowPriority())
         return;
 
     start(*m_pendingLoads.takeFirst());
@@ -88,6 +89,9 @@ void NetworkLoadScheduler::HostContext::unschedule(NetworkLoad& load)
 
 void NetworkLoadScheduler::HostContext::prioritize(NetworkLoad& load)
 {
+    auto priority = load.parameters().request.priority();
+    load.reprioritizeRequest(++priority);
+
     if (!m_pendingLoads.remove(&load))
         return;
 

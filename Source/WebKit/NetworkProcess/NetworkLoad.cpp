@@ -105,6 +105,13 @@ void NetworkLoad::updateRequestAfterRedirection(WebCore::ResourceRequest& newReq
     newRequest = WTFMove(updatedRequest);
 }
 
+void NetworkLoad::reprioritizeRequest(ResourceLoadPriority priority)
+{
+    m_currentRequest.setPriority(priority);
+    if (m_task)
+        m_task->setPriority(priority);
+}
+
 void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 {
     updateRequest(m_currentRequest, newRequest);

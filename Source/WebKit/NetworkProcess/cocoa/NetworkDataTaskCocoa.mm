@@ -702,4 +702,11 @@ void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<v
 #endif
 }
 
+void NetworkDataTaskCocoa::setPriority(WebCore::ResourceLoadPriority priority)
+{
+    if (!WebCore::ResourceRequest::resourcePrioritiesEnabled())
+        return;
+    m_task.get().priority = toNSURLSessionTaskPriority(priority);
+}
+
 }
