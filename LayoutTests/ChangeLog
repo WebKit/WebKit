@@ -1,3 +1,11 @@
+
+        imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is timing out on Catalina wk1 debug EWS
+        https://bugs.webkit.org/show_bug.cgi?id=206503
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk1/TestExpectations: Changed expectation from Mojave to Catalina to suppress failure.
+
 2021-02-12  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/storageAccess convert PHP to Python
