@@ -1,3 +1,22 @@
+2021-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit-patch] Use identifiers when posting to bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=221724
+        <rdar://problem/74209525>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        (view_identifier_url): Return commits.webkit.org identifier link.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.mock_svn_remote): Return a mock context for a remote Svn instance.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/comments.py:
+        (bug_comment_from_svn_revision): Query remote Subversion server to construct identifier link.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state): Mock context for a remote Svn instance.
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+
 2021-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Make WebKitLegacy.CrossPartitionFileSchemeAccess stop timing out on EWS bots
