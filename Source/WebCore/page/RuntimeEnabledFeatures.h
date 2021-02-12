@@ -267,6 +267,11 @@ public:
     bool vorbisDecoderEnabled() const { return m_vorbisDecoderEnabled; }
 #endif
 
+#if ENABLE(OPUS)
+    void setOpusDecoderEnabled(bool isEnabled) { m_opusDecoderEnabled = isEnabled; }
+    bool opusDecoderEnabled() const { return m_opusDecoderEnabled; }
+#endif
+
 #if ENABLE(WEB_AUTHN)
     void setWebAuthenticationModernEnabled(bool areEnabled) { m_areWebAuthenticationModernEnabled = areEnabled; }
     bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
@@ -409,6 +414,10 @@ private:
 
 #if ENABLE(VORBIS)
     bool m_vorbisDecoderEnabled { false };
+#endif
+
+#if ENABLE(OPUS)
+    bool m_opusDecoderEnabled { false };
 #endif
 
 #if ENABLE(WEB_AUTHN)
