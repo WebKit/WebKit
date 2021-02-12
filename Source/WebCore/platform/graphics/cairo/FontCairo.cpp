@@ -58,8 +58,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     auto xOffset = point.x();
     Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
     {
-        ASSERT(from + numGlyphs <= glyphBuffer.size());
-
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
             cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
