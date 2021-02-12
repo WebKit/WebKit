@@ -223,10 +223,14 @@ class cpp_type_container(cpp_type):
         return self.contained_type.is_const()
 
 def create_cpp_type_container(type_name : str) -> Optional[cpp_type_container]:
+    # The logic to determine container is to just assume all templates are containers.
     m = re.match(r"([\w:]+)<(.+)>$", type_name)
     if not m:
         return None
     container_name = m[1]
+    # All templates are containers except these below.
+    if container_name in ['RefPtr', 'Ref']:
+        return None
     templates = m[2]
     arity = None
     m = re.match(r"([^,]+),\s*(\d+)", templates)
@@ -245,7 +249,7 @@ def cpp_split_args_specs(args_spec : str) -> Iterator[str]:
      # https://stackoverflow.com/questions/33527245/python-split-by-comma-skipping-the-content-inside-parentheses
     comma = r",(?!(?:[^<]*\<[^>]*\>)*[^<>]*\>)"
     return filter(None, [a.strip() for a in re.split(comma, args_spec.strip())])
-    
+
 def create_cpp_type_function(type_name : str) -> Optional[cpp_type_function]:
     m = re.match(r'(.*)\((.*)\)', type_name)
     if not m:
@@ -253,12 +257,12 @@ def create_cpp_type_function(type_name : str) -> Optional[cpp_type_function]:
     return_value_type = get_cpp_type(m[1])
     args_types = [get_cpp_type(a) for a in cpp_split_args_specs(m[2])]
     return cpp_type_function(type_name, return_value_type, args_types)
-        
+
 # Pointer or refererence
 class cpp_type_indirect(cpp_type):
     category : str
     value_type : cpp_type
-    
+
     def __init__(self, type_name : str, category : str, value_type : cpp_type):
         cpp_type.__init__(self, type_name)
         self.category = category
@@ -280,7 +284,7 @@ class cpp_type_indirect(cpp_type):
 def create_cpp_type_indirect(type_name : str) -> Optional[cpp_type_indirect]:
     m = re.match(r"const (.+)&&$", type_name)
     if not m:
-        m = re.match(r"(.+)&&$", type_name) 
+        m = re.match(r"(.+)&&$", type_name)
     if m:
         return cpp_type_indirect(type_name, '&&', get_cpp_type(m[1]))
     m = re.match(r"const (.+)&$", type_name)
@@ -983,7 +987,7 @@ def main():
     for cpp_type in sorted(all_types, key=lambda x: len(x.type_name)):
         if cpp_type in webkit_ipc_types:
             continue
-      
+
         if cpp_type.is_dynamic_span() or cpp_type.is_span():
             transfer_type = webkit_ipc_get_span_transfer_type(cpp_type)
             webkit_ipc_types[cpp_type] = transfer_type.get_value_type()
@@ -1012,7 +1016,7 @@ def main():
                 webkit_ipc_types[cpp_type] = value_type
         else:
             webkit_ipc_types[cpp_type] = cpp_type.get_value_type()
-    
+
     # The input to the generators is list of functions to remote.
     # Run the various generators.
     generators = [

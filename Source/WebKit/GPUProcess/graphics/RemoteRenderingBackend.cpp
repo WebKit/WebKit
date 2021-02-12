@@ -296,14 +296,14 @@ void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIden
     m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
 }
 
-void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
+void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     RefPtr<ImageData> imageData;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         imageData = imageBuffer->getImageData(outputFormat, srcRect);
-    completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
+    completionHandler(WTFMove(imageData));
 }
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)

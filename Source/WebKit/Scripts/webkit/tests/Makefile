@@ -1,2 +1,12 @@
+
+TESTS = \
+    TestWithSuperclass \
+    TestWithLegacyReceiver \
+    TestWithoutAttributes \
+    TestWithIfMessage \
+    TestWithSemaphore \
+    TestWithImageData \
+#
+
 all:
-	python ../../generate-message-receiver.py . TestWithSuperclass TestWithLegacyReceiver TestWithoutAttributes TestWithIfMessage TestWithSemaphore
+	python ../../generate-message-receiver.py . $(TESTS)

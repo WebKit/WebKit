@@ -2442,6 +2442,17 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE(GCGLenum mode
     }
 }
 
+RefPtr<WebCore::ImageData> RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData()
+{
+    RefPtr<WebCore::ImageData> returnValue = { };
+    if (!isContextLost()) {
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToImageData(), Messages::RemoteGraphicsContextGL::PaintRenderingResultsToImageData::Reply(returnValue));
+        if (!sendResult)
+            markContextLost();
+    }
+    return returnValue;
+}
+
 }
 
 #endif

@@ -1,3 +1,70 @@
+2021-02-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPU process WebGL context toDataURL does not work for non-premultiplied contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221748
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement GraphicsContextGL::paintRenderingResultsToImageData(). This
+        is used for Image.toDataURL() call, and returns something for
+        WebGL canvases that have non-premultiplied alpha.
+
+        No new tests, tested by currently failing WebGL conformance and ad hoc tests like
+        premultiplyalpha-test.html.
+        This does not make any failing test pass, as the tests test also premultiplied
+        case, which needs other currently unimplemented code.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (paintRenderingResultsToImageData):
+        Generated GPU process side implementation.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getImageData):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        Change ImageDataReference to RefPtr<ImageData>.
+
+        * Platform/IPC/ImageDataReference.h: Removed.
+        This implementation is redundant. The messages could accept just
+        RefPtr<WebCore::ImageData>, which is exactly "reference to
+        Image Data", i.e. ImageDataReference.
+
+        RefPtr<WebCore::ImageData> encoder and decoder already exist.
+
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/tests/Makefile:
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithImageData.messages.in: Added.
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp: Added.
+        (WebKit::TestWithImageData::didReceiveMessage):
+        (WebKit::TestWithImageData::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessages.h: Added.
+        (Messages::TestWithImageData::messageReceiverName):
+        (Messages::TestWithImageData::SendImageData::name):
+        (Messages::TestWithImageData::SendImageData::SendImageData):
+        (Messages::TestWithImageData::SendImageData::arguments const):
+        (Messages::TestWithImageData::ReceiveImageData::name):
+        (Messages::TestWithImageData::ReceiveImageData::arguments const):
+        * Scripts/webkit/tests/TestWithImageDataMessagesReplies.h: Added.
+        Test using RefPtr<WebCore::ImageData> in messages.in.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getImageData):
+        Generated Web process side implementation.
+
 2021-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Stop using GenericCallback from WebPageProxy

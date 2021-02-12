@@ -1172,4 +1172,10 @@
     {
         m_context->multiDrawElementsInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
     }
+    void paintRenderingResultsToImageData(CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
+    {
+        RefPtr<WebCore::ImageData> returnValue = { };
+        returnValue = m_context->paintRenderingResultsToImageData();
+        completionHandler(WTFMove(returnValue));
+    }
 

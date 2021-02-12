@@ -1,3 +1,14 @@
+2021-02-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPU process WebGL context toDataURL does not work for non-premultiplied contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221748
+
+        Reviewed by Myles C. Maxfield.
+
+        Add support for generating IPC implementation for functions with RefPtr<>.
+
+        * Scripts/generate-gpup-webgl:
+
 2021-02-12  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] commit identifier should show main instead of trunk

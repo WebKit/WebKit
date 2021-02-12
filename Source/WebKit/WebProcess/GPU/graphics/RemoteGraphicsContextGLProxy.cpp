@@ -140,12 +140,6 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer*)
     notImplemented();
 }
 
-RefPtr<ImageData> RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData()
-{
-    notImplemented();
-    return nullptr;
-}
-
 void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
 {
     if (!isContextLost()) {
