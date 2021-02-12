@@ -59,5 +59,5 @@ class CloseBugForLandDiffTest(unittest.TestCase):
                 step.run(dict(commit_text='Mock commit text'))
             self.assertEqual(
                 captured.root.log.getvalue(),
-                'Committed 5@main: <https://commits.webkit.org/5@main>\nNo bug id provided.\n'
+                'Committed r49824 (5@main): <https://commits.webkit.org/5@main>\nNo bug id provided.\n'
             )

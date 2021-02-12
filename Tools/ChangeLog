@@ -1,5 +1,20 @@
 2021-02-12  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkit-patch] Post both revision and identifier to bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=221829
+        <rdar://problem/74282619>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/comments.py:
+        (bug_comment_from_svn_revision): Include subversion revision.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state):
+
+2021-02-12  Jonathan Bedard  <jbedard@apple.com>
+
         [webkit-patch] Use identifiers when posting to bugzilla (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=221724
         <rdar://problem/74209525>

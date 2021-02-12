@@ -194,7 +194,7 @@ MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
 Committed r49824: <https://commits.webkit.org/r49824>
-Committed 5@main: <https://commits.webkit.org/5@main>
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>
 No bug id provided.
 """
         with self.mock_svn_remote():
@@ -323,7 +323,7 @@ Committed r49824: <https://commits.webkit.org/r49824>
 Commenting without closing bug 50000
 MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
-Committed 5@main: <https://commits.webkit.org/5@main>
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>
 --- End comment ---
 
 """
@@ -494,7 +494,7 @@ MOCK reopen_bug 50000 with comment 'Reverted r852 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 """
         with self.mock_svn_remote():
             self.assert_execute_outputs(Revert(), [852, "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
@@ -514,12 +514,12 @@ MOCK reopen_bug 50000 with comment 'Reverted r852 and r963 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 MOCK reopen_bug 50005 with comment 'Reverted r852 and r963 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 """
         with self.mock_svn_remote():
             self.assert_execute_outputs(Revert(), ["852 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
@@ -537,17 +537,17 @@ MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 MOCK reopen_bug 50004 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 """
         with self.mock_svn_remote():
             self.assert_execute_outputs(Revert(), ["852 3001 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
@@ -565,12 +565,12 @@ MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r999 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r999 for reason:
 
 Reason
 
-Committed 5@main: <https://commits.webkit.org/5@main>'
+Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
 """
         with self.mock_svn_remote():
             self.assert_execute_outputs(Revert(), ["852 999 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
