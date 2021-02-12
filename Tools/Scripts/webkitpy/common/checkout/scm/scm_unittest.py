@@ -35,6 +35,7 @@ import getpass
 import logging
 import os
 import os.path
+import pathlib
 import re
 import stat
 import sys
@@ -197,7 +198,7 @@ class SVNTestRepository(object):
 
         test_object.temp_directory = os.path.realpath(tempfile.mkdtemp(suffix="svn_test"))
         test_object.svn_repo_path = os.path.join(test_object.temp_directory, "repo")
-        test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path
+        test_object.svn_repo_url = pathlib.Path(test_object.svn_repo_path).as_uri()
         test_object.svn_checkout_path = os.path.join(test_object.temp_directory, "checkout")
         shutil.copytree(cached_svn_repo_path, test_object.svn_repo_path)
         run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url + "/trunk", test_object.svn_checkout_path])
@@ -206,7 +207,7 @@ class SVNTestRepository(object):
     def _setup_mock_repo(cls):
         # Create an test SVN repository
         svn_repo_path = tempfile.mkdtemp(suffix="svn_test_repo")
-        svn_repo_url = "file://%s" % svn_repo_path  # Not sure this will work on windows
+        svn_repo_url = pathlib.Path(svn_repo_path).as_uri()
         # git svn complains if we don't pass --pre-1.5-compatible, not sure why:
         # Expected FS format '2'; found format '3' at /usr/local/libexec/git-core//git-svn line 1477
         run_command(['svnadmin', 'create', '--pre-1.5-compatible', svn_repo_path])

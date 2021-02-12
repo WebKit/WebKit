@@ -38,6 +38,8 @@ else:
     AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
     AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
 
+    AutoInstall.register(Package('pathlib', Version(2, 3, 5), pypi_name='pathlib2'))
+
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
 AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))

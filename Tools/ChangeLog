@@ -1,5 +1,22 @@
 2021-02-12  Don Olmstead  <don.olmstead@sony.com>
 
+        [Python-3] Use pathlib to generate file:// urls
+        https://bugs.webkit.org/show_bug.cgi?id=221850
+
+        Reviewed by Jonathan Bedard.
+
+        Use pathlib which can generate file:// urls for *nix and Windows. The previous logic
+        only worked on *nix.
+
+        Add the pathlib backport for 2.7.
+
+        * Scripts/webkitpy/__init__.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SVNTestRepository.setup):
+        (SVNTestRepository._setup_mock_repo):
+
+2021-02-12  Don Olmstead  <don.olmstead@sony.com>
+
         [Python-3] base64.encodestring is deprecated
         https://bugs.webkit.org/show_bug.cgi?id=221842
 
