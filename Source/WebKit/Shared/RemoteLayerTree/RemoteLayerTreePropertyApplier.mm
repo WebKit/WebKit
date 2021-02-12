@@ -69,10 +69,10 @@
     }
 
     // Remove views at the end.
-    NSMutableArray *viewsToRemove = nil;
+    RetainPtr<NSMutableArray> viewsToRemove;
     auto appendViewToRemove = [&viewsToRemove](UIView *view) {
         if (!viewsToRemove)
-            viewsToRemove = [[NSMutableArray alloc] init];
+            viewsToRemove = adoptNS([[NSMutableArray alloc] init]);
 
         [viewsToRemove addObject:view];
     };
@@ -84,10 +84,8 @@
             appendViewToRemove(subview);
     }
 
-    if (viewsToRemove) {
+    if (viewsToRemove)
         [viewsToRemove makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [viewsToRemove release];
-    }
 }
 
 @end

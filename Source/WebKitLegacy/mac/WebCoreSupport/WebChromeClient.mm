@@ -253,51 +253,38 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& features
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
-        NSNumber *x = features.x ? [[NSNumber alloc] initWithFloat:*features.x] : nil;
-        NSNumber *y = features.y ? [[NSNumber alloc] initWithFloat:*features.y] : nil;
-        NSNumber *width = features.width ? [[NSNumber alloc] initWithFloat:*features.width] : nil;
-        NSNumber *height = features.height ? [[NSNumber alloc] initWithFloat:*features.height] : nil;
-        NSNumber *menuBarVisible = [[NSNumber alloc] initWithBool:features.menuBarVisible];
-        NSNumber *statusBarVisible = [[NSNumber alloc] initWithBool:features.statusBarVisible];
-        NSNumber *toolBarVisible = [[NSNumber alloc] initWithBool:features.toolBarVisible];
-        NSNumber *scrollbarsVisible = [[NSNumber alloc] initWithBool:features.scrollbarsVisible];
-        NSNumber *resizable = [[NSNumber alloc] initWithBool:features.resizable];
-        NSNumber *fullscreen = [[NSNumber alloc] initWithBool:features.fullscreen];
-        NSNumber *dialog = [[NSNumber alloc] initWithBool:features.dialog];
+        auto x = features.x ? adoptNS([[NSNumber alloc] initWithFloat:*features.x]) : nil;
+        auto y = features.y ? adoptNS([[NSNumber alloc] initWithFloat:*features.y]) : nil;
+        auto width = features.width ? adoptNS([[NSNumber alloc] initWithFloat:*features.width]) : nil;
+        auto height = features.height ? adoptNS([[NSNumber alloc] initWithFloat:*features.height]) : nil;
+        auto menuBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.menuBarVisible]);
+        auto statusBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.statusBarVisible]);
+        auto toolBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.toolBarVisible]);
+        auto scrollbarsVisible = adoptNS([[NSNumber alloc] initWithBool:features.scrollbarsVisible]);
+        auto resizable = adoptNS([[NSNumber alloc] initWithBool:features.resizable]);
+        auto fullscreen = adoptNS([[NSNumber alloc] initWithBool:features.fullscreen]);
+        auto dialog = adoptNS([[NSNumber alloc] initWithBool:features.dialog]);
         
-        NSMutableDictionary *dictFeatures = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                             menuBarVisible, @"menuBarVisible", 
-                                             statusBarVisible, @"statusBarVisible",
-                                             toolBarVisible, @"toolBarVisible",
-                                             scrollbarsVisible, @"scrollbarsVisible",
-                                             resizable, @"resizable",
-                                             fullscreen, @"fullscreen",
-                                             dialog, @"dialog",
-                                             nil];
+        auto dictFeatures = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                             menuBarVisible.get(), @"menuBarVisible",
+                                             statusBarVisible.get(), @"statusBarVisible",
+                                             toolBarVisible.get(), @"toolBarVisible",
+                                             scrollbarsVisible.get(), @"scrollbarsVisible",
+                                             resizable.get(), @"resizable",
+                                             fullscreen.get(), @"fullscreen",
+                                             dialog.get(), @"dialog",
+                                             nil]);
         
         if (x)
-            [dictFeatures setObject:x forKey:@"x"];
+            [dictFeatures setObject:x.get() forKey:@"x"];
         if (y)
-            [dictFeatures setObject:y forKey:@"y"];
+            [dictFeatures setObject:y.get() forKey:@"y"];
         if (width)
-            [dictFeatures setObject:width forKey:@"width"];
+            [dictFeatures setObject:width.get() forKey:@"width"];
         if (height)
-            [dictFeatures setObject:height forKey:@"height"];
+            [dictFeatures setObject:height.get() forKey:@"height"];
         
-        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures);
-        
-        [dictFeatures release];
-        [x release];
-        [y release];
-        [width release];
-        [height release];
-        [menuBarVisible release];
-        [statusBarVisible release];
-        [toolBarVisible release];
-        [scrollbarsVisible release];
-        [resizable release];
-        [fullscreen release];
-        [dialog release];
+        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures.get());
     } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)]) {
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewModalDialogWithRequest:), nil);
     } else {
@@ -463,25 +450,23 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     }
 
     NSString *messageSource = stringForMessageSource(source);
-    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+    auto dictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
         (NSString *)message, @"message",
         @(lineNumber), @"lineNumber",
         @(columnNumber), @"columnNumber",
         (NSString *)sourceURL, @"sourceURL",
         messageSource, @"MessageSource",
         stringForMessageLevel(level), @"MessageLevel",
-        NULL];
+        NULL]);
 
 #if PLATFORM(IOS_FAMILY)
-    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary withSource:messageSource];
+    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary.get() withSource:messageSource];
 #else
     if (respondsToNewSelector)
-        CallUIDelegate(m_webView, selector, dictionary, messageSource);
+        CallUIDelegate(m_webView, selector, dictionary.get(), messageSource);
     else
-        CallUIDelegate(m_webView, selector, dictionary);
+        CallUIDelegate(m_webView, selector, dictionary.get());
 #endif
-
-    [dictionary release];
 }
 
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
@@ -668,9 +653,8 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
 
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags, const String& toolTip, TextDirection)
 {
-    WebElementDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:result];
-    [m_webView _mouseDidMoveOverElement:element modifierFlags:modifierFlags];
-    [element release];
+    auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:result]);
+    [m_webView _mouseDidMoveOverElement:element.get() modifierFlags:modifierFlags];
     setToolTip(toolTip);
 }
 
@@ -694,9 +678,8 @@ void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& database
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame.document()->securityOrigin()];
-    CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(&frame), webOrigin, (NSString *)databaseName);
-    [webOrigin release];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame.document()->securityOrigin()]);
+    CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(&frame), webOrigin.get(), (NSString *)databaseName);
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -710,9 +693,8 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin];
-    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin, static_cast<NSUInteger>(totalSpaceNeeded));
-    [webOrigin release];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
+    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin.get(), static_cast<NSUInteger>(totalSpaceNeeded));
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -782,15 +764,14 @@ void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     BOOL allowMultipleFiles = chooser.settings().allowsMultipleFiles;
-    WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
+    auto listener = adoptNS([[WebOpenPanelResultListener alloc] initWithChooser:chooser]);
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:)])
-        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:), listener, allowMultipleFiles);
+        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:), listener.get(), allowMultipleFiles);
     else if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:)])
-        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
+        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener.get());
     else
         [listener cancel];
-    [listener release];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -1079,9 +1060,8 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 {
     SEL selector = @selector(webView:exitFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
-        CallUIDelegate(m_webView, selector, kit(element), listener);
-        [listener release];
+        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element]);
+        CallUIDelegate(m_webView, selector, kit(element), listener.get());
     }
 #if !PLATFORM(IOS_FAMILY)
     else

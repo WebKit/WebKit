@@ -4254,39 +4254,28 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
 {
     _usingGestureForSelection = YES;
-    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
-    RetainPtr<WKContentView> view = self;
 
-    _page->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view, selectionHandler]() {
-        selectionHandler();
+    _page->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
         view->_usingGestureForSelection = NO;
-        [selectionHandler release];
     });
 }
 
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
     _usingGestureForSelection = YES;
-    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
-    RetainPtr<WKContentView> view = self;
-    
-    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view, selectionHandler]() {
-        selectionHandler();
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
         view->_usingGestureForSelection = NO;
-        [selectionHandler release];
     });
 }
 
 - (void)moveSelectionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction completionHandler:(void (^)(void))completionHandler
 {
     _usingGestureForSelection = YES;
-    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
-    RetainPtr<WKContentView> view = self;
-    
-    _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view, selectionHandler] {
-        selectionHandler();
+    _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
         view->_usingGestureForSelection = NO;
-        [selectionHandler release];
     });
 }
 
@@ -4318,12 +4307,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
-    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
-    
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving) {
-        selectionHandler(endIsMoving);
-        [selectionHandler release];
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
+        completionHandler(endIsMoving);
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
     });
 }

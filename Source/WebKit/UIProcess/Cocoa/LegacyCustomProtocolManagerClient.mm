@@ -37,7 +37,7 @@
     WeakPtr<WebKit::LegacyCustomProtocolManagerProxy> _customProtocolManagerProxy;
     WebKit::LegacyCustomProtocolID _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
-    NSURLConnection *_urlConnection;
+    RetainPtr<NSURLConnection> _urlConnection;
 }
 - (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(WebKit::LegacyCustomProtocolID)customProtocolID request:(NSURLRequest *)request;
 - (void)cancel;
@@ -56,7 +56,7 @@
     _customProtocolID = customProtocolID;
     _storagePolicy = NSURLCacheStorageNotAllowed;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    _urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+    _urlConnection = adoptNS([[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO]);
     [_urlConnection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     [_urlConnection start];
     ALLOW_DEPRECATED_DECLARATIONS_END
@@ -67,7 +67,6 @@
 - (void)dealloc
 {
     [_urlConnection cancel];
-    [_urlConnection release];
     [super dealloc];
 }
 
@@ -145,11 +144,10 @@ void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManager
     if (!request)
         return;
 
-    WKCustomProtocolLoader *loader = [[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:manager customProtocolID:customProtocolID request:request];
+    auto loader = adoptNS([[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:manager customProtocolID:customProtocolID request:request]);
     ASSERT(loader);
     ASSERT(!m_loaderMap.contains(customProtocolID));
-    m_loaderMap.add(customProtocolID, loader);
-    [loader release];
+    m_loaderMap.add(customProtocolID, WTFMove(loader));
 }
 
 void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerProxy&, WebKit::LegacyCustomProtocolID customProtocolID)

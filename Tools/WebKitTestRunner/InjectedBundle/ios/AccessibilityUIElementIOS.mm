@@ -1021,7 +1021,8 @@ bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback
     // Other platforms may be different.
     if (m_notificationHandler)
         return false;
-    m_notificationHandler = [[AccessibilityNotificationHandler alloc] init];
+
+    m_notificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
     [m_notificationHandler setPlatformElement:platformUIElement()];
     [m_notificationHandler setCallback:functionCallback];
     [m_notificationHandler startObserving];
@@ -1035,7 +1036,6 @@ bool AccessibilityUIElement::removeNotificationListener()
     ASSERT(m_notificationHandler);
     
     [m_notificationHandler stopObserving];
-    [m_notificationHandler release];
     m_notificationHandler = nil;
     
     return true;

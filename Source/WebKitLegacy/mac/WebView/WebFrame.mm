@@ -189,15 +189,11 @@ NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterf
 
 - (void)dealloc
 {
-    [webFrameView release];
-
     [super dealloc];
 }
 
 - (void)setWebFrameView:(WebFrameView *)v
 { 
-    [v retain];
-    [webFrameView release];
     webFrameView = v;
 }
 
@@ -306,9 +302,8 @@ WebView *getWebView(WebFrame *webFrame)
 {
     WebView *webView = kit(page);
 
-    WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
-    auto coreFrame = WebCore::Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame));
-    [frame release];
+    RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
+    auto coreFrame = WebCore::Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setName(name);
@@ -328,10 +323,9 @@ WebView *getWebView(WebFrame *webFrame)
 {
     WebView *webView = kit(page);
 
-    WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
+    RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
     frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame);
-    [frame release];
+    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame.get());
 
     page->mainFrame().tree().setName(name);
     page->mainFrame().init();
@@ -356,12 +350,11 @@ static NSURL *createUniqueWebDataURL();
 {
     WebView *webView = kit(page);
     
-    WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
+    RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
     frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame);
-    [frame release];
+    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame.get());
 
-    frame->_private->coreFrame->initWithSimpleHTMLDocument(style, createUniqueWebDataURL());
+    frame.get()->_private->coreFrame->initWithSimpleHTMLDocument(style, createUniqueWebDataURL());
 }
 #endif
 
@@ -1731,7 +1724,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto& selection = frame->selection().selection();
     auto root = selection.isNone() ? frame->document()->bodyOrFrameset() : selection.rootEditableElement();
 
-    DOMRange *previousDOMRange = nil;
+    RetainPtr<DOMRange> previousDOMRange;
     id previousMetadata = nil;
 
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
@@ -1758,13 +1751,11 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
                 // It is possible for a DocumentMarker to be split by editing. Adjacent markers with the
                 // the same metadata are for the same result. So combine their ranges.
                 ASSERT(previousDOMRange == [ranges lastObject]);
-                [previousDOMRange retain];
                 [ranges removeLastObject];
                 DOMNode *startContainer = [domRange startContainer];
                 int startOffset = [domRange startOffset];
                 [previousDOMRange setEnd:startContainer offset:startOffset];
-                [ranges addObject:previousDOMRange];
-                [previousDOMRange release];
+                [ranges addObject:previousDOMRange.get()];
             }
         }
     }
@@ -2390,7 +2381,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (WebFrameView *)frameView
 {
-    return _private->webFrameView;
+    return _private->webFrameView.get();
 }
 
 - (WebView *)webView

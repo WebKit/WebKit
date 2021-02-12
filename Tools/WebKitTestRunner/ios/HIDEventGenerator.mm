@@ -1042,9 +1042,9 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     NSArray *endTouches = endEvent[HIDEventTouchesKey];
     
     while (time < endTime) {
-        NSMutableDictionary *newEvent = [endEvent mutableCopy];
+        auto newEvent = adoptNS([endEvent mutableCopy]);
         double timeRatio = (time - startTime) / (endTime - startTime);
-        newEvent[HIDEventTimeOffsetKey] = @(time);
+        newEvent.get()[HIDEventTimeOffsetKey] = @(time);
         
         NSEnumerator *startEnumerator = [startTouches objectEnumerator];
         NSDictionary *startTouch;
@@ -1058,27 +1058,25 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
                 endTouch = [endEnumerator nextObject];
             
             if (endTouch) {
-                NSMutableDictionary *newTouch = [endTouch mutableCopy];
+                auto newTouch = adoptNS([endTouch mutableCopy]);
                 
-                if (newTouch[HIDEventXKey] != startTouch[HIDEventXKey])
-                    newTouch[HIDEventXKey] = @(interpolations[interpolationType]([startTouch[HIDEventXKey] doubleValue], [endTouch[HIDEventXKey] doubleValue], timeRatio));
+                if (newTouch.get()[HIDEventXKey] != startTouch[HIDEventXKey])
+                    newTouch.get()[HIDEventXKey] = @(interpolations[interpolationType]([startTouch[HIDEventXKey] doubleValue], [endTouch[HIDEventXKey] doubleValue], timeRatio));
                 
-                if (newTouch[HIDEventYKey] != startTouch[HIDEventYKey])
-                    newTouch[HIDEventYKey] = @(interpolations[interpolationType]([startTouch[HIDEventYKey] doubleValue], [endTouch[HIDEventYKey] doubleValue], timeRatio));
+                if (newTouch.get()[HIDEventYKey] != startTouch[HIDEventYKey])
+                    newTouch.get()[HIDEventYKey] = @(interpolations[interpolationType]([startTouch[HIDEventYKey] doubleValue], [endTouch[HIDEventYKey] doubleValue], timeRatio));
                 
-                if (newTouch[HIDEventPressureKey] != startTouch[HIDEventPressureKey])
-                    newTouch[HIDEventPressureKey] = @(interpolations[interpolationType]([startTouch[HIDEventPressureKey] doubleValue], [endTouch[HIDEventPressureKey] doubleValue], timeRatio));
+                if (newTouch.get()[HIDEventPressureKey] != startTouch[HIDEventPressureKey])
+                    newTouch.get()[HIDEventPressureKey] = @(interpolations[interpolationType]([startTouch[HIDEventPressureKey] doubleValue], [endTouch[HIDEventPressureKey] doubleValue], timeRatio));
                 
-                [newTouches addObject:newTouch];
-                [newTouch release];
+                [newTouches addObject:newTouch.get()];
             } else
                 NSLog(@"Missing End Touch with ID: %ld", (long)startTouchID);
         }
         
-        newEvent[HIDEventTouchesKey] = newTouches;
+        newEvent.get()[HIDEventTouchesKey] = newTouches;
         
-        [interpolatedEvents addObject:newEvent];
-        [newEvent release];
+        [interpolatedEvents addObject:newEvent.get()];
         time += timeStep;
     }
     

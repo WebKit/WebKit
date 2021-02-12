@@ -401,25 +401,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _tableViewController = adoptNS([[WKSelectTableViewController alloc] initWithView:view hasGroups:hasGroups]);
     [_tableViewController setPopover:self];
-    UIViewController *popoverViewController = _tableViewController.get();
-    UINavigationController *navController = nil;
+    RetainPtr<UIViewController> popoverViewController = _tableViewController.get();
     BOOL needsNavigationController = !view.focusedElementInformation.title.isEmpty();
-    if (needsNavigationController) {
-        navController = [[UINavigationController alloc] initWithRootViewController:_tableViewController.get()];
-        popoverViewController = navController;
-    }
+    if (needsNavigationController)
+        popoverViewController = adoptNS([[UINavigationController alloc] initWithRootViewController:_tableViewController.get()]);
     
     CGSize popoverSize = [_tableViewController.get().tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
     if (needsNavigationController)
         [(UINavigationController *)popoverViewController topViewController].preferredContentSize = popoverSize;
     else
-        popoverViewController.preferredContentSize = popoverSize;
+        [popoverViewController setPreferredContentSize: popoverSize];
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:popoverViewController] autorelease];
+    self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()] autorelease];
     ALLOW_DEPRECATED_DECLARATIONS_END
-
-    [navController release];
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
     [[UIKeyboardImpl sharedInstance] setDelegate:_tableViewController.get()];

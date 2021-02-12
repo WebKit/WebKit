@@ -97,14 +97,11 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
         }
     } else {
         NSString* nsErrorMessage = nsStringNilIfEmpty(errorMsg);
-        NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:nsErrorMessage, WebScriptErrorDescriptionKey, @(errorLine), WebScriptErrorLineNumberKey, nil];
-        NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
+        auto info = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:nsErrorMessage, WebScriptErrorDescriptionKey, @(errorLine), WebScriptErrorLineNumberKey, nil]);
+        auto error = adoptNS([[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info.get()]);
 
         if (implementations->failedToParseSourceFunc)
-            CallScriptDebugDelegate(implementations->failedToParseSourceFunc, webView, @selector(webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:), nsSource, firstLine, nsURL, error, webFrame);
-
-        [error release];
-        [info release];
+            CallScriptDebugDelegate(implementations->failedToParseSourceFunc, webView, @selector(webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:), nsSource, firstLine, nsURL, error.get(), webFrame);
     }
 
     m_callingDelegate = false;

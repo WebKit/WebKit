@@ -352,9 +352,8 @@ WebHistoryItem *kit(HistoryItem* item)
     NSArray *childDicts = [dict objectForKey:childrenKey];
     if (childDicts) {
         for (int i = [childDicts count] - 1; i >= 0; i--) {
-            WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation:[childDicts objectAtIndex:i]];
+            auto child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:[childDicts objectAtIndex:i]]);
             core(_private)->addChildItem(*core(child->_private));
-            [child release];
         }
     }
 

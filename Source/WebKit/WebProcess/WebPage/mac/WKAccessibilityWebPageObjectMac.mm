@@ -63,7 +63,6 @@ namespace ax = WebCore::Accessibility;
 - (void)dealloc
 {
     NSAccessibilityUnregisterUniqueIdForUIElement(self);
-    [m_parent release];
     [super dealloc];
 }
 
@@ -161,7 +160,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         WebCore::AXObjectCache::enableAccessibility();
     
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-        return m_parent;
+        return m_parent.get();
     
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
         return [m_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];

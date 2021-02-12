@@ -1,3 +1,53 @@
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
+
+        Reviewed by Alex Christensen.
+
+        Reduce explicit usage of [objC release] in WebKit by using smart pointers.
+
+        * Shared/Cocoa/WKObject.mm:
+        (-[WKObject dealloc]):
+        (initializeTargetIfNeeded):
+        (-[WKObject forwardingTargetForSelector:]):
+        (-[WKObject forwardInvocation:]):
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (-[UIView _web_setSubviews:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        (-[WKCustomProtocolLoader dealloc]):
+        (WebKit::LegacyCustomProtocolManagerClient::startLoading):
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h:
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView initWithFrame:]):
+        (-[WKInspectorHighlightView dealloc]):
+        (-[WKInspectorHighlightView _removeAllLayers]):
+        (-[WKInspectorHighlightView _createLayers:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectPositionAtPoint:stayingWithinFocusedElement:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView moveSelectionAtBoundary:inDirection:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _updateDelegate]):
+        (-[WKScrollView dealloc]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel dealloc]):
+        (-[WKTextInputPanel init]):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (+[WKPopoverColorWell _colorPopoverCreateIfNecessary:]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase setRemoteParent:]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject dealloc]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2021-02-12  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPU process WebGL context toDataURL does not work for non-premultiplied contexts

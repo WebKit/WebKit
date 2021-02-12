@@ -1321,7 +1321,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NSArray* buttonAttrs = nil;
     static NSArray* scrollViewAttrs = nil;
     static NSArray* incrementorAttrs = nil;
-    NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
             NSAccessibilitySubroleAttribute,
@@ -1364,15 +1363,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                            nil];
     }
     if (anchorAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityURLAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityLinkRelationshipTypeAttribute];
-        anchorAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        anchorAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (webAreaAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         // WebAreas should not expose AXSubrole.
         [tempArray removeObject:NSAccessibilitySubroleAttribute];
         // WebAreas should not expose ancestor attributes
@@ -1387,11 +1385,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityCaretBrowsingEnabledAttribute];
         [tempArray addObject:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute];
         [tempArray addObject:NSAccessibilityWebSessionIDAttribute];
-        webAreaAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        webAreaAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (textAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityNumberOfCharactersAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextRangeAttribute];
@@ -1403,57 +1400,51 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
-        textAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        textAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (listAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        listAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        listAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (listBoxAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:listAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:listAttrs]);
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        listBoxAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (rangeAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        rangeAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        rangeAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (menuBarAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        menuBarAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        menuBarAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (menuAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        menuAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        menuAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (menuItemAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
         [tempArray addObject:NSAccessibilityTitleAttribute];
         [tempArray addObject:NSAccessibilityDescriptionAttribute];
         [tempArray addObject:NSAccessibilityHelpAttribute];
@@ -1467,8 +1458,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:(NSString*)kAXMenuItemPrimaryUIElementAttribute];
         [tempArray addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
         [tempArray addObject:NSAccessibilityFocusedAttribute];
-        menuItemAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        menuItemAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (menuButtonAttrs == nil) {
         menuButtonAttrs = [[NSArray alloc] initWithObjects:NSAccessibilityRoleAttribute,
@@ -1483,42 +1473,38 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                            NSAccessibilityChildrenAttribute, nil];
     }
     if (controlAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
-        controlAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        controlAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (incrementorAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
         [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
         [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
-        incrementorAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        incrementorAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (buttonAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         // Buttons should not expose AXValue.
         [tempArray removeObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
-        buttonAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        buttonAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (comboBoxAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:controlAttrs]);
         [tempArray addObject:NSAccessibilityExpandedAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        comboBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        comboBoxAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tableAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
@@ -1531,91 +1517,80 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRowCountAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
         [tempArray addObject:NSAccessibilityARIARowCountAttribute];
-        tableAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tableAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tableRowAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
-        tableRowAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tableRowAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tableColAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
         [tempArray addObject:NSAccessibilityHeaderAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
-        tableColAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tableColAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tableCellAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityRowIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnIndexAttribute];
         [tempArray addObject:NSAccessibilityARIARowIndexAttribute];
-        tableCellAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tableCellAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (groupAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        groupAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        groupAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (inputImageAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:buttonAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:buttonAttrs]);
         [tempArray addObject:NSAccessibilityURLAttribute];
-        inputImageAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        inputImageAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (passwordFieldAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
-        passwordFieldAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        passwordFieldAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tabListAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityTabsAttribute];
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        tabListAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tabListAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (outlineAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilitySelectedRowsAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        outlineAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        outlineAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (outlineRowAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:tableRowAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:tableRowAttrs]);
         [tempArray addObject:NSAccessibilityDisclosingAttribute];
         [tempArray addObject:NSAccessibilityDisclosedByRowAttribute];
         [tempArray addObject:NSAccessibilityDisclosureLevelAttribute];
         [tempArray addObject:NSAccessibilityDisclosedRowsAttribute];
         [tempArray removeObject:NSAccessibilityValueAttribute];
-        outlineRowAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        outlineRowAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (scrollViewAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityHorizontalScrollBarAttribute];
         [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
-        scrollViewAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        scrollViewAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
 
     NSArray *objectAttributes = attributes;
@@ -3128,7 +3103,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if (textParamAttrs == nil) {
-        NSMutableArray* tempArray = [[NSMutableArray alloc] initWithArray:paramAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:paramAttrs]);
         [tempArray addObject:(NSString*)kAXLineForIndexParameterizedAttribute];
         [tempArray addObject:(NSString*)kAXRangeForLineParameterizedAttribute];
         [tempArray addObject:(NSString*)kAXStringForRangeParameterizedAttribute];
@@ -3138,22 +3113,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:(NSString*)kAXRTFForRangeParameterizedAttribute];
         [tempArray addObject:(NSString*)kAXAttributedStringForRangeParameterizedAttribute];
         [tempArray addObject:(NSString*)kAXStyleRangeForIndexParameterizedAttribute];
-        textParamAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        textParamAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (tableParamAttrs == nil) {
-        NSMutableArray* tempArray = [[NSMutableArray alloc] initWithArray:paramAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:paramAttrs]);
         [tempArray addObject:NSAccessibilityCellForColumnAndRowParameterizedAttribute];
-        tableParamAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        tableParamAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
     if (!webAreaParamAttrs) {
-        NSMutableArray* tempArray = [[NSMutableArray alloc] initWithArray:paramAttrs];
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:paramAttrs]);
         [tempArray addObject:NSAccessibilityTextMarkerForIndexParameterizedAttribute];
         [tempArray addObject:NSAccessibilityTextMarkerIsValidParameterizedAttribute];
         [tempArray addObject:NSAccessibilityIndexForTextMarkerParameterizedAttribute];
-        webAreaParamAttrs = [[NSArray alloc] initWithArray:tempArray];
-        [tempArray release];
+        webAreaParamAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
 
     if (backingObject->isPasswordField())

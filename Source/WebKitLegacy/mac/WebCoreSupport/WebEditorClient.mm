@@ -434,7 +434,7 @@ void _WebCreateFragment(Document&, NSAttributedString *, FragmentAndResources&)
 static NSDictionary *attributesForAttributedStringConversion()
 {
     // This function needs to be kept in sync with identically named one in WebCore, which is used on newer OS versions.
-    NSMutableArray *excludedElements = [[NSMutableArray alloc] initWithObjects:
+    auto excludedElements = adoptNS([[NSMutableArray alloc] initWithObjects:
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
@@ -447,16 +447,14 @@ static NSDictionary *attributesForAttributedStringConversion()
         // Omit object so no file attachments are part of the fragment.
         @"object",
 #endif
-        nil];
+        nil]);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
         [excludedElements addObject:@"object"];
 #endif
 
-    NSDictionary *dictionary = @{ NSExcludedElementsDocumentAttribute: excludedElements };
-
-    [excludedElements release];
+    NSDictionary *dictionary = @{ NSExcludedElementsDocumentAttribute: excludedElements.get() };
 
     return dictionary;
 }

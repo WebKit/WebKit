@@ -1332,11 +1332,10 @@ static CFMutableSetRef allWebViewsSet;
 {
     NSArray *editableTypes = [WebHTMLView _insertablePasteboardTypes];
     NSArray *URLTypes = [NSPasteboard _web_dragTypesForURL];
-    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:editableTypes];
+    auto types = adoptNS([[NSMutableSet alloc] initWithArray:editableTypes]);
     [types addObjectsFromArray:URLTypes];
     [types addObject:[WebHTMLView _dummyPasteboardType]];
     [self registerForDraggedTypes:[types allObjects]];
-    [types release];
 }
 
 static bool needsOutlookQuirksScript()
@@ -1449,10 +1448,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     NSRect f = [self frame];
-    WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
+    auto frameView = adoptNS([[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)]);
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self addSubview:frameView];
-    [frameView release];
+    [self addSubview:frameView.get()];
 
 #if PLATFORM(MAC)
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
@@ -1609,7 +1607,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
         [self setSmartInsertDeleteEnabled:[[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled]];
 
-    [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
+    [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView.get()];
 
 #if PLATFORM(IOS_FAMILY)
     NSRunLoop *runLoop = WebThreadNSRunLoop();
@@ -1631,7 +1629,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     NSView *nextKeyView = [self nextKeyView];
     if (nextKeyView && nextKeyView != frameView)
         [frameView setNextKeyView:nextKeyView];
-    [super setNextKeyView:frameView];
+    [super setNextKeyView:frameView.get()];
 
     if ([[self class] shouldIncludeInWebKitStatistics])
         ++WebViewCount;
@@ -1728,7 +1726,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if !PLATFORM(IOS_FAMILY)
 + (NSArray *)_supportedFileExtensions
 {
-    NSMutableSet *extensions = [[NSMutableSet alloc] init];
+    auto extensions = adoptNS([[NSMutableSet alloc] init]);
     NSArray *MIMETypes = [self _supportedMIMETypes];
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
@@ -1738,9 +1736,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
             [extensions addObjectsFromArray:extensionsForType];
         }
     }
-    NSArray *uniqueExtensions = [extensions allObjects];
-    [extensions release];
-    return uniqueExtensions;
+    return [extensions allObjects];
 }
 #endif
 
@@ -1785,11 +1781,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->drawsBackground = YES;
     _private->backgroundColor = CGColorRetain(WebCore::cachedCGColor(WebCore::Color::white));
 
-    WebFrameView *frameView = nil;
-    frameView = [[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)];
+    auto frameView = adoptNS([[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)]);
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self addSubview:frameView];
-    [frameView release];
+    [self addSubview:frameView.get()];
 
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
@@ -1865,7 +1859,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowScreenScaleChanged:) name:WAKWindowScreenScaleDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowVisibilityChanged:) name:WAKWindowVisibilityDidChangeNotification object:nil];
 
-    [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page frameView:frameView style:style];
+    [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page frameView:frameView.get() style:style];
 
     [self _addToAllWebViewsSet];
 
@@ -2576,22 +2570,18 @@ static bool fastDocumentTeardownEnabled()
 {
     ASSERT(URL);
 
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    auto request = adoptNS([[NSURLRequest alloc] initWithURL:URL]);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WebDownload *download = [WebDownload _downloadWithRequest:request delegate:_private->downloadDelegate directory:nil];
+    return [WebDownload _downloadWithRequest:request.get() delegate:_private->downloadDelegate directory:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
-    [request release];
-
-    return download;
 }
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
-    NSDictionary *features = [[NSDictionary alloc] init];
+    auto features = adoptNS([[NSDictionary alloc] init]);
     WebView *newWindowWebView = [[self _UIDelegateForwarder] webView:self
                                             createWebViewWithRequest:nil
-                                                      windowFeatures:features];
-    [features release];
+                                                      windowFeatures:features.get()];
     if (!newWindowWebView)
         return nil;
 
@@ -3366,9 +3356,8 @@ IGNORE_WARNINGS_END
     if (auto* element = document ? document->fullscreenManager().currentFullscreenElement() : 0) {
         SEL selector = @selector(webView:closeFullScreenWithListener:);
         if ([_private->UIDelegate respondsToSelector:selector]) {
-            WebKitFullScreenListener *listener = [[WebKitFullScreenListener alloc] initWithElement:element];
-            CallUIDelegate(self, selector, listener);
-            [listener release];
+            auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element]);
+            CallUIDelegate(self, selector, listener.get());
         } else if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen]) {
             [_private->newFullscreenController close];
         }
@@ -3613,11 +3602,10 @@ IGNORE_WARNINGS_END
 - (void)caretChanged
 {
     [_private->_caretChangeListener caretChanged];
-    NSSet *copy = [_private->_caretChangeListeners copy];
-    for (id <WebCaretChangeListener> listener in copy) {
+    auto copy = adoptNS([_private->_caretChangeListeners copy]);
+    for (id <WebCaretChangeListener> listener in copy.get()) {
         [listener caretChanged];
     }
-    [copy release];
 }
 
 - (void)_clearDelegates
@@ -3861,9 +3849,8 @@ IGNORE_WARNINGS_END
     if ([_private->backgroundColor isEqual:backgroundColor])
         return;
 
-    id old = _private->backgroundColor;
+    auto old = adoptNS(_private->backgroundColor);
     _private->backgroundColor = [backgroundColor retain];
-    [old release];
 
     [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
 }
@@ -5300,7 +5287,7 @@ IGNORE_WARNINGS_END
 
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes
 {
-    NSDictionary *viewTypes = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] copy];
+    auto viewTypes = adoptNS([[WebFrameView _viewTypesAllowImageTypeOmission:YES] copy]);
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
     id key;
     while ((key = [enumerator nextObject])) {
@@ -5314,7 +5301,6 @@ IGNORE_WARNINGS_END
                 representationClass:[WebHTMLRepresentation class]
                 forMIMEType:[MIMETypes objectAtIndex:i]];
     }
-    [viewTypes release];
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -5809,7 +5795,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     [prefs willAddToWebView];
 
-    WebPreferences *oldPrefs = _private->preferences;
+    auto oldPrefs = adoptNS(_private->preferences);
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedInternalNotification object:[self preferences]];
     [WebPreferences _removeReferenceForIdentifier:[oldPrefs identifier]];
@@ -5823,7 +5809,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [[self preferences] _postPreferencesChangedAPINotification];
 
     [oldPrefs didRemoveFromWebView];
-    [oldPrefs release];
 }
 
 - (WebPreferences *)preferences
@@ -5834,9 +5819,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)setPreferencesIdentifier:(NSString *)anIdentifier
 {
     if (!_private->closed && ![anIdentifier isEqual:[[self preferences] identifier]]) {
-        WebPreferences *prefs = [[WebPreferences alloc] initWithIdentifier:anIdentifier];
-        [self setPreferences:prefs];
-        [prefs release];
+        auto prefs = adoptNS([[WebPreferences alloc] initWithIdentifier:anIdentifier]);
+        [self setPreferences:prefs.get()];
     }
 }
 
@@ -6807,9 +6791,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight
 {
-    id old = _private->currentNodeHighlight;
+    auto old = adoptNS(_private->currentNodeHighlight);
     _private->currentNodeHighlight = [nodeHighlight retain];
-    [old release];
 }
 
 - (WebNodeHighlight *)currentNodeHighlight
@@ -7153,12 +7136,11 @@ static WebFrameView *containingFrameView(NSView *view)
 
         WebFrameView *mainFrameView = [frame frameView];
         float scale = [[mainFrameView documentView] scale];
-        WebPlainWhiteView *plainWhiteView = [[WebPlainWhiteView alloc] initWithFrame:NSZeroRect];
+        auto plainWhiteView = adoptNS([[WebPlainWhiteView alloc] initWithFrame:NSZeroRect]);
         [plainWhiteView setScale:scale];
         [plainWhiteView setFrame:[mainFrameView bounds]];
-        [mainFrameView _setDocumentView:plainWhiteView];
+        [mainFrameView _setDocumentView:plainWhiteView.get()];
         [plainWhiteView setNeedsDisplay:YES];
-        [plainWhiteView release];
     });
 }
 #endif
@@ -8670,11 +8652,10 @@ FORWARD(toggleUnderline)
     ASSERT([element isKindOfClass:[NSDictionary class]]);
 
     WebDataSource *dataSource = [(WebFrame *)[element objectForKey:WebElementFrameKey] dataSource];
-    NSURLRequest *request = [[dataSource request] copy];
+    auto request = adoptNS([[dataSource request] copy]);
     ASSERT(request);
 
-    [self _openNewWindowWithRequest:request];
-    [request release];
+    [self _openNewWindowWithRequest:request.get()];
 }
 
 - (void)_searchWithGoogleFromMenu:(id)sender
@@ -8691,12 +8672,11 @@ FORWARD(toggleUnderline)
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
     [pasteboard declareTypes:@[WebCore::legacyStringPasteboardType()] owner:nil];
-    NSMutableString *s = [selectedString mutableCopy];
+    auto s = adoptNS([selectedString mutableCopy]);
     const unichar nonBreakingSpaceCharacter = 0xA0;
     NSString *nonBreakingSpaceString = [NSString stringWithCharacters:&nonBreakingSpaceCharacter length:1];
     [s replaceOccurrencesOfString:nonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
-    [pasteboard setString:s forType:WebCore::legacyStringPasteboardType()];
-    [s release];
+    [pasteboard setString:s.get() forType:WebCore::legacyStringPasteboardType()];
 
     // FIXME: seems fragile to use the service by name, but this is what AppKit does
     NSPerformService(@"Search With Google", pasteboard);

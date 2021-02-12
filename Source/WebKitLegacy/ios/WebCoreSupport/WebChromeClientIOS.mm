@@ -133,7 +133,7 @@ void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
 {
     auto& settings = chooser.settings();
     BOOL allowMultipleFiles = settings.allowsMultipleFiles;
-    WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
+    auto listener = adoptNS([[WebOpenPanelResultListener alloc] initWithChooser:chooser]);
 
     WebMediaCaptureType captureType = WebMediaCaptureTypeNone;
 #if ENABLE(MEDIA_CAPTURE)
@@ -146,13 +146,11 @@ void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
     };
 
     if (WebThreadIsCurrent()) {
-        RunLoop::main().dispatch([this, listener = retainPtr(listener), configuration = retainPtr(configuration)] {
+        RunLoop::main().dispatch([this, listener = WTFMove(listener), configuration = retainPtr(configuration)] {
             [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration.get()];
         });
     } else
-        [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener configuration:configuration];
-
-    [listener release];
+        [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration];
 }
 
 void WebChromeClientIOS::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)

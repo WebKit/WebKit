@@ -246,7 +246,7 @@ static void invalidateGStateCallback(WKViewRef view)
     }
     
     [subviewReferences release];
-    
+
     [super dealloc];
 }
 
@@ -328,13 +328,12 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (void)addSubview:(WAKView *)subview
 {
-    [subview retain];
+    auto protectedSubView = retainPtr(subview);
     [subview removeFromSuperview];
     WKViewAddSubview (viewRef, [subview _viewRef]);
     
     // Keep a reference to subview so it sticks around.
     [[self _subviewReferences] addObject:subview];
-    [subview release];
 }
 
 - (void)willRemoveSubview:(WAKView *)subview
@@ -344,10 +343,9 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 - (void)removeFromSuperview
 {
-    WAKView *oldSuperview = [[self superview] retain];
+    RetainPtr<WAKView> oldSuperview = [self superview];
     WKViewRemoveFromSuperview (viewRef);
     [[oldSuperview _subviewReferences] removeObject:self];
-    [oldSuperview release];
 }
 
 - (void)viewDidMoveToWindow

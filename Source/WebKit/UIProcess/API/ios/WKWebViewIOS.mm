@@ -59,6 +59,7 @@
 #import <WebCore/VersionChecks.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(DATA_DETECTION)
@@ -3032,11 +3033,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         // Defer snapshotting until after the current resize completes.
-        void (^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
-        RetainPtr<WKWebView> retainedSelf = self;
-        _callbacksDeferredDuringResize.append([retainedSelf, rectInViewCoordinates, imageWidth, copiedCompletionHandler] {
-            [retainedSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:copiedCompletionHandler];
-            [copiedCompletionHandler release];
+        _callbacksDeferredDuringResize.append([retainedSelf = retainPtr(self), rectInViewCoordinates, imageWidth, completionHandler = makeBlockPtr(completionHandler)] {
+            [retainedSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:completionHandler.get()];
         });
         return;
     }

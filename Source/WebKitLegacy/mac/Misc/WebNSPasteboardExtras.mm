@@ -193,10 +193,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
 - (void)_web_writeFileWrapperAsRTFDAttachment:(NSFileWrapper *)wrapper
 {
-    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    
-    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
-    [attachment release];
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithFileWrapper:wrapper]);
+    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     [self setData:RTFDData forType:legacyRTFDPasteboardType()];
@@ -317,9 +315,8 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     if (customDataBuffer)
         [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
-    NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
-    [self setPropertyList:extensions forType:legacyFilesPromisePasteboardType()];
-    [extensions release];
+    auto extensions = adoptNS([[NSArray alloc] initWithObjects:extension, nil]);
+    [self setPropertyList:extensions.get() forType:legacyFilesPromisePasteboardType()];
 
     return source;
 }

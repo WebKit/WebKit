@@ -255,9 +255,7 @@ static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 
 static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, int64_t& newChangeCount)
 {
-    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
-    [attachment release];
+    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:adoptNS([[NSTextAttachment alloc] initWithFileWrapper:wrapper]).get()];
 
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     if (!RTFDData)

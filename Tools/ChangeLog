@@ -1,3 +1,79 @@
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
+
+        Reviewed by Alex Christensen.
+
+        Reduce explicit usage of [objC release] in WebKit by using smart pointers.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::addNotificationListener):
+        (AccessibilityUIElement::removeNotificationListener):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::addNotificationListener):
+        (AccessibilityUIElement::removeNotificationListener):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (destroyWebViewAndOffscreenWindow):
+        (dumpFrameAsPDF):
+        (dumpBackForwardListForWebView):
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        (-[EventSendingController sentTouchEventOfType:]):
+        (-[EventSendingController touchEnd]):
+        (-[EventSendingController touchCancel]):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::clearBackForwardList):
+        (TestRunner::keepWebHistory):
+        (TestRunner::setDatabaseQuota):
+        (TestRunner::setMockDeviceOrientation):
+        (TestRunner::setMockGeolocationPosition):
+        (-[APITestDelegateIPhone initWithTestRunner:utf8Data:baseURL:]):
+        (-[APITestDelegateIPhone dealloc]):
+        (-[APITestDelegateIPhone run]):
+        (-[APITestDelegateIPhone _cleanUp]):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        (-[SynchronousLoader dealloc]):
+        (-[SynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+        (+[SynchronousLoader makeRequest:withUsername:password:]):
+        (TestRunner::addChromeInputField):
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:]):
+        (-[UIDelegate timerFired]):
+        (-[UIDelegate dealloc]):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator interpolatedEvents:]):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::addChromeInputField):
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm:
+        (-[WebKitTestRunnerDraggingInfo dealloc]):
+        (-[WebKitTestRunnerDraggingInfo draggedImage]):
+        (-[WebKitTestRunnerDraggingInfo draggingPasteboard]):
+        (-[WebKitTestRunnerDraggingInfo draggingSource]):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard _pasteboardWithName:]):
+        (-[LocalPasteboard _addTypesWithoutUpdatingChangeCount:owner:]):
+
 2021-02-12  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Delete unused Makefile

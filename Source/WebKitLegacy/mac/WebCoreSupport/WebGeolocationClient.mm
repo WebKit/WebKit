@@ -121,13 +121,10 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
         return;
     }
 
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()];
-    WebGeolocationPolicyListener* listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()]);
+    auto listener = adoptNS([[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation]);
 
-    CallUIDelegate(m_webView, selector, webOrigin, kit(frame), listener);
-
-    [webOrigin release];
-    [listener release];
+    CallUIDelegate(m_webView, selector, webOrigin.get(), kit(frame), listener.get());
 #else
     RetainPtr<WebGeolocationProviderInitializationListener> listener = adoptNS([[WebGeolocationProviderInitializationListener alloc] initWithGeolocation:geolocation]);
     [[m_webView _geolocationProvider] initializeGeolocationForWebView:m_webView listener:listener.get()];
@@ -224,12 +221,10 @@ Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
     Frame* frame = m_geolocation->frame();
     if (!frame)
         return;
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()];
-    WebGeolocationPolicyListener *listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:m_geolocation.get() forWebView:webView];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()]);
+    auto listener = adoptNS([[WebGeolocationPolicyListener alloc] initWithGeolocation:m_geolocation.get() forWebView:webView]);
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
-    CallUIDelegate(webView, selector, webOrigin, kit(frame), listener);
-    [webOrigin release];
-    [listener release];
+    CallUIDelegate(webView, selector, webOrigin.get(), kit(frame), listener.get());
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

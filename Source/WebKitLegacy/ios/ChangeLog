@@ -1,3 +1,22 @@
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
+
+        Reviewed by Alex Christensen.
+
+        Reduce explicit usage of [objC release] in WebKit by using smart pointers.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::runOpenPanel):
+        * WebView/WebPDFViewIOS.mm:
+        (-[WebPDFView dealloc]):
+        (-[WebPDFView setDataSource:]):
+        (-[WebPDFView _checkPDFTitle]):
+        (-[WebPDFView title]):
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder _updateTitleForDocumentIfAvailable]):
+
 2021-01-19  Keith Rollin  <krollin@apple.com>
 
         Modularize WebKitLegacy.framework

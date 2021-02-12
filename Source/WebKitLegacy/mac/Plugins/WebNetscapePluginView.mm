@@ -1034,13 +1034,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if ([self _shouldCancelSrcStream]) {
             NSURLResponse *response = [[self dataSource] response];
             
-            NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+            auto error = adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                             contentURL:[response URL]
                                                          pluginPageURL:nil
                                                             pluginName:nil // FIXME: Get this from somewhere
-                                                              MIMEType:[response MIMEType]];
-            [[self dataSource] _documentLoader]->cancelMainResourceLoad(error);
-            [error release];
+                                                              MIMEType:[response MIMEType]]);
+            [[self dataSource] _documentLoader]->cancelMainResourceLoad(error.get());
             return;
         }
         
@@ -1177,11 +1176,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         frame = kit(core([self webFrame])->loader().findFrameForNavigation(frameName));
         if (frame == nil) {
             WebView *currentWebView = [self webView];
-            NSDictionary *features = [[NSDictionary alloc] init];
+            auto features = adoptNS([[NSDictionary alloc] init]);
             WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView
                                                         createWebViewWithRequest:nil
-                                                                  windowFeatures:features];
-            [features release];
+                                                                  windowFeatures:features.get()];
 
             if (!newWebView) {
                 if ([pluginRequest sendNotification]) {
@@ -1273,13 +1271,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if (_eventHandler)
             currentEventIsUserGesture = _eventHandler->currentEventIsUserGesture();
         
-        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request 
+        auto pluginRequest = adoptNS([[WebPluginRequest alloc] initWithRequest:request
                                                                           frameName:target
                                                                          notifyData:notifyData 
                                                                    sendNotification:sendNotification
-                                                            didStartFromUserGesture:currentEventIsUserGesture];
-        [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
-        [pluginRequest release];
+                                                            didStartFromUserGesture:currentEventIsUserGesture]);
+        [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest.get() afterDelay:0];
     } else {
         auto stream = WebNetscapePluginStream::create(request, plugin, sendNotification, notifyData);
 

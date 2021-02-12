@@ -31,6 +31,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
+#import <wtf/RetainPtr.h>
 
 static const CGFloat slowMotionFactor = 10;
 
@@ -178,9 +179,8 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (void)setSubAnimation:(NSAnimation *)animation
 {
-    id oldAnimation = _subAnimation;
+    auto oldAnimation = adoptNS(_subAnimation);
     _subAnimation = [animation retain];
-    [oldAnimation release];
 }
 
 - (NSTimeInterval)additionalDurationNeededToReachFinalFrame

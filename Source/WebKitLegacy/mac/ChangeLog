@@ -1,3 +1,183 @@
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
+
+        Reviewed by Alex Christensen.
+
+        Reduce explicit usage of [objC release] in WebKit by using smart pointers.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMNode absoluteQuads]):
+        (-[DOMHTMLAreaElement absoluteQuadsWithOwner:]):
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException):
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (-[WebDefaultUIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate init]):
+        (-[WebHistoryPrivate dealloc]):
+        (-[WebHistoryPrivate removeItemFromDateCaches:]):
+        (-[WebHistoryPrivate addItemToDateCaches:]):
+        (-[WebHistoryPrivate visitedURL:withTitle:]):
+        (-[WebHistoryPrivate addItem:discardDuplicate:]):
+        (-[WebHistoryPrivate rebuildHistoryByDayIfNeeded:]):
+        (-[WebHistoryPrivate removeAllItems]):
+        (-[WebHistoryPrivate orderedLastVisitedDays]):
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        (-[WebHistoryPrivate addVisitedLinksToVisitedLinkStore:]):
+        (-[WebHistory loadFromURL:error:]):
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal dealloc]):
+        (-[WebDownloadInternal setRealDelegate:]):
+        (-[WebDownloadInternal downloadDidBegin:]):
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        (-[WebDownloadInternal download:didReceiveResponse:]):
+        (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+        (-[WebDownloadInternal download:decideDestinationWithSuggestedFilename:]):
+        (-[WebDownloadInternal download:didCreateDestination:]):
+        (-[WebDownloadInternal downloadDidFinish:]):
+        (-[WebDownloadInternal download:didFailWithError:]):
+        * Misc/WebNSDataExtras.mm:
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]):
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::didReceiveData):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView pluginView:receivedData:]):
+        (-[WebNetscapePluginView loadPluginRequest:]):
+        (-[WebNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _removePlugin:]):
+        (-[WebPluginDatabase _scanForNewPlugins]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        (WebChromeClient::addMessageToConsole):
+        (WebChromeClient::mouseDidMoveOverElement):
+        (WebChromeClient::exceededDatabaseQuota):
+        (WebChromeClient::reachedApplicationCacheOriginQuota):
+        (WebChromeClient::runOpenPanel):
+        (WebChromeClient::exitFullScreenForElement):
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebFrameLoaderClient::createDocumentLoader):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::actionDictionary const):
+        (WebFrameLoaderClient::createFrame):
+        (pluginView):
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (WebGeolocationClient::requestPermission):
+        (-[WebGeolocationProviderInitializationListener initializationAllowedWebView:]):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]):
+        (-[WebInspectorWindowController initWithInspectedWebView:isUnderTest:]):
+        (-[WebInspectorWindowController dealloc]):
+        (-[WebInspectorWindowController frontendWebView]):
+        (-[WebInspectorWindowController window]):
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::requestPermission):
+        (WebNotificationClient::checkPermission):
+        * WebView/WebArchive.mm:
+        (-[WebArchivePrivate dealloc]):
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        (-[WebArchive mainResource]):
+        (-[WebArchive subresources]):
+        (-[WebArchive subframeArchives]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _makeRepresentation]):
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFramePrivate setWebFrameView:]):
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]):
+        (+[WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:frameView:style:]):
+        (-[WebFrame getDictationResultRanges:andMetadatas:]):
+        (-[WebFrame frameView]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameViewPrivate dealloc]):
+        (-[WebFrameView _scrollView]):
+        (-[WebFrameView _install]):
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView _setCustomScrollViewClass:]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController init]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        * WebView/WebNavigationData.mm:
+        (-[WebNavigationDataPrivate dealloc]):
+        (-[WebNavigationData initWithURLString:title:originalRequest:response:hasSubstituteData:clientRedirectSource:]):
+        (-[WebNavigationData url]):
+        (-[WebNavigationData title]):
+        (-[WebNavigationData originalRequest]):
+        (-[WebNavigationData response]):
+        (-[WebNavigationData clientRedirectSource]):
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument):
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]):
+        (-[WebPDFView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        (-[WebPDFView attributedString]):
+        (-[WebPDFView selectionImageForcingBlackText:]):
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        (-[WebPDFView _nextMatchFor:direction:caseSensitive:wrap:fromSelection:startInSelection:]):
+        * WebView/WebPolicyDelegate.mm:
+        (-[WebPolicyDecisionListenerPrivate initWithTarget:action:]):
+        (-[WebPolicyDecisionListenerPrivate dealloc]):
+        (-[WebPolicyDecisionListener _usePolicy:]):
+        (-[WebPolicyDecisionListener _invalidate]):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _setIBCreatorID:]):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _buildUI]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+        * WebView/WebView.mm:
+        (-[WebView _registerDraggedTypes]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView _supportedFileExtensions]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _downloadURL:]):
+        (-[WebView _openNewWindowWithRequest:]):
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+        (-[WebView caretChanged]):
+        (-[WebView setBackgroundColor:]):
+        (+[WebView setMIMETypesShownAsHTML:]):
+        (-[WebView setPreferences:]):
+        (-[WebView setPreferencesIdentifier:]):
+        (-[WebView setCurrentNodeHighlight:]):
+        (-[WebView stopLoadingAndClear]):
+        (-[WebView _openFrameInNewWindowFromMenu:]):
+        (-[WebView _searchWithGoogleFromMenu:]):
+        * WebView/WebWindowAnimation.mm:
+        (-[WebWindowScaleAnimation setSubAnimation:]):
+
 2021-02-10  Rob Buis  <rbuis@igalia.com>
 
         Use event loop to set title

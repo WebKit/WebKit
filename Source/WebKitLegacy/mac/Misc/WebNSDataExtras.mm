@@ -27,6 +27,7 @@
 #import <WebKitLegacy/WebNSDataExtrasPrivate.h>
 
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
 @interface NSString (WebNSDataExtrasInternal)
 - (NSString *)_web_capitalizeRFC822HeaderFieldName;
@@ -311,11 +312,10 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
             }
             // Merge the continuation of the previous header
             NSString *currentValue = [headerFields objectForKey:lastKey];
-            NSString *newValue = [[NSString alloc] initWithBytes:line length:lineLength encoding:NSISOLatin1StringEncoding];
+            auto newValue = adoptNS([[NSString alloc] initWithBytes:line length:lineLength encoding:NSISOLatin1StringEncoding]);
             ASSERT(currentValue);
             ASSERT(newValue);
-            [headerFields setObject:[currentValue stringByAppendingString:newValue] forKey:lastKey];
-            [newValue release];
+            [headerFields setObject:[currentValue stringByAppendingString:newValue.get()] forKey:lastKey];
         } else {
             // Brand new header
             const UInt8* colon;
@@ -331,13 +331,12 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
                 if (*colon != ' ' && *colon != '\t')
                     break;
             }
-            NSString *value = [[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding];
+            auto value = adoptNS([[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding]);
             if (NSString *oldValue = [headerFields objectForKey:lastKey]) {
-                [value autorelease];
-                value = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value];
+                auto newValue = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value.get()];
+                value = WTFMove(newValue);
             }
-            [headerFields setObject:value forKey:lastKey];
-            [value release];
+            [headerFields setObject:value.get() forKey:lastKey];
         }
     }
 

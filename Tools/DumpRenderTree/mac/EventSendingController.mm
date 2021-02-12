@@ -584,7 +584,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     
 #if !PLATFORM(IOS_FAMILY)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
-    NSEvent *event = [NSEvent mouseEventWithType:eventType
+    auto event = retainPtr([NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
                                    modifierFlags:buildModifierFlags(modifiers)
                                        timestamp:[self currentEventTime]
@@ -592,23 +592,23 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
-                                        pressure:0.0];
+                                        pressure:0.0]);
 #else
-    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseDown
+    auto event = adoptNS([[WebEvent alloc] initWithMouseEventType:WebEventMouseDown
                                                      timeStamp:[self currentEventTime]
-                                                      location:lastMousePosition];
+                                                      location:lastMousePosition]);
 #endif
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
 #if !PLATFORM(IOS_FAMILY)
-        [NSApp _setCurrentEvent:event];
+        [NSApp _setCurrentEvent:event.get()];
 #endif
         {
 #if !PLATFORM(IOS_FAMILY)
-            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
+            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event.get());
 #endif
-            [subView mouseDown:event];
+            [subView mouseDown:event.get()];
         }
 #if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:nil];
@@ -616,10 +616,6 @@ static NSUInteger swizzledEventPressedMouseButtons()
         if (buttonNumber == LeftMouseButton)
             leftMouseButtonDown = YES;
     }
-
-#if PLATFORM(IOS_FAMILY)
-    [event release];
-#endif
 }
 
 - (void)mouseDown:(int)buttonNumber
@@ -676,7 +672,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     [[[mainFrame frameView] documentView] layout];
 #if !PLATFORM(IOS_FAMILY)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
-    NSEvent *event = [NSEvent mouseEventWithType:eventType
+    auto event = retainPtr([NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
                                    modifierFlags:buildModifierFlags(modifiers)
                                        timestamp:[self currentEventTime]
@@ -684,11 +680,11 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
-                                        pressure:0.0];
+                                        pressure:0.0]);
 #else
-    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseUp
+    auto event = adoptNS([[WebEvent alloc] initWithMouseEventType:WebEventMouseUp
                                                      timeStamp:[self currentEventTime]
-                                                      location:lastMousePosition];
+                                                      location:lastMousePosition]);
 #endif
 
     NSView *targetView = [[mainFrame webView] hitTest:[event locationInWindow]];
@@ -698,13 +694,13 @@ static NSUInteger swizzledEventPressedMouseButtons()
     targetView = targetView ? targetView : [[mainFrame frameView] documentView];
     assert(targetView);
 #if !PLATFORM(IOS_FAMILY)
-    [NSApp _setCurrentEvent:event];
+    [NSApp _setCurrentEvent:event.get()];
 #endif
     {
 #if !PLATFORM(IOS_FAMILY)
-        auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(targetView, event);
+        auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(targetView, event.get());
 #endif
-        [targetView mouseUp:event];
+        [targetView mouseUp:event.get()];
     }
 #if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
@@ -730,10 +726,6 @@ static NSUInteger swizzledEventPressedMouseButtons()
         draggingInfo = nil;
     }
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-    [event release];
-#endif
 }
 
 - (void)mouseUp:(int)buttonNumber
@@ -757,7 +749,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     NSView *view = [mainFrame webView];
 #if !PLATFORM(IOS_FAMILY)
     NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
-    NSEvent *event = [NSEvent mouseEventWithType:(leftMouseButtonDown ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
+    auto event = retainPtr([NSEvent mouseEventWithType:(leftMouseButtonDown ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
                                         location:newMousePosition
                                    modifierFlags:0 
                                        timestamp:[self currentEventTime]
@@ -765,23 +757,23 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:(leftMouseButtonDown ? clickCount : 0) 
-                                        pressure:0.0];
-    CGEventRef cgEvent = event.CGEvent;
+                                        pressure:0.0]);
+    CGEventRef cgEvent = [event CGEvent];
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - lastMousePosition.x);
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, newMousePosition.y - lastMousePosition.y);
-    event = [NSEvent eventWithCGEvent:cgEvent];
+    event = retainPtr([NSEvent eventWithCGEvent:cgEvent]);
     lastMousePosition = newMousePosition;
 #else
     lastMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
-    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseMoved
+    auto event = adoptNS([[WebEvent alloc] initWithMouseEventType:WebEventMouseMoved
                                                      timeStamp:[self currentEventTime]
-                                                      location:lastMousePosition];
+                                                      location:lastMousePosition]);
 #endif // !PLATFORM(IOS_FAMILY)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
 #if !PLATFORM(IOS_FAMILY)
-        [NSApp _setCurrentEvent:event];
+        [NSApp _setCurrentEvent:event.get()];
 #endif
         if (leftMouseButtonDown) {
 #if !PLATFORM(IOS_FAMILY)
@@ -792,25 +784,21 @@ static NSUInteger swizzledEventPressedMouseButtons()
                 [[mainFrame webView] draggingUpdated:draggingInfo];
             } else {
 #if !PLATFORM(IOS_FAMILY)
-                auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
+                auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event.get());
 #endif
-                [subView mouseDragged:event];
+                [subView mouseDragged:event.get()];
             }
 #endif
         } else {
 #if !PLATFORM(IOS_FAMILY)
-            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
+            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event.get());
 #endif
-            [subView mouseMoved:event];
+            [subView mouseMoved:event.get()];
         }
 #if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:nil];
 #endif
     }
-
-#if PLATFORM(IOS_FAMILY)
-    [event release];
-#endif
 }
 
 - (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)continuously
@@ -1167,7 +1155,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     [[[mainFrame frameView] documentView] layout];
 
 #if !PLATFORM(IOS_FAMILY)
-    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
+    auto event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
                         timestamp:[self currentEventTime]
@@ -1176,21 +1164,21 @@ static NSUInteger swizzledEventPressedMouseButtons()
                         characters:eventCharacter
                         charactersIgnoringModifiers:charactersIgnoringModifiers
                         isARepeat:NO
-                        keyCode:keyCode];
+                        keyCode:keyCode]);
 #else
-    WebEvent *event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')];
+    auto event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    [NSApp _setCurrentEvent:event];
+    [NSApp _setCurrentEvent:event.get()];
 #endif
-    [[[[mainFrame webView] window] firstResponder] keyDown:event];
+    [[[[mainFrame webView] window] firstResponder] keyDown:event.get()];
 #if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    event = [NSEvent keyEventWithType:NSEventTypeKeyUp
+    event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyUp
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
                         timestamp:[self currentEventTime]
@@ -1199,22 +1187,17 @@ static NSUInteger swizzledEventPressedMouseButtons()
                         characters:eventCharacter
                         charactersIgnoringModifiers:charactersIgnoringModifiers
                         isARepeat:NO
-                        keyCode:keyCode];
+                        keyCode:keyCode]);
 #else
-    [event release];
-    event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')];
+    event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    [NSApp _setCurrentEvent:event];
+    [NSApp _setCurrentEvent:event.get()];
 #endif
-    [[[[mainFrame webView] window] firstResponder] keyUp:event];
+    [[[[mainFrame webView] window] firstResponder] keyUp:event.get()];
 #if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    [event release];
 #endif
 }
 
@@ -1494,9 +1477,9 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 - (void)sentTouchEventOfType:(WebEventType)type
 {
-    NSMutableArray *touchLocations = [[NSMutableArray alloc] initWithCapacity:[touches count]];
-    NSMutableArray *touchIdentifiers = [[NSMutableArray alloc] initWithCapacity:[touches count]];
-    NSMutableArray *touchPhases = [[NSMutableArray alloc] initWithCapacity:[touches count]];
+    auto touchLocations = adoptNS([[NSMutableArray alloc] initWithCapacity:[touches count]]);
+    auto touchIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:[touches count]]);
+    auto touchPhases = adoptNS([[NSMutableArray alloc] initWithCapacity:[touches count]]);
     
     CGPoint centroid = CGPointZero;
     NSUInteger touchesDownCount = 0;
@@ -1520,25 +1503,20 @@ static NSUInteger swizzledEventPressedMouseButtons()
     else
         centroid = CGPointZero;
 
-    WebEvent *event = [[WebEvent alloc] initWithTouchEventType:type
+    auto event = adoptNS([[WebEvent alloc] initWithTouchEventType:type
                                         timeStamp:[self currentEventTime]
                                         location:centroid
                                         modifiers:(WebEventFlags)nextEventFlags
                                         touchCount:[touches count]
-                                        touchLocations:touchLocations
-                                        touchIdentifiers:touchIdentifiers
-                                        touchPhases:touchPhases
+                                        touchLocations:touchLocations.get()
+                                        touchIdentifiers:touchIdentifiers.get()
+                                        touchPhases:touchPhases.get()
                                         isGesture:(touchesDownCount > 1)
                                         gestureScale:1
-                                        gestureRotation:0];
+                                        gestureRotation:0]);
     // Ensure that layout is up-to-date so that hit-testing through WAKViews works correctly.
     [mainFrame updateLayout];
-    [[[mainFrame webView] window] sendEventSynchronously:event];
-    [event release];
-    
-    [touchLocations release];
-    [touchIdentifiers release];
-    [touchPhases release];
+    [[[mainFrame webView] window] sendEventSynchronously:event.get()];
     
     nextEventFlags = 0;
 }
@@ -1557,28 +1535,26 @@ static NSUInteger swizzledEventPressedMouseButtons()
 {
     [self sentTouchEventOfType:WebEventTouchEnd];
 
-    NSMutableArray *touchesToRemove = [[NSMutableArray alloc] init];
+    auto touchesToRemove = adoptNS([[NSMutableArray alloc] init]);
     for (SyntheticTouch *currTouch in touches) {
         if (currTouch.phase == UITouchPhaseEnded)
             [touchesToRemove addObject:currTouch];
     }
 
-    [touches removeObjectsInArray:touchesToRemove];
-    [touchesToRemove release];
+    [touches removeObjectsInArray:touchesToRemove.get()];
 }
 
 - (void)touchCancel
 {
     [self sentTouchEventOfType:WebEventTouchCancel];
 
-    NSMutableArray *touchesToRemove = [[NSMutableArray alloc] init];
+    auto touchesToRemove = adoptNS([[NSMutableArray alloc] init]);
     for (SyntheticTouch *currTouch in touches) {
         if (currTouch.phase == UITouchPhaseCancelled)
             [touchesToRemove addObject:currTouch];
     }
 
-    [touches removeObjectsInArray:touchesToRemove];
-    [touchesToRemove release];
+    [touches removeObjectsInArray:touchesToRemove.get()];
 }
 #endif
 

@@ -68,7 +68,7 @@ static const CGFloat initialWindowHeight = 650;
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate, WebPolicyDelegate, WebUIDelegate> {
 @private
     RetainPtr<WebView> _inspectedWebView;
-    WebView* _frontendWebView;
+    RetainPtr<WebView> _frontendWebView;
     NakedPtr<WebInspectorFrontendClient> _frontendClient;
     WebInspectorClient* _inspectorClient;
     BOOL _attachedToInspectedWebView;
@@ -475,7 +475,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
 
-    WebPreferences *preferences = [[WebPreferences alloc] init];
+    auto preferences = adoptNS([[WebPreferences alloc] init]);
     [preferences setAllowsAnimatedImages:YES];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setAutosaves:NO];
@@ -494,13 +494,11 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [preferences setAllowTopNavigationToDataURLs:YES];
     [preferences setStorageBlockingPolicy:WebAllowAllStorage];
 
-    _frontendWebView = [[WebView alloc] init];
-    [_frontendWebView setPreferences:preferences];
+    _frontendWebView = adoptNS([[WebView alloc] init]);
+    [_frontendWebView setPreferences:preferences.get()];
     [_frontendWebView setProhibitsMainFrameScrolling:YES];
     [_frontendWebView setUIDelegate:self];
     [_frontendWebView setPolicyDelegate:self];
-
-    [preferences release];
 
     [self setWindowFrameAutosaveName:@"Web Inspector 2"];
     return self;
@@ -514,16 +512,14 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     _inspectedWebView = webView;
 
     NSString *pagePath = isUnderTest ? [self inspectorTestPagePath] : [self inspectorPagePath];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath: pagePath]];
-    [[_frontendWebView mainFrame] loadRequest:request];
-    [request release];
+    auto request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath: pagePath]]);
+    [[_frontendWebView mainFrame] loadRequest:request.get()];
 
     return self;
 }
 
 - (void)dealloc
 {
-    [_frontendWebView release];
     [super dealloc];
 }
 
@@ -552,32 +548,29 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (WebView *)frontendWebView
 {
-    return _frontendWebView;
+    return _frontendWebView.get();
 }
 
 - (NSWindow *)window
 {
-    NSWindow *window = [super window];
-    if (window)
+    if (auto *window = [super window])
         return window;
 
     NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
-    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO]);
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
 
-    CGFloat approximatelyHalfScreenSize = (window.screen.frame.size.width / 2) - 4;
+    CGFloat approximatelyHalfScreenSize = ([window screen].frame.size.width / 2) - 4;
     CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 
-    window.titlebarAppearsTransparent = YES;
+    [window setTitlebarAppearsTransparent: YES];
 
-    [self setWindow:window];
-    [window release];
-
-    return window;
+    [self setWindow:window.get()];
+    return window.get();
 }
 
 // MARK: -
@@ -659,8 +652,8 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
 
         [_frontendWebView removeFromSuperview];
-        [_inspectedWebView.get() addSubview:_frontendWebView positioned:NSWindowBelow relativeTo:(NSView *)frameView];
-        [[_inspectedWebView.get() window] makeFirstResponder:_frontendWebView];
+        [_inspectedWebView.get() addSubview:_frontendWebView.get() positioned:NSWindowBelow relativeTo:(NSView *)frameView];
+        [[_inspectedWebView.get() window] makeFirstResponder:_frontendWebView.get()];
 
         [_frontendWebView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
@@ -673,7 +666,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         [_frontendWebView setFrame:[contentView frame]];
         [_frontendWebView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [_frontendWebView removeFromSuperview];
-        [contentView addSubview:_frontendWebView];
+        [contentView addSubview:_frontendWebView.get()];
 
         [super showWindow:nil];
     }
@@ -796,8 +789,8 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         [resultListener chooseFilenames:filenames];
     };
 
-    if (_frontendWebView.window)
-        [panel beginSheetModalForWindow:_frontendWebView.window completionHandler:completionHandler];
+    if ([_frontendWebView window])
+        [panel beginSheetModalForWindow:[_frontendWebView window] completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
 }

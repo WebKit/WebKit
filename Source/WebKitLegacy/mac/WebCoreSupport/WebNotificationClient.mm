@@ -130,11 +130,9 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, W
 
     m_everRequestedPermission = true;
 
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
     
-    CallUIDelegate(m_webView, selector, webOrigin, listener);
-    
-    [webOrigin release];
+    CallUIDelegate(m_webView, selector, webOrigin.get(), listener);
 }
 
 bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*) const
@@ -147,9 +145,8 @@ bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:WTFMove(callback)];
-    requestPermission(context, listener);
-    [listener release];
+    auto listener = adoptNS([[WebNotificationPolicyListener alloc] initWithCallback:WTFMove(callback)]);
+    requestPermission(context, listener.get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -159,9 +156,8 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
         return NotificationClient::Permission::Denied;
     if (![[m_webView preferences] notificationsEnabled])
         return NotificationClient::Permission::Denied;
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()];
-    WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin];
-    [webOrigin release];
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
+    WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin.get()];
     switch (permission) {
         case WebNotificationPermissionAllowed:
             return NotificationClient::Permission::Granted;

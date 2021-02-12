@@ -241,9 +241,7 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         NSString *voiceURI = [attributes objectForKey:NSVoiceIdentifier];
         NSString *name = [attributes objectForKey:NSVoiceName];
         NSString *language = [attributes objectForKey:NSVoiceLocaleIdentifier];
-        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:language];
-        NSString *defaultVoiceURI = speechSynthesisGetDefaultVoiceIdentifierForLocale(locale);
-        [locale release];
+        NSString *defaultVoiceURI = speechSynthesisGetDefaultVoiceIdentifierForLocale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:language]).get());
 
         // Change to BCP-47 format as defined by spec.
         language = [language stringByReplacingOccurrencesOfString:@"_" withString:@"-"];

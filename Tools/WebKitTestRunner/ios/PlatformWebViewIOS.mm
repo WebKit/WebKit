@@ -209,9 +209,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     m_window.backgroundColor = [UIColor lightGrayColor];
     m_window.platformWebView = this;
 
-    UIViewController *viewController = [[PlatformWebViewController alloc] init];
-    [m_window setRootViewController:viewController];
-    [viewController release];
+    [m_window setRootViewController:adoptNS([[PlatformWebViewController alloc] init]).get()];
 
     m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
 

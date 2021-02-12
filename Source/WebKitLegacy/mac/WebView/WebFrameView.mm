@@ -110,7 +110,7 @@ enum {
 @interface WebFrameViewPrivate : NSObject {
 @public
     WebFrame *webFrame;
-    WebDynamicScrollBarsView *frameScrollView;
+    RetainPtr<WebDynamicScrollBarsView> frameScrollView;
     BOOL includedInWebKitStatistics;
 }
 @end
@@ -119,7 +119,6 @@ enum {
 
 - (void)dealloc
 {
-    [frameScrollView release];
     [super dealloc];
 }
 
@@ -237,7 +236,7 @@ enum {
     // after _private has been nilled out.
     if (_private == nil)
         return nil;
-    return _private->frameScrollView;
+    return _private->frameScrollView.get();
 }
 
 - (float)_verticalPageScrollDistance
@@ -316,7 +315,7 @@ enum {
 
     auto* view = frame->view();
 
-    view->setPlatformWidget(_private->frameScrollView);
+    view->setPlatformWidget(_private->frameScrollView.get());
 
     // FIXME: Frame tries to do this too. Is this code needed?
     if (WebCore::RenderWidget* owner = frame->ownerRenderer()) {
@@ -373,7 +372,7 @@ enum {
 
     _private = [[WebFrameViewPrivate alloc] init];
 
-    WebDynamicScrollBarsView *scrollView = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)];
+    auto scrollView = adoptNS([[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)]);
     _private->frameScrollView = scrollView;
 #if PLATFORM(IOS_FAMILY)
     [scrollView setDelegate:self];
@@ -385,12 +384,12 @@ enum {
     [scrollView setHasHorizontalScroller:NO];
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [scrollView setLineScroll:WebCore::Scrollbar::pixelsPerLineStep()];
-    [self addSubview:scrollView];
+    [self addSubview:scrollView.get()];
 
     // Don't call our overridden version of setNextKeyView here; we need to make the standard NSView
     // link between us and our subview so that previousKeyView and previousValidKeyView work as expected.
     // This works together with our becomeFirstResponder and setNextKeyView overrides.
-    [super setNextKeyView:scrollView];
+    [super setNextKeyView:scrollView.get()];
     
     return self;
 }
@@ -1234,31 +1233,29 @@ enum {
     if (![customClass isSubclassOfClass:[WebDynamicScrollBarsView class]])
         return;
 
-    WebDynamicScrollBarsView *oldScrollView = _private->frameScrollView; // already retained
-    NSView <WebDocumentView> *documentView = [[self documentView] retain];
+    auto oldScrollView = _private->frameScrollView; // already retained
+    auto documentView = retainPtr([self documentView]);
 
-    WebDynamicScrollBarsView *scrollView  = [[customClass alloc] initWithFrame:[oldScrollView frame]];
+    RetainPtr<WebDynamicScrollBarsView> scrollView  = adoptNS([[customClass alloc] initWithFrame:[oldScrollView frame]]);
     [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
     [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
     [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
     [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];
     [scrollView setAutoresizingMask:[oldScrollView autoresizingMask]];
     [scrollView setLineScroll:[oldScrollView lineScroll]];
-    [self addSubview:scrollView];
+    [self addSubview:scrollView.get()];
 
     // don't call our overridden version here; we need to make the standard NSView link between us
     // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
     // together with our becomeFirstResponder and setNextKeyView overrides.
-    [super setNextKeyView:scrollView];
+    [super setNextKeyView:scrollView.get()];
 
-    _private->frameScrollView = scrollView;
+    _private->frameScrollView = WTFMove(scrollView);
 
-    [self _setDocumentView:documentView];
+    [self _setDocumentView:documentView.get()];
     [self _install];
 
     [oldScrollView removeFromSuperview];
-    [oldScrollView release];
-    [documentView release];
 }
 #endif // !PLATFORM(IOS_FAMILY)
 

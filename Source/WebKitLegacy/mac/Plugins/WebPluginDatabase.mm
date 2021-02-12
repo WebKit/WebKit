@@ -287,7 +287,7 @@ static NSArray *additionalWebPlugInPaths;
             [self _addPlugin:plugin];
 
         // Build a list of MIME types.
-        NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
+        auto MIMETypes = adoptNS([[NSMutableSet alloc] init]);
         pluginEnumerator = [plugins objectEnumerator];
         while ((plugin = [pluginEnumerator nextObject])) {
             const auto& pluginInfo = [plugin pluginInfo];
@@ -318,7 +318,6 @@ static NSArray *additionalWebPlugInPaths;
             if (self == sharedDatabase)
                 [WebView _registerPluginMIMEType:MIMEType];
         }
-        [MIMETypes release];
     }
 }
 
@@ -452,17 +451,16 @@ static NSArray *additionalWebPlugInPaths;
     // Remove plug-in from database
     NSString *pluginPath = [plugin path];
     ASSERT(pluginPath);
-    [plugin retain];
+    auto protectedPlugin = retainPtr(plugin);
     [plugins removeObjectForKey:pluginPath];
     [plugin wasRemovedFromPluginDatabase:self];
-    [plugin release];
 }
 
 - (NSMutableSet *)_scanForNewPlugins
 {
     NSMutableSet *newPlugins = [NSMutableSet set];
     NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
-    NSMutableSet *uniqueFilenames = [[NSMutableSet alloc] init];
+    auto uniqueFilenames = adoptNS([[NSMutableSet alloc] init]);
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *pluginDirectory;
     while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
@@ -484,7 +482,6 @@ static NSArray *additionalWebPlugInPaths;
                 [newPlugins addObject:pluginPackage];
         }
     }
-    [uniqueFilenames release];
     
     return newPlugins;
 }

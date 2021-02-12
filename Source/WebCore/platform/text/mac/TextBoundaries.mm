@@ -181,9 +181,8 @@ static void findComplexWordBoundary(StringView text, int position, int* start, i
 void findWordBoundary(StringView text, int position, int* start, int* end)
 {
 #if USE(APPKIT)
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()];
+    auto attributedString = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]);
     NSRange range = [attributedString doubleClickAtIndex:std::min<unsigned>(position, text.length() - 1)];
-    [attributedString release];
     *start = range.location;
     *end = range.location + range.length;
 #else
@@ -232,9 +231,8 @@ void findEndWordBoundary(StringView text, int position, int* end)
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
 #if USE(APPKIT)
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()];
+    auto attributedString = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]);
     int result = [attributedString nextWordFromIndex:position forward:forward];
-    [attributedString release];
     return result;
 #else
     // This very likely won't behave exactly like the non-iPhone version, but it works

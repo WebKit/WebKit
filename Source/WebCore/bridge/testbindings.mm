@@ -245,9 +245,9 @@ int main(int argc, char **argv)
         interp.setGlobalObject(global);
         JSGlobalObject* lexicalGlobalObject = interp.globalObject();
         
-        MyFirstInterface *myInterface = [[MyFirstInterface alloc] init];
+        auto myInterface = adoptNS([[MyFirstInterface alloc] init]);
         
-        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface));
+        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface.get()));
         
         for (int i = 1; i < argc; i++) {
             const char *code = readJavaScriptFromFile(argv[i]);
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
             }
         }
         
-        [myInterface release];
+        myInterface = nil;
         [pool drain];
     } // end block, so that Interpreter and global get deleted
     

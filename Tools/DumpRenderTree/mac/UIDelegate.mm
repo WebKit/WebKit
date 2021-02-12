@@ -252,7 +252,7 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 {
     if (!gTestRunner->isGeolocationPermissionSet()) {
         if (!m_pendingGeolocationPermissionListeners)
-            m_pendingGeolocationPermissionListeners = [[NSMutableSet set] retain];
+            m_pendingGeolocationPermissionListeners = [NSMutableSet set];
         [m_pendingGeolocationPermissionListeners addObject:listener];
         return;
     }
@@ -290,7 +290,6 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
             [listener deny];
     }
     [m_pendingGeolocationPermissionListeners removeAllObjects];
-    [m_pendingGeolocationPermissionListeners release];
     m_pendingGeolocationPermissionListeners = nil;
 }
 
@@ -437,8 +436,6 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     [draggingInfo release];
     draggingInfo = nil;
 #endif
-    [m_pendingGeolocationPermissionListeners release];
-    m_pendingGeolocationPermissionListeners = nil;
 
     [super dealloc];
 }

@@ -293,19 +293,19 @@ private:
     HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
-    NSMutableAttributedString *_attrStr;
-    NSMutableDictionary *_documentAttrs;
+    RetainPtr<NSMutableAttributedString> _attrStr;
+    RetainPtr<NSMutableDictionary> _documentAttrs;
     NSURL *_baseURL;
-    NSMutableArray *_textLists;
-    NSMutableArray *_textBlocks;
-    NSMutableArray *_textTables;
-    NSMutableArray *_textTableSpacings;
-    NSMutableArray *_textTablePaddings;
-    NSMutableArray *_textTableRows;
-    NSMutableArray *_textTableRowArrays;
-    NSMutableArray *_textTableRowBackgroundColors;
-    NSMutableDictionary *_fontCache;
-    NSMutableArray *_writingDirectionArray;
+    RetainPtr<NSMutableArray> _textLists;
+    RetainPtr<NSMutableArray> _textBlocks;
+    RetainPtr<NSMutableArray> _textTables;
+    RetainPtr<NSMutableArray> _textTableSpacings;
+    RetainPtr<NSMutableArray> _textTablePaddings;
+    RetainPtr<NSMutableArray> _textTableRows;
+    RetainPtr<NSMutableArray> _textTableRowArrays;
+    RetainPtr<NSMutableArray> _textTableRowBackgroundColors;
+    RetainPtr<NSMutableDictionary> _fontCache;
+    RetainPtr<NSMutableArray> _writingDirectionArray;
     
     CGFloat _defaultTabInterval;
     NSUInteger _domRangeStartIndex;
@@ -360,19 +360,19 @@ HTMLConverter::HTMLConverter(const SimpleRange& range)
     : m_start(makeContainerOffsetPosition(range.start))
     , m_end(makeContainerOffsetPosition(range.end))
 {
-    _attrStr = [[NSMutableAttributedString alloc] init];
-    _documentAttrs = [[NSMutableDictionary alloc] init];
+    _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
+    _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
     _baseURL = nil;
-    _textLists = [[NSMutableArray alloc] init];
-    _textBlocks = [[NSMutableArray alloc] init];
-    _textTables = [[NSMutableArray alloc] init];
-    _textTableSpacings = [[NSMutableArray alloc] init];
-    _textTablePaddings = [[NSMutableArray alloc] init];
-    _textTableRows = [[NSMutableArray alloc] init];
-    _textTableRowArrays = [[NSMutableArray alloc] init];
-    _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
-    _fontCache = [[NSMutableDictionary alloc] init];
-    _writingDirectionArray = [[NSMutableArray alloc] init];
+    _textLists = adoptNS([[NSMutableArray alloc] init]);
+    _textBlocks = adoptNS([[NSMutableArray alloc] init]);
+    _textTables = adoptNS([[NSMutableArray alloc] init]);
+    _textTableSpacings = adoptNS([[NSMutableArray alloc] init]);
+    _textTablePaddings = adoptNS([[NSMutableArray alloc] init]);
+    _textTableRows = adoptNS([[NSMutableArray alloc] init]);
+    _textTableRowArrays = adoptNS([[NSMutableArray alloc] init]);
+    _textTableRowBackgroundColors = adoptNS([[NSMutableArray alloc] init]);
+    _fontCache = adoptNS([[NSMutableDictionary alloc] init]);
+    _writingDirectionArray = adoptNS([[NSMutableArray alloc] init]);
 
     _defaultTabInterval = 36;
     _domRangeStartIndex = 0;
@@ -385,21 +385,7 @@ HTMLConverter::HTMLConverter(const SimpleRange& range)
     _caches = makeUnique<HTMLConverterCaches>();
 }
 
-HTMLConverter::~HTMLConverter()
-{
-    [_attrStr release];
-    [_documentAttrs release];
-    [_textLists release];
-    [_textBlocks release];
-    [_textTables release];
-    [_textTableSpacings release];
-    [_textTablePaddings release];
-    [_textTableRows release];
-    [_textTableRowArrays release];
-    [_textTableRowBackgroundColors release];
-    [_fontCache release];
-    [_writingDirectionArray release];
-}
+HTMLConverter::~HTMLConverter() = default;
 
 AttributedString HTMLConverter::convert()
 {
@@ -978,7 +964,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (!font) {
         String fontName = _caches->propertyValueForNode(element, CSSPropertyFontFamily);
         if (fontName.length())
-            font = _fontForNameAndSize(fontName.convertToASCIILowercase(), fontSize, _fontCache);
+            font = _fontForNameAndSize(fontName.convertToASCIILowercase(), fontSize, _fontCache.get());
         if (!font)
             font = [PlatformFontClass fontWithName:@"Times" size:fontSize];
 
@@ -1084,11 +1070,11 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
     Element* blockElement = _blockLevelElementForNode(&element);
     if (&element != blockElement && [_writingDirectionArray count] > 0)
-        [attrs setObject:[NSArray arrayWithArray:_writingDirectionArray] forKey:NSWritingDirectionAttributeName];
+        [attrs setObject:[NSArray arrayWithArray:_writingDirectionArray.get()] forKey:NSWritingDirectionAttributeName];
 
     if (blockElement) {
         Element& coreBlockElement = *blockElement;
-        NSMutableParagraphStyle *paragraphStyle = [defaultParagraphStyle() mutableCopy];
+        RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([defaultParagraphStyle() mutableCopy]);
         unsigned heading = 0;
         if (coreBlockElement.hasTagName(h1Tag))
             heading = 1;
@@ -1150,11 +1136,10 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 [paragraphStyle setParagraphSpacing:marginBottom];
         }
         if ([_textLists count] > 0)
-            [paragraphStyle setTextLists:_textLists];
+            [paragraphStyle setTextLists:_textLists.get()];
         if ([_textBlocks count] > 0)
-            [paragraphStyle setTextBlocks:_textBlocks];
-        [attrs setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-        [paragraphStyle release];
+            [paragraphStyle setTextBlocks:_textBlocks.get()];
+        [attrs setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
     }
     return attrs;
 }
@@ -1909,7 +1894,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSDictionary *attrsToInsert = nil;
     PlatformFont *font;
     NSParagraphStyle *paragraphStyle;
-    NSMutableParagraphStyle *newStyle;
+    RetainPtr<NSMutableParagraphStyle> newStyle;
     NSTextTab *tab = nil;
     NSTextTab *tabToRemove;
     NSRange paragraphRange;
@@ -1948,7 +1933,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     if (paragraphRange.location < _domRangeStartIndex)
                         _domRangeStartIndex += insertLength;
                     
-                    newStyle = [paragraphStyle mutableCopy];
+                    newStyle = adoptNS([paragraphStyle mutableCopy]);
                     listLocation = (listIndex + 1) * 36;
                     markerLocation = listLocation - 25;
                     [newStyle setFirstLineHeadIndent:0];
@@ -1964,14 +1949,10 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                         else
                             break;
                     }
-                    tab = [[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation];
-                    [newStyle addTabStop:tab];
-                    [tab release];
-                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }];
-                    [newStyle addTabStop:tab];
-                    [tab release];
-                    [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle range:paragraphRange];
-                    [newStyle release];
+                    [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation]).get()];
+                    [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }]).get()];
+                    [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle.get() range:paragraphRange];
+                    newStyle = nil;
                     
                     idx = NSMaxRange(paragraphRange);
                 } else {
@@ -2338,12 +2319,8 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
             return wrapper;
         }
     }
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
 
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
-    [request release];
-    
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:adoptNS([[NSMutableURLRequest alloc] initWithURL:URL]).get()];
     if (cachedResponse) {
         NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
         [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];

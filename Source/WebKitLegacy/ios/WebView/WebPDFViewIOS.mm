@@ -69,7 +69,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 @implementation WebPDFView {
     BOOL dataSourceHasBeenSet;
     CGPDFDocumentRef _PDFDocument;
-    NSString *_title;
+    RetainPtr<NSString> _title;
     CGRect *_pageRects;
 }
 
@@ -109,7 +109,6 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     if (_PDFDocument != NULL)
         CGPDFDocumentRelease(_PDFDocument);
     free(_pageRects);
-    [_title release];
     [super dealloc];
 }
 
@@ -203,7 +202,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
         return;
 
     if (!_title)
-        _title = [[[[dataSource request] URL] lastPathComponent] copy];
+        _title = adoptNS([[[[dataSource request] URL] lastPathComponent] copy]);
 
     WAKView * superview = [self superview];
     
@@ -296,8 +295,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
         title = [(NSString *)CGPDFStringCopyTextString(value) autorelease];
 
     if ([title length]) {
-        [_title release];
-        _title = [title copy];
+        _title = adoptNS([title copy]);
         core([self _frame])->loader().client().dispatchDidReceiveTitle({ title, TextDirection::LTR });
     }
 }
@@ -344,7 +342,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 
 - (NSString *)title
 {
-    return _title;
+    return _title.get();
 }
 
 - (unsigned)pageNumberForRect:(CGRect)rect

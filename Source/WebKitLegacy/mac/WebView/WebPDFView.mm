@@ -390,12 +390,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
     // disable it using validateUserInterfaceItem.
     NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Open with %@", "context menu item for PDF"), appName];
-    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
+    auto item = adoptNS([[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""]);
     [item setTag:WebMenuItemTagOpenWithDefaultApplication];
     if (appIcon)
         [item setImage:appIcon];
-    [items insertObject:item atIndex:0];
-    [item release];
+    [items insertObject:item.get() atIndex:0];
     
     [items insertObject:[NSMenuItem separatorItem] atIndex:1];
     
@@ -642,7 +641,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         return 0;
 
     PDFSelection *previousMatch = nil;
-    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:limit];
+    auto matches = adoptNS([[NSMutableArray alloc] initWithCapacity:limit]);
 
     for (;;) {
         PDFSelection *nextMatch = [self _nextMatchFor:string direction:YES caseSensitive:!(options & WebFindOptionsCaseInsensitive) wrap:NO fromSelection:previousMatch startInSelection:NO];
@@ -656,8 +655,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             break;
     }
 
-    [self _setTextMatches:matches];
-    [matches release];
+    [self _setTextMatches:matches.get()];
     
     return [matches count];
 }
@@ -708,12 +706,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // changing the selection is a hack, but the only way to get an attr string is via PDFSelection
     
     // must copy this selection object because we change the selection which seems to release it
-    PDFSelection *savedSelection = [[PDFSubview currentSelection] copy];
+    auto savedSelection = adoptNS([[PDFSubview currentSelection] copy]);
     [PDFSubview selectAll:nil];
     NSAttributedString *result = [[PDFSubview currentSelection] attributedString];
     if (savedSelection) {
-        [PDFSubview setCurrentSelection:savedSelection];
-        [savedSelection release];
+        [PDFSubview setCurrentSelection:savedSelection.get()];
     } else {
         // FIXME: behavior of setCurrentSelection:nil is not documented - check 4182934 for progress
         // Otherwise, we could collapse this code with the case above.
@@ -874,7 +871,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // Convert the selection to an attributed string, and draw that.
     // FIXME 4621154: this doesn't handle italics (and maybe other styles)
     // FIXME 4604366: this doesn't handle text at non-actual size
-    NSMutableAttributedString *attributedString = [[self selectedAttributedString] mutableCopy];
+    RetainPtr<NSMutableAttributedString> attributedString = adoptNS([[self selectedAttributedString] mutableCopy]);
     NSRange wholeStringRange = NSMakeRange(0, [attributedString length]);
     
     // Modify the styles in the attributed string to draw black text, no background, and no underline. We draw 
@@ -891,8 +888,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [selectionImage lockFocus];
     [attributedString drawAtPoint:NSZeroPoint];
     [selectionImage unlockFocus];
-    
-    [attributedString release];
 
     return selectionImage;
 }
@@ -1106,7 +1101,7 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
     NSMutableArray *copiedItems = [NSMutableArray array];
 
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    NSDictionary *actionsToTags = [[NSDictionary alloc] initWithObjectsAndKeys:
+    auto actionsToTags = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
         @(WebMenuItemPDFActualSize), NSStringFromSelector(@selector(_setActualSize:)),
         @(WebMenuItemPDFZoomIn), NSStringFromSelector(@selector(zoomIn:)),
         @(WebMenuItemPDFZoomOut), NSStringFromSelector(@selector(zoomOut:)),
@@ -1118,20 +1113,20 @@ IGNORE_WARNINGS_BEGIN("undeclared-selector")
         @(WebMenuItemPDFContinuous), NSStringFromSelector(@selector(_toggleContinuous:)),
         @(WebMenuItemPDFNextPage), NSStringFromSelector(@selector(goToNextPage:)),
         @(WebMenuItemPDFPreviousPage), NSStringFromSelector(@selector(goToPreviousPage:)),
-        nil];
+        nil]);
 IGNORE_WARNINGS_END
 
     // Leave these menu items out, since WebKit inserts equivalent ones. Note that we leave out PDFKit's "Look Up in Dictionary"
     // item here because WebKit already includes an item with the same title and purpose. We map WebKit's to PDFKit's 
     // "Look Up in Dictionary" via the implementation of -[WebPDFView _lookUpInDictionaryFromMenu:].
-    NSSet *unwantedActions = [[NSSet alloc] initWithObjects:
+    auto unwantedActions = adoptNS([[NSSet alloc] initWithObjects:
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
                               NSStringFromSelector(@selector(_searchInSpotlight:)),
                               NSStringFromSelector(@selector(_searchInGoogle:)),
                               NSStringFromSelector(@selector(_searchInDictionary:)),
 IGNORE_WARNINGS_END
                               NSStringFromSelector(@selector(copy:)),
-                              nil];
+                              nil]);
     
     NSEnumerator *e = [[[PDFSubview menuForEvent:theEvent] itemArray] objectEnumerator];
     NSMenuItem *item;
@@ -1144,9 +1139,8 @@ IGNORE_WARNINGS_END
         
         // Copy items since a menu item can be in only one menu at a time, and we don't
         // want to modify the original menu supplied by PDFKit.
-        NSMenuItem *itemCopy = [item copy];
-        [copiedItems addObject:itemCopy];
-        [itemCopy release];
+        RetainPtr<NSMenuItem> itemCopy = adoptNS([item copy]);
+        [copiedItems addObject:itemCopy.get()];
         
         // Include all of PDFKit's separators for now. At the end we'll remove any ones that were made
         // useless by removing PDFKit's menu items.
@@ -1176,9 +1170,6 @@ IGNORE_WARNINGS_END
             LOG_ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
     }
     
-    [actionsToTags release];
-    [unwantedActions release];
-    
     // Since we might have removed elements supplied by PDFKit, and we want to minimize our hardwired
     // knowledge of the order and arrangement of PDFKit's menu items, we need to remove any bogus
     // separators that were left behind.
@@ -1201,7 +1192,7 @@ IGNORE_WARNINGS_END
     
     PDFDocument *document = [PDFSubview document];
     
-    PDFSelection *selectionForInitialSearch = [initialSelection copy];
+    auto selectionForInitialSearch = adoptNS([initialSelection copy]);
     if (startInSelection) {
         // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
         // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
@@ -1218,8 +1209,7 @@ IGNORE_WARNINGS_END
             [selectionForInitialSearch extendSelectionAtStart:-initialSelectionLength];
         }
     }
-    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
-    [selectionForInitialSearch release];
+    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch.get() withOptions:options];
 
     // If we first searched in the selection, and we found the selection, search again from just past the selection
     if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))

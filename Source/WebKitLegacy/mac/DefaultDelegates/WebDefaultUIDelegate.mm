@@ -31,6 +31,7 @@
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
+#import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS_FAMILY)
 #import "WebJavaScriptTextInputPanel.h"
@@ -192,7 +193,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
 #if !PLATFORM(IOS_FAMILY)
-    WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
+    auto panel = adoptNS([[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText]);
     [panel showWindow:nil];
     NSString *result;
     if ([NSApp runModalForWindow:[panel window]])
@@ -200,7 +201,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     else
         result = nil;
     [[panel window] close];
-    [panel release];
     return result;
 #else
     return nil;

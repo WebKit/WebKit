@@ -138,10 +138,9 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
         [popover _setRequiresCorrectContentAppearance:YES];
         popover.behavior = NSPopoverBehaviorTransient;
 
-        NSColorPopoverController *controller = [[NSClassFromString(@"NSColorPopoverController") alloc] init];
-        popover.contentViewController = controller;
-        controller.popover = popover;
-        [controller release];
+        auto controller = adoptNS([[NSClassFromString(@"NSColorPopoverController") alloc] init]);
+        popover.contentViewController = controller.get();
+        [controller setPopover: popover];
 
         colorPopover = popover;
     }

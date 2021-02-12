@@ -178,9 +178,8 @@ BOOL isAllowedHost(NSString *host)
     NSMutableURLRequest *newRequest = [request mutableCopy];
     const set<string>& clearHeaders = gTestRunner->willSendRequestClearHeaders();
     for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
-        NSString *nsHeader = [[NSString alloc] initWithUTF8String:header->c_str()];
-        [newRequest setValue:nil forHTTPHeaderField:nsHeader];
-        [nsHeader release];
+        auto nsHeader = adoptNS([[NSString alloc] initWithUTF8String:header->c_str()]);
+        [newRequest setValue:nil forHTTPHeaderField:nsHeader.get()];
     }
     if (auto* destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]))
         [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination]]];
