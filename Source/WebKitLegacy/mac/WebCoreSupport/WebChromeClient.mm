@@ -253,36 +253,24 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& features
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
-        auto x = features.x ? adoptNS([[NSNumber alloc] initWithFloat:*features.x]) : nil;
-        auto y = features.y ? adoptNS([[NSNumber alloc] initWithFloat:*features.y]) : nil;
-        auto width = features.width ? adoptNS([[NSNumber alloc] initWithFloat:*features.width]) : nil;
-        auto height = features.height ? adoptNS([[NSNumber alloc] initWithFloat:*features.height]) : nil;
-        auto menuBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.menuBarVisible]);
-        auto statusBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.statusBarVisible]);
-        auto toolBarVisible = adoptNS([[NSNumber alloc] initWithBool:features.toolBarVisible]);
-        auto scrollbarsVisible = adoptNS([[NSNumber alloc] initWithBool:features.scrollbarsVisible]);
-        auto resizable = adoptNS([[NSNumber alloc] initWithBool:features.resizable]);
-        auto fullscreen = adoptNS([[NSNumber alloc] initWithBool:features.fullscreen]);
-        auto dialog = adoptNS([[NSNumber alloc] initWithBool:features.dialog]);
-        
         auto dictFeatures = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                             menuBarVisible.get(), @"menuBarVisible",
-                                             statusBarVisible.get(), @"statusBarVisible",
-                                             toolBarVisible.get(), @"toolBarVisible",
-                                             scrollbarsVisible.get(), @"scrollbarsVisible",
-                                             resizable.get(), @"resizable",
-                                             fullscreen.get(), @"fullscreen",
-                                             dialog.get(), @"dialog",
+                                             @(features.menuBarVisible), @"menuBarVisible",
+                                             @(features.statusBarVisible), @"statusBarVisible",
+                                             @(features.toolBarVisible), @"toolBarVisible",
+                                             @(features.scrollbarsVisible), @"scrollbarsVisible",
+                                             @(features.resizable), @"resizable",
+                                             @(features.fullscreen), @"fullscreen",
+                                             @(features.dialog), @"dialog",
                                              nil]);
         
-        if (x)
-            [dictFeatures setObject:x.get() forKey:@"x"];
-        if (y)
-            [dictFeatures setObject:y.get() forKey:@"y"];
-        if (width)
-            [dictFeatures setObject:width.get() forKey:@"width"];
-        if (height)
-            [dictFeatures setObject:height.get() forKey:@"height"];
+        if (features.x)
+            [dictFeatures setObject:@(*features.x) forKey:@"x"];
+        if (features.y)
+            [dictFeatures setObject:@(*features.y) forKey:@"y"];
+        if (features.width)
+            [dictFeatures setObject:@(*features.width) forKey:@"width"];
+        if (features.height)
+            [dictFeatures setObject:@(*features.height) forKey:@"height"];
         
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures.get());
     } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)]) {
@@ -450,22 +438,22 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     }
 
     NSString *messageSource = stringForMessageSource(source);
-    auto dictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-        (NSString *)message, @"message",
-        @(lineNumber), @"lineNumber",
-        @(columnNumber), @"columnNumber",
-        (NSString *)sourceURL, @"sourceURL",
-        messageSource, @"MessageSource",
-        stringForMessageLevel(level), @"MessageLevel",
-        NULL]);
+    auto dictionary = @{
+        @"message": (NSString *)message,
+        @"lineNumber": @(lineNumber),
+        @"columnNumber": @(columnNumber),
+        @"sourceURL": (NSString *)sourceURL,
+        @"MessageSource": messageSource,
+        @"MessageLevel": stringForMessageLevel(level),
+    };
 
 #if PLATFORM(IOS_FAMILY)
-    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary.get() withSource:messageSource];
+    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary withSource:messageSource];
 #else
     if (respondsToNewSelector)
-        CallUIDelegate(m_webView, selector, dictionary.get(), messageSource);
+        CallUIDelegate(m_webView, selector, dictionary, messageSource);
     else
-        CallUIDelegate(m_webView, selector, dictionary.get());
+        CallUIDelegate(m_webView, selector, dictionary);
 #endif
 }
 

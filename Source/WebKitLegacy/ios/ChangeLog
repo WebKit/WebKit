@@ -2,6 +2,19 @@
 
         Reduce explicit usage of [objC release] in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=221780
+        <rdar://problem/74282389>
+
+        Reviewed by Darin Adler.
+
+        Apply review feedback from Darin Adler and Sam Weinig after r272789.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder _updateTitleForDocumentIfAvailable]):
+
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
 
         Reviewed by Alex Christensen.
 

@@ -2,6 +2,68 @@
 
         Reduce explicit usage of [objC release] in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=221780
+        <rdar://problem/74282389>
+
+        Reviewed by Darin Adler.
+
+        Apply review feedback from Darin Adler and Sam Weinig after r272789.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMNode absoluteQuads]):
+        (-[DOMHTMLAreaElement absoluteQuadsWithOwner:]):
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException):
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (-[WebDefaultUIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]):
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Misc/WebNSDataExtras.mm:
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        (WebChromeClient::addMessageToConsole):
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary const):
+        (WebFrameLoaderClient::createFrame):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController initWithInspectedWebView:isUnderTest:]):
+        (-[WebInspectorWindowController window]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _makeRepresentation]):
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        * WebView/WebNavigationData.mm:
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        * WebView/WebPolicyDelegate.mm:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+        * WebView/WebView.mm:
+        (-[WebView _openNewWindowWithRequest:]):
+        * WebView/WebWindowAnimation.h:
+        * WebView/WebWindowAnimation.mm:
+        (-[WebWindowScaleAnimation setSubAnimation:]):
+
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
 
         Reviewed by Alex Christensen.
 

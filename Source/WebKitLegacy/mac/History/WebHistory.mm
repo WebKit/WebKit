@@ -137,11 +137,6 @@ private:
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 // MARK: MODIFYING CONTENTS
 
 static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
@@ -286,7 +281,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     NSString *URLString = [url _web_originalDataAsString];
     if (!URLString)
         URLString = @"";
-    RetainPtr<WebHistoryItem> entry = [_entriesByURL objectForKey:URLString];
+    auto entry = retainPtr([_entriesByURL objectForKey:URLString]);
 
     if (entry) {
         LOG(History, "Updating global history entry %@", entry.get());
@@ -304,7 +299,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     
     [self addItemToDateCaches:entry.get()];
 
-    return entry.get();
+    return entry.autorelease();
 }
 
 - (BOOL)addItem:(WebHistoryItem *)entry discardDuplicate:(BOOL)discardDuplicate
@@ -859,8 +854,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     entry->_private->_redirectURLs = nullptr;
 
-    auto entries = adoptNS([[NSArray alloc] initWithObjects:entry, nil]);
-    [self _sendNotification:WebHistoryItemsAddedNotification entries:entries.get()];
+    [self _sendNotification:WebHistoryItemsAddedNotification entries:@[entry]];
 }
 
 - (void)_addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore &)visitedLinkStore

@@ -48,9 +48,8 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
     else
         reason = adoptNS([[NSString alloc] initWithFormat:@"*** %@ %d", DOMException, description.legacyCode]);
 
-    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:@(description.legacyCode), DOMException, nil]);
-
-    NSException *exception = [NSException exceptionWithName:DOMException reason:reason.get() userInfo:userInfo.get()];
+    auto userInfo = @{ DOMException: @(description.legacyCode) };
+    auto exception = [NSException exceptionWithName:DOMException reason:reason.get() userInfo:userInfo];
     [exception raise];
 
     RELEASE_ASSERT_NOT_REACHED();

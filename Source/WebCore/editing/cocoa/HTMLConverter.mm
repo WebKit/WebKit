@@ -295,7 +295,7 @@ private:
 
     RetainPtr<NSMutableAttributedString> _attrStr;
     RetainPtr<NSMutableDictionary> _documentAttrs;
-    NSURL *_baseURL;
+    RetainPtr<NSURL> _baseURL;
     RetainPtr<NSMutableArray> _textLists;
     RetainPtr<NSMutableArray> _textBlocks;
     RetainPtr<NSMutableArray> _textTables;
@@ -1636,7 +1636,7 @@ void HTMLConverter::_addLinkForElement(Element& element, NSRange range)
         if (!url)
             url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(strippedString));
         if (!url)
-            url = [NSURL _web_URLWithString:strippedString relativeToURL:_baseURL];
+            url = [NSURL _web_URLWithString:strippedString relativeToURL:_baseURL.get()];
         [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url : (id)urlString range:range];
     }
 }
@@ -1795,7 +1795,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         if (urlString && [urlString length] > 0) {
             NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)
-                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
+                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
 #if PLATFORM(IOS_FAMILY)
             BOOL usePlaceholderImage = NO;
 #else
@@ -1815,14 +1815,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (baseString && [baseString length] > 0) {
                 baseURL = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(baseString));
                 if (!baseURL)
-                    baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
+                    baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL];
             if (!url)
                 url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)
-                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
+                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
@@ -1894,7 +1894,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSDictionary *attrsToInsert = nil;
     PlatformFont *font;
     NSParagraphStyle *paragraphStyle;
-    RetainPtr<NSMutableParagraphStyle> newStyle;
     NSTextTab *tab = nil;
     NSTextTab *tabToRemove;
     NSRange paragraphRange;
@@ -1933,7 +1932,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     if (paragraphRange.location < _domRangeStartIndex)
                         _domRangeStartIndex += insertLength;
                     
-                    newStyle = adoptNS([paragraphStyle mutableCopy]);
+                    auto newStyle = adoptNS([paragraphStyle mutableCopy]);
                     listLocation = (listIndex + 1) * 36;
                     markerLocation = listLocation - 25;
                     [newStyle setFirstLineHeadIndent:0];
@@ -1952,7 +1951,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation]).get()];
                     [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }]).get()];
                     [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle.get() range:paragraphRange];
-                    newStyle = nil;
                     
                     idx = NSMaxRange(paragraphRange);
                 } else {

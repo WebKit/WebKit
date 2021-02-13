@@ -117,11 +117,6 @@ enum {
 
 @implementation WebFrameViewPrivate
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 @end
 
 @implementation WebFrameView (WebFrameViewFileInternal)

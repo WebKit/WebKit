@@ -328,16 +328,16 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if (!_document || !CGPDFDocumentIsUnlocked(_document))
         return;
 
-    RetainPtr<NSString> title;
+    RetainPtr<CFStringRef> title;
 
     CGPDFDictionaryRef info = CGPDFDocumentGetInfo(_document);
     CGPDFStringRef value;
     if (CGPDFDictionaryGetString(info, "Title", &value))
-        title = adoptNS((NSString *)CGPDFStringCopyTextString(value));
+        title = adoptCF(CGPDFStringCopyTextString(value));
 
-    if ([title length]) {
-        [self setTitle:title.get()];
-        [[self _frame] _dispatchDidReceiveTitle:title.get()];
+    if (title && CFStringGetLength(title.get())) {
+        [self setTitle:(NSString *)title.get()];
+        [[self _frame] _dispatchDidReceiveTitle:(NSString *)title.get()];
     }
 }
 

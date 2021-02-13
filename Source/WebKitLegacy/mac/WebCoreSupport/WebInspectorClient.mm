@@ -512,15 +512,10 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     _inspectedWebView = webView;
 
     NSString *pagePath = isUnderTest ? [self inspectorTestPagePath] : [self inspectorPagePath];
-    auto request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath: pagePath]]);
+    auto request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:pagePath]]);
     [[_frontendWebView mainFrame] loadRequest:request.get()];
 
     return self;
-}
-
-- (void)dealloc
-{
-    [super dealloc];
 }
 
 // MARK: -
@@ -567,7 +562,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 
-    [window setTitlebarAppearsTransparent: YES];
+    [window setTitlebarAppearsTransparent:YES];
 
     [self setWindow:window.get()];
     return window.get();

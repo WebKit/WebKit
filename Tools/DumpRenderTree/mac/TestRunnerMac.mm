@@ -1065,7 +1065,7 @@ void TestRunner::addChromeInputField()
 {
 #if !PLATFORM(IOS_FAMILY)
     auto textField = adoptNS([[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)]);
-    [textField setTag: 1];
+    [textField setTag:1];
     [[[[mainFrame webView] window] contentView] addSubview:textField.get()];
     
     [textField setNextKeyView:[mainFrame webView]];

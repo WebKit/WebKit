@@ -1565,8 +1565,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
 
     if (auto mouseEventData = action.mouseEventData()) {
         constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
-        auto element = adoptNS([[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
+        auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
         [result setObject:element.get() forKey:WebActionElementKey];
 
         if (mouseEventData->isTrusted)
@@ -1609,10 +1608,8 @@ RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, Web
     ASSERT(m_webFrame);
     
     auto childView = adoptNS([[WebFrameView alloc] init]);
-    
-    RefPtr<WebCore::Frame> result = [WebFrame _createSubframeWithOwnerElement:&ownerElement frameName:name frameView:childView.get()];
-
-    WebFrame *newFrame = kit(result.get());
+    auto result = [WebFrame _createSubframeWithOwnerElement:&ownerElement frameName:name frameView:childView.get()];
+    auto newFrame = kit(result.ptr());
 
     if ([newFrame _dataSource])
         [[newFrame _dataSource] _documentLoader]->setOverrideEncoding([[m_webFrame.get() _dataSource] _documentLoader]->overrideEncoding());  

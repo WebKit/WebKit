@@ -315,8 +315,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     if (customDataBuffer)
         [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
-    auto extensions = adoptNS([[NSArray alloc] initWithObjects:extension, nil]);
-    [self setPropertyList:extensions.get() forType:legacyFilesPromisePasteboardType()];
+    [self setPropertyList:@[extension] forType:legacyFilesPromisePasteboardType()];
 
     return source;
 }

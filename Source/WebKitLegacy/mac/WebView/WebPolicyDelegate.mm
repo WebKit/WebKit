@@ -63,11 +63,6 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 @end
 
 @implementation WebPolicyDecisionListener

@@ -172,12 +172,11 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
                                                                  "and the second argument is the application name."),
                              [[(NSString*)pluginPath lastPathComponent] stringByDeletingPathExtension], [[NSProcessInfo processInfo] processName]];
     
-    auto hostProperties = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-                                    visibleName, @"visibleName",
-                                    (NSString *)pluginPath, @"bundlePath",
-                                    nil]);
-    
-    data = [NSPropertyListSerialization dataWithPropertyList:hostProperties.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+    auto hostProperties = @{
+        @"visibleName": visibleName,
+        @"bundlePath": (NSString *)pluginPath,
+    };
+    data = [NSPropertyListSerialization dataWithPropertyList:hostProperties format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
     ASSERT(data);
 
     ProcessSerialNumber psn;

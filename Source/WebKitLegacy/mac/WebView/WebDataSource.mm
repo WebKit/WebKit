@@ -317,12 +317,9 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
             // FIXME: seems poor form to do this as a side effect of getting a document fragment
             toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
 
-            DOMDocumentFragment *fragment = [[self webFrame] _documentFragmentWithMarkupString:markupString.get() baseURLString:[[mainResource URL] _web_originalDataAsString]];
-            return fragment;
-        } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)) {
+            return [[self webFrame] _documentFragmentWithMarkupString:markupString.get() baseURLString:[[mainResource URL] _web_originalDataAsString]];
+        } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
             return [self _documentFragmentWithImageResource:mainResource];
-            
-        }
     }
     return nil;
 }
@@ -384,7 +381,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
-        RetainPtr<id> newRep = repClass != nil ? adoptNS([(NSObject *)[repClass alloc] init]) : nil;
+        RetainPtr<id> newRep = repClass ? adoptNS([[repClass alloc] init]) : nil;
         [self _setRepresentation:(id <WebDocumentRepresentation>)newRep.get()];
     }
 

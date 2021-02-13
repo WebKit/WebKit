@@ -182,10 +182,8 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
             quads = [self lineBoxQuads];
     }
 
-    if (![quads count]) {
-        auto quadObject = adoptNS([[WKQuadObject alloc] initWithQuad:[self absoluteQuad]]);
-        quads = @[quadObject.get()];
-    }
+    if (![quads count])
+        quads = @[adoptNS([[WKQuadObject alloc] initWithQuad:[self absoluteQuad]]).get()];
 
     return quads;
 }
@@ -359,9 +357,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (NSArray *)absoluteQuadsWithOwner:(DOMNode *)owner
 {
-    auto quadObject = adoptNS([[WKQuadObject alloc] initWithQuad:[self absoluteQuadWithOwner:owner]]);
-    NSArray *quadArray = @[quadObject.get()];
-    return quadArray;
+    return @[adoptNS([[WKQuadObject alloc] initWithQuad:[self absoluteQuadWithOwner:owner]]).get()];
 }
 
 @end

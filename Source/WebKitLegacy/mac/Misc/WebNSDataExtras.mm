@@ -332,10 +332,8 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
                     break;
             }
             auto value = adoptNS([[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding]);
-            if (NSString *oldValue = [headerFields objectForKey:lastKey]) {
-                auto newValue = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value.get()];
-                value = WTFMove(newValue);
-            }
+            if (NSString *oldValue = [headerFields objectForKey:lastKey])
+                value = adoptNS([[NSString alloc] initWithFormat:@"%@, %@", oldValue, value.get()]);
             [headerFields setObject:value.get() forKey:lastKey];
         }
     }

@@ -84,12 +84,6 @@ using WebCore::narrowPrecisionToFloat;
     return self;
 }
 
-- (void) dealloc
-{
-    [_subAnimation release];
-    [super dealloc];
-}
-
 - (void)setDuration:(NSTimeInterval)duration
 {
     [super setDuration:WebWindowAnimationDurationFromDuration(duration)];
@@ -179,8 +173,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (void)setSubAnimation:(NSAnimation *)animation
 {
-    auto oldAnimation = adoptNS(_subAnimation);
-    _subAnimation = [animation retain];
+    _subAnimation = animation;
 }
 
 - (NSTimeInterval)additionalDurationNeededToReachFinalFrame

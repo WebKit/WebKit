@@ -2578,10 +2578,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
-    auto features = adoptNS([[NSDictionary alloc] init]);
-    WebView *newWindowWebView = [[self _UIDelegateForwarder] webView:self
-                                            createWebViewWithRequest:nil
-                                                      windowFeatures:features.get()];
+    WebView *newWindowWebView = [[self _UIDelegateForwarder] webView:self createWebViewWithRequest:nil windowFeatures:@{ }];
     if (!newWindowWebView)
         return nil;
 

@@ -1101,19 +1101,19 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
     NSMutableArray *copiedItems = [NSMutableArray array];
 
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    auto actionsToTags = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-        @(WebMenuItemPDFActualSize), NSStringFromSelector(@selector(_setActualSize:)),
-        @(WebMenuItemPDFZoomIn), NSStringFromSelector(@selector(zoomIn:)),
-        @(WebMenuItemPDFZoomOut), NSStringFromSelector(@selector(zoomOut:)),
-        @(WebMenuItemPDFAutoSize), NSStringFromSelector(@selector(_setAutoSize:)),
-        @(WebMenuItemPDFSinglePage), NSStringFromSelector(@selector(_setSinglePage:)),
-        @(WebMenuItemPDFSinglePageScrolling), NSStringFromSelector(@selector(_setSinglePageScrolling:)),
-        @(WebMenuItemPDFFacingPages), NSStringFromSelector(@selector(_setDoublePage:)),
-        @(WebMenuItemPDFFacingPagesScrolling), NSStringFromSelector(@selector(_setDoublePageScrolling:)),
-        @(WebMenuItemPDFContinuous), NSStringFromSelector(@selector(_toggleContinuous:)),
-        @(WebMenuItemPDFNextPage), NSStringFromSelector(@selector(goToNextPage:)),
-        @(WebMenuItemPDFPreviousPage), NSStringFromSelector(@selector(goToPreviousPage:)),
-        nil]);
+    auto actionsToTags = @{
+        NSStringFromSelector(@selector(_setActualSize:)): @(WebMenuItemPDFActualSize),
+        NSStringFromSelector(@selector(zoomIn:)): @(WebMenuItemPDFZoomIn),
+        NSStringFromSelector(@selector(zoomOut:)): @(WebMenuItemPDFZoomOut),
+        NSStringFromSelector(@selector(_setAutoSize:)): @(WebMenuItemPDFAutoSize),
+        NSStringFromSelector(@selector(_setSinglePage:)): @(WebMenuItemPDFSinglePage),
+        NSStringFromSelector(@selector(_setSinglePageScrolling:)): @(WebMenuItemPDFSinglePageScrolling),
+        NSStringFromSelector(@selector(_setDoublePage:)): @(WebMenuItemPDFFacingPages),
+        NSStringFromSelector(@selector(_setDoublePageScrolling:)): @(WebMenuItemPDFFacingPagesScrolling),
+        NSStringFromSelector(@selector(_toggleContinuous:)): @(WebMenuItemPDFContinuous),
+        NSStringFromSelector(@selector(goToNextPage:)): @(WebMenuItemPDFNextPage),
+        NSStringFromSelector(@selector(goToPreviousPage:)): @(WebMenuItemPDFPreviousPage),
+    };
 IGNORE_WARNINGS_END
 
     // Leave these menu items out, since WebKit inserts equivalent ones. Note that we leave out PDFKit's "Look Up in Dictionary"

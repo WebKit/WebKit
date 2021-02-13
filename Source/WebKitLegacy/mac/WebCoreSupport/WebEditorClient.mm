@@ -454,9 +454,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         [excludedElements addObject:@"object"];
 #endif
 
-    NSDictionary *dictionary = @{ NSExcludedElementsDocumentAttribute: excludedElements.get() };
-
-    return dictionary;
+    return @{ NSExcludedElementsDocumentAttribute: excludedElements.get() };
 }
 
 void _WebCreateFragment(Document& document, NSAttributedString *string, FragmentAndResources& result)

@@ -33,7 +33,7 @@
 #import "WebView.h"
 #import <wtf/RetainPtr.h>
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 #import "WebJavaScriptTextInputPanel.h"
 #import <WebCore/VersionChecks.h>
 #endif
@@ -43,7 +43,7 @@
 #import <WebCore/WKViewPrivate.h>
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
@@ -87,21 +87,21 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webViewClose: (WebView *)wv
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     [[wv window] close];
 #endif
 }
 
 - (void)webViewFocus: (WebView *)wv
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     [[wv window] makeKeyAndOrderFront:wv];
 #endif
 }
 
 - (void)webViewUnfocus: (WebView *)wv
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow])
         [NSApp _cycleWindowsReversed:FALSE];
 #endif
@@ -159,7 +159,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv setResizable:(BOOL)resizable
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
     [[wv window] setShowsResizeIndicator:resizable];
@@ -168,7 +168,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv setFrame:(NSRect)frame
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     [[wv window] setFrame:frame display:YES];
 #endif
 }
@@ -192,7 +192,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     auto panel = adoptNS([[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText]);
     [panel showWindow:nil];
     NSString *result;
@@ -216,7 +216,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))

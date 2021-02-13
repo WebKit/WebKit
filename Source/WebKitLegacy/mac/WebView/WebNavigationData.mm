@@ -41,11 +41,6 @@
 
 @implementation WebNavigationDataPrivate
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 @end
 
 @implementation WebNavigationData

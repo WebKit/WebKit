@@ -217,11 +217,6 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     }
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 {
     return CGFAbs(a - b) < 1;

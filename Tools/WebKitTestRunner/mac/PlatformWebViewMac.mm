@@ -150,7 +150,7 @@ void PlatformWebView::didInitializeClients()
 void PlatformWebView::addChromeInputField()
 {
     auto textField = adoptNS([[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)]);
-    [textField setTag: 1];
+    [textField setTag:1];
     [[m_window contentView] addSubview:textField.get()];
 
     NSView *view = platformView();

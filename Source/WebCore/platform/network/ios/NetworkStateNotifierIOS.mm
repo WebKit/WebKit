@@ -59,11 +59,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 - (void)networkStateChanged:(NSNotification *)unusedNotification
 {
     UNUSED_PARAM(unusedNotification);

@@ -1,3 +1,20 @@
+2021-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221780
+        <rdar://problem/74282389>
+
+        Reviewed by Darin Adler.
+
+        Apply review feedback from Darin Adler and Sam Weinig after r272789.
+
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (+[WKPopoverColorWell _colorPopoverCreateIfNecessary:]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase setRemoteParent:]):
+
 2021-02-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Provide SPI to query local credentials

@@ -187,11 +187,6 @@ NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterf
 
 @implementation WebFramePrivate
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 - (void)setWebFrameView:(WebFrameView *)v
 { 
     webFrameView = v;

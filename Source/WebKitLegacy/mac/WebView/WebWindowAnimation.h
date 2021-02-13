@@ -24,12 +24,13 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <wtf/RetainPtr.h>
 
 @interface WebWindowScaleAnimation : NSAnimation {
 @private
     NSRect _initialFrame, _finalFrame, _realFrame;
     NSWindow *_window; // (assign)
-    NSAnimation *_subAnimation; // (retain)
+    RetainPtr<NSAnimation> _subAnimation;
     NSTimeInterval _hintedDuration;
 }
 - (id)initWithHintedDuration:(NSTimeInterval)duration window:(NSWindow *)window initalFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;

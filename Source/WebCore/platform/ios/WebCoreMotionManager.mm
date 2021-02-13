@@ -145,9 +145,9 @@ static const double kGravity = 9.80665;
     m_gyroAvailable = m_motionManager.get().deviceMotionAvailable;
 
     if (m_gyroAvailable)
-        [m_motionManager setDeviceMotionUpdateInterval: kMotionUpdateInterval];
+        [m_motionManager setDeviceMotionUpdateInterval:kMotionUpdateInterval];
     else
-        [m_motionManager setAccelerometerUpdateInterval: kMotionUpdateInterval];
+        [m_motionManager setAccelerometerUpdateInterval:kMotionUpdateInterval];
 
     m_locationManager = adoptNS([allocCLLocationManagerInstance() init]);
     m_headingAvailable = [getCLLocationManagerClass() headingAvailable];

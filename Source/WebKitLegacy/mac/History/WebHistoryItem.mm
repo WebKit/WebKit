@@ -349,12 +349,9 @@ WebHistoryItem *kit(HistoryItem* item)
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey])
         _private->_redirectURLs = makeUnique<Vector<String>>(makeVector<String>(redirectURLs));
 
-    NSArray *childDicts = [dict objectForKey:childrenKey];
-    if (childDicts) {
-        for (int i = [childDicts count] - 1; i >= 0; i--) {
-            auto child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:[childDicts objectAtIndex:i]]);
-            core(_private)->addChildItem(*core(child->_private));
-        }
+    for (id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
+        auto child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:childDict]);
+        core(_private)->addChildItem(*core(child->_private));
     }
 
 #if PLATFORM(IOS_FAMILY)
