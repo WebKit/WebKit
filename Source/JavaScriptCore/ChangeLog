@@ -1,3 +1,30 @@
+2021-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        We enable JITCage too on macOS if it is ARM64E.
+        We need to add this entitlement only when building it on macOS 120000 or higher version.
+        Otherwise, we cannot launch the process. This means that we need to dynamically generate entitlements file
+        because we must not attach this entitlement when building JSC for non 120000 macOS.
+
+        This patch follows r248164's way: we must not use CODE_SIGN_ENTITLEMENTS because XCode inserts implicit code-signing
+        and it breaks our pipeline. We need to disable this XCode's implicit behavior by setting CODE_SIGN_INJECT_BASE_ENTITLEMENTS.
+
+        And we also create TestAPI.xcconfig to apply generated entitlements only to testapi and jsc shell.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/TestAPI.xcconfig: Copied from Source/JavaScriptCore/Configurations/ToolExecutable.xcconfig.
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/process-entitlements.sh: Added.
+        * allow-jit-macOS.entitlements: Removed.
+        * testapi.entitlements: Removed.
+
 2021-02-12  Mark Lam  <mark.lam@apple.com>
 
         Rename `slotVisitor` variables to `visitor`.

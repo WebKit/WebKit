@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+// Copyright (C) 2011-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -19,7 +19,7 @@
 // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
 // OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 #include "Version.xcconfig"
@@ -32,17 +32,11 @@ USE_INTERNAL_SDK_Production = YES;
 USE_INTERNAL_SDK_Debug = $(HAVE_INTERNAL_SDK);
 USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
 
-CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = $(CODE_SIGN_ENTITLEMENTS_macosx_$(TARGET_NAME)_$(USE_INTERNAL_SDK));
-
-CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = $(CODE_SIGN_ENTITLEMENTS_ios_$(TARGET_NAME));
-CODE_SIGN_ENTITLEMENTS_ios_minidom = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testb3 = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testmasm = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testWasm = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testRegExp = entitlements.plist;
-
-OTHER_CODE_SIGN_FLAGS[sdk=iphone*] = -i com.apple.jsc;
+// We want this to always be NO. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=iphone*] = NO;
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=macosx*] = NO;
+OTHER_CODE_SIGN_FLAGS[sdk=iphone*] = -i com.apple.jsc --entitlements ${WK_PROCESSED_XCENT_FILE};
+OTHER_CODE_SIGN_FLAGS[sdk=macosx*] = --entitlements ${WK_PROCESSED_XCENT_FILE};
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
 SKIP_INSTALL_ = YES;
