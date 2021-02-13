@@ -1007,8 +1007,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     if (m_muted) {
-        // Clear m_muted so setMuted doesn't return without doing anything.
-        m_muted = false;
         [m_avPlayer.get() setMuted:m_muted];
 
 #if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)

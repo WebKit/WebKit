@@ -4889,6 +4889,11 @@ double Internals::privatePlayerVolume(const HTMLMediaElement&)
 {
     return 0;
 }
+
+bool Internals::privatePlayerMuted(const HTMLMediaElement&)
+{
+    return false;
+}
 #endif
 
 #endif
