@@ -38,6 +38,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (WebCore::PublicKeyCredentialCreationOptions)convertToCoreCreationOptionsWithOptions:(_WKPublicKeyCredentialCreationOptions *)options WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (WebCore::PublicKeyCredentialRequestOptions)convertToCoreRequestOptionsWithOptions:(_WKPublicKeyCredentialRequestOptions *)options WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithAccessGroup:(NSString *)accessGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 // For details of configuration, refer to MockWebAuthenticationConfiguration.h.
 @property (nonatomic, copy) NSDictionary *mockConfiguration;
 

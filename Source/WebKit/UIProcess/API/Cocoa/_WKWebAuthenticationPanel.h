@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKDeclarationSpecifiers.h>
 #import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -79,6 +80,10 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationSource) {
     _WKWebAuthenticationSourceExternal,
 } WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialNameKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
+
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
 @optional
@@ -98,8 +103,11 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
 
-+ (void)clearAllLocalAuthenticatorCredentials;
-+ (BOOL)isUserVerifyingPlatformAuthenticatorAvailable;
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)clearAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
++ (BOOL)isUserVerifyingPlatformAuthenticatorAvailable WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (instancetype)init;
 

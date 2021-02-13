@@ -1,3 +1,14 @@
+2021-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Provide SPI to query local credentials
+        https://bugs.webkit.org/show_bug.cgi?id=221743
+        <rdar://problem/65849832>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-12  Michael Saboff  <msaboff@apple.com>
 
         [ARM64e] Harden Mach exception handling

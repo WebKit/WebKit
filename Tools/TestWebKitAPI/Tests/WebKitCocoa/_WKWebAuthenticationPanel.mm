@@ -1925,6 +1925,37 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
     }];
     Util::run(&webAuthenticationPanelRan);
 }
+
+TEST(WebAuthenticationPanel, GetAllCredential)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64));
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
+    EXPECT_WK_STREQ([[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialRelyingPartyIDKey], "example.com");
+
+    cleanUpKeychain("example.com");
+}
+
+TEST(WebAuthenticationPanel, DeleteOneCredential)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64));
+
+    [_WKWebAuthenticationPanel deleteLocalAuthenticatorCredentialWithID:adoptNS([[NSData alloc] initWithBase64EncodedString:@"SMSXHngF7hEOsElA73C3RY+8bR4=" options:0]).get()];
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 0lu);
+}
 #endif
 
 } // namespace TestWebKitAPI

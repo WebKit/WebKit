@@ -44,6 +44,8 @@
 #import "_WKPublicKeyCredentialUserEntity.h"
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/CBORReader.h>
+#import <WebCore/FidoConstants.h>
 #import <WebCore/MockWebAuthenticationConfiguration.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
@@ -78,6 +80,10 @@ static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
     return crypto->computeHash();
 }
 #endif
+
+NSString * const _WKLocalAuthenticatorCredentialNameKey = @"_WKLocalAuthenticatorCredentialNameKey";
+NSString * const _WKLocalAuthenticatorCredentialIDKey = @"_WKLocalAuthenticatorCredentialIDKey";
+NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey = @"_WKLocalAuthenticatorCredentialRelyingPartyIDKey";
 
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
@@ -179,6 +185,88 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
 {
 }
 #endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(WEB_AUTHN)
+static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *accessGroup)
+{
+    NSDictionary *query = @{
+        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
+        (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPrivate,
+        (__bridge id)kSecAttrAccessGroup: accessGroup,
+        (__bridge id)kSecReturnAttributes: @YES,
+        (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitAll,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (__bridge id)kSecUseDataProtectionKeychain: @YES
+#else
+        (__bridge id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    if (status && status != errSecItemNotFound)
+        return nullptr;
+    auto retainAttributesArray = adoptCF(attributesArrayRef);
+
+    auto result = adoptNS([[NSMutableArray alloc] init]);
+    for (NSDictionary *attributes in (NSArray *)attributesArrayRef) {
+        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(__bridge id)kSecAttrApplicationTag]));
+        if (!decodedResponse || !decodedResponse->isMap()) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        auto& responseMap = decodedResponse->getMap();
+
+        auto it = responseMap.find(cbor::CBORValue(fido::kEntityNameMapKey));
+        if (it == responseMap.end() || !it->second.isString()) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        auto& username = it->second.getString();
+
+        [result addObject:@{
+            _WKLocalAuthenticatorCredentialNameKey: username,
+            _WKLocalAuthenticatorCredentialIDKey: attributes[(__bridge id)kSecAttrApplicationLabel],
+            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[(__bridge id)kSecAttrLabel]
+        }];
+    }
+
+    return result;
+}
+#endif
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(String(WebCore::LocalAuthenticatiorAccessGroup)).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithAccessGroup:(NSString *)accessGroup
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(accessGroup).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
++ (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID
+{
+#if ENABLE(WEB_AUTHN)
+    NSDictionary* deleteQuery = @{
+        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
+        (__bridge id)kSecAttrApplicationLabel: credentialID,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (__bridge id)kSecUseDataProtectionKeychain: @YES
+#else
+        (__bridge id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+#endif
+}
 
 + (void)clearAllLocalAuthenticatorCredentials
 {

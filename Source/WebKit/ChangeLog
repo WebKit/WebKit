@@ -1,3 +1,21 @@
+2021-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Provide SPI to query local credentials
+        https://bugs.webkit.org/show_bug.cgi?id=221743
+        <rdar://problem/65849832>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by API tests.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (getAllLocalAuthenticatorCredentialsImpl):
+        (+[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentials]):
+        (+[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:]):
+        (+[_WKWebAuthenticationPanel deleteLocalAuthenticatorCredentialWithID:]):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h:
+
 2021-02-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Unable to play WebM/Opus generated from Chrome MediaRecorder
