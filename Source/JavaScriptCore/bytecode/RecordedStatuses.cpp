@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,32 +102,32 @@ SetPrivateBrandStatus* RecordedStatuses::addSetPrivateBrandStatus(const CodeOrig
     return result;
 }
 
-void RecordedStatuses::visitAggregate(SlotVisitor& slotVisitor)
+void RecordedStatuses::visitAggregate(SlotVisitor& visitor)
 {
     for (auto& pair : gets)
-        pair.second->visitAggregate(slotVisitor);
+        pair.second->visitAggregate(visitor);
     for (auto& pair : deletes)
-        pair.second->visitAggregate(slotVisitor);
+        pair.second->visitAggregate(visitor);
     for (auto& pair : checkPrivateBrands)
-        pair.second->visitAggregate(slotVisitor);
+        pair.second->visitAggregate(visitor);
     for (auto& pair : setPrivateBrands)
-        pair.second->visitAggregate(slotVisitor);
+        pair.second->visitAggregate(visitor);
 }
 
-void RecordedStatuses::markIfCheap(SlotVisitor& slotVisitor)
+void RecordedStatuses::markIfCheap(SlotVisitor& visitor)
 {
     for (auto& pair : gets)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
     for (auto& pair : puts)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
     for (auto& pair : ins)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
     for (auto& pair : deletes)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
     for (auto& pair : checkPrivateBrands)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
     for (auto& pair : setPrivateBrands)
-        pair.second->markIfCheap(slotVisitor);
+        pair.second->markIfCheap(visitor);
 }
 
 void RecordedStatuses::finalizeWithoutDeleting(VM& vm)

@@ -1,5 +1,42 @@
 2021-02-12  Mark Lam  <mark.lam@apple.com>
 
+        Rename `slotVisitor` variables to `visitor`.
+        https://bugs.webkit.org/show_bug.cgi?id=221866
+
+        Reviewed by Yusuke Suzuki.
+
+        In existing code, we sometimes name a SlotVisitor instance `slotVisitor` and
+        sometimes just `visitor`.  This patch makes it so that we use `visitor` consistently
+        everywhere.  This will also reduce the size of the GC verifier patch later.
+
+        Also fixed a few typos in comments.
+
+        This is a pure refactoring patch.  There are no behavior changes.
+
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSContextGroupAddMarkingConstraint):
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::visitAggregate):
+        (JSC::RecordedStatuses::markIfCheap):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::blocksInPostOrder):
+        * heap/Heap.cpp:
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runFixpointPhase):
+        (JSC::Heap::runConcurrentPhase):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::resumeThePeriphery):
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::performIncrement):
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachSlotVisitor):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::visit):
+
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
         Remove some unused methods in MarkedBlock and PreciseAllocation.
         https://bugs.webkit.org/show_bug.cgi?id=221864
 
