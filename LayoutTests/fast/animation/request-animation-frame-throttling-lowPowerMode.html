@@ -20,7 +20,8 @@
             }
             else {
                 // The LowPowerMode throttling interval = 30_ms. The frame rate ~= 33.3 fps.
-                shouldBeTrue("framesPerSecond < 35");
+                shouldBeTrue("framesPerSecond < 36");
+                if (framesPerSecond >= 36) { alert("actual framesPerSecond " + framesPerSecond) }
                 finishJSTest();
             }
         }
