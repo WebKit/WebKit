@@ -1,3 +1,31 @@
+2021-02-12  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/mime convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221737
+	<rdar://problem/74219024>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/mime/quoted-charset.php: Removed.
+        * http/tests/mime/quoted-charset.py: Added.
+        * http/tests/mime/resources/style-with-charset.php: Removed.
+        * http/tests/mime/resources/style-with-charset.py: Added.
+        * http/tests/mime/resources/style-with-text-css-and-invalid-type.php: Removed.
+        * http/tests/mime/resources/style-with-text-css-and-invalid-type.py: Added.
+        * http/tests/mime/resources/style-with-text-plain.php: Removed.
+        * http/tests/mime/resources/style-with-text-plain.py: Added.
+        * http/tests/mime/resources/uppercase-mime-type.php: Removed.
+        * http/tests/mime/resources/uppercase-mime-type.py: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html:
+        * http/tests/mime/uppercase-mime-type-expected.txt:
+        * http/tests/mime/uppercase-mime-type.html:
+
 2021-02-12  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r272784): [macOS Release] fast/animation/request-animation-frame-throttling-lowPowerMode.html is a flaky failure
