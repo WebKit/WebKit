@@ -214,8 +214,10 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
+
     auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
-    inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
+    inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
     ASSERT(m_inlineContent);
 
     for (auto& run : m_inlineContent->runs) {

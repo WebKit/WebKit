@@ -156,11 +156,12 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 {
 }
 
-void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
+void InlineContentBuilder::build(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
+    auto& inlineFormattingState = inlineFormattingContext.formattingState();
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayNonRootInlineBoxes(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayNonRootInlineBoxes(inlineFormattingContext, inlineContent);
     createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
@@ -322,8 +323,11 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
-        while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex)
-            scrollableOverflowRect.unite(nonRootInlineBoxes[inlineBoxIndex++].rect());
+        while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
+            auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
+            if (inlineBox.canContributeToLineOverflow())
+                scrollableOverflowRect.unite(inlineBox.rect());
+        }
 
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         auto enclosingTopAndBottom = line.enclosingTopAndBottom();
@@ -337,8 +341,10 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
     }
 }
 
-void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList&) const
+void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
+    auto& inlineFormattingState = inlineFormattingContext.formattingState();
+    auto inlineQuirks = inlineFormattingContext.quirks();
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         auto& lineBoxLogicalRect = lineBox.logicalRect();
@@ -351,7 +357,7 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
             auto inlineBoxRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect });
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox) });
         }
     }
 }

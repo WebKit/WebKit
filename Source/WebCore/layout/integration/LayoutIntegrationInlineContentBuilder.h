@@ -34,7 +34,7 @@ namespace WebCore {
 class RenderBlockFlow;
 
 namespace Layout {
-class InlineFormattingState;
+class InlineFormattingContext;
 class LayoutState;
 }
 
@@ -47,7 +47,7 @@ class InlineContentBuilder {
 public:
     InlineContentBuilder(const Layout::LayoutState&, const RenderBlockFlow&);
 
-    void build(const Layout::InlineFormattingState&, InlineContent&) const;
+    void build(const Layout::InlineFormattingContext&, InlineContent&) const;
 
 private:
     using LineLevelVisualAdjustmentsForRunsList = Vector<LineLevelVisualAdjustmentsForRuns>;
@@ -55,7 +55,7 @@ private:
     LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState&) const;
     void createDisplayLineRuns(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
     void createDisplayLines(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
-    void createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
+    void createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext&, InlineContent&) const;
 
     const Layout::LayoutState& m_layoutState;
     const RenderBlockFlow& m_blockFlow;

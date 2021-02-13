@@ -88,10 +88,11 @@ private:
 
 class NonRootInlineBox {
 public:
-    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect)
+    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, bool canContributeToLineOverflow)
         : m_lineIndex(lineIndex)
         , m_layoutBox(makeWeakPtr(layoutBox))
         , m_rect(rect)
+        , m_canContributeToLineOverflow(canContributeToLineOverflow)
     {
     }
 
@@ -102,10 +103,13 @@ public:
 
     FloatRect rect() const { return m_rect; }
 
+    bool canContributeToLineOverflow() const { return m_canContributeToLineOverflow; }
+
 private:
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
     FloatRect m_rect;
+    bool m_canContributeToLineOverflow { false };
 };
 
 }
