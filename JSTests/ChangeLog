@@ -1,3 +1,11 @@
+2021-02-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix stress/copy-data-properties-fast-path.js occasional failure
+
+        Wrap it with try-catch since stack-overflow RangeError in JS can happen.
+
+        * stress/copy-data-properties-fast-path.js:
+
 2021-02-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         SetIntegrityLevel should call [[DefineOwnProperty]] with partial descriptor
