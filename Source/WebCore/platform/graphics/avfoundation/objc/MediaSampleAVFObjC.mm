@@ -87,7 +87,10 @@ MediaTime MediaSampleAVFObjC::presentationTime() const
 
 MediaTime MediaSampleAVFObjC::decodeTime() const
 {
-    return PAL::toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get()));
+    auto timeStamp = CMSampleBufferGetDecodeTimeStamp(m_sample.get());
+    if (CMTIME_IS_INVALID(timeStamp))
+        return presentationTime();
+    return PAL::toMediaTime(timeStamp);
 }
 
 MediaTime MediaSampleAVFObjC::duration() const

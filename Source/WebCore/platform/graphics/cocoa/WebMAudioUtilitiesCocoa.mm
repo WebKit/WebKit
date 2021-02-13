@@ -297,7 +297,7 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
         unsigned packetFrameSize;
         int packetBandwidth;
         unsigned packetStreamChannels;
-        unsigned useInbandFEC { 1 };
+        unsigned useInbandFEC;
         unsigned encFinalRange { 0 };
     };
 
@@ -307,6 +307,7 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
         CFSwapInt32HostToBig(samplesPerPacket),
         static_cast<int>(CFSwapInt32HostToBig(bandwidth)),
         CFSwapInt32HostToBig(channelCount),
+        CFSwapInt32HostToBig(1),
     };
 
     auto magicCookie = Vector<uint8_t>(sizeof(CoreAudioOpusHeader));

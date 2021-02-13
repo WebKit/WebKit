@@ -61,6 +61,7 @@ public:
     uint64_t trackID() const { return m_trackID; }
     CMMediaType mediaType() const { return m_mediaType; }
     const MediaTime& duration() const { return m_duration; }
+    MediaTime greatestPresentationTime() const;
 
     void setEnabled(bool enabled) { m_isEnabled = enabled ? Enabled::True : Enabled::False; }
     void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);

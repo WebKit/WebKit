@@ -85,6 +85,16 @@ MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReade
         m_isEnabled = enabled.value() ? Enabled::True : Enabled::False;
 }
 
+MediaTime MediaTrackReader::greatestPresentationTime() const
+{
+    auto& sampleMap = m_sampleStorage->sampleMap;
+    if (sampleMap.empty())
+        return MediaTime::invalidTime();
+
+    auto& lastSample = *sampleMap.decodeOrder().rbegin()->second;
+    return lastSample.presentationTime() + lastSample.duration();
+}
+
 void MediaTrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
 {
     ASSERT(!isMainThread());

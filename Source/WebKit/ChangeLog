@@ -1,3 +1,21 @@
+2021-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Unable to play WebM/Opus generated from Chrome MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=221808
+
+        Reviewed by Eric Carlson.
+
+        In the absense of an explicit duration parsed from the InitializationSegment,
+        rely instead on the maximum presentation timestamp available in any MediaTrackReader
+        to generate an explicit duration.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::finishParsing):
+        (WebKit::MediaFormatReader::copyProperty):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::greatestPresentationTime const):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+
 2021-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r272799.

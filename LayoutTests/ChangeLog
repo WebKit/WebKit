@@ -1,3 +1,13 @@
+2021-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Unable to play WebM/Opus generated from Chrome MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=221808
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-bigsur/media/media-webm-no-duration-expected.txt: Added.
+        * platform/mac-bigsur/media/media-webm-no-duration.html: Added.
+
 2021-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing
