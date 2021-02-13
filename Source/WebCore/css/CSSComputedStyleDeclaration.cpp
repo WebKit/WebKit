@@ -108,7 +108,7 @@ static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
     // a calculation that combines a percentage and a number.
     if (length.isPercent())
         return CSSValuePool::singleton().createValue(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    if (length.isFixed())
+    if (length.isAuto() || length.isFixed())
         return CSSValuePool::singleton().createValue(length.value(), CSSUnitType::CSS_NUMBER);
 
     // Calculating the actual length currently in use would require most of the code from RenderBoxModelObject::paintNinePieceImage.
@@ -227,23 +227,14 @@ static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     if (!image.hasImage())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
-    // Image first.
     RefPtr<CSSValue> imageValue;
     if (image.image())
         imageValue = image.image()->cssValue();
 
-    // Create the image slice.
-    RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image);
-
-    // Create the border area slices.
-    RefPtr<CSSValue> borderSlices = valueForNinePieceImageQuad(image.borderSlices());
-
-    // Create the border outset.
-    RefPtr<CSSValue> outset = valueForNinePieceImageQuad(image.outset());
-
-    // Create the repeat rules.
-    RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image);
-
+    auto imageSlices = valueForNinePieceImageSlice(image);
+    auto borderSlices = valueForNinePieceImageQuad(image.borderSlices());
+    auto outset = valueForNinePieceImageQuad(image.outset());
+    auto repeat = valueForNinePieceImageRepeat(image);
     return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
 
@@ -1031,7 +1022,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     // Add the line names and track sizes that precede the auto repeat().
-    unsigned autoRepeatInsertionPoint = isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint();
+    int autoRepeatInsertionPoint = std::clamp<int>(isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint(), 0, trackSizes.size());
     populateGridTrackList(list.get(), collector, trackSizes, getTrackSize, 0, autoRepeatInsertionPoint);
 
     // Add a CSSGridAutoRepeatValue with the contents of the auto repeat().
