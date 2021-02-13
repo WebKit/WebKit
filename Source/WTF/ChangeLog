@@ -1,3 +1,16 @@
+2021-02-12  Michael Saboff  <msaboff@apple.com>
+
+        [ARM64e] Harden Mach exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=221841
+
+        Reviewed by Geoffrey Garen.
+
+        For Darwin ARM64e platforms, we check to make sure that all thread state besides the PC hasn't
+        been modified by an exception handler.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::hashThreadState):
+
 2021-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Opus Codec support

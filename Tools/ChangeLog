@@ -1,73 +1,14 @@
-2021-02-12  Don Olmstead  <don.olmstead@sony.com>
+2021-02-12  Michael Saboff  <msaboff@apple.com>
 
-        [Python-3] Use pathlib to generate file:// urls
-        https://bugs.webkit.org/show_bug.cgi?id=221850
+        [ARM64e] Harden Mach exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=221841
 
-        Reviewed by Jonathan Bedard.
+        Reviewed by Geoffrey Garen.
 
-        Use pathlib which can generate file:// urls for *nix and Windows. The previous logic
-        only worked on *nix.
+        Updated test to check that the exception type matches the one we registered for.
 
-        Add the pathlib backport for 2.7.
-
-        * Scripts/webkitpy/__init__.py:
-        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
-        (SVNTestRepository.setup):
-        (SVNTestRepository._setup_mock_repo):
-
-2021-02-12  Don Olmstead  <don.olmstead@sony.com>
-
-        [Python-3] base64.encodestring is deprecated
-        https://bugs.webkit.org/show_bug.cgi?id=221842
-
-        Reviewed by Jonathan Bedard.
-
-        In Python 3.9 base64.encodestring was completely removed. Replacing with base64.b64encode
-        which works in Python 2/3 and is used by the code being tested.
-
-        * Scripts/webkitpy/w3c/wpt_github_unittest.py:
-        (WPTGitHubTest.test_auth_token):
-
-2021-02-12  Don Olmstead  <don.olmstead@sony.com>
-
-        Run additional webkitpy tests on Windows by default
-        https://bugs.webkit.org/show_bug.cgi?id=221851
-
-        Reviewed by Jonathan Bedard.
-
-        The tests in WebKit/Scripts and webkitpy.common.config pass on Windows.
-
-        The WebKit/Scripts tests are not run when using Cygwin. Without any port option its
-        the only way to differentiate WinCairo, which doesn't use Cygwin, and AppleWin, which
-        does.
-
-        * Scripts/webkitpy/test/main.py:
-
-2021-02-12  Ryan Haddad  <ryanhaddad@apple.com>
-
-        REGRESSION (r268421): TestWebKitAPI.WebKit.PreferenceChanges* tests are flaky failures
-        https://bugs.webkit.org/show_bug.cgi?id=221848
-
-        Unreviewed test gardening.
-
-        TestWebKitAPI.WebKit.GlobalPreferenceChangesUsingDefaultsWrite is also flaky, so disable it for Big Sur.
-
-        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
-
-2021-02-12  Don Olmstead  <don.olmstead@sony.com>
-
-        webkitpy.xcode only relevant for darwin platforms
-        https://bugs.webkit.org/show_bug.cgi?id=221837
-
-        Reviewed by Jonathan Bedard.
-
-        The tests in webkitpy.xcode are Darwin specific and should only run on that platform.
-
-        This issue was discovered when running the tests with Python 3 on Windows which failed
-        a number of tests in the suite. These tests may run successfully on *nix platforms but
-        aren't actually relevant.
-
-        * Scripts/webkitpy/test/main.py:
+        * TestWebKitAPI/Tests/WTF/Signals.cpp:
+        (TEST):
 
 2021-02-12  Jonathan Bedard  <jbedard@apple.com>
 

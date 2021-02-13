@@ -1489,7 +1489,8 @@ autogenerate_wasm_opcodes
 # Helpers
 
 op :throw_from_slow_path_trampoline
-op :throw_from_fault_handler_trampoline
+op :throw_from_fault_handler_trampoline_fastTLS
+op :throw_from_fault_handler_trampoline_reg_instance
 
 op :call_return_location
 op :call_no_tls_return_location
