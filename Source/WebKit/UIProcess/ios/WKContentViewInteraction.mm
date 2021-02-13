@@ -9192,8 +9192,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (_positionInformation.cursor && [region.identifier isEqual:pointerRegionIdentifier]) {
         WebCore::Cursor::Type cursorType = _positionInformation.cursor->type();
 
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (cursorType == WebCore::Cursor::Hand)
             return [UIPointerStyle _systemPointerStyle];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (cursorType == WebCore::Cursor::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
             return iBeamCursor();

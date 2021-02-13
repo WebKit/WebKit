@@ -1,3 +1,10 @@
+2021-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointerInteraction:styleForRegion:]):
+
 2021-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable JITCage on macOS
