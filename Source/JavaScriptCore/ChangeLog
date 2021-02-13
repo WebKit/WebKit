@@ -1,3 +1,19 @@
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unused methods in MarkedBlock and PreciseAllocation.
+        https://bugs.webkit.org/show_bug.cgi?id=221864
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::visitWeakSet): Deleted.
+        (JSC::MarkedBlock::Handle::reapWeakSet): Deleted.
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::shrink): Deleted.
+        (JSC::PreciseAllocation::visitWeakSet): Deleted.
+        (JSC::PreciseAllocation::reapWeakSet): Deleted.
+        * heap/PreciseAllocation.h:
+
 2021-02-12  Michael Saboff  <msaboff@apple.com>
 
         [ARM64e] Harden Mach exception handling
