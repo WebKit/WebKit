@@ -1,3 +1,13 @@
+2021-02-14  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le
+        https://bugs.webkit.org/show_bug.cgi?id=221557
+        <rdar://problem/74311603>
+
+        Unreviewed, unskip this test since it seems Yusuke has already fixed it.
+
+        * stress/copy-data-properties-fast-path.js:
+
 2021-02-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's [[GetOwnProperty]] should complete trap result descriptor before validation
