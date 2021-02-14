@@ -1,3 +1,13 @@
+2021-02-13  Darin Adler  <darin@apple.com>
+
+        Crash calling replaceTrack on a sender that outlives its RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=221870
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection-expected.txt: Added.
+        * fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection.html: Added.
+
 2021-02-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Sound does not play on YouTube after switching back to foreground
