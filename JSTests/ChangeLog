@@ -1,3 +1,13 @@
+2021-02-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Proxy's [[GetOwnProperty]] should complete trap result descriptor before validation
+        https://bugs.webkit.org/show_bug.cgi?id=221772
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/proxy-get-own-property.js:
+        * stress/proxy-returning-incomplete-property-descriptor-error.js: Added.
+
 2021-02-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le

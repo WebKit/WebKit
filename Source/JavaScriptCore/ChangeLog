@@ -1,3 +1,32 @@
+2021-02-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Proxy's [[GetOwnProperty]] should complete trap result descriptor before validation
+        https://bugs.webkit.org/show_bug.cgi?id=221772
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements CompletePropertyDescriptor abstract op and utilizes it in
+        Proxy's [[GetOwnProperty]], right before IsCompatiblePropertyDescriptor check
+        as per spec [1].
+
+        This change tightens trap result validation rules for properties that are
+        non-configurable on [[ProxyTarget]], aligning JSC with V8 and SpiderMonkey.
+
+        It's impossible to prefill trap result descriptor: toPropertyDescriptor() throws
+        on malformed descriptors, thus it expects the argument to be an empty descriptor
+        (added an assert).
+
+        Property descriptors returned to userland are unaffected as they were implicitly
+        completed when filling PropertySlot (see PropertyDescriptor::defaultAttributes).
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p (step 14)
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/ProxyObject.cpp:
+        (JSC::completePropertyDescriptor):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+
 2021-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable JITCage on macOS

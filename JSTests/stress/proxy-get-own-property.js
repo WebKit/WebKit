@@ -325,33 +325,14 @@ Object.prototype.fooBarBaz = 20; // Make for-in go over the prototype chain to t
     };
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 500; i++) {
-        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
-        assert(desc.configurable === false);
-        assert(desc.enumerable === false);
-        assert(desc.writable === false);
-        assert(desc.value === 45);
-    }
-}
-
-{
-    let target = {};
-    Object.defineProperty(target, "x", {
-        enumerable: false,
-        configurable: false,
-        writable: true
-    });
-    let handler = {
-        getOwnPropertyDescriptor: function(theTarget, propName) {
-            return {enumerable: false, value: 45};
+        let threw = false;
+        try {
+            Object.getOwnPropertyDescriptor(proxy, "x");
+        } catch(e) {
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' can't be non-configurable and non-writable when the target's property is writable");
+            threw = true;
         }
-    };
-    let proxy = new Proxy(target, handler);
-    for (let i = 0; i < 500; i++) {
-        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
-        assert(desc.configurable === false);
-        assert(desc.enumerable === false);
-        assert(desc.writable === false);
-        assert(desc.value === 45);
+        assert(threw);
     }
 }
 
