@@ -189,6 +189,7 @@ template<typename T, typename D, typename ColorType, typename M, typename TF> st
     using ComponentType = T;
     using Model = M;
     using TransferFunction = TF;
+    using Descriptor = D;
     static constexpr WhitePoint whitePoint = D::whitePoint;
 
     constexpr RGBAType(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
@@ -256,6 +257,31 @@ struct ExtendedLinearEncoded : RGBAType<T, D, ExtendedLinearEncoded<T, D>, Exten
     using BoundedCounterpart = BoundedLinearEncoded<T, D>;
     using Reference = XYZA<T, D::whitePoint>;
 };
+
+template<typename, typename = void> inline constexpr bool HasDescriptorMember = false;
+template<typename ColorType> inline constexpr bool HasDescriptorMember<ColorType, std::void_t<typename ColorType::Descriptor>> = true;
+
+template<typename, typename = void> inline constexpr bool HasExtendedCounterpartMember = false;
+template<typename ColorType> inline constexpr bool HasExtendedCounterpartMember<ColorType, std::void_t<typename ColorType::ExtendedCounterpart>> = true;
+
+template<typename, typename = void> inline constexpr bool HasBoundedCounterpartMember = false;
+template<typename ColorType> inline constexpr bool HasBoundedCounterpartMember<ColorType, std::void_t<typename ColorType::BoundedCounterpart>> = true;
+
+template<typename, typename = void> inline constexpr bool HasGammaEncodedCounterpartMember = false;
+template<typename ColorType> inline constexpr bool HasGammaEncodedCounterpartMember<ColorType, std::void_t<typename ColorType::GammaEncodedCounterpart>> = true;
+
+template<typename, typename = void> inline constexpr bool HasLinearCounterpartMember = false;
+template<typename ColorType> inline constexpr bool HasLinearCounterpartMember<ColorType, std::void_t<typename ColorType::LinearCounterpart>> = true;
+
+template<typename ColorType> inline constexpr bool IsRGBType = HasDescriptorMember<ColorType>;
+template<typename ColorType> inline constexpr bool IsRGBExtendedType = IsRGBType<ColorType> && HasBoundedCounterpartMember<ColorType>;
+template<typename ColorType> inline constexpr bool IsRGBBoundedType = IsRGBType<ColorType> && HasExtendedCounterpartMember<ColorType>;
+template<typename ColorType> inline constexpr bool IsRGBGammaEncodedType = IsRGBType<ColorType> && HasLinearCounterpartMember<ColorType>;
+template<typename ColorType> inline constexpr bool IsRGBLinearEncodedType = IsRGBType<ColorType> && HasGammaEncodedCounterpartMember<ColorType>;
+
+template<typename ColorType1, typename ColorType2, bool enabled> inline constexpr bool IsSameRGBTypeFamilyValue = false;
+template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamilyValue<ColorType1, ColorType2, true> = std::is_same_v<typename ColorType1::Descriptor, typename ColorType2::Descriptor>;
+template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamily = IsSameRGBTypeFamilyValue<ColorType1, ColorType2, IsRGBType<ColorType1> && IsRGBType<ColorType2>>;
 
 template<typename T> struct SRGBADescriptor {
     template<TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
@@ -397,6 +423,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const Lab<T>
     return { c.lightness, c.a, c.b, c.alpha };
 }
 
+template<typename ColorType> inline constexpr bool IsLab = std::is_same_v<Lab<typename ColorType::ComponentType>, ColorType>;
+
 // MARK: - LCHA Color Type.
 
 template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
@@ -429,6 +457,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const LCHA<T
 {
     return { c.lightness, c.chroma, c.hue, c.alpha };
 }
+
+template<typename ColorType> inline constexpr bool IsLCHA = std::is_same_v<LCHA<typename ColorType::ComponentType>, ColorType>;
 
 
 // MARK: - HSLA Color Type.
@@ -464,6 +494,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T
     return { c.hue, c.saturation, c.lightness, c.alpha };
 }
 
+template<typename ColorType> inline constexpr bool IsHSLA = std::is_same_v<HSLA<typename ColorType::ComponentType>, ColorType>;
+
 // MARK: - HWBA Color Type.
 
 template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
@@ -496,6 +528,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const HWBA<T
 {
     return { c.hue, c.whiteness, c.blackness, c.alpha };
 }
+
+template<typename ColorType> inline constexpr bool IsHWBA = std::is_same_v<HWBA<typename ColorType::ComponentType>, ColorType>;
 
 // MARK: - XYZ Color Type.
 
@@ -530,6 +564,7 @@ template<typename T, WhitePoint W> constexpr ColorComponents<T> asColorComponent
     return { c.x, c.y, c.z, c.alpha };
 }
 
+template<typename ColorType> inline constexpr bool IsXYZA = std::is_same_v<XYZA<typename ColorType::ComponentType, ColorType::whitePoint>, ColorType>;
 
 // Packed Color Formats
 
