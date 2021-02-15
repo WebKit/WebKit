@@ -158,8 +158,8 @@ static exception_mask_t toMachMask(Signal signal)
 #if CPU(ARM64E) && OS(DARWIN)
 inline ptrauth_generic_signature_t hashThreadState(const thread_state_t source)
 {
-    constexpr size_t threadStatePCPointerIndex = offsetof(arm_thread_state64_t, __opaque_pc) / sizeof(uintptr_t);
-    constexpr size_t threadStateSizeInPointers = sizeof(arm_thread_state64_t) / sizeof(uintptr_t);
+    constexpr size_t threadStatePCPointerIndex = (offsetof(arm_unified_thread_state, ts_64) + offsetof(arm_thread_state64_t, __opaque_pc)) / sizeof(uintptr_t);
+    constexpr size_t threadStateSizeInPointers = sizeof(arm_unified_thread_state) / sizeof(uintptr_t);
 
     ptrauth_generic_signature_t hash = 0;
 
