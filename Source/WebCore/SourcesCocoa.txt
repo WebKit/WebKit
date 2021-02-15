@@ -190,7 +190,6 @@ page/mac/PageMac.mm
 page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
 page/mac/WheelEventDeltaFilterMac.mm
-page/scrolling/ScrollingMomentumCalculator.cpp
 page/scrolling/cocoa/ScrollingStateNode.mm
 page/scrolling/cocoa/ScrollingTreeFixedNode.mm
 page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm
@@ -249,8 +248,6 @@ platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
-platform/cocoa/ScrollController.mm
-platform/cocoa/ScrollSnapAnimatorState.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SharedBufferCocoa.mm
 platform/cocoa/SystemVersion.mm
@@ -502,6 +499,7 @@ platform/mac/PublicSuffixMac.mm
 platform/mac/RemoteCommandListenerMac.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
+platform/mac/ScrollController.mm
 platform/mac/ScrollViewMac.mm
 platform/mac/ScrollbarThemeMac.mm @no-unify
 platform/mac/SerializedPlatformDataCueMac.mm

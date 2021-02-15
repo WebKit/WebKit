@@ -1771,6 +1771,7 @@ page/scrolling/ScrollSnapOffsetsInfo.cpp
 page/scrolling/ScrollLatchingController.cpp
 page/scrolling/ScrollingConstraints.cpp
 page/scrolling/ScrollingCoordinator.cpp
+page/scrolling/ScrollingMomentumCalculator.cpp
 page/scrolling/ScrollingStateFixedNode.cpp
 page/scrolling/ScrollingStateFrameHostingNode.cpp
 page/scrolling/ScrollingStateFrameScrollingNode.cpp
@@ -1839,6 +1840,8 @@ platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/ScrollAnimator.cpp
+platform/ScrollController.cpp
+platform/ScrollSnapAnimatorState.cpp
 platform/ScrollTypes.cpp
 platform/ScrollView.cpp
 platform/ScrollableArea.cpp

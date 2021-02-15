@@ -368,6 +368,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/RemoteCommandListenerMac.mm
     platform/mac/SSLKeyGeneratorMac.mm
     platform/mac/ScrollAnimatorMac.mm
+    platform/mac/ScrollController.mm
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformDataCueMac.mm
@@ -510,8 +511,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/PlatformView.h
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModelMediaElement.h
-    platform/cocoa/ScrollController.h
-    platform/cocoa/ScrollSnapAnimatorState.h
     platform/cocoa/SearchPopupMenuCocoa.h
     platform/cocoa/SystemBattery.h
     platform/cocoa/SystemVersion.h

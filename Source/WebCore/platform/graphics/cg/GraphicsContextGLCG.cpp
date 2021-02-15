@@ -34,6 +34,7 @@
 #include "GraphicsContextGLOpenGL.h"
 #include "Image.h"
 #include "ImageBufferUtilitiesCG.h"
+#include "ImageData.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContextGLNEON.h"
