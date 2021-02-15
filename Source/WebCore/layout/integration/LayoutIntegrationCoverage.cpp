@@ -240,6 +240,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIncludesHighlights:
         stream << "text includes highlights";
         break;
+    case AvoidanceReason::FlowHasJustifiedNonBreakingSpace:
+        stream << "justified text has non-breaking-space character";
+        break;
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
         break;
@@ -403,6 +406,8 @@ template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, bool t
 {
     OptionSet<AvoidanceReason> reasons;
     if (textIsJustified) {
+        if (character == noBreakSpace)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonBreakingSpace, reasons, includeReasons);
         // Include characters up to Latin Extended-B and some punctuation range when text is justified.
         bool isLatinIncludingExtendedB = character <= 0x01FF;
         bool isPunctuationRange = character >= 0x2010 && character <= 0x2027;
@@ -423,8 +428,10 @@ template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, bool t
     return reasons;
 }
 
-template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar, bool, IncludeReasons)
+template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar character, bool textIsJustified, IncludeReasons)
 {
+    if (textIsJustified && character == noBreakSpace)
+        return { AvoidanceReason::FlowHasJustifiedNonBreakingSpace };
     return { };
 }
 
