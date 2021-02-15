@@ -1,3 +1,91 @@
+2021-02-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] PropertySlot should allow passing custom setters
+        https://bugs.webkit.org/show_bug.cgi?id=221872
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+        1. Merges PropertySlot::TypeCustomAccessor into TypeCustom, allowing to pass a setter for
+           CustomAccessor / CustomValue. Raw C++ function pointers are used to avoid creating
+           CustomGetterSetter instances for non-reified static properties.
+        2. Reworks JSObject::getOwnPropertyDescriptor() for custom accessors, making it simpler,
+           more robust, and no longer required to reify all static properties.
+        3. Hoists GetValueFunc / PutValueFunc declarations to JSC namespace so they can be used
+           in header files.
+        4. Moves CustomAccessor's wrapper maps to JSGlobalObject (because VM outlives it) and
+           simplifies their keys to C++ function pointers.
+        5. Splits JSCustomGetterSetterFunction into JSCustomGetterFunction / JSCustomSetterFunction
+           since their signatures and [[Call]] logic are quite different. This is a nice refactor
+           that also simplifies garbage collection and reduces memory needed for setter wrappers.
+        6. Removes PropertyDescriptor::setCustomDescriptor(), making PropertyDescriptor unaware of
+           custom accessors. Also, drops CustomAccessor check from validateAndApplyPropertyDescriptor()
+           that was incorrect (no error should be thrown if accessors are unchanged) yet unreachable
+           because PropertyDescriptor::equalTo() ignores CustomAccessor.
+
+        This change fixes a) accessor functions of unforgeable properties [1] to be persistent
+        (in terms of referential equality) and b) cross-realm accessor functions to be of correct
+        global object (instead of lexical).
+
+        [1]: https://heycam.github.io/webidl/#dfn-unforgeable-on-an-interface
+
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSCustomGetterFunction.cpp: Added.
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::JSCustomGetterFunction):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomGetterFunction.h: Added.
+        * runtime/JSCustomGetterSetterFunction.cpp: Removed.
+        * runtime/JSCustomGetterSetterFunction.h: Removed.
+        * runtime/JSCustomSetterFunction.cpp: Added.
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::JSCustomSetterFunction):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSCustomSetterFunction.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::customGetterFunctionMap):
+        (JSC::JSGlobalObject::customSetterFunctionMap):
+        (JSC::JSGlobalObject::customGetterFunctionStructure const):
+        (JSC::JSGlobalObject::customSetterFunctionStructure const):
+        (JSC::JSGlobalObject::customGetterSetterFunctionStructure const): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::getCustomGetterFunction):
+        (JSC::getCustomSetterFunction):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::validateAndApplyPropertyDescriptor):
+        (JSC::getCustomGetterSetterFunctionForGetterSetter): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlotFromTable):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        (JSC::PropertyDescriptor::setCustomDescriptor): Deleted.
+        * runtime/PropertyDescriptor.h:
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customAccessorGetter const): Deleted.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isCustom const):
+        (JSC::PropertySlot::customGetter const):
+        (JSC::PropertySlot::customSetter const):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::getValue const):
+        (JSC::PropertySlot::isCustomAccessor const): Deleted.
+        (JSC::PropertySlot::customGetterSetter const): Deleted.
+        (JSC::PropertySlot::setCustomGetterSetter): Deleted.
+        * runtime/PutPropertySlot.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2021-02-15  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext] Implement private accessors

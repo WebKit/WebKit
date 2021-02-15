@@ -1415,16 +1415,16 @@ ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(VM& vm, PropertySlot& 
     if (customGetterSetter->inherits<DOMAttributeGetterSetter>(vm)) {
         auto* domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter);
         if (structure->isUncacheableDictionary())
-            slot.setCustom(this, attributes, domAttribute->getter(), domAttribute->domAttribute());
+            slot.setCustom(this, attributes, domAttribute->getter(), domAttribute->setter(), domAttribute->domAttribute());
         else
-            slot.setCacheableCustom(this, attributes, domAttribute->getter(), domAttribute->domAttribute());
+            slot.setCacheableCustom(this, attributes, domAttribute->getter(), domAttribute->setter(), domAttribute->domAttribute());
         return;
     }
 
     if (structure->isUncacheableDictionary())
-        slot.setCustom(this, attributes, customGetterSetter->getter());
+        slot.setCustom(this, attributes, customGetterSetter->getter(), customGetterSetter->setter());
     else
-        slot.setCacheableCustom(this, attributes, customGetterSetter->getter());
+        slot.setCacheableCustom(this, attributes, customGetterSetter->getter(), customGetterSetter->setter());
 }
 
 // It may seem crazy to inline a function this large, especially a virtual function,

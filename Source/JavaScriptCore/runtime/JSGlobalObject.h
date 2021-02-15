@@ -86,6 +86,8 @@ class IntlCollator;
 class JSArrayBuffer;
 class JSArrayBufferPrototype;
 class JSCallee;
+class JSCustomGetterFunction;
+class JSCustomSetterFunction;
 class JSGlobalObjectDebuggable;
 class JSInternalPromise;
 class JSModuleLoader;
@@ -396,7 +398,8 @@ public:
     FunctionStructures m_ordinaryFunctions;
 
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_regExpStructure;
@@ -540,6 +543,9 @@ public:
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
 
+    WeakGCMap<GetValueFunc, JSCustomGetterFunction>& customGetterFunctionMap() { return m_customGetterFunctionMap; }
+    WeakGCMap<PutValueFunc, JSCustomSetterFunction>& customSetterFunctionMap() { return m_customSetterFunctionMap; }
+
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
@@ -554,6 +560,8 @@ public:
     RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient { nullptr };
     Optional<unsigned> m_stackTraceLimit;
+    WeakGCMap<GetValueFunc, JSCustomGetterFunction> m_customGetterFunctionMap;
+    WeakGCMap<PutValueFunc, JSCustomSetterFunction> m_customSetterFunctionMap;
 
 #if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
@@ -799,7 +807,8 @@ public:
     }
 
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
-    Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
+    Structure* customGetterFunctionStructure() const { return m_customGetterFunctionStructure.get(this); }
+    Structure* customSetterFunctionStructure() const { return m_customSetterFunctionStructure.get(this); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(this); }

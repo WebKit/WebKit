@@ -905,6 +905,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h
     runtime/GetPutInfo.h
+    runtime/GetterSetter.h
     runtime/GetVM.h
     runtime/GlobalExecutable.h
     runtime/HashMapImpl.h
@@ -940,6 +941,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCast.h
     runtime/JSCell.h
     runtime/JSCellInlines.h
+    runtime/JSCustomGetterFunction.h
+    runtime/JSCustomSetterFunction.h
     runtime/JSDataView.h
     runtime/JSDateMath.h
     runtime/JSDestructibleObject.h
@@ -999,6 +1002,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ModuleProgramExecutable.h
     runtime/NativeExecutable.h
     runtime/NativeFunction.h
+    runtime/NullGetterFunction.h
+    runtime/NullSetterFunction.h
     runtime/NumberObject.h
     runtime/NumberPrototype.h
     runtime/NumericStrings.h

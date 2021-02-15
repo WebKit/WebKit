@@ -29,6 +29,8 @@
 #include "JSDOMWindowCustom.h"
 #include "RuntimeApplicationChecks.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/GetterSetter.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 
@@ -70,8 +72,9 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
     // a descriptor that has a setter but no getter.
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
-        CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
-        slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum), customGetterSetter);
+        auto* setter = JSCustomSetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyPutter());
+        auto* getterSetter = GetterSetter::create(vm, &lexicalGlobalObject, nullptr, setter);
+        slot.setGetterSlot(&thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
         return true;
     }
 

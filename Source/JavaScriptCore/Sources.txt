@@ -865,7 +865,8 @@ runtime/JSCJSValue.cpp
 runtime/JSCPtrTag.cpp
 runtime/JSCallee.cpp
 runtime/JSCell.cpp
-runtime/JSCustomGetterSetterFunction.cpp
+runtime/JSCustomGetterFunction.cpp
+runtime/JSCustomSetterFunction.cpp
 runtime/JSDataView.cpp
 runtime/JSDataViewPrototype.cpp
 runtime/JSDateMath.cpp @no-unify // Confine U_SHOW_CPLUSPLUS_API's effect to this file.

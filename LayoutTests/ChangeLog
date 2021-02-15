@@ -1,3 +1,15 @@
+2021-02-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] PropertySlot should allow passing custom setters
+        https://bugs.webkit.org/show_bug.cgi?id=221872
+
+        Reviewed by Yusuke Suzuki.
+
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window-expected.txt:
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window.html:
+        * js/instance-property-getter-other-instance-expected.txt:
+        * js/instance-property-getter-other-instance.html:
+
 2021-02-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new look for input type=range with datalist

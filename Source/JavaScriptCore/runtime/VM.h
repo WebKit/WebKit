@@ -141,7 +141,6 @@ class JSAPIWrapperGlobalObject;
 class JSAPIWrapperObject;
 class JSCCallbackFunction;
 class JSCallbackConstructor;
-class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSGlobalLexicalEnvironment;
@@ -503,7 +502,8 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackGlobalObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterSetterFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customSetterFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(dataViewSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(debuggerScopeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(errorInstanceSpace)
@@ -723,7 +723,6 @@ public:
     SmallStrings smallStrings;
     NumericStrings numericStrings;
     std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
-    WeakGCMap<std::pair<CustomGetterSetter*, int>, JSCustomGetterSetterFunction> customGetterSetterFunctionMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
     Strong<JSString> lastCachedString;
 

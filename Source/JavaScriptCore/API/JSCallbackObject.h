@@ -234,8 +234,6 @@ private:
     static RawNativeFunction getCallFunction();
     static RawNativeFunction getConstructFunction();
 
-    using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue, PropertyName);
-
     static GetValueFunc getStaticFunctionGetter();
     static GetValueFunc getCallbackGetter();
  

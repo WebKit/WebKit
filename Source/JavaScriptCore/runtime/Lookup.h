@@ -238,17 +238,18 @@ inline bool getStaticPropertySlotFromTable(VM& vm, const ClassInfo* classInfo, c
     }
 
     if (entry->attributes() & PropertyAttribute::DOMJITAttribute) {
+        ASSERT_WITH_MESSAGE(entry->attributes() & PropertyAttribute::ReadOnly, "DOMJITAttribute supports readonly attributes currently.");
         const DOMJIT::GetterSetter* domJIT = entry->domJIT();
-        slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), domJIT->getter(), DOMAttributeAnnotation { classInfo, domJIT });
+        slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), domJIT->getter(), nullptr, DOMAttributeAnnotation { classInfo, domJIT });
         return true;
     }
 
     if (entry->attributes() & PropertyAttribute::DOMAttribute) {
-        slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), entry->propertyGetter(), DOMAttributeAnnotation { classInfo, nullptr });
+        slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), entry->propertyGetter(), entry->propertyPutter(), DOMAttributeAnnotation { classInfo, nullptr });
         return true;
     }
 
-    slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), entry->propertyGetter());
+    slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), entry->propertyGetter(), entry->propertyPutter());
     return true;
 }
 

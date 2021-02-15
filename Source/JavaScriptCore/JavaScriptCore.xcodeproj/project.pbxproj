@@ -1182,7 +1182,6 @@
 		70EC0EC71AA0D7DA00B6AAFA /* StringIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EC11AA0D7DA00B6AAFA /* StringIteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */; };
 		7311FA32240DB1D3003D48DB /* DeleteByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7311FA31240DB1D3003D48DB /* DeleteByIdVariant.h */; };
 		734B655523F5C10400A069D1 /* DeletePropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 734B655423F4A33100A069D1 /* DeletePropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		73AD062923FF662600F53593 /* DeleteByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 73AD062823FF662600F53593 /* DeleteByStatus.h */; };
@@ -1233,6 +1232,11 @@
 		7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0894D60FAFBA2D00001865 /* JSAPIValueWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		84323E7825D5EC1900F97776 /* NullGetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6546F5201A32A59C006F07D5 /* NullGetterFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		84323E7925D5EC2800F97776 /* NullSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 65525FC41A6DD3B3007B5495 /* NullSetterFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		84323E7A25D5EC3B00F97776 /* GetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = BC337BDE0E1AF0B80076918A /* GetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		84323E7F25D5EC6A00F97776 /* JSCustomSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 84323E7B25D5EC6900F97776 /* JSCustomSetterFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		84323E8025D5EC6A00F97776 /* JSCustomGetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 84323E7C25D5EC6900F97776 /* JSCustomGetterFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */ = {isa = PBXBuildFile; fileRef = 860161E00F3A83C100F84710 /* MacroAssemblerX86.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		860161E50F3A83C100F84710 /* MacroAssemblerX86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = 860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4036,8 +4040,6 @@
 		70ECA6001AFDBEA200449739 /* JSTemplateObjectDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTemplateObjectDescriptor.cpp; sourceTree = "<group>"; };
 		70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTemplateObjectDescriptor.h; sourceTree = "<group>"; };
 		70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateObjectDescriptor.h; sourceTree = "<group>"; };
-		72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomGetterSetterFunction.cpp; sourceTree = "<group>"; };
-		72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomGetterSetterFunction.h; sourceTree = "<group>"; };
 		7311FA31240DB1D3003D48DB /* DeleteByIdVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteByIdVariant.h; sourceTree = "<group>"; };
 		7311FA33240DB249003D48DB /* DeleteByIdVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByIdVariant.cpp; sourceTree = "<group>"; };
 		73190D962400934900F891C9 /* DeleteByStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByStatus.cpp; sourceTree = "<group>"; };
@@ -4133,6 +4135,10 @@
 		7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRules.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
+		84323E7B25D5EC6900F97776 /* JSCustomSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSetterFunction.h; sourceTree = "<group>"; };
+		84323E7C25D5EC6900F97776 /* JSCustomGetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomGetterFunction.h; sourceTree = "<group>"; };
+		84323E7D25D5EC6A00F97776 /* JSCustomGetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomGetterFunction.cpp; sourceTree = "<group>"; };
+		84323E7E25D5EC6A00F97776 /* JSCustomSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSetterFunction.cpp; sourceTree = "<group>"; };
 		84925A9A22B30CBA00D1DFFF /* RegExpStringIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpStringIteratorPrototype.cpp; sourceTree = "<group>"; };
 		84925A9B22B30CBA00D1DFFF /* RegExpStringIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpStringIteratorPrototype.h; sourceTree = "<group>"; };
 		84925A9C22B30CC800D1DFFF /* RegExpStringIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RegExpStringIteratorPrototype.js; sourceTree = "<group>"; };
@@ -7482,8 +7488,10 @@
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
 				FE1E2C3C2240C1EF00F6B729 /* JSCPtrTag.cpp */,
 				FE7497E5209001B00003565B /* JSCPtrTag.h */,
-				72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */,
-				72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */,
+				84323E7D25D5EC6A00F97776 /* JSCustomGetterFunction.cpp */,
+				84323E7C25D5EC6900F97776 /* JSCustomGetterFunction.h */,
+				84323E7E25D5EC6A00F97776 /* JSCustomSetterFunction.cpp */,
+				84323E7B25D5EC6900F97776 /* JSCustomSetterFunction.h */,
 				0F2B66BD17B6B5AB00A7AE3F /* JSDataView.cpp */,
 				0F2B66BE17B6B5AB00A7AE3F /* JSDataView.h */,
 				0F2B66BF17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp */,
@@ -9811,6 +9819,7 @@
 				0F9332A014CA7DCD0085F3C6 /* GetByStatus.h in Headers */,
 				520D99F12388CC81000509A3 /* GetByValHistory.h in Headers */,
 				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,
+				84323E7A25D5EC3B00F97776 /* GetterSetter.h in Headers */,
 				534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */,
 				FE1D6D6F236258FE007A5C26 /* GetVM.h in Headers */,
 				0FEC3C5B1F33A48900F59B6C /* GigacageAlignedMemoryAllocator.h in Headers */,
@@ -10038,7 +10047,8 @@
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				FE7497E6209001B10003565B /* JSCPtrTag.h in Headers */,
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
-				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
+				84323E8025D5EC6A00F97776 /* JSCustomGetterFunction.h in Headers */,
+				84323E7F25D5EC6A00F97776 /* JSCustomSetterFunction.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,
 				996B731C1BDA08DD00331B84 /* JSDataViewPrototype.lut.h in Headers */,
@@ -10270,6 +10280,8 @@
 				FE1409072056F3FF00CFE318 /* NativeFunction.h in Headers */,
 				0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */,
 				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
+				84323E7825D5EC1900F97776 /* NullGetterFunction.h in Headers */,
+				84323E7925D5EC2800F97776 /* NullSetterFunction.h in Headers */,
 				BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */,
 				BC18C4420E16F5CD00B34460 /* NumberConstructor.lut.h in Headers */,
 				BC18C4430E16F5CD00B34460 /* NumberObject.h in Headers */,

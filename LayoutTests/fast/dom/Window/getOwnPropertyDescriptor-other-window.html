@@ -10,12 +10,12 @@ otherWindow = frames[0];
 
 evalAndLog("descriptor = Object.getOwnPropertyDescriptor(otherWindow, 'location')");
 shouldNotBe("descriptor", "undefined");
-shouldBeType("descriptor.get", "Function");
-shouldBeType("descriptor.set", "Function");
+shouldBeTrue("descriptor.get instanceof otherWindow.Function");
+shouldBeTrue("descriptor.set instanceof otherWindow.Function");
 shouldBeTrue("descriptor.enumerable");
 shouldBeFalse("descriptor.configurable");
 shouldBeEqualToString("descriptor.get.call(otherWindow).toString()", "about:blank");
-shouldBe("descriptor.get.call()", "descriptor.get.call(window)");
+shouldBe("descriptor.get.call()", "descriptor.get.call(otherWindow)");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

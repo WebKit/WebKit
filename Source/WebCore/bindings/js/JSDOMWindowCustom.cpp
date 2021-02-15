@@ -48,9 +48,12 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/GetterSetter.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCustomGetterFunction.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
@@ -184,9 +187,10 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
             || propertyName == builtinNames.openerPublicName()
             || propertyName == builtinNames.parentPublicName()
             || propertyName == builtinNames.topPublicName()) {
-            bool shouldExposeSetter = propertyName == builtinNames.locationPublicName();
-            CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), shouldExposeSetter ? entry->propertyPutter() : nullptr);
-            slot.setCustomGetterSetter(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum), customGetterSetter);
+            auto* getter = JSCustomGetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyGetter());
+            auto* setter = propertyName == builtinNames.locationPublicName() ? JSCustomSetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyPutter()) : nullptr;
+            auto* getterSetter = GetterSetter::create(vm, &lexicalGlobalObject, getter, setter);
+            slot.setGetterSlot(thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
             return true;
         }
     }

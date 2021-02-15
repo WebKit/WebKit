@@ -109,7 +109,8 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
-#include "JSCustomGetterSetterFunction.h"
+#include "JSCustomGetterFunction.h"
+#include "JSCustomSetterFunction.h"
 #include "JSDataView.h"
 #include "JSDataViewPrototype.h"
 #include "JSDollarVM.h"
@@ -504,6 +505,8 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_numberToStringWatchpointSet(IsWatched)
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
+    , m_customGetterFunctionMap(vm)
+    , m_customSetterFunctionMap(vm)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
 }
@@ -615,9 +618,13 @@ void JSGlobalObject::init(VM& vm)
     initFunctionStructures(m_builtinFunctions);
     initFunctionStructures(m_ordinaryFunctions);
 
-    m_customGetterSetterFunctionStructure.initLater(
+    m_customGetterFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            init.set(JSCustomGetterSetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+            init.set(JSCustomGetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+        });
+    m_customSetterFunctionStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSCustomSetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
         });
     m_boundFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -2001,7 +2008,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitFunctionStructures(thisObject->m_builtinFunctions);
     visitFunctionStructures(thisObject->m_ordinaryFunctions);
 
-    thisObject->m_customGetterSetterFunctionStructure.visit(visitor);
+    thisObject->m_customGetterFunctionStructure.visit(visitor);
+    thisObject->m_customSetterFunctionStructure.visit(visitor);
     thisObject->m_boundFunctionStructure.visit(visitor);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_regExpStructure);

@@ -64,7 +64,7 @@ public:
     JSObject* setterObject() const;
     JS_EXPORT_PRIVATE void setUndefined();
     JS_EXPORT_PRIVATE void setDescriptor(JSValue, unsigned attributes);
-    JS_EXPORT_PRIVATE void setCustomDescriptor(unsigned attributes);
+    JS_EXPORT_PRIVATE void setAccessorDescriptor(unsigned attributes);
     JS_EXPORT_PRIVATE void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
     JS_EXPORT_PRIVATE void setWritable(bool);
     JS_EXPORT_PRIVATE void setEnumerable(bool);
