@@ -415,6 +415,7 @@ namespace WebCore {
     macro(reader) \
     macro(readyPromise) \
     macro(readyPromiseCapability) \
+    macro(registerRTCRtpScriptTransformer) \
     macro(requestAnimationFrame) \
     macro(requestIdleCallback) \
     macro(response) \
