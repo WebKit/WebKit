@@ -1,3 +1,15 @@
+2021-02-15  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Ignore an IPC message if the message receiver has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=221920
+
+        Reviewed by Eric Carlson.
+
+        No new tests, fixing test crashes due to assertion failures.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+
 2021-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add a ShareableBitmap with decoded image data to WebHitTestResultData

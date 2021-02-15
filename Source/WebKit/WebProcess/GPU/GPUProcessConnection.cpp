@@ -32,14 +32,19 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
+#include "Logging.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
+#include "MediaSourcePrivateRemoteMessages.h"
+#include "RemoteAudioHardwareListenerMessages.h"
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteMediaPlayerManager.h"
+#include "RemoteRemoteCommandListenerMessages.h"
 #include "SampleBufferDisplayLayerMessages.h"
+#include "SourceBufferPrivateRemoteMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -160,12 +165,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         return true;
     }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-#if USE(AUDIO_SESSION)
-    if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
-        // FIXME
-        return true;
-    }
-#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
         WebProcess::singleton().supplement<RemoteCDMFactory>()->didReceiveSessionMessage(connection, decoder);
@@ -177,9 +177,40 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 
     // Skip messages intended for already removed messageReceiverMap() destinations.
 #if ENABLE(WEBGL)
-    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName())
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName()) {
+        RELEASE_LOG_ERROR(WebGL, "The RemoteGraphicsContextGLProxy object has beed destroyed");
         return true;
+    }
 #endif
+
+#if USE(AUDIO_SESSION)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The RemoteAudioSession object has beed destroyed");
+        return true;
+    }
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    if (decoder.messageReceiverName() == Messages::MediaSourcePrivateRemote::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The MediaSourcePrivateRemote object has beed destroyed");
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::SourceBufferPrivateRemote::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The SourceBufferPrivateRemote object has beed destroyed");
+        return true;
+    }
+#endif
+
+    if (decoder.messageReceiverName() == Messages::RemoteAudioHardwareListener::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The RemoteAudioHardwareListener object has beed destroyed");
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteRemoteCommandListener::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The RemoteRemoteCommandListener object has beed destroyed");
+        return true;
+    }
 
     return false;
 }
