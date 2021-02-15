@@ -275,8 +275,8 @@ void DocumentThreadableLoader::computeIsDone()
             m_client->notifyIsDone(m_async && !m_preflightChecker && !m_resource);
         return;
     }
-    platformStrategies()->loaderStrategy()->isResourceLoadFinished(*m_resource, [this, protectedThis = makeRef(*this)](bool isDone) {
-        if (m_client)
+    platformStrategies()->loaderStrategy()->isResourceLoadFinished(*m_resource, [this, weakThis = makeWeakPtr(*this)](bool isDone) {
+        if (weakThis && m_client)
             m_client->notifyIsDone(isDone);
     });
 }

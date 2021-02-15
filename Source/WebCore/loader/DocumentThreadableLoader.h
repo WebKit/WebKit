@@ -36,6 +36,7 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "ThreadableLoader.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
     class CachedRawResource;
@@ -43,7 +44,7 @@ namespace WebCore {
     class Document;
     class ThreadableLoaderClient;
 
-    class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private CachedRawResourceClient  {
+    class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, public CanMakeWeakPtr<DocumentThreadableLoader>, private CachedRawResourceClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
@@ -58,6 +59,7 @@ namespace WebCore {
         void cancel() override;
         virtual void setDefersLoading(bool);
         void computeIsDone() final;
+        void clearClient() { m_client = nullptr; }
 
         friend CrossOriginPreflightChecker;
         friend class InspectorInstrumentation;
