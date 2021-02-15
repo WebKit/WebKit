@@ -1,3 +1,27 @@
+2021-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Unexpected ASSERT when touch events are dispatched on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=221832
+
+        Reviewed by Dean Jackson.
+
+        The TouchEvent message is special.  It's received on a non-main thread and completed on the main thread, which asserts.
+        Rather than lose our asserts making sure our message CompletionHandlers are called on the correct thread,
+        mark this one with a new attribute, MainThreadCallback, which indicates that it is ok for the callback to be called on the main thread
+        like it was before r272558 in a different form.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync):
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/model.py:
+        * Scripts/webkit/tests/TestWithImageDataMessages.h:
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessages.h:
+        * Scripts/webkit/tests/TestWithSemaphoreMessages.h:
+        * Scripts/webkit/tests/TestWithSuperclass.messages.in:
+        * Scripts/webkit/tests/TestWithSuperclassMessages.h:
+        * Scripts/webkit/tests/TestWithoutAttributesMessages.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+
 2021-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Page scrolling by wheel events doesn't work in non-AC mode pages if Hardware Acceleration Policy is changed dynamically from "always" to "never"

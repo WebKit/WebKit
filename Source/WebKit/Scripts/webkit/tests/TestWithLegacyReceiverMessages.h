@@ -283,6 +283,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePlugin; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<bool&>;
     using ReplyArguments = std::tuple<bool>;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
@@ -306,6 +307,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<>;
     using ReplyArguments = std::tuple<>;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
@@ -329,6 +331,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPlugins; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<Vector<WebCore::PluginInfo>&>;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
     explicit GetPlugins(bool refresh)
@@ -353,6 +356,7 @@ public:
     static const bool isSync = true;
 
     using DelayedReply = GetPluginProcessConnectionDelayedReply;
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
     using Reply = std::tuple<IPC::Connection::Handle&>;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
@@ -378,6 +382,7 @@ public:
     static const bool isSync = true;
 
     using DelayedReply = TestMultipleAttributesDelayedReply;
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
     using Reply = std::tuple<>;
     using ReplyArguments = std::tuple<>;
@@ -484,6 +489,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<Vector<WebCore::KeypressCommand>&>;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
     explicit InterpretKeyEvent(uint32_t type)

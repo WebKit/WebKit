@@ -25,7 +25,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE
+from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE
 
 _license_header = """/*
  * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
@@ -207,6 +207,10 @@ def message_to_struct_declaration(receiver, message):
             result.append('    using AsyncReply = %sAsyncReply;\n' % message.name)
         elif message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
+        if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
+            result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
+        else:
+            result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE):
             result.append('    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):

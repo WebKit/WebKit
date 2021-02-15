@@ -26,6 +26,7 @@ from collections import Counter, defaultdict
 
 BUILTIN_ATTRIBUTE = "Builtin"
 ASYNC_ATTRIBUTE = "Async"
+MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 
 class MessageReceiver(object):
