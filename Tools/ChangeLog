@@ -1,3 +1,15 @@
+2021-02-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] Distinguish hash and revision
+        https://bugs.webkit.org/show_bug.cgi?id=221861
+        <rdar://problem/74298457>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit.py:
+        (Commit.from_json): Pass hash and revision via json.
+        (Commit.__init__): Convert id to hash or revision.
+
 2021-02-15  Sam Weinig  <weinig@apple.com>
 
         Prepare for adding relative color support
