@@ -26,10 +26,6 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
         fi
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-        then
-            plistbuddy Add :com.apple.private.securejit bool YES
-        fi
     fi
 
     mac_process_webcontent_or_plugin_entitlements
@@ -108,14 +104,6 @@ function mac_process_plugin_entitlements()
     plistbuddy Add :com.apple.security.files.user-selected.read-write      bool YES
     plistbuddy Add :com.apple.security.print                               bool YES
 
-    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
-    then
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-        then
-            plistbuddy Add :com.apple.private.securejit bool YES
-        fi
-    fi
-
     mac_process_webcontent_or_plugin_entitlements
 }
 
@@ -159,10 +147,6 @@ function maccatalyst_process_webcontent_entitlements()
         plistbuddy Add :com.apple.private.security.message-filter bool YES
         plistbuddy Add :com.apple.UIKit.view-service-wants-custom-idiom-and-scale bool YES
     fi
-    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-    then
-        plistbuddy Add :com.apple.private.securejit bool YES
-    fi
 }
 
 function maccatalyst_process_gpu_entitlements()
@@ -190,10 +174,6 @@ function maccatalyst_process_plugin_entitlements()
     plistbuddy Add :com.apple.security.cs.disable-library-validation       bool YES
     plistbuddy Add :com.apple.security.files.user-selected.read-write      bool YES
     plistbuddy Add :com.apple.security.print                               bool YES
-    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-    then
-        plistbuddy Add :com.apple.private.securejit bool YES
-    fi
 }
 
 
