@@ -1,3 +1,12 @@
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=221893
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-02-15  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r272842) [GStreamer] Layout tests exiting early due to crashes after GPUProcess for media enabled by default for WTR

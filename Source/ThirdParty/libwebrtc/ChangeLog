@@ -1,3 +1,19 @@
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=221893
+
+        Reviewed by Eric Carlson.
+
+        Always use the remote factory to simplify things. This ensures that factories remain in sync whether callbacks are set or not.
+        We check anyway whether callbacks are set and use them if needed.
+        Otherwise, we default to the in-process code path.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::createWebKitEncoderFactory):
+
 2021-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Opus Codec support

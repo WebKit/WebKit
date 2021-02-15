@@ -1,5 +1,28 @@
 2021-02-15  Youenn Fablet  <youenn@apple.com>
 
+        Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=221893
+
+        Reviewed by Eric Carlson.
+
+        Make LibWebRTCProvider and MediaRecorder provider keep a WebPage reference.
+        Use it to get WebRTCPlatformCodecsInGPUProcessEnabled setting when needed.
+        For LibWebRTCProvider, set callback only once before creating the first peer connection.
+        This makes sure we do not change callbacks while using them in another thread.
+
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.cpp:
+        (WebKit::MediaRecorderProvider::createMediaRecorderPrivate):
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.h:
+        (WebKit::MediaRecorderProvider::MediaRecorderProvider):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        (WebKit::LibWebRTCProvider::LibWebRTCProvider):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
         Share more code between RemoteRealtimeAudioSource and RemoteRealtimeVideoSource
         https://bugs.webkit.org/show_bug.cgi?id=221898
 

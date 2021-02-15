@@ -1107,13 +1107,14 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
   humanReadableName: "WebRTC Platform Codecs in GPU Process"
   humanReadableDescription: "Enable WebRTC Platform Codecs in GPU Process"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: WebKit::defaultWebRTCCodecsInGPUProcess()
+    WebCore:
+      default: false
 
 WebRTCPlatformSocketsEnabled:
   type: bool

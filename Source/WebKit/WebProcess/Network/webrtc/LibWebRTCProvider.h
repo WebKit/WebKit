@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+class WebPage;
+
 #if USE(LIBWEBRTC)
 
 #if PLATFORM(COCOA)
@@ -47,7 +49,7 @@ using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
 
 class LibWebRTCProvider final : public LibWebRTCProviderBase {
 public:
-    LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
+    explicit LibWebRTCProvider(WebPage&);
 
 private:
     std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */) final;
@@ -58,9 +60,32 @@ private:
     void registerMDNSName(WebCore::DocumentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
     void disableNonLocalhostConnections() final;
     void startedNetworkThread() final;
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
+    WebPage& m_webPage;
+    bool m_didInitializeCallback { false };
+#endif
 };
+
+inline LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
+    : m_webPage(webPage)
+#endif
+{
+    m_useNetworkThreadWithSocketServer = false;
+}
+
+inline UniqueRef<LibWebRTCProvider> createLibWebRTCProvider(WebPage& page)
+{
+    return makeUniqueRef<LibWebRTCProvider>(page);
+}
 #else
 using LibWebRTCProvider = WebCore::LibWebRTCProvider;
+
+inline UniqueRef<LibWebRTCProvider> createLibWebRTCProvider(WebPage&)
+{
+    return makeUniqueRef<LibWebRTCProvider>();
+}
 #endif // USE(LIBWEBRTC)
 
 } // namespace WebKit
