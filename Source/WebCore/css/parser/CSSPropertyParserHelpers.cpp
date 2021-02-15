@@ -773,6 +773,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range, const CSSParserConte
         case RGBComponentType::Number:
             return consumeNumberRaw(args);
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     auto initialComponent = consumeInitialComponent(args);
