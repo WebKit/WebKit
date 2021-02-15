@@ -488,15 +488,16 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
     if (childCrossSizeIsDefinite(child, child.style().logicalWidth()))
         return child.logicalWidth();
 
-    // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
-    bool childHasOverrideWidth = child.hasOverridingLogicalWidth();
-    auto overrideWidth = childHasOverrideWidth ? child.overridingLogicalWidth() : -1_lu;
-    if (childHasOverrideWidth)
+    Optional<LayoutUnit> childOverridingWidth;
+    if (child.hasOverridingLogicalWidth()) {
+        // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
+        childOverridingWidth = child.overridingLogicalWidth();
         const_cast<RenderBox*>(&child)->clearOverridingLogicalWidth();
+    }
     LogicalExtentComputedValues values;
     child.computeLogicalWidthInFragment(values);
-    if (childHasOverrideWidth)
-        const_cast<RenderBox*>(&child)->setOverridingLogicalWidth(overrideWidth);
+    if (childOverridingWidth)
+        const_cast<RenderBox*>(&child)->setOverridingLogicalWidth(*childOverridingWidth);
     return values.m_extent;
 }
 
