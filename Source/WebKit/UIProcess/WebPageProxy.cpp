@@ -7459,18 +7459,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_webDeviceOrientationUpdateProviderProxy = nullptr;
 #endif
 
-    CallbackBase::Error error { };
-    switch (resetStateReason) {
-    case ResetStateReason::NavigationSwap:
-        FALLTHROUGH;
-    case ResetStateReason::PageInvalidated:
-        error = CallbackBase::Error::OwnerWasInvalidated;
-        break;
-    case ResetStateReason::WebProcessExited:
-        error = CallbackBase::Error::ProcessExited;
-        break;
-    }
-
     for (auto& editCommand : std::exchange(m_editCommandSet, { }))
         editCommand->invalidate();
 
