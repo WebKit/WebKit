@@ -1,3 +1,22 @@
+2021-02-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] BubblewrapLauncher should create flatpak-info keyfile only once
+        https://bugs.webkit.org/show_bug.cgi?id=221224
+
+        Reviewed by Adrian Perez de Castro.
+
+        BubblewrapLauncher should create its flatpak-info keyfile only once, because its contents
+        will never change. Makes more sense to cache this tiny string in memory than to recompute it
+        every time a subprocess is launched.
+
+        When working on this, I noticed a quirk in the documentation of g_key_file_to_data: although
+        the function has a GError parameter, it is legacy and the function is actually guaranteed to
+        succeed. So icky though it seems, I've removed the error checking for that, as recommended
+        by its documentation.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::createFlatpakInfo):
+
 2021-02-13  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed build fix.

@@ -694,26 +694,24 @@ static int setupSeccomp()
 
 static int createFlatpakInfo()
 {
-    GUniquePtr<GKeyFile> keyFile(g_key_file_new());
+    static NeverDestroyed<GUniquePtr<char>> data;
+    static size_t size;
 
-    // xdg-desktop-portal relates your name to certain permissions so we want
-    // them to be application unique which is best done via GApplication.
-    GApplication* app = g_application_get_default();
-    if (!app) {
-        g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
-        return -1;
-    }
-    g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+    if (!data.get()) {
+        // xdg-desktop-portal relates your name to certain permissions so we want
+        // them to be application unique which is best done via GApplication.
+        GApplication* app = g_application_get_default();
+        if (!app) {
+            g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
+            return -1;
+        }
 
-    size_t size;
-    GUniqueOutPtr<GError> error;
-    GUniquePtr<char> data(g_key_file_to_data(keyFile.get(), &size, &error.outPtr()));
-    if (error.get()) {
-        g_warning("%s", error->message);
-        return -1;
+        GUniquePtr<GKeyFile> keyFile(g_key_file_new());
+        g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+        data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
     }
 
-    return createSealedMemFdWithData("flatpak-info", data.get(), size);
+    return createSealedMemFdWithData("flatpak-info", data->get(), size);
 }
 
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
