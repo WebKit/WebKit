@@ -37,6 +37,10 @@ import os
 import re
 import requests
 import socket
+import sys
+
+if sys.version_info > (3, 0):
+    unicode = str
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
@@ -815,7 +819,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             contributors_json = self.load_contributors_from_disk()
 
         contributors = {}
-        for key, value in contributors_json.iteritems():
+        for key, value in contributors_json.items():
             emails = value.get('emails')
             if emails:
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
@@ -2907,7 +2911,7 @@ class PrintConfiguration(steps.ShellSequence):
             '10.5': 'Leopard',
         }
 
-        for key, value in build_to_name_mapping.iteritems():
+        for key, value in build_to_name_mapping.items():
             if build.startswith(key):
                 return value
         return 'Unknown'

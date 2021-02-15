@@ -129,7 +129,7 @@ class BuildStepMixinAdditions(BuildStepMixin):
 
     @property
     def executedSteps(self):
-        return filter(lambda step: not step.stopped, self.previous_steps)
+        return [step for step in self.previous_steps if not step.stopped]
 
     def setProperty(self, name, value, source='Unknown'):
         self.properties.setProperty(name, value, source)

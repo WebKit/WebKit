@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,15 +31,15 @@ import steps
 
 class TestCase(unittest.TestCase):
     def assertBuildSteps(self, actual_steps, expected_steps):
-        assert all(map(lambda step: isinstance(step, _BuildStepFactory), actual_steps))
-        assert all(map(lambda step: isinstance(step, _BuildStepFactory), expected_steps))
+        assert all([isinstance(step, _BuildStepFactory) for step in actual_steps])
+        assert all([isinstance(step, _BuildStepFactory) for step in expected_steps])
 
         # Convert to dictionaries because assertEqual() only knows how to diff Python built-in types.
         def step_to_dict(step):
             return {key: getattr(step, key) for key in step.compare_attrs}
 
-        actual_steps = map(step_to_dict, actual_steps)
-        expected_steps = map(step_to_dict, expected_steps)
+        actual_steps = [step_to_dict(step) for step in actual_steps]
+        expected_steps = [step_to_dict(step) for step in expected_steps]
         self.assertEqual(actual_steps, expected_steps)
 
 
