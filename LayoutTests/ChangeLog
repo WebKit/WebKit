@@ -1,3 +1,17 @@
+2021-02-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for input type=range with datalist
+        https://bugs.webkit.org/show_bug.cgi?id=221782
+        <rdar://problem/74251214>
+
+        Reviewed by Darin Adler.
+
+        Added a reference mismatch test to verify that range inputs with
+        different datalist option values do not appear the same.
+
+        * fast/forms/ios/form-control-refresh/range/datalist-expected-mismatch.html:
+        * fast/forms/ios/form-control-refresh/range/datalist.html:
+
 2021-02-15  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Repopulate the TestExpectations file #3

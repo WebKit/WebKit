@@ -54,7 +54,6 @@
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
 #include "HTMLOptionElement.h"
-#include "HTMLParserIdioms.h"
 #endif
 
 #if USE(NEW_THEME)
@@ -1057,16 +1056,18 @@ LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
     return 0;
 }
 
-void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!is<HTMLInputElement>(o.node()))
         return;
 
     auto& input = downcast<HTMLInputElement>(*o.node());
-    if (!input.isRangeControl() || !input.list())
+    if (!input.isRangeControl())
         return;
 
-    auto& dataList = downcast<HTMLDataListElement>(*input.list());
+    auto dataList = input.dataList();
+    if (!dataList)
+        return;
 
     double min = input.minimum();
     double max = input.maximum();
@@ -1117,19 +1118,17 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     paintInfo.context().setFillColor(o.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    for (auto& optionElement : dataList.suggestions()) {
-        String value = optionElement.value();
-        if (!input.isValidValue(value))
-            continue;
-        double parsedValue = parseToDoubleForNumberType(input.sanitizeValue(value));
-        double tickFraction = (parsedValue - min) / (max - min);
-        double tickRatio = isHorizontal && o.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
-        double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
-        if (isHorizontal)
-            tickRect.setX(tickPosition);
-        else
-            tickRect.setY(tickPosition);
-        paintInfo.context().fillRect(tickRect);
+    for (auto& optionElement : dataList->suggestions()) {
+        if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
+            double tickFraction = (*optionValue - min) / (max - min);
+            double tickRatio = isHorizontal && o.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+            double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
+            if (isHorizontal)
+                tickRect.setX(tickPosition);
+            else
+                tickRect.setY(tickPosition);
+            paintInfo.context().fillRect(tickRect);
+        }
     }
 }
 

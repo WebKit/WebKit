@@ -407,6 +407,15 @@ Optional<Decimal> HTMLInputElement::findClosestTickMarkValue(const Decimal& valu
 {
     return m_inputType->findClosestTickMarkValue(value);
 }
+
+Optional<double> HTMLInputElement::listOptionValueAsDouble(const HTMLOptionElement& optionElement)
+{
+    auto optionValue = optionElement.value();
+    if (!isValidValue(optionValue))
+        return WTF::nullopt;
+
+    return parseToDoubleForNumberType(sanitizeValue(optionValue));
+}
 #endif
 
 ExceptionOr<void> HTMLInputElement::stepUp(int n)

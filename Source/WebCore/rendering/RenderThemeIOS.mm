@@ -84,6 +84,12 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+
+#if ENABLE(DATALIST_ELEMENT)
+#include "HTMLDataListElement.h"
+#include "HTMLOptionElement.h"
+#endif
+
 #import <pal/ios/UIKitSoftLink.h>
 
 @interface WebCoreRenderThemeBundle : NSObject
@@ -2277,6 +2283,72 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     return false;
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+
+void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled()) {
+        RenderTheme::paintSliderTicks(box, paintInfo, rect);
+        return;
+    }
+
+    if (!is<HTMLInputElement>(box.node()))
+        return;
+
+    auto& input = downcast<HTMLInputElement>(*box.node());
+    if (!input.isRangeControl())
+        return;
+
+    auto dataList = input.dataList();
+    if (!dataList)
+        return;
+
+    double min = input.minimum();
+    double max = input.maximum();
+    if (min >= max)
+        return;
+
+    constexpr int tickWidth = 2;
+    constexpr int tickHeight = 8;
+    constexpr int tickCornerRadius = 1;
+
+    FloatRect tickRect;
+    FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
+
+    bool isHorizontal = box.style().appearance() == SliderHorizontalPart;
+    if (isHorizontal) {
+        tickRect.setWidth(tickWidth);
+        tickRect.setHeight(tickHeight);
+        tickRect.setY(rect.center().y() - tickRect.height() / 2.0f);
+    } else {
+        tickRect.setWidth(tickHeight);
+        tickRect.setHeight(tickWidth);
+        tickRect.setX(rect.center().x() - tickRect.width() / 2.0f);
+    }
+
+    auto value = input.valueAsNumber();
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    for (auto& optionElement : dataList->suggestions()) {
+        if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
+            auto tickFraction = (*optionValue - min) / (max - min);
+            auto tickRatio = isHorizontal && box.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+            if (isHorizontal)
+                tickRect.setX(rect.x() + tickRatio * (rect.width() - tickRect.width()));
+            else
+                tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
+
+            FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlColor : controlBackgroundColor);
+        }
+    }
+}
+
+#endif // ENABLE(DATALIST_ELEMENT)
+
 bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!is<RenderSlider>(box))
@@ -2287,7 +2359,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     GraphicsContextStateSaver stateSaver(context);
 
     bool isHorizontal = true;
-    IntRect trackClip = rect;
+    FloatRect trackClip = rect;
 
     switch (box.style().appearance()) {
     case SliderHorizontalPart:
