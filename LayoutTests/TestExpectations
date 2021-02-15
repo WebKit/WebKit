@@ -1244,6 +1244,7 @@ webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Skip ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Skip ]
 webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-auto-direction-change-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-002.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-003.html [ ImageOnlyFailure ]

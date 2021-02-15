@@ -1,3 +1,12 @@
+2021-02-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=221890
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestExpectations: Add test failure for :dir().
+
 2021-02-15  Frederic Wang  <fwang@igalia.com>
 
         Crash in RetainPtr<CGImage*>::RetainPtr via ImageBufferCGBackend::toCFData
