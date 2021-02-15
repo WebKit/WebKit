@@ -77,8 +77,10 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
             const Settings* settings = document ? &document->settings() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && document) {
-                if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
+                if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree)) {
+                    document->fontSelector().willBeginLoadingFontSoon(*cachedFont);
                     source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), cachedFont);
+                }
             }
         } else
             source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), nullptr, fontFaceElement);
@@ -89,12 +91,12 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
     fontFace.sourcesPopulated();
 }
 
-CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
-    : CSSFontFace(fontSelector && fontSelector->document() ? &fontSelector->document()->settings() : nullptr, cssConnection, wrapper, isLocalFallback)
+Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
 {
-    m_fontSelector = makeWeakPtr(fontSelector); // FIXME: Ideally this data member would go away (https://bugs.webkit.org/show_bug.cgi?id=208351).
+    auto result = adoptRef(*new CSSFontFace((fontSelector && fontSelector->document()) ? &fontSelector->document()->settings() : nullptr, cssConnection, wrapper, isLocalFallback));
     if (fontSelector)
-        addClient(*fontSelector);
+        result->addClient(*fontSelector);
+    return result;
 }
 
 CSSFontFace::CSSFontFace(const Settings* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
@@ -548,11 +550,18 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
     fontLoadEventOccurred();
 }
 
-void CSSFontFace::opportunisticallyStartFontDataURLLoading(CSSFontSelector& fontSelector)
+void CSSFontFace::opportunisticallyStartFontDataURLLoading(Document* document)
 {
     // We don't want to go crazy here and blow the cache. Usually these data URLs are the first item in the src: list, so let's just check that one.
     if (!m_sources.isEmpty())
-        m_sources[0]->opportunisticallyStartFontDataURLLoading(fontSelector);
+        m_sources[0]->opportunisticallyStartFontDataURLLoading(document);
+}
+
+Document* CSSFontFace::document()
+{
+    if (m_wrapper && is<Document>(m_wrapper->scriptExecutionContext()))
+        return downcast<Document>(m_wrapper->scriptExecutionContext());
+    return nullptr;
 }
 
 size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
@@ -579,7 +588,7 @@ size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
             if (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()) {
                 if (policy == ExternalResourceDownloadPolicy::Allow && m_status == Status::Pending)
                     setStatus(Status::Loading);
-                source->load(m_fontSelector.get());
+                source->load(document());
             }
         }
 
@@ -651,7 +660,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     for (size_t i = startIndex; i < m_sources.size(); ++i) {
         auto& source = m_sources[i];
         if (source->status() == CSSFontFaceSource::Status::Pending && (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()))
-            source->load(m_fontSelector.get());
+            source->load(document());
 
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:

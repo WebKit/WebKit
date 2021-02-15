@@ -48,6 +48,7 @@ public:
     CachedFont(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*, Type = Type::FontResource);
     virtual ~CachedFont();
 
+    void requestLoad();
     void beginLoadIfNeeded(CachedResourceLoader&);
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
