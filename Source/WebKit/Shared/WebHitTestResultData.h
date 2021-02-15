@@ -20,6 +20,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "ShareableBitmap.h"
 #include "SharedMemory.h"
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
@@ -62,8 +63,9 @@ struct WebHitTestResultData {
 
     String lookupText;
     String toolTipText;
-    RefPtr<WebKit::SharedMemory> imageSharedMemory;
+    RefPtr<SharedMemory> imageSharedMemory;
     uint64_t imageSize;
+    RefPtr<ShareableBitmap> imageBitmap;
 
 #if PLATFORM(MAC)
     RetainPtr<DDActionContext> detectedDataActionContext;

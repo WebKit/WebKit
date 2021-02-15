@@ -1,3 +1,37 @@
+2021-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a ShareableBitmap with decoded image data to WebHitTestResultData
+        https://bugs.webkit.org/show_bug.cgi?id=221869
+
+        Reviewed by Tim Horton.
+
+        Add `WebHitTestResultData::imageBitmap`; we'll use this in future patches to vend decoded image data to system
+        frameworks for image extraction.
+
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        (WebKit::WebHitTestResultData::encode const):
+        (WebKit::WebHitTestResultData::decode):
+
+        Add `imageBitmap` and decoding/encoding support using `ShareableBitmap::Handle`.
+
+        * Shared/WebHitTestResultData.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp: Added.
+        (WebKit::createShareableBitmap):
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.h: Added.
+
+        Pull logic to decode rendered image data into a bitmap into a separate helper function; use this helper function
+        in `WebHitTestResultData`, as well as a couple of existing call sites in `WebPage`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestImageExtraction):
+        (WebKit::WebPage::shareableBitmap const): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
 2021-02-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] SleepDisabler does not inhibit sleep with bubblewrap sandbox enabled: need to run xdg-dbus-proxy under bwrap or xdg-desktop-portal does not read our app ID

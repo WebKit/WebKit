@@ -1406,8 +1406,6 @@ public:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
-    RefPtr<ShareableBitmap> shareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt) const;
-
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

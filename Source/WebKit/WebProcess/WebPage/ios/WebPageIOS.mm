@@ -42,6 +42,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteScrollingCoordinator.h"
 #import "SandboxUtilities.h"
+#import "ShareableBitmapUtilities.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingControllerProxy.h"
@@ -2677,7 +2678,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.isAnimatedImage = image->isAnimated();
 
     if (request.includeSnapshot || request.includeImageData)
-        info.image = page.shareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+        info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)

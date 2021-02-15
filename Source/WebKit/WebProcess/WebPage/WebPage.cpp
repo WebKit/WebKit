@@ -64,6 +64,7 @@
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "ShareableBitmap.h"
+#include "ShareableBitmapUtilities.h"
 #include "SharedBufferDataReference.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
@@ -7172,7 +7173,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
 
     m_elementsWithExtractedImages.add(element);
 
-    auto bitmap = shareableBitmap(downcast<RenderImage>(*renderImage));
+    auto bitmap = createShareableBitmap(downcast<RenderImage>(*renderImage));
     if (!bitmap)
         return;
 
@@ -7281,40 +7282,6 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 {
 }
 #endif
-
-RefPtr<ShareableBitmap> WebPage::shareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels) const
-{
-    auto* cachedImage = renderImage.cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return nullptr;
-
-    auto* image = cachedImage->imageForRenderer(&renderImage);
-    if (!image || image->width() <= 1 || image->height() <= 1)
-        return nullptr;
-
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
-    if (screenSizeInPixels) {
-        auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *screenSizeInPixels }).size();
-        bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
-    }
-
-    // FIXME: Only select ExtendedColor on images known to need wide gamut.
-    ShareableBitmap::Configuration bitmapConfiguration;
-#if USE(CG)
-    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(corePage()->mainFrame().view());
-#endif
-
-    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
-    if (!sharedBitmap)
-        return nullptr;
-
-    auto graphicsContext = sharedBitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
-    return sharedBitmap;
-}
 
 } // namespace WebKit
 

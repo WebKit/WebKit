@@ -1980,6 +1980,7 @@
 		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */; };
 		F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291911FA59107002CC93E /* _WKAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */; };
 		F44815642387820000982657 /* WKDeferringGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F44815622387820000982657 /* WKDeferringGestureRecognizer.h */; };
@@ -5837,6 +5838,8 @@
 		F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebpagePreferences.mm; sourceTree = "<group>"; };
 		F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesInternal.h; sourceTree = "<group>"; };
 		F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesPrivate.h; sourceTree = "<group>"; };
+		F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareableBitmapUtilities.h; sourceTree = "<group>"; };
+		F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapUtilities.cpp; sourceTree = "<group>"; };
 		F44291911FA59107002CC93E /* _WKAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachment.h; sourceTree = "<group>"; };
 		F44291931FA59311002CC93E /* _WKAttachment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAttachment.mm; sourceTree = "<group>"; };
 		F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachmentInternal.h; sourceTree = "<group>"; };
@@ -9574,6 +9577,8 @@
 				BC111ADE112F5B9A00337BAB /* mac */,
 				1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */,
 				1A7284451959ED100007BCE5 /* SessionStateConversion.h */,
+				F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */,
+				F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */,
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
 				BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */,
 				BC032D6010F4378D0058C15A /* WebChromeClient.h */,
@@ -12019,6 +12024,7 @@
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
+				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				A183494224EF467800BDC9A8 /* SharedBufferCopy.h in Headers */,
 				2DC18FF6EF2A3130C1301767 /* SharedBufferDataReference.h in Headers */,

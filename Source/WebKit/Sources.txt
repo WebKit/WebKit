@@ -665,6 +665,7 @@ WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp
 
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
+WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebColorChooser.cpp
 WebProcess/WebCoreSupport/WebContextMenuClient.cpp
