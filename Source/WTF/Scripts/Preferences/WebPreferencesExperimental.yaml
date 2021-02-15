@@ -879,7 +879,7 @@ UseGPUProcessForMediaEnabled:
   humanReadableName: "GPU Process: Media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
+  condition: ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
