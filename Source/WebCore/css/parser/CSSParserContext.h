@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,6 @@ class Document;
 struct CSSParserContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
 
@@ -50,36 +49,37 @@ public:
     CSSParserMode mode { HTMLStandardMode };
     Optional<StyleRuleType> enclosingRuleType;
     bool isHTMLDocument { false };
-#if ENABLE(TEXT_AUTOSIZING)
-    bool textAutosizingEnabled { false };
-#endif
+
+    // This is only needed to support getMatchedCSSRules.
+    bool hasDocumentSecurityOrigin { false };
+
+    bool isContentOpaque { false };
+    bool useSystemAppearance { false };
+
+    // Settings.
+    bool aspectRatioEnabled { false };
+    bool colorFilterEnabled { false };
+    bool constantPropertiesEnabled { false };
+    bool deferredCSSParserEnabled { false };
+    bool enforcesCSSMIMETypeInNoQuirksMode { true };
+    bool individualTransformPropertiesEnabled { false };
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     bool legacyOverflowScrollingTouchEnabled { false };
 #endif
-    bool enforcesCSSMIMETypeInNoQuirksMode { true };
-    bool useLegacyBackgroundSizeShorthandBehavior { false };
+    bool overscrollBehaviorEnabled { false };
+    bool scrollBehaviorEnabled { false };
     bool springTimingFunctionEnabled { false };
-    bool constantPropertiesEnabled { false };
-    bool colorFilterEnabled { false };
+#if ENABLE(TEXT_AUTOSIZING)
+    bool textAutosizingEnabled { false };
+#endif
+    bool useLegacyBackgroundSizeShorthandBehavior { false };
+
+    // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool attachmentEnabled { false };
 #endif
-    bool deferredCSSParserEnabled { false };
-    bool scrollBehaviorEnabled { false };
-    bool individualTransformPropertiesEnabled { false };
-
-    bool overscrollBehaviorEnabled { false };
-    
-    // This is only needed to support getMatchedCSSRules.
-    bool hasDocumentSecurityOrigin { false };
-    
-    bool useSystemAppearance { false };
 
     URL completeURL(const String& url) const;
-
-    bool isContentOpaque { false };
-
-    bool aspectRatioEnabled { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
@@ -90,6 +90,8 @@ WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 struct CSSParserContextHash {
     static unsigned hash(const CSSParserContext& key)
     {
+        // FIXME: Convert this to use WTF::Hasher.
+
         unsigned hash = 0;
         if (!key.baseURL.isNull())
             hash ^= WTF::URLHash::hash(key.baseURL);

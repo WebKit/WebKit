@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,39 +47,46 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 {
 }
 
-CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)
-    : baseURL(sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL)
-    , charset(charset)
-    , mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
-    , isHTMLDocument(document.isHTMLDocument())
-    , hasDocumentSecurityOrigin(sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL))
-{
-    enforcesCSSMIMETypeInNoQuirksMode = document.settings().enforceCSSMIMETypeInNoQuirksMode();
-    useLegacyBackgroundSizeShorthandBehavior = document.settings().useLegacyBackgroundSizeShorthandBehavior();
-#if ENABLE(TEXT_AUTOSIZING)
-    textAutosizingEnabled = document.settings().textAutosizingEnabled();
-#endif
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    legacyOverflowScrollingTouchEnabled = document.settings().legacyOverflowScrollingTouchEnabled();
+static bool shouldEnableLegacyOverflowScrollingTouch(const Document& document)
+{
     // The legacy -webkit-overflow-scrolling: touch behavior may have been disabled through the website policy,
     // in that case we want to disable the legacy behavior regardless of what the setting says.
     if (auto* loader = document.loader()) {
         if (loader->legacyOverflowScrollingTouchPolicy() == LegacyOverflowScrollingTouchPolicy::Disable)
-            legacyOverflowScrollingTouchEnabled = false;
+            return false;
     }
+    return document.settings().legacyOverflowScrollingTouchEnabled();
+}
 #endif
-    springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
-    constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
-    colorFilterEnabled = document.settings().colorFilterEnabled();
+
+CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)
+    : baseURL { sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL }
+    , charset { charset }
+    , mode { document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode }
+    , isHTMLDocument { document.isHTMLDocument() }
+    , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL) }
+    , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
+    , aspectRatioEnabled { document.settings().aspectRatioEnabled() }
+    , colorFilterEnabled { document.settings().colorFilterEnabled() }
+    , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
+    , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
+    , enforcesCSSMIMETypeInNoQuirksMode { document.settings().enforceCSSMIMETypeInNoQuirksMode() }
+    , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    , legacyOverflowScrollingTouchEnabled { shouldEnableLegacyOverflowScrollingTouch(document) }
+#endif
+    , overscrollBehaviorEnabled { document.settings().overscrollBehaviorEnabled() }
+    , scrollBehaviorEnabled { document.settings().CSSOMViewSmoothScrollingEnabled() }
+    , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
+#if ENABLE(TEXT_AUTOSIZING)
+    , textAutosizingEnabled { document.settings().textAutosizingEnabled() }
+#endif
+    , useLegacyBackgroundSizeShorthandBehavior { document.settings().useLegacyBackgroundSizeShorthandBehavior() }
 #if ENABLE(ATTACHMENT_ELEMENT)
-    attachmentEnabled = RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+    , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
-    deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
-    scrollBehaviorEnabled = document.settings().CSSOMViewSmoothScrollingEnabled();
-    overscrollBehaviorEnabled = document.settings().overscrollBehaviorEnabled();
-    useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
-    individualTransformPropertiesEnabled = document.settings().cssIndividualTransformPropertiesEnabled();
-    aspectRatioEnabled = document.settings().aspectRatioEnabled();
+{
 }
 
 bool operator==(const CSSParserContext& a, const CSSParserContext& b)
@@ -87,28 +94,31 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
     return a.baseURL == b.baseURL
         && a.charset == b.charset
         && a.mode == b.mode
+        && a.enclosingRuleType == b.enclosingRuleType
         && a.isHTMLDocument == b.isHTMLDocument
-#if ENABLE(TEXT_AUTOSIZING)
-        && a.textAutosizingEnabled == b.textAutosizingEnabled
-#endif
+        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
+        && a.isContentOpaque == b.isContentOpaque
+        && a.useSystemAppearance == b.useSystemAppearance
+        && a.aspectRatioEnabled == b.aspectRatioEnabled
+        && a.colorFilterEnabled == b.colorFilterEnabled
+        && a.constantPropertiesEnabled == b.constantPropertiesEnabled
+        && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
+        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
+        && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         && a.legacyOverflowScrollingTouchEnabled == b.legacyOverflowScrollingTouchEnabled
 #endif
-        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
-        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
+        && a.overscrollBehaviorEnabled == b.overscrollBehaviorEnabled
+        && a.scrollBehaviorEnabled == b.scrollBehaviorEnabled
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
-        && a.constantPropertiesEnabled == b.constantPropertiesEnabled
-        && a.colorFilterEnabled == b.colorFilterEnabled
+#if ENABLE(TEXT_AUTOSIZING)
+        && a.textAutosizingEnabled == b.textAutosizingEnabled
+#endif
+        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
-        && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
-        && a.scrollBehaviorEnabled == b.scrollBehaviorEnabled
-        && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
-        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
-        && a.useSystemAppearance == b.useSystemAppearance
-        && a.aspectRatioEnabled == b.aspectRatioEnabled
-        && a.overscrollBehaviorEnabled == b.overscrollBehaviorEnabled;
+    ;
 }
 
 URL CSSParserContext::completeURL(const String& url) const

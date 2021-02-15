@@ -1,3 +1,13 @@
+2021-02-15  Sam Weinig  <weinig@apple.com>
+
+        Prepare for adding relative color support
+        https://bugs.webkit.org/show_bug.cgi?id=221881
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        Update HSLA tests to account for HSLA now using 0-360, 0-100, 0-100 bounds rather than 0-1, 0-1, 0-1.
+
 2021-02-15  Adam Roben  <aroben@apple.com>
 
         Add `git commit -v` support to commit-log-editor

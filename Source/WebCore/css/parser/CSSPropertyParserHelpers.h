@@ -102,8 +102,8 @@ RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 StringView consumeUrlAsStringView(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);
 
-Color consumeColorWorkerSafe(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, CSSParserMode, bool acceptQuirkyColors = false);
+Color consumeColorWorkerSafe(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false);
 
 enum class PositionSyntax {
     Position, // <position>
@@ -126,9 +126,8 @@ enum class AllowedImageType : uint8_t {
     GeneratedImage = 1 << 3
 };
 
-RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });
-
-RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
+RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, const CSSParserContext&, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });
+RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, const CSSParserContext&);
 
 enum class AllowedFilterFunctions {
     PixelFilters,
@@ -136,7 +135,7 @@ enum class AllowedFilterFunctions {
 };
 
 RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
-RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, CSSParserMode, bool allowInset, bool allowSpread);
+RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread);
 
 struct FontStyleRaw {
     CSSValueID style;

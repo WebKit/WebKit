@@ -600,7 +600,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
 
                         // Force the lightness of the underline color to the middle, and multiply the alpha by 38%,
                         // so the color will appear on light and dark backgrounds, since only one color can be specified.
-                        hsla.lightness = 0.5f;
+                        hsla.lightness = 50.0f;
                         hsla.alpha *= 0.38f;
                         
                         // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.

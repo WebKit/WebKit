@@ -67,18 +67,18 @@ template<> struct ExtendedRGBModel<float> {
 
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 }
+        { 0, 360 },
+        { 0, 100 },
+        { 0, 100 }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct HWBModel<float> {
     static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 }
+        { 0, 360 },
+        { 0, 100 },
+        { 0, 100 }
     } };
     static constexpr bool isInvertible = false;
 };

@@ -1726,15 +1726,15 @@ static RefPtr<CSSValue> consumeZIndex(CSSParserTokenRange& range)
     return consumeInteger(range);
 }
 
-static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool isBoxShadowProperty)
+static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool isBoxShadowProperty)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
     RefPtr<CSSValueList> shadowValueList = CSSValueList::createCommaSeparated();
     do {
-        if (RefPtr<CSSShadowValue> shadowValue = consumeSingleShadow(range, cssParserMode, isBoxShadowProperty, isBoxShadowProperty))
-            shadowValueList->append(*shadowValue);
+        if (auto shadowValue = consumeSingleShadow(range, context, isBoxShadowProperty, isBoxShadowProperty))
+            shadowValueList->append(shadowValue.releaseNonNull());
         else
             return nullptr;
     } while (consumeCommaIncludingWhitespace(range));
@@ -1813,19 +1813,19 @@ static RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range)
     return nullptr;
 }
 
-static RefPtr<CSSPrimitiveValue> consumeCaretColor(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSPrimitiveValue> consumeCaretColor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeColor(range, cssParserMode);
+    return consumeColor(range, context);
 }
 
-static RefPtr<CSSValue> consumeOutlineColor(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeOutlineColor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // Allow the special focus color even in HTML Standard parsing mode.
     if (range.peek().id() == CSSValueWebkitFocusRingColor)
         return consumeIdent(range);
-    return consumeColor(range, cssParserMode);
+    return consumeColor(range, context);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeLineWidth(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
@@ -2228,7 +2228,7 @@ static RefPtr<CSSPrimitiveValue> consumePositionY(CSSParserTokenRange& range, CS
     return consumePositionLonghand<CSSValueTop, CSSValueBottom>(range, cssParserMode);
 }
 
-static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -2238,7 +2238,7 @@ static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, CSSParser
         if (range.peek().id() == CSSValueNone)
             parsedValue = consumeIdent(range);
         else
-            parsedValue = consumeColor(range, cssParserMode);
+            parsedValue = consumeColor(range, context);
         if (parsedValue) {
             RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
             values->append(url.releaseNonNull());
@@ -2247,7 +2247,7 @@ static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, CSSParser
         }
         return url;
     }
-    return consumeColor(range, cssParserMode);
+    return consumeColor(range, context);
 }
 
 static RefPtr<CSSValue> consumeGlyphOrientation(CSSParserTokenRange& range, CSSParserMode mode, CSSPropertyID property)
@@ -3258,7 +3258,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     case CSSPropertyWebkitMaskSize:
         return consumeBackgroundSize(property, range, context.mode);
     case CSSPropertyBackgroundColor:
-        return consumeColor(range, context.mode);
+        return consumeColor(range, context);
     default:
         break;
     };
@@ -4241,7 +4241,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWidows:
         return consumePositiveInteger(m_range);
     case CSSPropertyTextDecorationColor:
-        return consumeColor(m_range, m_context.mode);
+        return consumeColor(m_range, m_context);
     case CSSPropertyTextDecorationSkip:
         return consumeTextDecorationSkip(m_range);
     case CSSPropertyWebkitTextStrokeWidth:
@@ -4261,12 +4261,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyFloodColor:
     case CSSPropertyLightingColor:
     case CSSPropertyColumnRuleColor:
-        return consumeColor(m_range, m_context.mode);
+        return consumeColor(m_range, m_context);
     case CSSPropertyCaretColor:
-        return consumeCaretColor(m_range, m_context.mode);
+        return consumeCaretColor(m_range, m_context);
     case CSSPropertyColor:
     case CSSPropertyBackgroundColor:
-        return consumeColor(m_range, m_context.mode, inQuirksMode());
+        return consumeColor(m_range, m_context, inQuirksMode());
     case CSSPropertyBorderInlineStartWidth:
     case CSSPropertyBorderInlineEndWidth:
     case CSSPropertyBorderBlockStartWidth:
@@ -4278,7 +4278,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBorderTopColor: {
         bool allowQuirkyColors = inQuirksMode()
             && (currentShorthand == CSSPropertyInvalid || currentShorthand == CSSPropertyBorderColor);
-        return consumeColor(m_range, m_context.mode, allowQuirkyColors);
+        return consumeColor(m_range, m_context, allowQuirkyColors);
     }
     case CSSPropertyBorderBottomWidth:
     case CSSPropertyBorderLeftWidth:
@@ -4294,7 +4294,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyTextShadow: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
     case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow:
-        return consumeShadow(m_range, m_context.mode, property == CSSPropertyBoxShadow || property == CSSPropertyWebkitBoxShadow);
+        return consumeShadow(m_range, m_context, property == CSSPropertyBoxShadow || property == CSSPropertyWebkitBoxShadow);
     case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
@@ -4342,7 +4342,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeRotate(m_range, m_context.mode);
     case CSSPropertyFill:
     case CSSPropertyStroke:
-        return consumePaintStroke(m_range, m_context.mode);
+        return consumePaintStroke(m_range, m_context);
     case CSSPropertyGlyphOrientationVertical:
     case CSSPropertyGlyphOrientationHorizontal:
         return consumeGlyphOrientation(m_range, m_context.mode, property);
@@ -5093,7 +5093,7 @@ bool CSSPropertyParser::consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>&
                 continue;
         }
         if (!color) {
-            color = consumeColor(m_range, m_context.mode);
+            color = consumeColor(m_range, m_context);
             if (color)
                 continue;
         }
