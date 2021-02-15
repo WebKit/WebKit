@@ -1,6 +1,3 @@
-fast/layoutformattingcontext/subframe-with-display-none-html.html# This file should contain entries for expectations that are specific
-# to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1142,7 +1139,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ BigSur+ ] fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
 # rdar://66811185 (imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html is a constant failure)
-[ BigSur+ ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure ]
+[ BigSur+ Catalina ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure ]
 
 # Disable plug-in tests on Apple Silicon
 [ arm64 ] compositing/plugins [ Skip ]
@@ -1313,6 +1310,8 @@ webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
 webkit.org/b/219905 fast/layoutformattingcontext/subframe-with-display-none-html.html [ Crash ImageOnlyFailure ]
+# This file should contain entries for expectations that are specific
+# to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 
 webkit.org/b/220018 webanimations/accelerated-transform-related-animation-property-order.html [ ImageOnlyFailure ]
 
@@ -1325,3 +1324,62 @@ webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.ht
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
+
+# webkit.org/b/221687
+platform/mac/media/encrypted-media/fps-clearkey-crash.html [ Timeout Crash ]
+platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Crash ]
+platform/mac/media/encrypted-media/fps-createSession.html [ Crash ]
+platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess.html [ Crash ]
+platform/mac/media/encrypted-media/fps-generateRequest.html [ Crash ]
+platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Crash ]
+platform/mac/media/media-source/videoplaybackquality-decompressionsession.html [ Failure ]
+platform/mac/media/mediacapabilities/mediacapabilities-encodingInfo-undefined.html [ Failure ]
+platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Failure ]
+
+# webkit.org/b/221797
+fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout ]
+
+# webkit.org/b/221823
+webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Failure ]
+webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
+webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Failure ]
+webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-half_float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r32f-red-float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-r8ui-red_integer-unsigned_byte.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-half_float.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte.html [ Failure ]
+webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure ]
+
+# webkit.org/b/221824
+http/wpt/webrtc/sframe-transform-in-worker.html [ Failure ]
+http/wpt/webrtc/video-script-transform.html [ Failure ]
+http/wpt/webrtc/webrtc-transform.html [ Failure ]
+
+# webkit.org/b/221825
+fast/canvas/webgl/texImage2D-video-flipY-true.html [ Failure ]
+
+# webkit.org/b/221826
+fast/mediastream/media-element-current-time.html [ Failure ]
+
+webkit.org/b/221838 webgl/2.0.0/conformance2/textures/video [ Failure ]
+
+webkit.org/b/221844 webrtc/audio-video-element-playing.html [ Failure ]
+
+# webkit.org/b/221846
+imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Failure ]
+
+webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Timeout ]
+
+# webkit.org/b/221865
+imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Failure ]

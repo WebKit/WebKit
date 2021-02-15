@@ -1,3 +1,55 @@
+2021-02-14  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Move UseGPUProcessForMediaEnabled from WebPreferencesInternal to WebPreferencesExperimental
+        https://bugs.webkit.org/show_bug.cgi?id=221310
+
+        Reviewed by Eric Carlson.
+
+        Update expectations of the tests which are affected by the "Media In GPUProcess" feature
+        (WebKitTestRunner will enable the feature by default). Also set "UseGPUProcessForMediaEnabled=false"
+        for some webrtc tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        * platform/wk2/TestExpectations:
+        * webrtc/captureCanvas-webrtc-software-h264-baseline.html:
+        * webrtc/captureCanvas-webrtc-software-h264-high.html:
+        * webrtc/captureCanvas-webrtc.html:
+        * webrtc/concurrentVideoPlayback2.html:
+        * webrtc/direction-change.html:
+        * webrtc/disable-encryption.html:
+        * webrtc/h264-baseline.html:
+        * webrtc/h264-high.html:
+        * webrtc/multi-audio.html:
+        * webrtc/multi-video.html:
+        * webrtc/peer-connection-track-end.html:
+        * webrtc/peerconnection-page-cache-long.html:
+        * webrtc/peerconnection-page-cache.html:
+        * webrtc/remove-track.html:
+        * webrtc/utf8-sdp.html:
+        * webrtc/video-addTrack.html:
+        * webrtc/video-addTransceiver.html:
+        * webrtc/video-autoplay.html:
+        * webrtc/video-disabled-black.html:
+        * webrtc/video-h264.html:
+        * webrtc/video-interruption.html:
+        * webrtc/video-mediastreamtrack-stats.html:
+        * webrtc/video-mute.html:
+        * webrtc/video-remote-mute.html:
+        * webrtc/video-replace-muted-track.html:
+        * webrtc/video-replace-track-to-null.html:
+        * webrtc/video-replace-track.html:
+        * webrtc/video-rotation-no-cvo.html:
+        * webrtc/video-rotation.html:
+        * webrtc/video-setDirection.html:
+        * webrtc/video-sframe.html:
+        * webrtc/video-stats.html:
+        * webrtc/video-unmute.html:
+        * webrtc/video-with-data-channel.html:
+        * webrtc/video.html:
+
 2021-02-13  Darin Adler  <darin@apple.com>
 
         Crash calling replaceTrack on a sender that outlives its RTCPeerConnection

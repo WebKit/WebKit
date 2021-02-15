@@ -764,17 +764,6 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-UseGPUProcessForMediaEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Media"
-  humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: defaultUseGPUProcessForMediaEnabled()
-
 UseGPUProcessForWebGLEnabled:
   type: bool
   humanReadableName: "GPU Process: WebGL"

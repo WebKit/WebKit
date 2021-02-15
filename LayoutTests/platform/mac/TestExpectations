@@ -865,6 +865,13 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sou
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
+# webkit.org/b/221686
+imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
+media/media-source/media-source-resize.html [ Timeout ]
+
 # Requires WebM
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Skip ]

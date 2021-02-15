@@ -29,10 +29,11 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKString.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKInternalDebugFeature.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -62,12 +63,7 @@ static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
 TEST(GPUProcess, RelaunchOnCrash)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseGPUProcessForMediaEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
@@ -118,12 +114,7 @@ TEST(GPUProcess, RelaunchOnCrash)
 TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseGPUProcessForMediaEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
@@ -225,12 +216,7 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 TEST(GPUProcess, CrashWhilePlayingVideo)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseGPUProcessForMediaEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
@@ -288,12 +274,7 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
 TEST(GPUProcess, CrashWhilePlayingAudioViaCreateMediaElementSource)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseGPUProcessForMediaEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"webaudio-createMediaElementSource"];
@@ -361,12 +342,7 @@ static NSString *testCanvasPage = @"<body> \n"
 TEST(GPUProcess, CanvasBasicCrashHandling)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseGPUProcessForCanvasRenderingEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
-            break;
-        }
-    }
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
 
     NSInteger viewWidth = 400;
     NSInteger viewHeight = 400;
