@@ -1380,8 +1380,12 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     if (!progress)
         return;
 
-    if (!animatedStyle)
-        animatedStyle = RenderStyle::clonePtr(renderer()->style());
+    if (!animatedStyle) {
+        if (auto* style = targetStyleable()->lastStyleChangeEventStyle())
+            animatedStyle = RenderStyle::clonePtr(*style);
+        else
+            animatedStyle = RenderStyle::clonePtr(renderer()->style());
+    }
 
     setAnimatedPropertiesInStyle(*animatedStyle.get(), progress.value());
 }

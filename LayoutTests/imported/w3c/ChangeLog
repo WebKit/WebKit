@@ -1,3 +1,18 @@
+2021-02-15  Antoine Quint  <graouts@webkit.org>
+
+        Getting the computed style should resolve animations using the last style change event style
+        https://bugs.webkit.org/show_bug.cgi?id=221882
+
+        Reviewed by Dean Jackson.
+
+        Mark 20 new PASS results.
+
+        * web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-006-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+
 2021-02-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update WPT test suite
