@@ -110,14 +110,14 @@ Optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
     if (!patternSpaceTransform)
         return WTF::nullopt;
 
-    Optional<bool> repeatY;
-    decoder >> repeatY;
-    if (!repeatY)
-        return WTF::nullopt;
-
     Optional<bool> repeatX;
     decoder >> repeatX;
     if (!repeatX)
+        return WTF::nullopt;
+
+    Optional<bool> repeatY;
+    decoder >> repeatY;
+    if (!repeatY)
         return WTF::nullopt;
 
     return {{ *repeatX, *repeatY, *patternSpaceTransform }};
