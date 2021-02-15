@@ -106,7 +106,7 @@
 
 (define-once (play-audio)
     (allow mach-lookup
-           (global-name "com.apple.audio.AURemoteIOServer"))
+           (global-name "com.apple.audio.AURemoteIOServer")))
 
 (define-once (play-media . filters)
     (if (not (null? filters))
