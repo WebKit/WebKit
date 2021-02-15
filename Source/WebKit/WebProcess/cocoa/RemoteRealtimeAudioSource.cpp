@@ -55,15 +55,10 @@ Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& 
 
 RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
-    , m_identifier(identifier)
+    , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
-    , m_shouldCaptureInGPUProcess(shouldCaptureInGPUProcess)
-    , m_device(device)
 {
-    if (constraints)
-        m_constraints = *constraints;
-
-    ASSERT(m_device.type() == CaptureDevice::DeviceType::Microphone);
+    ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
 #endif
@@ -71,52 +66,30 @@ RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifi
 
 void RemoteRealtimeAudioSource::createRemoteMediaSource()
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt(), m_constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
         if (!succeeded) {
-            didFail(WTFMove(errorMessage));
+            m_proxy.didFail(WTFMove(errorMessage));
             return;
         }
+
         setSettings(WTFMove(settings));
         setCapabilities(WTFMove(capabilities));
-        setAsReady();
-        if (m_shouldCaptureInGPUProcess)
+        setName(String { m_settings.label().string() });
+
+        m_proxy.setAsReady();
+        if (m_proxy.shouldCaptureInGPUProcess())
             WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
     });
 }
 
 RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource()
 {
-    if (m_shouldCaptureInGPUProcess)
+    if (m_proxy.shouldCaptureInGPUProcess())
         WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().audioCaptureFactory().unsetActiveSource(*this);
 #endif
-}
-
-void RemoteRealtimeAudioSource::whenReady(CompletionHandler<void(String)>&& callback)
-{
-    if (m_isReady)
-        return callback(WTFMove(m_errorMessage));
-    m_callback = WTFMove(callback);
-}
-
-void RemoteRealtimeAudioSource::didFail(String&& errorMessage)
-{
-    m_isReady = true;
-    m_errorMessage = WTFMove(errorMessage);
-    if (m_callback)
-        m_callback(m_errorMessage);
-}
-
-void RemoteRealtimeAudioSource::setAsReady()
-{
-    ASSERT(!m_isReady);
-    m_isReady = true;
-
-    setName(String { m_settings.label().string() });
-    if (m_callback)
-        m_callback({ });
 }
 
 void RemoteRealtimeAudioSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
@@ -131,62 +104,22 @@ void RemoteRealtimeAudioSource::setSettings(RealtimeMediaSourceSettings&& settin
     notifySettingsDidChangeObservers(changed);
 }
 
-void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const WTF::MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
+void RemoteRealtimeAudioSource::applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&& settings)
+{
+    setSettings(WTFMove(settings));
+    m_proxy.applyConstraintsSucceeded();
+}
+
+void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
 {
     ASSERT(!isMainThread());
     audioSamplesAvailable(time, data, description, size);
 }
 
-IPC::Connection* RemoteRealtimeAudioSource::connection()
-{
-    ASSERT(isMainThread());
-#if ENABLE(GPU_PROCESS)
-    if (m_shouldCaptureInGPUProcess)
-        return &WebProcess::singleton().ensureGPUProcessConnection().connection();
-#endif
-    return WebProcess::singleton().parentProcessConnection();
-}
-
-void RemoteRealtimeAudioSource::startProducingData()
-{
-    connection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
-}
-
-void RemoteRealtimeAudioSource::stopProducingData()
-{
-    connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
-}
-
-const WebCore::RealtimeMediaSourceCapabilities& RemoteRealtimeAudioSource::capabilities()
-{
-    return m_capabilities;
-}
-
-void RemoteRealtimeAudioSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
-{
-    m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
-    // FIXME: Use sendAsyncWithReply.
-    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
-}
-
-void RemoteRealtimeAudioSource::applyConstraintsSucceeded(RealtimeMediaSourceSettings&& settings)
-{
-    setSettings(WTFMove(settings));
-
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
-    callback({ });
-}
-
-void RemoteRealtimeAudioSource::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
-{
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
-    callback(ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
-}
-
 void RemoteRealtimeAudioSource::hasEnded()
 {
-    connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_identifier }, 0);
-    m_manager.removeAudioSource(m_identifier);
+    m_proxy.hasEnded();
+    m_manager.removeAudioSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 
@@ -205,7 +138,7 @@ void RemoteRealtimeAudioSource::captureFailed()
 #if ENABLE(GPU_PROCESS)
 void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
-    ASSERT(m_shouldCaptureInGPUProcess);
+    ASSERT(m_proxy.shouldCaptureInGPUProcess());
     if (isEnded())
         return;
 
@@ -218,11 +151,13 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
 #endif
 
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
-    m_isReady = false;
+    m_proxy.resetReady();
     createRemoteMediaSource();
     // FIXME: We should update the track according current settings.
     if (isProducingData())
         startProducingData();
+
+    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
 }
 #endif
 

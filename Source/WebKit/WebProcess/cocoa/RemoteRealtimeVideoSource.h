@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "GPUProcessConnection.h"
+#include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/RealtimeVideoCaptureSource.h>
@@ -48,7 +49,7 @@ namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeVideoSource : public WebCore::RealtimeVideoCaptureSource
+class RemoteRealtimeVideoSource final : public WebCore::RealtimeVideoCaptureSource
 #if ENABLE(GPU_PROCESS)
     , public GPUProcessConnection::Client
 #endif
@@ -57,8 +58,8 @@ public:
     static Ref<WebCore::RealtimeVideoCaptureSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeVideoSource();
 
-    WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
-    IPC::Connection* connection();
+    WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
+    IPC::Connection* connection() { return m_proxy.connection(); }
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
@@ -71,8 +72,8 @@ private:
     RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // WebCore::RealtimeMediaSource
-    void startProducingData() final;
-    void stopProducingData() final;
+    void startProducingData() final { m_proxy.startProducingData(); }
+    void stopProducingData() final { m_proxy.stopProducingData(); }
     bool isCaptureSource() const final { return true; }
     void beginConfiguration() final { }
     void commitConfiguration() final { }
@@ -80,8 +81,8 @@ private:
     void hasEnded() final;
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final;
-    void whenReady(CompletionHandler<void(String)>&&) final;
-    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_device.type(); }
+    void whenReady(CompletionHandler<void(String)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
+    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
 
     // WebCore::RealtimeVideoCaptureSource
     void generatePresets() final;
@@ -99,19 +100,12 @@ private:
     void setAsReady();
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
-    WebCore::RealtimeMediaSourceIdentifier m_identifier;
+    RemoteRealtimeMediaSourceProxy m_proxy;
     UserMediaCaptureManager& m_manager;
+
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
-
-    WebCore::CaptureDevice m_device;
-    WebCore::MediaConstraints m_constraints;
-
     WebCore::MediaSample::VideoRotation m_sampleRotation { WebCore::MediaSample::VideoRotation::None };
-    bool m_shouldCaptureInGPUProcess { false };
-    bool m_isReady { false };
-    String m_errorMessage;
-    CompletionHandler<void(String)> m_callback;
 };
 
 } // namespace WebKit

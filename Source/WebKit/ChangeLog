@@ -1,3 +1,40 @@
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Share more code between RemoteRealtimeAudioSource and RemoteRealtimeVideoSource
+        https://bugs.webkit.org/show_bug.cgi?id=221898
+
+        Reviewed by Eric Carlson.
+
+        Introduce RemoteRealtimeMediaSourceProxy to share more code between the two classes.
+        This class implements most of the messaging with capture process.
+        No change of behavior.
+
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::createRemoteMediaSource):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        (WebKit::RemoteRealtimeAudioSource::identifier const): Deleted.
+        (WebKit::RemoteRealtimeAudioSource::connection): Deleted.
+        (WebKit::RemoteRealtimeAudioSource::applyConstraintsFailed): Deleted.
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        (WebKit::RemoteRealtimeMediaSourceProxy::isReady const):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::RemoteRealtimeVideoSource):
+        (WebKit::RemoteRealtimeVideoSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource):
+        (WebKit::RemoteRealtimeVideoSource::setShouldApplyRotation):
+        (WebKit::RemoteRealtimeVideoSource::hasEnded):
+        (WebKit::RemoteRealtimeVideoSource::generatePresets):
+        (WebKit::RemoteRealtimeVideoSource::setFrameRateWithPreset):
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRealtimeVideoSource::whenReady): Deleted.
+        (WebKit::RemoteRealtimeVideoSource::didFail): Deleted.
+        (WebKit::RemoteRealtimeVideoSource::setAsReady): Deleted.
+        (WebKit::RemoteRealtimeVideoSource::connection): Deleted.
+        (WebKit::RemoteRealtimeVideoSource::startProducingData): Deleted.
+        (WebKit::RemoteRealtimeVideoSource::stopProducingData): Deleted.
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        (WebKit::RemoteRealtimeVideoSource::identifier const): Deleted.
+
 2021-02-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] BubblewrapLauncher should create flatpak-info keyfile only once

@@ -28,8 +28,8 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "GPUProcessConnection.h"
+#include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/CaptureDevice.h>
-#include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <wtf/Deque.h>
 
@@ -48,7 +48,7 @@ namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeAudioSource : public WebCore::RealtimeMediaSource
+class RemoteRealtimeAudioSource final : public WebCore::RealtimeMediaSource
 #if ENABLE(GPU_PROCESS)
     , public GPUProcessConnection::Client
 #endif
@@ -57,34 +57,34 @@ public:
     static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeAudioSource();
 
-    WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
-    IPC::Connection* connection();
+    WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
+    IPC::Connection* connection() { return m_proxy.connection(); }
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
+    void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(errorMessage)); }
 
     void captureStopped();
     void captureFailed() final;
 
-    void remoteAudioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
+    void remoteAudioSamplesAvailable(const MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
 
 private:
     RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // RealtimeMediaSource
-    void startProducingData() final;
-    void stopProducingData() final;
+    void startProducingData() final { m_proxy.startProducingData(); }
+    void stopProducingData() final { m_proxy.stopProducingData(); }
     bool isCaptureSource() const final { return true; }
     void beginConfiguration() final { }
     void commitConfiguration() final { }
-    void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
+    void applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& callback) final { m_proxy.applyConstraints(constraints, WTFMove(callback)); }
     void hasEnded() final;
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
-    const WebCore::RealtimeMediaSourceCapabilities& capabilities() final;
-    void whenReady(CompletionHandler<void(String)>&&) final;
-    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_device.type(); }
+    const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
+    void whenReady(CompletionHandler<void(String)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
+    WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
 
 #if ENABLE(GPU_PROCESS)
     // GPUProcessConnection::Client
@@ -92,22 +92,12 @@ private:
 #endif
 
     void createRemoteMediaSource();
-    void didFail(String&& errorMessage);
-    void setAsReady();
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
-    WebCore::RealtimeMediaSourceIdentifier m_identifier;
+    RemoteRealtimeMediaSourceProxy m_proxy;
     UserMediaCaptureManager& m_manager;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
-
-    Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
-    bool m_shouldCaptureInGPUProcess { false };
-    bool m_isReady { false };
-    String m_errorMessage;
-    CompletionHandler<void(String)> m_callback;
-    WebCore::CaptureDevice m_device;
-    WebCore::MediaConstraints m_constraints;
 };
 
 } // namespace WebKit
