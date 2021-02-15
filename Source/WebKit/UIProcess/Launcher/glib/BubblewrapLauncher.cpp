@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <seccomp.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -128,6 +129,28 @@ argsToFd(const Vector<CString>& args, const char *name)
     return memfd;
 }
 
+static int createFlatpakInfo()
+{
+    static NeverDestroyed<GUniquePtr<char>> data;
+    static size_t size;
+
+    if (!data.get()) {
+        // xdg-desktop-portal relates your name to certain permissions so we want
+        // them to be application unique which is best done via GApplication.
+        GApplication* app = g_application_get_default();
+        if (!app) {
+            g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
+            return -1;
+        }
+
+        GUniquePtr<GKeyFile> keyFile(g_key_file_new());
+        g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+        data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
+    }
+
+    return createSealedMemFdWithData("flatpak-info", data->get(), size);
+}
+
 enum class DBusAddressType {
     Normal,
     Abstract,
@@ -185,6 +208,9 @@ public:
         int proxyFd = argsToFd(proxyArgs, "dbus-proxy");
         GUniquePtr<char> proxyArgsStr(g_strdup_printf("--args=%d", proxyFd));
 
+        // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
+        // xdg-dbus-proxy's mount namespace. Portals may use this as a trusted way to get the
+        // sandboxed process's application ID, and will break if it's missing.
         Vector<CString> args = {
             DBUS_PROXY_EXECUTABLE,
             proxyArgsStr.get(),
@@ -201,11 +227,14 @@ public:
         g_subprocess_launcher_set_child_setup(launcher.get(), childSetupFunc, GINT_TO_POINTER(syncFds[1]), nullptr);
         g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
         g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
+
         // We are purposefully leaving syncFds[0] open here.
         // xdg-dbus-proxy will exit() itself once that is closed on our exit
 
+        ProcessLauncher::LaunchOptions launchOptions;
+        launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
         GUniqueOutPtr<GError> error;
-        GRefPtr<GSubprocess> process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv, &error.outPtr()));
+        GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
         if (!process.get())
             g_error("Failed to start dbus proxy: %s", error->message);
 
@@ -692,28 +721,6 @@ static int setupSeccomp()
     return tmpfd;
 }
 
-static int createFlatpakInfo()
-{
-    static NeverDestroyed<GUniquePtr<char>> data;
-    static size_t size;
-
-    if (!data.get()) {
-        // xdg-desktop-portal relates your name to certain permissions so we want
-        // them to be application unique which is best done via GApplication.
-        GApplication* app = g_application_get_default();
-        if (!app) {
-            g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
-            return -1;
-        }
-
-        GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
-        data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
-    }
-
-    return createSealedMemFdWithData("flatpak-info", data->get(), size);
-}
-
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
 {
     ASSERT(launcher);
@@ -724,11 +731,11 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     if (launchOptions.processType == ProcessLauncher::ProcessType::Network)
         return adoptGRef(g_subprocess_launcher_spawnv(launcher, argv, error));
 
+    const char* runDir = g_get_user_runtime_dir();
     Vector<CString> sandboxArgs = {
         "--die-with-parent",
         "--unshare-pid",
         "--unshare-uts",
-        "--unshare-net",
 
         // We assume /etc has safe permissions.
         // At a later point we can start masking privacy-concerning files.
@@ -737,7 +744,8 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--proc", "/proc",
         "--tmpfs", "/tmp",
         "--unsetenv", "TMPDIR",
-        "--dir", "/run",
+        "--dir", runDir,
+        "--setenv", "XDG_RUNTIME_DIR", runDir,
         "--symlink", "../run", "/var/run",
         "--symlink", "../tmp", "/var/tmp",
         "--ro-bind", "/sys/block", "/sys/block",
@@ -762,6 +770,24 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
     };
+
+    if (launchOptions.processType == ProcessLauncher::ProcessType::DBusProxy) {
+        sandboxArgs.appendVector(Vector<CString>({
+            "--ro-bind", "/usr/bin", "/usr/bin",
+            // This is a lot of access, but xdg-dbus-proxy is trusted so that's OK. It's sandboxed
+            // only because we have to mount .flatpak-info in its mount namespace. The user rundir
+            // is where we mount our proxy socket.
+            "--bind", runDir,
+        }));
+    } else {
+        // xdg-dbus-proxy needs access to host abstract sockets to connect to the a11y bus. Secure
+        // host services must not use abstract sockets. Otherwise, only the network process should
+        // have network access, and the network process is not sandboxed at all.
+        sandboxArgs.appendVector(Vector<CString>({
+            "--unshare-net"
+        }));
+    }
+
     // We would have to parse ld config files for more info.
     bindPathVar(sandboxArgs, "LD_LIBRARY_PATH");
 

@@ -1,3 +1,29 @@
+2021-02-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] SleepDisabler does not inhibit sleep with bubblewrap sandbox enabled: need to run xdg-dbus-proxy under bwrap or xdg-desktop-portal does not read our app ID
+        https://bugs.webkit.org/show_bug.cgi?id=219010
+
+        Reviewed by Carlos Garcia Campos.
+
+        We need to run xdg-dbus-proxy under bubblewrap so that we can mount /.flatpak-info in its
+        mount namespace. Why? Because xdg-desktop-portal checks the pid of its D-Bus peer using
+        Unix credentials, then looks in that process's mount namespace to read its app ID from
+        /.flatpak-info. If /.flatpak-info doesn't exist, then any portals that depend on the app ID
+        will break, including the inhibit portal that we need to prevent the system from suspending
+        during video playback. This normally works because flatpak runs xdg-dbus-proxy under
+        bubblewrap and mounts /.flatpak-info, but it breaks for WebKit because we don't. Start doing
+        so.
+
+        This method of getting the app ID might seem like a strange contortion, but it's really
+        required beacuse the sandboxed process cannot be trusted to provide its own app ID, and will
+        not have write access to its /.flatpak-info so we can rely on that.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::createFlatpakInfo):
+        (WebKit::XDGDBusProxyLauncher::launch):
+        (WebKit::bubblewrapSpawn):
+
 2021-02-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r272831.
