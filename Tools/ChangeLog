@@ -1,3 +1,33 @@
+2021-02-15  Adam Roben  <aroben@apple.com>
+
+        Add `git commit -v` support to commit-log-editor
+        https://bugs.webkit.org/show_bug.cgi?id=221903
+
+        Reviewed by Darin Adler.
+
+        From the git-commit documentation:
+        
+            -v, --verbose
+                Show unified diff between the HEAD commit and what would be
+                committed at the bottom of the commit message template to help
+                the user describe the commit by reminding what changes the
+                commit has. Note that this diff output doesn't have its lines
+                prefixed with #. This diff will not be a part of the commit
+                message. See the commit.verbose configuration variable in
+                git-config(1).
+        
+        commit-log-editor was getting confused about the diff not being prefixed
+        with #. Now it looks for the "cut line" that Git puts in the log just
+        before the diff. It looks like this:
+        
+            # ------------------------ >8 ------------------------
+        
+        See https://github.com/git/git/blob/e6362826a0409539642a5738db61827e5978e2e4/wt-status.c#L24-L25
+        
+        * Scripts/commit-log-editor: Keep track of whether the "cut line" has
+          been found. If it has, consider it and everything after it to be part
+          of the log contents but not the existing log message.
+
 2021-02-14  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Move UseGPUProcessForMediaEnabled from WebPreferencesInternal to WebPreferencesExperimental

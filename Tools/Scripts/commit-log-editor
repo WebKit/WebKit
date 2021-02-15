@@ -134,26 +134,29 @@ if ($splitEditor) {
 }
 
 my $inChangesToBeCommitted = !isGit();
+my $foundCutLine = 0;
 my @changeLogs = ();
 my $logContents = "";
 my $existingLog = 0;
 open LOG, $log or die "Could not open the log file.";
 while (my $curLine = <LOG>) {
     if (isGit()) {
-        if ($curLine =~ /^# Changes to be committed:$/) {
+        if ($curLine eq "# ------------------------ >8 ------------------------\n") {
+          $foundCutLine = 1;
+        } elsif ($curLine =~ /^# Changes to be committed:$/) {
             $inChangesToBeCommitted = 1;
         } elsif ($inChangesToBeCommitted && $curLine =~ /^# \S/) {
             $inChangesToBeCommitted = 0;
         }
     }
 
-    if (!isGit() || $curLine =~ /^#/) {
+    if (!isGit() || $curLine =~ /^#/ || $foundCutLine) {
         $logContents .= $curLine;
     } else {
         # $_ contains the current git log message
         # (without the log comment info). We don't need it.
     }
-    $existingLog = isGit() && !($curLine =~ /^#/ || $curLine =~ /^\s*$/) unless $existingLog;
+    $existingLog = isGit() && !$foundCutLine && !($curLine =~ /^#/ || $curLine =~ /^\s*$/) unless $existingLog;
     push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && ($curLine =~ /^(?:M|A)....(.*ChangeLog)\r?\n?$/ || $curLine =~ /^#\t(?:modified|new file):   (.*ChangeLog)$/) && $curLine !~ /-ChangeLog$/;
 }
 close LOG;
