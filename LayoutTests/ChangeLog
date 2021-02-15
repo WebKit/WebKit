@@ -1,3 +1,24 @@
+2021-02-15  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/ssl convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221862
+        <rdar://problem/74298527>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/ssl/referer-301.html:
+        * http/tests/ssl/referer-303.html:
+        * http/tests/ssl/resources/ping-with-unsafe-redirect-frame.html:
+        * http/tests/ssl/resources/redirect-ping-to-http.php: Removed.
+        * http/tests/ssl/resources/redirect-ping-to-http.py: Added.
+        * http/tests/ssl/resources/referer-301-redir.php: Removed.
+        * http/tests/ssl/resources/referer-301-redir.py: Added.
+        * http/tests/ssl/resources/referer-303-redir.php: Removed.
+        * http/tests/ssl/resources/referer-303-redir.py: Added.
+        * http/tests/ssl/verify-ssl-enabled.php: Removed.
+        * http/tests/ssl/verify-ssl-enabled.py: Added.
+        * platform/win/TestExpectations:
+
 2021-02-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update WPT test suite

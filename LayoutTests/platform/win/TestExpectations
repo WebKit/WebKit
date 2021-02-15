@@ -2414,7 +2414,7 @@ http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Failure ]
 http/tests/ssl/ping-with-unsafe-redirect.html [ Failure ]
 http/tests/ssl/referer-301.html [ Failure ]
 http/tests/ssl/referer-303.html [ Failure ]
-http/tests/ssl/verify-ssl-enabled.php [ Failure ] # Easy?
+http/tests/ssl/verify-ssl-enabled.py [ Failure ] # Easy?
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/access-control-preflight-headers-async.html [ Pass Failure ] # Easy?
 http/tests/xmlhttprequest/cache-override.html [ Failure ]
