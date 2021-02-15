@@ -1,3 +1,101 @@
+2021-02-15  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private accessors
+        https://bugs.webkit.org/show_bug.cgi?id=194435
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is implementing support for instance private getters and
+        setters following the proposal on https://tc39.es/proposal-private-methods.
+        Private accessors also use the private brand check mechanism of
+        private methods, which means that we are using both
+        `op_set_private_brand` and `op_check_private_brand` to perform brand
+        checks. Accessors are also stored on class lexical scope as a pair of
+        `getter` and `setter`. This is done creating a new `JSObject` and
+        storing the `getter` on `get` property, and `setter` on `set`
+        property. This is designed in such way that we can always hit IC fast
+        path on `get_by_id_direct` to access the property, and also to allow
+        constant folding of accessors on DFG/FTL, since acessors objects are
+        going to be constant once created.
+
+        For reference, we have the following bytecode for a private getter
+        access:
+
+        ```
+        class C {
+            get #m() {...}
+            access() {
+                return this.#m;
+            }
+        }
+        ```
+
+        Bytecode for class declaration:
+
+        ```
+        ...
+        new_object         dst:loc12, inlineCapacity:2 // this is the object to store getter and setter pair
+        new_func_exp       dst:loc13, scope:loc4, functionDecl:"get #m() {...}"
+        put_by_id          base:loc13, property:@homeObject, value:loc11, flags:Strict
+        put_by_id          base:loc12, property:@get, value:loc13, flags:IsDirect|Strict
+        put_to_scope       scope:loc4, var:#m, value:loc12 // loc4 is the class lexical scope
+        ...
+
+        ```
+
+        Bytecode for `access()`:
+
+        ```
+        ...
+        resolve_scope      dst:loc7, scope:loc4, var:"#m", resolveType:GlobalProperty, localScopeDepth:0
+        get_from_scope     dst:loc8, scope:loc7, var:@privateBrand
+        check_private_brand base:this, brand:loc8
+        get_from_scope     dst:loc8, scope:loc7, var:"#m"
+        get_by_id_direct   dst:loc9, base:loc8, property:@get
+        mov                dst:loc10, src:this
+        call               dst:loc6, callee:loc9, argc:1, argv:16
+        ...
+
+        ```
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::getPrivateTraits):
+        (JSC::BytecodeGenerator::getAvailablePrivateAccessNames):
+        (JSC::BytecodeGenerator::isPrivateMethod): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::BaseDotNode::emitGetPropertyValue):
+        (JSC::BaseDotNode::emitPutProperty):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitDot):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        * parser/Parser.h:
+        (JSC::Scope::declarePrivateSetter):
+        (JSC::Scope::declarePrivateGetter):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironment::declarePrivateAccessor):
+        (JSC::VariableEnvironment::declarePrivateSetter):
+        (JSC::VariableEnvironment::declarePrivateGetter):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isPrivateSetter const):
+        (JSC::VariableEnvironmentEntry::isPrivateGetter const):
+        (JSC::VariableEnvironmentEntry::setIsPrivateSetter):
+        (JSC::VariableEnvironmentEntry::setIsPrivateGetter):
+        (JSC::PrivateNameEntry::isSetter const):
+        (JSC::PrivateNameEntry::isGetter const):
+        (JSC::PrivateNameEntry::isField const):
+        (JSC::PrivateNameEntry::isPrivateMethodOrAcessor const):
+        (JSC::VariableEnvironment::declarePrivateSetter):
+        (JSC::VariableEnvironment::declarePrivateGetter):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createPrivateMethodAccessError):
+
 2021-02-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r272831.

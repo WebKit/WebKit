@@ -4,6 +4,7 @@ flags:
   WeakRef: useWeakRefs
   FinalizationRegistry: useWeakRefs
   class-fields-private: usePrivateClassFields
+  class-methods-private: usePrivateMethods
   class-static-fields-public: usePublicStaticClassFields
   class-static-fields-private: usePrivateStaticClassFields
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
@@ -19,7 +20,6 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
 
-    - class-methods-private
     - class-static-methods-private
     - cleanupSome
     - host-gc-required

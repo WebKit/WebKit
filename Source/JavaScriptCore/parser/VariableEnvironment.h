@@ -47,6 +47,8 @@ public:
     ALWAYS_INLINE bool isSloppyModeHoistingCandidate() const { return m_bits & IsSloppyModeHoistingCandidate; }
     ALWAYS_INLINE bool isPrivateField() const { return m_bits & IsPrivateField; }
     ALWAYS_INLINE bool isPrivateMethod() const { return m_bits & IsPrivateMethod; }
+    ALWAYS_INLINE bool isPrivateSetter() const { return m_bits & IsPrivateSetter; }
+    ALWAYS_INLINE bool isPrivateGetter() const { return m_bits & IsPrivateGetter; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
     ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
@@ -60,6 +62,8 @@ public:
     ALWAYS_INLINE void setIsSloppyModeHoistingCandidate() { m_bits |= IsSloppyModeHoistingCandidate; }
     ALWAYS_INLINE void setIsPrivateField() { m_bits |= IsPrivateField; }
     ALWAYS_INLINE void setIsPrivateMethod() { m_bits |= IsPrivateMethod; }
+    ALWAYS_INLINE void setIsPrivateSetter() { m_bits |= IsPrivateSetter; }
+    ALWAYS_INLINE void setIsPrivateGetter() { m_bits |= IsPrivateGetter; }
 
     ALWAYS_INLINE void clearIsVar() { m_bits &= ~IsVar; }
 
@@ -84,6 +88,8 @@ private:
         IsSloppyModeHoistingCandidate = 1 << 9,
         IsPrivateField = 1 << 10,
         IsPrivateMethod = 1 << 11,
+        IsPrivateGetter = 1 << 12,
+        IsPrivateSetter = 1 << 13,
     };
     uint16_t m_bits { 0 };
 };
@@ -101,8 +107,11 @@ public:
     ALWAYS_INLINE bool isUsed() const { return m_bits & IsUsed; }
     ALWAYS_INLINE bool isDeclared() const { return m_bits & IsDeclared; }
     ALWAYS_INLINE bool isMethod() const { return m_bits & IsMethod; }
+    ALWAYS_INLINE bool isSetter() const { return m_bits & IsSetter; }
+    ALWAYS_INLINE bool isGetter() const { return m_bits & IsGetter; }
+    ALWAYS_INLINE bool isField() const { return !isPrivateMethodOrAcessor(); }
 
-    bool isPrivateMethodOrAcessor() const { return isMethod(); }
+    bool isPrivateMethodOrAcessor() const { return isMethod() || isSetter() || isGetter(); }
 
     ALWAYS_INLINE void setIsUsed() { m_bits |= IsUsed; }
     ALWAYS_INLINE void setIsDeclared() { m_bits |= IsDeclared; }
@@ -119,6 +128,8 @@ public:
         IsUsed = 1 << 0,
         IsDeclared = 1 << 1,
         IsMethod = 1 << 2,
+        IsGetter = 1 << 3,
+        IsSetter = 1 << 4,
     };
 
 private:
@@ -194,6 +205,14 @@ public:
 
     bool declarePrivateMethod(const Identifier& identifier) { return declarePrivateMethod(identifier.impl()); }
     bool declarePrivateMethod(const RefPtr<UniquedStringImpl>& identifier);
+
+    bool declarePrivateAccessor(const RefPtr<UniquedStringImpl>&, PrivateNameEntry::Traits);
+
+    bool declarePrivateSetter(const Identifier& identifier) { return declarePrivateSetter(identifier.impl()); }
+    bool declarePrivateSetter(const RefPtr<UniquedStringImpl>& identifier);
+
+    bool declarePrivateGetter(const Identifier& identifier) { return declarePrivateGetter(identifier.impl()); }
+    bool declarePrivateGetter(const RefPtr<UniquedStringImpl>& identifier);
 
     Map::AddResult declarePrivateField(const RefPtr<UniquedStringImpl>& identifier)
     {

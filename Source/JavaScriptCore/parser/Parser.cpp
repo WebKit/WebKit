@@ -2880,6 +2880,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     classScope->preventVarDeclarations();
     classScope->setStrictMode();
     bool declaresPrivateMethod = false;
+    bool declaresPrivateAccessor = false;
     next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
@@ -2978,7 +2979,7 @@ parseMethod:
             bool escaped = m_token.m_data.escaped;
             ASSERT(ident);
             next();
-            if (parseMode == SourceParseMode::MethodMode && !escaped && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(BIGINT) || match(OPENBRACKET))) {
+            if (parseMode == SourceParseMode::MethodMode && !escaped && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(BIGINT) || match(OPENBRACKET) || (Options::usePrivateMethods() && match(PRIVATENAME)))) {
                 isGetter = *ident == propertyNames.get;
                 isSetter = *ident == propertyNames.set;
             }
@@ -3006,6 +3007,7 @@ parseMethod:
             ASSERT(ident);
             next();
             if (Options::usePrivateMethods() && match(OPENPAREN)) {
+                semanticFailIfTrue(tag == ClassElementTag::Static, "Cannot declare a static private method");
                 semanticFailIfTrue(classScope->declarePrivateMethod(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
                 declaresPrivateMethod = true;
                 type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateMethod);
@@ -3025,8 +3027,21 @@ parseMethod:
 
         TreeProperty property;
         if (isGetter || isSetter) {
-            type = static_cast<PropertyNode::Type>(type & ~PropertyNode::Constant);
-            type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
+            if (Options::usePrivateMethods() && match(PRIVATENAME)) {
+                ident = m_token.m_data.ident;
+                if (isSetter) {
+                    semanticFailIfTrue(classScope->declarePrivateSetter(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Declared private setter with an already used name");
+                    declaresPrivateAccessor = true;
+                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateSetter);
+                } else {
+                    semanticFailIfTrue(classScope->declarePrivateGetter(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Declared private getter with an already used name");
+                    declaresPrivateAccessor = true;
+                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateGetter);
+                }
+            } else {
+                type = static_cast<PropertyNode::Type>(type & ~PropertyNode::Constant);
+                type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
+            }
             property = parseGetterSetter(context, type, methodStart, ConstructorKind::None, tag);
             failIfFalse(property, "Cannot parse this method");
         } else if (!match(OPENPAREN) && (tag == ClassElementTag::Instance || Options::usePublicStaticClassFields()) && parseMode == SourceParseMode::MethodMode) {
@@ -3100,12 +3115,17 @@ parseMethod:
     info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
-    if (declaresPrivateMethod) {
+    if (declaresPrivateMethod || declaresPrivateAccessor) {
         Identifier privateBrandIdentifier = m_vm.propertyNames->builtinNames().privateBrandPrivateName();
         DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateBrandIdentifier, true);
         ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
         classScope->useVariable(&privateBrandIdentifier, false);
         classScope->addClosedVariableCandidateUnconditionally(privateBrandIdentifier.impl());
+    }
+
+    if constexpr (std::is_same_v<TreeBuilder, ASTBuilder>) {
+        if (classElements)
+            classElements->setHasPrivateAccessors(declaresPrivateAccessor);
     }
 
     if (Options::usePrivateClassFields()) {
@@ -4428,12 +4448,18 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 
     JSTokenLocation location(tokenLocation());
 
-    if (matchSpecIdentifier() || match(STRING) || m_token.m_type & KeywordTokenFlag) {
+    bool matchesPrivateName = match(PRIVATENAME);
+    if (matchSpecIdentifier() || match(STRING) || (Options::usePrivateMethods() && matchesPrivateName) || m_token.m_type & KeywordTokenFlag) {
         stringPropertyName = m_token.m_data.ident;
         semanticFailIfTrue(tag == ClassElementTag::Static && *stringPropertyName == m_vm.propertyNames->prototype,
             "Cannot declare a static method named 'prototype'");
         semanticFailIfTrue(tag == ClassElementTag::Instance && *stringPropertyName == m_vm.propertyNames->constructor,
             "Cannot declare a getter or setter named 'constructor'");
+
+        if (match(PRIVATENAME)) {
+            semanticFailIfTrue(tag == ClassElementTag::No, "Cannot declare a private setter or getter outside a class");
+            semanticFailIfTrue(tag == ClassElementTag::Static, "Cannot declare a private setter or getter as static");
+        }
         next();
     } else if (match(DOUBLE) || match(INTEGER)) {
         numericPropertyName = m_token.m_data.doubleValue;
@@ -4454,10 +4480,18 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
         failIfFalse(match(OPENPAREN), "Expected a parameter list for getter definition");
         SetForScope<SourceParseMode> innerParseMode(m_parseMode, SourceParseMode::GetterMode);
         failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, false, constructorKind, SuperBinding::Needed, getterOrSetterStartOffset, info, FunctionDefinitionType::Method)), "Cannot parse getter definition");
-    } else {
+    } else if (type & PropertyNode::Setter) {
         failIfFalse(match(OPENPAREN), "Expected a parameter list for setter definition");
         SetForScope<SourceParseMode> innerParseMode(m_parseMode, SourceParseMode::SetterMode);
         failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, false, constructorKind, SuperBinding::Needed, getterOrSetterStartOffset, info, FunctionDefinitionType::Method)), "Cannot parse setter definition");
+    } else if (type & PropertyNode::PrivateSetter) {
+        failIfFalse(match(OPENPAREN), "Expected a parameter list for private setter definition");
+        SetForScope<SourceParseMode> innerParseMode(m_parseMode, SourceParseMode::SetterMode);
+        failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, false, constructorKind, SuperBinding::Needed, getterOrSetterStartOffset, info, FunctionDefinitionType::Method)), "Cannot parse private setter definition");
+    } else if (type & PropertyNode::PrivateGetter) {
+        failIfFalse(match(OPENPAREN), "Expected a parameter list for private getter definition");
+        SetForScope<SourceParseMode> innerParseMode(m_parseMode, SourceParseMode::GetterMode);
+        failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, false, constructorKind, SuperBinding::Needed, getterOrSetterStartOffset, info, FunctionDefinitionType::Method)), "Cannot parse private getter definition");
     }
 
     if (stringPropertyName)

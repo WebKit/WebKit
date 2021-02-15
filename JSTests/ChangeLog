@@ -1,3 +1,23 @@
+2021-02-15  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private accessors
+        https://bugs.webkit.org/show_bug.cgi?id=194435
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/private-accesor-duplicate-name-early-errors.js: Added.
+        * stress/private-getter-brand-check.js: Added.
+        * stress/private-getter-inner-class.js: Added.
+        * stress/private-members-get-and-set.js: Added.
+        * stress/private-methods-and-accessors-postfix-node.js: Added.
+        * stress/private-methods-and-accessors-prefix-node.js: Added.
+        * stress/private-names-available-on-direct-eval.js:
+        * stress/private-names-available-on-eval-during-field-initialization.js: Copied from JSTests/stress/private-names-available-on-direct-eval.js.
+        * stress/private-setter-brand-check.js: Added.
+        * stress/private-setter-inner-class.js: Added.
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2021-02-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le

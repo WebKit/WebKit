@@ -721,7 +721,7 @@ namespace JSC {
     enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
     class PropertyNode final : public ParserArenaFreeable {
     public:
-        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32, PrivateField = 64, PrivateMethod = 128 };
+        enum Type : uint16_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32, PrivateField = 64, PrivateMethod = 128, PrivateSetter = 256, PrivateGetter = 512 };
 
         PropertyNode(const Identifier&, ExpressionNode*, Type, SuperBinding, ClassElementTag);
         PropertyNode(ExpressionNode*, Type, SuperBinding, ClassElementTag);
@@ -740,7 +740,7 @@ namespace JSC {
         bool isInstanceClassField() const { return isInstanceClassProperty() && !needsSuperBinding(); }
         bool isStaticClassField() const { return isStaticClassProperty() && !needsSuperBinding(); }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
-        bool isPrivate() const { return m_type & (PrivateField | PrivateMethod); }
+        bool isPrivate() const { return m_type & (PrivateField | PrivateMethod | PrivateGetter | PrivateSetter); }
         bool hasComputedName() const { return m_expression; }
         bool isComputedClassField() const { return isClassField() && hasComputedName(); }
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
@@ -760,7 +760,7 @@ namespace JSC {
         const Identifier* m_name;
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
-        unsigned m_type;
+        unsigned m_type : 10;
         unsigned m_needsSuperBinding : 1;
         static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
         unsigned m_classElementTag : 2;
@@ -788,6 +788,16 @@ namespace JSC {
             return m_node->isStaticClassField();
         }
 
+        void setHasPrivateAccessors(bool hasPrivateAccessors)
+        {
+            m_hasPrivateAccessors = hasPrivateAccessors;
+        }
+
+        bool hasPrivateAccessors() const
+        {
+            return m_hasPrivateAccessors;
+        }
+
         static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*, Vector<JSTextPosition>*);
@@ -804,6 +814,7 @@ namespace JSC {
 
         PropertyNode* m_node;
         PropertyListNode* m_next { nullptr };
+        bool m_hasPrivateAccessors { false };
     };
 
     class ObjectLiteralNode final : public ExpressionNode {

@@ -517,6 +517,34 @@ public:
         return result;
     }
 
+    DeclarationResultMask declarePrivateSetter(const Identifier& ident)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool addResult = m_lexicalVariables.declarePrivateSetter(ident);
+
+        if (!addResult) {
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
+            return result;
+        }
+
+        return result;
+    }
+
+    DeclarationResultMask declarePrivateGetter(const Identifier& ident)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool addResult = m_lexicalVariables.declarePrivateGetter(ident);
+
+        if (!addResult) {
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
+            return result;
+        }
+
+        return result;
+    }
+
     DeclarationResultMask declarePrivateField(const Identifier& ident)
     {
         ASSERT(m_allowsLexicalDeclarations);

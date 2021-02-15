@@ -56,8 +56,8 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/BitVector.h>
+#include <wtf/HashSet.h>
 #include <wtf/Optional.h>
-#include <wtf/SmallPtrSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -1900,10 +1900,17 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
 
             // FIXME: only do this if there is an eval() within a nested scope --- otherwise it isn't needed.
             // https://bugs.webkit.org/show_bug.cgi?id=206663
-            if (entry.value.isPrivateField())
-                symbolTable->addPrivateName(entry.key.get(), PrivateNameEntry(PrivateNameEntry::Traits::IsDeclared));
-            else if (entry.value.isPrivateMethod())
-                symbolTable->addPrivateName(entry.key.get(), PrivateNameEntry(PrivateNameEntry::Traits::IsDeclared | PrivateNameEntry::Traits::IsMethod));
+            
+            const PrivateNameEnvironment* privateEnvironment = lexicalVariables.privateNameEnvironment();
+            if (!privateEnvironment)
+                continue;
+
+            auto findResult = privateEnvironment->find(entry.key.get());
+
+            if (findResult == privateEnvironment->end())
+                continue;
+
+            symbolTable->addPrivateName(findResult->key.get(), findResult->value);
         }
     }
     return hasCapturedVariables;
@@ -2931,16 +2938,18 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
     }
 }
 
-bool BytecodeGenerator::isPrivateMethod(const Identifier& ident)
+// This should be called only with PrivateNames available.
+PrivateNameEntry BytecodeGenerator::getPrivateTraits(const Identifier& ident)
 {
     for (unsigned i = m_privateNamesStack.size(); i--; ) {
         auto& map = m_privateNamesStack[i];
         auto it = map.find(ident.impl());
         if (it != map.end())
-            return it->value.isMethod();
+            return it->value;
     }
 
-    return false;
+    RELEASE_ASSERT_NOT_REACHED();
+    return PrivateNameEntry();
 }
 
 void BytecodeGenerator::pushPrivateAccessNames(const PrivateNameEnvironment* environment)
@@ -2981,17 +2990,13 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
 Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
 {
     PrivateNameEnvironment result;
-    SmallPtrSet<UniquedStringImpl*, 16> excludedNames;
+    HashSet<UniquedStringImpl*> excludedNames;
     for (unsigned i = m_privateNamesStack.size(); i--; ) {
         auto& map = m_privateNamesStack[i];
         for (auto& entry : map)  {
-            if (entry.value.isPrivateMethodOrAcessor()) {
-                if (!excludedNames.contains(entry.key.get())) {
-                    result.add(entry.key, entry.value);
-                    excludedNames.add(entry.key.get());
-                }
-            } else
-                excludedNames.add(entry.key.get());
+            auto addResult = excludedNames.add(entry.key.get());
+            if (addResult.isNewEntry)
+                result.add(entry.key, entry.value);
         }
     }
 

@@ -741,6 +741,12 @@ test/built-ins/Function/prototype/toString/method-computed-property-name.js:
 test/built-ins/Function/prototype/toString/method-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
+test/built-ins/Function/prototype/toString/private-method-class-expression.js:
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
+test/built-ins/Function/prototype/toString/private-method-class-statement.js:
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
 test/built-ins/Function/prototype/toString/setter-class-expression-static.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
