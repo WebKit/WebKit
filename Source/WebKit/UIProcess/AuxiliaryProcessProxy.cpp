@@ -89,11 +89,6 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
         varname = "WEBAUTHN_PROCESS_CMD_PREFIX";
         break;
 #endif
-#if ENABLE(BUBBLEWRAP_SANDBOX)
-    case ProcessLauncher::ProcessType::DBusProxy:
-        ASSERT_NOT_REACHED();
-        break;
-#endif
     }
     const char* processCmdPrefix = getenv(varname);
     if (processCmdPrefix && *processCmdPrefix)
