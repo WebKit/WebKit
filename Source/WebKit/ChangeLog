@@ -1,3 +1,39 @@
+2021-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Page scrolling by wheel events doesn't work in non-AC mode pages if Hardware Acceleration Policy is changed dynamically from "always" to "never"
+        https://bugs.webkit.org/show_bug.cgi?id=221067
+
+        Reviewed by Carlos Garcia Campos.
+
+        GTK port is still supporting non-AC mode in WebKit2, and it can
+        enable/disable accelerated compositing dynamically.
+
+        r271235 fixed the bug that wheel event scrolling didn't work in
+        non-AC mode pages by checking if EventDispatcher's
+        m_scrollingTrees has a scrolling tree for a WebKit::WebPage.
+        However, if accelerated compositing is disabled dynamically,
+        m_scrollingTrees keeps to have a scrolling tree for the WebPage.
+        m_scrollingTrees should remove the item if accelerated compositing
+        is disabled.
+
+        r271235 added a code to check m_scrollingTrees, but it didn't lock
+        m_scrollingTreesMutex. The code can be removed. Removed it by
+        moving to above code.
+
+        EventDispatcher::wheelEvent was using a local lambda expression.
+        However the return value wasn't used. It can be a do-while
+        statement.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent): Replaced the lambda
+        expression with a do-while statement. Unified code of the checking
+        scrolling tree existence.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::enterAcceleratedCompositingMode):
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        (WebKit::WebPage::close):
+
 2021-02-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] SleepDisabler does not inhibit sleep with bubblewrap sandbox enabled: need to run xdg-dbus-proxy under bwrap or xdg-desktop-portal does not read our app ID

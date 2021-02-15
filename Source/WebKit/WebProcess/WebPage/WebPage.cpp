@@ -759,11 +759,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     webPageCounter.increment();
 #endif
 
-#if ENABLE(SCROLLING_THREAD)
-    if (m_useAsyncScrolling)
-        webProcess.eventDispatcher().addScrollingTreeForPage(this);
-#endif
-
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
         m_mimeTypesWithCustomContentProviders.add(mimeType);
 
@@ -1424,11 +1419,21 @@ void WebPage::clearMainFrameName()
 
 void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 {
+#if ENABLE(SCROLLING_THREAD)
+    if (m_useAsyncScrolling)
+        WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(this);
+#endif
+
     m_drawingArea->setRootCompositingLayer(layer);
 }
 
 void WebPage::exitAcceleratedCompositingMode()
 {
+#if ENABLE(SCROLLING_THREAD)
+    if (m_useAsyncScrolling)
+        WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(this);
+#endif
+
     m_drawingArea->setRootCompositingLayer(nullptr);
 }
 
@@ -1525,10 +1530,6 @@ void WebPage::close()
     if (m_remoteObjectRegistry)
         m_remoteObjectRegistry->close();
     ASSERT(!m_remoteObjectRegistry);
-#endif
-#if ENABLE(SCROLLING_THREAD)
-    if (m_useAsyncScrolling)
-        webProcess.eventDispatcher().removeScrollingTreeForPage(this);
 #endif
     webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_identifier);
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
