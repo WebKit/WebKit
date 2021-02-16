@@ -253,10 +253,14 @@ void AVAudioSessionCaptureDeviceManager::disableAllDevicesQuery()
         return;
 
     if (m_audioSessionState == AudioSessionState::Active) {
-        NSError *error = nil;
-        [m_audioSession setActive:NO withOptions:0 error:&error];
-        if (error)
-            RELEASE_LOG_ERROR(WebRTC, "Failed to disactivate audio session with error: %@.", error.localizedDescription);
+        dispatch_async(m_dispatchQueue, makeBlockPtr([this] {
+            if (m_audioSessionState != AudioSessionState::NotNeeded)
+                return;
+            NSError *error = nil;
+            [m_audioSession setActive:NO withOptions:0 error:&error];
+            if (error)
+                RELEASE_LOG_ERROR(WebRTC, "Failed to disactivate audio session with error: %@.", error.localizedDescription);
+        }).get());
     }
 
     m_audioSessionState = AudioSessionState::NotNeeded;
