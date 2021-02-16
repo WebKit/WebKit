@@ -27,7 +27,7 @@ window.addEventListener("pagehide", function(event) {
         finishJSTest();
     }
 
-    eventSource = new EventSource("resources/infinite-event-stream.php");
+    eventSource = new EventSource("resources/infinite-event-stream.py");
 
     eventSource.onerror = () => {
         testFailed("Received error event");

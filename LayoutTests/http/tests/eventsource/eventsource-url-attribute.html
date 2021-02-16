@@ -9,7 +9,7 @@
 
 description("Both .URL and .url should work (for compatibility reasons).");
 
-var url = "http://127.0.0.1:8000/eventsource/resources/event-stream.php";
+var url = "http://127.0.0.1:8000/eventsource/resources/event-stream.py";
 var source = new EventSource(url);
 
 shouldBeEqualToString("source.URL", url);

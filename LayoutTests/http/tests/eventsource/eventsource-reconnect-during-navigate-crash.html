@@ -8,10 +8,10 @@ if (window.testRunner) {
 }
 
 function navigate() {
-    window.location = "resources/wait-then-notify-done.php";
+    window.location = "resources/wait-then-notify-done.py";
 }
 
-var es = new EventSource("resources/reconnect.php");
+var es = new EventSource("resources/reconnect.py");
 es.onerror = function() {
     setTimeout(navigate, 0);
 };

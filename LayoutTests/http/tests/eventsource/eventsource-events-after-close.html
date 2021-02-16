@@ -12,7 +12,7 @@
     }
 
     var log = document.getElementById("log");
-    var es = new EventSource("resources/event-stream.php");
+    var es = new EventSource("resources/event-stream.py");
     var counter = 0;
     es.addEventListener('message', function (e) {
         log.innerHTML += "Got message #" + ++counter + "\n";

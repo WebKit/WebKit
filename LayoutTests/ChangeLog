@@ -1,5 +1,48 @@
 2021-02-16  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/eventsource convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221940
+        <rdar://problem/74372782>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/eventsource/eventsource-content-type-charset.html:
+        * http/tests/eventsource/eventsource-cors-basic-expected.txt:
+        * http/tests/eventsource/eventsource-cors-basic.html:
+        * http/tests/eventsource/eventsource-cors-with-credentials-expected.txt:
+        * http/tests/eventsource/eventsource-cors-with-credentials.html:
+        * http/tests/eventsource/eventsource-eof.html:
+        * http/tests/eventsource/eventsource-events-after-close.html:
+        * http/tests/eventsource/eventsource-page-cache-connected.html:
+        * http/tests/eventsource/eventsource-page-cache-connecting.html:
+        * http/tests/eventsource/eventsource-parse-event-stream.html:
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html:
+        * http/tests/eventsource/eventsource-reconnect.html:
+        * http/tests/eventsource/eventsource-status-code-states.html:
+        * http/tests/eventsource/eventsource-url-attribute-expected.txt:
+        * http/tests/eventsource/eventsource-url-attribute.html:
+        * http/tests/eventsource/resources/es-cors-basic.php: Removed.
+        * http/tests/eventsource/resources/es-cors-basic.py: Added.
+        * http/tests/eventsource/resources/es-cors-credentials.php: Removed.
+        * http/tests/eventsource/resources/es-cors-credentials.py: Added.
+        * http/tests/eventsource/resources/es-eof.php: Removed.
+        * http/tests/eventsource/resources/es-eof.py: Added.
+        * http/tests/eventsource/resources/event-stream.php: Removed.
+        * http/tests/eventsource/resources/event-stream.py: Added.
+        * http/tests/eventsource/resources/infinite-event-stream.php: Removed.
+        * http/tests/eventsource/resources/infinite-event-stream.py: Added.
+        * http/tests/eventsource/resources/reconnect.php: Removed.
+        * http/tests/eventsource/resources/reconnect.py: Added.
+        * http/tests/eventsource/resources/request-existent-eventsource-error.html:
+        * http/tests/eventsource/resources/response-content-type-charset.php: Removed.
+        * http/tests/eventsource/resources/response-content-type-charset.py: Added.
+        * http/tests/eventsource/resources/status-codes.php: Removed.
+        * http/tests/eventsource/resources/status-codes.py: Added.
+        * http/tests/eventsource/resources/wait-then-notify-done.php: Removed.
+        * http/tests/eventsource/resources/wait-then-notify-done.py: Added.
+
+2021-02-16  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/plugins convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=221941
         <rdar://problem/74373443>
