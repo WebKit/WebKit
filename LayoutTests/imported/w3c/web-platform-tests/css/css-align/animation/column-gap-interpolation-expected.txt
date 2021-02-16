@@ -69,12 +69,12 @@ PASS CSS Animations: property <column-gap> from [inherit] to [20px] at (0.3) sho
 PASS CSS Animations: property <column-gap> from [inherit] to [20px] at (0.6) should be [48px]
 PASS CSS Animations: property <column-gap> from [inherit] to [20px] at (1) should be [20px]
 FAIL CSS Animations: property <column-gap> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 15px "
-FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (-0.3) should be [111px] assert_equals: expected "111px " but got "7px "
-FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (0) should be [90px] assert_equals: expected "90px " but got "7px "
-FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (0.3) should be [69px] assert_equals: expected "69px " but got "10.9px "
-FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (0.6) should be [48px] assert_equals: expected "48px " but got "16.36px "
+PASS Web Animations: property <column-gap> from [inherit] to [20px] at (-0.3) should be [111px]
+PASS Web Animations: property <column-gap> from [inherit] to [20px] at (0) should be [90px]
+PASS Web Animations: property <column-gap> from [inherit] to [20px] at (0.3) should be [69px]
+PASS Web Animations: property <column-gap> from [inherit] to [20px] at (0.6) should be [48px]
 PASS Web Animations: property <column-gap> from [inherit] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "20px "
+FAIL Web Animations: property <column-gap> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 15px "
 PASS CSS Transitions: property <column-gap> from [unset] to [20px] at (-0.3) should be [20px]
 PASS CSS Transitions: property <column-gap> from [unset] to [20px] at (0) should be [20px]
 PASS CSS Transitions: property <column-gap> from [unset] to [20px] at (0.3) should be [20px]

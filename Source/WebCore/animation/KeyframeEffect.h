@@ -123,7 +123,7 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void apply(RenderStyle&, Optional<Seconds> = WTF::nullopt) override;
+    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = WTF::nullopt) override;
     void invalidate() override;
     void animationDidTick() final;
     void animationDidPlay() final;
@@ -198,7 +198,7 @@ private:
     void computeStackingContextImpact();
     void computeSomeKeyframesUseStepsTimingFunction();
     void clearBlendingKeyframes();
-    void updateBlendingKeyframes(RenderStyle&);
+    void updateBlendingKeyframes(RenderStyle& elementStyle, const RenderStyle* parentElementStyle);
     void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const RenderStyle* parentElementStyle);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();

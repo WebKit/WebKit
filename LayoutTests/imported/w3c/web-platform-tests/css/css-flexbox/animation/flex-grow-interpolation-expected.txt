@@ -65,12 +65,12 @@ PASS CSS Animations: property <flex-grow> from [inherit] to [2] at (0.3) should 
 PASS CSS Animations: property <flex-grow> from [inherit] to [2] at (0.6) should be [2.4]
 PASS CSS Animations: property <flex-grow> from [inherit] to [2] at (1) should be [2]
 PASS CSS Animations: property <flex-grow> from [inherit] to [2] at (1.5) should be [1.5]
-FAIL Web Animations: property <flex-grow> from [inherit] to [2] at (-0.3) should be [3.3] assert_equals: expected "3.3 " but got "0.7 "
-FAIL Web Animations: property <flex-grow> from [inherit] to [2] at (0) should be [3] assert_equals: expected "3 " but got "0.7 "
-FAIL Web Animations: property <flex-grow> from [inherit] to [2] at (0.3) should be [2.7] assert_equals: expected "2.7 " but got "1.09 "
-FAIL Web Animations: property <flex-grow> from [inherit] to [2] at (0.6) should be [2.4] assert_equals: expected "2.4 " but got "1.64 "
+PASS Web Animations: property <flex-grow> from [inherit] to [2] at (-0.3) should be [3.3]
+PASS Web Animations: property <flex-grow> from [inherit] to [2] at (0) should be [3]
+PASS Web Animations: property <flex-grow> from [inherit] to [2] at (0.3) should be [2.7]
+PASS Web Animations: property <flex-grow> from [inherit] to [2] at (0.6) should be [2.4]
 PASS Web Animations: property <flex-grow> from [inherit] to [2] at (1) should be [2]
-FAIL Web Animations: property <flex-grow> from [inherit] to [2] at (1.5) should be [1.5] assert_equals: expected "1.5 " but got "2 "
+PASS Web Animations: property <flex-grow> from [inherit] to [2] at (1.5) should be [1.5]
 PASS CSS Transitions: property <flex-grow> from [unset] to [2] at (-0.3) should be [0]
 PASS CSS Transitions: property <flex-grow> from [unset] to [2] at (0) should be [0]
 PASS CSS Transitions: property <flex-grow> from [unset] to [2] at (0.3) should be [0.6]

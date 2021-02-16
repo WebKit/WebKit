@@ -65,12 +65,12 @@ PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (
 PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px]
 PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
 FAIL CSS Animations: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 2px "
-FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px] assert_equals: expected "12.4px " but got "0.7px "
-FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px] assert_equals: expected "10px " but got "0.7px "
-FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px] assert_equals: expected "7.6px " but got "1.09px "
-FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px] assert_equals: expected "5.2px " but got "1.64px "
+PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px]
+PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px]
+PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px]
+PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px]
 PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
-FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "2px "
+FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 2px "
 FAIL CSS Transitions: property <border-image-outset> from [unset] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
 PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (0) should be [0]
 FAIL CSS Transitions: property <border-image-outset> from [unset] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "

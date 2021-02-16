@@ -76,13 +76,13 @@ PASS CSS Animations: property <background-position-y> from [inherit] to [80px] a
 PASS CSS Animations: property <background-position-y> from [inherit] to [80px] at (0.75) should be [75px]
 PASS CSS Animations: property <background-position-y> from [inherit] to [80px] at (1) should be [80px]
 PASS CSS Animations: property <background-position-y> from [inherit] to [80px] at (1.25) should be [85px]
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (-0.25) should be [55px] assert_equals: expected "55px " but got "30px "
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (0) should be [60px] assert_equals: expected "60px " but got "30px "
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (0.25) should be [65px] assert_equals: expected "65px " but got "42.5px "
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (0.5) should be [70px] assert_equals: expected "70px " but got "61.25px "
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (0.75) should be [75px] assert_equals: expected "75px " but got "75.31px "
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (-0.25) should be [55px]
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (0) should be [60px]
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (0.25) should be [65px]
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (0.5) should be [70px]
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (0.75) should be [75px]
 PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (1) should be [80px]
-FAIL Web Animations: property <background-position-y> from [inherit] to [80px] at (1.25) should be [85px] assert_equals: expected "85px " but got "80px "
+PASS Web Animations: property <background-position-y> from [inherit] to [80px] at (1.25) should be [85px]
 PASS CSS Transitions: property <background-position-y> from [300px, 400px] to [500px, 600px, 700px] at (-0.25) should be [250px, 350px, 200px, 375px, 225px, 325px]
 PASS CSS Transitions: property <background-position-y> from [300px, 400px] to [500px, 600px, 700px] at (0) should be [300px, 400px, 300px, 400px, 300px, 400px]
 PASS CSS Transitions: property <background-position-y> from [300px, 400px] to [500px, 600px, 700px] at (0.25) should be [350px, 450px, 400px, 425px, 375px, 475px]

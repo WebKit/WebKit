@@ -1,3 +1,15 @@
+2021-02-16  Antoine Quint  <graouts@webkit.org>
+
+        Web Animations JS API does not support "inherit" CSS values for keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=221931
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions for a couple tests with platform-specific results.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+
 2021-02-16  Chris Lord  <clord@igalia.com>
 
         [GLIB] Many service worker tests unexpectedly pass consistently

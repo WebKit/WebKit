@@ -121,7 +121,7 @@ public:
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
-    virtual void resolve(RenderStyle&, Optional<Seconds> = WTF::nullopt);
+    virtual void resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = WTF::nullopt);
     void effectTargetDidChange(const Optional<const Styleable>& previousTarget, const Optional<const Styleable>& newTarget);
     void acceleratedStateDidChange();
     void willChangeRenderer();

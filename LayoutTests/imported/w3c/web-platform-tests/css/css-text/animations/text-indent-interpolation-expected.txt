@@ -65,12 +65,12 @@ PASS CSS Animations: property <text-indent> from [inherit] to [20px] at (0.3) sh
 PASS CSS Animations: property <text-indent> from [inherit] to [20px] at (0.6) should be [40px]
 PASS CSS Animations: property <text-indent> from [inherit] to [20px] at (1) should be [20px]
 PASS CSS Animations: property <text-indent> from [inherit] to [20px] at (1.5) should be [-5px]
-FAIL Web Animations: property <text-indent> from [inherit] to [20px] at (-0.3) should be [85px] assert_equals: expected "85px " but got "7px "
-FAIL Web Animations: property <text-indent> from [inherit] to [20px] at (0) should be [70px] assert_equals: expected "70px " but got "7px "
-FAIL Web Animations: property <text-indent> from [inherit] to [20px] at (0.3) should be [55px] assert_equals: expected "55px " but got "10.9px "
-FAIL Web Animations: property <text-indent> from [inherit] to [20px] at (0.6) should be [40px] assert_equals: expected "40px " but got "16.36px "
+PASS Web Animations: property <text-indent> from [inherit] to [20px] at (-0.3) should be [85px]
+PASS Web Animations: property <text-indent> from [inherit] to [20px] at (0) should be [70px]
+PASS Web Animations: property <text-indent> from [inherit] to [20px] at (0.3) should be [55px]
+PASS Web Animations: property <text-indent> from [inherit] to [20px] at (0.6) should be [40px]
 PASS Web Animations: property <text-indent> from [inherit] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <text-indent> from [inherit] to [20px] at (1.5) should be [-5px] assert_equals: expected "- 5px " but got "20px "
+PASS Web Animations: property <text-indent> from [inherit] to [20px] at (1.5) should be [-5px]
 PASS CSS Transitions: property <text-indent> from [unset] to [20px] at (-0.3) should be [85px]
 PASS CSS Transitions: property <text-indent> from [unset] to [20px] at (0) should be [70px]
 PASS CSS Transitions: property <text-indent> from [unset] to [20px] at (0.3) should be [55px]
@@ -89,12 +89,12 @@ PASS CSS Animations: property <text-indent> from [unset] to [20px] at (0.3) shou
 PASS CSS Animations: property <text-indent> from [unset] to [20px] at (0.6) should be [40px]
 PASS CSS Animations: property <text-indent> from [unset] to [20px] at (1) should be [20px]
 PASS CSS Animations: property <text-indent> from [unset] to [20px] at (1.5) should be [-5px]
-FAIL Web Animations: property <text-indent> from [unset] to [20px] at (-0.3) should be [85px] assert_equals: expected "85px " but got "7px "
-FAIL Web Animations: property <text-indent> from [unset] to [20px] at (0) should be [70px] assert_equals: expected "70px " but got "7px "
-FAIL Web Animations: property <text-indent> from [unset] to [20px] at (0.3) should be [55px] assert_equals: expected "55px " but got "10.9px "
-FAIL Web Animations: property <text-indent> from [unset] to [20px] at (0.6) should be [40px] assert_equals: expected "40px " but got "16.36px "
+PASS Web Animations: property <text-indent> from [unset] to [20px] at (-0.3) should be [85px]
+PASS Web Animations: property <text-indent> from [unset] to [20px] at (0) should be [70px]
+PASS Web Animations: property <text-indent> from [unset] to [20px] at (0.3) should be [55px]
+PASS Web Animations: property <text-indent> from [unset] to [20px] at (0.6) should be [40px]
 PASS Web Animations: property <text-indent> from [unset] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <text-indent> from [unset] to [20px] at (1.5) should be [-5px] assert_equals: expected "- 5px " but got "20px "
+PASS Web Animations: property <text-indent> from [unset] to [20px] at (1.5) should be [-5px]
 PASS CSS Transitions: property <text-indent> from [0px] to [50px] at (-0.3) should be [-15px]
 PASS CSS Transitions: property <text-indent> from [0px] to [50px] at (0) should be [0]
 PASS CSS Transitions: property <text-indent> from [0px] to [50px] at (0.3) should be [15px]

@@ -61,9 +61,9 @@ CSSTransition::CSSTransition(const Styleable& styleable, CSSPropertyID property,
 {
 }
 
-void CSSTransition::resolve(RenderStyle& targetStyle, Optional<Seconds> startTime)
+void CSSTransition::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> startTime)
 {
-    DeclarativeAnimation::resolve(targetStyle, startTime);
+    DeclarativeAnimation::resolve(targetStyle, parentElementStyle, startTime);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
 }
 
