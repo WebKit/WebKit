@@ -1,3 +1,12 @@
+2021-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Apple internal iOS build after r272878
+
+        Wrap `NSScrollViewSPI.h` in a `USE(APPKIT)` guard, so that we don't attempt to import AppKit headers when
+        building for iOS using the internal SDK.
+
+        * pal/spi/mac/NSScrollViewSPI.h:
+
 2021-02-15  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Ensure that no image decoders run in the GPU Process
