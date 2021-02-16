@@ -1,3 +1,33 @@
+2021-02-16  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Grid list in Layout panel missing empty message
+        https://bugs.webkit.org/show_bug.cgi?id=221763
+        <rdar://problem/74242610>
+
+        Reviewed by BJ Burg.
+
+        Show a message instead of an empty list in the Layout sidebar panel
+        when there are no CSS Grid contexts found on the inspected page.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.set gridNodeSet):
+        (WI.CSSGridSection.prototype.attached):
+        (WI.CSSGridSection.prototype.detached):
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection):
+        Move logic to update the `gridNodeSet` from `CSSGridSection` up to `LayoutDetailsSidebarPanel`
+        so the parent view can toggle between the empty message and the populated CSS grid section accordingly.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.attached):
+        (WI.LayoutDetailsSidebarPanel.prototype.detached):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._handleLayoutContextTypeChanged):
+        (WI.LayoutDetailsSidebarPanel.prototype._refreshGridNodeSet):
+
 2021-02-11  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Add settings UI for CSS Grid overlay

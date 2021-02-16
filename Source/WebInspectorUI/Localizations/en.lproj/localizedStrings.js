@@ -939,6 +939,8 @@ localizedStrings["No Associated Data"] = "No Associated Data";
 localizedStrings["No Attributes"] = "No Attributes";
 localizedStrings["No Box Model Information"] = "No Box Model Information";
 localizedStrings["No CSS Changes"] = "No CSS Changes";
+/* Message shown when there are no CSS Grid contexts on the inspected page. */
+localizedStrings["No CSS Grid Contexts @ Layout Details Sidebar Panel"] = "No CSS Grid Contexts";
 localizedStrings["No Canvas Contexts"] = "No Canvas Contexts";
 localizedStrings["No Canvas Selected"] = "No Canvas Selected";
 localizedStrings["No Chart Available"] = "No Chart Available";

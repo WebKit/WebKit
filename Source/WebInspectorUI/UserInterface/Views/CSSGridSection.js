@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: <https://webkit.org/b/152269> convert `WI.CSSGridSection` to be a subclass of `WI.DetailsSectionRow`
+
 WI.CSSGridSection = class CSSGridSection extends WI.View
 {
     constructor()
@@ -35,22 +37,26 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         this._checkboxElementByNodeMap = new WeakMap;
     }
 
+    // Public
+
+    set gridNodeSet(value)
+    {
+        this._gridNodeSet = value;
+        this.needsLayout();
+    }
+
     // Protected
 
     attached()
     {
         super.attached();
 
-        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayStateChanged, this);
         WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayStateChanged, this);
-
-        this._refreshGridNodeSet();
     }
 
     detached()
     {
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayStateChanged, this);
         WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayStateChanged, this);
 
@@ -122,22 +128,5 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             return;
 
         checkboxElement.checked = event.type === WI.OverlayManager.Event.GridOverlayShown;
-    }
-
-    _handleLayoutContextTypeChanged(event)
-    {
-        let domNode = event.target;
-        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
-            this._gridNodeSet.add(domNode);
-        else
-            this._gridNodeSet.delete(domNode);
-
-        this.needsLayout();
-    }
-
-    _refreshGridNodeSet()
-    {
-        this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
-        this.needsLayout();
     }
 };
