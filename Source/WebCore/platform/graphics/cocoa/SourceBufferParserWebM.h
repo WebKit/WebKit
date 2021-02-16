@@ -30,10 +30,10 @@
 #include "SourceBufferParser.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <CoreMedia/CMTime.h>
+#include <common/vp9_header_parser.h>
 #include <pal/spi/cf/CoreMediaSPI.h>
 #include <webm/callback.h>
 #include <webm/status.h>
-#include <webm/vp9_header_parser.h>
 #include <wtf/Box.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>

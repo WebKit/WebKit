@@ -37,7 +37,7 @@
 #import "VideoConfiguration.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <JavaScriptCore/DataView.h>
-#import <webm/vp9_header_parser.h>
+#import <common/vp9_header_parser.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
