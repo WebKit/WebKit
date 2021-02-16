@@ -80,8 +80,11 @@
     (literal "/dev/autofs_nowait")
     (literal "/dev/random")
     (literal "/dev/urandom")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
     (literal "/private/etc/master.passwd")
-    (literal "/private/etc/passwd"))
+    (literal "/private/etc/passwd")
+#endif
+)
 
 (allow file-read*
        file-write-data

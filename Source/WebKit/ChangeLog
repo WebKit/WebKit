@@ -1,3 +1,17 @@
+2021-02-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unneeded sandbox access to some file paths
+        https://bugs.webkit.org/show_bug.cgi?id=221946
+        <rdar://problem/62865856>
+
+        Reviewed by Per Arne Vollan.
+
+        Block access to /etc/passwd now that none of WebContent's dependencies
+        expect access.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-16  Megan Gardner  <megan_gardner@apple.com>
 
         Change App Highlights API to operate in terms of a single serialized highlight at a time

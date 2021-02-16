@@ -362,7 +362,6 @@
   (literal "/private/etc/fstab"
            "/private/etc/hosts"
            "/private/etc/group"
-           "/private/etc/passwd"
            "/private/etc/protocols"
            "/private/etc/services"))
 
