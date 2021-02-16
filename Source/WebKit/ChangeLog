@@ -1,3 +1,39 @@
+2021-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteAudioSourceProviderManager is accessed in non-thread-safe manner
+        https://bugs.webkit.org/show_bug.cgi?id=221894
+
+        Reviewed by Chris Dumez.
+
+        Remove call to Connection::removeWorkQueueMessageReceiver() from the destructor.
+        The message receive destination is still active during destructor,
+        so Connection might dispatch new message tasks during that time.
+        This causes ref of the instance already being destroyed, which
+        then causes the tasks to use deleted instance and then later
+        deleting it again.
+
+        Other subclasses call add...() correctly.
+        Other subclasses never call remove..(). Assert that the instances are
+        never destroyed, as to never leave a dangling reference in the connection.
+
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::~SecItemShimProxy):
+        * UIProcess/mac/SecItemShimProxy.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::~GPUProcessConnection):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::~RemoteAudioSourceProviderManager):
+        (WebKit::RemoteAudioSourceProviderManager::stopListeningForIPC):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.h:
+        * WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp:
+        (WebKit::WebInspectorInterruptDispatcher::~WebInspectorInterruptDispatcher):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::~PluginProcessConnectionManager):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::~EventDispatcher):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::~ViewUpdateDispatcher):
+
 2021-02-16  Youenn Fablet  <youenn@apple.com>
 
         Set a default path for device ID hash salts

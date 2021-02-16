@@ -43,6 +43,7 @@ class RemoteAudioSourceProviderManager : public IPC::Connection::WorkQueueMessag
 public:
     static Ref<RemoteAudioSourceProviderManager> create() { return adoptRef(*new RemoteAudioSourceProviderManager()); }
     ~RemoteAudioSourceProviderManager();
+    void stopListeningForIPC();
 
     void addProvider(Ref<RemoteAudioSourceProvider>&&);
     void removeProvider(WebCore::MediaPlayerIdentifier);

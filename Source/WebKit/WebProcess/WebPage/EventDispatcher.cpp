@@ -66,6 +66,7 @@ EventDispatcher::EventDispatcher()
 
 EventDispatcher::~EventDispatcher()
 {
+    ASSERT_NOT_REACHED();
 }
 
 #if ENABLE(SCROLLING_THREAD)

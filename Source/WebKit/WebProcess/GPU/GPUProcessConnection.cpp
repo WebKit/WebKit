@@ -88,6 +88,10 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectio
 GPUProcessConnection::~GPUProcessConnection()
 {
     m_connection->invalidate();
+#if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
+    if (m_audioSourceProviderManager)
+        m_audioSourceProviderManager->stopListeningForIPC();
+#endif
 }
 
 void GPUProcessConnection::didClose(IPC::Connection&)

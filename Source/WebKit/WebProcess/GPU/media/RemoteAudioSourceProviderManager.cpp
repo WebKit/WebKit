@@ -45,6 +45,11 @@ RemoteAudioSourceProviderManager::RemoteAudioSourceProviderManager()
 
 RemoteAudioSourceProviderManager::~RemoteAudioSourceProviderManager()
 {
+    ASSERT(!m_connection);
+}
+
+void RemoteAudioSourceProviderManager::stopListeningForIPC()
+{
     setConnection(nullptr);
 }
 

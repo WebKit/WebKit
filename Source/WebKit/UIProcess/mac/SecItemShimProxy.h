@@ -43,6 +43,7 @@ public:
 
 private:
     SecItemShimProxy();
+    ~SecItemShimProxy();
 
     // IPC::Connection::WorkQueueMessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
