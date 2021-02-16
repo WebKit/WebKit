@@ -1,3 +1,17 @@
+2021-02-16  Sam Weinig  <weinig@apple.com>
+
+        lab() and lch() are not clamping out of bounds values at parse time
+        https://bugs.webkit.org/show_bug.cgi?id=221947
+
+        Reviewed by Simon Fraser.
+
+        The model level assertions caught this (yay). The spec requires that we
+        clamp negative lightness values to 0 for lab(), lch() and color(lab)
+        and negative chroma values to 0 for lch().
+
+        * fast/css/parsing-lab-colors-expected.txt:
+        * fast/css/parsing-lab-colors.html:
+
 2021-02-16  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/in-app-browser-privacy convert PHP to Python

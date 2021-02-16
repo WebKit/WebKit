@@ -926,7 +926,9 @@ static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserConte
     if (!args.atEnd())
         return { };
 
-    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(*aValue), static_cast<float>(*bValue), static_cast<float>(*alpha) };
+    auto normalizedLightness = std::max(0.0, *lightness);
+
+    return Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(*aValue), static_cast<float>(*bValue), static_cast<float>(*alpha) };
 }
 
 static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -953,9 +955,11 @@ static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserConte
     if (!args.atEnd())
         return { };
 
+    auto normalizedLightness = std::max(0.0, *lightness);
+    auto normalizedChroma = std::max(0.0, *chroma);
     auto normalizedHue = normalizeHue(*hue);
 
-    return convertColor<Lab<float>>(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(*chroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) });
+    return convertColor<Lab<float>>(LCHA<float> { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) });
 }
 
 template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
@@ -1005,7 +1009,9 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
     if (!alpha)
         return { };
 
-    return Lab<float> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) };
+    auto normalizedLightness = std::max(0.0, channels[0]);
+
+    return Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) };
 }
 
 static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)

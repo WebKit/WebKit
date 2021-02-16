@@ -15,6 +15,9 @@ PASS computedStyle("background-color", "lab(50% -200 200)") is "lab(50% -200 200
 PASS computedStyle("background-color", "lab(0% 0 0 / -10%)") is "lab(0% 0 0 / 0)"
 PASS computedStyle("background-color", "lab(0% 0 0 / 110%)") is "lab(0% 0 0)"
 PASS computedStyle("background-color", "lab(0% 0 0 / 300%)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "lab(-40% 0 0)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "lab(50% -20 0)") is "lab(50% -20 0)"
+PASS computedStyle("background-color", "lab(50% 0 -20)") is "lab(50% 0 -20)"
 
 lch()
 PASS computedStyle("background-color", "lch(0% 0 0deg)") is "lab(0% 0 0)"
@@ -30,6 +33,8 @@ PASS computedStyle("background-color", "lch(10% 20 380deg)") is "lab(10% 18.7938
 PASS computedStyle("background-color", "lch(10% 20 -340deg)") is "lab(10% 18.793852 6.8404026)"
 PASS computedStyle("background-color", "lch(10% 20 740deg)") is "lab(10% 18.793852 6.8404026)"
 PASS computedStyle("background-color", "lch(10% 20 -700deg)") is "lab(10% 18.793852 6.8404026)"
+PASS computedStyle("background-color", "lch(-40% 0 0)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "lch(20% -20 0)") is "lab(20% 0 0)"
 PASS computedStyle("background-color", "lch(0% 0 0 / 0.5)") is "lab(0% 0 0 / 0.5)"
 PASS computedStyle("background-color", "lch(10% 20 20 / 110%)") is "lab(10% 18.793852 6.8404026)"
 PASS computedStyle("background-color", "lch(10% 20 -700)") is "lab(10% 18.793852 6.8404026)"
@@ -52,6 +57,9 @@ PASS computedStyle("background-color", "color(lab)") is "lab(0% 0 0)"
 PASS computedStyle("background-color", "color(lab 50% -200 / 0.5)") is "lab(50% -200 0 / 0.5)"
 PASS computedStyle("background-color", "color(lab 50% / 0.5)") is "lab(50% 0 0 / 0.5)"
 PASS computedStyle("background-color", "color(lab / 0.5)") is "lab(0% 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab -40% 0 0)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -20 0)") is "lab(50% -20 0)"
+PASS computedStyle("background-color", "color(lab 50% 0 -20)") is "lab(50% 0 -20)"
 
 Test invalid values
 PASS computedStyle("background-color", "lab(0 0 0)") is "rgba(0, 0, 0, 0)"

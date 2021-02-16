@@ -46,6 +46,9 @@
     testComputed("background-color", "lab(0% 0 0 / -10%)", "lab(0% 0 0 / 0)");
     testComputed("background-color", "lab(0% 0 0 / 110%)", "lab(0% 0 0)");
     testComputed("background-color", "lab(0% 0 0 / 300%)", "lab(0% 0 0)");
+    testComputed("background-color", "lab(-40% 0 0)", "lab(0% 0 0)");
+    testComputed("background-color", "lab(50% -20 0)", "lab(50% -20 0)");
+    testComputed("background-color", "lab(50% 0 -20)", "lab(50% 0 -20)");
 
     debug('');
     debug('lch()');
@@ -62,6 +65,8 @@
     testComputed("background-color", "lch(10% 20 -340deg)", "lab(10% 18.793852 6.8404026)");
     testComputed("background-color", "lch(10% 20 740deg)", "lab(10% 18.793852 6.8404026)");
     testComputed("background-color", "lch(10% 20 -700deg)", "lab(10% 18.793852 6.8404026)");
+    testComputed("background-color", "lch(-40% 0 0)", "lab(0% 0 0)");
+    testComputed("background-color", "lch(20% -20 0)", "lab(20% 0 0)");
     // hue (the third argument) can be either an angle or number, with number interpreted as degrees.
     testComputed("background-color", "lch(0% 0 0 / 0.5)", "lab(0% 0 0 / 0.5)"); 
     testComputed("background-color", "lch(10% 20 20 / 110%)", "lab(10% 18.793852 6.8404026)");
@@ -86,6 +91,9 @@
     testComputed("background-color", "color(lab 50% -200 / 0.5)", "lab(50% -200 0 / 0.5)");
     testComputed("background-color", "color(lab 50% / 0.5)", "lab(50% 0 0 / 0.5)");
     testComputed("background-color", "color(lab / 0.5)", "lab(0% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab -40% 0 0)", "lab(0% 0 0)");
+    testComputed("background-color", "color(lab 50% -20 0)", "lab(50% -20 0)");
+    testComputed("background-color", "color(lab 50% 0 -20)", "lab(50% 0 -20)");
 
     debug('');
     debug('Test invalid values');
