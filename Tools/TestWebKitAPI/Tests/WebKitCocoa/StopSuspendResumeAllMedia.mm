@@ -29,7 +29,6 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-#import <WebKit/WKMediaPlaybackState.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -53,7 +52,7 @@ TEST(WKWebView, StopAllMediaPlayback)
 
     __block bool didPause = false;
     [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
-    [webView pauseAllMediaPlayback:nil];
+    [webView pauseAllMediaPlaybackWithCompletionHandler:nil];
     TestWebKitAPI::Util::run(&didPause);
 }
 
@@ -73,7 +72,7 @@ TEST(WKWebView, SuspendResumeAllMediaPlayback)
 
     __block bool didPause = false;
     [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
-    [webView suspendAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:nil];
     TestWebKitAPI::Util::run(&didPause);
 
     __block bool didReject = false;
@@ -83,7 +82,7 @@ TEST(WKWebView, SuspendResumeAllMediaPlayback)
 
     didBeginPlaying = false;
     [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
-    [webView resumeAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:NO completionHandler:nil];
     TestWebKitAPI::Util::run(&didBeginPlaying);
 }
 
@@ -103,7 +102,7 @@ TEST(WKWebView, SuspendResumeAllMediaPlaybackMultipleTimes)
 
     __block bool didPause = false;
     [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
-    [webView suspendAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:nil];
     TestWebKitAPI::Util::run(&didPause);
 
     __block bool didReject = false;
@@ -113,13 +112,13 @@ TEST(WKWebView, SuspendResumeAllMediaPlaybackMultipleTimes)
 
     // Suspend again to increment the counter.
     __block bool isDone = false;
-    [webView suspendAllMediaPlayback:^{
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:^{
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;
-    [webView resumeAllMediaPlayback:^{
+    [webView setAllMediaPlaybackSuspended:NO completionHandler:^{
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -132,7 +131,7 @@ TEST(WKWebView, SuspendResumeAllMediaPlaybackMultipleTimes)
 
     didBeginPlaying = false;
     [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
-    [webView resumeAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:NO completionHandler:nil];
     TestWebKitAPI::Util::run(&didBeginPlaying);
 }
 
@@ -152,11 +151,11 @@ TEST(WKWebView, CheckMediaPlaybackSuspended)
 
     __block bool didPause = false;
     [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
-    [webView suspendAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:nil];
     TestWebKitAPI::Util::run(&didPause);
 
     __block bool isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStateSuspended);
         isDone = true;
     }];
@@ -164,11 +163,11 @@ TEST(WKWebView, CheckMediaPlaybackSuspended)
 
     didBeginPlaying = false;
     [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
-    [webView resumeAllMediaPlayback:nil];
+    [webView setAllMediaPlaybackSuspended:NO completionHandler:nil];
     TestWebKitAPI::Util::run(&didBeginPlaying);
     
     isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStatePlaying);
         isDone = true;
     }];
@@ -183,7 +182,7 @@ TEST(WKWebView, CheckMediaPlaybackExists)
     [webView synchronouslyLoadHTMLString:@"start network process"];
 
     __block bool isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStateNone);
         isDone = true;
     }];
@@ -192,7 +191,7 @@ TEST(WKWebView, CheckMediaPlaybackExists)
     [webView synchronouslyLoadHTMLString:@"<video src=\"video-with-audio.mp4\" webkit-playsinline></video>"];
 
     isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStatePlaying);
         isDone = true;
     }];
@@ -200,7 +199,7 @@ TEST(WKWebView, CheckMediaPlaybackExists)
     
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStateNone);
         isDone = true;
     }];
@@ -222,7 +221,7 @@ TEST(WKWebView, CheckMediaPlaybackPaused)
     TestWebKitAPI::Util::run(&didBeginPlaying);
 
     __block bool isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_EQ(state, WKMediaPlaybackStatePlaying);
         isDone = true;
     }];
@@ -230,11 +229,11 @@ TEST(WKWebView, CheckMediaPlaybackPaused)
     
     __block bool didPause = false;
     [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
-    [webView pauseAllMediaPlayback:nil];
+    [webView pauseAllMediaPlaybackWithCompletionHandler:nil];
     TestWebKitAPI::Util::run(&didPause);
     
     isDone = false;
-    [webView requestMediaPlaybackState:^(WKMediaPlaybackState state) {
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState state) {
         EXPECT_TRUE(WKMediaPlaybackStatePaused);
         isDone = true;
     }];

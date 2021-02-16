@@ -1,3 +1,49 @@
+2021-02-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up WKWebView media API
+        https://bugs.webkit.org/show_bug.cgi?id=221929
+        <rdar://problem/73460121>
+
+        Reviewed by Youenn Fablet.
+
+        A few fixes that came from API review:
+
+        1) Change closeAllMediaPresentations to be
+        closeAllMediaPresentationsWithCompletionHandler. Ditto for
+        pauseAllMediaPlayback and requestMediaPlaybackState. This leads to
+        better Swift imports.
+
+        2) Combine suspendAllMediaPlayback and resumeAllMediaPlayback into a
+        single setAllMediaPlaybackSuspended:completionHandler function which
+        takes a boolean. This reinforces the relationship between
+        suspend/resume and differentiates them from pause.
+
+        And a few other drive-by fixes, like moving WKMediaPlaybackState to
+        the WKWebView class because it is unlikely to be used outside of that
+        context, changing NSUInteger -> NSInteger, and changing the ordering
+        of the WKMediaPlaybackState enum to be more natural.
+
+        No new tests. No behavior change. Covered by existing API tests.
+
+        * UIProcess/API/Cocoa/WKMediaPlaybackState.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeAllMediaPresentationsWithCompletionHandler:]):
+        (-[WKWebView pauseAllMediaPlaybackWithCompletionHandler:]):
+        (-[WKWebView setAllMediaPlaybackSuspended:completionHandler:]):
+        (toWKMediaPlaybackState):
+        (-[WKWebView requestMediaPlaybackStateWithCompletionHandler:]):
+        (-[WKWebView _closeAllMediaPresentations]):
+        (-[WKWebView _stopAllMediaPlayback]):
+        (-[WKWebView _suspendAllMediaPlayback]):
+        (-[WKWebView _resumeAllMediaPlayback]):
+        (-[WKWebView closeAllMediaPresentations:]): Deleted.
+        (-[WKWebView pauseAllMediaPlayback:]): Deleted.
+        (-[WKWebView suspendAllMediaPlayback:]): Deleted.
+        (-[WKWebView resumeAllMediaPlayback:]): Deleted.
+        (-[WKWebView requestMediaPlaybackState:]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable JITCage on macOS

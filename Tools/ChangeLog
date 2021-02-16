@@ -1,3 +1,18 @@
+2021-02-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up WKWebView media API
+        https://bugs.webkit.org/show_bug.cgi?id=221929
+        <rdar://problem/73460121>
+
+        Reviewed by Youenn Fablet.
+
+        Update naming.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+
 2021-02-16  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Need new user agent quirk for Google Docs and Google Drive

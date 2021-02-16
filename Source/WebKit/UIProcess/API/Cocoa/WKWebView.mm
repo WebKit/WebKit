@@ -67,7 +67,6 @@
 #import "WKFrameInfoPrivate.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
-#import "WKMediaPlaybackState.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
@@ -917,7 +916,7 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
+- (void)closeAllMediaPresentationsWithCompletionHandler:(void (^)(void))completionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
@@ -933,7 +932,7 @@ static bool validateArgument(id argument)
 #endif
 }
 
-- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+- (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^)(void))completionHandler
 {
     if (!completionHandler) {
         _page->pauseAllMediaPlayback([] { });
@@ -943,19 +942,13 @@ static bool validateArgument(id argument)
     _page->pauseAllMediaPlayback(makeBlockPtr(completionHandler));
 }
 
-- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+- (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^)(void))completionHandler
 {
-    if (!completionHandler) {
-        _page->suspendAllMediaPlayback([] { });
-        return;
-    }
-    _page->suspendAllMediaPlayback(makeBlockPtr(completionHandler));
-}
+    if (!completionHandler)
+        completionHandler = [] { };
 
-- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
-{
-    if (!completionHandler) {
-        _page->resumeAllMediaPlayback([] { });
+    if (suspended) {
+        _page->suspendAllMediaPlayback(makeBlockPtr(completionHandler));
         return;
     }
     _page->resumeAllMediaPlayback(makeBlockPtr(completionHandler));
@@ -966,12 +959,12 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     switch (mediaPlaybackState) {
     case WebKit::MediaPlaybackState::NoMediaPlayback:
         return WKMediaPlaybackStateNone;
+    case WebKit::MediaPlaybackState::MediaPlaybackPlaying:
+        return WKMediaPlaybackStatePlaying;
     case WebKit::MediaPlaybackState::MediaPlaybackPaused:
         return WKMediaPlaybackStatePaused;
     case WebKit::MediaPlaybackState::MediaPlaybackSuspended:
         return WKMediaPlaybackStateSuspended;
-    case WebKit::MediaPlaybackState::MediaPlaybackPlaying:
-        return WKMediaPlaybackStatePlaying;
     default:
         break;
     }
@@ -979,7 +972,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     return WKMediaPlaybackStateNone;
 }
 
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+- (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler
 {
     if (!completionHandler)
         return;
@@ -2012,7 +2005,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
-    [self closeAllMediaPresentations:nil];
+    [self closeAllMediaPresentationsWithCompletionHandler:nil];
 }
 
 - (void)_stopMediaCapture
@@ -2022,17 +2015,17 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_stopAllMediaPlayback
 {
-    [self pauseAllMediaPlayback:nil];
+    [self pauseAllMediaPlaybackWithCompletionHandler:nil];
 }
 
 - (void)_suspendAllMediaPlayback
 {
-    [self suspendAllMediaPlayback:nil];
+    [self setAllMediaPlaybackSuspended:YES completionHandler:nil];
 }
 
 - (void)_resumeAllMediaPlayback
 {
-    [self resumeAllMediaPlayback:nil];
+    [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
 - (void)_restoreAppHighlights:(NSData *)data
