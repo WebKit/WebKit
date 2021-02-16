@@ -1,5 +1,14 @@
 2021-02-16  Chris Lord  <clord@igalia.com>
 
+        [GLIB] Many service worker tests unexpectedly pass consistently
+        https://bugs.webkit.org/show_bug.cgi?id=221954
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations: Remove a bunch of failure expectations in service worker tests
+
+2021-02-16  Chris Lord  <clord@igalia.com>
+
         [GTK][WPE] tex-image-and-sub-image-2d-with-video tests pass unexpectedly
         https://bugs.webkit.org/show_bug.cgi?id=221951
 
