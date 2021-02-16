@@ -13,6 +13,10 @@ else
 	WEBINSPECTORUI_MODULE = WebInspectorUI
 endif
 
+ifeq (iosmac,$(SDK_VARIANT))
+	WEBINSPECTORUI_MODULE =
+endif
+
 MODULES = bmalloc WTF JavaScriptCore ThirdParty WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit
 
 define build_target_for_each_module

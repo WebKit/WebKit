@@ -1,3 +1,14 @@
+2021-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        Local macCatalyst builds should not build WebInspectorUI
+        https://bugs.webkit.org/show_bug.cgi?id=221992
+
+        Reviewed by Wenson Hsieh.
+
+        * Source/Makefile:
+        This project is not used in macCatalyst, and is not even built in production builds.
+        We should stop building it in local release/debug builds as well.
+
 2021-02-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
