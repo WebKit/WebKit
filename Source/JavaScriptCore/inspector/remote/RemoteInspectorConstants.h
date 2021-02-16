@@ -57,6 +57,7 @@
 #define WIRApplicationDictionaryKey             @"WIRApplicationDictionaryKey"
 #define WIRMessageDataKey                       @"WIRMessageDataKey"
 #define WIRApplicationGetListingMessage         @"WIRApplicationGetListingMessage"
+#define WIRApplicationWakeUpDebuggablesMessage  @"WIRApplicationWakeUpDebuggablesMessage"
 #define WIRIndicateMessage                      @"WIRIndicateMessage"
 #define WIRIndicateEnabledKey                   @"WIRIndicateEnabledKey"
 #define WIRSenderKey                            @"WIRSenderKey"

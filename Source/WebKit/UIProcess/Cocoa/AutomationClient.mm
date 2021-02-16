@@ -46,6 +46,7 @@ AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomation
 {
     m_delegateMethods.allowsRemoteAutomation = [delegate respondsToSelector:@selector(_processPoolAllowsRemoteAutomation:)];
     m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPool:didRequestAutomationSessionWithIdentifier:configuration:)];
+    m_delegateMethods.requestedDebuggablesToWakeUp = [delegate respondsToSelector:@selector(_processPoolDidRequestInspectorDebuggablesToWakeUp:)];
     m_delegateMethods.browserNameForAutomation = [delegate respondsToSelector:@selector(_processPoolBrowserNameForAutomation:)];
     m_delegateMethods.browserVersionForAutomation = [delegate respondsToSelector:@selector(_processPoolBrowserVersionForAutomation:)];
 
@@ -89,6 +90,16 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     RunLoop::main().dispatch([this, requestedSessionIdentifier = retainPtr(requestedSessionIdentifier), configuration = retainPtr(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
             [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
+    });
+}
+
+// FIXME: Consider renaming AutomationClient and _WKAutomationDelegate to _WKInspectorDelegate since it isn't only used for automation now.
+// http://webkit.org/b/221933
+void AutomationClient::requestedDebuggablesToWakeUp()
+{
+    RunLoop::main().dispatch([this] {
+        if (m_delegateMethods.requestedDebuggablesToWakeUp)
+            [m_delegate.get() _processPoolDidRequestInspectorDebuggablesToWakeUp:m_processPool];
     });
 }
 

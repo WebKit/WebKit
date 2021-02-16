@@ -1,3 +1,17 @@
+2021-02-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add a way to wake up debuggables to the remote inspector protocol
+        https://bugs.webkit.org/show_bug.cgi?id=221871
+        rdar://70351644
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::AutomationClient): Check if the delegate responds to new method.
+        (WebKit::AutomationClient::requestedDebuggablesToWakeUp): Added. Call new process pool delegate method.
+
 2021-02-15  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Ensure that no image decoders run in the GPU Process
