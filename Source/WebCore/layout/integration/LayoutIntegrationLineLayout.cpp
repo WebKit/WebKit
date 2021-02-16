@@ -216,7 +216,7 @@ void LineLayout::constructContent()
 {
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
-    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
+    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow(), m_boxTree };
     inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
     ASSERT(m_inlineContent);
 

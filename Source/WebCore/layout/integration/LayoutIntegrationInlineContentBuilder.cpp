@@ -150,9 +150,10 @@ BidiRun::BidiRun(unsigned start, unsigned end, BidiContext* context, UCharDirect
 }
 #endif
 
-InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow)
+InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
     : m_layoutState(layoutState)
     , m_blockFlow(blockFlow)
+    , m_boxTree(boxTree)
 {
 }
 
@@ -319,9 +320,26 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
-        // Collect ink overflow from runs.
-        while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
-            lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
+        // Collect overflow from runs.
+        for (; runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex; ++runIndex) {
+            auto& run = runs[runIndex];
+            lineInkOverflowRect.unite(run.inkOverflow());
+
+            auto& layoutBox = run.layoutBox();
+            if (!layoutBox.isReplacedBox())
+                continue;
+
+            // Similar to InlineFlowBox::addReplacedChildOverflow.
+            auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+            if (!box.hasSelfPaintingLayer()) {
+                auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
+                childInkOverflow.move(run.rect().x(), run.rect().y());
+                lineInkOverflowRect.unite(childInkOverflow);
+            }
+            auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
+            childScrollableOverflow.move(run.rect().x(), run.rect().y());
+            scrollableOverflowRect.unite(childScrollableOverflow);
+        }
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
         while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
             auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
