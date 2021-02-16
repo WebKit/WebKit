@@ -1,3 +1,15 @@
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        Enable JIT_CAGE when macOS is 120000 or higher with ARM64E.
+
+        * wtf/PlatformEnable.h:
+
 2021-02-15  Per Arne  <pvollan@apple.com>
 
         [macOS] Close XPC connections before entering sandbox

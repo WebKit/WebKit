@@ -1,3 +1,22 @@
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        We enable JITCage too on macOS if it is ARM64E.
+        We need to add this entitlement only when building it on macOS 120000 or higher version.
+        Otherwise, we cannot launch the process. This means that we need to dynamically generate entitlements file
+        because we must not attach this entitlement when building JSC for non 120000 macOS.
+
+        We also remove install_name for jsc binary because it broke codesigning. Previously, it was OK since we didn't
+        have com.apple.private.xxx, but now this broken codesigning makes JSC binary unlaunchable.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/process-entitlements.sh:
+
 2021-02-16  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit even more

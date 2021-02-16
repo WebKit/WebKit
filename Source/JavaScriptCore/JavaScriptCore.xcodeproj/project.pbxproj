@@ -11279,7 +11279,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}\"\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\n";
+			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}\"\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\n";
 		};
 		65788AA018B409EB00C189FF /* Offline Assemble */ = {
 			isa = PBXShellScriptBuildPhase;

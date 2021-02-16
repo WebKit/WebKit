@@ -12,11 +12,26 @@ function plistbuddy()
 function mac_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+        then
+            plistbuddy Add :com.apple.private.securejit bool YES
+        fi
+    fi
 }
 
 function mac_process_testapi_entitlements()
 {
-    true
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+        plistbuddy Add :com.apple.rootless.storage.JavaScriptCore bool YES
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+        then
+            plistbuddy Add :com.apple.private.securejit bool YES
+        fi
+    fi
 }
 
 # ========================================
@@ -26,12 +41,20 @@ function mac_process_testapi_entitlements()
 function maccatalyst_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+    then
+        plistbuddy Add :com.apple.private.securejit bool YES
+    fi
 }
 
 function maccatalyst_process_testapi_entitlements()
 {
     plistbuddy Add :com.apple.rootless.storage.JavaScriptCore bool YES
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+    then
+        plistbuddy Add :com.apple.private.securejit bool YES
+    fi
 }
 
 # ========================================
