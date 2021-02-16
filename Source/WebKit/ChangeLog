@@ -1,3 +1,17 @@
+2021-02-15  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r272867.
+
+        Broke 50+ fast/layoutformattingcontext/ tests on Mac Debug WK2
+
+        Reverted changeset:
+
+        "Page scrolling by wheel events doesn't work in non-AC mode
+        pages if Hardware Acceleration Policy is changed dynamically
+        from "always" to "never""
+        https://bugs.webkit.org/show_bug.cgi?id=221067
+        https://commits.webkit.org/r272867
+
 2021-02-15  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Connect Touch Bar to MediaSession

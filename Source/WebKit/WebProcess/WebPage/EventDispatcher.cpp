@@ -121,14 +121,12 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 #if ENABLE(SCROLLING_THREAD)
-    do {
+    processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
         LockHolder locker(m_scrollingTreesMutex);
 
         auto scrollingTree = m_scrollingTrees.get(pageID);
-        if (!scrollingTree) {
-            dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
-            break;
-        }
+        if (!scrollingTree)
+            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
         
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
@@ -161,7 +159,13 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
             // respond to the UI process that the event was handled.
             protectedThis->sendDidReceiveEvent(pageID, wheelEvent.type(), result.wasHandled);
         });
-    } while (false);
+
+        return processingSteps;
+    }();
+
+    auto scrollingTree = m_scrollingTrees.get(pageID);
+    if (!scrollingTree)
+        dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
 #else
     UNUSED_PARAM(canRubberBandAtLeft);
     UNUSED_PARAM(canRubberBandAtRight);
