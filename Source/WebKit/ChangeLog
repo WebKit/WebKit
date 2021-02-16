@@ -1,5 +1,18 @@
 2021-02-15  Per Arne  <pvollan@apple.com>
 
+        [macOS] Close XPC connections before entering sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=221905
+        <rdar://problem/70359582>
+
+        Reviewed by Brent Fulgham.
+
+        XPC connections that are now allowed in the sandbox should be closed before entering the sandbox.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+
+2021-02-15  Per Arne  <pvollan@apple.com>
+
         Remove 'com.apple.powerlog.plxpclogger.xpc' from WebKit sandboxes
         https://bugs.webkit.org/show_bug.cgi?id=221840
         <rdar://problem/73579040>

@@ -62,6 +62,11 @@
 #import <rootless.h>
 #endif
 
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
+SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
+
 #if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
 #else
@@ -690,6 +695,8 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
 #else
 #error "Unknown architecture."
 #endif
+    if (mbr_close_connectionsPtr())
+        mbr_close_connectionsPtr()();
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
