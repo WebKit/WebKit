@@ -3386,7 +3386,6 @@
 		144CA34F221F037900817789 /* CachedBytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedBytecode.h; sourceTree = "<group>"; };
 		1450FA1D2357BEC40093CD4D /* WasmLLIntTierUpCounter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmLLIntTierUpCounter.cpp; sourceTree = "<group>"; };
 		1450FA1E2357BEC40093CD4D /* WasmLLIntTierUpCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmLLIntTierUpCounter.h; sourceTree = "<group>"; };
-		145348572291737F00B1C2EB /* testapi.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = testapi.entitlements; sourceTree = "<group>"; };
 		145722851437E140005FDE26 /* StrongInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrongInlines.h; sourceTree = "<group>"; };
 		145C507F0D9DF63B0088F6B9 /* CallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallData.h; sourceTree = "<group>"; };
 		145FF2C6243BB99A00569E71 /* ECMAMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAMode.cpp; sourceTree = "<group>"; };
@@ -4098,7 +4097,6 @@
 		79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingProfiler.cpp; sourceTree = "<group>"; };
 		79D5CD591C1106A900CECA07 /* SamplingProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingProfiler.h; sourceTree = "<group>"; };
 		79D7B0E121152FD200FE7C64 /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
-		79D7B0E221152FD300FE7C64 /* allow-jit-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "allow-jit-macOS.entitlements"; sourceTree = "<group>"; };
 		79DAE2791E03C82200B526AA /* WasmExceptionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmExceptionType.h; sourceTree = "<group>"; };
 		79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasOwnPropertyCache.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
@@ -5168,8 +5166,10 @@
 		E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeRewriter.h; sourceTree = "<group>"; };
 		E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkedJSValueRefArray.h; sourceTree = "<group>"; };
 		E3D3515E241B89CF008DC16E /* MarkedJSValueRefArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedJSValueRefArray.cpp; sourceTree = "<group>"; };
+		E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestAPI.xcconfig; sourceTree = "<group>"; };
 		E3D877711E65C08900BE945A /* BytecodeDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeDumper.cpp; sourceTree = "<group>"; };
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
+		E3E9F8D525D7582F00F9F84B /* process-entitlements.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "process-entitlements.sh"; sourceTree = "<group>"; };
 		E3EE137421FBD43400D83C4B /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
 		E3EE137521FBD43400D83C4B /* ErrorType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorType.cpp; sourceTree = "<group>"; };
 		E3F2192F24C78829003AE453 /* IntlSegmentIteratorPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentIteratorPrototype.h; sourceTree = "<group>"; };
@@ -5547,9 +5547,7 @@
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
-				79D7B0E221152FD300FE7C64 /* allow-jit-macOS.entitlements */,
 				79D7B0E121152FD200FE7C64 /* entitlements.plist */,
-				145348572291737F00B1C2EB /* testapi.entitlements */,
 				1432EBD70A34CAD400717B9F /* API */,
 				9688CB120ED12B4E001D649F /* assembler */,
 				0FEC84B21BDACD5E0080FF74 /* b3 */,
@@ -6628,6 +6626,7 @@
 				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
 				5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */,
 				A1B89B88221E002A00EB4CEA /* SDKVariant.xcconfig */,
+				E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */,
 				BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */,
 				1C9051420BA9E8A70081E9D0 /* Version.xcconfig */,
 				37119A7720CCB5DC002C6DC9 /* WebKitTargetConditionals.xcconfig */,
@@ -8655,6 +8654,7 @@
 				9959E9291BD17FA0001AA413 /* jsmin.py */,
 				99DA00AD1BD5993E00F4575C /* lazywriter.py */,
 				A5EF13F71F0731B4000F0442 /* make-js-file-arrays.py */,
+				E3E9F8D525D7582F00F9F84B /* process-entitlements.sh */,
 				99DA00AE1BD5993E00F4575C /* UpdateContents.py */,
 				9959E92A1BD17FA0001AA413 /* xxd.pl */,
 			);
@@ -10412,6 +10412,7 @@
 				992F56B71E4E84B20035953B /* RemoteInspectorXPCConnection.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
+				FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */,
 				0F2C63AA1E4FA42E00C13839 /* RunningScope.h in Headers */,
 				70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
@@ -10561,7 +10562,6 @@
 				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
-				FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */,
 				79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */,
 				0F6C73511AC9F99F00BE1682 /* VariableWriteFireDetail.h in Headers */,
 				0FE0502D1AA9095600D33B33 /* VarOffset.h in Headers */,
@@ -10799,6 +10799,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14BD59D60A3E8FC900BAF59C /* Build configuration list for PBXNativeTarget "testapi" */;
 			buildPhases = (
+				E3D6F6EE25D78CF600C20EB4 /* Generate Entitlements */,
 				14BD59BC0A3E8F9000BAF59C /* Sources */,
 				14BD59BD0A3E8F9000BAF59C /* Frameworks */,
 				5366FDB222D5485B00BF94AF /* Copy Support Scripts */,
@@ -10920,6 +10921,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C276708902AFE008A9EFC /* Build configuration list for PBXNativeTarget "jsc" */;
 			buildPhases = (
+				E3D6F6ED25D78C0100C20EB4 /* Generate Entitlements */,
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
 				5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */,
@@ -11341,6 +11343,46 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
+		};
+		E3D6F6ED25D78C0100C20EB4 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		E3D6F6EE25D78CF600C20EB4 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -12076,21 +12118,21 @@
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -12471,7 +12513,7 @@
 		};
 		A76148420E6402F700E357FA /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Profiling;

@@ -1,3 +1,25 @@
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Dynamically generate entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=221944
+
+        Reviewed by Saam Barati.
+
+        This patch generates entitlements at compile time since we need to selectively add certain entitlements to binaries.
+        It follows r248164's way: we must not use CODE_SIGN_ENTITLEMENTS because XCode inserts implicit code-signing
+        and it breaks our pipeline. We need to disable this XCode's implicit behavior by setting CODE_SIGN_INJECT_BASE_ENTITLEMENTS.
+
+        And we also create TestAPI.xcconfig to apply generated entitlements only to testapi and jsc shell.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/TestAPI.xcconfig: Copied from Source/JavaScriptCore/Configurations/ToolExecutable.xcconfig.
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/process-entitlements.sh: Added.
+        * allow-jit-macOS.entitlements: Removed.
+        * testapi.entitlements: Removed.
+
 2021-02-15  Michael Saboff  <msaboff@apple.com>
 
         [ARM64] Change break instruction comment to indicate possible security failure
