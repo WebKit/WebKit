@@ -1459,7 +1459,6 @@
             "com.apple.diagnosticd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"
-            "com.apple.powerlog.plxpclogger.xpc"
             "com.apple.tccd"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete

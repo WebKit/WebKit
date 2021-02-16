@@ -444,10 +444,6 @@
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
 
-;; Power logging
-(allow mach-lookup
-    (global-name "com.apple.powerlog.plxpclogger.xpc")) ;;  <rdar://problem/36442803>
-
 ;; Silently deny unnecessary accesses caused by MessageUI framework.
 ;; This can be removed once <rdar://problem/47038102> is resolved.
 (deny file-read*

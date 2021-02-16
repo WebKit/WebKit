@@ -689,10 +689,6 @@
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
 
-;; Power logging
-(allow mach-lookup
-    (global-name "com.apple.powerlog.plxpclogger.xpc")) ;;  <rdar://problem/36442803>
-
 (mobile-preferences-read
     "com.apple.EmojiPreferences"
     ; <rdar://problem/8477596> com.apple.InputModePreferences

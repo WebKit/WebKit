@@ -654,7 +654,6 @@
     (allow mach-lookup
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")
-        (global-name "com.apple.powerlog.plxpclogger.xpc")
     )
 )
 
