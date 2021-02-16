@@ -4282,7 +4282,7 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
 ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandString, float argument)
 {
     PlatformMediaSession::RemoteControlCommandType command;
-    PlatformMediaSession::RemoteCommandArgument parameter { argument };
+    PlatformMediaSession::RemoteCommandArgument parameter { argument, { } };
 
     if (equalLettersIgnoringASCIICase(commandString, "play"))
         command = PlatformMediaSession::PlayCommand;

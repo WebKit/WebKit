@@ -175,7 +175,7 @@ private:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     // NowPlayingManager::Client
-    void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, Optional<double>) final;
+    void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
 
     RefPtr<Logger> m_logger;
 

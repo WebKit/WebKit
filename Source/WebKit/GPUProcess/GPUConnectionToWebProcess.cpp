@@ -361,9 +361,9 @@ void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplicatio
     gpuProcess().nowPlayingManager().setNowPlayingInfo(*this, WTFMove(nowPlayingInfo));
 }
 
-void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand { type, argument }, 0);
+    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand(type, argument), 0);
 }
 
 #if USE(AUDIO_SESSION)

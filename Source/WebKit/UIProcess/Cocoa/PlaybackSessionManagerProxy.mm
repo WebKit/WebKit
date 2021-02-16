@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,12 @@ void PlaybackSessionModelContext::removeClient(PlaybackSessionModelClient& clien
 {
     ASSERT(m_clients.contains(&client));
     m_clients.remove(&client);
+}
+
+void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    if (m_manager)
+        m_manager->sendRemoteCommand(m_contextId, command, argument);
 }
 
 void PlaybackSessionModelContext::play()
@@ -578,6 +584,12 @@ void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(PlaybackSessionContex
 {
     if (m_page)
         m_page->send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value));
+}
+
+void PlaybackSessionManagerProxy::sendRemoteCommand(PlaybackSessionContextIdentifier contextId, WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SendRemoteCommand(contextId, command, argument));
 }
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()

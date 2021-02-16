@@ -362,6 +362,12 @@ void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
         m_mediaElement->setPlayingOnSecondScreen(value);
 }
 
+void PlaybackSessionModelMediaElement::sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    if (m_mediaElement)
+        m_mediaElement->mediaSession().didReceiveRemoteControlCommand(command, argument);
+}
+
 void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)

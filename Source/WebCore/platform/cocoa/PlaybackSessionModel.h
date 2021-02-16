@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "PlatformMediaSession.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -61,6 +62,7 @@ public:
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;
     virtual void setPlayingOnSecondScreen(bool) = 0;
+    virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 

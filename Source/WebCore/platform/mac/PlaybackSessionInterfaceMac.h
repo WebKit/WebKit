@@ -68,6 +68,7 @@ public:
 
     void updatePlaybackControlsManagerCanTogglePictureInPicture();
 #endif
+    void willBeginScrubbing();
     void beginScrubbing();
     void endScrubbing();
 

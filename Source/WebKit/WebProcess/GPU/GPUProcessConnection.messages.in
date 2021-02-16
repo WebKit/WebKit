@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUProcessConnection WantsDispatchMessage {
-    DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+    DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSession::RemoteControlCommandType type, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -220,7 +220,7 @@ bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC:
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
 }

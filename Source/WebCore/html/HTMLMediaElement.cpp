@@ -7517,7 +7517,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
     UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
-    double offset = 15;
+    const double defaultSkipAmount = 15;
     switch (command) {
     case PlatformMediaSession::PlayCommand:
         play();
@@ -7540,19 +7540,15 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
         endScanning();
         break;
     case PlatformMediaSession::SkipForwardCommand:
-        if (argument)
-            offset = *argument;
-        handleSeekToPlaybackPosition(offset);
+        handleSeekToPlaybackPosition(argument.time ? argument.time.value() : defaultSkipAmount);
         break;
     case PlatformMediaSession::SkipBackwardCommand:
-        if (argument)
-            offset = *argument;
-        handleSeekToPlaybackPosition(0 - offset);
+        handleSeekToPlaybackPosition(0 - (argument.time ? argument.time.value() : defaultSkipAmount));
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
-        ASSERT(argument);
-        if (argument)
-            handleSeekToPlaybackPosition(*argument);
+        ASSERT(argument.time);
+        if (argument.time)
+            handleSeekToPlaybackPosition(argument.time.value());
         break;
     default:
         { } // Do nothing

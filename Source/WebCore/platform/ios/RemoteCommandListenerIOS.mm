@@ -58,7 +58,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PauseCommand, WTF::nullopt);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PauseCommand, { });
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -68,7 +68,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PlayCommand, WTF::nullopt);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PlayCommand, { });
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -78,7 +78,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand, WTF::nullopt);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand, { });
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -93,7 +93,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis, command] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(command, WTF::nullopt);
+            weakThis->m_client.didReceiveRemoteControlCommand(command, { });
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -108,7 +108,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis, command] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(command, WTF::nullopt);
+            weakThis->m_client.didReceiveRemoteControlCommand(command, { });
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -121,7 +121,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
             return MPRemoteCommandHandlerStatusCommandFailed;
 
         MPChangePlaybackPositionCommandEvent* seekEvent = static_cast<MPChangePlaybackPositionCommandEvent *>(event);
-        PlatformMediaSession::RemoteCommandArgument argument { [seekEvent positionTime] };
+        PlatformMediaSession::RemoteCommandArgument argument { [seekEvent positionTime], { } };
 
         callOnMainThread([weakThis, argument = WTFMove(argument)] {
             if (!weakThis)

@@ -1,3 +1,29 @@
+2021-02-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Connect Touch Bar to MediaSession
+        https://bugs.webkit.org/show_bug.cgi?id=221921
+        <rdar://problem/74363311>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didReceiveRemoteControlCommand):  PlatformMediaSession::RemoteCommandArgument
+        is a struct.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::sendRemoteCommand): 
+        (WebKit::PlaybackSessionManagerProxy::sendRemoteCommand):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveRemoteCommand):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::sendRemoteCommand):
+
 2021-02-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add a way to wake up debuggables to the remote inspector protocol
