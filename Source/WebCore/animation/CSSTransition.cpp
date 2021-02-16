@@ -41,7 +41,7 @@ Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, CSSProp
 {
     ASSERT(oldStyle);
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, *oldStyle, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
-    result->initialize(oldStyle, newStyle);
+    result->initialize(oldStyle, newStyle, nullptr);
     result->setTimingProperties(delay, duration);
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());

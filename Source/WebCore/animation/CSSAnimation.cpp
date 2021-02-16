@@ -36,10 +36,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimation);
 
-Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle)
 {
     auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation));
-    result->initialize(oldStyle, newStyle);
+    result->initialize(oldStyle, newStyle, parentElementStyle);
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());
 

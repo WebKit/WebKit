@@ -154,7 +154,7 @@ public:
 #endif
     bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
 
-    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
     bool animatesProperty(CSSPropertyID) const;
@@ -199,7 +199,7 @@ private:
     void computeSomeKeyframesUseStepsTimingFunction();
     void clearBlendingKeyframes();
     void updateBlendingKeyframes(RenderStyle&);
-    void computeCSSAnimationBlendingKeyframes(const RenderStyle&);
+    void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const RenderStyle* parentElementStyle);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);

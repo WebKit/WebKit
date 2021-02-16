@@ -200,7 +200,7 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
     return false;
 }
 
-void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleable, const RenderStyle* currentStyle, const RenderStyle& newStyle)
+void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleable, const RenderStyle* currentStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle)
 {
     auto& keyframeEffectStack = styleable.ensureKeyframeEffectStack();
 
@@ -250,7 +250,7 @@ void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleab
             }
 
             if (!foundMatchingAnimation)
-                newAnimations.add(CSSAnimation::create(styleable, currentAnimation, currentStyle, newStyle));
+                newAnimations.add(CSSAnimation::create(styleable, currentAnimation, currentStyle, newStyle, parentElementStyle));
         }
     }
 

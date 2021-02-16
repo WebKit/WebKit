@@ -827,7 +827,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
             keyframeList.addProperty(styleProperties->propertyAt(i).id());
 
         auto keyframeRule = StyleRuleKeyframe::create(WTFMove(styleProperties));
-        keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, &elementStyle, keyframeRule.ptr(), keyframeValue));
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, &elementStyle, nullptr, keyframeRule.ptr(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
 
@@ -985,16 +985,16 @@ void KeyframeEffect::checkForMatchingColorFilterFunctionLists()
     });
 }
 
-void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle)
 {
     ASSERT(is<DeclarativeAnimation>(animation()));
     if (is<CSSAnimation>(animation()))
-        computeCSSAnimationBlendingKeyframes(newStyle);
+        computeCSSAnimationBlendingKeyframes(newStyle, parentElementStyle);
     else if (is<CSSTransition>(animation()))
         computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
 }
 
-void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle)
+void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const RenderStyle* parentElementStyle)
 {
     ASSERT(is<CSSAnimation>(animation()));
     ASSERT(document());
@@ -1004,7 +1004,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(backingAnimation.name());
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, &unanimatedStyle, keyframeList);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, &unanimatedStyle, parentElementStyle, keyframeList);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList.keyframes()) {
@@ -1727,7 +1727,7 @@ OptionSet<AcceleratedActionApplicationResult> KeyframeEffect::applyPendingAccele
 
         KeyframeList explicitKeyframes(m_blendingKeyframes.animationName());
         explicitKeyframes.copyKeyframes(m_blendingKeyframes);
-        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle);
+        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle, nullptr);
         return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), explicitKeyframes) ? RunningAccelerated::Yes : RunningAccelerated::No;
     };
 
