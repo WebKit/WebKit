@@ -39,9 +39,8 @@ class WebInspectorProxy;
 class InspectorDelegate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorDelegate(_WKInspector *);
-
-    std::unique_ptr<API::InspectorClient> createInspectorClient();
+    InspectorDelegate(_WKInspector *, id <_WKInspectorDelegate>);
+    ~InspectorDelegate();
 
     RetainPtr<id <_WKInspectorDelegate>> delegate();
     void setDelegate(id <_WKInspectorDelegate>);

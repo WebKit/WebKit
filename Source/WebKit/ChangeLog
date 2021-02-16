@@ -1,3 +1,32 @@
+2021-02-16  BJ Burg  <bburg@apple.com>
+
+        REGRESSION(r266890): [Cocoa] Fix InspectorDelegate / API::InspectorClient leak
+        https://bugs.webkit.org/show_bug.cgi?id=221988
+        <rdar://73594555>
+
+        Reviewed by Devin Rousso.
+
+        There was a logic error introduced into the new delegate situation after
+        moving _WKInspectorDelegate from WKWebView to _WKInspector. When setting
+        .delegate to nil, we shouldn't allocate dummy API::InspectorClient/
+        InspectorDelegate instances. As written, these instances form their own retain
+        cycle and cause a leak if Web Inspector has been opened or if
+        WKWebView._inspector is accessed (which lazily creates the delegates).
+
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector setDelegate:]):
+        Adopt new constructor and pass in the ObjC delegate.
+
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.mm:
+        (WebKit::InspectorDelegate::InspectorDelegate):
+        (WebKit::InspectorDelegate::createInspectorClient): Deleted.
+        (WebKit::InspectorDelegate::setDelegate): Deleted.
+        Clean up this class so that we always receive the ObjC delegate
+        via the constructor. If a nil delegate is passed---for example, when
+        closing the WKWebView---then don't create an API::InspectorClient
+        and set the WebInspectorProxy's client to nullptr.
+
 2021-02-16  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unneeded sandbox access to some file paths
