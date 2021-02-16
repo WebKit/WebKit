@@ -1,3 +1,15 @@
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        libwebrtc installs some files into incorrect locations in /usr/local/include
+        https://bugs.webkit.org/show_bug.cgi?id=221534
+        <rdar://problem/74333613>
+
+        Reviewed by Eric Carlson.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Remove no longer needed private header copying.
+        Move vp9 header copying from common to webm.
+
 2021-02-15  Youenn Fablet  <youenn@apple.com>
 
         Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings

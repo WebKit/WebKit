@@ -6,20 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		5C63F6611E414AB6002CA531 /* Copy webrtc headers */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5C63F6621E414AB6002CA531 /* Build configuration list for PBXAggregateTarget "Copy webrtc headers" */;
-			buildPhases = (
-				5C63F6661E414ABA002CA531 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Copy webrtc headers";
-			productName = "Copy webrtc headers";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		410091CF242CFD6500C5EDA2 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A391FA1EFC493000C4516A /* internal.h */; };
 		410091D2242CFF6F00C5EDA2 /* gcm_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 410091D0242CFD8200C5EDA2 /* gcm_nohw.c */; };
@@ -1470,6 +1456,9 @@
 		415F1FB621272FBA00064CBF /* vad_with_level.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BE321272F85001D5D7B /* vad_with_level.h */; };
 		415F1FB721272FBA00064CBF /* vector_float_frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BDD21272F84001D5D7B /* vector_float_frame.h */; };
 		415F1FC62127308F00064CBF /* audio_state.cc in Sources */ = {isa = PBXBuildFile; fileRef = 415F1FC52127308E00064CBF /* audio_state.cc */; };
+		416008B425DBCEC300E892FE /* vp9_header_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
+		416008B525DBD3DE00E892FE /* vp9_header_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */; };
+		416008B625DBD45000E892FE /* vp9_header_parser.h in Copy common headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
 		416225D22169818100A91C9B /* video_decoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 416225CA2169817F00A91C9B /* video_decoder_factory.h */; };
 		416225D32169818100A91C9B /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 416225CB2169818000A91C9B /* video_frame_buffer.h */; };
 		416225D42169818100A91C9B /* video_encoder_factory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 416225CC2169818000A91C9B /* video_encoder_factory.mm */; };
@@ -2225,7 +2214,7 @@
 		41DB1A9424321614005AB8EA /* rtcstats_objects.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DB1A9324321614005AB8EA /* rtcstats_objects.cc */; };
 		41DDB24D21265BD700296D47 /* fixed_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24B21265BD700296D47 /* fixed_array.h */; };
 		41DDB24E21265BD700296D47 /* inlined_vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24C21265BD700296D47 /* inlined_vector.h */; };
-		41DDB25121265BE900296D47 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24F21265BE900296D47 /* optional.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41DDB25121265BE900296D47 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24F21265BE900296D47 /* optional.h */; };
 		41DDB26C212679D200296D47 /* string_builder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB268212679D100296D47 /* string_builder.h */; };
 		41DDB26D212679D200296D47 /* audio_format_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB269212679D100296D47 /* audio_format_to_string.h */; };
 		41DDB26E212679D200296D47 /* string_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DDB26A212679D200296D47 /* string_builder.cc */; };
@@ -3790,7 +3779,6 @@
 		CDEBB4CA24C01A0D00ADBD44 /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
 		CDEBB4D324C0C8CA00ADBD44 /* bit_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB45124C0191A00ADBD44 /* bit_utils.cc */; };
 		CDEBB4D424C0CB1000ADBD44 /* callback.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB48E24C0191A00ADBD44 /* callback.cc */; };
-		CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */; };
 		CDFD2FC524C4DAF70048DAC3 /* buffer_reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40D24C0191A00ADBD44 /* buffer_reader.h */; };
 		CDFD2FC624C4DAF70048DAC3 /* callback.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40E24C0191A00ADBD44 /* callback.h */; };
 		CDFD2FC724C4DAF70048DAC3 /* dom_types.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40B24C0191A00ADBD44 /* dom_types.h */; };
@@ -3801,7 +3789,6 @@
 		CDFD2FCC24C4DAF70048DAC3 /* reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40524C0191A00ADBD44 /* reader.h */; };
 		CDFD2FCD24C4DAF70048DAC3 /* status.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40624C0191A00ADBD44 /* status.h */; };
 		CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40824C0191A00ADBD44 /* webm_parser.h */; };
-		CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -3821,13 +3808,6 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		4105EB6B212E01D2008C0C20 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
-		};
 		411ED03F212E0811004320BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -3841,20 +3821,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 41F77D15215BE45E00E72967;
 			remoteInfo = yasm;
-		};
-		5C08848D1E4A97E300403995 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
-		};
-		5C0884D41E4A980100403995 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
 		};
 		5C0884DF1E4A982000403995 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3870,26 +3836,12 @@
 			remoteGlobalIDString = 5C0884D21E4A980100403995;
 			remoteInfo = libyuv;
 		};
-		5C0885431E4AA3B100403995 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
-		};
 		5C088C0C1E4AA3FD00403995 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5C0885371E4AA3B100403995;
 			remoteInfo = libwebrtcpcrtc;
-		};
-		5C11A0361E4577E1004F0987 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
 		};
 		5C11A13E1E45783A004F0987 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3898,33 +3850,12 @@
 			remoteGlobalIDString = 5C11A0341E4577E1004F0987;
 			remoteInfo = usrsctp;
 		};
-		5C4B49101E42C336002651C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
-		};
 		5C4B4AC61E42C58B002651C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5C4B490E1E42C336002651C8;
 			remoteInfo = opus;
-		};
-		5C63F6671E414B96002CA531 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
-		};
-		5C63FA7C1E418411002CA531 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
-			remoteInfo = "Copy webrtc headers";
 		};
 		5C63FC611E418449002CA531 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4119,10 +4050,10 @@
 		CDFD2FCF24C4DB0C0048DAC3 /* Copy common headers */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/common";
+			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/webm";
 			dstSubfolderSpec = 0;
 			files = (
-				CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */,
+				416008B625DBD45000E892FE /* vp9_header_parser.h in Copy common headers */,
 			);
 			name = "Copy common headers";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15625,6 +15556,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				416008B425DBCEC300E892FE /* vp9_header_parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17041,7 +16973,6 @@
 			);
 			dependencies = (
 				41BE7174215BF42300A7B196 /* PBXTargetDependency */,
-				4105EB6A212E01D2008C0C20 /* PBXTargetDependency */,
 			);
 			name = vpx;
 			productName = libwebrtc;
@@ -17078,7 +17009,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C08848C1E4A97E300403995 /* PBXTargetDependency */,
 			);
 			name = srtp;
 			productName = boringssl;
@@ -17098,7 +17028,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C0884D31E4A980100403995 /* PBXTargetDependency */,
 			);
 			name = yuv;
 			productName = boringssl;
@@ -17118,7 +17047,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C0885421E4AA3B100403995 /* PBXTargetDependency */,
 			);
 			name = webrtcpcrtc;
 			productName = libwebrtc;
@@ -17138,7 +17066,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C11A0351E4577E1004F0987 /* PBXTargetDependency */,
 			);
 			name = usrsctp;
 			productName = boringssl;
@@ -17158,7 +17085,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C4B490F1E42C336002651C8 /* PBXTargetDependency */,
 			);
 			name = opus;
 			productName = boringssl;
@@ -17178,7 +17104,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5C63FA7B1E418411002CA531 /* PBXTargetDependency */,
 			);
 			name = boringssl;
 			productName = boringssl;
@@ -17227,7 +17152,6 @@
 				5C11A13F1E45783A004F0987 /* PBXTargetDependency */,
 				5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */,
 				5C63FC621E418449002CA531 /* PBXTargetDependency */,
-				5C63F6681E414B96002CA531 /* PBXTargetDependency */,
 			);
 			name = libwebrtc;
 			productName = libwebrtc;
@@ -17247,10 +17171,6 @@
 					41F77D15215BE45E00E72967 = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Manual;
-					};
-					5C63F6611E414AB6002CA531 = {
-						CreatedOnToolsVersion = 8.3;
-						ProvisioningStyle = Automatic;
 					};
 					CDEBB11824C0187400ADBD44 = {
 						CreatedOnToolsVersion = 12.0;
@@ -17273,7 +17193,6 @@
 			projectRoot = "";
 			targets = (
 				FB39D0D01200F0E300088E69 /* libwebrtc */,
-				5C63F6611E414AB6002CA531 /* Copy webrtc headers */,
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
 				5C11A0341E4577E1004F0987 /* usrsctp */,
@@ -17306,19 +17225,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../../Tools/Scripts/check-for-inappropriate-objc-class-names WK_RTC || exit $?\nfi\n";
-		};
-		5C63F6661E414ABA002CA531 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "PRIVATE_HEADERS_FOLDER_PATH=usr/local/include\n\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"NO\" ]]; then\n    PRIVATE_HEADERS_PATH=\"${TARGET_BUILD_DIR%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nelse\n    PRIVATE_HEADERS_PATH=\"${DSTROOT}${INSTALL_PATH_PREFIX%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nfi;\n\nmkdir -p \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/webrtc\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/abseil-cpp/absl\" \"${PRIVATE_HEADERS_PATH}\"\n";
 		};
 		5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -18362,7 +18268,7 @@
 				CDEBB4C324C019C400ADBD44 /* var_int_parser.cc in Sources */,
 				CDEBB4B924C019C400ADBD44 /* virtual_block_parser.cc in Sources */,
 				CDEBB4C824C019C400ADBD44 /* void_parser.cc in Sources */,
-				CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */,
+				416008B525DBD3DE00E892FE /* vp9_header_parser.cc in Sources */,
 				CDEBB4BA24C019C400ADBD44 /* webm_parser.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -19497,11 +19403,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4105EB6A212E01D2008C0C20 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 4105EB6B212E01D2008C0C20 /* PBXContainerItemProxy */;
-		};
 		411ED040212E0811004320BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4105EB69212E01D2008C0C20 /* vpx */;
@@ -19511,16 +19412,6 @@
 			isa = PBXTargetDependency;
 			target = 41F77D15215BE45E00E72967 /* yasm */;
 			targetProxy = 41BE7173215BF42300A7B196 /* PBXContainerItemProxy */;
-		};
-		5C08848C1E4A97E300403995 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C08848D1E4A97E300403995 /* PBXContainerItemProxy */;
-		};
-		5C0884D31E4A980100403995 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C0884D41E4A980100403995 /* PBXContainerItemProxy */;
 		};
 		5C0884E01E4A982000403995 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -19532,45 +19423,20 @@
 			target = 5C0884D21E4A980100403995 /* yuv */;
 			targetProxy = 5C0884E11E4A982000403995 /* PBXContainerItemProxy */;
 		};
-		5C0885421E4AA3B100403995 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C0885431E4AA3B100403995 /* PBXContainerItemProxy */;
-		};
 		5C088C0D1E4AA3FD00403995 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C0885371E4AA3B100403995 /* webrtcpcrtc */;
 			targetProxy = 5C088C0C1E4AA3FD00403995 /* PBXContainerItemProxy */;
-		};
-		5C11A0351E4577E1004F0987 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C11A0361E4577E1004F0987 /* PBXContainerItemProxy */;
 		};
 		5C11A13F1E45783A004F0987 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C11A0341E4577E1004F0987 /* usrsctp */;
 			targetProxy = 5C11A13E1E45783A004F0987 /* PBXContainerItemProxy */;
 		};
-		5C4B490F1E42C336002651C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C4B49101E42C336002651C8 /* PBXContainerItemProxy */;
-		};
 		5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C4B490E1E42C336002651C8 /* opus */;
 			targetProxy = 5C4B4AC61E42C58B002651C8 /* PBXContainerItemProxy */;
-		};
-		5C63F6681E414B96002CA531 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C63F6671E414B96002CA531 /* PBXContainerItemProxy */;
-		};
-		5C63FA7B1E418411002CA531 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
-			targetProxy = 5C63FA7C1E418411002CA531 /* PBXContainerItemProxy */;
 		};
 		5C63FC621E418449002CA531 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -19808,30 +19674,6 @@
 			};
 			name = Production;
 		};
-		5C63F6631E414AB6002CA531 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		5C63F6641E414AB6002CA531 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		5C63F6651E414AB6002CA531 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
 		5C63FC5D1E418411002CA531 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B43B01E42877A002651C8 /* boringssl.xcconfig */;
@@ -20001,16 +19843,6 @@
 				5C4B4A8B1E42C336002651C8 /* Debug */,
 				5C4B4A8C1E42C336002651C8 /* Release */,
 				5C4B4A8D1E42C336002651C8 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5C63F6621E414AB6002CA531 /* Build configuration list for PBXAggregateTarget "Copy webrtc headers" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5C63F6631E414AB6002CA531 /* Debug */,
-				5C63F6641E414AB6002CA531 /* Release */,
-				5C63F6651E414AB6002CA531 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
