@@ -1,3 +1,15 @@
+2021-02-16  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/plugins convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221941
+        <rdar://problem/74373443>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/plugins/get-url-redirect.html:
+        * http/tests/plugins/resources/redirection-response.php: Removed.
+        * http/tests/plugins/resources/redirection-response.py: Added.
+
 2021-02-16  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening and updating baselines
