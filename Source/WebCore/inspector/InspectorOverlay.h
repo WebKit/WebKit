@@ -51,6 +51,7 @@ using ErrorStringOr = Expected<T, ErrorString>;
 
 namespace WebCore {
 
+class FloatPoint;
 class GraphicsContext;
 class InspectorClient;
 class Node;
@@ -165,6 +166,13 @@ private:
         Highlight::Bounds bounds;
         Path titlePath;
     };
+    
+    enum class LabelArrowDirection {
+        Down,
+        Up,
+        Left,
+        Right,
+    };
 
     RulerExclusion drawNodeHighlight(GraphicsContext&, Node&);
     RulerExclusion drawQuadHighlight(GraphicsContext&, const FloatQuad&);
@@ -173,6 +181,9 @@ private:
     void drawRulers(GraphicsContext&, const RulerExclusion&);
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
+    
+    void drawLayoutHatching(GraphicsContext&, FloatRect, IntPoint);
+    void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection);
 
     void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Grid&);
 

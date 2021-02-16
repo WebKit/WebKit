@@ -1140,6 +1140,113 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     return path;
 }
 
+void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatRect rect, IntPoint scrollOffset)
+{
+    GraphicsContextStateSaver saver(context);
+    
+    context.translate(rect.x(), rect.y());
+    context.clip(FloatRect(0, 0, rect.width(), rect.height()));
+    
+    context.setStrokeThickness(0.5);
+    context.setStrokeStyle(StrokeStyle::DashedStroke);
+    context.setLineDash({ 2, 2 }, 2);
+        
+    constexpr auto hatchSpacing = 12;
+    Path hatchPath;
+    
+    // The opposite axis' size is used to determine how far to draw a hatch line in both dimensions, which keeps the lines at a 45deg angle.
+    if (rect.width() > rect.height()) {
+        // Move across the top of the rect, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        for (float x = (-scrollOffset.x() % hatchSpacing) - rect.height(); x < rect.width(); x += hatchSpacing) {
+            hatchPath.moveTo({ x, 0 });
+            hatchPath.addLineTo({ x + rect.height(), rect.height()});
+        }
+    } else {
+        // Move down the left side of the rect, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        for (float y = (-scrollOffset.y() % hatchSpacing) - rect.width(); y < rect.height(); y += hatchSpacing) {
+            hatchPath.moveTo({ 0, y });
+            hatchPath.addLineTo({ rect.width(), y + rect.width()});
+        }
+    }
+    
+    context.strokePath(hatchPath);
+}
+
+void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection direction)
+{
+    GraphicsContextStateSaver saver(context);
+    
+    context.translate(point);
+    
+    FontCascadeDescription fontDescription;
+    fontDescription.setFamilies({ m_page.settings().fixedFontFamily() });
+    fontDescription.setComputedSize(13);
+
+    FontCascade font(WTFMove(fontDescription), 0, 0);
+    font.update(nullptr);
+    
+    float textWidth = font.width(TextRun(label));
+    float textHeight = font.fontMetrics().floatHeight();
+    float textDescent = font.fontMetrics().floatDescent();
+    constexpr auto padding = 4;
+    constexpr auto arrowSize = 4;
+    
+    Path labelPath;
+    FloatPoint textPosition;
+    
+    switch (direction) {
+    case InspectorOverlay::LabelArrowDirection::Down:
+        labelPath.moveTo({ -(textWidth / 2) - padding, -textHeight - (padding * 2) - arrowSize });
+        labelPath.addLineTo({ -(textWidth / 2) - padding, -arrowSize });
+        labelPath.addLineTo({ -arrowSize, -arrowSize });
+        labelPath.addLineTo({ 0, 0 });
+        labelPath.addLineTo({ arrowSize, -arrowSize });
+        labelPath.addLineTo({ (textWidth / 2) + padding, -arrowSize });
+        labelPath.addLineTo({ (textWidth / 2) + padding, -textHeight - (padding * 2) - arrowSize });
+        textPosition = FloatPoint(-(textWidth / 2), -(textHeight / 2) + textDescent - arrowSize - padding);
+        break;
+    case InspectorOverlay::LabelArrowDirection::Up:
+        labelPath.moveTo({ -(textWidth / 2) - padding, textHeight + (padding * 2) + arrowSize });
+        labelPath.addLineTo({ -(textWidth / 2) - padding, arrowSize });
+        labelPath.addLineTo({ -arrowSize, arrowSize });
+        labelPath.addLineTo({ 0, 0 });
+        labelPath.addLineTo({ arrowSize, arrowSize });
+        labelPath.addLineTo({ (textWidth / 2) + padding, arrowSize });
+        labelPath.addLineTo({ (textWidth / 2) + padding, textHeight + (padding * 2) + arrowSize });
+        textPosition = FloatPoint(-(textWidth / 2), (textHeight / 2) + textDescent + arrowSize + padding);
+        break;
+    case InspectorOverlay::LabelArrowDirection::Right:
+        labelPath.moveTo({ -textWidth - (padding * 2) - arrowSize, (textHeight / 2) + padding });
+        labelPath.addLineTo({ -arrowSize, (textHeight / 2) + padding });
+        labelPath.addLineTo({ -arrowSize, arrowSize });
+        labelPath.addLineTo({ 0, 0 });
+        labelPath.addLineTo({ -arrowSize, -arrowSize });
+        labelPath.addLineTo({ -arrowSize, -(textHeight / 2) - padding });
+        labelPath.addLineTo({ -textWidth - (padding * 2) - arrowSize, -(textHeight / 2) - padding });
+        textPosition = FloatPoint(-textWidth - arrowSize - padding, (textHeight / 2) - textDescent);
+        break;
+    case InspectorOverlay::LabelArrowDirection::Left:
+        labelPath.moveTo({ textWidth + (padding * 2) + arrowSize, (textHeight / 2) + padding });
+        labelPath.addLineTo({ arrowSize, (textHeight / 2) + padding });
+        labelPath.addLineTo({ arrowSize, arrowSize });
+        labelPath.addLineTo({ 0, 0 });
+        labelPath.addLineTo({ arrowSize, -arrowSize });
+        labelPath.addLineTo({ arrowSize, -(textHeight / 2) - padding });
+        labelPath.addLineTo({ textWidth + (padding * 2) + arrowSize, -(textHeight / 2) - padding });
+        textPosition = FloatPoint(arrowSize + padding, (textHeight / 2) - textDescent);
+        break;
+    }
+    
+    labelPath.closeSubpath();
+    
+    context.setFillColor(Color::white);
+    context.fillPath(labelPath);
+    context.strokePath(labelPath);
+    
+    context.setFillColor(Color::black);
+    context.drawText(font, TextRun(label), textPosition);
+}
+
 void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Grid& gridOverlay)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
@@ -1160,61 +1267,109 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     }
 
     auto* renderGrid = downcast<RenderGrid>(renderer);
+    auto columnPositions = renderGrid->columnPositions();
+    auto rowPositions = renderGrid->rowPositions();
     LayoutRect paddingBox = renderGrid->clientBoxRect();
     LayoutRect contentBox = LayoutRect(paddingBox.x() + renderGrid->paddingLeft(), paddingBox.y() + renderGrid->paddingTop(),
         paddingBox.width() - renderGrid->paddingLeft() - renderGrid->paddingRight(), paddingBox.height() - renderGrid->paddingTop() - renderGrid->paddingBottom());
-    FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
-    FloatRect gridBoundingBox = absContentQuad.boundingBox();
+    FloatQuad absoluteContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
+    // FIXME: <webkit.org/b/221971> The position of the grid's bounding box can end up in the wrong place in some layout contexts (e.g. inside another grid)
+    // The grid's bounding box may be less than the size of the content box.
+    FloatRect gridBoundingBox = {
+        absoluteContentQuad.boundingBox().x(),
+        absoluteContentQuad.boundingBox().y(),
+        columnPositions[columnPositions.size() - 1],
+        rowPositions[rowPositions.size() - 1],
+    };
+    
+    IntPoint scrollOffset;
     FrameView* pageView = m_page.mainFrame().view();
-    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
+    if (!pageView->delegatesScrolling())
+        scrollOffset = pageView->visibleContentRect().location();
+
     FloatSize viewportSize = pageView->sizeForVisibleContent();
+    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
+    float pageScaleFactor = m_page.pageScaleFactor();
+
+    float scrollX = scrollOffset.x() * pageScaleFactor;
+    float scrollY = scrollOffset.y() * pageScaleFactor;
 
     GraphicsContextStateSaver saver(context);
 
     // Drawing code is relative to the visible viewport area.
-    context.translate(0, contentInset.height());
+    context.translate(0 - scrollX, contentInset.height() - scrollY);
     
-    // FIXME: if showExtendedGridlines is false, set the clip path to the gridBoundingBox (maybe inflated?)
-
-    // Draw columns and rows.
     context.setStrokeThickness(1);
     context.setStrokeColor(gridOverlay.config.gridColor);
+    
+    // FIXME: <webkit.org/b/221974> This clipping clips labels as well.
+    if (!gridOverlay.config.showExtendedGridLines)
+        context.clip(gridBoundingBox);
 
-    auto columnPositions = renderGrid->columnPositions();
+    // Draw columns and rows.
     auto columnWidths = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
+    float previousColumnX = 0;
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
         // Column positions are (apparently) relative to the element's content area.
         auto position = columnPositions[i] + gridBoundingBox.x();
 
         Path columnPaths;
-        columnPaths.moveTo({ position, 0 });
-        columnPaths.addLineTo({ position, viewportSize.height() });
-
-        if (i < columnWidths.size()) {
-            auto width = columnWidths[i];
-            columnPaths.moveTo({ position + width, 0 });
-            columnPaths.addLineTo({ position + width, viewportSize.height() });
+        columnPaths.moveTo({ position, scrollY });
+        columnPaths.addLineTo({ position, scrollY + viewportSize.height() });
+        
+        float labelX = position;
+        if (previousColumnX) {
+            drawLayoutHatching(context, FloatRect(previousColumnX, scrollY, position - previousColumnX, viewportSize.height()), IntPoint(scrollX, scrollY));
+            labelX = (position + previousColumnX) / 2;
         }
 
+        if (i < columnWidths.size() && i + 1 != columnPositions.size()) {
+            auto width = columnWidths[i];
+            columnPaths.moveTo({ position + width, scrollY });
+            columnPaths.addLineTo({ position + width, scrollY + viewportSize.height() });
+            previousColumnX = position + width;
+        } else
+            previousColumnX = position;
+        
         context.strokePath(columnPaths);
+        
+        if (gridOverlay.config.showLineNumbers) {
+            // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
+            drawLayoutLabel(context, String::number(i + 1), FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
+            drawLayoutLabel(context, String::number(-static_cast<int>(columnPositions.size() - i)), FloatPoint(labelX, gridBoundingBox.y() + gridBoundingBox.height()), LabelArrowDirection::Up);
+        }
     }
 
-    auto rowPositions = renderGrid->rowPositions();
     auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
+    float previousRowY = 0;
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
         auto position = rowPositions[i] + gridBoundingBox.y();
 
         Path rowPaths;
-        rowPaths.moveTo({ 0, position });
-        rowPaths.addLineTo({ viewportSize.width(), position });
-
+        rowPaths.moveTo({ scrollX, position });
+        rowPaths.addLineTo({ scrollX + viewportSize.width(), position });
+        
+        float labelY = position;
+        if (previousRowY) {
+            drawLayoutHatching(context, FloatRect(scrollX, previousRowY, viewportSize.width(), position - previousRowY), IntPoint(scrollX, scrollY));
+            labelY = (position + previousRowY) / 2;
+        }
+            
         if (i < rowHeights.size()) {
             auto height = rowHeights[i];
-            rowPaths.moveTo({ 0, position + height });
-            rowPaths.addLineTo({ viewportSize.width(), position + height });
-        }
+            rowPaths.moveTo({ scrollX, position + height });
+            rowPaths.addLineTo({ scrollX + viewportSize.width(), position + height });
+            previousRowY = position + height;
+        } else
+            previousRowY = position;
 
         context.strokePath(rowPaths);
+        
+        if (gridOverlay.config.showLineNumbers) {
+            // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
+            drawLayoutLabel(context, String::number(i + 1), FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
+            drawLayoutLabel(context, String::number(-static_cast<int>(rowPositions.size() - i)), FloatPoint(gridBoundingBox.x() + gridBoundingBox.width(), labelY), LabelArrowDirection::Left);
+        }
     }
 }
 
