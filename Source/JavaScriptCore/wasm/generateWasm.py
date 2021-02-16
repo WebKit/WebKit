@@ -82,6 +82,8 @@ class Wasm:
 
 
 def isNormal(op):
+    if "extendedOp" in op:
+        return False
     return op["category"] == "arithmetic" or op["category"] == "comparison" or op["category"] == "conversion"
 
 

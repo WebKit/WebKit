@@ -238,6 +238,15 @@
         "i64.extend16_s":      { "category": "conversion", "value": 195, "return": ["i64"],                          "parameter": ["i64"],                        "immediate": [], "b3op": "SExt32(SExt16(Trunc(@0)))" },
         "i64.extend32_s":      { "category": "conversion", "value": 196, "return": ["i64"],                          "parameter": ["i64"],                        "immediate": [], "b3op": "SExt32(Trunc(@0))"         },
 
+        "i32.trunc_sat_f32_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 0 },
+        "i32.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 1 },
+        "i32.trunc_sat_f64_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f64"], "immediate": [], "extendedOp": 2 },
+        "i32.trunc_sat_f64_u": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f64"], "immediate": [], "extendedOp": 3 },
+        "i64.trunc_sat_f32_s": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f32"], "immediate": [], "extendedOp": 4 },
+        "i64.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f32"], "immediate": [], "extendedOp": 5 },
+        "i64.trunc_sat_f64_s": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 6 },
+        "i64.trunc_sat_f64_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 7 },
+
         "memory.atomic.notify":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32"],          "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  0 },
         "memory.atomic.wait32":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32", "i64"],   "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  1 },
         "memory.atomic.wait64":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i64", "i64"],   "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  2 },

@@ -1,3 +1,44 @@
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com> and Sergey Rubanov <chi187@gmail.com>
+
+        WebAssembly: implement non-trapping float to int conversion
+        https://bugs.webkit.org/show_bug.cgi?id=173471
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch implements trunc-saturated opcodes in Wasm. This does not trap, and instead it generates
+        saturated-truncated integer results from floats.
+
+            1. If the input is NaN, then return 0.
+            2. If the input is higher than the maximum value, then return the maximum value (e.g. INT_32MAX).
+            3. If the input is lower than the minimum value, then return the minimum value (e.g. INT_32MIN).
+
+        These wasm opcodes are defined as two-byte opcodes. Currently, we do not have a mechanism to define
+        this kind of opcodes automatically, so we manually define them. We will clean up in the future patch.
+
+        We rename ExtTableOpType to Ext1OpType since it is no longer limited to table opcodes.
+
+        * generator/Wasm.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::truncSaturated):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::truncSaturated):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::truncSaturated):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::truncSaturated):
+        * wasm/generateWasm.py:
+        (isNormal):
+        * wasm/generateWasmOpsHeader.py:
+        (opcodeWithTypesMacroizer):
+        (saturatedTruncMacroizer):
+        (saturatedTruncMacroizer.modifier):
+        (Ext1OpType):
+        (ExtTableOpType): Deleted.
+        * wasm/wasm.json:
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable JITCage on macOS

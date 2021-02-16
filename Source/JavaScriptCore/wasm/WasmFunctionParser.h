@@ -127,6 +127,8 @@ private:
     PartialResult WARN_UNUSED_RETURN store(Type memoryType);
     PartialResult WARN_UNUSED_RETURN load(Type memoryType);
 
+    PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, Type returnType, Type operandType);
+
     PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type memoryType);
     PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type memoryType);
     PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type memoryType);
@@ -357,6 +359,20 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch");
 
     WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset));
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::truncSaturated(Ext1OpType op, Type returnType, Type operandType) -> PartialResult
+{
+    TypedExpression value;
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary");
+
+    WASM_VALIDATOR_FAIL_IF(value.type() != operandType, "trunc-saturated value type mismatch");
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(truncSaturated(op, value, result, returnType, operandType));
+    m_expressionStack.constructAndAppend(returnType, result);
     return { };
 }
 
@@ -823,13 +839,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
-    case ExtTable: {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+    case Ext1: {
         uint8_t extOp;
-        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse 0xfc extended opcode");
 
-        switch (static_cast<ExtTableOpType>(extOp)) {
-        case ExtTableOpType::TableInit: {
+        Ext1OpType op = static_cast<Ext1OpType>(extOp);
+        switch (op) {
+        case Ext1OpType::TableInit: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
 
@@ -847,14 +865,18 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addTableInit(immediates.elementIndex, immediates.tableIndex, dstOffset, srcOffset, lenght));
             break;
         }
-        case ExtTableOpType::ElemDrop: {
+        case Ext1OpType::ElemDrop: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             unsigned elementIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
 
             WASM_TRY_ADD_TO_CONTEXT(addElemDrop(elementIndex));
             break;
         }
-        case ExtTableOpType::TableSize: {
+        case Ext1OpType::TableSize: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             unsigned tableIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
@@ -863,7 +885,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(I32, result);
             break;
         }
-        case ExtTableOpType::TableGrow: {
+        case Ext1OpType::TableGrow: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             unsigned tableIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
@@ -880,7 +904,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(I32, result);
             break;
         }
-        case ExtTableOpType::TableFill: {
+        case Ext1OpType::TableFill: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             unsigned tableIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
@@ -896,7 +922,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addTableFill(tableIndex, offset, fill, count));
             break;
         }
-        case ExtTableOpType::TableCopy: {
+        case Ext1OpType::TableCopy: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             TableCopyImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
 
@@ -918,7 +946,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addTableCopy(immediates.dstTableIndex, immediates.srcTableIndex, dstOffset, srcOffset, length));
             break;
         }
-        case ExtTableOpType::MemoryFill: {
+        case Ext1OpType::MemoryFill: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
 
             WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
@@ -938,7 +968,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count));
             break;
         }
-        case ExtTableOpType::MemoryCopy: {
+        case Ext1OpType::MemoryCopy: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
 
             WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
@@ -958,7 +990,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count));
             break;
         }
-        case ExtTableOpType::MemoryInit: {
+        case Ext1OpType::MemoryInit: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             MemoryInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryInitImmediates(immediates));
 
@@ -976,15 +1010,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addMemoryInit(immediates.dataSegmentIndex, dstAddress, srcAddress, length));
             break;
         }
-        case ExtTableOpType::DataDrop: {
+        case Ext1OpType::DataDrop: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
             unsigned dataSegmentIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
 
             WASM_TRY_ADD_TO_CONTEXT(addDataDrop(dataSegmentIndex));
             break;
         }
+
+#define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case Ext1OpType::name: return truncSaturated(op, returnType, operandType);
+        FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_CASE)
+#undef CREATE_CASE
+
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended table op ", extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid 0xfc extended op ", extOp);
             break;
         }
         return { };
@@ -1540,54 +1581,65 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case ExtTable: {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+    case Ext1: {
         uint8_t extOp;
-        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended 0xfc opcode");
 
-        switch (static_cast<ExtTableOpType>(extOp)) {
-        case ExtTableOpType::TableInit: {
+        switch (static_cast<Ext1OpType>(extOp)) {
+        case Ext1OpType::TableInit: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
             return { };
         }
-        case ExtTableOpType::ElemDrop: {
+        case Ext1OpType::ElemDrop: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             unsigned elementIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
             return { };
         }
-        case ExtTableOpType::TableSize:
-        case ExtTableOpType::TableGrow:
-        case ExtTableOpType::TableFill: {
+        case Ext1OpType::TableSize:
+        case Ext1OpType::TableGrow:
+        case Ext1OpType::TableFill: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             unsigned tableIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
             return { };
         }
-        case ExtTableOpType::TableCopy: {
+        case Ext1OpType::TableCopy: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             TableCopyImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
             return { };
         }
-        case ExtTableOpType::MemoryFill: {
+        case Ext1OpType::MemoryFill: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
             return { };
         }
-        case ExtTableOpType::MemoryCopy: {
+        case Ext1OpType::MemoryCopy: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
             return { };
         }
-        case ExtTableOpType::MemoryInit: {
+        case Ext1OpType::MemoryInit: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             MemoryInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryInitImmediates(immediates));
             return { };
         }
-        case ExtTableOpType::DataDrop: {
+        case Ext1OpType::DataDrop: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             unsigned dataSegmentIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
             return { };
         }
+#define CREATE_EXT1_CASE(name, ...) case Ext1OpType::name:
+        FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_EXT1_CASE)
+            return { };
+#undef CREATE_EXT1_CASE
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended table op ", extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended 0xfc op ", extOp);
             break;
         }
 

@@ -39,7 +39,13 @@ module Wasm
     end
 
     def self.generate_llint_generator(section)
-        opcodes = section.opcodes.select { |op| ["arithmetic", "comparison", "conversion"].include? op.extras["category"] }
+        opcodes = section.opcodes.select { |op|
+            if op.extras.has_key?("extendedOp")
+                false
+            else
+                ["arithmetic", "comparison", "conversion"].include? op.extras["category"]
+            end
+        }
         methods = opcodes.map do |op|
             case op.args.size
             when 2
