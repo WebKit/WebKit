@@ -1,3 +1,18 @@
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Set a default path for device ID hash salts
+        https://bugs.webkit.org/show_bug.cgi?id=221955
+
+        Reviewed by Eric Carlson.
+
+        The default path was the empty string, which leads to not persist device IDs.
+        Update this to provide a valid default path like for other persisting data types.
+        Covered by API test.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
 2021-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Synthesize range responses if needed in WebCoreNSURLSession
