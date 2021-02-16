@@ -1,3 +1,13 @@
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Enable GPU WebRTC codecs in GPUProcess by default on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=221562
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebRTCCodecsInGPUProcess):
+
 2021-02-15  Per Arne  <pvollan@apple.com>
 
         [macOS] Close XPC connections before entering sandbox

@@ -218,7 +218,7 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 
 bool defaultWebRTCCodecsInGPUProcess()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return true;
 #elif HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
