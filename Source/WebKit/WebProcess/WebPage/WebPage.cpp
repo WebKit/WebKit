@@ -7251,7 +7251,7 @@ void WebPage::revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxE
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight createNewGroup)
+bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
@@ -7264,16 +7264,21 @@ bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight creat
         return false;
 
     document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
-    document->appHighlightStorage().updateAppHighlightsStorage();
+    document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()), createNewGroup);
 
     return true;
 }
 
-void WebPage::restoreAppHighlights(const IPC::DataReference& data)
+void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memoryHandles)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
-    document->appHighlightStorage().restoreAppHighlights(SharedBuffer::create(data.data(), data.size()));
+    for (const auto& ipcHandle : memoryHandles) {
+        auto sharedMemory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+        if (!sharedMemory)
+            continue;
+        document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
+    }
 }
 #endif
 

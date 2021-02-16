@@ -28,6 +28,7 @@
 #include "config.h"
 #include "EmptyClients.h"
 
+#include "AppHighlight.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "CacheStorageProvider.h"
@@ -502,7 +503,7 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void EmptyChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+void EmptyChromeClient::storeAppHighlight(const AppHighlight&) const
 {
 }
 #endif

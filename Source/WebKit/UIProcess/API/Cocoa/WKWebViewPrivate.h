@@ -368,7 +368,7 @@ for this property.
 @property (nonatomic, setter=_setHasBlankOverlay:) BOOL _hasBlankOverlay WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, weak, setter=_setAppHighlightDelegate:) id <_WKAppHighlightDelegate> _appHighlightDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_restoreAppHighlights:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_restoreAppHighlights:(NSArray<NSData *> *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract The theme color of the active page.
  @discussion This is the value of the most recently created or modified

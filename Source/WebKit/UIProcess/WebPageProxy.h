@@ -29,7 +29,6 @@
 #include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "ContextMenuContextData.h"
-#include "CreateNewGroupForHighlight.h"
 #include "DataReference.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
@@ -235,6 +234,7 @@ class TextIndicator;
 class ValidationBubble;
 
 enum class AutoplayEvent : uint8_t;
+enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
@@ -247,6 +247,7 @@ enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class WritingDirection : uint8_t;
 
+struct AppHighlight;
 struct ApplicationManifest;
 struct AttributedString;
 struct BackForwardItemIdentifier;
@@ -374,7 +375,6 @@ struct WebSpeechSynthesisVoice;
 struct URLSchemeTaskParameters;
 struct UserMessage;
 
-enum class CreateNewGroupForHighlight : bool;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
@@ -1824,9 +1824,9 @@ public:
     void syncIfMockDevicesEnabledChanged();
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
-    void updateAppHighlightsStorage(const IPC::SharedBufferCopy&);
-    void restoreAppHighlights(Ref<WebCore::SharedBuffer>&& data);
+    void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    void storeAppHighlight(const WebCore::AppHighlight&);
+    void restoreAppHighlights(const Vector<Ref<WebKit::SharedMemory>>& highlights);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

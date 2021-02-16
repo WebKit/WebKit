@@ -534,7 +534,7 @@ void WebPageProxy::addActivityStateUpdateCompletionHandler(CompletionHandler<voi
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebPageProxy::createAppHighlightInSelectedRange(CreateNewGroupForHighlight createNewGroup)
+void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup)
 {
     if (!hasRunningProcess())
         return;
@@ -542,14 +542,21 @@ void WebPageProxy::createAppHighlightInSelectedRange(CreateNewGroupForHighlight 
     send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup));
 }
 
-void WebPageProxy::restoreAppHighlights(Ref<SharedBuffer>&& data)
+void WebPageProxy::restoreAppHighlights(const Vector<Ref<SharedMemory>>& highlights)
 {
     if (!hasRunningProcess())
         return;
 
-    IPC::SharedBufferDataReference dataReference { data };
+    Vector<SharedMemory::IPCHandle> memoryHandles;
 
-    send(Messages::WebPage::RestoreAppHighlights(dataReference));
+    for (auto highlight : highlights) {
+        SharedMemory::Handle handle;
+        highlight->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
+        memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
+    }
+
+    send(Messages::WebPage::RestoreAppHighlights(WTFMove(memoryHandles)));
 }
 #endif
 

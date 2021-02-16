@@ -34,7 +34,6 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
-#include "CreateNewGroupForHighlight.h"
 #include "DataReference.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
@@ -204,6 +203,7 @@ class TextCheckingRequest;
 class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
+enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
@@ -1396,8 +1396,8 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
-    void restoreAppHighlights(const IPC::DataReference&);
+    bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    void restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&&);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);

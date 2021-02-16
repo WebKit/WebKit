@@ -108,6 +108,7 @@ enum class TextIndicatorWindowLifetime : uint8_t;
 enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
+struct AppHighlight;
 struct DictionaryPopupInfo;
 struct TextIndicatorData;
 struct ViewportAttributes;
@@ -575,7 +576,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) = 0;
+    virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 
 #if PLATFORM(COCOA)

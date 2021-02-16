@@ -60,6 +60,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
+#include <WebCore/AppHighlight.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
@@ -1244,10 +1245,9 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+void WebChromeClient::storeAppHighlight(const WebCore::AppHighlight& highlight) const
 {
-    auto buffer = IPC::SharedBufferCopy(data);
-    m_page.send(Messages::WebPageProxy::UpdateAppHighlightsStorage(buffer));
+    m_page.send(Messages::WebPageProxy::StoreAppHighlight(highlight));
 }
 #endif
 

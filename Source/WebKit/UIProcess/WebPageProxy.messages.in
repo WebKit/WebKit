@@ -531,7 +531,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    UpdateAppHighlightsStorage(IPC::SharedBufferCopy data)
+    StoreAppHighlight(struct WebCore::AppHighlight info)
 #endif
 
     SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, URL url) -> (String result) Synchronous

@@ -47,6 +47,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/geolocation/PositionErrorCallback.h
     Modules/geolocation/PositionOptions.h
 
+    Modules/highlight/AppHighlight.h
     Modules/highlight/Highlight.h
     Modules/highlight/HighlightRegister.h
 

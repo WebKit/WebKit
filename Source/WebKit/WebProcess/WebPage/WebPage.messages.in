@@ -624,8 +624,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetCanUseCredentialStorage(bool canUse)
 
 #if ENABLE(APP_HIGHLIGHTS)
-    CreateAppHighlightInSelectedRange(enum:bool WebKit::CreateNewGroupForHighlight createNewGroup)
-    RestoreAppHighlights(IPC::SharedBufferDataReference data)
+    CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup)
+    RestoreAppHighlights(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async

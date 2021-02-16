@@ -143,6 +143,7 @@
 #include "WebViewDidMoveToWindowObserver.h"
 #include "WebWheelEventCoalescer.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/AppHighlight.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
@@ -6637,11 +6638,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 #if ENABLE(APP_HIGHLIGHTS)
     if (item.action() == ContextMenuItemTagAddHighlightToNewGroup) {
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes);
+        createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes);
         return;
     }
     if (item.action() == ContextMenuItemTagAddHighlightToCurrentGroup) {
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No);
+        createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
         return;
     }
 #endif
@@ -9722,11 +9723,12 @@ void WebPageProxy::getApplicationManifest(CompletionHandler<void(const Optional<
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebPageProxy::updateAppHighlightsStorage(const IPC::SharedBufferCopy& data)
+void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
 {
-    MESSAGE_CHECK(m_process, data.buffer());
+    MESSAGE_CHECK(m_process, !highlight.highlight->isEmpty());
 
-    pageClient().updateAppHighlightsStorage(*data.buffer());
+    pageClient().storeAppHighlight(highlight);
+
 }
 #endif
 

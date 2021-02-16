@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Chrome.h"
 
+#include "AppHighlight.h"
 #include "ChromeClient.h"
 #include "ContactInfo.h"
 #include "ContactsRequestData.h"
@@ -512,9 +513,9 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-void Chrome::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+void Chrome::storeAppHighlight(const AppHighlight& highlight) const
 {
-    m_client.updateAppHighlightsStorage(WTFMove(data));
+    m_client.storeAppHighlight(highlight);
 }
 #endif
 

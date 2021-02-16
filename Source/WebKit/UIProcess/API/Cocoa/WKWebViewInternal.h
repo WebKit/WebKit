@@ -67,6 +67,7 @@ class Attachment;
 }
 
 namespace WebCore {
+struct AppHighlight;
 struct ExceptionDetails;
 enum class WheelScrollGestureState : uint8_t;
 }
@@ -265,7 +266,7 @@ class ViewGestureController;
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)_updateAppHighlightsStorage:(NSData *)data;
+- (void)_storeAppHighlight:(const WebCore::AppHighlight&)info;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

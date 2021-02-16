@@ -57,6 +57,7 @@ class PopupMenuClient;
 class PopupOpeningObserver;
 class SearchPopupMenu;
 
+struct AppHighlight;
 struct ContactInfo;
 struct ContactsRequestData;
 struct DateTimeChooserParameters;
@@ -165,7 +166,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const;
+    void storeAppHighlight(const AppHighlight&) const;
 #endif
 
     void runOpenPanel(Frame&, FileChooser&);

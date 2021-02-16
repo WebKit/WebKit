@@ -64,7 +64,7 @@ Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
 Modules/geolocation/GeolocationCoordinates.cpp
 Modules/geolocation/NavigatorGeolocation.cpp
-Modules/highlight/AppHighlightListData.cpp
+Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegister.cpp
 Modules/highlight/Highlight.cpp

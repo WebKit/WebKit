@@ -118,6 +118,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/AppHighlight.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
@@ -1416,14 +1417,14 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)_updateAppHighlightsStorage:(NSData *)data
+- (void)_storeAppHighlight:(const WebCore::AppHighlight&)highlightInformation
 {
     auto delegate = self._appHighlightDelegate;
     if (!delegate)
         return;
 
     if ([delegate respondsToSelector:@selector(_webView:updateAppHighlightsStorage:)])
-        [delegate _webView:self updateAppHighlightsStorage:data];
+        [delegate _webView:self updateAppHighlightsStorage:highlightInformation.highlight->createNSData().get()];
 }
 #endif
 
@@ -2028,12 +2029,21 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
-- (void)_restoreAppHighlights:(NSData *)data
+- (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    _page->restoreAppHighlights(WebCore::SharedBuffer::create(data));
+    Vector<Ref<WebKit::SharedMemory>> buffers;
+
+    for (NSData *highlight in highlights) {
+        auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
+        if (sharedMemory) {
+            [highlight getBytes:sharedMemory->data() length:highlight.length];
+            buffers.append(*sharedMemory);
+        }
+    }
+    _page->restoreAppHighlights(buffers);
 #else
-    UNUSED_PARAM(data);
+    UNUSED_PARAM(highlights);
 #endif
 }
 

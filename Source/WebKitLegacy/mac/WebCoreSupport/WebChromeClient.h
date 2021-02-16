@@ -152,7 +152,7 @@ private:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const final;
+    void storeAppHighlight(const WebCore::AppHighlight&) const final;
 #endif
 
 #if ENABLE(POINTER_LOCK)

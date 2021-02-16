@@ -30,7 +30,6 @@
 
 #import "APIUIClient.h"
 #import "CompletionHandlerCallChecker.h"
-#import "CreateNewGroupForHighlight.h"
 #import "DocumentEditingContext.h"
 #import "InputViewUpdateDeferrer.h"
 #import "InsertTextOptions.h"
@@ -8954,12 +8953,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebKit::CreateNewGroupForHighlight::No);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
 }
 
 - (void)createHighlightInNewGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebKit::CreateNewGroupForHighlight::Yes);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes);
 }
 
 #endif

@@ -1,3 +1,47 @@
+2021-02-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Change App Highlights API to operate in terms of a single serialized highlight at a time
+        https://bugs.webkit.org/show_bug.cgi?id=221802
+
+        Reviewed by Tim Horton.
+
+        Pipe through additional data needed for display, and update to allow for more information to be added more easily.
+
+        * Shared/CreateNewGroupForHighlight.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _storeAppHighlight:]):
+        (-[WKWebView _restoreAppHighlights:]):
+        (-[WKWebView _updateAppHighlightsStorage:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::storeAppHighlight):
+        (WebKit::PageClientImplCocoa::updateAppHighlightsStorage): Deleted.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange):
+        (WebKit::WebPageProxy::restoreAppHighlights):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::storeAppHighlight):
+        (WebKit::WebPageProxy::updateAppHighlightsStorage): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createHighlightInCurrentGroupWithRange:]):
+        (-[WKContentView createHighlightInNewGroupWithRange:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::storeAppHighlight const):
+        (WebKit::WebChromeClient::updateAppHighlightsStorage const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        (WebKit::WebPage::restoreAppHighlights):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-02-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up WKWebView media API
