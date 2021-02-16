@@ -1357,11 +1357,6 @@ webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-half_float.html [ Failur
 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte.html [ Failure ]
 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure ]
 
-# webkit.org/b/221824
-http/wpt/webrtc/sframe-transform-in-worker.html [ Failure ]
-http/wpt/webrtc/video-script-transform.html [ Failure ]
-http/wpt/webrtc/webrtc-transform.html [ Failure ]
-
 # webkit.org/b/221825
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Failure ]
 
@@ -1370,16 +1365,4 @@ fast/mediastream/media-element-current-time.html [ Failure ]
 
 webkit.org/b/221838 webgl/2.0.0/conformance2/textures/video [ Failure ]
 
-webkit.org/b/221844 webrtc/audio-video-element-playing.html [ Failure ]
-
-# webkit.org/b/221846
-imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Failure ]
-
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Timeout ]
-
-# webkit.org/b/221865
-imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Failure ]
