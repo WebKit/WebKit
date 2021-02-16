@@ -781,6 +781,7 @@ Document::~Document()
 
 void Document::removedLastRef()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     ASSERT(!m_deletionHasBegun);
     if (m_referencingNodeCount) {
         // Node::removedLastRef doesn't set refCount() to zero because it's not observable.
@@ -810,6 +811,8 @@ void Document::removedLastRef()
         m_fontSelector->unregisterForInvalidationCallbacks(*this);
 
         detachParser();
+
+        RELEASE_ASSERT(m_selection->isNone());
 
         // removeDetachedChildren() doesn't always unregister IDs,
         // so tear down scope information up front to avoid having
@@ -2592,6 +2595,8 @@ void Document::willBeRemovedFromFrame()
         disconnectDescendantFrames();
     }
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_frame || !m_frame->tree().childCount());
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();

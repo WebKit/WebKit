@@ -1,3 +1,20 @@
+2021-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventHandler::updateSelectionForMouseDownDispatchingSelectStart should not use an orphaned selection
+        https://bugs.webkit.org/show_bug.cgi?id=221942
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test for the bug 221786 / r272777.
+
+        Also updated a test imported from blink to expect rangeCount of 0 instead of 1
+        since we no longer update the selection when the target node has been removed
+        during selectstart.
+
+        * editing/selection/click-selection-with-selectstart-node-removal-expected.txt: Added.
+        * editing/selection/click-selection-with-selectstart-node-removal.html: Added.
+        * imported/blink/editing/selection/selectstart-event-crash.html:
+
 2021-02-16  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r271515): ::marker fired at wrong time
