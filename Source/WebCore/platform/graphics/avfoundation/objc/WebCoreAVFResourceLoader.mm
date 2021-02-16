@@ -170,7 +170,7 @@ WeakPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCore
     if (!resource)
         return nullptr;
     auto* resourcePointer = resource.get();
-    auto client = std::unique_ptr<PlatformResourceMediaLoader>(new PlatformResourceMediaLoader { parent, resource.releaseNonNull() });
+    auto client = adoptRef(*new PlatformResourceMediaLoader { parent, resource.releaseNonNull() });
     auto result = makeWeakPtr(client.get());
 
     resourcePointer->setClient(WTFMove(client));
