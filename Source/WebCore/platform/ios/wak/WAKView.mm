@@ -38,21 +38,22 @@
 #import "WebCoreThreadMessage.h"
 #import "WebEvent.h"
 #import <wtf/Assertions.h>
+#import <wtf/NeverDestroyed.h>
 
 WEBCORE_EXPORT NSString *WAKViewFrameSizeDidChangeNotification =   @"WAKViewFrameSizeDidChangeNotification";
 WEBCORE_EXPORT NSString *WAKViewDidScrollNotification =            @"WAKViewDidScrollNotification";
 
-static WAKView *globalFocusView = nil;
+static RetainPtr<WAKView>& globalFocusView()
+{
+    static NeverDestroyed<RetainPtr<WAKView>> _globalFocusView;
+    return _globalFocusView;
+}
+
 static CGInterpolationQuality sInterpolationQuality;
 
 static void setGlobalFocusView(WAKView *view)
 {
-    if (view == globalFocusView)
-        return;
-
-    [view retain];
-    [globalFocusView release];
-    globalFocusView = view;
+    globalFocusView() = view;
 }
 
 static WAKScrollView *enclosingScrollView(WAKView *view)
@@ -407,7 +408,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
 + (WAKView *)focusView
 {
-    return globalFocusView;
+    return globalFocusView().get();
 }
 
 - (NSRect)bounds

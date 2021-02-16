@@ -64,7 +64,7 @@
 @interface MyFirstInterface : NSObject
 {
     int myInt;
-    MySecondInterface *mySecondInterface;
+    RetainPtr<MySecondInterface> mySecondInterface;
     id jsobject;
     NSString *string;
 }
@@ -128,15 +128,8 @@
 - init
 {
     LOG ("\n");
-    mySecondInterface = [[MySecondInterface alloc] init];
+    mySecondInterface = adoptNS([[MySecondInterface alloc] init]);
     return self;
-}
-
-- (void)dealloc
-{
-    LOG ("\n");
-    [mySecondInterface release];
-    [super dealloc];
 }
 
 - (int)getInt 
@@ -159,7 +152,7 @@
 - (MySecondInterface *)getMySecondInterface 
 {
     LOG ("\n");
-    return mySecondInterface;
+    return mySecondInterface.get();
 }
 
 - (void)logMessage:(NSString *)message

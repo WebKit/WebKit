@@ -1,3 +1,38 @@
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit even more
+        https://bugs.webkit.org/show_bug.cgi?id=221914
+
+        Reviewed by Alex Christensen.
+
+        * API/JSContext.mm:
+        (-[JSContext initWithVirtualMachine:]):
+        (-[JSContext dealloc]):
+        (-[JSContext virtualMachine]):
+        (-[JSContext initWithGlobalContextRef:]):
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue initWithValue:]):
+        (-[JSManagedValue dealloc]):
+        (-[JSManagedValue didAddOwner:]):
+        (-[JSManagedValue didRemoveOwner:]):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (-[JSVirtualMachine dealloc]):
+        (-[JSVirtualMachine contextForGlobalContextRef:]):
+        (-[JSVirtualMachine addContext:forGlobalContextRef:]):
+        (-[JSVirtualMachine externalObjectGraph]):
+        (-[JSVirtualMachine externalRememberedSet]):
+        * API/JSWrapperMap.mm:
+        (createRenameMap):
+        (copyMethodsToObject):
+        (-[JSWrapperMap initWithGlobalContextRef:]):
+        (-[JSWrapperMap classInfoForClass:]):
+        (-[JSWrapperMap objcWrapperForJSValueRef:inContext:]):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCConfigurationImplementationGenerator._generate_configuration_implementation_for_domains):
+        (ObjCConfigurationImplementationGenerator._generate_ivars):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Dynamically generate entitlements

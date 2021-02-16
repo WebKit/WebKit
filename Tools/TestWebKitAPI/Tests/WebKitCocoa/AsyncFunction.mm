@@ -138,13 +138,12 @@ TEST(AsyncFunction, RoundTrip)
     EXPECT_NULL(error);
     EXPECT_TRUE([value isEqual:result]);
 
-    NSMutableArray *mutableArray = [[NSMutableArray alloc] init];
+    auto mutableArray = adoptNS([[NSMutableArray alloc] init]);
     [mutableArray addObject:value];
-    arguments = @{ @"a" : mutableArray };
+    arguments = @{ @"a" : mutableArray.get() };
     result = [webView objectByCallingAsyncFunction:@"return a" withArguments:arguments error:&error];
     EXPECT_NULL(error);
     EXPECT_TRUE([mutableArray isEqual:result]);
-    [mutableArray release];
 
     value = @[ @"foo", [NSDate dateWithTimeIntervalSinceReferenceDate:0] ];
     arguments = @{ @"a" : value };
@@ -158,13 +157,12 @@ TEST(AsyncFunction, RoundTrip)
     EXPECT_NULL(error);
     EXPECT_TRUE([value isEqual:result]);
 
-    NSMutableDictionary<NSString *, id> *mutableDictionary = [[NSMutableDictionary alloc] init];
-    mutableDictionary[@"foo"] = value;
-    arguments = @{ @"a" : mutableDictionary };
+    auto mutableDictionary = adoptNS((NSMutableDictionary<NSString *, id> *)[[NSMutableDictionary alloc] init]);
+    mutableDictionary.get()[@"foo"] = value;
+    arguments = @{ @"a" : mutableDictionary.get() };
     result = [webView objectByCallingAsyncFunction:@"return a" withArguments:arguments error:&error];
     EXPECT_NULL(error);
     EXPECT_TRUE([mutableDictionary isEqual:result]);
-    [mutableDictionary release];
 
     value = @{ @"a" : @"foo", @"b" : [NSDate dateWithTimeIntervalSinceReferenceDate:0] };
     arguments = @{ @"a" : value };

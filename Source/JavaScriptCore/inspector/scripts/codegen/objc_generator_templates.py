@@ -141,8 +141,7 @@ ${invocation}
     if (handler == _${variableNamePrefix}Handler)
         return;
 
-    [_${variableNamePrefix}Handler release];
-    _${variableNamePrefix}Handler = [handler retain];
+    _${variableNamePrefix}Handler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspector${domainName}BackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>("${domainName}"_s, *_controller, WTFMove(alternateDispatcher));
@@ -151,13 +150,13 @@ ${invocation}
 
 - (id<${objcPrefix}${domainName}DomainHandler>)${variableNamePrefix}Handler
 {
-    return _${variableNamePrefix}Handler;
+    return _${variableNamePrefix}Handler.get();
 }""")
 
     ConfigurationGetterImplementation = (
     """- (${objcPrefix}${domainName}DomainEventDispatcher *)${variableNamePrefix}EventDispatcher
 {
     if (!_${variableNamePrefix}EventDispatcher)
-        _${variableNamePrefix}EventDispatcher = [[${objcPrefix}${domainName}DomainEventDispatcher alloc] initWithController:_controller];
-    return _${variableNamePrefix}EventDispatcher;
+        _${variableNamePrefix}EventDispatcher = adoptNS([[${objcPrefix}${domainName}DomainEventDispatcher alloc] initWithController:_controller]);
+    return _${variableNamePrefix}EventDispatcher.get();
 }""")

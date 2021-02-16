@@ -189,23 +189,20 @@ enum {
     if (!MIMEType)
         MIMEType = @"text/html";
     Class viewClass = [self _viewClassForMIMEType:MIMEType];
-    NSView <WebDocumentView> *documentView;
+    RetainPtr<NSView <WebDocumentView>> documentView;
     if (viewClass) {
         // If the dataSource's representation has already been created, and it is also the
         // same class as the desired documentView, then use it as the documentView instead
         // of creating another one (Radar 4340787).
         id <WebDocumentRepresentation> dataSourceRepresentation = [dataSource representation];
         if (dataSourceRepresentation && [dataSourceRepresentation class] == viewClass)
-            documentView = (NSView <WebDocumentView> *)[dataSourceRepresentation retain];
+            documentView = (NSView <WebDocumentView> *)dataSourceRepresentation;
         else
-            documentView = [(NSView <WebDocumentView> *)[viewClass alloc] init];
-    } else
-        documentView = nil;
+            documentView = adoptNS([(NSView <WebDocumentView> *)[viewClass alloc] init]);
+    }
     
-    [self _setDocumentView:documentView];
-    [documentView release];
-    
-    return documentView;
+    [self _setDocumentView:documentView.get()];
+    return documentView.autorelease();
 }
 
 - (void)_setWebFrame:(WebFrame *)webFrame

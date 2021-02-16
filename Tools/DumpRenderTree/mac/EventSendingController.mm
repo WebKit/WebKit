@@ -963,8 +963,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 + (void)clearSavedEvents
 {
-    [savedMouseEvents release];
-    savedMouseEvents = nil;
+    auto oldEvents = adoptNS(std::exchange(savedMouseEvents, nil));
 }
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location

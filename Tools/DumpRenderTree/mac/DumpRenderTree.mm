@@ -99,6 +99,7 @@
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
@@ -238,7 +239,11 @@ static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 static std::set<std::string> allowedHosts;
 
-static WebHistoryItem *prevTestBFItem; // current b/f item at the end of the previous test
+static RetainPtr<WebHistoryItem>& prevTestBFItem()
+{
+    static NeverDestroyed<RetainPtr<WebHistoryItem>> _prevTestBFItem; // current b/f item at the end of the previous test.
+    return _prevTestBFItem;
+}
 
 #if PLATFORM(IOS_FAMILY)
 const CGRect layoutTestViewportRect = { {0, 0}, {static_cast<CGFloat>(TestRunner::viewWidth), static_cast<CGFloat>(TestRunner::viewHeight)} };
@@ -774,6 +779,7 @@ WebView *createWebViewAndOffscreenWindow()
 static void destroyWebViewAndOffscreenWindow(WebView *webView)
 {
     ASSERT(webView == [mainFrame webView]);
+    auto adoptedWebView = adoptNS(webView);
 #if !PLATFORM(IOS_FAMILY)
     NSWindow *window = [webView window];
 #endif
@@ -792,8 +798,6 @@ static void destroyWebViewAndOffscreenWindow(WebView *webView)
     auto uiWindow = adoptNS([gWebBrowserView window]);
     [uiWindow removeFromSuperview];
 #endif
-
-    [webView release];
 }
 
 static NSString *libraryPathForDumpRenderTree()
@@ -985,10 +989,10 @@ static void allocateGlobalControllers()
 #endif
 }
 
-// ObjC++ doens't seem to let me pass NSObject*& sadly.
+// ObjC++ doesn't seem to let me pass NSObject*& sadly.
 static inline void releaseAndZero(NSObject** object)
 {
-    [*object release];
+    auto oldObject = adoptNS(*object);
     *object = nil;
 }
 
@@ -1480,17 +1484,17 @@ static void dumpBackForwardListForWebView(WebView *view)
     for (int i = [bfList forwardListCount]; i > 0; i--) {
         WebHistoryItem *item = [bfList itemAtIndex:i];
         // something is wrong if the item from the last test is in the forward part of the b/f list
-        assert(item != prevTestBFItem);
+        assert(item != prevTestBFItem());
         [itemsToPrint addObject:item];
     }
 
-    assert([bfList currentItem] != prevTestBFItem);
+    assert([bfList currentItem] != prevTestBFItem());
     [itemsToPrint addObject:[bfList currentItem]];
     int currentItemIndex = [itemsToPrint count] - 1;
 
     for (int i = -1; i >= -[bfList backListCount]; i--) {
         WebHistoryItem *item = [bfList itemAtIndex:i];
-        if (item == prevTestBFItem)
+        if (item == prevTestBFItem())
             break;
         [itemsToPrint addObject:item];
     }
@@ -1963,8 +1967,7 @@ static void runTest(const std::string& inputLine)
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
 
-    [prevTestBFItem release];
-    prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
+    prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 
     auto& workQueue = DRT::WorkQueue::singleton();
     workQueue.clear();

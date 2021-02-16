@@ -133,14 +133,14 @@ IGNORE_WARNINGS_END
 TEST(_WKDownload, DownloadDelegate)
 {
     RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] init]);
-    DownloadDelegate *downloadDelegate = [[DownloadDelegate alloc] init];
-    [processPool _setDownloadDelegate:downloadDelegate];
+    auto downloadDelegate = adoptNS([[DownloadDelegate alloc] init]);
+    [processPool _setDownloadDelegate:downloadDelegate.get()];
 
     @autoreleasepool {
-        EXPECT_EQ(downloadDelegate, [processPool _downloadDelegate]);
+        EXPECT_EQ(downloadDelegate.get(), [processPool _downloadDelegate]);
     }
 
-    [downloadDelegate release];
+    downloadDelegate = nil;
     EXPECT_NULL([processPool _downloadDelegate]);
 }
 

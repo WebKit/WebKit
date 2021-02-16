@@ -34,15 +34,13 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, WebViewCanPasteZeroPng)
 {
-    WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     [webView setEditable:YES];
     
     //pasting a 0x0 image as pdf board type. Referring to <rdar://problem/11141920>
     [[NSPasteboard generalPasteboard] declareTypes:@[NSPDFPboardType] owner:nil];
     [[[NSBundle mainBundle] URLForResource:@"0" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"] writeToPasteboard:[NSPasteboard generalPasteboard]];
     [webView paste:nil];
-    
-    [webView release];
 }
 
 } // namespace TestWebKitAPI

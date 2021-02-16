@@ -337,7 +337,8 @@ static id<OrientationProvider> gOrientationProvider;
     ASSERT(anEvent);
     ASSERT(WebThreadIsLockedOrDisabled());
     WebEvent *lastEvent = currentEvent;
-    currentEvent = [anEvent retain];
+    auto currentEventProtector = retainPtr(anEvent);
+    currentEvent = anEvent;
 
     switch (anEvent.type) {
     case WebEventMouseMoved:
@@ -364,7 +365,6 @@ static id<OrientationProvider> gOrientationProvider;
         break;
     }
 
-    [currentEvent release];
     currentEvent = lastEvent;
 }
 

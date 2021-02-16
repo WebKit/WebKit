@@ -364,7 +364,6 @@ TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
         if ([webView respondsToSelector:@selector(_interactWithMediaControlsForTesting)])
             [webView _interactWithMediaControlsForTesting];
 
-        [webView release];
         finishedTest = true;
     }];
 

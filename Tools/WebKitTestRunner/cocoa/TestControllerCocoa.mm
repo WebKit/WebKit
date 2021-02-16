@@ -64,7 +64,7 @@ static TestWebsiteDataStoreDelegate *globalWebsiteDataStoreDelegateClient;
 
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
-    [globalWebViewConfiguration release];
+    auto oldGlobalWebViewConfiguration = adoptNS(globalWebViewConfiguration);
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
     globalWebViewConfiguration.processPool = (__bridge WKProcessPool *)context;
@@ -73,7 +73,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._allowTopNavigationToDataURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
-    [globalWebsiteDataStoreDelegateClient release];
+    auto oldGlobalWebsiteDataStoreDelegateClient = adoptNS(globalWebsiteDataStoreDelegateClient);
     globalWebsiteDataStoreDelegateClient = [[TestWebsiteDataStoreDelegate alloc] init];
     [globalWebViewConfiguration.websiteDataStore set_delegate:globalWebsiteDataStoreDelegateClient];
 

@@ -38,6 +38,7 @@
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 class JSManagedValueHandleOwner final : public JSC::WeakHandleOwner {
 public:
@@ -55,7 +56,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     JSC::Weak<JSC::JSGlobalObject> m_globalObject;
     RefPtr<JSC::JSLock> m_lock;
     JSC::JSWeakValue m_weakValue;
-    NSMapTable *m_owners;
+    RetainPtr<NSMapTable> m_owners;
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value
@@ -93,7 +94,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
-    m_owners = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1];
+    m_owners = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
 
     JSC::JSValue jsValue = toJS(globalObject, [value JSValueRef]);
     if (jsValue.isObject())
@@ -109,39 +110,37 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 {
     JSVirtualMachine *virtualMachine = [[[self value] context] virtualMachine];
     if (virtualMachine) {
-        NSMapTable *copy = [m_owners copy];
+        auto copy = adoptNS([m_owners copy]);
         for (id owner in [copy keyEnumerator]) {
-            size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
+            size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
             while (count--)
                 [virtualMachine removeManagedReference:self withOwner:owner];
         }
-        [copy release];
     }
 
     [self disconnectValue];
-    [m_owners release];
     [super dealloc];
 }
 
 - (void)didAddOwner:(id)owner
 {
-    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
-    NSMapInsert(m_owners, (__bridge void*)owner, reinterpret_cast<void*>(count + 1));
+    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
+    NSMapInsert(m_owners.get(), (__bridge void*)owner, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)didRemoveOwner:(id)owner
 {
-    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
+    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
 
     if (!count)
         return;
 
     if (count == 1) {
-        NSMapRemove(m_owners, (__bridge void*)owner);
+        NSMapRemove(m_owners.get(), (__bridge void*)owner);
         return;
     }
 
-    NSMapInsert(m_owners, (__bridge void*)owner, reinterpret_cast<void*>(count - 1));
+    NSMapInsert(m_owners.get(), (__bridge void*)owner, reinterpret_cast<void*>(count - 1));
 }
 
 - (JSValue *)value

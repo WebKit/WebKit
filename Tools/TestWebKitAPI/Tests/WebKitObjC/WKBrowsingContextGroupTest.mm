@@ -27,33 +27,30 @@
 #import "Test.h"
 
 #import <WebKit/WKBrowsingContextGroup.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 
 TEST(WKBrowsingContextGroupTest, GetSetJavaScriptEnabled)
 {
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
+    auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
     
-    ASSERT_TRUE(browsingContextGroup.allowsJavaScript);
+    ASSERT_TRUE([browsingContextGroup allowsJavaScript]);
 
-    browsingContextGroup.allowsJavaScript = NO;
+    [browsingContextGroup setAllowsJavaScript:NO];
 
-    ASSERT_FALSE(browsingContextGroup.allowsJavaScript);
-
-    [browsingContextGroup release];
+    ASSERT_FALSE([browsingContextGroup allowsJavaScript]);
 }
 
 TEST(WKBrowsingContextGroupTest, GetSetPluginsEnabled)
 {
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
+    auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
     
-    ASSERT_TRUE(browsingContextGroup.allowsPlugIns);
+    ASSERT_TRUE([browsingContextGroup allowsPlugIns]);
 
-    browsingContextGroup.allowsPlugIns = NO;
+    [browsingContextGroup setAllowsPlugIns:NO];
 
-    ASSERT_FALSE(browsingContextGroup.allowsPlugIns);
-
-    [browsingContextGroup release];
+    ASSERT_FALSE([browsingContextGroup allowsPlugIns]);
 }
 
 #endif // PLATFORM(MAC)

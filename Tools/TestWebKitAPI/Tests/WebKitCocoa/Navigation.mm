@@ -75,14 +75,14 @@ TEST(WKNavigation, NavigationDelegate)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NavigationDelegate *delegate = [[NavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
+    auto delegate = adoptNS([[NavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
 
     @autoreleasepool {
         EXPECT_EQ(delegate, [webView navigationDelegate]);
     }
 
-    [delegate release];
+    delegate = nil;
     EXPECT_NULL([webView navigationDelegate]);
 }
 

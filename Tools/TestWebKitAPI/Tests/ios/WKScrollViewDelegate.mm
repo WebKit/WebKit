@@ -55,12 +55,12 @@ namespace TestWebKitAPI {
 TEST(WKWebView, WKScrollViewDelegateCrash)
 {
     WKWebView *webView = [[WKWebView alloc] init];
-    TestDelegateForScrollView *delegateForScrollView = [[TestDelegateForScrollView alloc] init];
+    auto delegateForScrollView = adoptNS([[TestDelegateForScrollView alloc] init]);
     @autoreleasepool {
-        webView.scrollView.delegate = delegateForScrollView;
+        webView.scrollView.delegate = delegateForScrollView.get();
     }
     delegateIsDeallocated = false;
-    [delegateForScrollView release];
+    delegateForScrollView = nil;
     TestWebKitAPI::Util::run(&delegateIsDeallocated);
 
     EXPECT_NULL(webView.scrollView.delegate);

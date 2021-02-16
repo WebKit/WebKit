@@ -1,3 +1,73 @@
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit even more
+        https://bugs.webkit.org/show_bug.cgi?id=221914
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (destroyWebViewAndOffscreenWindow):
+        (releaseAndZero):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController clearSavedEvents]):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        (TestWebKitAPI::WebCoreNSURLSessionTest::TearDown):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (setUpCookieTestWithWebsiteDataStore):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (runTestWithWebsiteDataStore):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitObjC/WKBrowsingContextGroupTest.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/WKBrowsingContextLoadDelegateTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DOMNodeFromJSObject.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SubresourceErrorCrash.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/TypingStyleCrash.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebScriptObjectDescription.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteURL.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteZeroPng.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm:
+        (-[DidCreateJavaScriptContextFrameLoadDelegate webView:didCreateJavaScriptContext:forFrame:]):
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (+[TestProtocol registerWithScheme:]):
+        (+[TestProtocol unregister]):
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::addChromeInputField):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]):
+
 2021-02-16  Youenn Fablet  <youenn@apple.com>
 
         Set a default path for device ID hash salts

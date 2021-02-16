@@ -84,9 +84,9 @@ static NSMapTable *wrapperCache()
 @implementation JSVirtualMachine {
     JSContextGroupRef m_group;
     Lock m_externalDataMutex;
-    NSMapTable *m_contextCache;
-    NSMapTable *m_externalObjectGraph;
-    NSMapTable *m_externalRememberedSet;
+    RetainPtr<NSMapTable> m_contextCache;
+    RetainPtr<NSMapTable> m_externalObjectGraph;
+    RetainPtr<NSMapTable> m_externalRememberedSet;
 }
 
 - (instancetype)init
@@ -108,14 +108,14 @@ static NSMapTable *wrapperCache()
     
     NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
-    m_contextCache = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
+    m_contextCache = adoptNS([[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0]);
     
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions strongIDOptions = NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPersonality;
-    m_externalObjectGraph = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:strongIDOptions capacity:0];
+    m_externalObjectGraph = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:strongIDOptions capacity:0]);
 
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
-    m_externalRememberedSet = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:0];
+    m_externalRememberedSet = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:0]);
    
     [JSVMWrapperCache addWrapper:self forJSContextGroupRef:group];
  
@@ -125,9 +125,6 @@ static NSMapTable *wrapperCache()
 - (void)dealloc
 {
     JSContextGroupRelease(m_group);
-    [m_contextCache release];
-    [m_externalObjectGraph release];
-    [m_externalRememberedSet release];
     [super dealloc];
 }
 
@@ -245,12 +242,12 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 - (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext
 {
-    return (__bridge JSContext *)NSMapGet(m_contextCache, globalContext);
+    return (__bridge JSContext *)NSMapGet(m_contextCache.get(), globalContext);
 }
 
 - (void)addContext:(JSContext *)wrapper forGlobalContextRef:(JSGlobalContextRef)globalContext
 {
-    NSMapInsert(m_contextCache, globalContext, (__bridge void*)wrapper);
+    NSMapInsert(m_contextCache.get(), globalContext, (__bridge void*)wrapper);
 }
 
 - (Lock&)externalDataMutex
@@ -260,12 +257,12 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 - (NSMapTable *)externalObjectGraph
 {
-    return m_externalObjectGraph;
+    return m_externalObjectGraph.get();
 }
 
 - (NSMapTable *)externalRememberedSet
 {
-    return m_externalRememberedSet;
+    return m_externalRememberedSet.get();
 }
 
 - (void)shrinkFootprintWhenIdle

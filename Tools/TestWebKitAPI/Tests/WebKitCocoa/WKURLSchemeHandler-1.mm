@@ -773,8 +773,7 @@ TEST(URLSchemeHandler, Threads)
     [pool drain];
 
     Thread::create("B", [] {
-        [theTask release];
-        theTask = nil;
+        auto oldTask = adoptNS(std::exchange(theTask, nil));
     })->waitForCompletion();
 }
 

@@ -539,18 +539,17 @@ static void setUpCookieTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     observerCallbacks = 0;
     globalCookieStore = dataStore.httpCookieStore;
 
-    NSArray<NSHTTPCookie *> *cookies = nil;
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
     gotFlag = false;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
     // Make sure the cookie store starts out empty.
-    ASSERT_EQ(cookies.count, 0u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 0u);
 
     gotFlag = false;
 }
@@ -604,20 +603,19 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     gotFlag = false;
 
     // Check the cookie store to make sure only one cookie was set.
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
-    ASSERT_EQ(cookies.count, 1u);
-    EXPECT_WK_STREQ(cookies[0].domain, @"www.webkit.org");
+    ASSERT_EQ([cookies count], 1u);
+    EXPECT_WK_STREQ(cookies.get()[0].domain, @"www.webkit.org");
     while (observerCallbacks != 1u)
         TestWebKitAPI::Util::spinRunLoop();
 
-    [cookies release];
     gotFlag = false;
     [globalCookieStore deleteCookie:appBoundCookie.get() completionHandler:[]() {
         gotFlag = true;
@@ -670,32 +668,30 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     gotFlag = false;
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
     // Confirm both cookies are in the store.
-    ASSERT_EQ(cookies.count, 2u);
+    ASSERT_EQ([cookies count], 2u);
 
     // Now enable protections and ensure we can only retrieve the app-bound cookies.
     initializeInAppBrowserPrivacyTestSettings();
 
     cookies = nil;
     gotFlag = false;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
-    ASSERT_EQ(cookies.count, 1u);
-
-    [cookies release];
+    ASSERT_EQ([cookies count], 1u);
 
     gotFlag = false;
     [globalCookieStore deleteCookie:nonAppBoundCookie.get() completionHandler:[]() {

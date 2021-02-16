@@ -77,8 +77,7 @@ static NSMutableDictionary *localPasteboards;
 
 + (void)releaseLocalPasteboards
 {
-    [localPasteboards release];
-    localPasteboards = nil;
+    auto oldPasteboads = adoptNS(std::exchange(localPasteboards, nil));
 }
 
 // Convenience method for JS so that it doesn't have to try and create a NSArray on the objc side instead

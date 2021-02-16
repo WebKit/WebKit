@@ -55,7 +55,11 @@ NSString *WebHistoryItemsDiscardedWhileLoadingNotification = @"WebHistoryItemsDi
 NSString *WebHistorySavedNotification = @"WebHistorySavedNotification";
 NSString *WebHistoryItemsKey = @"WebHistoryItems";
 
-static WebHistory *_sharedHistory = nil;
+static RetainPtr<WebHistory>& sharedHistory()
+{
+    static NeverDestroyed<RetainPtr<WebHistory>> _sharedHistory;
+    return _sharedHistory;
+}
 
 NSString *FileVersionKey = @"WebHistoryFileVersion";
 NSString *DatesArrayKey = @"WebHistoryDates";
@@ -651,17 +655,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (WebHistory *)optionalSharedHistory
 {
-    return _sharedHistory;
+    return sharedHistory().get();
 }
 
 + (void)setOptionalSharedHistory:(WebHistory *)history
 {
-    if (_sharedHistory == history)
+    if (sharedHistory() == history)
         return;
     // FIXME: Need to think about multiple instances of WebHistory per application
     // and correct synchronization of history file between applications.
-    [_sharedHistory release];
-    _sharedHistory = [history retain];
+    sharedHistory() = history;
 
     WebVisitedLinkStore::setShouldTrackVisitedLinks(history);
     WebVisitedLinkStore::removeAllVisitedLinks();

@@ -1438,9 +1438,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
 #if !PLATFORM(IOS_FAMILY)
-    _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
+    _private->backgroundColor = adoptNS([[NSColor colorWithDeviceWhite:1 alpha:1] retain]);
 #else
-    _private->backgroundColor = CGColorRetain(WebCore::cachedCGColor(WebCore::Color::white));
+    _private->backgroundColor = WebCore::cachedCGColor(WebCore::Color::white);
 #endif
 
 #if PLATFORM(MAC)
@@ -1455,8 +1455,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if PLATFORM(MAC)
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
-        _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()];
-        [recognizer setDelegate:_private->immediateActionController];
+        _private->immediateActionController = adoptNS([[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()]);
+        [recognizer setDelegate:_private->immediateActionController.get()];
         [recognizer setDelaysPrimaryMouseButtonEvents:NO];
     }
 #endif
@@ -1598,7 +1598,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self _updateScreenScaleFromWindow];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowScreenScaleChanged:) name:WAKWindowScreenScaleDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowVisibilityChanged:) name:WAKWindowVisibilityDidChangeNotification object:nil];
-    _private->_fixedPositionContent = [[WebFixedPositionContent alloc] initWithWebView:self];
+    _private->_fixedPositionContent = adoptNS([[WebFixedPositionContent alloc] initWithWebView:self]);
 #if ENABLE(ORIENTATION_EVENTS)
     _private->deviceOrientation = [[self _UIKitDelegateForwarder] deviceOrientation];
 #endif
@@ -1779,7 +1779,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->preferences = [preferences retain];
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
-    _private->backgroundColor = CGColorRetain(WebCore::cachedCGColor(WebCore::Color::white));
+    _private->backgroundColor = WebCore::cachedCGColor(WebCore::Color::white);
 
     auto frameView = adoptNS([[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)]);
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -2364,7 +2364,6 @@ static NSMutableSet *knownPluginMIMETypes()
     if (_private->pluginDatabase) {
         [_private->pluginDatabase destroyAllPluginInstanceViews];
         [_private->pluginDatabase close];
-        [_private->pluginDatabase release];
         _private->pluginDatabase = nil;
     }
 #endif
@@ -2503,10 +2502,8 @@ static bool fastDocumentTeardownEnabled()
 
     [WebPreferences _removeReferenceForIdentifier:[self preferencesIdentifier]];
 
-    WebPreferences *preferences = _private->preferences;
-    _private->preferences = nil;
+    auto preferences = adoptNS(std::exchange(_private->preferences, nil));
     [preferences didRemoveFromWebView];
-    [preferences release];
 
     [self _closePluginDatabases];
 
@@ -2640,8 +2637,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WebInspector *)inspector
 {
     if (!_private->inspector)
-        _private->inspector = [[WebInspector alloc] initWithInspectedWebView:self];
-    return _private->inspector;
+        _private->inspector = adoptNS([[WebInspector alloc] initWithInspectedWebView:self]);
+    return _private->inspector.get();
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -2687,13 +2684,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (showing) {
         if (!_private->indicateLayer) {
-            _private->indicateLayer = [[WebIndicateLayer alloc] initWithWebView:self];
+            _private->indicateLayer = adoptNS([[WebIndicateLayer alloc] initWithWebView:self]);
             [_private->indicateLayer setNeedsLayout];
-            [[[self window] hostLayer] addSublayer:_private->indicateLayer];
+            [[[self window] hostLayer] addSublayer:_private->indicateLayer.get()];
         }
     } else {
         [_private->indicateLayer removeFromSuperlayer];
-        [_private->indicateLayer release];
         _private->indicateLayer = nil;
     }
 #else
@@ -2796,7 +2792,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _private->formDelegate = delegate;
 #if PLATFORM(IOS_FAMILY)
     [_private->formDelegateForwarder clearTarget];
-    [_private->formDelegateForwarder release];
     _private->formDelegateForwarder = nil;
 #endif
 }
@@ -2813,8 +2808,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     if (!_private->formDelegateForwarder)
-        _private->formDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:[self _formDelegate] defaultTarget:[WebDefaultFormDelegate sharedFormDelegate]];
-    return _private->formDelegateForwarder;
+        _private->formDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:[self _formDelegate] defaultTarget:[WebDefaultFormDelegate sharedFormDelegate]]);
+    return _private->formDelegateForwarder.get();
 }
 
 - (id)_formDelegateForSelector:(SEL)selector
@@ -2986,8 +2981,8 @@ static inline IMP getMethod(id o, SEL s)
         return nil;
 
     if (!_private->UIKitDelegateForwarder)
-        _private->UIKitDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->UIKitDelegate defaultTarget:[WebDefaultUIKitDelegate sharedUIKitDelegate]];
-    return _private->UIKitDelegateForwarder;
+        _private->UIKitDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:_private->UIKitDelegate defaultTarget:[WebDefaultUIKitDelegate sharedUIKitDelegate]]);
+    return _private->UIKitDelegateForwarder.get();
 }
 #endif
 
@@ -3150,8 +3145,8 @@ IGNORE_WARNINGS_END
         return nil;
 #endif
     if (!_private->policyDelegateForwarder)
-        _private->policyDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->policyDelegate defaultTarget:[WebDefaultPolicyDelegate sharedPolicyDelegate]];
-    return _private->policyDelegateForwarder;
+        _private->policyDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:_private->policyDelegate defaultTarget:[WebDefaultPolicyDelegate sharedPolicyDelegate]]);
+    return _private->policyDelegateForwarder.get();
 }
 
 - (id)_UIDelegateForwarder
@@ -3161,8 +3156,8 @@ IGNORE_WARNINGS_END
         return nil;
 #endif
     if (!_private->UIDelegateForwarder)
-        _private->UIDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->UIDelegate defaultTarget:[WebDefaultUIDelegate sharedUIDelegate]];
-    return _private->UIDelegateForwarder;
+        _private->UIDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:_private->UIDelegate defaultTarget:[WebDefaultUIDelegate sharedUIDelegate]]);
+    return _private->UIDelegateForwarder.get();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -3192,8 +3187,8 @@ IGNORE_WARNINGS_END
         return nil;
 
     if (!_private->editingDelegateForwarder)
-        _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->editingDelegate defaultTarget:[WebDefaultEditingDelegate sharedEditingDelegate]];
-    return _private->editingDelegateForwarder;
+        _private->editingDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:_private->editingDelegate defaultTarget:[WebDefaultEditingDelegate sharedEditingDelegate]]);
+    return _private->editingDelegateForwarder.get();
 }
 
 + (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType
@@ -3543,7 +3538,6 @@ IGNORE_WARNINGS_END
 {
     _private->UIKitDelegate = delegate;
     [_private->UIKitDelegateForwarder clearTarget];
-    [_private->UIKitDelegateForwarder release];
     _private->UIKitDelegateForwarder = nil;
 }
 
@@ -3574,13 +3568,13 @@ IGNORE_WARNINGS_END
 
 - (NSSet *)caretChangeListeners
 {
-    return _private->_caretChangeListeners;
+    return _private->_caretChangeListeners.get();
 }
 
 - (void)addCaretChangeListener:(id <WebCaretChangeListener>)listener
 {
     if (_private->_caretChangeListeners == nil) {
-        _private->_caretChangeListeners = [[NSMutableSet alloc] init];
+        _private->_caretChangeListeners = adoptNS([[NSMutableSet alloc] init]);
     }
 
     [_private->_caretChangeListeners addObject:listener];
@@ -3713,7 +3707,7 @@ IGNORE_WARNINGS_END
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
 {
     if (!_private->pluginDatabase)
-        _private->pluginDatabase = [[WebPluginDatabase alloc] init];
+        _private->pluginDatabase = adoptNS([[WebPluginDatabase alloc] init]);
 
     [_private->pluginDatabase setPlugInPaths:newPaths];
     [_private->pluginDatabase refresh];
@@ -3846,33 +3840,29 @@ IGNORE_WARNINGS_END
     if ([_private->backgroundColor isEqual:backgroundColor])
         return;
 
-    auto old = adoptNS(_private->backgroundColor);
-    _private->backgroundColor = [backgroundColor retain];
+    _private->backgroundColor = backgroundColor;
 
     [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
 }
 
 - (NSColor *)backgroundColor
 {
-    return _private->backgroundColor;
+    return _private->backgroundColor.get();
 }
 #else
 - (void)setBackgroundColor:(CGColorRef)backgroundColor
 {
-   if (!backgroundColor || CFEqual(_private->backgroundColor, backgroundColor))
+    if (!backgroundColor || CFEqual(_private->backgroundColor.get(), backgroundColor))
         return;
 
-    CFTypeRef old = _private->backgroundColor;
-    CFRetain(backgroundColor);
     _private->backgroundColor = backgroundColor;
-    CFRelease(old);
 
     [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
 }
 
 - (CGColorRef)backgroundColor
 {
-    return _private->backgroundColor;
+    return _private->backgroundColor.get();
 }
 #endif
 
@@ -4766,7 +4756,7 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
 - (WebFixedPositionContent*)_fixedPositionContent
 {
-    return _private ? _private->_fixedPositionContent : nil;
+    return _private ? _private->_fixedPositionContent.get() : nil;
 }
 
 - (void)_documentScaleChanged
@@ -5832,7 +5822,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if PLATFORM(IOS_FAMILY)
     [_private->UIDelegateForwarder clearTarget];
 #endif
-    [_private->UIDelegateForwarder release];
     _private->UIDelegateForwarder = nil;
 }
 
@@ -5848,8 +5837,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         return nil;
 
     if (!_private->resourceProgressDelegateForwarder)
-        _private->resourceProgressDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:[self resourceLoadDelegate] defaultTarget:[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate]];
-    return _private->resourceProgressDelegateForwarder;
+        _private->resourceProgressDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:[self resourceLoadDelegate] defaultTarget:[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate]]);
+    return _private->resourceProgressDelegateForwarder.get();
 }
 #endif
 
@@ -5857,7 +5846,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
 #if PLATFORM(IOS_FAMILY)
     [_private->resourceProgressDelegateForwarder clearTarget];
-    [_private->resourceProgressDelegateForwarder release];
     _private->resourceProgressDelegateForwarder = nil;
 #endif
     _private->resourceProgressDelegate = delegate;
@@ -5886,7 +5874,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if PLATFORM(IOS_FAMILY)
     [_private->policyDelegateForwarder clearTarget];
 #endif
-    [_private->policyDelegateForwarder release];
     _private->policyDelegateForwarder = nil;
 }
 
@@ -5902,8 +5889,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         return nil;
 
     if (!_private->frameLoadDelegateForwarder)
-        _private->frameLoadDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:[self frameLoadDelegate] defaultTarget:[WebDefaultFrameLoadDelegate sharedFrameLoadDelegate]];
-    return _private->frameLoadDelegateForwarder;
+        _private->frameLoadDelegateForwarder = adoptNS([[_WebSafeForwarder alloc] initWithTarget:[self frameLoadDelegate] defaultTarget:[WebDefaultFrameLoadDelegate sharedFrameLoadDelegate]]);
+    return _private->frameLoadDelegateForwarder.get();
 }
 #endif
 
@@ -5920,7 +5907,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     }
 #else
     [_private->frameLoadDelegateForwarder clearTarget];
-    [_private->frameLoadDelegateForwarder release];
     _private->frameLoadDelegateForwarder = nil;
 #endif
 
@@ -6139,9 +6125,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName
 {
-    NSString *name = [applicationName copy];
-    [_private->applicationNameForUserAgent release];
-    _private->applicationNameForUserAgent = name;
+    _private->applicationNameForUserAgent = adoptNS([applicationName copy]);
     if (!_private->userAgentOverridden)
         [self _invalidateUserAgentCache];
 }
@@ -6158,7 +6142,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (NSString *)applicationNameForUserAgent
 {
-    return [[_private->applicationNameForUserAgent retain] autorelease];
+    auto applicationNameForUserAgentCopy = _private->applicationNameForUserAgent;
+    return applicationNameForUserAgentCopy.autorelease();
 }
 
 - (void)setCustomUserAgent:(NSString *)userAgentString
@@ -6178,14 +6163,13 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)setMediaStyle:(NSString *)mediaStyle
 {
     if (_private->mediaStyle != mediaStyle) {
-        [_private->mediaStyle release];
-        _private->mediaStyle = [mediaStyle copy];
+        _private->mediaStyle = adoptNS([mediaStyle copy]);
     }
 }
 
 - (NSString *)mediaStyle
 {
-    return _private->mediaStyle;
+    return _private->mediaStyle.get();
 }
 
 - (BOOL)supportsTextEncoding
@@ -6258,7 +6242,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (String)_userAgentString
 {
     if (_private->userAgent.isNull())
-        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent];
+        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent.get()];
 
     return _private->userAgent;
 }
@@ -6281,12 +6265,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame))
         [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
     if (_private->hostWindow && [self window] != _private->hostWindow)
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow.get()];
     if (hostWindow)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
 #endif
-    [_private->hostWindow release];
-    _private->hostWindow = [hostWindow retain];
+    _private->hostWindow = hostWindow;
     for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame))
         [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
 #if !PLATFORM(IOS_FAMILY)
@@ -6301,7 +6284,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_private)
         return nil;
 
-    return _private->hostWindow;
+    return _private->hostWindow.get();
 }
 
 - (NSView <WebDocumentView> *)documentViewAtWindowPoint:(NSPoint)point
@@ -6788,13 +6771,12 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight
 {
-    auto old = adoptNS(_private->currentNodeHighlight);
-    _private->currentNodeHighlight = [nodeHighlight retain];
+    _private->currentNodeHighlight = nodeHighlight;
 }
 
 - (WebNodeHighlight *)currentNodeHighlight
 {
-    return _private->currentNodeHighlight;
+    return _private->currentNodeHighlight.get();
 }
 
 - (NSView *)previousValidKeyView
@@ -7718,14 +7700,14 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 #if PLATFORM(MAC)
 - (BOOL)_allowsLinkPreview
 {
-    if (WebImmediateActionController *immediateActionController = _private->immediateActionController)
+    if (WebImmediateActionController *immediateActionController = _private->immediateActionController.get())
         return immediateActionController.enabled;
     return NO;
 }
 
 - (void)_setAllowsLinkPreview:(BOOL)allowsLinkPreview
 {
-    if (WebImmediateActionController *immediateActionController = _private->immediateActionController)
+    if (WebImmediateActionController *immediateActionController = _private->immediateActionController.get())
         immediateActionController.enabled = allowsLinkPreview;
 }
 #endif
@@ -8081,7 +8063,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidChangeSelectionNotification object:self];
 
     _private->editingDelegate = delegate;
-    [_private->editingDelegateForwarder release];
     _private->editingDelegateForwarder = nil;
 
     // add notifications for new delegate
@@ -9102,7 +9083,7 @@ bool LayerFlushController::flushLayers()
 #if PLATFORM(MAC)
 - (WebImmediateActionController *)_immediateActionController
 {
-    return _private->immediateActionController;
+    return _private->immediateActionController.get();
 }
 
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo

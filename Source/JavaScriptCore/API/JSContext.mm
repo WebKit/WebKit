@@ -41,13 +41,13 @@
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
 #import "StrongInlines.h"
-
+#import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if JSC_OBJC_API_ENABLED
 
 @implementation JSContext {
-    JSVirtualMachine *m_virtualMachine;
+    RetainPtr<JSVirtualMachine> m_virtualMachine;
     JSGlobalContextRef m_context;
     JSC::Strong<JSC::JSObject> m_exception;
     WeakObjCPtr<id <JSModuleLoaderDelegate>> m_moduleLoaderDelegate;
@@ -77,7 +77,7 @@
     if (!self)
         return nil;
 
-    m_virtualMachine = [virtualMachine retain];
+    m_virtualMachine = virtualMachine;
     m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0);
 
     self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
@@ -94,7 +94,6 @@
 {
     m_exception.clear();
     JSGlobalContextRelease(m_context);
-    [m_virtualMachine release];
     [_exceptionHandler release];
     [super dealloc];
 }
@@ -254,7 +253,7 @@
 
 - (JSVirtualMachine *)virtualMachine
 {
-    return m_virtualMachine;
+    return m_virtualMachine.get();
 }
 
 - (NSString *)name
@@ -336,7 +335,7 @@
         return nil;
 
     JSC::JSGlobalObject* globalObject = toJS(context);
-    m_virtualMachine = [[JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())] retain];
+    m_virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())];
     ASSERT(m_virtualMachine);
     m_context = JSGlobalContextRetain(context);
     [self ensureWrapperMap];

@@ -1,3 +1,66 @@
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit even more
+        https://bugs.webkit.org/show_bug.cgi?id=221914
+
+        Reviewed by Alex Christensen.
+
+        * History/WebHistory.mm:
+        (+[WebHistory setOptionalSharedHistory:]):
+        * Plugins/WebPluginDatabase.mm:
+        (+[WebPluginDatabase setAdditionalWebPlugInPaths:]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterFullScreenForElement):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (NetscapePluginWidget::getFormValue):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView _attach:numLayers:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _closePluginDatabases]):
+        (-[WebView _close]):
+        (-[WebView inspector]):
+        (-[WebView setShowingInspectorIndication:]):
+        (-[WebView _setFormDelegate:]):
+        (-[WebView _formDelegateForwarder]):
+        (-[WebView _UIKitDelegateForwarder]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _UIDelegateForwarder]):
+        (-[WebView _editingDelegateForwarder]):
+        (-[WebView _setUIKitDelegate:]):
+        (-[WebView caretChangeListeners]):
+        (-[WebView addCaretChangeListener:]):
+        (-[WebView _setAdditionalWebPlugInPaths:]):
+        (-[WebView setBackgroundColor:]):
+        (-[WebView backgroundColor]):
+        (-[WebView _fixedPositionContent]):
+        (-[WebView setUIDelegate:]):
+        (-[WebView _resourceLoadDelegateForwarder]):
+        (-[WebView setResourceLoadDelegate:]):
+        (-[WebView setPolicyDelegate:]):
+        (-[WebView _frameLoadDelegateForwarder]):
+        (-[WebView setFrameLoadDelegate:]):
+        (-[WebView setApplicationNameForUserAgent:]):
+        (-[WebView applicationNameForUserAgent]):
+        (-[WebView setMediaStyle:]):
+        (-[WebView mediaStyle]):
+        (-[WebView _userAgentString]):
+        (-[WebView setHostWindow:]):
+        (-[WebView hostWindow]):
+        (-[WebView setCurrentNodeHighlight:]):
+        (-[WebView currentNodeHighlight]):
+        (-[WebView _allowsLinkPreview]):
+        (-[WebView _setAllowsLinkPreview:]):
+        (-[WebView setEditingDelegate:]):
+        (-[WebView _immediateActionController]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+
 2021-02-12  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit

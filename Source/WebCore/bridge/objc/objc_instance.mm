@@ -72,9 +72,8 @@ RuntimeObject* ObjcInstance::newRuntimeObject(JSGlobalObject* lexicalGlobalObjec
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
 {
-    NSString *oldException = s_exception;
+    auto oldException = adoptNS(s_exception);
     s_exception = [exception copy];
-    [oldException release];
 
     s_exceptionEnvironment = exceptionEnvironment;
 }
@@ -94,9 +93,8 @@ void ObjcInstance::moveGlobalExceptionToExecState(JSGlobalObject* lexicalGlobalO
         throwError(lexicalGlobalObject, scope, s_exception);
     }
 
-    [s_exception release];
-    s_exception = nil;
-    s_exceptionEnvironment = 0;
+    auto exception = adoptNS(std::exchange(s_exception, nil));
+    s_exceptionEnvironment = nullptr;
 }
 
 ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject) 

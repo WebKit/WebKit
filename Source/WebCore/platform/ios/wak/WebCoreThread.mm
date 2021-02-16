@@ -280,18 +280,15 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
 
 static void MainThreadAdoptAndRelease(id obj)
 {
-    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent()) {
-        [obj release];
+    auto adoptedObj = adoptNS(obj);
+    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
         return;
-    }
 #if LOG_RELEASES
     NSLog(@"Release send [web thread] : %@", obj);
 #endif
     // We own obj at this point, so we don't need the block to implicitly
     // retain it.
-    RunLoop::main().dispatch([obj] {
-        [obj release];
-    });
+    RunLoop::main().dispatch([adoptedObj = WTFMove(adoptedObj)] { });
 }
 
 void WebThreadAdoptAndRelease(id obj)
@@ -402,11 +399,11 @@ static void HandleWebThreadReleaseSource(void*)
 {
     ASSERT(WebThreadIsCurrent());
 
-    CFMutableArrayRef objects = nullptr;
+    RetainPtr<CFMutableArrayRef> objects;
     {
         auto locker = holdLock(webThreadReleaseLock);
         if (CFArrayGetCount(WebThreadReleaseObjArray)) {
-            objects = CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray);
+            objects = adoptCF(CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray));
             CFArrayRemoveAllValues(WebThreadReleaseObjArray);
         }
     }
@@ -414,15 +411,12 @@ static void HandleWebThreadReleaseSource(void*)
     if (!objects)
         return;
 
-    for (unsigned i = 0, count = CFArrayGetCount(objects); i < count; ++i) {
-        id obj = (id)CFArrayGetValueAtIndex(objects, i);
+    for (unsigned i = 0, count = CFArrayGetCount(objects.get()); i < count; ++i) {
+        auto obj = adoptCF(CFArrayGetValueAtIndex(objects.get(), i));
 #if LOG_RELEASES
-        NSLog(@"Release recv [web thread] : %@", obj);
+        NSLog(@"Release recv [web thread] : %@", obj.get());
 #endif
-        [obj release];
     }
-
-    CFRelease(objects);
 }
 
 void WebThreadCallDelegate(NSInvocation* invocation)
