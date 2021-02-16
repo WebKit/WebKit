@@ -1,3 +1,67 @@
+2021-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ThreadMessageReceiverRefCounted subclasses are accessed in non-thread-safe way
+        https://bugs.webkit.org/show_bug.cgi?id=221891
+
+        Reviewed by Chris Dumez.
+
+        For each ThreadMessageReceiverRefCounted subclass, remove calls
+        to Connection::addThreadMessageReceiver() from the constructor.
+        The calls pass 'this' as the ThreadMessageReceiver*. If the
+        connection tries to dispatch a message during the constructor, this
+        results in some or all of below:
+        - non-thread-safe read of mutated virtual function pointer
+        - call to incorrect member function, mostly to MessageReceiver::didReceiveMessage
+        - an assert from above
+        - skipped message
+
+        For each ThreadMessageReceiverRefCounted subclass, remove calls
+        to Connection::removeThreadMessageReceiver() from the destructor.
+        The message receive destination is still active during destructor,
+        so Connection might dispatch new message tasks during that time.
+        This causes ref of the instance already being destroyed, which
+        then causes the tasks to use deleted instance and then later
+        deleting it again.
+
+        Does not try to fix any other potential thread-related issues in
+        the modified areas.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::RemoteAudioMediaStreamTrackRendererManager):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::startListeningForIPC):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::close):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::startListeningForIPC):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::close):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::startListeningForIPC):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::create):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::LibWebRTCCodecs):
+        (WebKit::LibWebRTCCodecs::startListeningForIPC):
+        (WebKit::LibWebRTCCodecs::~LibWebRTCCodecs):
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        (WebKit::LibWebRTCCodecs::create):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.cpp:
+        (WebKit::LibWebRTCNetwork::~LibWebRTCNetwork):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::libWebRTCCodecs):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::~RemoteCaptureSampleManager):
+        (WebKit::RemoteCaptureSampleManager::stopListeningForIPC):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+        * WebProcess/glib/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+
 2021-02-16  Youenn Fablet  <youenn@apple.com>
 
         Enable GPU WebRTC codecs in GPUProcess by default on iOS

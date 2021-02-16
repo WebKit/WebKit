@@ -37,7 +37,7 @@ namespace WebKit {
 
 LibWebRTCNetwork::~LibWebRTCNetwork()
 {
-    setConnection(nullptr);
+    ASSERT_NOT_REACHED();
 }
 
 void LibWebRTCNetwork::setAsActive()

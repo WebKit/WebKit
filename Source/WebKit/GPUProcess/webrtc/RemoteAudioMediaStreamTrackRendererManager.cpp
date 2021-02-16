@@ -41,18 +41,20 @@ RemoteAudioMediaStreamTrackRendererManager::RemoteAudioMediaStreamTrackRendererM
     : m_connectionToWebProcess(connectionToWebProcess)
     , m_queue(connectionToWebProcess.gpuProcess().audioMediaStreamTrackRendererQueue())
 {
+}
+
+void RemoteAudioMediaStreamTrackRendererManager::startListeningForIPC()
+{
     m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName(), this);
     m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName(), this);
 }
 
-RemoteAudioMediaStreamTrackRendererManager::~RemoteAudioMediaStreamTrackRendererManager()
-{
-    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName());
-    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName());
-}
+RemoteAudioMediaStreamTrackRendererManager::~RemoteAudioMediaStreamTrackRendererManager() = default;
 
 void RemoteAudioMediaStreamTrackRendererManager::close()
 {
+    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName());
+    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName());
     dispatchToThread([this, protectedThis = makeRef(*this)] {
         m_renderers.clear();
     });

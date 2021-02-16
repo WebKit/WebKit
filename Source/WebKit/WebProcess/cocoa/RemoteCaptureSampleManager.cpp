@@ -46,6 +46,11 @@ RemoteCaptureSampleManager::RemoteCaptureSampleManager()
 
 RemoteCaptureSampleManager::~RemoteCaptureSampleManager()
 {
+    ASSERT(!m_connection);
+}
+
+void RemoteCaptureSampleManager::stopListeningForIPC()
+{
     if (m_isRegisteredToParentProcessConnection)
         WebProcess::singleton().parentProcessConnection()->removeThreadMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName());
     setConnection(nullptr);
