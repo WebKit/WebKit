@@ -1,5 +1,54 @@
 2021-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        Connection clients should be able to obtain the messages as data instead of embedded in function references
+        https://bugs.webkit.org/show_bug.cgi?id=221560
+
+        Reviewed by Chris Dumez.
+
+        Add IPC::MessageReceiveQueue, an interface which obtains messages from
+        the message receive thread and forwards them to caller as data.
+        This is important in order to be able to skip messages that are stale
+        or originating from a sender which is incorrect. Before, the client
+        could only get the messages as Function references, and those cannot
+        be skipped as it would be undefined what not executing a function means.
+
+        IPC::MessageReceiveQueue is a generalization and simplification of current
+        IPC::Connection::ThreadMessageReceiverRefCounted and
+        IPC::Connection::WorkQueueMessageReceiver. It has different ref-count
+        semantics, in the way that client controls the life-time with add and
+        remove.
+
+        IPC::MessageReceiveQueue fixes message reordering bug with
+        WorkQueueMessageReceiver and ThreadMessageReceiver where first few messages
+        that are routed to main thread message queue can come later than some
+        other message that gets handled from message receive thread.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addMessageReceiveQueue):
+        Add plain raw MessageReceiveQueue, to be used in WebGL IPC implementation.
+        Implement ThreadMessageReceiver and WorkQueueMessageReceiver with the
+        above.
+
+        (IPC::Connection::removeMessageReceiveQueue):
+        (IPC::Connection::dispatchMessageReceiverMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/MessageReceiveQueue.h: Copied from Source/WTF/wtf/FunctionDispatcher.h.
+        * Platform/IPC/MessageReceiveQueues.h: Added.
+        * Platform/IPC/MessageReceiveQueueMap.cpp: Added.
+        (IPC::MessageReceiveQueueMap::addImpl):
+        (IPC::MessageReceiveQueueMap::remove):
+        (IPC::MessageReceiveQueueMap::get const):
+        * Platform/IPC/MessageReceiveQueueMap.h: Copied from Source/WTF/wtf/FunctionDispatcher.h.
+        (IPC::MessageReceiveQueueMap::isValidMessage):
+        (IPC::MessageReceiveQueueMap::add):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         RemoteAudioSourceProviderManager is accessed in non-thread-safe manner
         https://bugs.webkit.org/show_bug.cgi?id=221894
 
