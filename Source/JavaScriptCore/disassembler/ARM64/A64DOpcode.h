@@ -409,7 +409,7 @@ public:
     unsigned opc() { return (m_opcode>>21) & 0x7; }
     unsigned op2() { return (m_opcode>>2) & 0x7; }
     unsigned ll() { return m_opcode & 0x3; }
-    int immediate16() { return (static_cast<int>((m_opcode >> 5) & 0xffff) << 16) >> 16; }
+    unsigned immediate16() { return (static_cast<unsigned>((m_opcode >> 5) & 0xffff) << 16) >> 16; }
 };
 
 class A64DOpcodeExtract : public A64DOpcode {

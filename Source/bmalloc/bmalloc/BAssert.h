@@ -41,7 +41,7 @@
 #elif BCPU(ARM_THUMB2)
 #define BBreakpointTrap()  __asm__ volatile ("bkpt #0")
 #elif BCPU(ARM64)
-#define BBreakpointTrap()  __asm__ volatile ("brk #0")
+#define BBreakpointTrap()  __asm__ volatile ("brk #0xc471")
 #else
 #error "Unsupported CPU".
 #endif

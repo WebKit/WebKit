@@ -235,7 +235,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #elif CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  asm volatile ("bkpt #0")
 #elif CPU(ARM64)
-#define WTFBreakpointTrap()  asm volatile ("brk #0")
+#define WTFBreakpointTrap()  asm volatile ("brk #0xc471")
 #else
 #define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
