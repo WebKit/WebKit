@@ -1,3 +1,12 @@
+2021-02-16  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] tex-image-and-sub-image-2d-with-video tests pass unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=221951
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Teardown shadow root renderers on hostChildElementDidChange

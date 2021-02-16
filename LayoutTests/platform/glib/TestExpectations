@@ -198,6 +198,12 @@ webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Pass ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Pass ]
 
+# These tests are expected to fail with GPU process and on Mac, but pass on GTK and WPE
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
