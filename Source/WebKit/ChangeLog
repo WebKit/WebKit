@@ -1,3 +1,16 @@
+2021-02-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure that no image decoders run in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221885
+        <rdar://problem/74341122>
+
+        Reviewed by Simon Fraser.
+
+        Make GPU Process force ImageIO to disable all image decoding.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+
 2021-02-15  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Ignore an IPC message if the message receiver has been destroyed

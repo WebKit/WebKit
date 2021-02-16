@@ -65,6 +65,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
+#include <pal/spi/cg/ImageIOSPI.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -154,6 +158,11 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
         m_canShowWhileLocked
     });
     send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
+#endif
+
+#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
+    auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
+    CGImageSourceSetAllowableTypes(emptyArray.get());
 #endif
 
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
