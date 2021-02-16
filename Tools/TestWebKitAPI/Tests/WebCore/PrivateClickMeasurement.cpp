@@ -123,6 +123,12 @@ TEST(PrivateClickMeasurement, ValidConversionURLs)
     ASSERT_EQ(optionalConversion->priority, (uint32_t)2);
 }
 
+TEST(PrivateClickMeasurement, ValidSourceNonce)
+{
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    ASSERT_TRUE(ephemeralNonce.isValid());
+}
+
 // Negative test cases.
 
 TEST(PrivateClickMeasurement, InvalidSourceID)
@@ -273,6 +279,25 @@ TEST(PrivateClickMeasurement, InvalidConversionWithDisallowedURLComponents)
     const URL conversionURLWithFragment = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#fragment"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithFragment);
     ASSERT_FALSE(optionalConversion);
+}
+
+TEST(PrivateClickMeasurement, InvalidSourceNonce)
+{
+    // Fewer than the requried number of bytes.
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDabcd0123456789"_s };
+    ASSERT_FALSE(ephemeralNonce.isValid());
+    // More than the requried number of bytes.
+    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFGHIabcdefghi0123456789"_s };
+    ASSERT_FALSE(ephemeralNonce.isValid());
+    // Illegal, ASCII character '/'.
+    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcde/0123456789"_s };
+    ASSERT_FALSE(ephemeralNonce.isValid());
+    // Illegal, non-ASCII character 'å'.
+    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdeå0123456789" };
+    ASSERT_FALSE(ephemeralNonce.isValid());
+    // Empty string.
+    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { StringImpl::empty() };
+    ASSERT_FALSE(ephemeralNonce.isValid());
 }
 
 } // namespace TestWebKitAPI

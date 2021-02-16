@@ -450,7 +450,19 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         return WTF::nullopt;
     }
 
-    return PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
+    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
+
+    auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
+    if (!attributionSourceNonceAttr.isEmpty()) {
+        auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { attributionSourceNonceAttr };
+        if (!ephemeralNonce.isValid()) {
+            document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+            return WTF::nullopt;
+        }
+        privateClickMeasurement.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
+    }
+
+    return privateClickMeasurement;
 }
 
 void HTMLAnchorElement::handleClick(Event& event)

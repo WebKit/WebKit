@@ -1,3 +1,24 @@
+2021-02-15  John Wilander  <wilander@apple.com>
+
+        PCM: Add high entropy attributionSourceNonce attribute to anchor tags
+        https://bugs.webkit.org/show_bug.cgi?id=221934
+        <rdar://73581230>
+
+        Reviewed by Jiewen Tan.
+
+        In Private Click Measurement (PCM), the source site should have the option to
+        provide a high entropy nonce with which PCM can asynchronously validate its
+        subsequent, asynchronous request for a signature of its unlinkable token.
+
+        The nonce attribute's name is attributionSourceNonce and it's a
+        128-bit/16-byte Base64URL encoded string.
+
+        The attribute is behind the experimental feature flag
+        PrivateClickMeasurementFraudPrevention.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-02-15  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add python 3 support - part 2

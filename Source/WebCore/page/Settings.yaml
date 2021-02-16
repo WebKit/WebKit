@@ -437,6 +437,12 @@ PreventKeyboardDOMEventDispatch:
     WebCore:
       default: false
 
+PrivateClickMeasurementFraudPreventionEnabled:
+  type: bool
+  defaultValue:
+    WebCore:
+      default: false
+
 QuickTimePluginReplacementEnabled:
   type: bool
   defaultValue:

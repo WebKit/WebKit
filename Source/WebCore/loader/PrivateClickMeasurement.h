@@ -32,6 +32,7 @@
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -200,6 +201,28 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
+    struct EphemeralSourceNonce {
+        static constexpr uint32_t RequiredNumberOfBytes = 16;
+
+        EphemeralSourceNonce() = default;
+        explicit EphemeralSourceNonce(const String& nonceString)
+            : nonce { nonceString }
+        {
+        }
+
+        // FIXME: Investigate if we can do with a simple length check instead of decoding.
+        // https://bugs.webkit.org/show_bug.cgi?id=221945
+        bool isValid() const
+        {
+            Vector<uint8_t> digest;
+            if (!base64URLDecode(nonce, digest))
+                return false;
+            return digest.size() == RequiredNumberOfBytes;
+        }
+
+        String nonce;
+    };
+
     struct Priority {
         static constexpr uint32_t MaxEntropy = 63;
 
@@ -255,6 +278,9 @@ public:
     WEBCORE_EXPORT Ref<JSON::Object> json() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };
+    void setEphemeralSourceNonce(EphemeralSourceNonce&& nonce) { m_ephemeralSourceNonce = WTFMove(nonce); };
+    Optional<EphemeralSourceNonce> ephemeralSourceNonce() const { return !m_ephemeralSourceNonce ? WTF::nullopt : m_ephemeralSourceNonce->isValid() ? m_ephemeralSourceNonce : WTF::nullopt; };
+    void clearEphemeralSourceNonce() { m_ephemeralSourceNonce  = WTF::nullopt; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
     void setEarliestTimeToSend(WallTime time) { m_earliestTimeToSend = time; }
@@ -278,6 +304,7 @@ private:
     String m_purchaser;
     WallTime m_timeOfAdClick;
 
+    Optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
     Optional<AttributionTriggerData> m_attributionTriggerData;
     Optional<WallTime> m_earliestTimeToSend;
 };
