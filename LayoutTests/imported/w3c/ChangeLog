@@ -1,3 +1,14 @@
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder.stop() does not work correctly when recording has been paused.
+        https://bugs.webkit.org/show_bug.cgi?id=221916
+        <rdar://problem/74366154>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html:
+
 2021-02-16  Antoine Quint  <graouts@webkit.org>
 
         Web Animations JS API does not support "inherit" CSS values for keyframes
