@@ -594,6 +594,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
     pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
+    pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
 
     pageConfiguration.textInteractionEnabled = parameters.textInteractionEnabled;
     

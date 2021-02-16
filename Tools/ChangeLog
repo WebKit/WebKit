@@ -1,3 +1,14 @@
+2021-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to disable HTTPS upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=221591
+        <rdar://problem/56254945>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+        (TEST):
+
 2021-02-16  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit even more

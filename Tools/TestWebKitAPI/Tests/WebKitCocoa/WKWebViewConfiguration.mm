@@ -25,10 +25,13 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebsiteDataStore.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
@@ -94,4 +97,50 @@ TEST(WebKit, DefaultConfigurationEME)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, ConfigurationHTTPSUpgrade)
+{
+    using namespace TestWebKitAPI;
+    bool done = false;
+    Vector<char> requestBytes;
+    HTTPServer server([&] (Connection connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& bytes) mutable {
+            requestBytes = WTFMove(bytes);
+            done = true;
+        });
+    });
+
+    auto runTest = [&] (bool upgrade) {
+        done = false;
+        auto storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease];
+        storeConfiguration.allowsServerPreconnect = NO;
+        storeConfiguration.proxyConfiguration = @{
+            (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+            (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port()),
+            (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+            (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port()),
+        };
+        auto store = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+        auto configuration = [[WKWebViewConfiguration new] autorelease];
+        configuration.websiteDataStore = store;
+        configuration.upgradeKnownHostsToHTTPS = upgrade;
+        auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+        auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.opengl.org/"]];
+        [webView loadRequest:request];
+        Util::run(&done);
+    };
+
+    auto checkRequestBytesStartsWith = [&] (const char* string) {
+        EXPECT_GT(requestBytes.size(), strlen(string));
+        if (requestBytes.size() <= strlen(string))
+            return;
+        requestBytes[strlen(string)] = 0;
+        EXPECT_WK_STREQ(requestBytes.data(), string);
+    };
+
+    runTest(true);
+    checkRequestBytesStartsWith("CONNECT www.opengl.org:443 HTTP/1.1\r\n");
+    runTest(false);
+    checkRequestBytesStartsWith("GET http://www.opengl.org/ HTTP/1.1\r\n");
 }

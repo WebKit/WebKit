@@ -7867,6 +7867,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
     
     parameters.textInteractionEnabled = preferences().textInteractionEnabled();
+    parameters.httpsUpgradeEnabled = m_configuration->httpsUpgradeEnabled();
 
     return parameters;
 }

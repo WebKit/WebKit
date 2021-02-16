@@ -94,6 +94,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #endif
 
     copy->m_mediaCaptureEnabled = this->m_mediaCaptureEnabled;
+    copy->m_httpsUpgradeEnabled = this->m_httpsUpgradeEnabled;
 
     return copy;
 }

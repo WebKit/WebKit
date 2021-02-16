@@ -163,7 +163,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
@@ -183,7 +183,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
-    makeSecureIfNecessary(results, url);
+    if (page.httpsUpgradeEnabled())
+        makeSecureIfNecessary(results, url);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;

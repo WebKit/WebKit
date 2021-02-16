@@ -1,3 +1,29 @@
+2021-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to disable HTTPS upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=221591
+        <rdar://problem/56254945>
+
+        Reviewed by Geoff Garen.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::setHTTPSUpgradeEnabled):
+        (API::PageConfiguration::httpsUpgradeEnabled const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration upgradeCommonKnownRequestsToHTTPS]):
+        (-[WKWebViewConfiguration setUpgradeCommonKnownRequestsToHTTPS:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
 2021-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Connection clients should be able to obtain the messages as data instead of embedded in function references

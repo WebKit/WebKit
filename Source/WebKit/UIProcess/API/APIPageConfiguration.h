@@ -161,6 +161,9 @@ public:
     void setMediaCaptureEnabled(bool value) { m_mediaCaptureEnabled = value; }
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
 
+    void setHTTPSUpgradeEnabled(bool enabled) { m_httpsUpgradeEnabled = enabled; }
+    bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
     
@@ -211,6 +214,7 @@ private:
 #endif
 
     bool m_mediaCaptureEnabled { false };
+    bool m_httpsUpgradeEnabled { true };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };

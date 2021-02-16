@@ -72,7 +72,7 @@ static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& 
     auto* page = frame.page();
     if (!page)
         return false;
-    auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), resourceType, *documentLoader);
+    auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), resourceType, *documentLoader);
     bool result = results.summary.blockedLoad;
     ContentExtensions::applyResultsToRequest(WTFMove(results), page, request);
     return result;

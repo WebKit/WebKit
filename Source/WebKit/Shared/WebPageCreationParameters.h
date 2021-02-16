@@ -251,6 +251,7 @@ struct WebPageCreationParameters {
 #endif
 
     bool textInteractionEnabled { true };
+    bool httpsUpgradeEnabled { true };
 };
 
 } // namespace WebKit

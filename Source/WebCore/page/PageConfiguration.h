@@ -134,6 +134,7 @@ public:
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool textInteractionEnabled { true };
+    bool httpsUpgradeEnabled { true };
 };
 
 }

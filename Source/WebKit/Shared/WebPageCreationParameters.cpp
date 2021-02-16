@@ -179,6 +179,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     
     encoder << textInteractionEnabled;
+    encoder << httpsUpgradeEnabled;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -571,6 +572,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 #endif
     
     if (!decoder.decode(parameters.textInteractionEnabled))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return WTF::nullopt;
 
     return parameters;
