@@ -1,5 +1,45 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272435. rdar://problem/74410448
+
+    [LFC][Integration] Hit testing broken for descendants of pointer-events:none boxes
+    https://bugs.webkit.org/show_bug.cgi?id=221460
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Descendants of pointer-events:none boxes may still be hittestable if they override the value.
+    LFC integration hit testing code didn't take this into account.
+    
+    Test: fast/events/hittest-pointer-event-none-descendants.html
+    
+    * layout/integration/LayoutIntegrationLineLayout.cpp:
+    (WebCore::LayoutIntegration::LineLayout::hitTest):
+    
+    Replaced and inline-block boxes do the visibility/pointer-events test themselves.
+    This code just needs to take care of text boxes.
+    
+    LayoutTests:
+    
+    * fast/events/hittest-pointer-event-none-descendants-expected.html: Added.
+    * fast/events/hittest-pointer-event-none-descendants.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272435 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-05  Antti Koivisto  <antti@apple.com>
+
+            [LFC][Integration] Hit testing broken for descendants of pointer-events:none boxes
+            https://bugs.webkit.org/show_bug.cgi?id=221460
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/events/hittest-pointer-event-none-descendants-expected.html: Added.
+            * fast/events/hittest-pointer-event-none-descendants.html: Added.
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r272390. rdar://problem/74409535
 
     AX: expose focusable elements even if element or ancestor has aria-hidden=true
