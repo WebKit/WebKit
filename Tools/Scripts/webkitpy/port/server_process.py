@@ -42,8 +42,11 @@ from webkitcorepy import string_utils
 # used by subprocess, so we have to use the native APIs directly.
 if sys.platform.startswith('win'):
     import msvcrt
-    import win32pipe
+    import pywintypes
+    import win32api
     import win32file
+    import win32pipe
+    import winerror
 else:
     import fcntl
     import os
@@ -344,8 +347,8 @@ class ServerProcess(object):
             if avail > 0:
                 _, buf = win32file.ReadFile(handle, avail, None)
                 return buf
-        except Exception as e:
-            if e[0] not in (109, errno.ESHUTDOWN):  # 109 == win32 ERROR_BROKEN_PIPE
+        except pywintypes.error as e:
+            if e.winerror not in (winerror.ERROR_INVALID_FUNCTION, winerror.ERROR_BROKEN_PIPE, errno.ESHUTDOWN):
                 raise
         return None
 

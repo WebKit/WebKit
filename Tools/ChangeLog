@@ -1,3 +1,23 @@
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Catch winerror.ERROR_INVALID_FUNCTION in ServerProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222047
+
+        Reviewed by Jonathan Bedard.
+
+        The catch statement in _non_blocking_read_win32 throws a TypeError because the 'error'
+        object is not subscriptable. The block assumed a pywintypes.error so it was modified
+        to catch that exception. Using the proper type stopped that occurance but surfaced
+        additional issues.
+
+        When shutting down the server process the call to win32pipe.PeekNamedPipe can throw a
+        winerror.ERROR_INVALID_FUNCTION. There isn't really any documentation on MSDN pointing to
+        why this error would be thrown. ERROR_INVALID_FUNCTION seems to be around device driver
+        issues so the best guess is that the handle is no longer valid at this point of execution.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._non_blocking_read_win32):
+
 2021-02-17  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Failure to retrieve commit in EWS (Investigation)
