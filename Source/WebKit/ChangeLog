@@ -1,3 +1,15 @@
+2021-02-16  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r271493 ) Crash in +[NSAttributedString(WKPrivate) _loadFromHTMLWithOptions:contentLoader:completionHandler:] on background thread
+        <rdar://problem/74038372> and https://bugs.webkit.org/show_bug.cgi?id=222005
+
+        Reviewed by Geoffrey Garen.
+        
+        Test not possible as TestWebKitAPI seems to always initialize WebKit on the main thread.
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (+[NSAttributedString _loadFromHTMLWithOptions:contentLoader:completionHandler:]): Switch this RunLoop::main() back to dispatch_async to main.
+
 2021-02-16  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit
