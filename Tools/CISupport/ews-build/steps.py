@@ -3076,6 +3076,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     command = ['git', 'svn', 'dcommit', '--rmdir']
     commit_success_regexp = '^Committed r(?P<svn_revision>\d+)$'
     haltOnFailure = False
+    MAX_RETRY = 2
 
     def __init__(self, **kwargs):
         shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
@@ -3097,6 +3098,12 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
             self.addURL('r{}'.format(svn_revision), self.url_for_revision(svn_revision))
         else:
+            retry_count = int(self.getProperty('retry_count', 0))
+            if retry_count < self.MAX_RETRY:
+                self.setProperty('retry_count', retry_count + 1)
+                self.build.addStepsAfterCurrentStep([CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                return rc
+
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])

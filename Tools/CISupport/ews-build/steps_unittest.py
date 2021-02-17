@@ -3780,8 +3780,27 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
+    def test_failure_retry(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '2345')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 1)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        return rc
+
     def test_failure(self):
         self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
         self.setProperty('patch_id', '2345')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
