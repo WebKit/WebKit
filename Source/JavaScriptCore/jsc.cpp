@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -3176,6 +3176,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
+    Options::useAtMethod() = true;
     
 #if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;
