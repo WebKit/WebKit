@@ -184,7 +184,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
         || domain == "youtube.com"
         || domain.endsWith(".youtube.com")
         || domain == "hulu.com"
-        || domain.endsWith("hulu.com");
+        || domain.endsWith(".hulu.com");
 
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
