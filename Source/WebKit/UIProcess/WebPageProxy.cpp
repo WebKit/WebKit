@@ -6564,54 +6564,103 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
     }
 
-#if PLATFORM(COCOA)
-    if (item.action() == ContextMenuItemTagSmartCopyPaste) {
-        setSmartInsertDeleteEnabled(!isSmartInsertDeleteEnabled());
-        return;
-    }
-    if (item.action() == ContextMenuItemTagSmartQuotes) {
-        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagSmartDashes) {
-        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagSmartLinks) {
-        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagTextReplacement) {
-        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagCorrectSpellingAutomatically) {
-        TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
-        m_process->updateTextCheckerState();
-        return;        
-    }
-    if (item.action() == ContextMenuItemTagShowSubstitutions) {
-        TextChecker::toggleSubstitutionsPanelIsShowing();
-        return;
-    }
-#endif
     struct DownloadInfo {
         String url;
         String suggestedFilename;
     };
     Optional<DownloadInfo> downloadInfo;
-    if (item.action() == ContextMenuItemTagDownloadImageToDisk)
+
+    switch (item.action()) {
+#if PLATFORM(COCOA)
+    case ContextMenuItemTagSmartCopyPaste:
+        setSmartInsertDeleteEnabled(!isSmartInsertDeleteEnabled());
+        return;
+
+    case ContextMenuItemTagSmartQuotes:
+        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagSmartDashes:
+        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagSmartLinks:
+        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagTextReplacement:
+        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagCorrectSpellingAutomatically:
+        TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagShowSubstitutions:
+        TextChecker::toggleSubstitutionsPanelIsShowing();
+        return;
+#endif
+
+    case ContextMenuItemTagDownloadImageToDisk:
         downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL, { } }};
-    if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
+        break;
+
+    case ContextMenuItemTagDownloadLinkToDisk: {
         auto& hitTestResult = m_activeContextMenuContextData.webHitTestResultData();
         downloadInfo = {{ hitTestResult.absoluteLinkURL, hitTestResult.linkSuggestedFilename }};
+        break;
     }
-    if (item.action() == ContextMenuItemTagDownloadMediaToDisk)
+
+    case ContextMenuItemTagDownloadMediaToDisk:
         downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL, { } }};
+        break;
+
+    case ContextMenuItemTagCheckSpellingWhileTyping:
+        TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagCheckGrammarWithSpelling:
+        TextChecker::setGrammarCheckingEnabled(!TextChecker::state().isGrammarCheckingEnabled);
+        m_process->updateTextCheckerState();
+        return;
+
+    case ContextMenuItemTagShowSpellingPanel:
+        if (!TextChecker::spellingUIIsShowing())
+            advanceToNextMisspelling(true);
+        TextChecker::toggleSpellingUIIsShowing();
+        return;
+
+#if ENABLE(APP_HIGHLIGHTS)
+    case ContextMenuItemTagAddHighlightToNewGroup:
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes);
+        return;
+
+    case ContextMenuItemTagAddHighlightToCurrentGroup:
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No);
+        return;
+#endif
+
+    case ContextMenuItemTagLearnSpelling:
+    case ContextMenuItemTagIgnoreSpelling:
+        ++m_pendingLearnOrIgnoreWordMessageCount;
+        break;
+
+    case ContextMenuItemTagRevealImage:
+#if ENABLE(IMAGE_EXTRACTION)
+        handleContextMenuRevealImage();
+#endif
+        return;
+
+    default:
+        break;
+    }
+
     if (downloadInfo) {
         auto& download = m_process->processPool().download(m_websiteDataStore, this, URL(URL(), downloadInfo->url), downloadInfo->suggestedFilename);
         download.setDidStartCallback([this, weakThis = makeWeakPtr(*this)] (auto* download) {
@@ -6620,34 +6669,6 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
             m_navigationClient->contextMenuDidCreateDownload(*this, *download);
         });
     }
-    if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
-        TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagCheckGrammarWithSpelling) {
-        TextChecker::setGrammarCheckingEnabled(!TextChecker::state().isGrammarCheckingEnabled);
-        m_process->updateTextCheckerState();
-        return;
-    }
-    if (item.action() == ContextMenuItemTagShowSpellingPanel) {
-        if (!TextChecker::spellingUIIsShowing())
-            advanceToNextMisspelling(true);
-        TextChecker::toggleSpellingUIIsShowing();
-        return;
-    }
-#if ENABLE(APP_HIGHLIGHTS)
-    if (item.action() == ContextMenuItemTagAddHighlightToNewGroup) {
-        createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes);
-        return;
-    }
-    if (item.action() == ContextMenuItemTagAddHighlightToCurrentGroup) {
-        createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
-        return;
-    }
-#endif
-    if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
-        ++m_pendingLearnOrIgnoreWordMessageCount;
 
     platformDidSelectItemFromActiveContextMenu(item);
 

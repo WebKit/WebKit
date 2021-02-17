@@ -445,6 +445,9 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagReload:
         return _WKMenuItemIdentifierReload;
 
+    case ContextMenuItemTagRevealImage:
+        return _WKMenuItemIdentifierRevealImage;
+
     case ContextMenuItemTagSearchWeb:
         return _WKMenuItemIdentifierSearchWeb;
 

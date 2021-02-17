@@ -1,3 +1,50 @@
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Add plumbing to support the `ContextMenuItemTagRevealImage` action, as well as some WebKitAdditions extension
+        points. See below for more details. This patch was mostly written by Devin Rousso, with some adjustments from
+        me.
+
+        * Configurations/WebKit.xcconfig:
+
+        Link against UniformTypeIdentifiers.
+
+        * Shared/API/c/WKContextMenuItemTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+
+        Add `kWKContextMenuItemTagRevealImage`, and add helpers to convert from `WebCore::ContextMenuItemTagRevealImage`
+        to `kWKContextMenuItemTagRevealImage` and vice versa.
+
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::webHitTestResultData):
+
+        Add a non-const version of `webHitTestResultData()`, so that we can generate a `CGImage` using
+        `WebHitTestResultData`'s bitmap data.
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleContextMenuRevealImage):
+
+        Add a helper method, `handleContextMenuRevealImage`, to handle the new context menu action; additionally,
+        introduce another helper method, `revealExtractedImageInPreviewPanel`, to handle the Mac-specific
+        `QLPreviewPanel` logic when invoking the new item. See WebKitAdditions changes for more detail.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+
 2021-02-17  Per Arne  <pvollan@apple.com>
 
         [macOS] Deny access to unused IOKit classes

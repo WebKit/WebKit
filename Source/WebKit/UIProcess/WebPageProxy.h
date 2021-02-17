@@ -112,6 +112,7 @@
 #include <WebCore/ViewportArguments.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
@@ -181,6 +182,10 @@ interface ID3D11Device1;
 
 #if ENABLE(MEDIA_USAGE)
 #include <WebCore/MediaSessionIdentifier.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyAdditionsBefore.h>
 #endif
 
 namespace API {
@@ -1839,6 +1844,11 @@ public:
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+    void handleContextMenuRevealImage();
+    void resetImageExtractionPreview();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2894,6 +2904,10 @@ private:
     size_t m_suspendMediaPlaybackCounter { 0 };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyAdditionsAfter.h>
+#endif
 };
 
 } // namespace WebKit

@@ -76,6 +76,10 @@ SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyCocoaAdditionsBefore.mm>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
 
@@ -577,12 +581,29 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
     return SandboxExtension::HandleArray();
 }
 
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+
+void WebPageProxy::handleContextMenuRevealImage()
+{
+    auto& result = m_activeContextMenuContextData.webHitTestResultData();
+    if (!result.imageBitmap)
+        return;
+
+    revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+
 void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
 }
 
 } // namespace WebKit
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyCocoaAdditionsAfter.mm>
+#endif
 
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK

@@ -171,7 +171,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_EXTRACTION)
-        title = WebCore::localizedNSString(@"Reveal Image");
+        title = WebCore::contextMenuItemTagRevealImage();
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };

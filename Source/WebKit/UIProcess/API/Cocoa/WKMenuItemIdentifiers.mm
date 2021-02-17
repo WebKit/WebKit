@@ -47,6 +47,7 @@ NSString * const _WKMenuItemIdentifierOpenLinkInNewWindow = @"WKMenuItemIdentifi
 NSString * const _WKMenuItemIdentifierOpenMediaInNewWindow = @"WKMenuItemIdentifierOpenMediaInNewWindow";
 NSString * const _WKMenuItemIdentifierPaste = @"WKMenuItemIdentifierPaste";
 NSString * const _WKMenuItemIdentifierReload = @"WKMenuItemIdentifierReload";
+NSString * const _WKMenuItemIdentifierRevealImage = @"WKMenuItemIdentifierRevealImage";
 NSString * const _WKMenuItemIdentifierSearchWeb = @"WKMenuItemIdentifierSearchWeb";
 NSString * const _WKMenuItemIdentifierShowHideMediaControls = @"WKMenuItemIdentifierShowHideMediaControls";
 NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen = @"WKMenuItemIdentifierToggleEnhancedFullScreen";

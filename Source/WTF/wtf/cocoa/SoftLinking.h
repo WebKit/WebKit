@@ -123,6 +123,13 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_OPTIONAL(umbrella, framework) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+        return frameworkLibrary; \
+    }
+
 #define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \

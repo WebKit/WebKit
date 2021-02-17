@@ -1,3 +1,16 @@
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Legacy WebKit won't be supporting this new context menu action; see other ChangeLog entries for more details.
+
+        * WebView/WebHTMLView.mm:
+        (toTag):
+
 2021-02-16  Megan Gardner  <megan_gardner@apple.com>
 
         Change App Highlights API to operate in terms of a single serialized highlight at a time

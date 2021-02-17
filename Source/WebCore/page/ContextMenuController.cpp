@@ -517,6 +517,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
+    case ContextMenuItemTagRevealImage:
+        // This should be handled at the client layer.
+        ASSERT_NOT_REACHED();
+        break;
     default:
         break;
     }
@@ -810,6 +814,9 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
     ContextMenuItem InsertEmojiItem(ActionType, ContextMenuItemTagInsertEmoji, contextMenuItemTagInsertEmoji());
 #endif
+#if ENABLE(IMAGE_EXTRACTION)
+    ContextMenuItem RevealImageItem(ActionType, ContextMenuItemTagRevealImage, contextMenuItemTagRevealImage());
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
     ContextMenuItem ShareMenuItem;
@@ -856,8 +863,13 @@ void ContextMenuController::populate()
 
             appendItem(OpenImageInNewWindowItem, m_contextMenu.get());
             appendItem(DownloadImageItem, m_contextMenu.get());
-            if (imageURL.isLocalFile() || m_context.hitTestResult().image())
+            if (imageURL.isLocalFile() || m_context.hitTestResult().image()) {
                 appendItem(CopyImageItem, m_contextMenu.get());
+
+#if ENABLE(IMAGE_EXTRACTION)
+                appendItem(RevealImageItem, m_contextMenu.get());
+#endif
+            }
 #if PLATFORM(GTK)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
 #endif
@@ -1449,6 +1461,8 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagMediaMute:
             shouldEnable = m_context.hitTestResult().mediaHasAudio();
             shouldCheck = shouldEnable &&  m_context.hitTestResult().mediaMuted();
+            break;
+        case ContextMenuItemTagRevealImage:
             break;
     }
 

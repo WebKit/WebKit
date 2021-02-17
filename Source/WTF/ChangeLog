@@ -1,3 +1,15 @@
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Add a new soft-linking macro to optionally link against an umbrella framework.
+
+        * wtf/cocoa/SoftLinking.h:
+
 2021-02-16  Sam Weinig  <weinig@apple.com>
 
         Add CSS property to enable separated bit on GraphicsLayer
