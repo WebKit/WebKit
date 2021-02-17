@@ -1,3 +1,13 @@
+2021-02-17  Dean Jackson  <dino@apple.com>
+
+        Use element fullscreen for video on some configurations
+        https://bugs.webkit.org/show_bug.cgi?id=222048
+        <rdar://problem/74439214>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-02-17  Per Arne  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the fonts service
