@@ -20,6 +20,7 @@
 #pragma once
 
 #include <libsoup/soup.h>
+#include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -35,9 +36,8 @@ public:
     };
 
     WebKitTestServer(ServerOptions = ServerHTTP);
-    virtual ~WebKitTestServer();
 
-    SoupURI* baseURI() const { return m_baseURI; }
+    const URL& baseURL() const { return m_baseURL; }
     unsigned port() const;
     CString getURIForPath(const char* path) const;
     void run(SoupServerCallback);
@@ -45,15 +45,15 @@ public:
 #if SOUP_CHECK_VERSION(2, 50, 0)
     void addWebSocketHandler(SoupServerWebsocketCallback, gpointer userData);
     void removeWebSocketHandler();
-    SoupURI* baseWebSocketURI() const { return m_baseWebSocketURI; }
+    const URL& baseWebSocketURL() const { return m_baseWebSocketURL; }
     CString getWebSocketURIForPath(const char* path) const;
 #endif
 
 private:
     GRefPtr<SoupServer> m_soupServer;
-    SoupURI* m_baseURI { nullptr };
+    URL m_baseURL;
 #if SOUP_CHECK_VERSION(2, 50, 0)
-    SoupURI* m_baseWebSocketURI { nullptr };
+    URL m_baseWebSocketURL;
 #endif
     RefPtr<WorkQueue> m_queue;
 };

@@ -593,10 +593,10 @@ public:
         // actually a proxy server. We're testing whether the proxy settings
         // work, not whether we can write a soup proxy server.
         m_proxyServer.run(serverCallback);
-        g_assert_nonnull(m_proxyServer.baseURI());
+        g_assert_false(m_proxyServer.baseURL().isNull());
 #if SOUP_CHECK_VERSION(2, 61, 90)
         m_proxyServer.addWebSocketHandler(webSocketProxyServerCallback, this);
-        g_assert_nonnull(m_proxyServer.baseWebSocketURI());
+        g_assert_false(m_proxyServer.baseWebSocketURL().isNull());
 #endif
     }
 
@@ -611,7 +611,7 @@ public:
 
     GUniquePtr<char> proxyServerPortAsString()
     {
-        GUniquePtr<char> port(g_strdup_printf("%u", soup_uri_get_port(m_proxyServer.baseURI())));
+        GUniquePtr<char> port(g_strdup_printf("%u", m_proxyServer.port()));
         return port;
     }
 
@@ -657,7 +657,7 @@ static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 {
     // Proxy URI is unset by default. Requests to kServer should be received by kServer.
-    GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", soup_uri_get_port(kServer->baseURI())));
+    GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", kServer->port()));
     auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
@@ -669,8 +669,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 #endif
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
-    GUniquePtr<char> proxyURI(soup_uri_to_string(test->m_proxyServer.baseURI(), FALSE));
-    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().data(), nullptr);
     auto* dataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
@@ -718,7 +717,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
-    settings = webkit_network_proxy_settings_new(proxyURI.get(), ignoreHosts);
+    settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().data(), ignoreHosts);
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
@@ -734,7 +733,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", proxyURI.get());
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().data());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());

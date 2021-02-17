@@ -1,3 +1,40 @@
+2021-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Reduce the use of SoupURI in unit tests in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=221963
+
+        Reviewed by Adrian Perez de Castro.
+
+        Now that URL is in WTF we can just use it instead.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (testWebViewAuthenticationRequest):
+        (ProxyAuthenticationTest::ProxyAuthenticationTest):
+        (ProxyAuthenticationTest::proxyServerPortAsString):
+        (testWebViewAuthenticationProxy):
+        (testWebViewAuthenticationProxyHTTPS):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (testLoadFailedWithTLSErrors):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionPageID):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (ProxyTest::ProxyTest):
+        (ProxyTest::proxyServerPortAsString):
+        (testWebContextProxySettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (setInitialNotificationPermissionsAllowedCallback):
+        (setInitialNotificationPermissionsDisallowedCallback):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::run):
+        (WebKitTestServer::addWebSocketHandler):
+        (WebKitTestServer::removeWebSocketHandler):
+        (WebKitTestServer::getWebSocketURIForPath const):
+        (WebKitTestServer::getURIForPath const):
+        (WebKitTestServer::port const):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        (WebKitTestServer::baseURL const):
+        (WebKitTestServer::baseWebSocketURL const):
+
 2021-02-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Use makeJSArray in both AccessibilityUIElementMac/IOS.mm.

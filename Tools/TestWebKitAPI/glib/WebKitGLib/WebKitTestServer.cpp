@@ -42,13 +42,6 @@ WebKitTestServer::WebKitTestServer(ServerOptions options)
     }
 }
 
-WebKitTestServer::~WebKitTestServer()
-{
-    soup_uri_free(m_baseURI);
-    if (m_baseWebSocketURI)
-        soup_uri_free(m_baseWebSocketURI);
-}
-
 void WebKitTestServer::run(SoupServerCallback serverCallback)
 {
     soup_server_add_handler(m_soupServer.get(), nullptr, serverCallback, nullptr, nullptr);
@@ -69,14 +62,15 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
 
     GSList* uris = soup_server_get_uris(m_soupServer.get());
     g_assert_nonnull(uris);
-    m_baseURI = soup_uri_copy(static_cast<SoupURI*>(uris->data));
+    GUniquePtr<gchar> urlString(soup_uri_to_string(static_cast<SoupURI*>(uris->data), FALSE));
+    m_baseURL = URL({ }, String::fromUTF8(urlString.get()));
     g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(soup_uri_free));
 }
 
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
 {
-    m_baseWebSocketURI = soup_uri_new_with_base(m_baseURI, "/websocket/");
-    m_baseWebSocketURI->scheme = m_baseWebSocketURI->scheme == SOUP_URI_SCHEME_HTTP ? SOUP_URI_SCHEME_WS : SOUP_URI_SCHEME_WSS;
+    m_baseWebSocketURL = URL(m_baseURL, "/websocket/");
+    m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http") ? SOUP_URI_SCHEME_WS : SOUP_URI_SCHEME_WSS);
 
     if (m_queue) {
         m_queue->dispatch([this, callback, userData] {
@@ -88,8 +82,7 @@ void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback,
 
 void WebKitTestServer::removeWebSocketHandler()
 {
-    soup_uri_free(m_baseWebSocketURI);
-    m_baseWebSocketURI = nullptr;
+    m_baseWebSocketURL = { };
 
     if (m_queue) {
         m_queue->dispatch([this] {
@@ -101,23 +94,17 @@ void WebKitTestServer::removeWebSocketHandler()
 
 CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
-    g_assert_nonnull(m_baseWebSocketURI);
+    g_assert_false(m_baseWebSocketURL.isNull());
     g_assert_true(path && *path == '/');
-    SoupURI* uri = soup_uri_new_with_base(m_baseWebSocketURI, path + 1); // Ignore the leading slash.
-    GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
-    soup_uri_free(uri);
-    return uriString.get();
+    return URL(m_baseWebSocketURL, path + 1).string().utf8(); // Ignore the leading slash.
 }
 
 CString WebKitTestServer::getURIForPath(const char* path) const
 {
-    SoupURI* uri = soup_uri_new_with_base(m_baseURI, path);
-    GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
-    soup_uri_free(uri);
-    return uriString.get();
+    return URL(m_baseURL, path).string().utf8();
 }
 
 unsigned WebKitTestServer::port() const
 {
-    return soup_uri_get_port(m_baseURI);
+    return m_baseURL.port().valueOr(0);
 }

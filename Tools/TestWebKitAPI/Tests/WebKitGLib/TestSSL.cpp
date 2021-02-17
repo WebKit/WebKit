@@ -221,14 +221,7 @@ public:
 
     TLSErrorsTest()
         : m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
-        , m_failingURI(nullptr)
     {
-    }
-
-    ~TLSErrorsTest()
-    {
-        if (m_failingURI)
-            soup_uri_free(m_failingURI);
     }
 
     bool loadFailedWithTLSErrors(const char* failingURI, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors) override
@@ -238,20 +231,18 @@ public:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(certificate));
         m_certificate = certificate;
         m_tlsErrors = tlsErrors;
-        if (m_failingURI)
-            soup_uri_free(m_failingURI);
-        m_failingURI = soup_uri_new(failingURI);
+        m_failingURL = URL({ }, failingURI);
         return true;
     }
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
-    const char* host() const { return m_failingURI->host; }
+    CString host() const { return m_failingURL.host().toString().utf8(); }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;
     GTlsCertificateFlags m_tlsErrors;
-    SoupURI* m_failingURI;
+    URL m_failingURL;
 };
 
 static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
@@ -266,14 +257,14 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert_true(G_IS_TLS_CERTIFICATE(test->certificate()));
     g_assert_cmpuint(test->tlsErrors(), ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
-    g_assert_cmpstr(test->host(), ==, soup_uri_get_host(kHttpsServer->baseURI()));
+    ASSERT_CMP_CSTRING(test->host(), ==, kHttpsServer->baseURL().host().toString().utf8());
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadFailedWithTLSErrors);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     assertIfSSLRequestProcessed = false;
 
     // Test allowing an exception for this certificate on this host.
-    webkit_web_context_allow_tls_certificate_for_host(test->m_webContext.get(), test->certificate(), test->host());
+    webkit_web_context_allow_tls_certificate_for_host(test->m_webContext.get(), test->certificate(), test->host().data());
     // The page should now load without errors.
     test->loadURI(kHttpsServer->getURIForPath("/test-tls/").data());
     test->waitUntilTitleChanged();
