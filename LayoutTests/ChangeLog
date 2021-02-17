@@ -1,5 +1,50 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272829. rdar://problem/74409245
+
+    [Mac] Sound does not play on YouTube after switching back to foreground
+    https://bugs.webkit.org/show_bug.cgi?id=221858
+    <rdar://70602677>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: platform/mac/media/unmute-after-loading.html
+    
+    Remove a stray, unnecessary reset of a cached muted state which kept mute
+    state from being changed the first time after loading.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+    * testing/Internals.cpp:
+    (WebCore::Internals::privatePlayerMuted):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    * testing/Internals.mm:
+    (WebCore::Internals::privatePlayerMuted):
+    
+    LayoutTests:
+    
+    * platform/mac/media/unmute-after-loading-expected.txt: Added.
+    * platform/mac/media/unmute-after-loading.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272829 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-12  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Sound does not play on YouTube after switching back to foreground
+            https://bugs.webkit.org/show_bug.cgi?id=221858
+            <rdar://70602677>
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac/media/unmute-after-loading-expected.txt: Added.
+            * platform/mac/media/unmute-after-loading.html: Added.
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r272583. rdar://problem/74409637
 
     MediaStream-backed video elements should not compute the mediaType based on track muted states
