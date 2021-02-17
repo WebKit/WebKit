@@ -1366,3 +1366,5 @@ fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/221838 webgl/2.0.0/conformance2/textures/video [ Failure ]
 
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Timeout ]
+
+webkit.org/b/221965 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-seekable.html  [ Pass Failure ]
