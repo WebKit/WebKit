@@ -120,6 +120,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gpuIOKitExtensionHandles;
     encoder << gpuMachExtensionHandles;
 #endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    encoder << fontMachExtensionHandle;
+#endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
 #endif
@@ -399,6 +402,14 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!gpuMachExtensionHandles)
         return WTF::nullopt;
     parameters.gpuMachExtensionHandles = WTFMove(*gpuMachExtensionHandles);
+#endif
+
+#if HAVE(STATIC_FONT_REGISTRY)
+    Optional<Optional<SandboxExtension::Handle>> fontMachExtensionHandle;
+    decoder >> fontMachExtensionHandle;
+    if (!fontMachExtensionHandle)
+        return WTF::nullopt;
+    parameters.fontMachExtensionHandle = WTFMove(*fontMachExtensionHandle);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)

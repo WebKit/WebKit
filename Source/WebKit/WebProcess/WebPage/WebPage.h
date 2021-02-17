@@ -2241,6 +2241,10 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
 #endif
+
+#if HAVE(STATIC_FONT_REGISTRY)
+    RefPtr<SandboxExtension> m_fontExtension;
+#endif
 };
 
 #if !PLATFORM(IOS_FAMILY)

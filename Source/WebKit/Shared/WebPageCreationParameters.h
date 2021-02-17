@@ -179,6 +179,9 @@ struct WebPageCreationParameters {
     SandboxExtension::HandleArray gpuIOKitExtensionHandles;
     SandboxExtension::HandleArray gpuMachExtensionHandles;
 #endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    Optional<SandboxExtension::Handle> fontMachExtensionHandle;
+#endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
 #endif

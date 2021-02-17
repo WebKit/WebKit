@@ -7687,6 +7687,35 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
 }
 #endif
 
+#if HAVE(STATIC_FONT_REGISTRY)
+static bool customizedReaderConfiguration()
+{
+    auto configuration = adoptCF(CFPreferencesCopyAppValue(CFSTR("ReaderConfiguration"), kCFPreferencesCurrentApplication));
+    if (!configuration || CFGetTypeID(configuration.get()) != CFDictionaryGetTypeID())
+        return false;
+    auto fontFamilyNameForLanguageTag = CFDictionaryGetValue(static_cast<CFDictionaryRef>(configuration.get()), CFSTR("fontFamilyNameForLanguageTag"));
+    if (!fontFamilyNameForLanguageTag || CFGetTypeID(fontFamilyNameForLanguageTag) != CFDictionaryGetTypeID())
+        return false;
+    auto fontFamilyNameForLanguageTagDictionary = static_cast<CFDictionaryRef>(fontFamilyNameForLanguageTag);
+    auto count = CFDictionaryGetCount(fontFamilyNameForLanguageTagDictionary);
+    Vector<CFTypeRef> fontFamilyValues(count);
+    CFDictionaryGetKeysAndValues(fontFamilyNameForLanguageTagDictionary, nullptr, fontFamilyValues.data());
+
+    for (auto font : fontFamilyValues) {
+        if (!font || CFGetTypeID(font) != CFStringGetTypeID())
+            continue;
+        if (String(static_cast<CFStringRef>(font)) != "System")
+            return true;
+    }
+    return false;
+}
+
+static bool disableStaticFontRegistry()
+{
+    return CFPreferencesGetAppBooleanValue(CFSTR("WebKitDisableStaticFontRegistry"), kCFPreferencesCurrentApplication, nullptr);
+}
+#endif // HAVE(STATIC_FONT_REGISTRY)
+
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     WebPageCreationParameters parameters;
@@ -7789,6 +7818,15 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         || !preferences().useGPUProcessForWebGLEnabled()) {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
         parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), WTF::nullopt);
+    }
+#endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    if (disableStaticFontRegistry()
+        || preferences().shouldAllowUserInstalledFonts()
+        || (WebCore::MacApplication::isSafari() && customizedReaderConfiguration())) {
+        SandboxExtension::Handle fontMachExtensionHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
+        parameters.fontMachExtensionHandle = WTFMove(fontMachExtensionHandle);
     }
 #endif
 #if HAVE(APP_ACCENT_COLORS)

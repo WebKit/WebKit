@@ -621,6 +621,15 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     }
 #endif
 
+#if HAVE(STATIC_FONT_REGISTRY)
+    if (parameters.fontMachExtensionHandle) {
+        if ((m_fontExtension = SandboxExtension::create(WTFMove(*parameters.fontMachExtensionHandle)))) {
+            bool ok = m_fontExtension->consume();
+            ASSERT_UNUSED(ok, ok);
+        }
+    }
+#endif
+
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
     updatePreferences(parameters.store);
@@ -1003,6 +1012,11 @@ WebPage::~WebPage()
         if (completionHandler)
             completionHandler(WTF::nullopt);
     }
+#endif
+    
+#if HAVE(STATIC_FONT_REGISTRY)
+    if (m_fontExtension)
+        m_fontExtension->revoke();
 #endif
 }
 

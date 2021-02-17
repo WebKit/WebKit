@@ -1,3 +1,15 @@
+2021-02-17  Per Arne  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the fonts service
+        https://bugs.webkit.org/show_bug.cgi?id=221610
+        <rdar://problem/69168609>
+
+        Reviewed by Brent Fulgham.
+
+        Add HAVE define for platform static font registry.
+
+        * wtf/PlatformHave.h:
+
 2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Introduce a new context menu item to preview images
