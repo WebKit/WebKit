@@ -1,3 +1,75 @@
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272703. rdar://problem/74409698
+
+    Reduce the overhead of DocumentFragment in innerHTML & outerHTML
+    https://bugs.webkit.org/show_bug.cgi?id=221535
+    <rdar://problem/73861015>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    This patch reduces the overhead of using DocumentFragment in innerHTMl and outerHTML setters by
+    1. Cache DocumentFragment used for innerHTML and outerHTML.
+    2. Adding a fast path to removeAllChildrenWithScriptAssertion when removing child nodes from (1)
+    immediately before appending it to the new parent. This is safe for now since no DOM nodes or API
+    store information about its root node or parent node when it's DocumentFragment, and and there
+    are no node flags to be updated or invalidated since we're removing already-disconnected nodes
+    to which no script ever had access up until this point. We release-assert these conditions before
+    going into the fast path.
+    
+    No new tests since there should be no observable behavior change.
+    
+    * dom/ContainerNode.cpp:
+    (WebCore::ContainerNode::removeAllChildrenWithScriptAssertion): Added a fast path. See above.
+    * dom/Document.cpp:
+    (WebCore::Document::commonTeardown): Clear m_documentFragmentForInnerOuterHTML as it would keep
+    the ownewr document (this Document) alive otherwise.
+    (WebCore::Document::documentFragmentForInnerOuterHTML): Added. Lazily create a DocumentFragment
+    used to parse the fragment for innerHTML and outerHTML setters. Remove any child nodes left in
+    the document fragment in the case the last call to replaceChildrenWithFragment took a fast path
+    for a single text node, which case we don't remove any child nodes from DocumentFragment.
+    * dom/Document.h:
+    * dom/DocumentFragment.h:
+    (WebCore::DocumentFragment::setIsDocumentFragmentForInnerOuterHTML): Added.
+    * dom/Node.h:
+    (WebCore::Node::isDocumentFragmentForInnerOuterHTML const): Added.
+    * editing/markup.cpp:
+    (WebCore::createFragmentForMarkup): Extracted from createFragmentForInnerOuterHTML to share code
+    between createFragmentForInnerOuterHTML and createContextualFragment.
+    (WebCore::createFragmentForInnerOuterHTML): Reuse the fragment in createFragmentForMarkup.
+    (WebCore::createContextualFragment): Don't reuse the fragment in createFragmentForMarkup as this
+    function is used by Range::createContextualFragment which exposes the document fragment to
+    arbitrary author scripts.
+    (WebCore::hasOneChild): Deleted since we now have Node::hasOneChild.
+    (WebCore::hasOneTextChild): Use Node::hasOneChild.
+    (WebCore::replaceChildrenWithFragment): Added assertions to make sure we don't have any child nodes
+    left after replacing the children.
+    
+    Source/WTF:
+    
+    Added a helper function for writing assertions.
+    
+    * wtf/WeakPtr.h:
+    (WTF::WeakPtrFactory::isInitialized const): Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272703 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Reduce the overhead of DocumentFragment in innerHTML & outerHTML
+            https://bugs.webkit.org/show_bug.cgi?id=221535
+            <rdar://problem/73861015>
+
+            Reviewed by Geoffrey Garen.
+
+            Added a helper function for writing assertions.
+
+            * wtf/WeakPtr.h:
+            (WTF::WeakPtrFactory::isInitialized const): Added.
+
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r272234. rdar://problem/74105068
