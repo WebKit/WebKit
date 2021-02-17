@@ -39,6 +39,7 @@
 namespace WebCore {
 
     class ContentSecurityPolicy;
+    class DocumentThreadableLoader;
     class ResourceError;
     class ResourceRequest;
     class SecurityOrigin;
@@ -110,7 +111,7 @@ namespace WebCore {
             void notifyIsDone(bool isDone) final;
 
             // Only to be used on the main thread.
-            RefPtr<ThreadableLoader> m_mainThreadLoader;
+            RefPtr<DocumentThreadableLoader> m_mainThreadLoader;
             bool m_loadingFinished { false };
 
             // ThreadableLoaderClientWrapper is to be used on the worker context thread.
