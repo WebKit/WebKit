@@ -346,11 +346,11 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
         animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, &parent().style);
         newStyle = WTFMove(animatedStyle);
+
+        Adjuster adjuster(m_document, parent().style, parentBoxStyle(), styleable.pseudoId == PseudoId::None ? &element : nullptr);
+        adjuster.adjustAnimatedStyle(*newStyle, animationImpact);
     } else
         styleable.setLastStyleChangeEventStyle(nullptr);
-
-    if (animationImpact)
-        Adjuster::adjustAnimatedStyle(*newStyle, parentBoxStyle(), animationImpact);
 
     // Deduplication speeds up equality comparisons as the properties inherit to descendants.
     // FIXME: There should be a more general mechanism for this.

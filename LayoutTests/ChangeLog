@@ -1,3 +1,14 @@
+2021-02-17  Antti Koivisto  <antti@apple.com>
+
+        Animated keyframe style needs to go through full style adjuster
+        https://bugs.webkit.org/show_bug.cgi?id=222036
+        rdar://72421747
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/animation/animation-position-crash-expected.html: Added.
+        * fast/animation/animation-position-crash.html: Added.
+
 2021-02-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GLib/GTK test expectations gardening

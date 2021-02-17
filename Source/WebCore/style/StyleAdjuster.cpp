@@ -574,19 +574,18 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
         style.setDisplay(DisplayType::Block);
 }
 
-void Adjuster::adjustAnimatedStyle(RenderStyle& style, const RenderStyle* parentBoxStyle, OptionSet<AnimationImpact> impact)
+void Adjuster::adjustAnimatedStyle(RenderStyle& style, OptionSet<AnimationImpact> impact) const
 {
+    adjust(style, nullptr);
+
     // Set an explicit used z-index in two cases:
     // 1. When the element respects z-index, and the style has an explicit z-index set (for example, the animation
     //    itself may animate z-index).
     // 2. When we want the stacking context side-effets of explicit z-index, via forceStackingContext.
     // It's important to not clobber an existing used z-index, since an earlier animation may have set it, but we
     // may still need to update the used z-index value from the specified value.
-    bool elementRespectsZIndex = style.position() != PositionType::Static || (parentBoxStyle && parentBoxStyle->isDisplayFlexibleOrGridBox());
-
-    if (elementRespectsZIndex && !style.hasAutoSpecifiedZIndex())
-        style.setUsedZIndex(style.specifiedZIndex());
-    else if (impact.contains(AnimationImpact::ForcesStackingContext))
+    
+    if (style.hasAutoUsedZIndex() && impact.contains(AnimationImpact::ForcesStackingContext))
         style.setUsedZIndex(0);
 }
 
