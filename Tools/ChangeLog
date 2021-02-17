@@ -1,3 +1,21 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Use smart pointer for WebView ownership in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=222009
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (globalWebView):
+        (createWebViewAndOffscreenWindow):
+        (destroyGlobalWebViewAndOffscreenWindow):
+        (createGlobalWebViewAndOffscreenWindow):
+        (dumpRenderTree):
+        (runTest):
+        (destroyWebViewAndOffscreenWindow): Deleted.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
 2021-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [Python-3] UnicodeDecodeError when checking for an interpreter on Windows

@@ -211,6 +211,12 @@ NSWindow *mainWindow = nil;
 CFMutableSetRef disallowedURLs= nullptr;
 static CFRunLoopTimerRef waitToDumpWatchdog;
 
+static RetainPtr<WebView>& globalWebView()
+{
+    static NeverDestroyed<RetainPtr<WebView>> globalWebView;
+    return globalWebView;
+}
+
 // Delegates
 static FrameLoadDelegate *frameLoadDelegate;
 static UIDelegate *uiDelegate;
@@ -673,11 +679,11 @@ WebView *createWebViewAndOffscreenWindow()
 {
 #if !PLATFORM(IOS_FAMILY)
     NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
-    WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"]);
 #else
     DumpRenderTreeBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
     [webBrowserView setInputViewObeysDOMFocus:YES];
-    WebView *webView = [[webBrowserView webView] retain];
+    auto webView = retainPtr([webBrowserView webView]);
     [webView setGroupName:@"org.webkit.DumpRenderTree"];
 #endif
 
@@ -721,7 +727,7 @@ WebView *createWebViewAndOffscreenWindow()
 
     [window setColorSpace:[firstScreen colorSpace]];
     [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
-    [[window contentView] addSubview:webView];
+    [[window contentView] addSubview:webView.get()];
     if (showWebView)
         [window orderFront:nil];
     else
@@ -731,7 +737,7 @@ WebView *createWebViewAndOffscreenWindow()
     [window startListeningForAcceleratedCompositingChanges];
 #else
     DumpRenderTreeWindow *drtWindow = [[DumpRenderTreeWindow alloc] initWithLayer:[webBrowserView layer]];
-    [drtWindow setContentView:webView];
+    [drtWindow setContentView:webView.get()];
     [webBrowserView setWAKWindow:drtWindow];
 
     [[webView window] makeFirstResponder:[[[webView mainFrame] frameView] documentView]];
@@ -772,19 +778,22 @@ WebView *createWebViewAndOffscreenWindow()
 #endif
 
     [webView setMediaVolume:0];
-
-    return webView;
+    return webView.leakRef();
 }
 
-static void destroyWebViewAndOffscreenWindow(WebView *webView)
+static void destroyGlobalWebViewAndOffscreenWindow()
 {
-    ASSERT(webView == [mainFrame webView]);
-    auto adoptedWebView = adoptNS(webView);
+    if (!mainFrame && !globalWebView())
+        return;
+
+    ASSERT(globalWebView() == [mainFrame webView]);
+
 #if !PLATFORM(IOS_FAMILY)
-    NSWindow *window = [webView window];
+    NSWindow *window = [globalWebView() window];
 #endif
-    [webView close];
+    [globalWebView() close];
     mainFrame = nil;
+    globalWebView() = nil;
 
 #if !PLATFORM(IOS_FAMILY)
     // Work around problem where registering drag types leaves an outstanding
@@ -798,6 +807,13 @@ static void destroyWebViewAndOffscreenWindow(WebView *webView)
     auto uiWindow = adoptNS([gWebBrowserView window]);
     [uiWindow removeFromSuperview];
 #endif
+}
+
+static void createGlobalWebViewAndOffscreenWindow()
+{
+    destroyGlobalWebViewAndOffscreenWindow();
+    globalWebView() = adoptNS(createWebViewAndOffscreenWindow());
+    mainFrame = [globalWebView() mainFrame];
 }
 
 static NSString *libraryPathForDumpRenderTree()
@@ -1212,7 +1228,7 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-    destroyWebViewAndOffscreenWindow([mainFrame webView]);
+    destroyGlobalWebViewAndOffscreenWindow();
 
     releaseGlobalControllers();
 
@@ -1905,12 +1921,9 @@ static void runTest(const std::string& inputLine)
 
     auto options = testOptionsForTest(command);
 
-    if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
-        if (mainFrame)
-            destroyWebViewAndOffscreenWindow([mainFrame webView]);
-        WebView *pristineWebView = createWebViewAndOffscreenWindow();
-        mainFrame = [pristineWebView mainFrame];
-    }
+    if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value()))
+        createGlobalWebViewAndOffscreenWindow();
+
     mainFrameTestOptions = options;
 
     const char* testURL([[url absoluteString] UTF8String]);
