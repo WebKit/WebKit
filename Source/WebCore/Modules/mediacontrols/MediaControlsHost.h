@@ -40,6 +40,7 @@ class HTMLMediaElement;
 class MediaControlTextTrackContainerElement;
 class TextTrack;
 class TextTrackList;
+class VoidCallback;
 
 class MediaControlsHost : public RefCounted<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
@@ -93,7 +94,7 @@ public:
     static String formattedStringForDuration(double);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    void showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString);
+    bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 private:
@@ -101,6 +102,11 @@ private:
 
     WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
     bool m_simulateCompactMode { false };
 };
 

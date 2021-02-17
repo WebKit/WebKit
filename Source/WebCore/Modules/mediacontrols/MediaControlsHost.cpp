@@ -44,8 +44,10 @@
 #include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Scope.h>
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
 
@@ -89,7 +91,13 @@ MediaControlsHost::MediaControlsHost(HTMLMediaElement& mediaElement)
 {
 }
 
-MediaControlsHost::~MediaControlsHost() = default;
+MediaControlsHost::~MediaControlsHost()
+{
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    if (auto showMediaControlsContextMenuCallback = std::exchange(m_showMediaControlsContextMenuCallback, nullptr))
+        showMediaControlsContextMenuCallback->handleEvent();
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+}
 
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
@@ -326,24 +334,33 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 #define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
 #endif
 
-void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString)
+bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString, Ref<VoidCallback>&& callback)
 {
+    if (m_showMediaControlsContextMenuCallback)
+        return false;
+
+    m_showMediaControlsContextMenuCallback = WTFMove(callback);
+
+    auto invokeCallbackAtScopeExit = makeScopeExit([&, protectedThis = makeRef(*this)] {
+        std::exchange(m_showMediaControlsContextMenuCallback, nullptr)->handleEvent();
+    });
+
     if (!m_mediaElement)
-        return;
+        return false;
 
     auto& mediaElement = *m_mediaElement;
 
     auto* page = mediaElement.document().page();
     if (!page)
-        return;
+        return false;
 
     auto optionsJSON = JSON::Value::parseJSON(optionsJSONString);
     if (!optionsJSON)
-        return;
+        return false;
 
     auto optionsJSONObject = optionsJSON->asObject();
     if (!optionsJSONObject)
-        return;
+        return false;
 
     using MenuData = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack> MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData>;
     HashMap<MediaControlsContextMenuItem::ID, MenuData> idMap;
@@ -416,11 +433,11 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif
 
     if (items.isEmpty())
-        return;
+        return false;
 
     ASSERT(!idMap.isEmpty());
 
-    page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap)] (MediaControlsContextMenuItem::ID selectedItemID) {
+    page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap), invokeCallbackAtScopeExit = WTFMove(invokeCallbackAtScopeExit)] (MediaControlsContextMenuItem::ID selectedItemID) {
         if (selectedItemID == MediaControlsContextMenuItem::invalidID)
             return;
 
@@ -447,6 +464,8 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
         );
     });
+
+    return true;
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

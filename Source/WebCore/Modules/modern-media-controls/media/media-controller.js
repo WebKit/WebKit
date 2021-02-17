@@ -113,6 +113,29 @@ class MediaController
             this.media.pause();
     }
 
+    get canShowMediaControlsContextMenu()
+    {
+        return !!this.host?.showMediaControlsContextMenu;
+    }
+
+    showMediaControlsContextMenu(button)
+    {
+        if (!this.canShowMediaControlsContextMenu)
+            return false;
+
+        let autoHideController = this.controls.autoHideController;
+
+        let willShowContextMenu = this.host.showMediaControlsContextMenu(button.element, button.contextMenuOptions, () => {
+            button.on = false;
+            autoHideController.hasSecondaryUIAttached = false;
+        });
+        if (willShowContextMenu) {
+            button.on = true;
+            autoHideController.hasSecondaryUIAttached = true;
+        }
+        return willShowContextMenu;
+    }
+
     // Protected
 
     set pageScaleFactor(pageScaleFactor)

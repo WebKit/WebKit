@@ -42,13 +42,12 @@ class OverflowSupport extends MediaControllerSupport
 
     buttonWasPressed(control)
     {
-        if (this.mediaController.host?.showMediaControlsContextMenu)
-            this.mediaController.host.showMediaControlsContextMenu(control.element, control.contextMenuOptions);
+        this.mediaController.showMediaControlsContextMenu(control);
     }
 
     syncControl()
     {
-        this.control.enabled = !!this.mediaController.host?.showMediaControlsContextMenu;
+        this.control.enabled = this.mediaController.canShowMediaControlsContextMenu;
 
         let defaultContextMenuOptions = {};
         window["WebKitAdditions.OverflowSupport.prototype.syncControl"]?.(this, defaultContextMenuOptions);

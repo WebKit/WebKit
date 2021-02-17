@@ -65,5 +65,5 @@ enum DeviceType {
     [EnabledAtRuntime=ModernMediaControls] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [EnabledAtRuntime=ModernMediaControls] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
 
-    [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenus, EnabledAtRuntime=ModernMediaControls] undefined showMediaControlsContextMenu(HTMLElement target, JSON options);
+    [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenus, EnabledAtRuntime=ModernMediaControls] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
 };
