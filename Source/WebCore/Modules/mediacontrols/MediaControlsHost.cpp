@@ -45,10 +45,15 @@
 #include "TextTrack.h"
 #include "TextTrackList.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MediaControlsHostAdditions.cpp>
+#endif
 
 const AtomString& MediaControlsHost::automaticKeyword()
 {
@@ -313,7 +318,15 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, ContextMenuOptions&& options)
+#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData)
+#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData
+#endif
+
+#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn)
+#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
+#endif
+
+void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString)
 {
     if (!m_mediaElement)
         return;
@@ -324,12 +337,25 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
     if (!page)
         return;
 
-    using MenuTrackItem = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack>>;
-    HashMap<MediaControlsContextMenuItem::ID, MenuTrackItem> idMap;
+    auto optionsJSON = JSON::Value::parseJSON(optionsJSONString);
+    if (!optionsJSON)
+        return;
+
+    auto optionsJSONObject = optionsJSON->asObject();
+    if (!optionsJSONObject)
+        return;
+
+    using MenuData = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack> MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData>;
+    HashMap<MediaControlsContextMenuItem::ID, MenuData> idMap;
+    auto generateID = [&] (MenuData data) {
+        auto id = idMap.size() + 1;
+        idMap.add(id, data);
+        return id;
+    };
 
     Vector<MediaControlsContextMenuItem> items;
 
-    if (options.includeAudioTracks) {
+    if (optionsJSONObject->getBoolean("includeAudioTracks"_s).valueOr(false)) {
         if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
             MediaControlsContextMenuItem audioTracksItem;
             audioTracksItem.title = WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title");
@@ -340,12 +366,9 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
 
             for (auto& audioTrack : captionPreferences.sortedTrackListForMenu(audioTracks)) {
                 MediaControlsContextMenuItem audioTrackItem;
-                audioTrackItem.id = idMap.size() + 1;
+                audioTrackItem.id = generateID(audioTrack);
                 audioTrackItem.title = captionPreferences.displayNameForTrack(audioTrack.get());
                 audioTrackItem.isChecked = audioTrack->enabled();
-
-                idMap.add(audioTrackItem.id, audioTrack);
-
                 audioTracksItem.children.append(WTFMove(audioTrackItem));
             }
 
@@ -354,7 +377,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
         }
     }
 
-    if (options.includeTextTracks) {
+    if (optionsJSONObject->getBoolean("includeTextTracks"_s).valueOr(false)) {
         if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
             MediaControlsContextMenuItem textTracksItem;
             textTracksItem.title = WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title");
@@ -370,7 +393,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
 
             for (auto& textTrack : sortedTextTracks) {
                 MediaControlsContextMenuItem textTrackItem;
-                textTrackItem.id = idMap.size() + 1;
+                textTrackItem.id = generateID(textTrack);
                 textTrackItem.title = captionPreferences.displayNameForTrack(textTrack.get());
                 if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::Manual))
                     textTrackItem.isChecked = true;
@@ -380,9 +403,6 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
                     textTrackItem.isChecked = true;
                 else
                     textTrackItem.isChecked = false;
-
-                idMap.add(textTrackItem.id, textTrack);
-
                 textTracksItem.children.append(WTFMove(textTrackItem));
             }
 
@@ -391,13 +411,16 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
         }
     }
 
+#if defined(MediaControlsHostAdditions_showMediaControlsContextMenu_options)
+    MediaControlsHostAdditions_showMediaControlsContextMenu_options
+#endif
+
     if (items.isEmpty())
         return;
 
     ASSERT(!idMap.isEmpty());
 
     page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap)] (MediaControlsContextMenuItem::ID selectedItemID) {
-
         if (selectedItemID == MediaControlsContextMenuItem::invalidID)
             return;
 
@@ -421,6 +444,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
                 }
                 mediaElement.setSelectedTextTrack(selectedTextTrack.get());
             }
+            MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
         );
     });
 }

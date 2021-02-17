@@ -26,7 +26,7 @@ PASS mediaControls.timeControl.children.length is 3
 PASS mediaControls.timeControl.children[0] is mediaControls.timeControl.elapsedTimeLabel
 PASS mediaControls.timeControl.children[1] is mediaControls.timeControl.scrubber
 PASS mediaControls.timeControl.children[2] is mediaControls.timeControl.remainingTimeLabel
-PASS mediaControls.rightContainer.children.length is 2
+PASS mediaControls.rightContainer.children.length is 3
 PASS mediaControls.rightContainer.children[0] is mediaControls.airplayButton
 PASS mediaControls.rightContainer.children[1] is mediaControls.tracksButton
 PASS mediaControls.topRightControlsBar.children.length is 2

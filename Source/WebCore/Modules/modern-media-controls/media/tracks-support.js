@@ -57,7 +57,7 @@ class TracksSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         if (this.mediaController.host?.showMediaControlsContextMenu)
-            this.mediaController.host.showMediaControlsContextMenu(control.element, {includeAudioTracks: true, includeTextTracks: true});
+            this.mediaController.host.showMediaControlsContextMenu(control.element, control.contextMenuOptions);
         else
             this.mediaController.controls.showTracksPanel();
     }

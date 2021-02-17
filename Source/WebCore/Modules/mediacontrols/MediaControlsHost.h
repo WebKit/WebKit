@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
@@ -92,11 +93,7 @@ public:
     static String formattedStringForDuration(double);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    struct ContextMenuOptions {
-        bool includeAudioTracks { false };
-        bool includeTextTracks { false };
-    };
-    void showMediaControlsContextMenu(HTMLElement&, ContextMenuOptions&&);
+    void showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 private:

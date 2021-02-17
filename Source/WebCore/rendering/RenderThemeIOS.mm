@@ -100,6 +100,10 @@
 
 namespace WebCore {
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/RenderThemeIOSAdditions.cpp>
+#endif
+
 using namespace HTMLNames;
 
 const float ControlBaseHeight = 20;
@@ -1291,9 +1295,12 @@ String RenderThemeIOS::mediaControlsScript()
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
 
             StringBuilder scriptBuilder;
-            scriptBuilder.append("window.isIOSFamily = true;");
+            scriptBuilder.append("window.isIOSFamily = true;\n");
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
+#if defined(RenderThemeIOSAdditions_mediaControlsScript)
+            RenderThemeIOSAdditions_mediaControlsScript
+#endif
             m_mediaControlsScript = scriptBuilder.toString();
         }
         return m_mediaControlsScript;
