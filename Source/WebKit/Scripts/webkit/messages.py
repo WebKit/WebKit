@@ -143,6 +143,8 @@ def function_parameter_type(type, kind):
 def reply_type(type):
     if type == 'IPC::SharedBufferDataReference':
         return 'IPC::DataReference'
+    if type == 'Optional<IPC::SharedBufferDataReference>':
+        return 'Optional<IPC::DataReference>'
     return type
 
 

@@ -280,14 +280,12 @@
         "subtests": {
             "/webkit/WebKitWebResource/get-data-error": {
                 "expected": {
-                    "wpe": {"status": ["FAIL"]},
-                    "gtk": {"status": ["CRASH", "FAIL"], "bug": "webkit.org/b/221672"}
+                    "wpe": {"status": ["FAIL"]}
                 }
             },
             "/webkit/WebKitWebResource/get-data-empty": {
                 "expected": {
-                    "wpe": {"status": ["FAIL"]},
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/221672"}
+                    "wpe": {"status": ["FAIL"]}
                 }
             }
         }

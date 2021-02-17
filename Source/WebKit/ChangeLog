@@ -1,3 +1,27 @@
+2021-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r272636) [GTK] Crash and failures in API test /WebKit2Gtk/TestResources
+        https://bugs.webkit.org/show_bug.cgi?id=221672
+
+        Reviewed by Michael Catanzaro.
+
+        Since r272636 it's no longer possible to differentiate between async reply being cancelled or data just being
+        empty for WebPageProxy data completion handlers. Use Optional to indicate that the reply was canlled when its
+        data is nullopt, and ensure we always provide a valid API::Data object when data is not nullopt.
+
+        * Scripts/webkit/messages.py: Handle the special case of SharedBufferDataReference as Optional.
+        * UIProcess/API/glib/WebKitWebResource.cpp:
+        (resourceDataCallback): Bring back the cancellation error handling.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::CompletionHandler<void):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r268097): Calling processDidTerminate delegate asynchronously is risky compatibility-wise

@@ -212,13 +212,13 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData() -> (IPC::SharedBufferDataReference data) Async
 #endif
-    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::SharedBufferDataReference dataReference) Async
-    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (IPC::SharedBufferDataReference dataReference) Async
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (Optional<IPC::SharedBufferDataReference> dataReference) Async
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (Optional<IPC::SharedBufferDataReference> dataReference) Async
     GetRenderTreeExternalRepresentation() -> (String string) Async
     GetSelectionOrContentsAsString() -> (String string) Async
-    GetSelectionAsWebArchiveData() -> (IPC::DataReference data) Async
+    GetSelectionAsWebArchiveData() -> (Optional<IPC::DataReference> data) Async
     GetSourceForFrame(WebCore::FrameIdentifier frameID) -> (String string) Async
-    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::DataReference dataReference) Async
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (Optional<IPC::DataReference> dataReference) Async
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, Optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details) Async
 

@@ -3657,7 +3657,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&& callback)
+void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const Optional<IPC::DataReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3691,7 +3691,7 @@ void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(
     callback(resultString);
 }
 
-void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
+void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3722,7 +3722,7 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
+void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3736,7 +3736,7 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     callback(dataReference);
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::DataReference&)>&& callback)
+void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const Optional<IPC::DataReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;

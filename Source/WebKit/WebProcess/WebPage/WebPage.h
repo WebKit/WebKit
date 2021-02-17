@@ -1585,13 +1585,13 @@ private:
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback);
 #endif
-    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
-    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
+    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&&);
+    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&&);
     void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
     void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
-    void getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&&);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(const Optional<IPC::DataReference>&)>&&);
     void getSourceForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
-    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::DataReference&)>&&);
+    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Optional<IPC::DataReference>&)>&&);
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);

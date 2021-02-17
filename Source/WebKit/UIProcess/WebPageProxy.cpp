@@ -4125,10 +4125,10 @@ void WebPageProxy::getSamplingProfilerOutput(CompletionHandler<void(const String
     sendWithAsyncReply(Messages::WebPage::GetSamplingProfilerOutput(), WTFMove(callback));
 }
 
-static CompletionHandler<void(const IPC::DataReference& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
+static CompletionHandler<void(const Optional<IPC::DataReference>& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
 {
-    return [callback = WTFMove(callback)] (const IPC::DataReference& data) mutable {
-        callback(API::Data::create(data).get());
+    return [callback = WTFMove(callback)] (const Optional<IPC::DataReference>& data) mutable {
+        callback(data ? API::Data::create(data->data(), data->size()).ptr() : nullptr);
     };
 }
 
