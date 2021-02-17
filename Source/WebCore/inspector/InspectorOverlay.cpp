@@ -1390,7 +1390,10 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     }
     
     if (gridOverlay.config.showAreaNames) {
-        for (auto& [name, area] : node->renderStyle()->namedGridArea()) {
+        for (auto& gridArea : node->renderStyle()->namedGridArea()) {
+            auto& name = gridArea.key;
+            auto& area = gridArea.value;
+
             // Named grid areas will always be rectangular per the CSS Grid specification.
             auto columnStartLine = area.columns.startLine();
             auto columnEndLine = area.columns.endLine();
