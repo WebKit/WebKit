@@ -15,14 +15,14 @@ Focus me
  Focus me.
  Focus me.
 
-FAIL Focus element SPAN#el-1 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for SPAN#el-1 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element SPAN#el-2 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for SPAN#el-2 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element SPAN#el-3 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for SPAN#el-3 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element BUTTON#el-4 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for BUTTON#el-4 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-5 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-5 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-6 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-6 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-7 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-7 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-8 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-8 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-10 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-10 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL Focus element INPUT#el-11 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-11 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+PASS Focus element SPAN#el-1 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element SPAN#el-2 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element SPAN#el-3 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element BUTTON#el-4 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-5 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-6 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-7 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-8 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-10 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-11 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
 

@@ -504,6 +504,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassFocus:
                 builder.appendLiteral(":focus");
                 break;
+            case CSSSelector::PseudoClassFocusVisible:
+                builder.appendLiteral(":focus-visible");
+                break;
             case CSSSelector::PseudoClassFocusWithin:
                 builder.appendLiteral(":focus-within");
                 break;

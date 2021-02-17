@@ -73,6 +73,7 @@ public:
     bool textAutosizingEnabled { false };
 #endif
     bool useLegacyBackgroundSizeShorthandBehavior { false };
+    bool focusVisibleEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

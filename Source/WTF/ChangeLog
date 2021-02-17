@@ -1,3 +1,12 @@
+2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible parsing and experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=221895
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Add experimental feature flag.
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable JITCage on macOS

@@ -1,3 +1,14 @@
+2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible parsing and experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=221895
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/TestExpectations: Skip test that timeouts in iOS platform.
+        * platform/mac/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt:
+        Slightly different rebaseline due to default outline color on Mac.
+
 2021-02-16  Jonathan Bedard  <JonWBedard@gmail.com>
 
         [LayoutTests] Convert http/tests/resources/redirect.php to Python

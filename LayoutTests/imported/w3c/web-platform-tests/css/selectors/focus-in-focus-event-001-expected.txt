@@ -1,6 +1,6 @@
 
 
 PASS Checks that ':focus' pseudo-class matches inside 'focus' event handler
-FAIL Checks that ':focus-visible' pseudo-class matches inside 'focus' event handler assert_unreached: ':focus-visible'  is an invalid selector. SyntaxError: SyntaxError: The string did not match the expected pattern. Reached unreachable code
+FAIL Checks that ':focus-visible' pseudo-class matches inside 'focus' event handler assert_unreached: ':focus-visible'  is an invalid selector. SyntaxError: Error: assert_equals: ':focus-visible' matches event.target expected null but got Element node <input type="text"></input> Reached unreachable code
 PASS Checks that ':focus-within' pseudo-class matches inside 'focus' event handler
 

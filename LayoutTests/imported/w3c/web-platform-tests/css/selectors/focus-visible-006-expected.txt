@@ -5,5 +5,5 @@ If the element has a red background, then the test result is FAILURE. If the ele
 
 Focus me
 
-FAIL Focus should always match :focus-visible on content editable divs assert_equals: outlineColor for SPAN#el should be green expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Focus should always match :focus-visible on content editable divs assert_equals: outlineColor for SPAN#el should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

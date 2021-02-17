@@ -1,5 +1,5 @@
 Initial
 Target
 
-FAIL :focus-visible does not match after script focus move assert_equals: backgroundColor for DIV#initial should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+PASS :focus-visible does not match after script focus move
 

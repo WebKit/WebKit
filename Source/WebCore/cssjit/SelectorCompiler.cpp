@@ -85,6 +85,7 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPse
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDirectFocusPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusVisiblePseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsMediaDocument, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsInRange, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesIndeterminatePseudoClass, bool, (const Element&));
@@ -631,6 +632,11 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element&
     return matchesFocusPseudoClass(element);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMatchesFocusVisiblePseudoClass, bool, (const Element& element))
+{
+    return matchesFocusVisiblePseudoClass(element);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationIsMediaDocument, bool, (const Element& element))
 {
     return isMediaDocument(element);
@@ -778,6 +784,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassFocusVisible:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusVisiblePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullPageMedia:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationIsMediaDocument));

@@ -282,6 +282,18 @@ FetchAPIKeepAliveEnabled:
     WebKit:
       default: true
 
+FocusVisibleEnabled:
+  type: bool
+  humanReadableName: ":focus-visible pseudo-class"
+  humanReadableDescription: "Enable the focus-indicated pseudo-class :focus-visible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
   type: bool

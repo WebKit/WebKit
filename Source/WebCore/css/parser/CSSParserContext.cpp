@@ -83,6 +83,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , textAutosizingEnabled { document.settings().textAutosizingEnabled() }
 #endif
     , useLegacyBackgroundSizeShorthandBehavior { document.settings().useLegacyBackgroundSizeShorthandBehavior() }
+    , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -115,6 +116,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.textAutosizingEnabled == b.textAutosizingEnabled
 #endif
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
+        && a.focusVisibleEnabled == b.focusVisibleEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif

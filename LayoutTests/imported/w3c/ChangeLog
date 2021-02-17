@@ -1,3 +1,30 @@
+2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible parsing and experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=221895
+
+        Reviewed by Darin Adler.
+
+        Update expectations as now :focus-visible is a valid selector.
+
+        * web-platform-tests/css/selectors/focus-in-focus-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-in-focusin-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-005-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-007-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-009-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-010-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-012-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-015-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-016-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-017-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-018-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-focus-visible-expected.txt:
+
 2021-02-16  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder.stop() does not work correctly when recording has been paused.

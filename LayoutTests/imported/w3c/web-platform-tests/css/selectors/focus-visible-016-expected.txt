@@ -1,5 +1,5 @@
 Initial
 
 
-FAIL :focus-visible always match on text inputs assert_equals: backgroundColor for DIV#initial should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+FAIL :focus-visible always match on text inputs assert_equals: backgroundColor for INPUT#target should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
 
