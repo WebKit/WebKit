@@ -687,6 +687,10 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     if (maximumWidth > 0) {
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if (inputElement.document().settings().iOSFormControlRefreshEnabled())
+            width = static_cast<int>(std::ceil(maximumWidth));
+#endif
         style.setWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
@@ -2487,6 +2491,9 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
 
 void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+    if (is<HTMLInputElement>(box.element()))
+        return;
+
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 

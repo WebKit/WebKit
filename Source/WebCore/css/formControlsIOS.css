@@ -88,6 +88,20 @@ input[type="color"]::-webkit-color-swatch {
     border-radius: inherit;
 }
 
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
+    border: initial;
+    background-color: rgb(238, 238, 238);
+    font-family: system-ui;
+    color: rgb(0, 122, 255);
+    padding: 0.2em 0.5em;
+}
+
+input::-webkit-date-and-time-value {
+    margin: 0px;
+    text-align: center;
+    width: 100%;
+}
+
 select {
     color: rgb(0, 122, 255);
     font-weight: bold;
