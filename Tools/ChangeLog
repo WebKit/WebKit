@@ -1,3 +1,31 @@
+2021-02-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Use makeJSArray in both AccessibilityUIElementMac/IOS.mm.
+        https://bugs.webkit.org/show_bug.cgi?id=221999
+        <rdar://problem/74407113>
+
+        Reviewed by Chris Fleizach.
+
+        We had functions makeJSArray and convertElementsToObjectArray doing
+        exactly the same thing, one for Mac and One for iOS.
+        - Moved makeJSArray to the platform independent header so it can be used
+        in both platforms.
+        - Moved the retrieval of the JS context inside makeJSArray, so that the
+        caller doesn't have to do that.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (WTR::makeJSArray): Added to platform independent header.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::elementsForRange):
+        (WTR::convertElementsToObjectArray): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const):
+        (WTR::AccessibilityUIElement::searchTextWithCriteria):
+        (WTR::makeJSArray): Deleted.
+
 2021-02-16  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Document package usage

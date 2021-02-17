@@ -27,10 +27,13 @@
 
 #include "AccessibilityTextMarker.h"
 #include "AccessibilityTextMarkerRange.h"
+#include "InjectedBundle.h"
+#include "InjectedBundlePage.h"
 #include "JSWrappable.h"
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit/WKBundleFrame.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
@@ -407,5 +410,19 @@ private:
 #ifdef __OBJC__
 inline Optional<RefPtr<AccessibilityUIElement>> makeVectorElement(const RefPtr<AccessibilityUIElement>*, id element) { return { { AccessibilityUIElement::create(element) } }; }
 #endif
+
+template<typename T>
+JSObjectRef makeJSArray(const Vector<T>& elements)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
+    size_t size = elements.size();
+    for (size_t i = 0; i < size; ++i)
+        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get()), nullptr);
+
+    return array;
+}
 
 } // namespace WTR

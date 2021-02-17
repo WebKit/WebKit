@@ -240,21 +240,11 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int
     
     return AccessibilityUIElement::create(element);
 }
-    
-static JSValueRef convertElementsToObjectArray(JSContextRef context, const Vector<RefPtr<AccessibilityUIElement>>& elements)
-{
-    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
-    auto size = elements.size();
-    for (size_t i = 0; i < size; ++i)
-        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get()), nullptr);
-    return array;
-}
+
 JSValueRef AccessibilityUIElement::elementsForRange(unsigned location, unsigned length)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     NSArray *elementsForRange = [m_element elementsForRange:NSMakeRange(location, length)];
-    return convertElementsToObjectArray(context, makeVector<RefPtr<AccessibilityUIElement>>(elementsForRange));
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(elementsForRange));
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
