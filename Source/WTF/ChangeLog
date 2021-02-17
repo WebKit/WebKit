@@ -1,3 +1,22 @@
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Clients of ARC-dependent WTF functions may get incorrect/crashy behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222004
+        <rdar://73620184>
+
+        Reviewed by Geoffrey Garen.
+
+        ARC is enabled in WTF but not in our other frameworks. This can lead to bad/crashy
+        behavior. To address the issue, renames functions like adoptNS() to adoptNSArc()
+        when ARC is enabled, via a #define.
+
+        This patch was written by Geoff Garen.
+
+        * wtf/BlockPtr.h:
+        * wtf/OSObjectPtr.h:
+        * wtf/RetainPtr.h:
+        * wtf/WeakObjCPtr.h:
+
 2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus-visible parsing and experimental flag

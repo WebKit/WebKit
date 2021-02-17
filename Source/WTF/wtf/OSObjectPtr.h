@@ -28,6 +28,13 @@
 #include <os/object.h>
 #include <wtf/StdLibExtras.h>
 
+// Because ARC enablement is a compile-time choice, and we compile this header
+// both ways, we need a separate copy of our code when ARC is enabled.
+#if __has_feature(objc_arc)
+#define retainOSObject retainOSObjectArc
+#define releaseOSObject releaseOSObjectArc
+#endif
+
 namespace WTF {
 
 template<typename> class OSObjectPtr;
