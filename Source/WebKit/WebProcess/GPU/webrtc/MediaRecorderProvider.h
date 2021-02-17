@@ -40,13 +40,13 @@ private:
     std::unique_ptr<WebCore::MediaRecorderPrivate> createMediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&) final;
 #endif
 
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
     WebPage& m_webPage;
 #endif
 };
 
 inline MediaRecorderProvider::MediaRecorderProvider(WebPage& webPage)
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
     : m_webPage(webPage)
 #endif
 {

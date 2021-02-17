@@ -1,3 +1,14 @@
+2021-02-17  Youenn Fablet  <youenn@apple.com>
+
+        Build fix for non MEDIA_STREAM enabled ports after r272858
+        https://bugs.webkit.org/show_bug.cgi?id=222030
+
+        Unreviewed.
+
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.h:
+        (WebKit::MediaRecorderProvider::MediaRecorderProvider):
+        Do not declare m_webPage in configs that do not use it.
+
 2021-02-16  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Video as image source triggers IOSurface readback (unnecessarily slow)
