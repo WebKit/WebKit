@@ -61,9 +61,6 @@ private:
     void append(RefPtr<StringImpl>&&) override;
     void finish() override;
 
-    // FIXME: Why do we need this?
-    bool isWaitingForScripts() const override { return false; }
-
     void checkBuffer(int len = 10)
     {
         if ((m_dest - m_buffer) > m_size - len) {

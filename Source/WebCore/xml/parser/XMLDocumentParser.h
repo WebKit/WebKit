@@ -94,7 +94,6 @@ private:
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) final;
     void finish() final;
-    bool isWaitingForScripts() const final;
     void stopParsing() final;
     void detach() final;
 

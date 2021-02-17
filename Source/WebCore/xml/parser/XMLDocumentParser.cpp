@@ -244,11 +244,6 @@ void XMLDocumentParser::notifyFinished(PendingScript& pendingScript)
         resumeParsing();
 }
 
-bool XMLDocumentParser::isWaitingForScripts() const
-{
-    return m_pendingScript;
-}
-
 void XMLDocumentParser::pauseParsing()
 {
     ASSERT(!m_parserPaused);
