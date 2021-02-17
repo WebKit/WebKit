@@ -1,5 +1,20 @@
 2021-02-17  Don Olmstead  <don.olmstead@sony.com>
 
+        [Python-3] UnicodeDecodeError when checking for an interpreter on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=222059
+
+        Reviewed by Jonathan Bedard.
+
+        When calling open to determine which interpreter should be used Python 3 was throwing a
+        UnicodeDecodeError. On Python 3 an encoding of cp437 is specified since all characters are
+        defined in it. Python 2 does not have this problem and throws with a TypeError if an
+        encoding argument is passed.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
         [Python-3] Catch winerror.ERROR_INVALID_FUNCTION in ServerProcess
         https://bugs.webkit.org/show_bug.cgi?id=222047
 
