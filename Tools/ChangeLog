@@ -1,3 +1,12 @@
+2021-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Effectively revert r272908
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::runVideoTest):
+        (TestWebKitAPI::TEST):
+
 2021-02-17  Sam Sneddon  <gsnedders@apple.com>
 
         Add deprecation notices to believed-unused commands in webkit-patch
