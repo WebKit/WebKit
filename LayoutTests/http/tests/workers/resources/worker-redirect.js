@@ -43,7 +43,7 @@ function testCrossOriginLoad()
 function testCrossOriginRedirectedLoad()
 {
     try {
-        var worker = createWorker('/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
+        var worker = createWorker('/resources/redirect.py?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
         worker.onerror = function(evt) {
             log("SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.");
             runNextTest();

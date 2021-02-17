@@ -17,7 +17,7 @@ function runTest() {
         log("Synchronous status: " + xhr.status + ", readyState:" + xhr.readyState + ", responseText: " + xhr.responseText);
     }
 
-    xhr.open("GET", "/resources/redirect.php?url=/contentextensions/resources/url-blocking-test.js", false);
+    xhr.open("GET", "/resources/redirect.py?url=/contentextensions/resources/url-blocking-test.js", false);
     try {
         xhr.send();
     } catch (error) {

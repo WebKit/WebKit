@@ -33,7 +33,7 @@ function onprogress(event)
 
     if (!haveReloaded && event.loaded == 2) {
         reloadedLocation = window.location + "#reloaded";
-        window.location = "/resources/redirect.php?url=" + encodeURIComponent(reloadedLocation);
+        window.location = "/resources/redirect.py?url=" + encodeURIComponent(reloadedLocation);
         console.log("Reloading...");
     }
 }

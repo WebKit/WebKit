@@ -41,7 +41,7 @@ function testAsync(method, code, next)
     resetTripmine();
 
     var req = new XMLHttpRequest;
-    req.open(method, "/resources/redirect.php?code=" + code + "&url=http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.py", true);
+    req.open(method, "/resources/redirect.py?code=" + code + "&url=http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.py", true);
     req.setRequestHeader("X-WebKit-Test", "*");
     req.setRequestHeader("Content-Type", "application/xml");
     req.send("data");
@@ -55,7 +55,7 @@ function testSync(method, code, next)
     resetTripmine();
 
     var req = new XMLHttpRequest;
-    req.open(method, "/resources/redirect.php?code=" + code + "&url=http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.py", false);
+    req.open(method, "/resources/redirect.py?code=" + code + "&url=http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.py", false);
     req.setRequestHeader("X-WebKit-Test", "*");
     req.setRequestHeader("Content-Type", "application/xml");
     try {

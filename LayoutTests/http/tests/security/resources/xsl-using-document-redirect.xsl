@@ -9,7 +9,7 @@ if (window.testRunner)
 </script>
 <div>This test includes content via a cross-origin document() command.  It
 passes if the load fails and thus there is no text below this line.</div>
-<xsl:value-of select="document('/resources/redirect.php?url=http://localhost:8000/security/resources/target.xml')"/>
+<xsl:value-of select="document('/resources/redirect.py?url=http://localhost:8000/security/resources/target.xml')"/>
 </body>
 </html>
 </xsl:template>

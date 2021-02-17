@@ -34,16 +34,16 @@ function runTest(url, type) {
     });
 }
 
-runTest('/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi', 'text').then(function(req) {
+runTest('/resources/redirect.py?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi', 'text').then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi');
 
-    return runTest('/resources/redirect.php?url=http://localhost:7/', 'document');
+    return runTest('/resources/redirect.py?url=http://localhost:7/', 'document');
 }).then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', '');
 
-    return runTest('/resources/redirect.php?url=http://localhost:22/', 'text');
+    return runTest('/resources/redirect.py?url=http://localhost:22/', 'text');
 }).then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', '');

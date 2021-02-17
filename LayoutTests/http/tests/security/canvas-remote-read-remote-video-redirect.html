@@ -18,7 +18,7 @@
 
     var video = document.createElement("video");
     video.addEventListener("loadeddata", test);
-    video.src = `/resources/redirect.php?url=http://localhost:8000/${findMediaFile("video", "resources/test")}`;
+    video.src = `/resources/redirect.py?url=http://localhost:8000/${findMediaFile("video", "resources/test")}`;
     
     window.jsTestIsAsync = true;
 </script>

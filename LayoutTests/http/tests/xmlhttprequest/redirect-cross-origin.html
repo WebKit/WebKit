@@ -31,7 +31,7 @@
         xhr.onloadstart = function() { log("onloadstart") }
         xhr.onprogress = function() { log("onprogress") }
         xhr.onerror = function() { log("onerror"); setTimeout(doneMissing, 100); }
-        xhr.open("GET", "/resources/redirect.php?url=http://localhost:7/", true); // A port that will likely refuse the connection.
+        xhr.open("GET", "/resources/redirect.py?url=http://localhost:7/", true); // A port that will likely refuse the connection.
         xhr.send();
     }
 
@@ -61,7 +61,7 @@
     xhr.onloadstart = function() { log("onloadstart") }
     xhr.onprogress = function() { log("onprogress") }
     xhr.onerror = function() { log("onerror"); setTimeout(doneExisting, 100); }
-    xhr.open("GET", "/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/reply.xml", true);
+    xhr.open("GET", "/resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/reply.xml", true);
     xhr.send();
 
 </script>

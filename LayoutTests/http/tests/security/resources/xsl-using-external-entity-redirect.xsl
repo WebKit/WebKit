@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE doc [ <!ENTITY ent SYSTEM "/resources/redirect.php?url=http://localhost:8000/security/resources/target.xml"> ]>
+<!DOCTYPE doc [ <!ENTITY ent SYSTEM "/resources/redirect.py?url=http://localhost:8000/security/resources/target.xml"> ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="*">
 <html>

@@ -30,7 +30,7 @@ function test()
     applicationCache.oncached = null;
     applicationCache.onnoupdate = null;
     var iframe = document.createElement("iframe");
-    iframe.setAttribute("src", "/resources/redirect.php?url=http://127.0.0.1:8000/appcache/resources/simple.txt");
+    iframe.setAttribute("src", "/resources/redirect.py?url=http://127.0.0.1:8000/appcache/resources/simple.txt");
     document.body.appendChild(iframe);
     iframe.onload = done;
 }

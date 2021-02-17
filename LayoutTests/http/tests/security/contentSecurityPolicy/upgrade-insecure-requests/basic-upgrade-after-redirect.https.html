@@ -11,7 +11,7 @@ if (window.testRunner)
 // This is a bit of a hack. UPGRADE doesn't upgrade the port number, so we
 // specify this non-existent URL ('http' over port 8443). If UPGRADE doesn't
 // work, it won't load.
-var insecureImage = "http://127.0.0.1:8443/resources/redirect.php?url=http://127.0.0.1:8443/security/resources/abe.png";
+var insecureImage = "http://127.0.0.1:8443/resources/redirect.py?url=http://127.0.0.1:8443/security/resources/abe.png";
 
 (function() {
     var t = async_test("Verify that images are upgraded after a redirection.");
