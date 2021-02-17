@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing MediaDevices addEventListener/removeEventListener</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id="video" autoplay playsInline></video>
+    <script>
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = video.srcObject.getTracks()[0];
+
+    await video.play();
+
+    if (!window.internals)
+       return;
+    internals.setMediaSessionRestrictions("video", "backgroundprocessplaybackrestricted");
+
+    let mutePromise = new Promise(resolve => track.onmute = resolve);
+    internals.applicationDidEnterBackground(true);
+    internals.setMediaStreamTrackMuted(track, true);
+    await mutePromise;
+
+    let counter = 100
+    while (!video.paused && --counter > 0)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_true(video.paused, "video paused");
+
+    let unmutePromise = new Promise(resolve => track.onunmute = resolve);
+    internals.applicationWillEnterForeground(false);
+    internals.setMediaStreamTrackMuted(track, false);
+    await unmutePromise;
+
+    counter = 100;
+    while (video.paused && --counter > 0)
+       await new Promise(resolve => setTimeout(resolve, 50));
+    assert_false(video.paused, "video resumed");
+
+}, "MediaStream video should restart when going to foreground");
+    </script>
+</body>
+</html>

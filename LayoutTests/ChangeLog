@@ -1,5 +1,48 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272583. rdar://problem/74409637
+
+    MediaStream-backed video elements should not compute the mediaType based on track muted states
+    https://bugs.webkit.org/show_bug.cgi?id=221601
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    In case of entering background, two things happen:
+    - video elements get paused
+    - local video capture track gets muted
+    When entering foreground:
+    - video element should resume but did not as the local video track was muted and video element was considered as an audio element.
+    - local video capture track gets unmuted but this is too late.
+    To fix this, compute hasVideo/hasAudio based on available tracks, no matter their active state.
+    
+    Test: fast/mediastream/MediaStream-video-element-enter-background.html
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::hasVideo const):
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::hasAudio const):
+    
+    LayoutTests:
+    
+    * fast/mediastream/MediaStream-video-element-enter-background-expected.txt: Added.
+    * fast/mediastream/MediaStream-video-element-enter-background.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272583 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-09  Youenn Fablet  <youenn@apple.com>
+
+            MediaStream-backed video elements should not compute the mediaType based on track muted states
+            https://bugs.webkit.org/show_bug.cgi?id=221601
+
+            Reviewed by Eric Carlson.
+
+            * fast/mediastream/MediaStream-video-element-enter-background-expected.txt: Added.
+            * fast/mediastream/MediaStream-video-element-enter-background.html: Added.
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r272567. rdar://problem/74410033
 
     REGRESSION (r269458): yahoo.com social / comments bar shows as transparent when scrolling page
