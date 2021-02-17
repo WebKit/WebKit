@@ -1,5 +1,21 @@
 2021-02-16  Razvan Caliman  <rcaliman@apple.com>
 
+        Web Inspector: Grids with overlays that disappear and reappear remain checked in Layout pane, toggling hits assertion
+        https://bugs.webkit.org/show_bug.cgi?id=221919
+        <rdar://problem/74363006>
+
+        Reviewed by Devin Rousso.
+
+        When a DOMNode's grid layout context changes to something else,
+        its corresponding shown grid overlay is automatically hidden on the backend.
+        The frontend needs to update its mapping of nodes to overlays and notify listeners of the change in state.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype._handleLayoutContextTypeChanged):
+
+2021-02-16  Razvan Caliman  <rcaliman@apple.com>
+
         Web Inspector: Grid list in Layout panel missing empty message
         https://bugs.webkit.org/show_bug.cgi?id=221763
         <rdar://problem/74242610>

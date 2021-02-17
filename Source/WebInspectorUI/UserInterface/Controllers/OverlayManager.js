@@ -53,6 +53,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
         console.assert(domNode instanceof WI.DOMNode, domNode);
         console.assert(!color || color instanceof WI.Color, color);
+        console.assert(domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid, domNode.layoutContextType);
 
         color ||= WI.Color.fromString("magenta"); // fallback color
 
@@ -71,6 +72,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         let overlay = {domNode, ...commandArguments};
         this._gridOverlayForNodeMap.set(domNode, overlay);
 
+        domNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayShown, overlay);
     }
 
@@ -78,6 +80,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
     {
         console.assert(domNode instanceof WI.DOMNode, domNode);
         console.assert(!domNode.destroyed, domNode);
+        console.assert(domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid, domNode.layoutContextType);
         if (domNode.destroyed)
             return;
 
@@ -88,10 +91,23 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         let target = WI.assumingMainTarget();
         target.DOMAgent.hideGridOverlay(domNode.id);
 
+        domNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
     }
 
     // Private
+
+    _handleLayoutContextTypeChanged(event)
+    {
+        let domNode = event.target;
+        console.assert(domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid, domNode);
+
+        domNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
+
+        // When the context type changes, the overlay is automatically hidden on the backend. Here, we only update the map and notify listeners.
+        let overlay = this._gridOverlayForNodeMap.take(domNode);
+        this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
+    }
 
     _handleGridSettingChanged(event)
     {
