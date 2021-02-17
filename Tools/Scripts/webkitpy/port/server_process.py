@@ -69,13 +69,8 @@ class ServerProcess(object):
             self._cmd = ['/usr/bin/arch', '-{}'.format(self._port.architecture())] + cmd
         else:
             self._cmd = cmd
+        self._env = env
         self._crash_message = crash_message or 'This test marked as a crash'
-
-        # Windows does not allow unicode values in the environment
-        if env and platform.is_native_win():
-            self._env = {key: env[key].encode('utf-8') for key in env}
-        else:
-            self._env = env
 
         # Set if the process outputs non-standard newlines like '\r\n' or '\r'.
         # Don't set if there will be binary data or the data must be ASCII encoded.

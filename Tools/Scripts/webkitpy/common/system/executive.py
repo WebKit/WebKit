@@ -503,8 +503,20 @@ class Executive(AbstractExecutive):
         else:
             string_args = self._stringify_args(args)
 
+        # Windows Python 3 throws a TypeError if the environment contains `bytes` instead of `str`
+        env = kwargs.pop('env', None)
+        if self._is_native_win and env is not None:
+            mod_env = {}
+            for key, value in env.items():
+                if not isinstance(key, str):
+                    key = key.decode('utf-8')
+                if not isinstance(value, str):
+                    value = value.decode('utf-8')
+                mod_env[key] = value
+            env = mod_env
+
         # Python 3 treats Popen as a context manager, we should allow this in Python 2
-        result = subprocess.Popen(string_args, **kwargs)
+        result = subprocess.Popen(string_args, env=env, **kwargs)
         if not callable(getattr(result, "__enter__", None)) and not callable(getattr(result, "__exit__", None)):
             return self.WrappedPopen(result)
         return result

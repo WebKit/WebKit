@@ -1,3 +1,23 @@
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Child process environment on Windows can only contain strings
+        https://bugs.webkit.org/show_bug.cgi?id=222012
+
+        Reviewed by Jonathan Bedard.
+
+        When running Python 3 on Windows a 'TypeError: environment can only contain strings' is
+        thrown during execution of run-webkit-tests. If the Executive is running on native Windows
+        it converts the keys and values of the environment dictionary into strings and passes them
+        into the popen call.
+
+        In ServerProcess it was modifying the environment as well. This code was removed so
+        Executive is the only place that handles this issue.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__):
+
 2021-02-17  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Support unicode when printing changelogs
