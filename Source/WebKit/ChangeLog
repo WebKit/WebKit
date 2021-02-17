@@ -1,3 +1,15 @@
+2021-02-17  Per Arne  <pvollan@apple.com>
+
+        [macOS] Deny access to unused IOKit classes
+        https://bugs.webkit.org/show_bug.cgi?id=221969
+        <rdar://problem/74395400>
+
+        Reviewed by Brent Fulgham.
+
+        Deny access to the IOKit classes AppleIntelMEUserClient and AppleSNBFBUserClient when the GPU process is enabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-17  Youenn Fablet  <youenn@apple.com>
 
         RemoteMediaPlayerManager does not need to support media stream code path

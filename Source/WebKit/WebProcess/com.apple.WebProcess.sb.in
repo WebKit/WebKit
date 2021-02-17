@@ -1818,8 +1818,6 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
-            "AppleIntelMEUserClient"
-            "AppleSNBFBUserClient"
             "IOSurfaceRootUserClient"
         )
     )
@@ -1873,7 +1871,9 @@
             "AGPMClient"
             "AppleGraphicsControlClient"
             "AppleGraphicsPolicyClient"
+            "AppleIntelMEUserClient"
             "AppleMGPUPowerControlClient"
+            "AppleSNBFBUserClient"
             "IOAccelerationUserClient"
         )
     )
