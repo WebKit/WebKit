@@ -5100,7 +5100,10 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     if (!style().hasAspectRatio())
         return false;
 
-    if (!shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !style().logicalHeight().isPercentOrCalculated())
+    auto isResolvablePercentageHeight = [this] () {
+        return style().logicalHeight().isPercentOrCalculated() && (isOutOfFlowPositioned() || percentageLogicalHeightIsResolvable());
+    };
+    if (!shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !isResolvablePercentageHeight())
         return false;
 
     return true;

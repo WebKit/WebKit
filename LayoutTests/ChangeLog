@@ -1,3 +1,14 @@
+2021-02-17  Rob Buis  <rbuis@igalia.com>
+
+        Improve percentage height in shouldComputeLogicalWidthFromAspectRatio
+        https://bugs.webkit.org/show_bug.cgi?id=221405
+
+        Reviewed by Simon Fraser.
+
+        Enable some tests that pass now.
+
+        * TestExpectations:
+
 2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus-visible parsing and experimental flag
