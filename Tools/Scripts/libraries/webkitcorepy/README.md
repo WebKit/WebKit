@@ -4,7 +4,7 @@ Provides a number of utilities intended to support intermediate to advanced Pyth
 
 ## Requirements
 
-The mock and requests libraries.
+The mock, requests and six libraries.
  
 ## Usage
 

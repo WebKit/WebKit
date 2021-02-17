@@ -45,7 +45,7 @@ class Scm(ScmBase):
         return os.path.realpath(path)
 
     @classmethod
-    def from_path(cls, path,  contributors=None):
+    def from_path(cls, path, contributors=None):
         from webkitscmpy import local
 
         if local.Git.is_checkout(path):
