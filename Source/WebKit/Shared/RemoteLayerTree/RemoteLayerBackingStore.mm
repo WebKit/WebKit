@@ -220,6 +220,8 @@ bool RemoteLayerBackingStore::display()
     WebCore::IntRect expandedScaledLayerBounds(WebCore::IntPoint(), expandedScaledSize);
 
     swapToValidFrontBuffer();
+    if (!m_frontBuffer.imageBuffer)
+        return true;
 
     WebCore::GraphicsContext& context = m_frontBuffer.imageBuffer->context();
 
