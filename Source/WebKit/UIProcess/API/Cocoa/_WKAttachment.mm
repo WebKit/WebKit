@@ -120,7 +120,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     if (!_attachment->isValid())
         return nil;
 
-    return [[[_WKAttachmentInfo alloc] initWithFileWrapper:_attachment->fileWrapper() filePath:_attachment->filePath() mimeType:_attachment->mimeType() utiType:_attachment->utiType()] autorelease];
+    return adoptNS([[_WKAttachmentInfo alloc] initWithFileWrapper:_attachment->fileWrapper() filePath:_attachment->filePath() mimeType:_attachment->mimeType() utiType:_attachment->utiType()]).autorelease();
 }
 
 - (void)requestInfo:(void(^)(_WKAttachmentInfo *, NSError *))completionHandler

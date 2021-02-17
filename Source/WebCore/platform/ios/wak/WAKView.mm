@@ -198,7 +198,7 @@ static void invalidateGStateCallback(WKViewRef view)
 {
     ASSERT(_viewRef);
     if (_viewRef->isa.classInfo == &WKViewClassInfo)
-        return [[[WAKView alloc] _initWithViewRef:_viewRef] autorelease];
+        return adoptNS([[WAKView alloc] _initWithViewRef:_viewRef]).autorelease();
     WKError ("unable to create wrapper for %s\n", _viewRef->isa.classInfo->name);
     return nil;
 }
@@ -238,7 +238,7 @@ static void invalidateGStateCallback(WKViewRef view)
 
 - (void)dealloc
 {
-    [[[subviewReferences copy] autorelease] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [adoptNS([subviewReferences copy]).autorelease() makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     if (viewRef) {
         _WKViewSetViewContext (viewRef, 0);

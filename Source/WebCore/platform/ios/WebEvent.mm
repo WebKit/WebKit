@@ -380,19 +380,19 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
     ASSERT(!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
-    return [[_characters retain] autorelease];
+    return retainPtr(_characters).autorelease();
 }
 
 - (NSString *)charactersIgnoringModifiers
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
     ASSERT(!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
-    return [[_charactersIgnoringModifiers retain] autorelease];
+    return retainPtr(_charactersIgnoringModifiers).autorelease();
 }
 
 - (NSString *)inputManagerHint
 {
-    return [[_inputManagerHint retain] autorelease];
+    return retainPtr(_inputManagerHint).autorelease();
 }
 
 - (WebEventFlags)modifierFlags

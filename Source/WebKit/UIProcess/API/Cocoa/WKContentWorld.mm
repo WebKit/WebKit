@@ -74,7 +74,7 @@
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (_WKUserContentWorld *)_userContentWorld
 {
-    return [[[_WKUserContentWorld alloc] _initWithContentWorld:self] autorelease];
+    return adoptNS([[_WKUserContentWorld alloc] _initWithContentWorld:self]).autorelease();
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

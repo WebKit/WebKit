@@ -655,7 +655,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKWebViewConfiguration *)configuration
 {
-    return [[_configuration copy] autorelease];
+    return adoptNS([_configuration copy]).autorelease();
 }
 
 - (WKBackForwardList *)backForwardList
@@ -1210,12 +1210,12 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
 {
     if (!string.length) {
-        completionHandler([[[WKFindResult alloc] _initWithMatchFound:NO] autorelease]);
+        completionHandler(adoptNS([[WKFindResult alloc] _initWithMatchFound:NO]).autorelease());
         return;
     }
 
     _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found) {
-        handler([[[WKFindResult alloc] _initWithMatchFound:found] autorelease]);
+        handler(adoptNS([[WKFindResult alloc] _initWithMatchFound:found]).autorelease());
     });
 }
 
@@ -1703,8 +1703,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
-        _WKFrameTreeNode *node = [[wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())) retain] autorelease];
-        completionHandler(node);
+        auto node = retainPtr(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
+        completionHandler(node.autorelease());
     });
 }
 
@@ -1948,7 +1948,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (WKBrowsingContextHandle *)_handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page] autorelease];
+    return adoptNS([[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page]).autorelease();
 }
 
 - (_WKRenderingProgressEvents)_observedRenderingProgressEvents
@@ -2233,13 +2233,13 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    WKPDFConfiguration *pdfConfiguration = nil;
+    RetainPtr<WKPDFConfiguration> pdfConfiguration;
     if (snapshotConfiguration) {
-        pdfConfiguration = [[[WKPDFConfiguration alloc] init] autorelease];
-        pdfConfiguration.rect = snapshotConfiguration.rect;
+        pdfConfiguration = adoptNS([[WKPDFConfiguration alloc] init]);
+        [pdfConfiguration setRect:snapshotConfiguration.rect];
     }
 
-    [self createPDFWithConfiguration:pdfConfiguration completionHandler:completionHandler];
+    [self createPDFWithConfiguration:pdfConfiguration.autorelease() completionHandler:completionHandler];
 }
 
 - (NSData *)_sessionStateData
@@ -2250,7 +2250,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (_WKSessionState *)_sessionState
 {
-    return [[[_WKSessionState alloc] _initWithSessionState:_page->sessionState()] autorelease];
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
 }
 
 - (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter
@@ -2262,7 +2262,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         return (bool)filter(wrapper(item));
     });
 
-    return [[[_WKSessionState alloc] _initWithSessionState:sessionState] autorelease];
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:sessionState]).autorelease();
 }
 
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
@@ -2580,7 +2580,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     _page->getContentsAsAttributedString([handler = makeBlockPtr(completionHandler)](auto& attributedString) {
         if (attributedString.string)
-            handler([[attributedString.string.get() retain] autorelease], [[attributedString.documentAttributes.get() retain] autorelease], nil);
+            handler(retainPtr(attributedString.string.get()).autorelease(), retainPtr(attributedString.documentAttributes.get()).autorelease(), nil);
         else
             handler(nil, nil, createNSError(WKErrorUnknown).get());
     });

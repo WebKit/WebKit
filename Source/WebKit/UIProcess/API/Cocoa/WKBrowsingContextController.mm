@@ -459,7 +459,7 @@ static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef 
 {
     WKRetain(listener); // Released in the decision handler below.
 
-    return [[^(WKPolicyDecision decision) {
+    return adoptNS([^(WKPolicyDecision decision) {
         switch (decision) {
         case WKPolicyDecisionCancel:
             WKFramePolicyListenerIgnore(listener);                    
@@ -475,7 +475,7 @@ static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef 
         };
 
         WKRelease(listener); // Retained in the context above.
-    } copy] autorelease];
+    } copy]).autorelease();
 }
 
 static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
@@ -504,7 +504,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             };
 
             if (originatingFrame) {
-                actionDictionary = [[actionDictionary mutableCopy] autorelease];
+                actionDictionary = adoptNS([actionDictionary mutableCopy]).autorelease();
                 [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
             }
             
@@ -734,7 +734,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (WKBrowsingContextHandle *)handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page] autorelease];
+    return adoptNS([[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page]).autorelease();
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry

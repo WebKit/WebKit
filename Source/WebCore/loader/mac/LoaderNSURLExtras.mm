@@ -88,7 +88,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
 NSString *filenameByFixingIllegalCharacters(NSString *string)
 {
-    NSMutableString *filename = [[string mutableCopy] autorelease];
+    auto filename = adoptNS([string mutableCopy]);
 
     // Strip null characters.
     unichar nullChar = 0;
@@ -104,5 +104,5 @@ NSString *filenameByFixingIllegalCharacters(NSString *string)
     while ([filename hasPrefix:@"."])
         [filename deleteCharactersInRange:NSMakeRange(0, 1)];
 
-    return filename;
+    return filename.autorelease();
 }

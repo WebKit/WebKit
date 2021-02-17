@@ -69,7 +69,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
         return self;
 
     initAVPlayerController();
-    self.playerControllerProxy = [[allocAVPlayerControllerInstance() init] autorelease];
+    self.playerControllerProxy = adoptNS([allocAVPlayerControllerInstance() init]).autorelease();
     _liveStreamEventModePossible = YES;
 
     [self addObserver:self forKeyPath:@"seekableTimeRanges" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:WebAVPlayerControllerSeekableTimeRangesObserverContext];

@@ -133,7 +133,7 @@ static WKWebViewConfiguration *configuration;
 {
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.processPool = [[[WKProcessPool alloc] init] autorelease];
+        configuration.processPool = adoptNS([[WKProcessPool alloc] init]).autorelease();
         configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
         configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
         configuration._allowsJavaScriptMarkup = NO;
@@ -270,11 +270,11 @@ static WKWebViewConfiguration *configuration;
 
             // Make the string be an instance of the receiver class.
             if (attributedString && self != attributedString.class)
-                attributedString = [[[self alloc] initWithAttributedString:attributedString] autorelease];
+                attributedString = adoptNS([[self alloc] initWithAttributedString:attributedString]).autorelease();
 
             // Make the document attributes immutable.
             if ([attributes isKindOfClass:NSMutableDictionary.class])
-                attributes = [[[NSDictionary alloc] initWithDictionary:attributes] autorelease];
+                attributes = adoptNS([[NSDictionary alloc] initWithDictionary:attributes]).autorelease();
 
             completionHandler(attributedString, attributes, error);
         };
@@ -310,7 +310,7 @@ static WKWebViewConfiguration *configuration;
             [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
                 if (error)
                     return cancel(WKErrorUnknown, error);
-                finish([[attributedString retain] autorelease], [[documentAttributes retain] autorelease], nil);
+                finish(retainPtr(attributedString).autorelease(), retainPtr(documentAttributes).autorelease(), nil);
             }];
         };
 

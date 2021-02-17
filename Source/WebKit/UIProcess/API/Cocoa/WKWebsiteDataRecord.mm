@@ -150,7 +150,7 @@ static NSString *dataTypesToString(NSSet *dataTypes)
     if (!size)
         return nil;
 
-    return [[[_WKWebsiteDataSize alloc] initWithSize:*size] autorelease];
+    return adoptNS([[_WKWebsiteDataSize alloc] initWithSize:*size]).autorelease();
 }
 
 - (NSArray<NSString *> *)_originsStrings

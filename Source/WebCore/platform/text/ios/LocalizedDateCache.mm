@@ -76,9 +76,9 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponentsType typ
     if (m_formatterMap.contains(key))
         return m_formatterMap.get(key).get();
 
-    NSDateFormatter *dateFormatter = [createFormatterForType(type) autorelease];
-    m_formatterMap.set(key, dateFormatter);
-    return dateFormatter;
+    auto dateFormatter = createFormatterForType(type);
+    m_formatterMap.set(key, dateFormatter.get());
+    return dateFormatter.autorelease();
 }
 
 float LocalizedDateCache::maximumWidthForDateType(DateComponentsType type, const FontCascade& font, const MeasureTextClient& measurer)
@@ -97,9 +97,9 @@ float LocalizedDateCache::maximumWidthForDateType(DateComponentsType type, const
     return calculatedMaximum;
 }
 
-NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponentsType type)
+RetainPtr<NSDateFormatter> LocalizedDateCache::createFormatterForType(DateComponentsType type)
 {
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    auto dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     NSLocale *currentLocale = [NSLocale currentLocale];
     [dateFormatter setLocale:currentLocale];
 
@@ -141,7 +141,7 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
     float maximumWidth = 0;
 
     // Get the formatter we would use, copy it because we will force its time zone to be UTC.
-    NSDateFormatter *dateFormatter = [[formatterForDateType(type) copy] autorelease];
+    auto dateFormatter = adoptNS([formatterForDateType(type) copy]);
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
     // Sample date with a 4 digit year and 2 digit day, hour, and minute. Digits are

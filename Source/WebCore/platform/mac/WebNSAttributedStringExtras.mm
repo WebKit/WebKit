@@ -55,13 +55,13 @@ NSAttributedString *attributedStringByStrippingAttachmentCharacters(NSAttributed
     
     attachmentRange = [originalString rangeOfString:attachmentCharString];
     if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-        NSMutableAttributedString *newAttributedString = [[attributedString mutableCopyWithZone:NULL] autorelease];
+        auto newAttributedString = adoptNS([attributedString mutableCopyWithZone:NULL]);
         
         while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
             [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
             attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
         }
-        return newAttributedString;
+        return newAttributedString.autorelease();
     }
     
     return attributedString;

@@ -1058,8 +1058,8 @@ using namespace Inspector;
 @implementation TestProtocolConfiguration
 {
     AugmentableInspectorController* _controller;
-    id<TestProtocolNetwork1DomainHandler> _network1Handler;
-    id<TestProtocolNetwork3DomainHandler> _network3Handler;
+    RetainPtr<id<TestProtocolNetwork1DomainHandler>> _network1Handler;
+    RetainPtr<id<TestProtocolNetwork3DomainHandler>> _network3Handler;
 }
 
 - (instancetype)initWithController:(AugmentableInspectorController*)controller
@@ -1072,20 +1072,12 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [_network1Handler release];
-    [_network3Handler release];
-    [super dealloc];
-}
-
 - (void)setNetwork1Handler:(id<TestProtocolNetwork1DomainHandler>)handler
 {
     if (handler == _network1Handler)
         return;
 
-    [_network1Handler release];
-    _network1Handler = [handler retain];
+    _network1Handler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorNetwork1BackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>("Network1"_s, *_controller, WTFMove(alternateDispatcher));
@@ -1094,7 +1086,7 @@ using namespace Inspector;
 
 - (id<TestProtocolNetwork1DomainHandler>)network1Handler
 {
-    return _network1Handler;
+    return _network1Handler.get();
 }
 
 - (void)setNetwork3Handler:(id<TestProtocolNetwork3DomainHandler>)handler
@@ -1102,8 +1094,7 @@ using namespace Inspector;
     if (handler == _network3Handler)
         return;
 
-    [_network3Handler release];
-    _network3Handler = [handler retain];
+    _network3Handler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorNetwork3BackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>("Network3"_s, *_controller, WTFMove(alternateDispatcher));
@@ -1112,7 +1103,7 @@ using namespace Inspector;
 
 - (id<TestProtocolNetwork3DomainHandler>)network3Handler
 {
-    return _network3Handler;
+    return _network3Handler.get();
 }
 
 @end

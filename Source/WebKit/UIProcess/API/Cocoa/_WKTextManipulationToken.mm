@@ -112,7 +112,7 @@ static BOOL isEqualOrBothNil(id a, id b)
 
     [description appendString:@">"];
 
-    return [[description copy] autorelease];
+    return adoptNS([description copy]).autorelease();
 }
 
 @end

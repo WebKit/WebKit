@@ -443,12 +443,12 @@ NS_ASSUME_NONNULL_END
     if (_invalidated)
         return nil;
 
-    WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request];
+    auto task = adoptNS([[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request]);
     {
         Locker<Lock> locker(_dataTasksLock);
-        _dataTasks.add(task);
+        _dataTasks.add(task.get());
     }
-    return (NSURLSessionDataTask *)[task autorelease];
+    return (NSURLSessionDataTask *)task.autorelease();
 }
 
 - (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url
@@ -661,9 +661,9 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
     // CoreMedia will explicitly add a user agent header. Remove if present.
     if (auto* userAgentValue = [request valueForHTTPHeaderField:@"User-Agent"]) {
-        NSMutableURLRequest* mutableRequest = [request mutableCopyWithZone:nil];
+        auto mutableRequest = adoptNS([request mutableCopyWithZone:nil]);
         [mutableRequest setValue:nil forHTTPHeaderField:@"User-Agent"];
-        request = [mutableRequest autorelease];
+        request = mutableRequest.autorelease();
     }
 
     self.originalRequest = self.currentRequest = request;

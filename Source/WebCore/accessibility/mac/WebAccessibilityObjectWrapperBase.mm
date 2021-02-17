@@ -527,7 +527,7 @@ static bool isValueTypeSupported(id value)
 static NSArray *arrayRemovingNonSupportedTypes(NSArray *array)
 {
     ASSERT([array isKindOfClass:[NSArray class]]);
-    NSMutableArray *mutableArray = [array mutableCopy];
+    auto mutableArray = adoptNS([array mutableCopy]);
     for (NSUInteger i = 0; i < [mutableArray count];) {
         id value = [mutableArray objectAtIndex:i];
         if ([value isKindOfClass:[NSDictionary class]])
@@ -540,7 +540,7 @@ static NSArray *arrayRemovingNonSupportedTypes(NSArray *array)
         }
         i++;
     }
-    return [mutableArray autorelease];
+    return mutableArray.autorelease();
 }
 
 static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionary)
@@ -548,7 +548,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
     if (!dictionary)
         return nil;
     ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-    NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
+    auto mutableDictionary = adoptNS([dictionary mutableCopy]);
     for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
         if ([value isKindOfClass:[NSDictionary class]])
@@ -558,7 +558,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
         else if (!isValueTypeSupported(value))
             [mutableDictionary removeObjectForKey:key];
     }
-    return [mutableDictionary autorelease];
+    return mutableDictionary.autorelease();
 }
 
 - (void)accessibilityPostedNotification:(NSString *)notificationName userInfo:(NSDictionary *)userInfo

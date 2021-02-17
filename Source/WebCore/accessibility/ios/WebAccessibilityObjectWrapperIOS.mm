@@ -189,7 +189,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
     if (!textMarkerData)
         return nil;
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData.value() cache:cache] autorelease];
+    return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData.value() cache:cache]).autorelease();
 }
 
 + (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache
@@ -204,7 +204,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     cache->textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID && !textMarkerData.ignored)
         return nil;
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+    return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 + (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const Optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache
@@ -217,7 +217,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     cache->startOrEndTextMarkerDataForRange(textMarkerData, *range, isStart);
     if (!textMarkerData.axID)
         return nil;
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+    return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 - (NSData *)dataRepresentation
@@ -290,7 +290,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     // rdar://7980318 if we start a call, then block in WebThreadLock(), then we're dealloced on another, thread, we could
     // crash, so we should retain ourself for the duration of usage here.
-    [[self retain] autorelease];
+    retainPtr(self).autorelease();
 
     WebThreadLock();
     
@@ -2333,7 +2333,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
 
     // iterate over the range to build the AX attributed string
-    NSMutableArray* array = [[NSMutableArray alloc] init];
+    auto array = adoptNS([[NSMutableArray alloc] init]);
     TextIterator it(*range);
     for (; !it.atEnd(); it.advance()) {
         Node& node = it.range().start.container;
@@ -2343,12 +2343,12 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
             if (!attributed) {
                 // First check if this is represented by a link.
                 AccessibilityObject* linkObject = AccessibilityObject::anchorElementForNode(&node);
-                if ([self _addAccessibilityObject:linkObject toTextMarkerArray:array])
+                if ([self _addAccessibilityObject:linkObject toTextMarkerArray:array.get()])
                     continue;
 
                 // Next check if this region is represented by a heading.
                 AccessibilityObject* headingObject = AccessibilityObject::headingElementForNode(&node);
-                if ([self _addAccessibilityObject:headingObject toTextMarkerArray:array])
+                if ([self _addAccessibilityObject:headingObject toTextMarkerArray:array.get()])
                     continue;
 
                 String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
@@ -2375,12 +2375,12 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
             if (replacedNode) {
                 AccessibilityObject* obj = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
                 if (obj && !obj->accessibilityIsIgnored())
-                    [self _addAccessibilityObject:obj toTextMarkerArray:array];
+                    [self _addAccessibilityObject:obj toTextMarkerArray:array.get()];
             }
         }
     }
 
-    return [array autorelease];
+    return array.autorelease();
 }
 
 // FIXME: No reason for this to be a method instead of a function.
@@ -2539,7 +2539,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:attributed];
     Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
-    id returnValue = [[(NSString *)[returnClass alloc] init] autorelease];
+    auto returnValue = adoptNS([(NSString *)[returnClass alloc] init]);
     
     const unichar attachmentChar = NSAttachmentCharacter;
     NSInteger count = [array count];
@@ -2547,17 +2547,17 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         id object = [array objectAtIndex:k];
 
         if (attributed && [object isKindOfClass:[WebAccessibilityObjectWrapper class]])
-            object = [[[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object }] autorelease];
+            object = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object }]).autorelease();
         
         if (![object isKindOfClass:returnClass])
             continue;
         
         if (attributed)
-            [(NSMutableAttributedString *)returnValue appendAttributedString:object];
+            [(NSMutableAttributedString *)returnValue.get() appendAttributedString:object];
         else
-            [(NSMutableString *)returnValue appendString:object];
+            [(NSMutableString *)returnValue.get() appendString:object];
     }
-    return returnValue;
+    return returnValue.autorelease();
 }
 
 - (id)_stringForRange:(NSRange)range attributed:(BOOL)attributed
@@ -2847,7 +2847,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+    return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 - (WebAccessibilityTextMarker *)previousMarkerForCharacterOffset:(CharacterOffset&)characterOffset
@@ -2860,7 +2860,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+    return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 - (Optional<SimpleRange>)rangeForTextMarkers:(NSArray *)textMarkers

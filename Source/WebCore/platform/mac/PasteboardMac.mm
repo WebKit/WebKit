@@ -248,9 +248,9 @@ void Pasteboard::write(const Color& color)
 
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->createNSData().get()] autorelease];
+    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->createNSData().get()]);
     [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(pasteboardImage.url.url, pasteboardImage.resourceMIMEType)];
-    return wrapper;
+    return wrapper.autorelease();
 }
 
 static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, int64_t& newChangeCount)

@@ -56,7 +56,7 @@ static NSDictionary* dictionaryThatCanCode(NSDictionary* src)
     // This function makes a copy of input dictionary, modifies it such that it "should" (as much as we can help it)
     // not contain any objects that do not conform to NSCoding protocol, and returns it autoreleased.
 
-    NSMutableDictionary* dst = [src mutableCopy];
+    auto dst = adoptNS([src mutableCopy]);
 
     // Kill the known problem entries.
     [dst removeObjectForKey:@"NSErrorPeerCertificateChainKey"]; // NSArray with SecCertificateRef objects
@@ -77,7 +77,7 @@ static NSDictionary* dictionaryThatCanCode(NSDictionary* src)
         // FIXME: We could drill down into subdictionaries, but it seems more trouble than it's worth
     }];
 
-    return [dst autorelease];
+    return dst.autorelease();
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder

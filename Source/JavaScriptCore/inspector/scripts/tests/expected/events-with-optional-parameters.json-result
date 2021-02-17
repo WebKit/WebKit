@@ -684,7 +684,7 @@ using namespace Inspector;
 @implementation TestProtocolConfiguration
 {
     AugmentableInspectorController* _controller;
-    TestProtocolDatabaseDomainEventDispatcher *_databaseEventDispatcher;
+    RetainPtr<TestProtocolDatabaseDomainEventDispatcher> _databaseEventDispatcher;
 }
 
 - (instancetype)initWithController:(AugmentableInspectorController*)controller
@@ -697,17 +697,11 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [_databaseEventDispatcher release];
-    [super dealloc];
-}
-
 - (TestProtocolDatabaseDomainEventDispatcher *)databaseEventDispatcher
 {
     if (!_databaseEventDispatcher)
-        _databaseEventDispatcher = [[TestProtocolDatabaseDomainEventDispatcher alloc] initWithController:_controller];
-    return _databaseEventDispatcher;
+        _databaseEventDispatcher = adoptNS([[TestProtocolDatabaseDomainEventDispatcher alloc] initWithController:_controller]);
+    return _databaseEventDispatcher.get();
 }
 
 @end

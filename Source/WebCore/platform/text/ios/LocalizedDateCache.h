@@ -49,7 +49,7 @@ private:
     LocalizedDateCache();
     ~LocalizedDateCache();
 
-    NSDateFormatter *createFormatterForType(DateComponentsType);
+    RetainPtr<NSDateFormatter> createFormatterForType(DateComponentsType);
     float calculateMaximumWidth(DateComponentsType, const MeasureTextClient&);
 
     // Using int instead of DateComponentsType for the key because the enum

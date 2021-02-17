@@ -61,7 +61,7 @@
 #else
 - (CALayer *)makeBackingLayer
 {
-    return [[[CALayerHost alloc] init] autorelease];
+    return adoptNS([[CALayerHost alloc] init]).autorelease();
 }
 #endif
 

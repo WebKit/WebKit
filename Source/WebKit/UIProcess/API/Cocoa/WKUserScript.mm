@@ -88,7 +88,7 @@
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (_WKUserContentWorld *)_userContentWorld
 {
-    return [[[_WKUserContentWorld alloc] _initWithContentWorld:wrapper(_userScript->contentWorld())] autorelease];
+    return adoptNS([[_WKUserContentWorld alloc] _initWithContentWorld:wrapper(_userScript->contentWorld())]).autorelease();
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

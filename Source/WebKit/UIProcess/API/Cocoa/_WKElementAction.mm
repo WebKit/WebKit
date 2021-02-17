@@ -96,8 +96,8 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
 
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler
 {
-    return [[[self alloc] _initWithTitle:title actionHandler:^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { handler(actionInfo); }
-        type:_WKElementActionTypeCustom assistant:nil] autorelease];
+    return adoptNS([[self alloc] _initWithTitle:title actionHandler:^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { handler(actionInfo); }
+        type:_WKElementActionTypeCustom assistant:nil]).autorelease();
 }
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
@@ -118,7 +118,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 + (instancetype)_elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler
 {
     WKElementActionHandlerInternal handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { actionHandler(actionInfo); };
-    return [[[self alloc] _initWithTitle:title actionHandler:handler type:type assistant:nil] autorelease];
+    return adoptNS([[self alloc] _initWithTitle:title actionHandler:handler type:type assistant:nil]).autorelease();
 }
 
 + (instancetype)_elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle assistant:(WKActionSheetAssistant *)assistant
@@ -182,7 +182,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return nil;
     }
 
-    return [[[self alloc] _initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type assistant:assistant] autorelease];
+    return adoptNS([[self alloc] _initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type assistant:assistant]).autorelease();
 }
 
 + (instancetype)_elementActionWithType:(_WKElementActionType)type assistant:(WKActionSheetAssistant *)assistant

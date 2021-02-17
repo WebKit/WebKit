@@ -60,12 +60,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
 + (_WKUserContentWorld *)worldWithName:(NSString *)name
 {
-    return [[[_WKUserContentWorld alloc] _initWithName:name] autorelease];
+    return adoptNS([[_WKUserContentWorld alloc] _initWithName:name]).autorelease();
 }
 
 + (_WKUserContentWorld *)normalWorld
 {
-    return [[[_WKUserContentWorld alloc] _init] autorelease];
+    return adoptNS([[_WKUserContentWorld alloc] _init]).autorelease();
 }
 
 - (NSString *)name

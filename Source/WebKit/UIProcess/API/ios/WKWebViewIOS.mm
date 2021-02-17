@@ -2551,7 +2551,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return nil;
 
     auto attributeOnURL = URL(URL(), makeString("https://", measurement->attributeOnSite().registrableDomain.string()));
-    return [[[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:attributeOnURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()] autorelease];
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:attributeOnURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()]).autorelease();
 #else
     return nil;
 #endif
@@ -3159,9 +3159,9 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     ++_activeFocusedStateRetainCount;
 
     // FIXME: Use something like CompletionHandlerCallChecker to ensure that the returned block is called before it's released.
-    return [[[self] {
+    return adoptNS([[self] {
         --_activeFocusedStateRetainCount;
-    } copy] autorelease];
+    } copy]).autorelease();
 }
 
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler

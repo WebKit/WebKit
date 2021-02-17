@@ -236,7 +236,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 {
     JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:group];
     if (!virtualMachine)
-        virtualMachine = [[[JSVirtualMachine alloc] initWithContextGroupRef:group] autorelease];
+        virtualMachine = adoptNS([[JSVirtualMachine alloc] initWithContextGroupRef:group]).autorelease();
     return virtualMachine;
 }
 

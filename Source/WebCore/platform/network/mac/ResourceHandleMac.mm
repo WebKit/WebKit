@@ -173,14 +173,14 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     nsRequest = applySniffingPoliciesIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
 
     if (d->m_storageSession)
-        nsRequest = [copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest) autorelease];
+        nsRequest = copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest).autorelease();
 
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This code is different from iOS code in ResourceHandleCFNet.cpp in that here we respect stream properties that were present in client properties.
     NSDictionary *streamPropertiesFromClient = [connectionProperties objectForKey:@"kCFURLConnectionSocketStreamProperties"];
-    NSMutableDictionary *streamProperties = streamPropertiesFromClient ? [[streamPropertiesFromClient mutableCopy] autorelease] : [NSMutableDictionary dictionary];
+    NSMutableDictionary *streamProperties = streamPropertiesFromClient ? adoptNS([streamPropertiesFromClient mutableCopy]).autorelease() : [NSMutableDictionary dictionary];
 #else
     NSMutableDictionary *streamProperties = [NSMutableDictionary dictionary];
 #endif

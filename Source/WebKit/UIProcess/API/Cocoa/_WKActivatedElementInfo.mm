@@ -53,7 +53,7 @@
 #if PLATFORM(IOS_FAMILY)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
 {
-    return [[[self alloc] _initWithInteractionInformationAtPosition:information userInfo:userInfo] autorelease];
+    return adoptNS([[self alloc] _initWithInteractionInformationAtPosition:information userInfo:userInfo]).autorelease();
 }
 
 - (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
@@ -151,7 +151,7 @@
 - (CocoaImage *)image
 {
     if (_cocoaImage)
-        return [[_cocoaImage copy] autorelease];
+        return adoptNS([_cocoaImage copy]).autorelease();
 
     if (!_image)
         return nil;
@@ -163,7 +163,7 @@
 #endif
     _image = nullptr;
 
-    return [[_cocoaImage copy] autorelease];
+    return adoptNS([_cocoaImage copy]).autorelease();
 }
 
 @end

@@ -477,13 +477,13 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 static NSURLRequest* downgradeRequest(NSURLRequest *request)
 {
-    NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
-    if ([nsMutableRequest.URL.scheme isEqualToString:@"https"]) {
-        NSURLComponents *components = [NSURLComponents componentsWithURL:nsMutableRequest.URL resolvingAgainstBaseURL:NO];
+    auto nsMutableRequest = adoptNS([request mutableCopy]);
+    if ([[nsMutableRequest URL].scheme isEqualToString:@"https"]) {
+        NSURLComponents *components = [NSURLComponents componentsWithURL:[nsMutableRequest URL] resolvingAgainstBaseURL:NO];
         components.scheme = @"http";
         [nsMutableRequest setURL:components.URL];
-        ASSERT([nsMutableRequest.URL.scheme isEqualToString:@"http"]);
-        return nsMutableRequest;
+        ASSERT([[nsMutableRequest URL].scheme isEqualToString:@"http"]);
+        return nsMutableRequest.autorelease();
     }
 
     ASSERT_NOT_REACHED();
@@ -514,15 +514,15 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     if ([request.URL.scheme isEqualToString:@"https"] && shouldIgnoreHSTS && ignoreHSTS(request)) {
         // The request was upgraded for some other reason than HSTS.
         // Don't ignore HSTS to avoid the risk of another downgrade.
-        NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
-        setIgnoreHSTS(nsMutableRequest, false);
-        return nsMutableRequest;
+        auto nsMutableRequest = adoptNS([request mutableCopy]);
+        setIgnoreHSTS(nsMutableRequest.get(), false);
+        return nsMutableRequest.autorelease();
     }
     
     if ([request.URL.scheme isEqualToString:@"http"] && ignoreHSTS(request) != shouldIgnoreHSTS) {
-        NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
-        setIgnoreHSTS(nsMutableRequest, shouldIgnoreHSTS);
-        return nsMutableRequest;
+        auto nsMutableRequest = adoptNS([request mutableCopy]);
+        setIgnoreHSTS(nsMutableRequest.get(), shouldIgnoreHSTS);
+        return nsMutableRequest.autorelease();
     }
 
     return request;
@@ -1158,7 +1158,7 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-    NSMutableDictionary *dictionary = [[[NSMutableDictionary alloc] init] autorelease];
+    auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     if (httpProxy.isValid()) {
         [dictionary setObject:httpProxy.host().toString() forKey:(NSString *)kCFStreamPropertyHTTPProxyHost];
         if (auto port = httpProxy.port())
@@ -1169,7 +1169,7 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
         if (auto port = httpsProxy.port())
             [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPSProxyPort];
     }
-    return dictionary;
+    return dictionary.autorelease();
 
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
@@ -1232,7 +1232,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
         // FIXME: Remove this respondsToSelector check once rdar://problem/50109631 is in a build and bots are updated.
         if ([configuration respondsToSelector:@selector(_hstsStorage)])
-            configuration._hstsStorage = [[alloc_NSHSTSStorageInstance() initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]] autorelease];
+            configuration._hstsStorage = adoptNS([alloc_NSHSTSStorageInstance() initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]]).autorelease();
     }
 #endif
 
@@ -1267,7 +1267,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     if (!parameters.alternativeServiceDirectory.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.alternativeServiceDirectoryExtensionHandle);
-        configuration._alternativeServicesStorage = [[[_NSHTTPAlternativeServicesStorage alloc] initPersistentStoreWithURL:[[NSURL fileURLWithPath:parameters.alternativeServiceDirectory isDirectory:YES] URLByAppendingPathComponent:@"AlternativeService.sqlite"]] autorelease];
+        configuration._alternativeServicesStorage = adoptNS([[_NSHTTPAlternativeServicesStorage alloc] initPersistentStoreWithURL:[[NSURL fileURLWithPath:parameters.alternativeServiceDirectory isDirectory:YES] URLByAppendingPathComponent:@"AlternativeService.sqlite"]]).autorelease();
     }
     if (parameters.http3Enabled)
         configuration._allowsHTTP3 = YES;
@@ -1299,10 +1299,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     auto* storageSession = networkProcess.storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
 
-    NSHTTPCookieStorage* cookieStorage;
+    RetainPtr<NSHTTPCookieStorage> cookieStorage;
     if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get()) {
-        cookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
-        configuration.HTTPCookieStorage = cookieStorage;
+        cookieStorage = adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage]);
+        configuration.HTTPCookieStorage = cookieStorage.get();
     } else
         cookieStorage = storageSession->nsCookieStorage();
 
@@ -1310,7 +1310,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     // We still need to check the selector since CFNetwork updates and WebKit updates are separate
     // on older macOS.
     if ([cookieStorage respondsToSelector:@selector(_overrideSessionCookieAcceptPolicy)])
-        cookieStorage._overrideSessionCookieAcceptPolicy = YES;
+        cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 #endif
 
     m_sessionWithCredentialStorage.initialize(configuration, *this, WebCore::StoredCredentialsPolicy::Use, NavigatingToAppBoundDomain::No);
@@ -1620,16 +1620,16 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol)
 {
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
-    auto *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
     if (!protocol.isNull()) {
-        NSMutableURLRequest *requestWithProtocols = [[nsRequest mutableCopy] autorelease];
+        auto requestWithProtocols = adoptNS([nsRequest mutableCopy]);
         [requestWithProtocols addValue: StringView(protocol).createNSString().get() forHTTPHeaderField:@"Sec-WebSocket-Protocol"];
-        nsRequest = requestWithProtocols;
+        nsRequest = WTFMove(requestWithProtocols);
     }
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
-    RetainPtr<NSURLSessionWebSocketTask> task = [m_sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest];
+    RetainPtr<NSURLSessionWebSocketTask> task = [m_sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     return makeUnique<WebSocketTask>(channel, WTFMove(task));
 }
 

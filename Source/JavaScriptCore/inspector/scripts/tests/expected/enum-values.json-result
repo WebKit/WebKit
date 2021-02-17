@@ -833,8 +833,8 @@ using namespace Inspector;
 @implementation TestProtocolConfiguration
 {
     AugmentableInspectorController* _controller;
-    id<TestProtocolCommandDomainDomainHandler> _commandDomainHandler;
-    TestProtocolEventDomainDomainEventDispatcher *_eventDomainEventDispatcher;
+    RetainPtr<id<TestProtocolCommandDomainDomainHandler>> _commandDomainHandler;
+    RetainPtr<TestProtocolEventDomainDomainEventDispatcher> _eventDomainEventDispatcher;
 }
 
 - (instancetype)initWithController:(AugmentableInspectorController*)controller
@@ -847,20 +847,12 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [_commandDomainHandler release];
-    [_eventDomainEventDispatcher release];
-    [super dealloc];
-}
-
 - (void)setCommandDomainHandler:(id<TestProtocolCommandDomainDomainHandler>)handler
 {
     if (handler == _commandDomainHandler)
         return;
 
-    [_commandDomainHandler release];
-    _commandDomainHandler = [handler retain];
+    _commandDomainHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTFMove(alternateDispatcher));
@@ -869,14 +861,14 @@ using namespace Inspector;
 
 - (id<TestProtocolCommandDomainDomainHandler>)commandDomainHandler
 {
-    return _commandDomainHandler;
+    return _commandDomainHandler.get();
 }
 
 - (TestProtocolEventDomainDomainEventDispatcher *)eventDomainEventDispatcher
 {
     if (!_eventDomainEventDispatcher)
-        _eventDomainEventDispatcher = [[TestProtocolEventDomainDomainEventDispatcher alloc] initWithController:_controller];
-    return _eventDomainEventDispatcher;
+        _eventDomainEventDispatcher = adoptNS([[TestProtocolEventDomainDomainEventDispatcher alloc] initWithController:_controller]);
+    return _eventDomainEventDispatcher.get();
 }
 
 @end

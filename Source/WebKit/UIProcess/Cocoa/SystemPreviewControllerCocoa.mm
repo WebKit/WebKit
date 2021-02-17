@@ -237,7 +237,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         }
     }
 
-    return [[UIImage new] autorelease];
+    return adoptNS([UIImage new]).autorelease();
 }
 
 @end

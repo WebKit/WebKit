@@ -77,17 +77,17 @@ bool AutomationClient::remoteAutomationAllowed() const
 
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const RemoteInspector::Client::SessionCapabilities& sessionCapabilities)
 {
-    _WKAutomationSessionConfiguration *configuration = [[[_WKAutomationSessionConfiguration alloc] init] autorelease];
+    auto configuration = adoptNS([[_WKAutomationSessionConfiguration alloc] init]);
     if (sessionCapabilities.allowInsecureMediaCapture)
-        configuration.allowsInsecureMediaCapture = sessionCapabilities.allowInsecureMediaCapture.value();
+        [configuration setAllowsInsecureMediaCapture:sessionCapabilities.allowInsecureMediaCapture.value()];
     if (sessionCapabilities.suppressICECandidateFiltering)
-        configuration.suppressesICECandidateFiltering = sessionCapabilities.suppressICECandidateFiltering.value();
+        [configuration setSuppressesICECandidateFiltering:sessionCapabilities.suppressICECandidateFiltering.value()];
 
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
     NSString *requestedSessionIdentifier = sessionIdentifier;
-    RunLoop::main().dispatch([this, requestedSessionIdentifier = retainPtr(requestedSessionIdentifier), configuration = retainPtr(configuration)] {
+    RunLoop::main().dispatch([this, requestedSessionIdentifier = retainPtr(requestedSessionIdentifier), configuration = WTFMove(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
             [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
     });

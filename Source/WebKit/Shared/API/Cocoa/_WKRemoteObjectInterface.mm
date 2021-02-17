@@ -193,7 +193,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 
 + (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol
 {
-    return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
+    return adoptNS([[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)]).autorelease();
 }
 
 - (NSString *)identifier

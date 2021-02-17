@@ -58,13 +58,13 @@
 {
     auto& data = _frameInfo->securityOrigin();
     auto apiOrigin = API::SecurityOrigin::create(data.protocol, data.host, data.port);
-    return [[wrapper(apiOrigin.get()) retain] autorelease];
+    return retainPtr(wrapper(apiOrigin.get())).autorelease();
 }
 
 - (WKWebView *)webView
 {
     if (WebKit::WebPageProxy* page = _frameInfo->page())
-        return [[fromWebPageProxy(*page) retain] autorelease];
+        return retainPtr(fromWebPageProxy(*page)).autorelease();
     return nil;
 }
 
@@ -86,12 +86,12 @@
 
 - (_WKFrameHandle *)_handle
 {
-    return [[wrapper(_frameInfo->handle()) retain] autorelease];
+    return retainPtr(wrapper(_frameInfo->handle())).autorelease();
 }
 
 - (_WKFrameHandle *)_parentFrameHandle
 {
-    return [[wrapper(_frameInfo->parentFrameHandle()) retain] autorelease];
+    return retainPtr(wrapper(_frameInfo->parentFrameHandle())).autorelease();
 }
 
 @end

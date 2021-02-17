@@ -313,8 +313,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         RELEASE_LOG_FAULT(IPC, "WKRemoteObjectCode::encodeObject: Object of type '%{private}s' contains a cycle", class_getName(object_getClass(object)));
         @try {
             // Try to encode a newly initialized object instead.
-            id newObject = [[[[object class] alloc] init] autorelease];
-            object = newObject;
+            object = adoptNS([[[object class] alloc] init]).autorelease();
         } @catch (NSException *e) {
             [NSException raise:NSInvalidArgumentException format:@"Object of type '%s' contains a cycle", class_getName(object_getClass(object))];
         }

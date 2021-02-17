@@ -635,7 +635,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
             return m_classMap.get()[(id)cls] = [self classInfoForClass:class_getSuperclass(cls)];
     }
 
-    return m_classMap.get()[(id)cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
+    return m_classMap.get()[(id)cls] = adoptNS([[JSObjCClassInfo alloc] initForClass:cls]).autorelease();
 }
 
 - (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context
@@ -666,7 +666,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
     JSValue *wrapper = (__bridge JSValue *)NSMapGet(m_cachedObjCWrappers.get(), value);
     if (!wrapper) {
-        wrapper = [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
+        wrapper = adoptNS([[JSValue alloc] initWithValue:value inContext:context]).autorelease();
         NSMapInsert(m_cachedObjCWrappers.get(), value, (__bridge void*)wrapper);
     }
     return wrapper;

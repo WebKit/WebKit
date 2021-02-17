@@ -157,7 +157,7 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
     if (coreChallenge.nsURLAuthenticationChallenge())
         return coreChallenge.nsURLAuthenticationChallenge();
         
-    return [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().nsSpace() proposedCredential:coreChallenge.proposedCredential().nsCredential() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().nsURLResponse() error:coreChallenge.error() sender:coreChallenge.sender()] autorelease];
+    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().nsSpace() proposedCredential:coreChallenge.proposedCredential().nsCredential() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().nsURLResponse() error:coreChallenge.error() sender:coreChallenge.sender()]).autorelease();
 }
 
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)

@@ -61,7 +61,7 @@
 
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
-    PKPaymentRequestPaymentMethodUpdate *update = paymentMethodUpdate ?: [[PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
+    PKPaymentRequestPaymentMethodUpdate *update = paymentMethodUpdate ?: adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]).autorelease();
     _summaryItems = adoptNS([update.paymentSummaryItems copy]);
     std::exchange(_didSelectPaymentMethodCompletion, nil)(update);
 }
@@ -73,7 +73,7 @@
 }
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
-    PKPaymentRequestShippingContactUpdate *update = shippingContactUpdate ?: [[PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()] autorelease];
+    PKPaymentRequestShippingContactUpdate *update = shippingContactUpdate ?: adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]).autorelease();
     _summaryItems = adoptNS([update.paymentSummaryItems copy]);
     _shippingMethods = adoptNS([update.shippingMethods copy]);
     std::exchange(_didSelectShippingContactCompletion, nil)(update);
@@ -81,7 +81,7 @@
 
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate
 {
-    PKPaymentRequestShippingMethodUpdate *update = shippingMethodUpdate ?: [[PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
+    PKPaymentRequestShippingMethodUpdate *update = shippingMethodUpdate ?: adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]).autorelease();
     _summaryItems = adoptNS([update.paymentSummaryItems copy]);
     std::exchange(_didSelectShippingMethodCompletion, nil)(update);
 }

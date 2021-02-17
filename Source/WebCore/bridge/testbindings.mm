@@ -65,7 +65,7 @@
 {
     int myInt;
     RetainPtr<MySecondInterface> mySecondInterface;
-    id jsobject;
+    RetainPtr<id> jsobject;
     NSString *string;
 }
 
@@ -174,15 +174,14 @@
 
 - (void)setJSObject:(id)jso
 {
-    [jsobject autorelease];
-    jsobject = [jso retain];
+    jsobject = jso;
 }
 
 - (void)callJSObject:(int)arg1 :(int)arg2
 {
-    id foo1 = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject, [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
+    id foo1 = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject.get(), [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
     printf ("foo (via call) = %s\n", [[foo1 description] lossyCString] );
-    id foo2 = [jsobject callWebScriptMethod:@"apply" withArguments:[NSArray arrayWithObjects:jsobject, [NSArray arrayWithObjects:[NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil], nil]];
+    id foo2 = [jsobject callWebScriptMethod:@"apply" withArguments:[NSArray arrayWithObjects:jsobject.get(), [NSArray arrayWithObjects:[NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil], nil]];
     printf ("foo (via apply) = %s\n", [[foo2 description] lossyCString] );
 }
 

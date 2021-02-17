@@ -104,7 +104,7 @@ static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy
 
 + (instancetype)defaultPreferences
 {
-    return [[[self alloc] init] autorelease];
+    return adoptNS([[self alloc] init]).autorelease();
 }
 
 - (void)dealloc

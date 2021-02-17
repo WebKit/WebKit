@@ -68,7 +68,7 @@
 
 - (instancetype)init
 {
-    return [self initWithVirtualMachine:[[[JSVirtualMachine alloc] init] autorelease]];
+    return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).autorelease()];
 }
 
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
@@ -408,7 +408,7 @@
     JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->vm())];
     JSContext *context = [virtualMachine contextForGlobalContextRef:globalContext];
     if (!context)
-        context = [[[JSContext alloc] initWithGlobalContextRef:globalContext] autorelease];
+        context = adoptNS([[JSContext alloc] initWithGlobalContextRef:globalContext]).autorelease();
     return context;
 }
 

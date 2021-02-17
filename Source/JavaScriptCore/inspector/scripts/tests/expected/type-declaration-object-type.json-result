@@ -1273,11 +1273,6 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 @end
 
 

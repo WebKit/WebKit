@@ -127,7 +127,7 @@ inline bool ResourceRequest::resourcePrioritiesEnabled()
 }
 
 #if PLATFORM(COCOA)
-NSURLRequest *copyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest *);
+RetainPtr<NSURLRequest> copyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest *);
 WEBCORE_EXPORT NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest *);
 #endif
 

@@ -489,15 +489,15 @@ static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTex
     NSUInteger length = [text length];
     if (!length)
         return nil;
-    NSMutableDictionary *change = [[NSMutableDictionary alloc] initWithCapacity:4];
+    auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
         [change setObject:@(length) forKey:NSAccessibilityTextChangeValueLength];
         text = [text substringToIndex:AXValueChangeTruncationLength];
     }
     [change setObject:text forKey:NSAccessibilityTextChangeValue];
-    addTextMarkerFor(change, object, markerTarget);
-    return [change autorelease];
+    addTextMarkerFor(change.get(), object, markerTarget);
+    return change.autorelease();
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType type, const String& text, const VisiblePosition& position)
