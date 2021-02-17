@@ -1,3 +1,15 @@
+2021-02-17  Youenn Fablet  <youenn@apple.com>
+
+        RemoteMediaPlayerManager does not need to support media stream code path
+        https://bugs.webkit.org/show_bug.cgi?id=221956
+
+        Reviewed by Eric Carlson.
+
+        RemoteMediaPlayerManager does not support isMediaStream code path so it is simpler to return IsNotSupported instead of MaybeSupported.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::supportsTypeAndCodecs):
+
 2021-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r272636) [GTK] Crash and failures in API test /WebKit2Gtk/TestResources
