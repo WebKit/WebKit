@@ -3886,7 +3886,7 @@
                 "-webkit-center",
                 {
                     "value": "-webkit-match-parent",
-                    "ur": "https://www.w3.org/TR/css-text-3/#text-align"
+                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
                 },
                 {
                     "value": "start",
