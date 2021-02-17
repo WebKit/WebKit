@@ -1827,6 +1827,12 @@ void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
         obj->notifyIfIgnoredValueChanged();
 }
 
+void AXObjectCache::recomputeIsIgnored(Node* node)
+{
+    if (AccessibilityObject* obj = get(node))
+        obj->notifyIfIgnoredValueChanged();
+}
+
 void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
 {
     if (!m_computedObjectAttributeCache)
@@ -3151,8 +3157,12 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleAttributeChange(deferredAttributeChangeContext.value, deferredAttributeChangeContext.key);
     m_deferredAttributeChange.clear();
     
-    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange)
+    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
+        // Recompute isIgnored after a focus change in case that altered visibility.
+        recomputeIsIgnored(deferredFocusedChangeContext.first);
+        recomputeIsIgnored(deferredFocusedChangeContext.second);
+    }
     m_deferredFocusedNodeChange.clear();
 
     for (auto& deferredModalChangedElement : m_deferredModalChangedList)
@@ -3348,6 +3358,10 @@ bool isNodeAriaVisible(Node* node)
 {
     if (!node)
         return false;
+
+    // If an element is focused, it should not be hidden.
+    if (is<Element>(*node) && downcast<Element>(*node).focused())
+        return true;
 
     // ARIA Node visibility is controlled by aria-hidden
     //  1) if aria-hidden=true, the whole subtree is hidden

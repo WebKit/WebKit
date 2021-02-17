@@ -1,5 +1,47 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272390. rdar://problem/74409535
+
+    AX: expose focusable elements even if element or ancestor has aria-hidden=true
+    https://bugs.webkit.org/show_bug.cgi?id=220534
+    <rdar://problem/71865875>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    ARIA states that if an item is focused, then it should override aria-hidden status.
+    https://github.com/w3c/aria/pull/1387/files
+    
+    Test: accessibility/focusable-inside-hidden.html
+    
+    * accessibility/AXObjectCache.cpp:
+    (WebCore::isNodeAriaVisible):
+    * accessibility/AccessibilityObject.cpp:
+    (WebCore::AccessibilityObject::isAXHidden const):
+    (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+    
+    LayoutTests:
+    
+    * accessibility/focusable-inside-hidden-expected.txt: Added.
+    * accessibility/focusable-inside-hidden.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272390 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: expose focusable elements even if element or ancestor has aria-hidden=true
+            https://bugs.webkit.org/show_bug.cgi?id=220534
+            <rdar://problem/71865875>
+
+            Reviewed by Zalan Bujtas.
+
+            * accessibility/focusable-inside-hidden-expected.txt: Added.
+            * accessibility/focusable-inside-hidden.html: Added.
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r271746. rdar://problem/74410558
 
     Disable Options:useAtMethod because of compatibility issue.
