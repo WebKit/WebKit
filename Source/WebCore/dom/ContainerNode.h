@@ -150,6 +150,7 @@ private:
     enum class DeferChildrenChanged { Yes, No };
     NodeVector removeAllChildrenWithScriptAssertion(ChildChange::Source, DeferChildrenChanged = DeferChildrenChanged::No);
     bool removeNodeWithScriptAssertion(Node&, ChildChange::Source);
+    ExceptionOr<void> removeSelfOrChildNodesForInsertion(Node&, NodeVector&);
 
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);

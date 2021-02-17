@@ -62,7 +62,11 @@ public:
 #endif // not ASSERT_ENABLED
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&);
-void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);
+enum class RemovedSubtreeObservability {
+    NotObservable,
+    MaybeObservableByRefPtr,
+};
+RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);
 void removeDetachedChildrenInContainer(ContainerNode&);
 
 enum SubframeDisconnectPolicy {
