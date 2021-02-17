@@ -1372,3 +1372,5 @@ webkit.org/b/221965 [ BigSur ] imported/w3c/web-platform-tests/media-source/medi
 webkit.org/b/221857 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/221853 inspector/debugger/stepping/stepInto.html [ Pass Timeout ]
+
+webkit.org/b/221849 inspector/model/remote-object/array-large.html [ Pass Timeout ]
