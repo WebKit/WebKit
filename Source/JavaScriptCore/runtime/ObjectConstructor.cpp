@@ -963,6 +963,8 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
                 }
 
                 size_t numProperties = properties.size();
+                // FIXME: We should probably be calling tryCreate here:
+                // https://bugs.webkit.org/show_bug.cgi?id=221984
                 JSArray* keys = JSArray::create(vm, globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous), numProperties);
                 WriteBarrier<Unknown>* buffer = keys->butterfly()->contiguous().data();
                 for (size_t i = 0; i < numProperties; i++) {
