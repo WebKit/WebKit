@@ -2277,3 +2277,5 @@ webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass Failure ]
 
 webkit.org/b/221973 [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.html [ Failure ]
+
+webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]

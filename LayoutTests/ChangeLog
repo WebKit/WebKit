@@ -1,4 +1,13 @@
 2021-02-17  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] media/webaudio-background-playback.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=221935
+
+        Ureviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-02-17  Robert Jenner  <jenner@apple.com>
  
         [ macOS Wk2 ] fast/selectors/text-field-selection-window-inactive-text-shadow.html is a flakey image failure
         https://bugs.webkit.org/show_bug.cgi?id=221857
