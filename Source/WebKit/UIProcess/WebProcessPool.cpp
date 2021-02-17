@@ -1013,6 +1013,14 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
     return createNewWebProcess(&websiteDataStore);
 }
 
+UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForServiceWorkers()
+{
+    if (!m_userContentControllerForServiceWorker)
+        m_userContentControllerForServiceWorker = WebUserContentControllerProxy::create();
+
+    return m_userContentControllerForServiceWorker->identifier();
+}
+
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     if (!pageConfiguration->pageGroup())
@@ -1062,7 +1070,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             serviceWorkerProcess.updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
     }
     if (userContentController)
-        m_userContentControllerIDForServiceWorker = userContentController->identifier();
+        m_userContentControllerForServiceWorker = userContentController;
 #endif
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();

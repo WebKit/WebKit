@@ -43,7 +43,7 @@ void ServiceWorkerInitializationData::encode(IPC::Encoder& encoder) const
 
 Optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::decode(IPC::Decoder& decoder)
 {
-    Optional<Optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
+    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
         return WTF::nullopt;

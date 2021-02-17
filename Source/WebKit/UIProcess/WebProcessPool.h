@@ -366,7 +366,7 @@ public:
     void removeFromServiceWorkerProcesses(WebProcessProxy&);
     size_t serviceWorkerProxiesCount() const { return serviceWorkerProcesses().computeSize(); }
     void updateServiceWorkerUserAgent(const String& userAgent);
-    const Optional<UserContentControllerIdentifier>& userContentControllerIdentifierForServiceWorkers() const { return m_userContentControllerIDForServiceWorker; }
+    UserContentControllerIdentifier userContentControllerIdentifierForServiceWorkers();
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
@@ -585,7 +585,7 @@ private:
     bool m_waitingForWorkerContextProcessConnection { false };
     String m_serviceWorkerUserAgent;
     Optional<WebPreferencesStore> m_serviceWorkerPreferences;
-    Optional<UserContentControllerIdentifier> m_userContentControllerIDForServiceWorker;
+    RefPtr<WebUserContentControllerProxy> m_userContentControllerForServiceWorker;
 #endif
 
 #if ENABLE(GPU_PROCESS)

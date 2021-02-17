@@ -42,7 +42,7 @@ struct ServiceWorkerInitializationData {
     void encode(IPC::Encoder&) const;
     static Optional<ServiceWorkerInitializationData> decode(IPC::Decoder&);
 
-    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    UserContentControllerIdentifier userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)
     Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleLists;
 #endif
