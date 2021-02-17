@@ -357,12 +357,12 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
         return;
     }
 
-    if (m_mediaSource->player()->shouldCheckHardwareSupport()) {
+    if (auto player = this->player(); player && player->shouldCheckHardwareSupport()) {
         for (auto& info : segment.videoTracks) {
             auto codec = FourCC::fromString(info.description->codec());
             if (!codec)
                 continue;
-            if (!codecsMeetHardwareDecodeRequirements({{ *codec }}, m_mediaSource->player()->mediaContentTypesRequiringHardwareSupport())) {
+            if (!codecsMeetHardwareDecodeRequirements({{ *codec }}, player->mediaContentTypesRequiringHardwareSupport())) {
                 m_parsingSucceeded = false;
                 completionHandler();
                 return;
@@ -388,8 +388,8 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
         m_audioTracks.append(audioTrackInfo.track);
     }
 
-    if (m_mediaSource)
-        m_mediaSource->player()->characteristicsChanged();
+    if (auto player = this->player())
+        player->characteristicsChanged();
 
     didReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
 }
@@ -432,11 +432,15 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
     if (!parser)
         return;
 
-    if (CDMSessionMediaSourceAVFObjC* session = m_mediaSource->player()->cdmSession())
+    auto player = this->player();
+    if (!player)
+        return;
+
+    if (CDMSessionMediaSourceAVFObjC* session = player->cdmSession())
         session->addParser(parser);
     else if (!CDMSessionAVContentKeySession::isAvailable()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [m_mediaSource->player()->streamSession() addStreamDataParser:parser];
+        [player->streamSession() addStreamDataParser:parser];
         END_BLOCK_OBJC_EXCEPTIONS
     }
 #else
@@ -446,7 +450,8 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<Uint8Array>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
 {
-    if (!m_mediaSource)
+    auto player = this->player();
+    if (!player)
         return;
 
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -455,7 +460,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     m_protectedTrackID = trackID;
     m_initData = WTFMove(initData);
     m_mediaSource->sourceBufferKeyNeeded(this, m_initData.get());
-    if (auto session = m_mediaSource->player()->cdmSession()) {
+    if (auto session = player->cdmSession()) {
         if (auto parser = this->parser())
             session->addParser(parser);
         hasSessionSemaphore->signal();
@@ -487,10 +492,10 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
+    player->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
 
     m_waitingForKey = true;
-    m_mediaSource->player()->waitingForKeyChanged();
+    player->waitingForKeyChanged();
 #endif
 
     UNUSED_PARAM(initData);
@@ -584,8 +589,8 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
         m_hasSessionSemaphore = nil;
     }
 
-    if (m_parsingSucceeded && m_mediaSource)
-        m_mediaSource->player()->setLoadingProgresssed(true);
+    if (auto player = this->player(); player && m_parsingSucceeded)
+        player->setLoadingProgresssed(true);
 
     SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true);
 }
@@ -624,8 +629,8 @@ void SourceBufferPrivateAVFObjC::destroyParser()
     if (!parser)
         return;
 #if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (m_mediaSource && m_mediaSource->player() && m_mediaSource->player()->hasStreamSession())
-        [m_mediaSource->player()->streamSession() removeStreamDataParser:parser];
+    if (auto player = this->player(); player && player->hasStreamSession())
+        [player->streamSession() removeStreamDataParser:parser];
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (m_cdmInstance) {
@@ -644,8 +649,8 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         setDecompressionSession(nullptr);
 
     for (auto& renderer : m_audioRenderers.values()) {
-        if (m_mediaSource)
-            m_mediaSource->player()->removeAudioRenderer(renderer.get());
+        if (auto player = this->player())
+            player->removeAudioRenderer(renderer.get());
         [renderer flush];
         [renderer stopRequestingMediaData];
         [m_errorListener stopObservingRenderer:renderer.get()];
@@ -682,15 +687,17 @@ void SourceBufferPrivateAVFObjC::removedFromMediaSource()
 
 MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 {
-    return m_mediaSource ? m_mediaSource->player()->readyState() : MediaPlayer::ReadyState::HaveNothing;
+    if (auto player = this->player())
+        return player->readyState();
+    return MediaPlayer::ReadyState::HaveNothing;
 }
 
 void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, readyState);
 
-    if (m_mediaSource)
-        m_mediaSource->player()->setReadyState(readyState);
+    if (auto player = this->player())
+        player->setReadyState(readyState);
 }
 
 bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
@@ -735,8 +742,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
         RetainPtr<AVSampleBufferAudioRenderer> renderer = m_audioRenderers.get(trackID);
         ALLOW_NEW_API_WITHOUT_GUARDS_END
         m_parser->setShouldProvideMediaDataForTrackID(false, trackID);
-        if (m_mediaSource)
-            m_mediaSource->player()->removeAudioRenderer(renderer.get());
+        if (auto player = this->player())
+            player->removeAudioRenderer(renderer.get());
     } else {
         m_parser->setShouldProvideMediaDataForTrackID(true, trackID);
         ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -749,7 +756,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
                 ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");
                 if (m_mediaSource)
                     m_mediaSource->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Audio);
-                m_mediaSource->player()->setNetworkState(MediaPlayer::NetworkState::DecodeError);
+                if (auto player = this->player())
+                    player->setNetworkState(MediaPlayer::NetworkState::DecodeError);
                 return;
             }
 
@@ -763,8 +771,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
         } else
             renderer = m_audioRenderers.get(trackID);
 
-        if (m_mediaSource)
-            m_mediaSource->player()->addAudioRenderer(renderer.get());
+        if (auto player = this->player())
+            player->addAudioRenderer(renderer.get());
     }
 }
 
@@ -946,16 +954,16 @@ void SourceBufferPrivateAVFObjC::flushVideo()
     if (m_decompressionSession) {
         m_decompressionSession->flush();
         m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
-            if (weakThis && weakThis->m_mediaSource)
-                weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
+            if (weakThis && weakThis->player())
+                weakThis->player()->setHasAvailableVideoFrame(true);
         });
     }
 
     m_cachedSize = WTF::nullopt;
 
-    if (m_mediaSource) {
-        m_mediaSource->player()->setHasAvailableVideoFrame(false);
-        m_mediaSource->player()->flushPendingSizeChanges();
+    if (auto player = this->player()) {
+        player->setHasAvailableVideoFrame(false);
+        player->flushPendingSizeChanges();
     }
 }
 
@@ -965,8 +973,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     [renderer flush];
 
-    if (m_mediaSource)
-        m_mediaSource->player()->setHasAvailableAudioSample(renderer, false);
+    if (auto player = this->player())
+        player->setHasAvailableAudioSample(renderer, false);
 }
 
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
@@ -1000,16 +1008,17 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
             return;
         }
 
+        auto player = this->player();
         FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (!m_cachedSize || formatSize != m_cachedSize.value()) {
             DEBUG_LOG(logSiteIdentifier, "size changed to ", formatSize);
             bool sizeWasNull = !m_cachedSize;
             m_cachedSize = formatSize;
-            if (m_mediaSource) {
+            if (player) {
                 if (sizeWasNull)
-                    m_mediaSource->player()->setNaturalSize(formatSize);
+                    player->setNaturalSize(formatSize);
                 else
-                    m_mediaSource->player()->sizeWillChangeAtTime(sample->presentationTime(), formatSize);
+                    player->sizeWillChangeAtTime(sample->presentationTime(), formatSize);
             }
         }
 
@@ -1019,7 +1028,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         if (!m_displayLayer)
             return;
 
-        if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
+        if (player && !player->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
             DEBUG_LOG(logSiteIdentifier, "adding buffer attachment");
 
             bool havePrerollDecodeWithCompletionHandler = [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
@@ -1031,7 +1040,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
                 CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @YES }, kCMAttachmentMode_ShouldNotPropagate);
                 [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
 #if PLATFORM(IOS_FAMILY)
-                m_mediaSource->player()->setHasAvailableVideoFrame(true);
+                player->setHasAvailableVideoFrame(true);
 #endif
             } else {
 
@@ -1068,8 +1077,8 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
 
         auto renderer = m_audioRenderers.get(trackID);
         [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-        if (m_mediaSource && !sample->isNonDisplaying() && m_mediaSource->player())
-            m_mediaSource->player()->setHasAvailableAudioSample(renderer.get(), true);
+        if (auto player = this->player(); player && !sample->isNonDisplaying())
+            player->setHasAvailableAudioSample(renderer.get(), true);
     }
 }
 
@@ -1077,8 +1086,8 @@ void SourceBufferPrivateAVFObjC::bufferWasConsumed()
 {
     DEBUG_LOG(LOGIDENTIFIER);
 
-    if (m_mediaSource)
-        m_mediaSource->player()->setHasAvailableVideoFrame(true);
+    if (auto player = this->player())
+        player->setHasAvailableVideoFrame(true);
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)
@@ -1271,11 +1280,17 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
             weakThis->didBecomeReadyForMoreSamples(weakThis->m_enabledVideoTrackID);
     });
     m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
-        if (weakThis && weakThis->m_mediaSource)
-            weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
+        if (weakThis && weakThis->player())
+            weakThis->player()->setHasAvailableVideoFrame(true);
     });
     reenqueSamples(AtomString::number(m_enabledVideoTrackID));
 }
+
+MediaPlayerPrivateMediaSourceAVFObjC* SourceBufferPrivateAVFObjC::player() const
+{
+    return m_mediaSource ? m_mediaSource->player() : nullptr;
+}
+
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBufferPrivateAVFObjC::logChannel() const

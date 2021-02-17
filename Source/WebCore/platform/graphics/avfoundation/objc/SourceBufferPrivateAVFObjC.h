@@ -60,6 +60,7 @@ namespace WebCore {
 class CDMInstance;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionMediaSourceAVFObjC;
+class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateAVFObjC;
 class TimeRanges;
 class AudioTrackPrivate;
@@ -174,6 +175,8 @@ private:
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void flushAudio(AVSampleBufferAudioRenderer *);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
+
+    MediaPlayerPrivateMediaSourceAVFObjC* player() const;
 
     Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivate>> m_audioTracks;
