@@ -2057,6 +2057,13 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (void)_addAppHighlight
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
+#endif
+}
+
 - (NSURL *)_unreachableURL
 {
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
