@@ -1,3 +1,17 @@
+2021-02-16  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Video as image source triggers IOSurface readback (unnecessarily slow)
+        https://bugs.webkit.org/show_bug.cgi?id=221993
+
+        Reviewed by Tim Horton.
+
+        Use IOSurface::sinkIntoImage() instead of IOSurface::createImage() to avoid expensive GPU readback.
+
+        Manually tested.
+
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+
 2021-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r272476.
