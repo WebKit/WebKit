@@ -1671,8 +1671,13 @@
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
     (allow mach-bootstrap
         (apply-message-filter
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (deny mach-message-send (with telemetry))
+            (allow mach-message-send (message-number
+#else
             (deny xpc-message-send (with telemetry))
             (allow xpc-message-send (message-number
+#endif
                 204
                 207
                 301

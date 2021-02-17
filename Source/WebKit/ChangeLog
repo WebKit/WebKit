@@ -1,3 +1,16 @@
+2021-02-16  Per Arne  <pvollan@apple.com>
+
+        Update syntax in the sandbox bootstrap filter
+        https://bugs.webkit.org/show_bug.cgi?id=221913
+        <rdar://problem/73463985>
+
+        Reviewed by Brent Fulgham.
+
+        Update syntax in the sandbox bootstrap filter on macOS and iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-16  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r271493 ) Crash in +[NSAttributedString(WKPrivate) _loadFromHTMLWithOptions:contentLoader:completionHandler:] on background thread
