@@ -216,6 +216,7 @@ void Structure::forEachProperty(VM& vm, const Functor& functor)
             if (!functor(entry))
                 return;
         }
+        ensureStillAliveHere(table);
     }
 }
 
