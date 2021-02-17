@@ -1,3 +1,13 @@
+2021-02-17  Ling Ho  <lingho@apple.com>
+
+        WebKit nighly archives page not working for Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=222016
+        <rdar://problem/74037376>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/build-archives.php:
+
 2021-02-11  Martin Robinson  <mrobinson@igalia.com>
 
         scroll-snap demo should use new spec
