@@ -402,7 +402,11 @@ egl::ConfigSet DisplayMtl::generateConfigs()
     config.transparentType = EGL_NONE;
 
     // Pbuffer
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     config.bindToTextureTarget = EGL_TEXTURE_RECTANGLE_ANGLE;
+#else
+    config.bindToTextureTarget = EGL_TEXTURE_2D;
+#endif
     config.maxPBufferWidth     = 4096;
     config.maxPBufferHeight    = 4096;
     config.maxPBufferPixels    = 4096 * 4096;

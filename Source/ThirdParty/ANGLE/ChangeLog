@@ -1,3 +1,21 @@
+2021-02-17  Dean Jackson  <dino@apple.com>
+
+        Metal-Angle on IOS fails in ValidateCreatePbufferFromClientBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222069
+
+        Reviewed by Simon Fraser.
+
+        Due to the differences between OpenGL and OpenGLES, WebCore
+        binds its IOSurfaces to a different texture target on macOS and iOS.
+        This isn't really needed with the Metal-ANGLE backend, but while we're
+        still supporting the OpenGL backend it is easier to have the Metal backend
+        use both targets.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::generateConfigs): Look for EGL_TEXTURE_2D on iOS. Note
+        we don't have to worry about the weird "iOS App on macOS" situation since
+        that only applies to using OpenGLES on macOS. Yay for Metal!
+
 2021-01-13  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] fbostatequery, negativebufferapi, negativevertexarrayapi, shaderstatequery conformance failures
