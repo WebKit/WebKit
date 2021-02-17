@@ -1,3 +1,52 @@
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272418. rdar://problem/74410581
+
+    CrashTracer: com.apple.WebKit.Networking at WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+    https://bugs.webkit.org/show_bug.cgi?id=221432
+    <rdar://problem/67069819>
+    
+    Reviewed by John Wilander.
+    
+    We are seeing crashes in ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+    as a result of trying to use a nullopt domainID value. In theory this should
+    never be WTF::nullopt but is because of a failing SQLite query in
+    ResourceLoadStatisticsDatabaseStore::domainID which reports the error "not an error".
+    
+    To fix this we should check the domain ID and return early with a
+    debug assert in setPrevalentResource() if it is WTF::nullopt to avoid
+    a crash. Additionally, we should add more information to the logging
+    statement, specifically the SQLite statement string, to try and debug further.
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272418 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-05  Kate Cheney  <katherine_cheney@apple.com>
+
+            CrashTracer: com.apple.WebKit.Networking at WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+            https://bugs.webkit.org/show_bug.cgi?id=221432
+            <rdar://problem/67069819>
+
+            Reviewed by John Wilander.
+
+            We are seeing crashes in ResourceLoadStatisticsDatabaseStore::setPrevalentResource
+            as a result of trying to use a nullopt domainID value. In theory this should
+            never be WTF::nullopt but is because of a failing SQLite query in
+            ResourceLoadStatisticsDatabaseStore::domainID which reports the error "not an error".
+
+            To fix this we should check the domain ID and return early with a
+            debug assert in setPrevalentResource() if it is WTF::nullopt to avoid
+            a crash. Additionally, we should add more information to the logging
+            statement, specifically the SQLite statement string, to try and debug further.
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+            (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+
 2021-02-10  Alan Coon  <alancoon@apple.com>
 
         Revert r272541. rdar://problem/74208306
