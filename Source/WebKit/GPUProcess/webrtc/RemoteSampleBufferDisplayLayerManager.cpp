@@ -43,20 +43,18 @@ RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPU
     , m_connection(gpuConnectionToWebProcess.connection())
     , m_queue(gpuConnectionToWebProcess.gpuProcess().videoMediaStreamTrackRendererQueue())
 {
-}
-
-void RemoteSampleBufferDisplayLayerManager::startListeningForIPC()
-{
     m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), this);
     m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), this);
 }
 
-RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
-
-void RemoteSampleBufferDisplayLayerManager::close()
+RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager()
 {
     m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
     m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+}
+
+void RemoteSampleBufferDisplayLayerManager::close()
+{
     dispatchToThread([this, protectedThis = makeRef(*this)] {
         callOnMainThread([layers = WTFMove(m_layers)] { });
     });

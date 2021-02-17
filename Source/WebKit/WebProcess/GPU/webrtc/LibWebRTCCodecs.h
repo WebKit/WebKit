@@ -62,12 +62,7 @@ namespace WebKit {
 class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<LibWebRTCCodecs> create()
-    {
-        auto instance = std::unique_ptr<LibWebRTCCodecs>(new LibWebRTCCodecs);
-        instance->startListeningForIPC();
-        return instance;
-    }
+    LibWebRTCCodecs();
     ~LibWebRTCCodecs();
 
     static void setCallbacks(bool useGPUProcess);
@@ -115,7 +110,7 @@ public:
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
     void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
-
+    
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -124,9 +119,6 @@ public:
     bool supportVP9VTB() const { return m_supportVP9VTB; }
 
 private:
-    LibWebRTCCodecs();
-    void startListeningForIPC();
-
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);

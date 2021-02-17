@@ -62,12 +62,7 @@ struct RTCPacketOptions;
 
 class NetworkRTCProvider : public rtc::MessageHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
 public:
-    static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
-    {
-        auto instance = adoptRef(*new NetworkRTCProvider(connection));
-        instance->startListeningForIPC();
-        return instance;
-    }
+    static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new NetworkRTCProvider(connection)); }
     ~NetworkRTCProvider();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -104,7 +99,6 @@ public:
 
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
-    void startListeningForIPC();
 
     void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t);
     void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int);

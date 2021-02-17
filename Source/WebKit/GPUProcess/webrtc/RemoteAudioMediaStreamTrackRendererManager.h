@@ -45,12 +45,7 @@ class RemoteAudioMediaStreamTrackRenderer;
 class RemoteAudioMediaStreamTrackRendererManager final : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteAudioMediaStreamTrackRendererManager> create(GPUConnectionToWebProcess& process)
-    {
-        auto instance = adoptRef(*new RemoteAudioMediaStreamTrackRendererManager(process));
-        instance->startListeningForIPC();
-        return instance;
-    }
+    static Ref<RemoteAudioMediaStreamTrackRendererManager> create(GPUConnectionToWebProcess& process) { return adoptRef(*new RemoteAudioMediaStreamTrackRendererManager(process)); }
     ~RemoteAudioMediaStreamTrackRendererManager();
 
     void didReceiveRendererMessage(IPC::Connection&, IPC::Decoder&);
@@ -62,7 +57,6 @@ public:
 
 private:
     explicit RemoteAudioMediaStreamTrackRendererManager(GPUConnectionToWebProcess&);
-    void startListeningForIPC();
 
     // IPC::Connection::ThreadMessageReceiver
     void dispatchToThread(Function<void()>&&) final;

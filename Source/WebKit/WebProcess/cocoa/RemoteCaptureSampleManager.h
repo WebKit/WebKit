@@ -50,7 +50,6 @@ class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiver
 public:
     RemoteCaptureSampleManager();
     ~RemoteCaptureSampleManager();
-    void stopListeningForIPC();
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
