@@ -426,6 +426,12 @@
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
+		1D47658625CCA416007AF312 /* RemoteImageDecoderAVFProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47658425CCA416007AF312 /* RemoteImageDecoderAVFProxy.h */; };
+		1D47659325CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47659025CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h */; };
+		1D47659425CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47659125CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessagesReplies.h */; };
+		1D47659C25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47659925CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessages.h */; };
+		1D47659D25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47659A25CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h */; };
+		1D4765A125CF5740007AF312 /* RemoteImageDecoderAVFManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D47659F25CF5740007AF312 /* RemoteImageDecoderAVFManager.h */; };
 		1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D4D736B23A9DF5500717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp */; };
 		1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */; };
 		1D4D737623A9ED1800717A25 /* RemoteMediaResourceManagerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */; };

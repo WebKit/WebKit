@@ -1,3 +1,14 @@
+2021-02-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r272625): Fix missing headers in Xcode project
+        <https://webkit.org/b/222052>
+
+        Reviewed by Eric Carlson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        - Manually reconstruct missing PBXBuildFile entries for Xcode
+          project.
+
 2021-02-17  Megan Gardner  <megan_gardner@apple.com>
 
         Change App Highlight delegate to pass more information about the highlight for display.
