@@ -1,3 +1,16 @@
+2021-02-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening GTK crashes and canvas failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.broken-expected.txt: Added
+        after r272776.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.nonexistent-expected.txt:
+        Ditto.
+
 2021-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         EventHandler::updateSelectionForMouseDownDispatchingSelectStart should not use an orphaned selection

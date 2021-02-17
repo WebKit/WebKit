@@ -137,6 +137,19 @@ webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.htm
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
+# CoordinatedGraphics
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-1.html [ Crash ]
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-2.html [ Crash ]
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-3.html [ Crash ]
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-4.html [ Crash ]
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-5.html [ Crash ]
+webkit.org/b/222026 fast/css/pseudo-active-style-sharing-6.html [ Crash ]
+webkit.org/b/222026 fast/events/frame-detached-in-mousedown.html [ Crash ]
+webkit.org/b/222026 fast/events/keydown-remove-frame.html [ Crash ]
+webkit.org/b/222026 fast/forms/file/input-file-write-files-using-open-panel.html [ Crash ]
+webkit.org/b/222026 fast/forms/placeholder-crash-with-scrollbar-corner.html [ Crash ]
+webkit.org/b/222026 loader/stateobjects/pushstate-size-iframe.html [ Crash ]
+webkit.org/b/222026 loader/stateobjects/pushstate-size.html [ Crash ]
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
