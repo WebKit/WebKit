@@ -1,3 +1,14 @@
+2021-02-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Failure to retrieve commit in EWS (Investigation)
+        https://bugs.webkit.org/show_bug.cgi?id=222050
+        <rdar://problem/74439957>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.request): Increase logging.
+
 2021-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [Python-3] Child process environment on Windows can only contain strings
