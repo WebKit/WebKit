@@ -123,9 +123,13 @@ void registerSupplementalVP9Decoder()
 
 bool isVP9DecoderAvailable()
 {
+#if PLATFORM(IOS)
+    return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+#else
     if (!VideoToolboxLibrary(true))
         return false;
     return noErr == VTSelectAndCreateVideoDecoderInstance(kCMVideoCodecType_VP9, kCFAllocatorDefault, nullptr, nullptr);
+#endif
 }
 
 bool isVP8DecoderAvailable()
