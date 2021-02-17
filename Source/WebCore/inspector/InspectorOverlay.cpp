@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "GridArea.h"
 #include "GridPositionsResolver.h"
 #include "InspectorClient.h"
 #include "IntPoint.h"
@@ -50,6 +51,7 @@
 #include "IntSize.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PseudoElement.h"
 #include "RenderBox.h"
@@ -1172,7 +1174,7 @@ void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatRect re
     context.strokePath(hatchPath);
 }
 
-void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection direction)
+void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection direction, Color backgroundColor, float maximumWidth)
 {
     GraphicsContextStateSaver saver(context);
     
@@ -1184,12 +1186,21 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
 
     FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
-    
-    float textWidth = font.width(TextRun(label));
-    float textHeight = font.fontMetrics().floatHeight();
-    float textDescent = font.fontMetrics().floatDescent();
+
     constexpr auto padding = 4;
     constexpr auto arrowSize = 4;
+    float textHeight = font.fontMetrics().floatHeight();
+    float textDescent = font.fontMetrics().floatDescent();
+    
+    float textWidth = font.width(TextRun(label));
+    if (maximumWidth && textWidth + (padding * 2) > maximumWidth) {
+        label.append("..."_s);
+        while (textWidth + (padding * 2) > maximumWidth && label.length() >= 4) {
+            // Remove the fourth from last character (the character before the ellipsis) and remeasure.
+            label.remove(label.length() - 4);
+            textWidth = font.width(TextRun(label));
+        }
+    }
     
     Path labelPath;
     FloatPoint textPosition;
@@ -1235,11 +1246,17 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
         labelPath.addLineTo({ textWidth + (padding * 2) + arrowSize, -(textHeight / 2) - padding });
         textPosition = FloatPoint(arrowSize + padding, (textHeight / 2) - textDescent);
         break;
+    case InspectorOverlay::LabelArrowDirection::None:
+        labelPath.addLineTo({ 0, textHeight + (padding * 2) });
+        labelPath.addLineTo({ textWidth + (padding * 2), textHeight + (padding * 2) });
+        labelPath.addLineTo({ textWidth + (padding * 2), 0 });
+        textPosition = FloatPoint(padding, padding + textHeight - textDescent);
+        break;
     }
     
     labelPath.closeSubpath();
     
-    context.setFillColor(Color::white);
+    context.setFillColor(backgroundColor);
     context.fillPath(labelPath);
     context.strokePath(labelPath);
     
@@ -1369,6 +1386,26 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
             drawLayoutLabel(context, String::number(i + 1), FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
             drawLayoutLabel(context, String::number(-static_cast<int>(rowPositions.size() - i)), FloatPoint(gridBoundingBox.x() + gridBoundingBox.width(), labelY), LabelArrowDirection::Left);
+        }
+    }
+    
+    if (gridOverlay.config.showAreaNames) {
+        for (auto& [name, area] : node->renderStyle()->namedGridArea()) {
+            // Named grid areas will always be rectangular per the CSS Grid specification.
+            auto columnStartLine = area.columns.startLine();
+            auto columnEndLine = area.columns.endLine();
+            auto rowStartLine = area.rows.startLine();
+            auto rowEndLine = area.rows.endLine();
+            
+            FloatRect areaRect = {
+                columnPositions[columnStartLine] + gridBoundingBox.x(),
+                rowPositions[rowStartLine] + gridBoundingBox.y(),
+                columnPositions[columnEndLine - 1] + columnWidths[columnEndLine - 1] - columnPositions[columnStartLine],
+                rowPositions[rowEndLine - 1] + rowHeights[rowEndLine - 1] - rowPositions[rowStartLine],
+            };
+            
+            context.strokeRect(areaRect, 3);
+            drawLayoutLabel(context, name, areaRect.location(), LabelArrowDirection::None, Color::white.colorWithAlphaByte(153), areaRect.width());
         }
     }
 }
