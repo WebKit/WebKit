@@ -8,7 +8,7 @@ FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to a
 FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to add [2px] at (0) should be [110px] assert_equals: expected "110px " but got "10px "
 FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to add [2px] at (0.5) should be [106px] assert_equals: expected "106px " but got "6px "
 FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to add [2px] at (1) should be [102px] assert_equals: expected "102px " but got "2px "
-FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to add [2px] at (1.5) should be [98px] assert_equals: expected "98px " but got "- 2px "
+FAIL Compositing: property <padding-top> underlying [100px] from add [10px] to add [2px] at (1.5) should be [98px] assert_equals: expected "98px " but got "0px "
 FAIL Compositing: property <padding-top> underlying [10%] from add [100px] to add [20%] at (-0.3) should be [calc(130px + 4%)] assert_equals: expected "160.75px " but got "100px "
 FAIL Compositing: property <padding-top> underlying [10%] from add [100px] to add [20%] at (0) should be [calc(100px + 10%)] assert_equals: expected "176.89px " but got "100px "
 FAIL Compositing: property <padding-top> underlying [10%] from add [100px] to add [20%] at (0.5) should be [calc(50px + 20%)] assert_equals: expected "203.8px " but got "126.89px "

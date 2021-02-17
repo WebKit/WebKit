@@ -1,3 +1,24 @@
+2021-02-17  Antoine Quint  <graouts@webkit.org>
+
+        CSS properties that disallow negative values should not animate to negative values
+        https://bugs.webkit.org/show_bug.cgi?id=222034
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-interpolation-expected.txt:
+
 2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus-visible parsing and experimental flag
