@@ -94,11 +94,7 @@ addEventListener("load", async () => {
     shouldBe("inputEventsFired", "5");
 
     beginTest("Advance field keys", "01:28");              // [01]:28 AM
-    UIHelper.keyDown(" ");                                 // -> 01:[28] AM
-    UIHelper.keyDown("2");                                 // -> 01:[02] AM
-    shouldBeEqualToString("input.value", "01:02");
-    UIHelper.keyDown("leftArrow");                         // -> [01]:02 AM
-    UIHelper.keyDown("/");                                 // -> 01:[02] AM
+    UIHelper.keyDown("/");                                 // -> 01:[28] AM
     UIHelper.keyDown("3");                                 // -> 01:[03] AM
     shouldBeEqualToString("input.value", "01:03");
     UIHelper.keyDown("leftArrow");                         // -> [01]:03 AM
@@ -121,8 +117,8 @@ addEventListener("load", async () => {
     UIHelper.keyDown(",");                                 // -> 01:[07] AM
     UIHelper.keyDown("8");                                 // -> 01:[08] AM
     shouldBeEqualToString("input.value", "01:08");
-    shouldBe("changeEventsFired", "7");
-    shouldBe("inputEventsFired", "7");
+    shouldBe("changeEventsFired", "6");
+    shouldBe("inputEventsFired", "6");
 
     beginTest("Up/Down arrow keys", "23:59");              // [11]:59 PM
     UIHelper.keyDown("upArrow");                           // -> [12]:59 PM

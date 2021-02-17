@@ -141,12 +141,8 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "11");
     shouldBe("inputEventsFired", "11");
 
-    beginTest("Advance field keys", "2020-06-05T16:27");        // [06]/01/2020 04:27 PM
-    UIHelper.keyDown(" ");                                      // -> 06/[01]/2020 04:27 PM
-    UIHelper.keyDown("2");                                      // -> 06/[02]/2020 04:27 PM
-    shouldBeEqualToString("input.value", "2020-06-02T16:27");
-    UIHelper.keyDown("leftArrow");                              // -> [06]/02/2020 04:27 PM
-    UIHelper.keyDown("/");                                      // -> 06/[02]/2020 04:27 PM
+    beginTest("Advance field keys", "2020-06-05T16:27");        // [06]/05/2020 04:27 PM
+    UIHelper.keyDown("/");                                      // -> 06/[05]/2020 04:27 PM
     UIHelper.keyDown("3");                                      // -> 06/[03]/2020 04:27 PM
     shouldBeEqualToString("input.value", "2020-06-03T16:27");
     UIHelper.keyDown("leftArrow");                              // -> [06]/03/2020 04:27 PM
@@ -169,8 +165,8 @@ addEventListener("load", async () => {
     UIHelper.keyDown(",");                                      // -> 06/[07]/2020 04:27 PM
     UIHelper.keyDown("8");                                      // -> 06/[08]/2020 04:27 PM
     shouldBeEqualToString("input.value", "2020-06-08T16:27");
-    shouldBe("changeEventsFired", "7");
-    shouldBe("inputEventsFired", "7");
+    shouldBe("changeEventsFired", "6");
+    shouldBe("inputEventsFired", "6");
 
     beginTest("Up/Down arrow keys", "2020-12-20T23:59");        // [12]/20/2020 11:59 PM
     UIHelper.keyDown("upArrow");                                // -> [01]/20/2020 11:59 PM

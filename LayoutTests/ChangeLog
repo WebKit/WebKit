@@ -1,5 +1,105 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272495. rdar://problem/74409320
+
+    [macOS] Return key binding for date inputs conflicts with return to submit form
+    https://bugs.webkit.org/show_bug.cgi?id=221532
+    <rdar://problem/74039204>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Currently, pressing the return key within a focused date input presents
+    the calendar view, rather than submitting an associated form. This is a
+    usability issue for keyboard users, and is different from the behavior
+    in Chrome. This patch matches the behavior in Chrome, and makes it so
+    that a return keypress submits an associated form.
+    
+    However, since the return key is now reserved for form submission, we
+    need a new key to present the calendar view for the date input. Chrome
+    and Firefox use the space key for this functionality, so this patch
+    matches that behavior.
+    
+    Note that r267281 updated date inputs to focus the next editable component
+    when pressing the space key. This behavior is now removed in favor of
+    presenting the calendar. Other separator keys, and arrow keys, can still be
+    used to focus the next editable component.
+    
+    Tests: fast/forms/date/date-editable-components/date-picker-show-on-space-keypress.html
+           fast/forms/date/date-editable-components/form-submit-on-return-keypress.html
+    
+    * html/BaseDateAndTimeInputType.cpp:
+    (WebCore::BaseDateAndTimeInputType::handleKeypressEvent):
+    
+    Date and time inputs are BaseClickableWithKeyInputTypes. This gives them
+    activation behavior on return and space keypresses, similar to button and
+    color inputs. However, since date/time inputs are closer to textfields,
+    than buttons, we elide activation behavior on a return keypress, allowing
+    the event to submit an associated form. Activation behavior on a space
+    keypress is supported by going through the existing code path.
+    
+    * html/shadow/DateTimeFieldElement.cpp:
+    (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+    
+    Remove "Space" from the list of separator keys that focus the next
+    editable component.
+    
+    LayoutTests:
+    
+    Added tests to verify that pressing the space key in a focused date
+    input presents a calendar view, and pressing the enter key in a focused
+    date input submits a form.
+    
+    Rebaselined existing tests to account for the fact that the space key
+    no longer focuses the next editable component within a date input.
+    
+    * fast/forms/date/date-editable-components/date-editable-components-keyboard-events-expected.txt:
+    * fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html:
+    * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress-expected.txt: Added.
+    * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress.html: Added.
+    * fast/forms/date/date-editable-components/form-submit-on-return-keypress-expected.txt: Added.
+    * fast/forms/date/date-editable-components/form-submit-on-return-keypress.html: Added.
+    * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events-expected.txt:
+    * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events.html:
+    * fast/forms/month/month-editable-components/month-editable-components-keyboard-events-expected.txt:
+    * fast/forms/month/month-editable-components/month-editable-components-keyboard-events.html:
+    * fast/forms/time/time-editable-components/time-editable-components-keyboard-events-expected.txt:
+    * fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272495 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-08  Aditya Keerthi  <akeerthi@apple.com>
+
+            [macOS] Return key binding for date inputs conflicts with return to submit form
+            https://bugs.webkit.org/show_bug.cgi?id=221532
+            <rdar://problem/74039204>
+
+            Reviewed by Wenson Hsieh.
+
+            Added tests to verify that pressing the space key in a focused date
+            input presents a calendar view, and pressing the enter key in a focused
+            date input submits a form.
+
+            Rebaselined existing tests to account for the fact that the space key
+            no longer focuses the next editable component within a date input.
+
+            * fast/forms/date/date-editable-components/date-editable-components-keyboard-events-expected.txt:
+            * fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html:
+            * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress-expected.txt: Added.
+            * fast/forms/date/date-editable-components/date-picker-show-on-space-keypress.html: Added.
+            * fast/forms/date/date-editable-components/form-submit-on-return-keypress-expected.txt: Added.
+            * fast/forms/date/date-editable-components/form-submit-on-return-keypress.html: Added.
+            * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events-expected.txt:
+            * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-keyboard-events.html:
+            * fast/forms/month/month-editable-components/month-editable-components-keyboard-events-expected.txt:
+            * fast/forms/month/month-editable-components/month-editable-components-keyboard-events.html:
+            * fast/forms/time/time-editable-components/time-editable-components-keyboard-events-expected.txt:
+            * fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html:
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r272435. rdar://problem/74410448
 
     [LFC][Integration] Hit testing broken for descendants of pointer-events:none boxes
