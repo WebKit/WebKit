@@ -1,3 +1,12 @@
+2021-02-17  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.html is constantly text failing
+        https://bugs.webkit.org/show_bug.cgi?id=221973
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-02-17  Martin Robinson  <mrobinson@igalia.com>
 
         Add a test to exercise CSS scroll snap in an independently scrollable body
