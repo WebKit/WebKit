@@ -3620,6 +3620,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueOptimized3d);
 #endif
             }
+            ASSERT_NOT_REACHED();
+            return nullptr;
         case CSSPropertyTranslate:
             if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
