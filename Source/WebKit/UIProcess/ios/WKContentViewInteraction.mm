@@ -92,6 +92,7 @@
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
+#import <WebCore/AppHighlight.h>
 #import <WebCore/Color.h>
 #import <WebCore/ColorIOS.h>
 #import <WebCore/ColorSerialization.h>
