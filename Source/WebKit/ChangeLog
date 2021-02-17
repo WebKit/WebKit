@@ -1,3 +1,13 @@
+2021-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Rename entitlements for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=222077
+        <rdar://problem/74451093>
+
+        Reviewed by Mark Lam.
+
+        * Scripts/process-entitlements.sh:
+
 2021-02-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r272905.

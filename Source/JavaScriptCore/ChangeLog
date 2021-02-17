@@ -1,3 +1,16 @@
+2021-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Rename entitlements for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=222077
+        <rdar://problem/74451093>
+
+        Reviewed by Mark Lam.
+
+        * Scripts/process-entitlements.sh:
+        * entitlements.plist:
+        * runtime/Options.cpp:
+        (JSC::canUseJITCage):
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove unnecessary hack for iOS7

@@ -28,7 +28,7 @@ function mac_process_webcontent_entitlements()
         fi
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
-            plistbuddy Add :com.apple.private.securejit bool YES
+            plistbuddy Add :com.apple.private.verified-jit bool YES
         fi
     fi
 
@@ -112,7 +112,7 @@ function mac_process_plugin_entitlements()
     then
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
-            plistbuddy Add :com.apple.private.securejit bool YES
+            plistbuddy Add :com.apple.private.verified-jit bool YES
         fi
     fi
 
@@ -161,7 +161,7 @@ function maccatalyst_process_webcontent_entitlements()
     fi
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
-        plistbuddy Add :com.apple.private.securejit bool YES
+        plistbuddy Add :com.apple.private.verified-jit bool YES
     fi
 }
 
@@ -192,7 +192,7 @@ function maccatalyst_process_plugin_entitlements()
     plistbuddy Add :com.apple.security.print                               bool YES
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
-        plistbuddy Add :com.apple.private.securejit bool YES
+        plistbuddy Add :com.apple.private.verified-jit bool YES
     fi
 }
 
@@ -214,7 +214,7 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
-    plistbuddy Add :com.apple.private.securejit bool YES
+    plistbuddy Add :com.apple.private.verified-jit bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
@@ -314,7 +314,7 @@ function ios_family_process_network_entitlements()
 
 function ios_family_process_plugin_entitlements()
 {
-    plistbuddy Add :com.apple.private.securejit                            bool YES
+    plistbuddy Add :com.apple.private.verified-jit                         bool YES
     plistbuddy Add :com.apple.security.cs.allow-jit                        bool YES
     plistbuddy Add :com.apple.security.cs.allow-unsigned-executable-memory bool YES
     plistbuddy Add :com.apple.security.cs.disable-library-validation       bool YES
