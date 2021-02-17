@@ -3343,7 +3343,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     if (m_isLayerTreeFrozenDueToSwipeAnimation)
         send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
 
-    processDidTerminate(ProcessTerminationReason::NavigationSwap);
+    resetStateAfterProcessTermination(ProcessTerminationReason::NavigationSwap);
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
@@ -7237,7 +7237,7 @@ URL WebPageProxy::currentResourceDirectoryURL() const
     return { };
 }
 
-void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
+void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason reason)
 {
     if (reason != ProcessTerminationReason::NavigationSwap)
         RELEASE_LOG_ERROR_IF_ALLOWED(Process, "processDidTerminate: (pid %d), reason %d", processIdentifier(), reason);
@@ -7264,10 +7264,8 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     // For bringup of process swapping, NavigationSwap termination will not go out to clients.
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
     // FIXME: This might have to change
-    if (reason != ProcessTerminationReason::NavigationSwap) {
+    if (reason != ProcessTerminationReason::NavigationSwap)
         navigationState().clearAllNavigations();
-        dispatchProcessDidTerminate(reason);
-    }
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -7301,22 +7299,14 @@ void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
 {
     RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "dispatchProcessDidTerminate: reason = %d", reason);
 
-    // We notify the client asynchronously because several pages may share the same process
-    // and we want to make sure all pages are aware their process has crashed before the
-    // the client reacts to the process termination.
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), reason] {
-        if (!weakThis)
-            return;
+    bool handledByClient = false;
+    if (m_loaderClient)
+        handledByClient = reason != ProcessTerminationReason::RequestedByClient && m_loaderClient->processDidCrash(*this);
+    else
+        handledByClient = m_navigationClient->processDidTerminate(*this, reason);
 
-        bool handledByClient = false;
-        if (m_loaderClient)
-            handledByClient = reason != ProcessTerminationReason::RequestedByClient && m_loaderClient->processDidCrash(*this);
-        else
-            handledByClient = m_navigationClient->processDidTerminate(*this, reason);
-
-        if (!handledByClient && shouldReloadAfterProcessTermination(reason))
-            tryReloadAfterProcessTermination();
-    });
+    if (!handledByClient && shouldReloadAfterProcessTermination(reason))
+        tryReloadAfterProcessTermination();
 }
 
 void WebPageProxy::tryReloadAfterProcessTermination()

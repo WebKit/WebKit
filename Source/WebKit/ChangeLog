@@ -1,3 +1,29 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r268097): Calling processDidTerminate delegate asynchronously is risky compatibility-wise
+        https://bugs.webkit.org/show_bug.cgi?id=222011
+
+        Reviewed by Carlos Garcia Campos.
+
+        Calling processDidTerminate delegate asynchronously like we did in r268097 is risky compatibility-wise.
+        This caused breakage in at least 2 client applications. While this can be dealt with on the client side,
+        it would be better to fix what r268097 was trying to fix without making the delegate call asynchronous.
+        The reason calling the delegate asynchronously is risky is because some view state may have time to get
+        reset by the time the client gets notified on the crash, potentially confusing the crash handling logic
+        in the client.
+
+        No new tests, covered by WKNavigation.ReloadRelatedViewsInProcessDidTerminate API test that is
+        still passing even though the delegate call is no longer asynchronous.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::requestTermination):
+
 2021-02-17  Youenn Fablet  <youenn@apple.com>
 
         Build fix for non MEDIA_STREAM enabled ports after r272858

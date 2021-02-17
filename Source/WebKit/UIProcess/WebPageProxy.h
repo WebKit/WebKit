@@ -1176,7 +1176,7 @@ public:
 
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
-    void processDidTerminate(ProcessTerminationReason);
+    void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
     void dispatchProcessDidTerminate(ProcessTerminationReason);
     void willChangeProcessIsResponsive();
