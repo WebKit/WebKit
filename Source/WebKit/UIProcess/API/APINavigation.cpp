@@ -29,6 +29,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebNavigationState.h"
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
 

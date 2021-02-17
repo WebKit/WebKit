@@ -1,3 +1,9 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix GTK build after r273023.
+
+        * UIProcess/API/APINavigation.cpp:
+
 2021-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Remove missing files from WebKit Xcode project
