@@ -224,11 +224,12 @@ public:
     RefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
+    JSValueRef errorMessageElements() const;
     // ARIA specific
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(MAC) || USE(ATK)
+#if PLATFORM(COCOA) || USE(ATK)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else

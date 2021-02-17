@@ -168,6 +168,7 @@
     object columnHeaders();
     object rowHeaders();
 
+    object errorMessageElements();
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaOwnsReferencingElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned long index);

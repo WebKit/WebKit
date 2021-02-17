@@ -1,3 +1,18 @@
+2021-02-17  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support aria-errormessage on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=221975
+        <rdar://problem/74397704>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-errormessage-expected.txt: Added.
+        * accessibility/aria-errormessage.html: Added.
+        * platform/gtk/TestExpectations: Skip.
+        * platform/ios/TestExpectations: Pass.
+        * platform/mac-wk1/TestExpectations: Skip.
+        * platform/win/TestExpectations: Skip.
+
 2021-02-17  Rob Buis  <rbuis@igalia.com>
 
         Improve percentage height in shouldComputeLogicalWidthFromAspectRatio

@@ -1857,6 +1857,17 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }).autorelease();
 }
 
+- (NSArray *)accessibilityErrorMessageElements
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    AXCoreObject::AccessibilityChildrenVector axObjects;
+    self.axBackingObject->ariaErrorMessageElements(axObjects);
+
+    return convertToNSArray(axObjects);
+}
+
 - (id)accessibilityLinkedElement
 {
     if (![self _prepareAccessibilityCall])

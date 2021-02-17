@@ -2593,6 +2593,7 @@ webkit.org/b/197709 imported/w3c/web-platform-tests/html/browsers/history/the-lo
 webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
 
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
+accessibility/aria-errormessage.html [ Skip ]
 
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
 

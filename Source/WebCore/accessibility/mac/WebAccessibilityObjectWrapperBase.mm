@@ -262,12 +262,14 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
 
 NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
-    return createNSArray(children, [] (auto& child) -> id {
+    return createNSArray(children, [] (const auto& child) -> id {
         auto wrapper = child->wrapper();
+
         // We want to return the attachment view instead of the object representing the attachment,
         // otherwise, we get palindrome errors in the AX hierarchy.
         if (child->isAttachment() && wrapper.attachmentView)
             return wrapper.attachmentView;
+
         return wrapper;
     }).autorelease();
 }
