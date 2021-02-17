@@ -6542,7 +6542,11 @@
         "transform-style": {
             "values": [
                 "flat",
-                "preserve-3d"
+                "preserve-3d",
+                {
+                    "value": "optimized-3d",
+                    "status": "internal"
+                }
             ],
             "codegen-properties": {
                 "name-for-methods": "TransformStyle3D"
@@ -6555,7 +6559,11 @@
         "-webkit-transform-style": {
             "values": [
                 "flat",
-                "preserve-3d"
+                "preserve-3d",
+                {
+                    "value": "optimized-3d",
+                    "status": "internal"
+                }
             ],
             "codegen-properties": {
                 "name-for-methods": "TransformStyle3D",

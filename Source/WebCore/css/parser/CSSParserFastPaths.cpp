@@ -818,7 +818,12 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone;
     case CSSPropertyTransformStyle:
     case CSSPropertyWebkitTransformStyle:
-        return valueID == CSSValueFlat || valueID == CSSValuePreserve3d;
+        return valueID == CSSValueFlat
+            || valueID == CSSValuePreserve3d
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+            || (valueID == CSSValueOptimized3d && context.transformStyleOptimized3DEnabled)
+#endif
+        ;
     case CSSPropertyWebkitUserDrag: // auto | none | element
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueElement;
     case CSSPropertyWebkitUserModify: // read-only | read-write

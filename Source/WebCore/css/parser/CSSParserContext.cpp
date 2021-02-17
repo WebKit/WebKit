@@ -82,6 +82,9 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(TEXT_AUTOSIZING)
     , textAutosizingEnabled { document.settings().textAutosizingEnabled() }
 #endif
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    , transformStyleOptimized3DEnabled { document.settings().cssTransformStyleOptimized3DEnabled() }
+#endif
     , useLegacyBackgroundSizeShorthandBehavior { document.settings().useLegacyBackgroundSizeShorthandBehavior() }
     , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -114,6 +117,9 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
 #if ENABLE(TEXT_AUTOSIZING)
         && a.textAutosizingEnabled == b.textAutosizingEnabled
+#endif
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+        && a.transformStyleOptimized3DEnabled == b.transformStyleOptimized3DEnabled
 #endif
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
         && a.focusVisibleEnabled == b.focusVisibleEnabled

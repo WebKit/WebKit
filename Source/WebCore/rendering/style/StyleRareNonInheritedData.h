@@ -195,7 +195,7 @@ public:
     OptionSet<TouchAction> touchActions;
 
     unsigned pageSizeType : 2; // PageSizeType
-    unsigned transformStyle3D : 1; // TransformStyle3D
+    unsigned transformStyle3D : 2; // TransformStyle3D
     unsigned backfaceVisibility : 1; // BackfaceVisibility
 
     unsigned userDrag : 2; // UserDrag

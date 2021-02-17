@@ -72,6 +72,9 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };
 #endif
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    bool transformStyleOptimized3DEnabled { false };
+#endif
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool focusVisibleEnabled { false };
 
@@ -119,7 +122,10 @@ struct CSSParserContextHash {
             & key.scrollBehaviorEnabled                     << 12
             & key.individualTransformPropertiesEnabled      << 13
             & key.overscrollBehaviorEnabled                 << 14
-            & key.mode                                      << 15; // Keep this last.
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+            & key.transformStyleOptimized3DEnabled          << 15
+#endif
+            & key.mode                                      << 16; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }
