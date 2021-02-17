@@ -1,3 +1,25 @@
+2021-02-16  Dean Johnson  <dean_johnson@apple.com>
+
+        [perf.webkit.org] Do not schedule jobs to Buildbot if the last job failed
+        https://bugs.webkit.org/show_bug.cgi?id=221943
+
+        Reviewed by Dewei Zhu.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.sampleBuildData): Allow options.results to be specified.
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        (async const): Add tests for new functionality. Existing tests still pass.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.initialize): Track the 'results' key from a build.
+        (BuildbotBuildEntry.prototype.result): Make the build result available.
+        (BuildbotSyncer): Track the last completed build.
+        (BuildbotSyncer.prototype.lastCompletedBuildSuccessful): Check if the last completed
+        build was successful.
+        (BuildbotSyncer.prototype.pullBuildbot):
+        * tools/js/buildbot-triggerable.js: Do not schedule a job to a builder who failed
+        its last completedd build.
+        (BuildbotTriggerable.prototype._scheduleRequestIfSlaveIsAvailable):
+
 2021-02-11  Dewei Zhu  <dewei_zhu@apple.com>
 
         'sync-commits.py' should be able to limit reporting scope to a specific branch on a Git repository.

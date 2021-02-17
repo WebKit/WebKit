@@ -479,7 +479,7 @@ MockData = {
             "complete_at": null,
             "buildid": options.buildid || 418744,
             "masterid": 1,
-            "results": null,
+            "results": options.results,
             "started_at": new Date('2017-12-19T23:11:49Z') / 1000,
             "state_string": options.statusDescription || null,
             "workerid": 41,

@@ -251,6 +251,10 @@ class BuildbotTriggerable {
 
         // Pick a new syncer for the first test.
         for (const syncer of this._syncers) {
+            // Only schedule A/B tests to queues whose last job was successful.
+            if (syncer.isTester() && !nextRequest.order() && !syncer.lastCompletedBuildSuccessful())
+                continue;
+
             const promise = this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, null);
             if (promise)
                 return promise;
