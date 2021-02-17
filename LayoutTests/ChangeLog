@@ -1,3 +1,13 @@
+2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
+        https://bugs.webkit.org/show_bug.cgi?id=221391
+        <rdar://problem/74207093>
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Unmarked tests for Bug 222026.
+
 2021-02-17  Robert Jenner  <jenner@apple.com>
 
         [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.html is constantly text failing
