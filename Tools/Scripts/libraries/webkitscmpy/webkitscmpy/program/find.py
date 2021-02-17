@@ -89,9 +89,9 @@ class Find(Command):
             return 0
 
         if commit.message:
-            print('Title: {}'.format(commit.message.splitlines()[0]))
-        print('Author: {}'.format(commit.author))
-        print('Identifier: {}'.format(commit))
+            print(u'Title: {}'.format(commit.message.splitlines()[0]))
+        print(u'Author: {}'.format(commit.author))
+        print(u'Identifier: {}'.format(commit))
         print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
         if args.verbose > 0 or commit.revision:
             print('Revision: {}'.format(commit.revision or 'N/A'))
@@ -100,6 +100,6 @@ class Find(Command):
 
         if args.verbose > 0:
             for line in commit.message.splitlines():
-                print('    {}'.format(line))
+                print(u'    {}'.format(line))
 
         return 0
