@@ -1576,8 +1576,11 @@ void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError*
 
 void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError* error)
 {
-    if (!success)
+    if (!success) {
         WTFLogAlways("-[AVPlayerViewController enterFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p)", this);
     if (!m_standby) {
