@@ -26,13 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.multicommandtool import Command
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
+from webkitpy.tool.multicommandtool import Command
 
 
 # This is mostly a command for testing FlakyTestReporter, however
 # it could be easily expanded to auto-create bugs, etc. if another
 # command outside of webkitpy wanted to use it.
+@DeprecatedCommand
 class BugForTest(Command):
     name = "bug-for-test"
     help_text = "Finds the bugzilla bug for a given test"

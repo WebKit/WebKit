@@ -38,6 +38,7 @@ from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations, BASELINE_SUFFIX_LIST
 from webkitpy.port import builders
 from webkitpy.port import factory
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.multicommandtool import Command
 
 
@@ -74,6 +75,7 @@ class AbstractRebaseliningCommand(Command):
         self._baseline_suffix_list = BASELINE_SUFFIX_LIST
 
 
+@DeprecatedCommand
 class RebaselineTest(AbstractRebaseliningCommand):
     name = "rebaseline-test-internal"
     help_text = "Rebaseline a single test from a buildbot. Only intended for use by other webkit-patch commands."
@@ -294,6 +296,7 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
             self._tool.scm().add_list(list(files_to_add))
 
 
+@DeprecatedCommand
 class RebaselineJson(AbstractParallelRebaselineCommand):
     name = "rebaseline-json"
     help_text = "Rebaseline based off JSON passed to stdin. Intended to only be called from other scripts."
@@ -309,6 +312,7 @@ class RebaselineJson(AbstractParallelRebaselineCommand):
         self._rebaseline(options, json.loads(sys.stdin.read()))
 
 
+@DeprecatedCommand
 class RebaselineExpectations(AbstractParallelRebaselineCommand):
     name = "rebaseline-expectations"
     help_text = "Rebaselines the tests indicated in TestExpectations."
@@ -370,6 +374,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
                 self._update_expectations_files(port_name)
 
 
+@DeprecatedCommand
 class Rebaseline(AbstractParallelRebaselineCommand):
     name = "rebaseline"
     help_text = "Rebaseline tests with results from the build bots. Shows the list of failing tests on the builders if no test names are provided."

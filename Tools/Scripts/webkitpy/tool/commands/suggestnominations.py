@@ -33,6 +33,7 @@ import re
 from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.tool import grammar
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.multicommandtool import Command
 
 
@@ -144,6 +145,7 @@ class AbstractCommitLogCommand(Command):
         }
 
 
+@DeprecatedCommand
 class SuggestNominations(AbstractCommitLogCommand):
     name = "suggest-nominations"
     help_text = "Suggest contributors for committer/reviewer nominations"

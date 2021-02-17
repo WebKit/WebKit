@@ -1,3 +1,42 @@
+2021-02-17  Sam Sneddon  <gsnedders@apple.com>
+
+        Add deprecation notices to believed-unused commands in webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=222058
+
+        Reviewed by Jonathan Bedard.
+
+        This only adds notices, asking any users of the commands to comment on
+        https://bugs.webkit.org/show_bug.cgi?id=221991; it doesn't in any way break the commands,
+        and the deprecation is easily undone.
+
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py:
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal.py:
+        * Scripts/webkitpy/tool/commands/bugfortest.py:
+        * Scripts/webkitpy/tool/commands/bugsearch.py:
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        (CommandsTest.assert_execute_outputs): Strip the warnings from unittest output to avoid changing every test
+        (CommandsTest._remove_deprecated_warning):
+        * Scripts/webkitpy/tool/commands/deprecatedcommand.py: Added. Class decorator for Commands output notice.
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/findusers.py:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Deprecate running tests through webkit-patch, even indirectly.
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+
 2021-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         Expand stubs to thread actual NSURLRequest/NSURLResponse for the new simulated-request API

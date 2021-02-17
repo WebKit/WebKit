@@ -1,4 +1,4 @@
-# Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,7 +10,7 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#     * Neither the name of Apple Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -26,26 +26,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
-from webkitpy.tool.multicommandtool import Command
+import logging
+from functools import wraps
+
+_log = logging.getLogger(__name__)
 
 
-@DeprecatedCommand
-class BugSearch(Command):
-    name = "bug-search"
-    help_text = "List bugs matching a query"
-    argument_names = "QUERY"
-    long_help = \
-"""Runs the bugzilla quicksearch QUERY on bugs.webkit.org, and lists all bugs
-returned. QUERY can be as simple as a bug number or a comma delimited list of
-bug numbers.
-See https://bugzilla.mozilla.org/page.cgi?id=quicksearch.html for full
-documentation on the query format."""
+def DeprecatedCommand(klass):
+    func = klass.execute
 
-    def execute(self, options, args, tool):
-        search_string = args[0]
-        bugs = tool.bugs.queries.fetch_bugs_matching_quicksearch(search_string)
-        for bug in bugs:
-            print("%5s %s" % (bug.id(), bug.title()))
-        if not bugs:
-            print("No bugs found matching '%s'" % search_string)
+    if hasattr(func, "_deprecated"):
+        # Avoid applying this multiple times
+        return klass
+
+    @wraps(func)
+    def wrapped(self, *args, **kwargs):
+        _log.warning("The '%s' command is currently deprecated due to believed non-use; "
+                     "if it forms part of your workflow, please comment on "
+                     "https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the "
+                     "command you ran, even if others have already mentioned it" % self.name)
+        return func(self, *args, **kwargs)
+
+    wrapped._deprecated = True
+
+    klass.execute = wrapped
+    return klass

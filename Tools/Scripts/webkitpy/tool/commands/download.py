@@ -36,6 +36,7 @@ from webkitpy.common.config import urls
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.grammar import pluralize
@@ -44,6 +45,7 @@ from webkitpy.tool.multicommandtool import Command
 _log = logging.getLogger(__name__)
 
 
+@DeprecatedCommand
 class Clean(AbstractSequencedCommand):
     name = "clean"
     help_text = "Clean the working copy"
@@ -55,6 +57,7 @@ class Clean(AbstractSequencedCommand):
         options.force_clean = True
 
 
+@DeprecatedCommand
 class Update(AbstractSequencedCommand):
     name = "update"
     help_text = "Update working copy (used internally)"
@@ -64,6 +67,7 @@ class Update(AbstractSequencedCommand):
     ]
 
 
+@DeprecatedCommand
 class Build(AbstractSequencedCommand):
     name = "build"
     help_text = "Update working copy and build"
@@ -77,6 +81,7 @@ class Build(AbstractSequencedCommand):
         options.build = True
 
 
+@DeprecatedCommand
 class BuildAndTest(AbstractSequencedCommand):
     name = "build-and-test"
     help_text = "Update working copy, build, and run the tests"
@@ -88,6 +93,7 @@ class BuildAndTest(AbstractSequencedCommand):
     ]
 
 
+@DeprecatedCommand
 class CheckPatchRelevance(AbstractSequencedCommand):
     name = "check-patch-relevance"
     help_text = "Check if this patch needs to be tested"
@@ -123,6 +129,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
         }
 
 
+@DeprecatedCommand
 class LandCowhand(AbstractSequencedCommand):
     # Gender-blind term for cowboy, see: http://en.wiktionary.org/wiki/cowhand
     name = "land-cowhand"
@@ -143,6 +150,7 @@ class LandCowhand(AbstractSequencedCommand):
         options.check_style_filter = "-changelog"
 
 
+@DeprecatedCommand
 class LandCowboy(LandCowhand):
     name = "land-cowboy"
 
@@ -151,6 +159,7 @@ class LandCowboy(LandCowhand):
         LandCowhand._prepare_state(self, options, args, tool)
 
 
+@DeprecatedCommand
 class CheckStyleLocal(AbstractSequencedCommand):
     name = "check-style-local"
     help_text = "Run check-webkit-style on the current working directory diff"
@@ -253,6 +262,7 @@ class ProcessURLsMixin(object):
         return all_patches
 
 
+@DeprecatedCommand
 class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "check-style"
     help_text = "Run check-webkit-style on the specified attachments"
@@ -265,6 +275,7 @@ class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     ]
 
 
+@DeprecatedCommand
 class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "build-attachment"
     help_text = "Apply and build patches from bugzilla"
@@ -277,6 +288,7 @@ class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     ]
 
 
+@DeprecatedCommand
 class BuildAndTestAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "build-and-test-attachment"
     help_text = "Apply, build, and test patches from bugzilla"
@@ -317,6 +329,7 @@ class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
+@DeprecatedCommand
 class ApplyWatchList(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "apply-watchlist"
     help_text = "Applies the watchlist to the specified attachments"
@@ -368,12 +381,14 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
+@DeprecatedCommand
 class LandFromURL(AbstractPatchLandingCommand, ProcessURLsMixin):
     name = "land-from-url"
     help_text = "Land all patches on the given URLs, optionally building and testing them first"
     argument_names = "URL [URLS]"
 
 
+@DeprecatedCommand
 class ValidateChangelog(AbstractSequencedCommand):
     name = "validate-changelog"
     help_text = "Validate that the ChangeLogs and reviewers look reasonable"
@@ -440,6 +455,7 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
         return state
 
 
+@DeprecatedCommand
 class PrepareRevert(AbstractRevertPrepCommand):
     name = "prepare-revert"
     help_text = "Revert the given revision(s) in the working copy and prepare ChangeLogs with revert reason"
@@ -455,6 +471,7 @@ Creates an appropriate revert ChangeLog, including a trac link and bug link.
     ]
 
 
+@DeprecatedCommand
 class PrepareRollout(PrepareRevert):
     name = "prepare-rollout"
 
@@ -463,6 +480,7 @@ class PrepareRollout(PrepareRevert):
         return PrepareRevert._prepare_state(self, options, args, tool)
 
 
+@DeprecatedCommand
 class CreateRevert(AbstractRevertPrepCommand):
     name = "create-revert"
     help_text = "Creates a bug to track the broken SVN revision(s) and uploads a revert patch."
@@ -492,6 +510,7 @@ so that we can track how often these flaky tests fail.
         return state
 
 
+@DeprecatedCommand
 class CreateRollout(CreateRevert):
     name = "create-rollout"
 
@@ -523,6 +542,7 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
     ]
 
 
+@DeprecatedCommand
 class Rollout(Revert):
     name = "rollout"
     show_in_main_help = False

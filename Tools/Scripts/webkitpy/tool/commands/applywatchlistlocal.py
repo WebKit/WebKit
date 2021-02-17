@@ -26,10 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool import steps
+from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 
 
+@DeprecatedCommand
 class ApplyWatchListLocal(AbstractSequencedCommand):
     name = "apply-watchlist-local"
     help_text = "Applies the watchlist to local changes"

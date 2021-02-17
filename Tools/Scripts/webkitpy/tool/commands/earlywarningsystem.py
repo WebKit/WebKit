@@ -34,17 +34,19 @@ import sys
 
 from webkitcorepy import string_utils
 
-from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
-from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.jsctestresultsreader import JSCTestResultsReader
+from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid, PatchIsNotApplicable
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.commands.queues import AbstractReviewQueue
 
 _log = logging.getLogger(__name__)
 
 
+@DeprecatedCommand
 class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDelegate):
     # FIXME: Switch _default_run_tests from opt-in to opt-out once more bots are ready to run tests.
     run_tests = False

@@ -35,6 +35,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.net.resultsjsonparser import for_each_test, JSONTestResult
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.servers.rebaselineserver import get_test_baselines, RebaselineHTTPServer, STATE_NEEDS_REBASELINE
 
 
@@ -49,6 +50,7 @@ class TestConfig(object):
         self.filesystem = host.filesystem
 
 
+@DeprecatedCommand
 class RebaselineServer(AbstractLocalServerCommand):
     name = "rebaseline-server"
     help_text = __doc__

@@ -41,6 +41,7 @@ from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.multicommandtool import Command
@@ -48,6 +49,7 @@ from webkitpy.tool.multicommandtool import Command
 _log = logging.getLogger(__name__)
 
 
+@DeprecatedCommand
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
     help_text = "Print a commit message suitable for the uncommitted changes"
@@ -64,6 +66,7 @@ class CommitMessageForCurrentDiff(Command):
         print("%s" % tool.checkout().commit_message_for_this_commit(options.git_commit).message())
 
 
+@DeprecatedCommand
 class CleanPendingCommit(Command):
     name = "clean-pending-commit"
     help_text = "Clear r+ on obsolete patches so they do not appear in the pending-commit list."
@@ -93,6 +96,7 @@ class CleanPendingCommit(Command):
 
 
 # FIXME: This should be share more logic with AssignToCommitter and CleanPendingCommit
+@DeprecatedCommand
 class CleanReviewQueue(Command):
     name = "clean-review-queue"
     help_text = "Clear r? on obsolete patches so they do not appear in the pending-review list."
@@ -118,6 +122,7 @@ class CleanReviewQueue(Command):
             self._tool.bugs.obsolete_attachment(patch.id(), message)
 
 
+@DeprecatedCommand
 class AssignToCommitter(Command):
     name = "assign-to-committer"
     help_text = "Assign bug to whoever attached the most recent r+'d patch"
@@ -161,6 +166,7 @@ class AssignToCommitter(Command):
             self._assign_bug_to_last_patch_attacher(bug_id)
 
 
+@DeprecatedCommand
 class ObsoleteAttachments(AbstractSequencedCommand):
     name = "obsolete-attachments"
     help_text = "Mark all attachments on a bug as obsolete"
@@ -173,6 +179,7 @@ class ObsoleteAttachments(AbstractSequencedCommand):
         return { "bug_id" : args[0] }
 
 
+@DeprecatedCommand
 class AttachToBug(AbstractSequencedCommand):
     name = "attach-to-bug"
     help_text = "Attach the file to the bug"
@@ -207,6 +214,7 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
         return state
 
 
+@DeprecatedCommand
 class Post(AbstractPatchUploadingCommand):
     name = "post"
     help_text = "Attach the current working directory diff to a bug as a patch file"
@@ -241,6 +249,7 @@ class LandSafely(AbstractPatchUploadingCommand):
     ]
 
 
+@DeprecatedCommand
 class HasLanded(AbstractPatchUploadingCommand):
     name = "has-landed"
     help_text = "Check that the current code was successfully landed and no changes remain."
@@ -250,6 +259,7 @@ class HasLanded(AbstractPatchUploadingCommand):
     ]
 
 
+@DeprecatedCommand
 class Prepare(AbstractSequencedCommand):
     name = "prepare"
     help_text = "Creates a bug (or prompts for an existing bug) and prepares the ChangeLogs"
@@ -311,6 +321,7 @@ class EditChangeLogs(AbstractSequencedCommand):
     ]
 
 
+@DeprecatedCommand
 class PostCommits(Command):
     name = "post-commits"
     help_text = "Attach a range of local commits to bugs as patch files"
@@ -370,6 +381,7 @@ class PostCommits(Command):
 
 
 # FIXME: This command needs to be brought into the modern age with steps and CommitInfo.
+@DeprecatedCommand
 class MarkBugFixed(Command):
     name = "mark-bug-fixed"
     help_text = "Mark the specified bug as fixed"
@@ -452,6 +464,7 @@ class MarkBugFixed(Command):
 
 
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
+@DeprecatedCommand
 class CreateBug(Command):
     name = "create-bug"
     help_text = "Create a bug from local changes or local commits"
@@ -536,6 +549,7 @@ class CreateBug(Command):
             self.create_bug_from_patch(options, args, tool)
 
 
+@DeprecatedCommand
 class WPTChangeExport(AbstractPatchUploadingCommand):
     name = "wpt-change-export"
     help_text = "Opens a pull request to synchronize any changes in the LayoutTests/imported/w3c/web-platform-tests directory"

@@ -126,7 +126,8 @@ class StepsTest(unittest.TestCase):
             step.run({})
         self.assertEqual(
             captured.root.log.getvalue(),
-            '''Running Python unit tests
+            '''Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it
+Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
@@ -150,7 +151,8 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--release', '--q
             step.run({})
         self.assertEqual(
             captured.root.log.getvalue(),
-            '''Running Python unit tests
+            '''Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it
+Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
@@ -175,7 +177,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
             step.run({})
         self.assertEqual(
             captured.root.log.getvalue(),
-            "MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
+            "Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it\nMOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
         )
 
     def test_runtests_jsc_debug(self):
@@ -191,7 +193,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
             step.run({})
         self.assertEqual(
             captured.root.log.getvalue(),
-            "MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
+            "Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it\nMOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
         )
 
     def test_build_jsc_debug(self):

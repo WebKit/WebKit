@@ -56,6 +56,16 @@ class CommandsTest(TestCase):
 
         with OutputCapture(level=logging.INFO) as captured:
             command.execute(options, args, tool)
-        self.assertEqual(captured.stdout.getvalue(), expected_stdout or '')
-        self.assertEqual(captured.stderr.getvalue(), expected_stderr or '')
-        self.assertEqual(captured.root.log.getvalue(), expected_logs or '')
+
+        actual_stdout = self._remove_deprecated_warning(captured.stdout.getvalue())
+        actual_stderr = self._remove_deprecated_warning(captured.stderr.getvalue())
+        actual_logs = self._remove_deprecated_warning(captured.root.log.getvalue())
+
+        self.assertEqual(actual_stdout, expected_stdout or '')
+        self.assertEqual(actual_stderr, expected_stderr or '')
+        self.assertEqual(actual_logs, expected_logs or '')
+
+    def _remove_deprecated_warning(self, s):
+        lines = s.splitlines(True)  # keepends=True (PY2 doesn't accept keyword form)
+        return "".join(l for l in lines
+                       if "currently deprecated due to believed non-use" not in l)

@@ -58,6 +58,18 @@ class RunTests(AbstractStep):
         ]
 
     def run(self, state):
+        if (
+            self._options.group == "jsc"
+            or self._options.iterate_on_new_tests
+            or self._options.test
+        ):
+            _log.warning(
+                "Running tests through webkit-patch is currently deprecated due to believed "
+                "non-use; if it forms part of your workflow, please comment on "
+                "https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the "
+                "command you ran, even if others have already mentioned it"
+            )
+
         if self._options.group == "jsc":
             self._run_javascriptcore_tests()
             return
