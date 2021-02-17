@@ -1,5 +1,72 @@
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272506. rdar://problem/74409747
+
+    Check that CGPDFDocumentRef is consistently unlocked and printable
+    <https://webkit.org/b/221512>
+    <rdar://problem/65277765>
+    
+    Reviewed by Daniel Bates.
+    
+    This patch does the following when printing PDFs:
+    - Checks return value of CGPDFDocumentUnlockWithPassword().
+    - Calls CGPDFDocumentAllowsPrinting() consistently.
+    - Handles -_ensureDocumentForPrinting and -_wk_printedDocument
+      returning nullptr.
+    
+    * UIProcess/_WKWebViewPrintFormatter.mm:
+    (-[_WKWebViewPrintFormatter drawInRect:forPageAtIndex:]):
+    - Check return value of -_wk_printedDocument since it may return
+      nullptr now.
+    
+    * UIProcess/ios/WKPDFView.mm:
+    (-[WKPDFView _ensureDocumentForPrinting]):
+    - Check return value of CGPDFDocumentUnlockWithPassword(), and
+      return nullptr if unsuccessful.
+    - Add CGPDFDocumentAllowsPrinting() check and return nullptr if
+      it fails.
+    (-[WKPDFView _wk_pageCountForPrintFormatter:]):
+    - Move the CGPDFDocumentAllowsPrinting() check into
+      -[WKPDFView _ensureDocumentForPrinting].
+    - Check return value of -_ensureDocumentForPrinting since it may
+      return nullptr now.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272506 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-08  David Kilzer  <ddkilzer@apple.com>
+
+            Check that CGPDFDocumentRef is consistently unlocked and printable
+            <https://webkit.org/b/221512>
+            <rdar://problem/65277765>
+
+            Reviewed by Daniel Bates.
+
+            This patch does the following when printing PDFs:
+            - Checks return value of CGPDFDocumentUnlockWithPassword().
+            - Calls CGPDFDocumentAllowsPrinting() consistently.
+            - Handles -_ensureDocumentForPrinting and -_wk_printedDocument
+              returning nullptr.
+
+            * UIProcess/_WKWebViewPrintFormatter.mm:
+            (-[_WKWebViewPrintFormatter drawInRect:forPageAtIndex:]):
+            - Check return value of -_wk_printedDocument since it may return
+              nullptr now.
+
+            * UIProcess/ios/WKPDFView.mm:
+            (-[WKPDFView _ensureDocumentForPrinting]):
+            - Check return value of CGPDFDocumentUnlockWithPassword(), and
+              return nullptr if unsuccessful.
+            - Add CGPDFDocumentAllowsPrinting() check and return nullptr if
+              it fails.
+            (-[WKPDFView _wk_pageCountForPrintFormatter:]):
+            - Move the CGPDFDocumentAllowsPrinting() check into
+              -[WKPDFView _ensureDocumentForPrinting].
+            - Check return value of -_ensureDocumentForPrinting since it may
+              return nullptr now.
+
+2021-02-16  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r272418. rdar://problem/74410581
 
     CrashTracer: com.apple.WebKit.Networking at WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource
