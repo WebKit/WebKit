@@ -1,3 +1,15 @@
+2021-02-17  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/preconnect convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221980
+        <rdar://problem/74399549>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/preconnect/link-header-rel-preconnect-http.html:
+        * http/tests/preconnect/resources/header-preconnect.php: Removed.
+        * http/tests/preconnect/resources/header-preconnect.py: Added.
+
 2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
