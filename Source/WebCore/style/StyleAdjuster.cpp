@@ -31,6 +31,7 @@
 #include "StyleAdjuster.h"
 
 #include "CSSFontSelector.h"
+#include "DOMTokenList.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventNames.h"
@@ -605,6 +606,20 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
+    }
+    if (m_document.quirks().needsWeChatScrollingQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> class1("tree-select", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select", AtomString::ConstructFromLiteral);
+        const auto& flexBasis = style.flexBasis();
+        if (style.minHeight().isAuto()
+            && style.display() == DisplayType::Flex
+            && style.flexGrow() == 1
+            && style.flexShrink() == 1
+            && (flexBasis.isPercent() || flexBasis.isFixed())
+            && flexBasis.value() == 0
+            && const_cast<Element*>(m_element)->classList().contains(class1)
+            && const_cast<Element*>(m_element)->classList().contains(class2))
+            style.setMinHeight(Length(0, LengthType::Fixed));
     }
 #if ENABLE(VIDEO)
     if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
