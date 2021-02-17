@@ -1,3 +1,15 @@
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove unnecessary hack for iOS7
+        https://bugs.webkit.org/show_bug.cgi?id=222017
+
+        Reviewed by Mark Lam.
+
+        Remove this symbol hack since we are not supporting iOS7.
+
+        * API/JSBase.cpp:
+        (JSGetMemoryUsageStatistics):
+
 2021-02-16  Saam Barati  <sbarati@apple.com>
 
         operationNewArrayWithSize should call tryCreate instead of create

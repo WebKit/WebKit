@@ -215,20 +215,3 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
 
     return toRef(object);
 }
-
-#if PLATFORM(IOS_FAMILY) && TARGET_OS_IOS
-// FIXME: Expose symbols to tell dyld where to find JavaScriptCore on older versions of
-// iOS (< 7.0). We should remove these symbols once we no longer need to support such
-// versions of iOS. See <rdar://problem/13696872> for more details.
-JS_EXPORT extern const char iosInstallName43 __asm("$ld$install_name$os4.3$/System/Library/PrivateFrameworks/JavaScriptCore.framework/JavaScriptCore");
-JS_EXPORT extern const char iosInstallName50 __asm("$ld$install_name$os5.0$/System/Library/PrivateFrameworks/JavaScriptCore.framework/JavaScriptCore");
-JS_EXPORT extern const char iosInstallName51 __asm("$ld$install_name$os5.1$/System/Library/PrivateFrameworks/JavaScriptCore.framework/JavaScriptCore");
-JS_EXPORT extern const char iosInstallName60 __asm("$ld$install_name$os6.0$/System/Library/PrivateFrameworks/JavaScriptCore.framework/JavaScriptCore");
-JS_EXPORT extern const char iosInstallName61 __asm("$ld$install_name$os6.1$/System/Library/PrivateFrameworks/JavaScriptCore.framework/JavaScriptCore");
-
-const char iosInstallName43 = 0;
-const char iosInstallName50 = 0;
-const char iosInstallName51 = 0;
-const char iosInstallName60 = 0;
-const char iosInstallName61 = 0;
-#endif
