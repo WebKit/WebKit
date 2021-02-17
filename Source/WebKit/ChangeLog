@@ -1,5 +1,17 @@
 2021-02-16  Per Arne  <pvollan@apple.com>
 
+        [macOS] Remove access to IOAccelerationUserClient
+        https://bugs.webkit.org/show_bug.cgi?id=221967
+        <rdar://problem/70495933>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to IOAccelerationUserClient in the WebContent process on macOS when the GPU process is enabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-02-16  Per Arne  <pvollan@apple.com>
+
         Update syntax in the sandbox bootstrap filter
         https://bugs.webkit.org/show_bug.cgi?id=221913
         <rdar://problem/73463985>

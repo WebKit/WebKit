@@ -1820,7 +1820,6 @@
         (iokit-registry-entry-class
             "AppleIntelMEUserClient"
             "AppleSNBFBUserClient"
-            "IOAccelerationUserClient"
             "IOSurfaceRootUserClient"
         )
     )
@@ -1852,7 +1851,7 @@
         )
     )
 )
-(allow iokit-open (with report)
+(allow iokit-open
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
     (with telemetry-backtrace)
 #endif
@@ -1875,6 +1874,7 @@
             "AppleGraphicsControlClient"
             "AppleGraphicsPolicyClient"
             "AppleMGPUPowerControlClient"
+            "IOAccelerationUserClient"
         )
     )
 )
