@@ -1,3 +1,12 @@
+2021-02-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLib/GTK test expectations gardening
+
+        * platform/glib/TestExpectations: These tests are expected to fail with GPU process and on
+        Mac, but pass on GTK and WPE
+        * platform/gtk/TestExpectations: Unflag
+        http/tests/inspector/network/intercept-request-properties.html passing since r272582.
+
 2021-02-17  Antoine Quint  <graouts@webkit.org>
 
         CSS properties that disallow negative values should not animate to negative values

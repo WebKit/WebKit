@@ -207,6 +207,32 @@ webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba
 webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass ]
 webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass ]
 
+# These tests are expected to fail with GPU process and on Mac, but pass on GTK and WPE
+http/tests/media/hls/hls-progress.html [ Pass ]
+http/tests/media/media-document-referer.html [ Pass ]
+http/tests/media/media-document.html [ Pass ]
+http/tests/media/media-play-stream-chunked-icy.html [ Pass ]
+http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Pass ]
+http/tests/media/video-auth.html [ Pass ]
+http/tests/media/video-no-content-length-stall.html [ Pass ]
+http/tests/media/video-query-url.html [ Pass ]
+http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Pass ]
+http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass ]
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Pass ]
+http/tests/security/video-cross-origin-caching.html [ Pass ]
+media/media-can-play-webm.html [ Pass ]
+media/media-controller-time-constant.html [ Pass ]
+media/media-controller-time.html [ Pass ]
+media/media-controller-unpause.html [ Pass ]
+media/mediacapabilities/mediacapabilities-types.html [ Pass ]
+media/video-canvas-createPattern.html [ Pass ]
+media/video-canvas-drawing-output.html [ Pass ]
+media/video-controller-currentTime-rate.html [ Pass ]
+media/video-object-fit.html [ Pass ]
+webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
+webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
