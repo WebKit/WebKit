@@ -483,7 +483,10 @@ private:
     CGRect _imageExtractionInteractionBounds;
     Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;
     std::unique_ptr<WebKit::SuppressInteractionToken> _suppressImageExtractionToken;
-#endif
+#if USE(UICONTEXTMENU)
+    RetainPtr<UIMenu> _imageExtractionContextMenu;
+#endif // USE(UICONTEXTMENU)
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>

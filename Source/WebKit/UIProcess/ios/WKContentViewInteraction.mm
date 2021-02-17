@@ -9716,7 +9716,7 @@ static NSArray<UIMenuElement *> *menuElementsFromLegacyPreview(UIViewController 
     return actions;
 }
 
-static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
 {
     if (!defaultElementActions || !defaultElementActions.get().count)
         return nil;
@@ -9988,6 +9988,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
                 RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
                 auto actions = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+#if ENABLE(IMAGE_EXTRACTION)
+                if (UIMenu *imageExtractionContextMenu = strongSelf->_imageExtractionContextMenu.get())
+                    [actions addObject:imageExtractionContextMenu];
+#endif // ENABLE(IMAGE_EXTRACTION)
                 return [UIMenu menuWithTitle:strongSelf->_positionInformation.title children:actions];
             };
 
@@ -10241,6 +10245,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     _contextMenuLegacyMenu = nullptr;
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    _imageExtractionContextMenu.clear();
+#endif // ENABLE(IMAGE_EXTRACTION)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
         auto strongSelf = weakSelf.get();
