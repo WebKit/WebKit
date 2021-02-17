@@ -303,7 +303,6 @@
     (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
-    (global-name "com.apple.mobileassetd")
     (global-name "com.apple.system.logger")
 )
 

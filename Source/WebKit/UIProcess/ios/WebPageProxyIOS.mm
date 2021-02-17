@@ -1545,10 +1545,9 @@ void WebPageProxy::isUserFacingChanged(bool isUserFacing)
 #if PLATFORM(IOS)
 void WebPageProxy::grantAccessToAssetServices()
 {
-    SandboxExtension::Handle mobileAssetHandle, mobileAssetHandleV2;
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd"_s, WTF::nullopt, mobileAssetHandle);
+    SandboxExtension::Handle mobileAssetHandleV2;
     SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, WTF::nullopt, mobileAssetHandleV2);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandle, mobileAssetHandleV2), 0);
+    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
 }
 
 void WebPageProxy::revokeAccessToAssetServices()

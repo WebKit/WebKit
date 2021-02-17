@@ -1,5 +1,27 @@
 2021-02-16  Per Arne  <pvollan@apple.com>
 
+        [iOS] Remove access to the Mobile asset service
+        https://bugs.webkit.org/show_bug.cgi?id=221959
+        <rdar://problem/73362858>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to the Mobile asset service in the WebContent process, since there are no longer reports of this being in use.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::nonBrowserServices):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::grantAccessToAssetServices):
+
+2021-02-16  Per Arne  <pvollan@apple.com>
+
         [macOS] Remove access to IOAccelerationUserClient
         https://bugs.webkit.org/show_bug.cgi?id=221967
         <rdar://problem/70495933>

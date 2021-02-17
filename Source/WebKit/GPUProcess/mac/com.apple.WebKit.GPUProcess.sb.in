@@ -647,7 +647,6 @@
     (global-name "com.apple.cookied")
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
-    (global-name "com.apple.mobileassetd")
 )
 
 (with-filter (system-attribute apple-internal)

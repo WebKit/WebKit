@@ -227,7 +227,6 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
     ASSERT(isMainThread());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.lsd.open"_s,
-        "com.apple.mobileassetd"_s,
         "com.apple.iconservices"_s,
         "com.apple.PowerManagement.control"_s,
         "com.apple.frontboard.systemappservices"_s

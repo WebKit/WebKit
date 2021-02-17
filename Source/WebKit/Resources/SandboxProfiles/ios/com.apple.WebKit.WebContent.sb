@@ -711,10 +711,6 @@
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
 
-;; FIXME(209309): Remove this telemetry once we have confirmed there are no more lookups.
-(deny mach-lookup (with telemetry-backtrace)
-       (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
-
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
     "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
@@ -1067,7 +1063,6 @@
             "com.apple.frontboard.systemappservices"
             "com.apple.iconservices"
             "com.apple.lsd.open"
-            "com.apple.mobileassetd" 
         )
     )
 )

@@ -1127,22 +1127,18 @@ void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handle
 #endif
 
 #if PLATFORM(IOS)
-void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
+void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {
-    if (m_assetServiceExtension && m_assetServiceV2Extension)
+    if (m_assetServiceV2Extension)
         return;
-    m_assetServiceExtension = SandboxExtension::create(WTFMove(mobileAssetHandle));
-    m_assetServiceExtension->consume();
     m_assetServiceV2Extension = SandboxExtension::create(WTFMove(mobileAssetV2Handle));
     m_assetServiceV2Extension->consume();
 }
 
 void WebProcess::revokeAccessToAssetServices()
 {
-    if (!m_assetServiceExtension || !m_assetServiceV2Extension)
+    if (!m_assetServiceV2Extension)
         return;
-    m_assetServiceExtension->revoke();
-    m_assetServiceExtension = nullptr;
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
 }

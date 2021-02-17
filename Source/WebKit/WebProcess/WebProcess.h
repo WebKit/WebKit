@@ -338,7 +338,7 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-    void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
+    void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
     void revokeAccessToAssetServices();
 #endif
 
@@ -700,7 +700,6 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    RefPtr<SandboxExtension> m_assetServiceExtension;
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
 #endif
 
