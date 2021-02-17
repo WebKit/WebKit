@@ -254,6 +254,7 @@ UIProcess/API/C/mac/WKPagePrivateMac.mm
 UIProcess/API/C/mac/WKProtectionSpaceNS.mm
 
 UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+UIProcess/API/Cocoa/_WKAppHighlight.mm
 UIProcess/API/Cocoa/_WKApplicationManifest.mm
 UIProcess/API/Cocoa/_WKAttachment.mm
 UIProcess/API/Cocoa/_WKAutomationSession.mm

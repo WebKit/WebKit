@@ -1,3 +1,15 @@
+2021-02-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Change App Highlight delegate to pass more information about the highlight for display.
+        https://bugs.webkit.org/show_bug.cgi?id=222014
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _storeAppHighlight:]):
+        * UIProcess/API/Cocoa/_WKAppHighlightDelegate.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-17  Devin Rousso  <drousso@apple.com>
 
         [iOS] Add support for additional accessibility image extraction contextmenu actions

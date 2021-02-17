@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#if HAVE(CONTACTSUI)
+#if TARGET_OS_IPHONE
+@class UIImage;
+#else
+@class NSImage;
+#endif
 
-#include <wtf/Forward.h>
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKAppHighlight : NSObject
 
-@class WKWebView;
-@protocol WKContactPickerDelegate;
+- (instancetype)init NS_UNAVAILABLE;
 
-namespace WebCore {
-struct ContactInfo;
-struct ContactsRequestData;
-}
+@property (nonatomic, readonly, copy) NSData *highlight;
 
-@interface WKContactPicker : NSObject
+@property (nonatomic, readonly, copy) NSString *text;
 
-- (instancetype)initWithView:(WKWebView *)view;
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, copy) UIImage *image;
+#else
+@property (nonatomic, readonly, copy) NSImage *image;
+#endif
 
-- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
-
-@property (nonatomic, weak) id<WKContactPickerDelegate> delegate;
 
 @end
-
-@protocol WKContactPickerDelegate <NSObject>
-@optional
-- (void)contactPickerDidPresent:(WKContactPicker *)contactPicker;
-- (void)contactPickerDidDismiss:(WKContactPicker *)contactPicker;
-@end
-
-@interface WKContactPicker (WKTesting)
-- (void)dismissWithContacts:(NSArray *)contacts;
-@end
-
-#endif // HAVE(CONTACTSUI)

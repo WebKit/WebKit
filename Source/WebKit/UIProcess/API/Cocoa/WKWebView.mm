@@ -100,6 +100,7 @@
 #import "WebViewImpl.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
+#import "_WKAppHighlightInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -1417,14 +1418,23 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)_storeAppHighlight:(const WebCore::AppHighlight&)highlightInformation
+- (void)_storeAppHighlight:(const WebCore::AppHighlight&)highlight
 {
     auto delegate = self._appHighlightDelegate;
     if (!delegate)
         return;
 
-    if ([delegate respondsToSelector:@selector(_webView:updateAppHighlightsStorage:)])
-        [delegate _webView:self updateAppHighlightsStorage:highlightInformation.highlight->createNSData().get()];
+    if (![delegate respondsToSelector:@selector(_webView:storeAppHighlight:inNewGroup:)])
+        return;
+
+    NSString *text = nil;
+
+    if (highlight.text)
+        text = highlight.text.value();
+
+    auto wkHighlight = adoptNS([[_WKAppHighlight alloc] initWithHighlight:highlight.highlight->createNSData().get() text:text image:nil]);
+
+    [delegate _webView:self storeAppHighlight:wkHighlight.get() inNewGroup:highlight.isNewGroup == WebCore::CreateNewGroupForHighlight::Yes ? YES : NO];
 }
 #endif
 

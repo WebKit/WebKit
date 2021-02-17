@@ -25,11 +25,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class _WKAppHighlight;
+
 @protocol _WKAppHighlightDelegate <NSObject>
 
 @optional
 
-- (void)_webView:(WKWebView *)webView updateAppHighlightsStorage:(NSData *)data;
+- (void)_webView:(WKWebView *)webView updateAppHighlightsStorage:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+- (void)_webView:(WKWebView *)webView storeAppHighlight:(_WKAppHighlight *)highlight inNewGroup:(BOOL)inNewGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

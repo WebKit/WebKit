@@ -26,8 +26,10 @@
 #import "config.h"
 #import "_WKInspectorExtensionInternal.h"
 
+#import "InspectorExtensionTypes.h"
 #import "WKError.h"
 #import "WKWebViewInternal.h"
+#import <WebCore/ExceptionDetails.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 
@@ -53,7 +55,7 @@
 {
     _extension->createTab(tabName, tabIconURL, sourceURL, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
             return;
         }
 
@@ -67,7 +69,7 @@
     Optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? makeOptional(URL(contextSecurityOrigin)) : WTF::nullopt;
     _extension->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (WebKit::InspectorExtensionEvaluationResult&& result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
             return;
         }
         
