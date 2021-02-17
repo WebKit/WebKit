@@ -9,20 +9,24 @@ Setting mode to 'showing' for first text track via JavaScript...
 Tapping tracks button...
 [
   {
-    "title": "Subtitles",
     "children": [
       {
-        "title": "Off"
-      },
-      {
-        "title": "Auto (Recommended)"
-      },
-      {
-        "title": "English",
-        "checked": true
-      },
-      {
-        "title": "French"
+        "title": "Subtitles",
+        "children": [
+          {
+            "title": "Off"
+          },
+          {
+            "title": "Auto (Recommended)"
+          },
+          {
+            "title": "English",
+            "checked": true
+          },
+          {
+            "title": "French"
+          }
+        ]
       }
     ]
   }
@@ -33,20 +37,24 @@ PASS media.textTracks[1].mode is 'showing'
 Tapping tracks button...
 [
   {
-    "title": "Subtitles",
     "children": [
       {
-        "title": "Off"
-      },
-      {
-        "title": "Auto (Recommended)",
-        "checked": true
-      },
-      {
-        "title": "English"
-      },
-      {
-        "title": "French"
+        "title": "Subtitles",
+        "children": [
+          {
+            "title": "Off"
+          },
+          {
+            "title": "Auto (Recommended)",
+            "checked": true
+          },
+          {
+            "title": "English"
+          },
+          {
+            "title": "French"
+          }
+        ]
       }
     ]
   }

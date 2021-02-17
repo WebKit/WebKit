@@ -41,14 +41,20 @@ async function clickOnSecondAudioTrack()
 {
     debug("Selecting second audio track...");
     let contextmenu = await getTracksContextMenu();
-    await UIHelper.chooseMenuAction(contextmenu[0].children[1].title);
+    let languagesMenu = contextmenu[0].children[0];
+    await UIHelper.chooseMenuAction(languagesMenu.title);
+    await UIHelper.delayFor(500); // give time for the UIMenu to animate
+    await UIHelper.chooseMenuAction(languagesMenu.children[1].title);
 }
 
 async function clickOnThirdAudioTrack()
 {
     debug("Selecting third audio track...");
     let contextmenu = await getTracksContextMenu();
-    await UIHelper.chooseMenuAction(contextmenu[0].children[2].title);
+    let languagesMenu = contextmenu[0].children[0];
+    await UIHelper.chooseMenuAction(languagesMenu.title);
+    await UIHelper.delayFor(500); // give time for the UIMenu to animate
+    await UIHelper.chooseMenuAction(languagesMenu.children[2].title);
 }
 
 async function handleAudioTracksChange()
