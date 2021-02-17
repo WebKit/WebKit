@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 
 namespace WebCore {
 enum class FrameLoadType : uint8_t;
+class ResourceResponse;
 }
 
 namespace WebKit {
@@ -59,6 +60,8 @@ public:
         , baseURL(baseURL)
         , userData(userData)
     { }
+
+    SubstituteData(Vector<uint8_t>&& content, const WebCore::ResourceResponse&, API::Object* userData);
 
     Vector<uint8_t> content;
     WTF::String MIMEType;
@@ -88,6 +91,11 @@ public:
     static Ref<Navigation> create(WebKit::WebNavigationState& state, std::unique_ptr<SubstituteData>&& substituteData)
     {
         return adoptRef(*new Navigation(state, WTFMove(substituteData)));
+    }
+
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, WebKit::WebBackForwardListItem* fromItem)
+    {
+        return adoptRef(*new Navigation(state, WTFMove(simulatedRequest), WTFMove(substituteData), fromItem));
     }
 
     virtual ~Navigation();
@@ -166,6 +174,7 @@ private:
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
     Navigation(WebKit::WebNavigationState&, std::unique_ptr<SubstituteData>&&);
+    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, WebKit::WebBackForwardListItem* fromItem);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_originalRequest;

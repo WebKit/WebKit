@@ -24,17 +24,22 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
 
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
-static NSURL *exampleURL = [NSURL URLWithString:@"https://example.com"];
+static NSString *exampleURLString = @"https://example.com";
+static NSURL *exampleURL = [NSURL URLWithString:exampleURLString];
 static NSString *htmlString = @"<html><body><h1>Hello, world!</h1></body></html>";
+static NSString *exampleURLString2 = @"https://example.org";
+static NSURL *exampleURL2 = [NSURL URLWithString:exampleURLString2];
+static NSString *htmlString2 = @"<html><body><h1>Hello, new world!</h1></body></html>";
 
 TEST(WKWebView, LoadSimulatedRequestUsingResponseHTMLString)
 {
@@ -77,4 +82,53 @@ TEST(WKWebView, LoadFileRequest)
     [webView loadFileRequest:request allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
     [delegate waitForDidFinishNavigation];
     EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
+}
+
+TEST(WKWebView, LoadSimulatedRequestUpdatesBackForwardList)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *loadRequest = [NSURLRequest requestWithURL:exampleURL];
+    [webView loadSimulatedRequest:loadRequest withResponseHTMLString:htmlString];
+    [delegate waitForDidFinishNavigation];
+
+    NSURLRequest *loadRequest2 = [NSURLRequest requestWithURL:exampleURL2];
+    [webView loadSimulatedRequest:loadRequest2 withResponseHTMLString:htmlString2];
+    [delegate waitForDidFinishNavigation];
+    
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_WK_STREQ(exampleURLString2, [list.currentItem.URL absoluteString]);
+    EXPECT_EQ((NSUInteger)1, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_TRUE(!list.forwardItem);
+    EXPECT_WK_STREQ(exampleURLString, [list.backItem.URL absoluteString]);
+    
+    EXPECT_TRUE([webView canGoBack]);
+    if (![webView canGoBack])
+        return;
+
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(exampleURLString, [list.currentItem.URL absoluteString]);
+    EXPECT_EQ((NSUInteger)0, list.backList.count);
+    EXPECT_EQ((NSUInteger)1, list.forwardList.count);
+    EXPECT_TRUE(!list.backItem);
+    EXPECT_WK_STREQ(exampleURLString2, [list.forwardItem.URL absoluteString]);
+
+    EXPECT_TRUE([webView canGoForward]);
+    if (![webView canGoForward])
+        return;
+
+    [webView goForward];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(exampleURLString2, [list.currentItem.URL absoluteString]);
+    EXPECT_EQ((NSUInteger)1, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_TRUE(!list.forwardItem);
+    EXPECT_WK_STREQ(exampleURLString, [list.backItem.URL absoluteString]);
 }

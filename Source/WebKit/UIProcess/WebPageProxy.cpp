@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1470,6 +1470,59 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     process->assumeReadAccessToBaseURL(*this, baseURL);
     process->send(Messages::WebPage::LoadData(loadParameters), webPageID);
     process->startResponsivenessTimer();
+}
+
+RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, const IPC::DataReference& data)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "loadSimulatedRequest:");
+
+#if ENABLE(APP_BOUND_DOMAINS)
+    if (simulatedResponse.mimeType() == "text/html"_s && !isFullWebBrowser())
+        m_limitsNavigationsToAppBoundDomains = true;
+#endif
+
+    if (m_isClosed) {
+        RELEASE_LOG_IF_ALLOWED(Loading, "loadSimulatedRequest: page is closed");
+        return nullptr;
+    }
+
+    if (!hasRunningProcess())
+        launchProcess(RegistrableDomain { simulatedRequest.url() }, ProcessLaunchReason::InitialProcess);
+
+    auto navigation = m_navigationState->createSimulatedLoadWithDataNavigation(ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(data.vector(), ResourceResponse(simulatedResponse), nullptr), m_backForwardList->currentItem());
+
+    if (shouldForceForegroundPriorityForClientNavigation())
+        navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
+
+    auto transaction = m_pageLoadState.transaction();
+
+    auto baseURL = simulatedRequest.url().string();
+    simulatedResponse.setURL(simulatedRequest.url()); // These should always match for simulated load
+
+    m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), !baseURL.isEmpty() ? baseURL : aboutBlankURL().string() });
+
+    LoadParameters loadParameters;
+    loadParameters.navigationID = navigation->navigationID();
+    loadParameters.request = WTFMove(simulatedRequest);
+    loadParameters.data = data;
+    loadParameters.MIMEType = simulatedResponse.mimeType();
+    loadParameters.encodingName = simulatedResponse.textEncodingName();
+    loadParameters.baseURLString = baseURL;
+    loadParameters.shouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+    loadParameters.shouldTreatAsContinuingLoad = false;
+    loadParameters.lockHistory = navigation->lockHistory();
+    loadParameters.lockBackForwardList = navigation->lockBackForwardList();
+    loadParameters.clientRedirectSourceForHistory = navigation->clientRedirectSourceForHistory();
+    loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain();
+
+    simulatedResponse.setExpectedContentLength(data.size());
+
+    addPlatformLoadParameters(m_process, loadParameters);
+
+    m_process->assumeReadAccessToBaseURL(*this, baseURL);
+    m_process->send(Messages::WebPage::LoadSimulatedRequestAndResponse(loadParameters, simulatedResponse), m_webPageID);
+    m_process->startResponsivenessTimer();
+    return navigation;
 }
 
 void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const String& encoding, const URL& baseURL, const URL& unreachableURL, API::Object* userData)

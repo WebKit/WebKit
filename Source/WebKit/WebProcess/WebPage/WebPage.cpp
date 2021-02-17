@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -1719,6 +1719,45 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);    
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain);
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL({ });
+}
+
+void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)
+{
+    ASSERT(simulatedResponse.url() == loadParameters.request.url());
+    ASSERT(simulatedResponse.mimeType() == loadParameters.MIMEType);
+    ASSERT(simulatedResponse.textEncodingName() == loadParameters.encodingName);
+    ASSERT(static_cast<size_t>(simulatedResponse.expectedContentLength()) == loadParameters.data.size());
+
+    platformDidReceiveLoadParameters(loadParameters);
+
+    auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(loadParameters.data.data()), loadParameters.data.size());
+
+#if ENABLE(APP_BOUND_DOMAINS)
+    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
+#endif
+
+    SendStopResponsivenessTimer stopper;
+
+    m_pendingNavigationID = loadParameters.navigationID;
+    m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
+
+    SubstituteData substituteData(WTFMove(sharedBuffer), loadParameters.request.url(), simulatedResponse, SubstituteData::SessionHistoryVisibility::Visible);
+
+    // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
+    // to all the client to set up any needed state.
+    m_loaderClient->willLoadDataRequest(*this, loadParameters.request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
+
+    // Initate the load in WebCore.
+    FrameLoadRequest frameLoadRequest(*m_mainFrame->coreFrame(), loadParameters.request, substituteData);
+    frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
+    frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
+    frameLoadRequest.setLockHistory(loadParameters.lockHistory);
+    frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
+    frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
+    frameLoadRequest.setIsRequestFromClientOrUserInput();
+
+    // FIXME: Should this be "corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));"?
+    m_mainFrame->coreFrame()->loader().load(WTFMove(frameLoadRequest));
 }
 
 void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)

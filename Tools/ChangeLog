@@ -1,3 +1,17 @@
+2021-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand stubs to thread actual NSURLRequest/NSURLResponse for the new simulated-request API
+        https://bugs.webkit.org/show_bug.cgi?id=221641
+        <rdar://problem/74166568>
+
+        Reviewed by Chris Dumez.
+
+        Add a new test to confirm that simulated loads work and are properly added to the
+        back-forward list.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm:
+        (TEST):
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Use smart pointer for WebView ownership in DumpRenderTree

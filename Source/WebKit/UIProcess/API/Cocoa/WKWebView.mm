@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2105,7 +2105,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
 {
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, response.MIMEType, response.textEncodingName, request.URL.absoluteString));
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string

@@ -1,3 +1,41 @@
+2021-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand stubs to thread actual NSURLRequest/NSURLResponse for the new simulated-request API
+        https://bugs.webkit.org/show_bug.cgi?id=221641
+        <rdar://problem/74166568>
+
+        Reviewed by Chris Dumez.
+
+        Tested by new API Test LoadSimulatedRequestUpdatesBackForwardList.
+
+        This bug builds on the stubs created in Bug 221430 to use actual Request and
+        Response objects for simulated loads:
+
+        1. Thread the NSURLRequest and NSURLResponse objects to the loading layer when handling loads
+           for HTML strings and data.
+        2. Loads via the simulated request API should cause entries to be added to the back/forward list.
+        3. Create a new API Test to confirm the back/forward list works as expected.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::SubstituteData::SubstituteData): New convenience constructor accepting a ResourceResponse.
+        (API::Navigation::Navigation): Ditto.
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::create): Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadSimulatedRequest:withResponse:responseData:]): Switch from using the plain 'loadData'
+        method to the new 'loadSimulatedRequest' implementation.
+        * UIProcess/WebNavigationState.cpp:
+        (WebKit::WebNavigationState::createSimulatedLoadWithDataNavigation): Added.
+        * UIProcess/WebNavigationState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadSimulatedRequest): New method to support the loadSimulatedRequest WKWebView API.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadSimulatedRequestAndResponse): Added message handler to perform a simulated load using
+        ResourceRequest and ResourceResponse objects.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added LoadSimulatedRequestAndResponse IPC message.
+
 2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
