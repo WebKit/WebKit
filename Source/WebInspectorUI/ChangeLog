@@ -1,3 +1,17 @@
+2021-02-18  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Update .eslintrc to account for ECMAScript 2021
+        https://bugs.webkit.org/show_bug.cgi?id=222107
+
+        Reviewed by BJ Burg.
+
+        Add ES2021 parser option so ESLint-based linters don't throw errors
+        for newer JavaScript features, like logical assignment operators (??=, &&=, ||=)
+
+        Note: The linter in an editor must support ESLint v7.8.0 or newer to understand ES2021.
+
+        * .eslintrc:
+
 2021-02-16  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Grids with overlays that disappear and reappear remain checked in Layout pane, toggling hits assertion
