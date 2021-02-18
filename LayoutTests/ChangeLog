@@ -1,3 +1,12 @@
+2021-02-18  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r273004): [ macOS ] media/modern-media-controls/volume-support/volume-support-drag.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=222117
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-02-18  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html is consistently failing

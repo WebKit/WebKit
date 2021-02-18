@@ -1848,8 +1848,6 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
-webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
-
 # Certain versions of macOS use different text security characters.
 webkit.org/b/209692 [ Mojave Catalina ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ ImageOnlyFailure ]
 
@@ -2291,3 +2289,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-sty
 imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
 
 webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ Failure ]
+
+webkit.org/b/222117 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
+webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
