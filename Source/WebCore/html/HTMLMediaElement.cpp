@@ -7577,6 +7577,12 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
         if (((m_videoFullscreenMode == VideoFullscreenModeStandard) || m_videoFullscreenStandby) && supportsPictureInPicture() && isPlaying())
             return true;
 #endif
+#if ENABLE(MEDIA_STREAM)
+        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
+            return true;
+        }
+#endif
     } else if (type == PlatformMediaSession::SuspendedUnderLock) {
         if (isPlayingToExternalTarget()) {
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
@@ -7586,6 +7592,12 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToAutomotiveHeadUnit() is true");
             return true;
         }
+#if ENABLE(MEDIA_STREAM)
+        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
+            return true;
+        }
+#endif
     }
     return false;
 }
