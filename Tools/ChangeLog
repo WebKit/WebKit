@@ -1,3 +1,14 @@
+2021-02-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening most common EWS flakiness
+
+        Unreviewed test gardening.
+
+        Flakiness happening mostly on a single bot. Marking them temporarily
+        as flaky until investigation is performed.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [Python-3] Child process environment on Windows can only contain strings

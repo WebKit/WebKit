@@ -113,6 +113,9 @@
             },
             "/webkit/WebKitWebContext/languages": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
+            },
+            "/webkit/WebKitWebContext/proxy": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188111"}}
             }
         }
     },
@@ -294,6 +297,13 @@
         "subtests": {
             "/jsc/vm": {
                 "expected": {"all": {"slow": true}}
+            }
+        }
+    },
+    "TestWebKitPolicyClient": {
+        "subtests": {
+            "/webkit/WebKitPolicyClient/autoplay-policy": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"}}
             }
         }
     }
