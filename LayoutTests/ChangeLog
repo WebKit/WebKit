@@ -1,5 +1,14 @@
 2021-02-17  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur WK1] media/video-multiple-concurrent-playback.html is flakey text failing
+        https://bugs.webkit.org/show_bug.cgi?id=221368
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-02-17  Robert Jenner  <jenner@apple.com>
+
         [ MacOS Wk2 ] inspector/model/remote-object/array-large.html is a flakey timeout
         https://bugs.webkit.org/show_bug.cgi?id=221849
 
