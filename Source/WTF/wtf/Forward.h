@@ -71,9 +71,7 @@ template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
 template<typename T, typename = RawPtrTraits<T>> class Ref;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
-#if USE(CF) || defined(__OBJC__)
 template<typename T> class RetainPtr;
-#endif
 template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
@@ -129,6 +127,7 @@ using WTF::RawPtrTraits;
 using WTF::RawValueTraits;
 using WTF::Ref;
 using WTF::RefPtr;
+using WTF::RetainPtr;
 using WTF::SHA1;
 using WTF::String;
 using WTF::StringBuffer;
@@ -142,10 +141,6 @@ using WTF::URL;
 using WTF::UniqueRef;
 using WTF::Variant;
 using WTF::Vector;
-
-#if USE(CF) || defined(__OBJC__)
-using WTF::RetainPtr;
-#endif
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;
 template<class E> using Unexpected = std::experimental::unexpected<E>;

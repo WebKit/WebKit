@@ -1,5 +1,11 @@
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address post-landing review comments from Darin Adler for r273046.
+
+        * wtf/Forward.h:
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
         DumpRenderTree's createWebViewAndOffscreenWindow() should return a RetainPtr
         https://bugs.webkit.org/show_bug.cgi?id=222068
 
