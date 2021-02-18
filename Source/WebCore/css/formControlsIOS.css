@@ -61,20 +61,20 @@ input[type="search"]::-webkit-search-results-button {
 input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::file-selector-button, button {
     border: initial;
     font: 11px system-ui;
-    font-weight: bold;
 }
 
 /* FIXME: Use semantic colors once final specifications are obtained. */
 /* FIXME: Add styles for additional button states once final specifications are obtained. */
 
 input:matches([type="button"], [type="reset"]), input[type="file"]::file-selector-button, button {
-    background-color: rgb(235, 245, 255);
-    color: rgb(22, 122, 255);
+    background-color: rgb(238, 238, 238);
+    color: rgb(0, 122, 255);
 }
 
 input[type="submit"] {
     background-color: rgb(22, 122, 255);
     color: white;
+    font-weight: bold;
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb:active {
