@@ -31,7 +31,6 @@
 #include "GenericTaskQueue.h"
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
-#include <pal/system/SystemSleepListener.h>
 
 namespace WebCore {
 
@@ -40,7 +39,6 @@ struct NowPlayingInfo;
 class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
     , private RemoteCommandListenerClient
-    , private PAL::SystemSleepListener::Client
     , private AudioHardwareListener::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -100,10 +98,6 @@ private:
     void audioHardwareDidBecomeInactive() final { }
     void audioOutputDeviceChanged() final;
 
-    // PAL::SystemSleepListener
-    void systemWillSleep() final { processSystemWillSleep(); }
-    void systemDidWake() final { processSystemDidWake(); }
-
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
     bool m_haveEverRegisteredAsNowPlayingApplication { false };
@@ -117,7 +111,6 @@ private:
     GenericTaskQueue<Timer> m_taskQueue;
 
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
-    std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
 };
 

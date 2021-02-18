@@ -1212,6 +1212,18 @@ void WebProcess::systemWillPowerOn()
 {
     MainThreadSharedTimer::restartSharedTimer();
 }
+
+void WebProcess::systemWillSleep()
+{
+    if (PlatformMediaSessionManager::sharedManagerIfExists())
+        PlatformMediaSessionManager::sharedManager().processSystemWillSleep();
+}
+
+void WebProcess::systemDidWake()
+{
+    if (PlatformMediaSessionManager::sharedManagerIfExists())
+        PlatformMediaSessionManager::sharedManager().processSystemDidWake();
+}
 #endif
 
 } // namespace WebKit

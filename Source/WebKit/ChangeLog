@@ -1,3 +1,25 @@
+2021-02-18  Per Arne  <pvollan@apple.com>
+
+        [macOS] Observe system sleep events in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=221996
+        <rdar://problem/74406570>
+
+        Reviewed by Chris Dumez.
+
+        System sleep events should be observed in the UI process, which should notify the WebContent process.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        (WebKit::WebProcessPool::systemWillSleep):
+        (WebKit::WebProcessPool::systemDidWake):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::systemWillSleep):
+        (WebKit::WebProcess::systemDidWake):
+
 2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL contexts do not work as source for Context2D drawImage calls in GPU process

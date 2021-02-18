@@ -198,5 +198,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
 #if PLATFORM(MAC)
     SystemWillPowerOn()
+    SystemWillSleep()
+    SystemDidWake()
 #endif
 }

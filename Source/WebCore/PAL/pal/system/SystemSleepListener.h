@@ -36,7 +36,7 @@ public:
         virtual void systemDidWake() = 0;
     };
 
-    static std::unique_ptr<SystemSleepListener> create(Client&);
+    PAL_EXPORT static std::unique_ptr<SystemSleepListener> create(Client&);
     virtual ~SystemSleepListener() = default;
 
     Client& client() { return m_client; }

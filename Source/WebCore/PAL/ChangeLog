@@ -1,3 +1,15 @@
+2021-02-18  Per Arne  <pvollan@apple.com>
+
+        [macOS] Observe system sleep events in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=221996
+        <rdar://problem/74406570>
+
+        Reviewed by Chris Dumez.
+
+        Export symbols, since the system sleep listener will be instantiated in the UI process.
+
+        * pal/system/SystemSleepListener.h:
+
 2021-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Apple internal iOS build after r272878

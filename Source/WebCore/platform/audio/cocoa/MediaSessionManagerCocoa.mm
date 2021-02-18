@@ -55,7 +55,6 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 #endif // !PLATFORM(MAC)
 
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
-    : m_systemSleepListener(PAL::SystemSleepListener::create(*this))
 {
 }
 

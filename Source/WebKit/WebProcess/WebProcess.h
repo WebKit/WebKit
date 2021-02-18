@@ -513,6 +513,8 @@ private:
 
 #if PLATFORM(MAC)
     void systemWillPowerOn();
+    void systemWillSleep();
+    void systemDidWake();
 #endif
     
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
