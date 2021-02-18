@@ -63,8 +63,15 @@ struct RangeResponseGenerator::Data {
     RefPtr<PlatformMediaResource> resource;
 };
 
-RangeResponseGenerator::RangeResponseGenerator() = default;
-RangeResponseGenerator::~RangeResponseGenerator() = default;
+RangeResponseGenerator::RangeResponseGenerator()
+{
+    ASSERT(isMainThread());
+}
+
+RangeResponseGenerator::~RangeResponseGenerator()
+{
+    ASSERT(isMainThread());
+}
 
 static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, Optional<size_t> totalContentLength)
 {
@@ -86,14 +93,11 @@ static ResourceResponse synthesizedResponseForRange(const ResourceResponse& orig
 
 void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 {
-    callOnMainThread([task = retainPtr(task), weakThis = makeWeakPtr(*this)] {
-        if (!weakThis)
-            return;
-        auto* data = weakThis->m_map.get(task.get().originalRequest.URL.absoluteString);
-        if (!data)
-            return;
-        data->taskData.remove(task);
-    });
+    ASSERT(isMainThread());
+    auto* data = m_map.get(task.originalRequest.URL.absoluteString);
+    if (!data)
+        return;
+    data->taskData.remove(task);
 }
 
 void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, Optional<size_t> expectedContentLength, const Data& data)
@@ -130,8 +134,10 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
         }
         if (byteIndex >= range.end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
-            if (generator)
-                generator->removeTask(task.get());
+            callOnMainThread([generator, task] {
+                if (generator)
+                    generator->removeTask(task.get());
+            });
         }
     };
 
@@ -266,17 +272,13 @@ private:
         data->resource = nullptr;
         m_generator->giveResponseToTasksWithFinishedRanges(*data);
     }
-    
+
     WeakPtr<RangeResponseGenerator> m_generator;
     const String m_urlString;
 };
 
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    bool rangeResponseGeneratorDisabled = true;
-    if (rangeResponseGeneratorDisabled)
-        return false;
-
     ASSERT(isMainThread());
     NSURLRequest *originalRequest = task.originalRequest;
     if (!originalRequest.URL)

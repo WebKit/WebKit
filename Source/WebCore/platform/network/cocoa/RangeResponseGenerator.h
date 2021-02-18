@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,21 +38,23 @@ struct ParsedRequestRange;
 class PlatformMediaResource;
 class ResourceResponse;
 
-class RangeResponseGenerator : public CanMakeWeakPtr<RangeResponseGenerator> {
+class RangeResponseGenerator : public ThreadSafeRefCounted<RangeResponseGenerator, WTF::DestructionThread::Main>, public CanMakeWeakPtr<RangeResponseGenerator> {
 public:
-    RangeResponseGenerator();
+    static Ref<RangeResponseGenerator> create() { return adoptRef(*new RangeResponseGenerator); }
     ~RangeResponseGenerator();
 
     bool willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *, PlatformMediaResource&, const ResourceResponse&);
     bool willHandleRequest(WebCoreNSURLSessionDataTask *, NSURLRequest *);
+    void removeTask(WebCoreNSURLSessionDataTask *);
 
 private:
+    RangeResponseGenerator();
+
     struct Data;
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);
     void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const ParsedRequestRange&, Optional<size_t> expectedContentLength, const Data&);
     static Optional<size_t> expectedContentLengthFromData(const Data&);
-    void removeTask(WebCoreNSURLSessionDataTask *);
 
     HashMap<String, std::unique_ptr<Data>> m_map;
 };

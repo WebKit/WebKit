@@ -1,3 +1,13 @@
+2021-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix a few issues with RangeResponseGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=222087
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening most common EWS flakiness

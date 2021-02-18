@@ -74,7 +74,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     NSUInteger _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
     WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
-    WebCore::RangeResponseGenerator _rangeResponseGenerator;
+    RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator;
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;

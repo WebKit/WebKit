@@ -234,6 +234,7 @@ NS_ASSUME_NONNULL_END
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
     _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
+    _rangeResponseGenerator = RangeResponseGenerator::create();
 
     return self;
 }
@@ -306,7 +307,7 @@ NS_ASSUME_NONNULL_END
 
 - (WebCore::RangeResponseGenerator&)rangeResponseGenerator
 {
-    return _rangeResponseGenerator;
+    return *_rangeResponseGenerator;
 }
 
 #pragma mark - NSURLSession API
@@ -704,6 +705,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         _resource->setClient(nullptr);
         _resource = nil;
     }
+    if (auto *session = self.session)
+        [session rangeResponseGenerator].removeTask(self);
 }
 
 #pragma mark - NSURLSession API
@@ -812,8 +815,10 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     RetainPtr<NSURLResponse> strongResponse = response.nsURLResponse();
 
-    if (resource && self.session && [self.session rangeResponseGenerator].willSynthesizeRangeResponses(self, *resource, response))
+    if (resource && self.session && [self.session rangeResponseGenerator].willSynthesizeRangeResponses(self, *resource, response)) {
+        _resource = nullptr;
         return completionHandler(ShouldContinuePolicyCheck::Yes);
+    }
     
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     if (!self.session)
