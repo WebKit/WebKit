@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009, 2010, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
@@ -70,6 +70,7 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include "SocketProvider.h"
 #include "StyleProperties.h"

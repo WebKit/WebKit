@@ -1,3 +1,13 @@
+2021-02-17  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for Debug builds using --force-opt=O3.
+
+        Not reviewed.
+
+        #include a needed Inlines.h.
+
+        * Platform/IPC/JSIPCBinding.cpp:
+
 2021-02-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Add additions to LocalConnection.mm
