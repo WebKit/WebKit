@@ -940,7 +940,12 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {u'step': u'Set cq- flag on patch'}
+        elif self.results == SKIPPED:
+            return buildstep.BuildStep.getResultSummary(self)
         return {u'step': u'Failed to set cq- flag on patch'}
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -1011,7 +1016,12 @@ class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {u'step': u'Added comment on bug {}'.format(self.bug_id)}
+        elif self.results == SKIPPED:
+            return buildstep.BuildStep.getResultSummary(self)
         return {u'step': u'Failed to add comment on bug {}'.format(self.bug_id)}
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
 class UnApplyPatchIfRequired(CleanWorkingDirectory):
@@ -3130,6 +3140,9 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         if self.results != SUCCESS:
             return {u'step': u'Failed to push commit to Webkit repository'}
         return shell.ShellCommand.getResultSummary(self)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
 class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):

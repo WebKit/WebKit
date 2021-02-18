@@ -43,7 +43,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
-                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults,
+                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -2743,7 +2743,6 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'release')
@@ -2759,11 +2758,10 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
-        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
     def test_failure(self):
-        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'debug')
@@ -2779,7 +2777,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
-        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
     def test_skipped(self):
@@ -3775,7 +3773,8 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
-        rc = self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
         self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
@@ -3792,7 +3791,8 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        rc = self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
         self.assertEqual(self.getProperty('retry_count'), 1)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
@@ -3811,7 +3811,8 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        rc = self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
         self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
         return rc
