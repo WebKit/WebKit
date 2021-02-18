@@ -3699,6 +3699,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
+#if ENABLE(APP_HIGHLIGHTS)
+    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
+        return self;
+#endif
     return [_webView targetForAction:action withSender:sender];
 }
 

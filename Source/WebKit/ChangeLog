@@ -1,3 +1,13 @@
+2021-02-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Return correct target for App Highlight menus.
+        https://bugs.webkit.org/show_bug.cgi?id=222089
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView targetForAction:withSender:]):
+
 2021-02-17  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Remove RemoteLegacyCDMSessionProxy and RemoteLegacyCDMSessionProxy from the message receiver map in the destructor of RemoteLegacyCDMFactoryProxy
