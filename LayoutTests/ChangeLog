@@ -1,3 +1,13 @@
+2021-02-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Implement section 9.8 Definite and Indefinite Sizes case 1
+        https://bugs.webkit.org/show_bug.cgi?id=219538
+        <rdar://problem/72136484>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Unskipped 8 tests that are passing now.
+
 2021-02-18  Youenn Fablet  <youenn@apple.com>
 
         [GPUP] Test webrtc/audio-video-element-playing.html fails when media in GPU Process is enabled

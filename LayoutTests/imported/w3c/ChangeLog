@@ -1,3 +1,18 @@
+2021-02-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Implement section 9.8 Definite and Indefinite Sizes case 1
+        https://bugs.webkit.org/show_bug.cgi?id=219538
+        <rdar://problem/72136484>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt: Replaced FAIL by PASS expectations.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v-expected.txt: Ditto.
+        * web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html: Updated expectation. Still failing.
+
 2021-02-18  Rob Buis  <rbuis@igalia.com>
 
         Treat <ratio> that ends with forward slash as invalid

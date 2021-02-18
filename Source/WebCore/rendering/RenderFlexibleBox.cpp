@@ -746,12 +746,7 @@ bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child) const
         // We can't compute a ratio in this case.
         return false;
     }
-    Length crossSize;
-    if (isHorizontalFlow())
-        crossSize = child.style().height();
-    else
-        crossSize = child.style().width();
-    return childCrossSizeIsDefinite(child, crossSize);
+    return childCrossSizeIsDefinite(child, isHorizontalFlow() ? child.style().height() : child.style().width());
 }
 
     
@@ -774,7 +769,13 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
     Optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
         crossSize = adjustForBoxSizing(child, crossSizeLength);
-    else {
+    else if (crossSizeLength.isAuto()) {
+        ASSERT(childCrossSizeShouldUseContainerCrossSize(child));
+        auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
+        // Keep this sync'ed with childCrossSizeShouldUseContainerCrossSize().
+        ASSERT(containerCrossSizeLength.isFixed());
+        crossSize = valueForLength(containerCrossSizeLength, -1_lu);
+    } else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
         crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());
         if (!crossSize)
@@ -822,10 +823,29 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
     return true;
 }
 
+bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
+{
+    if (!child.hasAspectRatio() || !child.intrinsicSize().height())
+        return false;
+
+    // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
+    // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
+    // stretched flex items is the flex container's inner cross size (clamped to the flex item's min and max cross size)
+    // and is considered definite.
+    if (!isMultiline() && alignmentForChild(child) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(child)) {
+        // This must be kept in sync with computeMainSizeFromAspectRatioUsing().
+        // FIXME: so far we're only considered fixed sizes but we should extend it to other definite sizes.
+        auto& crossSize = isHorizontalFlow() ? style().height() : style().width();
+        return crossSize.isFixed();
+    }
+    return false;
+}
+
 bool RenderFlexibleBox::childCrossSizeIsDefinite(const RenderBox& child, const Length& length) const
 {
     if (length.isAuto())
         return false;
+
     if (length.isPercentOrCalculated()) {
         if (!mainAxisIsChildInlineAxis(child) || m_hasDefiniteHeight == SizeDefiniteness::Definite)
             return true;
@@ -872,7 +892,7 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
     if (childMainSizeIsDefinite(child, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis).value());
 
-    if (useChildAspectRatio(child)) {
+    if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
         const Length& crossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
         return adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
     }
@@ -1150,10 +1170,15 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
-        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
-        ASSERT(contentSize >= 0);
-        if (child.hasAspectRatio() && child.intrinsicSize().height() > 0)
+        LayoutUnit contentSize;
+        Length childCrossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
+        if (useChildAspectRatio(child))
+            contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
+        else
+            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
+        if (child.hasAspectRatio() && child.intrinsicSize().height())
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
+        ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
         
         Length mainSize = isHorizontalFlow() ? child.style().width() : child.style().height();
@@ -1164,15 +1189,14 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 
-        if (useChildAspectRatio(child)) {
-            Length crossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
-            Optional<LayoutUnit> transferredSize = computeMainSizeFromAspectRatioUsing(child, crossSizeLength);
+        if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
+            Optional<LayoutUnit> transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
             if (transferredSize) {
                 transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize.value());
                 return std::max(childSize, std::min(transferredSize.value(), contentSize));
             }
         }
-        
+
         return std::max(childSize, contentSize);
     }
 
@@ -1221,12 +1245,12 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(co
 {
     Length crossMin = isHorizontalFlow() ? child.style().minHeight() : child.style().minWidth();
     Length crossMax = isHorizontalFlow() ? child.style().maxHeight() : child.style().maxWidth();
-    
+
     if (childCrossSizeIsDefinite(child, crossMax)) {
         LayoutUnit maxValue = computeMainSizeFromAspectRatioUsing(child, crossMax);
         childSize = std::min(maxValue, childSize);
     }
-    
+
     if (childCrossSizeIsDefinite(child, crossMin)) {
         LayoutUnit minValue = computeMainSizeFromAspectRatioUsing(child, crossMin);
         childSize = std::max(minValue, childSize);

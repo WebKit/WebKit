@@ -3918,7 +3918,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-015.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ ImageOnlyFailure ]
-webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-006.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-007.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-010.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ ImageOnlyFailure ]
@@ -3928,8 +3927,6 @@ webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-eleme
 webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ ImageOnlyFailure ]
 webkit.org/b/210144 imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html [ ImageOnlyFailure ]
 webkit.org/b/210478 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-006.html [ ImageOnlyFailure ]
-webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-007.xht [ ImageOnlyFailure ]
-webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-007.xht [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-001.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-002.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-005.html [ ImageOnlyFailure ]
@@ -4048,11 +4045,6 @@ webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-brea
 webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-vert-001b.html [ ImageOnlyFailure ]
 
 # min-size:auto in flexbox.
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002a.html [ ImageOnlyFailure ]
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002c.html [ ImageOnlyFailure ]
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-002a.html [ ImageOnlyFailure ]
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-002c.html [ ImageOnlyFailure ]
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-005.html [ ImageOnlyFailure ]
 webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-026.html [ ImageOnlyFailure ]
 webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-029.html [ ImageOnlyFailure ]
 webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-015.html [ ImageOnlyFailure ]
