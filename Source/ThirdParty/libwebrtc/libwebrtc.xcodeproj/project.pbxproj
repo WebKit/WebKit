@@ -1470,6 +1470,9 @@
 		415F1FB621272FBA00064CBF /* vad_with_level.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BE321272F85001D5D7B /* vad_with_level.h */; };
 		415F1FB721272FBA00064CBF /* vector_float_frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BDD21272F84001D5D7B /* vector_float_frame.h */; };
 		415F1FC62127308F00064CBF /* audio_state.cc in Sources */ = {isa = PBXBuildFile; fileRef = 415F1FC52127308E00064CBF /* audio_state.cc */; };
+		416008B425DBCEC300E892FE /* vp9_header_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
+		416008B525DBD3DE00E892FE /* vp9_header_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */; };
+		416008B625DBD45000E892FE /* vp9_header_parser.h in Copy common headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
 		416225D22169818100A91C9B /* video_decoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 416225CA2169817F00A91C9B /* video_decoder_factory.h */; };
 		416225D32169818100A91C9B /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 416225CB2169818000A91C9B /* video_frame_buffer.h */; };
 		416225D42169818100A91C9B /* video_encoder_factory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 416225CC2169818000A91C9B /* video_encoder_factory.mm */; };
@@ -2225,7 +2228,7 @@
 		41DB1A9424321614005AB8EA /* rtcstats_objects.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DB1A9324321614005AB8EA /* rtcstats_objects.cc */; };
 		41DDB24D21265BD700296D47 /* fixed_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24B21265BD700296D47 /* fixed_array.h */; };
 		41DDB24E21265BD700296D47 /* inlined_vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24C21265BD700296D47 /* inlined_vector.h */; };
-		41DDB25121265BE900296D47 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24F21265BE900296D47 /* optional.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41DDB25121265BE900296D47 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24F21265BE900296D47 /* optional.h */; };
 		41DDB26C212679D200296D47 /* string_builder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB268212679D100296D47 /* string_builder.h */; };
 		41DDB26D212679D200296D47 /* audio_format_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB269212679D100296D47 /* audio_format_to_string.h */; };
 		41DDB26E212679D200296D47 /* string_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DDB26A212679D200296D47 /* string_builder.cc */; };
@@ -3790,7 +3793,6 @@
 		CDEBB4CA24C01A0D00ADBD44 /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
 		CDEBB4D324C0C8CA00ADBD44 /* bit_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB45124C0191A00ADBD44 /* bit_utils.cc */; };
 		CDEBB4D424C0CB1000ADBD44 /* callback.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB48E24C0191A00ADBD44 /* callback.cc */; };
-		CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */; };
 		CDFD2FC524C4DAF70048DAC3 /* buffer_reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40D24C0191A00ADBD44 /* buffer_reader.h */; };
 		CDFD2FC624C4DAF70048DAC3 /* callback.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40E24C0191A00ADBD44 /* callback.h */; };
 		CDFD2FC724C4DAF70048DAC3 /* dom_types.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40B24C0191A00ADBD44 /* dom_types.h */; };
@@ -3801,7 +3803,6 @@
 		CDFD2FCC24C4DAF70048DAC3 /* reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40524C0191A00ADBD44 /* reader.h */; };
 		CDFD2FCD24C4DAF70048DAC3 /* status.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40624C0191A00ADBD44 /* status.h */; };
 		CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40824C0191A00ADBD44 /* webm_parser.h */; };
-		CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -4119,10 +4120,10 @@
 		CDFD2FCF24C4DB0C0048DAC3 /* Copy common headers */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/common";
+			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/webm";
 			dstSubfolderSpec = 0;
 			files = (
-				CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */,
+				416008B625DBD45000E892FE /* vp9_header_parser.h in Copy common headers */,
 			);
 			name = "Copy common headers";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15625,6 +15626,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				416008B425DBCEC300E892FE /* vp9_header_parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18362,7 +18364,7 @@
 				CDEBB4C324C019C400ADBD44 /* var_int_parser.cc in Sources */,
 				CDEBB4B924C019C400ADBD44 /* virtual_block_parser.cc in Sources */,
 				CDEBB4C824C019C400ADBD44 /* void_parser.cc in Sources */,
-				CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */,
+				416008B525DBD3DE00E892FE /* vp9_header_parser.cc in Sources */,
 				CDEBB4BA24C019C400ADBD44 /* webm_parser.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
