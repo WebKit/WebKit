@@ -2281,3 +2281,5 @@ webkit.org/b/221973 [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.
 webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
 
 webkit.org/b/221218 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
+
+webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
