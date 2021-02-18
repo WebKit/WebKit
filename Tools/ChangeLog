@@ -1,3 +1,15 @@
+2021-02-18  Youenn Fablet  <youenn@apple.com>
+
+        Set ENABLE_VP9 to 1 on IOS
+        https://bugs.webkit.org/show_bug.cgi?id=222042
+        <rdar://problem/74433523>
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        Disable VP9Decoder in ios simulator since there is no support for it through VTB.
+
 2021-02-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Remove all Google user agent quirks except for Google Docs
