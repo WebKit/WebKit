@@ -1193,7 +1193,7 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 {
     if (!m_libWebRTCCodecs)
-        m_libWebRTCCodecs = makeUnique<LibWebRTCCodecs>();
+        m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
 }
 #endif

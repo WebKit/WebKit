@@ -60,6 +60,7 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
     RealtimeMediaSourceCenter::singleton().unsetDisplayCaptureFactory(m_displayFactory);
     RealtimeMediaSourceCenter::singleton().unsetVideoCaptureFactory(m_videoFactory);
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
+    m_remoteCaptureSampleManager.stopListeningForIPC();
 }
 
 const char* UserMediaCaptureManager::supplementName()

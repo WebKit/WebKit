@@ -93,6 +93,10 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 #if !RELEASE_LOG_DISABLED
     rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
 #endif
+}
+
+void NetworkRTCProvider::startListeningForIPC()
+{
     m_connection->connection().addThreadMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName(), this);
 }
 

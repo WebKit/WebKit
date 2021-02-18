@@ -38,7 +38,6 @@ namespace WebKit {
 class LibWebRTCNetwork : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCNetwork() = default;
     ~LibWebRTCNetwork();
 
     IPC::Connection* connection() { return m_connection.get(); }
