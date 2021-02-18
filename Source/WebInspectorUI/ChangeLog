@@ -1,3 +1,41 @@
+2021-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Elements: show badges for CSS Grid container elements
+        https://bugs.webkit.org/show_bug.cgi?id=221370
+
+        Reviewed by BJ Burg.
+
+        Clicking "grid" CSS badge shows/hides the grid overlay for the corresponding element.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.isGridOverlayVisible):
+        (WI.OverlayManager.prototype.toggleGridOverlay):
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/DOMTreeElement.css: Added.
+        (.tree-outline.dom .badge-css-grid):
+        (.tree-outline.dom .badge-css-grid.activated):
+        (.tree-outline.dom li.selected .badge-css-grid):
+        (.tree-outline.dom li.selected .badge-css-grid.activated):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid.activated):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .badge-css-grid):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.onattach):
+        (WI.DOMTreeElement.prototype.ondetach):
+        (WI.DOMTreeElement.prototype.updateTitle):
+        (WI.DOMTreeElement.prototype._updateGridBadge):
+        (WI.DOMTreeElement.prototype._gridBadgeClicked):
+        (WI.DOMTreeElement.prototype._gridBadgeDoubleClicked):
+        (WI.DOMTreeElement.prototype._updateGridBadgeStatus):
+        (WI.DOMTreeElement.prototype._handleLayoutContextTypeChanged):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2021-02-18  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Update .eslintrc to account for ECMAScript 2021

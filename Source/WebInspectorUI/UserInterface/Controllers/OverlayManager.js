@@ -95,6 +95,19 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
     }
 
+    isGridOverlayVisible(domNode)
+    {
+        return this._gridOverlayForNodeMap.has(domNode);
+    }
+
+    toggleGridOverlay(domNode)
+    {
+        if (this.isGridOverlayVisible(domNode))
+            this.hideGridOverlay(domNode);
+        else
+            this.showGridOverlay(domNode);
+    }
+
     // Private
 
     _handleLayoutContextTypeChanged(event)
