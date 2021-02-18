@@ -1,3 +1,19 @@
+2021-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WPE] Implement support for CSS Scroll Snap
+        https://bugs.webkit.org/show_bug.cgi?id=203684
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add initial support for css-scroll-snap on WebKitGTK+ and WebKitWPE. This
+        adds support for all types of scroll snapping that WebKit supports apart
+        from mouse wheel snapping. Support for that will be added in a followup
+        change.
+
+        * Source/cmake/OptionsGTK.cmake: Enable scroll snapping when experimental features
+        are enabled.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2021-02-16  Tim Horton  <timothy_horton@apple.com>
 
         Local macCatalyst builds should not build WebInspectorUI

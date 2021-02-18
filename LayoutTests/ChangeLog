@@ -1,3 +1,20 @@
+2021-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WPE] Implement support for CSS Scroll Snap
+        https://bugs.webkit.org/show_bug.cgi?id=203684
+
+        Reviewed by Carlos Garcia Campos.
+
+        * css3/scroll-snap/scroll-padding-mainframe-paging.html: Since the GTK+ port has
+        animated scrolling, we need to modify this test to support a scroll operation
+        that does not happen immediately.
+        * platform/gtk/TestExpectations: Unskip scroll snap tests.
+        * platform/wpe/TestExpectations: Ditto.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForTargetScrollAnimationToSettle): Added a new helper that
+        uses rAF to detect when an animated scroll operation has finished. This is the
+        same strategy that the WPT tests use to detect this.
+
 2021-02-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Import CSS @counter-style WPTs

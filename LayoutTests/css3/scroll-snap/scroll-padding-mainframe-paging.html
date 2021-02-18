@@ -20,6 +20,7 @@
         {
             try {
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
 
                 expectTrue(document.scrollingElement.scrollTop != 0, "paging moved body");
                 let defaultPagePosition = document.scrollingElement.scrollTop;
@@ -27,25 +28,34 @@
                 let pageProportion = document.scrollingElement.scrollTop / viewportHeight;
 
                 document.scrollingElement.scrollTop = 0;
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
                 document.documentElement.style.scrollPaddingTop = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
 
                 let expected = (viewportHeight - 10) * pageProportion;
                 expectTrue(document.scrollingElement.scrollTop != 0, "paging moved padded body");
                 shouldBeCloseTo("document.scrollingElement.scrollTop", expected, 1);
 
                 document.scrollingElement.scrollTop = 0;
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
                 document.documentElement.style.scrollPaddingTop = "0px";
                 document.documentElement.style.scrollPaddingBottom = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
 
                 expectTrue(document.scrollingElement.scrollTop != 0, "paging moved padded body");
                 shouldBeCloseTo("document.scrollingElement.scrollTop", expected, 1);
 
                 document.scrollingElement.scrollTop = 0;
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
                 document.documentElement.style.scrollPaddingTop = "10px";
                 document.documentElement.style.scrollPaddingBottom = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
 
                 expected = (viewportHeight - 20) * pageProportion;
                 expectTrue(document.scrollingElement.scrollTop != 0, "paging moved padded body");
