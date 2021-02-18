@@ -27,6 +27,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <wtf/FileSystem.h>
+#include <wtf/UniStdExtras.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -189,8 +190,9 @@ public:
             return;
 
         int syncFds[2];
-        if (pipe2(syncFds, O_CLOEXEC) == -1)
+        if (pipe(syncFds) == -1)
             g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
+        setCloseOnExec(syncFds[0]);
 
         GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
 
@@ -224,7 +226,6 @@ public:
         argv[i] = nullptr;
 
         GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-        g_subprocess_launcher_set_child_setup(launcher.get(), childSetupFunc, GINT_TO_POINTER(syncFds[1]), nullptr);
         g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
         g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
 
@@ -248,12 +249,6 @@ public:
     };
 
 private:
-    static void childSetupFunc(gpointer userdata)
-    {
-        int fd = GPOINTER_TO_INT(userdata);
-        fcntl(fd, F_SETFD, 0); // Unset CLOEXEC
-    }
-
     static CString makeProxyPath(const char* appRunDir)
     {
         if (g_mkdir_with_parents(appRunDir, 0700) == -1) {
