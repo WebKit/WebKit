@@ -2289,3 +2289,5 @@ imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styl
 imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
+
+webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ Failure ]
