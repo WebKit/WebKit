@@ -1,3 +1,19 @@
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for getting size of PDF document during printing
+        https://bugs.webkit.org/show_bug.cgi?id=222064
+        <rdar://problem/74370891>
+
+        Reviewed by Geoff Garen and Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/test_print.pdf: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (-[PrintUIDelegate _webView:printFrame:pdfFirstPageSize:completionHandler:]):
+        (-[PrintUIDelegate waitForPageSize]):
+        (-[PrintUIDelegate lastPrintedFrame]):
+        (TEST):
+
 2021-02-18  Antoine Quint  <graouts@webkit.org>
 
         Page updates and rAF callbacks should run at a frequency close to 60Hz on high refresh-rate displays

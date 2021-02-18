@@ -1550,6 +1550,11 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     return JSValueMakeUndefined(ctx);
 }
 
+FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
+{
+    return FloatSize([[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size);
+}
+
 JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
 {
     static JSStaticFunction jsPDFDocStaticFunctions[] = {

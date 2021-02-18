@@ -32,6 +32,7 @@
 #import "WKNSURLExtras.h"
 #import "WKNavigationInternal.h"
 #import "WKViewInternal.h"
+#import "WKWebViewInternal.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -145,6 +146,13 @@ WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRe
 WKNavigation *WKPageLoadFileReturningNavigation(WKPageRef pageRef, WKURLRef fileURL, WKURLRef resourceDirectoryURL)
 {
     return WebKit::wrapper(WebKit::toImpl(pageRef)->loadFile(WebKit::toWTFString(fileURL), WebKit::toWTFString(resourceDirectoryURL)));
+}
+
+WKWebView *WKPageGetWebView(WKPageRef page)
+{
+    if (!page)
+        return nil;
+    return fromWebPageProxy(*WebKit::toImpl(page));
 }
 
 #if PLATFORM(MAC)

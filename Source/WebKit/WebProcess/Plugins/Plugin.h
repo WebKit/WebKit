@@ -55,6 +55,7 @@ namespace WebCore {
 class AffineTransform;
 class Element;
 class FloatPoint;
+class FloatSize;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
@@ -275,6 +276,7 @@ public:
 
 #if PLATFORM(COCOA)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
+    virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const;
     virtual NSObject *accessibilityObject() const { return 0; }
     virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const { return nullptr; }
 #endif

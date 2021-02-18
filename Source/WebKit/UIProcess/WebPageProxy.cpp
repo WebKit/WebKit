@@ -5924,7 +5924,7 @@ void WebPageProxy::showContactPicker(const WebCore::ContactsRequestData& request
     pageClient().showContactPicker(requestData, WTFMove(completionHandler));
 }
     
-void WebPageProxy::printFrame(FrameIdentifier frameID, const String& title, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::printFrame(FrameIdentifier frameID, const String& title, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_isPerformingDOMPrintOperation);
     m_isPerformingDOMPrintOperation = true;
@@ -5934,7 +5934,7 @@ void WebPageProxy::printFrame(FrameIdentifier frameID, const String& title, Comp
 
     frame->didChangeTitle(title);
 
-    m_uiClient->printFrame(*this, *frame, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    m_uiClient->printFrame(*this, *frame, pdfFirstPageSize, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
         endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
         m_isPerformingDOMPrintOperation = false;
         completionHandler();
@@ -8544,6 +8544,11 @@ void WebPageProxy::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>&
     sendWithAsyncReply(Messages::WebPage::DrawToPDF(frameID, rect), WTFMove(callback));
 }
 #endif // PLATFORM(COCOA)
+
+void WebPageProxy::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPage::GetPDFFirstPageSize(frameID), WTFMove(completionHandler));
+}
 
 void WebPageProxy::updateBackingStoreDiscardableState()
 {

@@ -449,7 +449,7 @@ TEST(WebKit, PrintPreview)
     bool _done;
 }
 
-- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame completionHandler:(void (^)(void))completionHandler
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
 {
     completionHandler();
     _done = true;

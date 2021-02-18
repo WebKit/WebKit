@@ -213,6 +213,7 @@ private:
     bool pluginHandlesContentOffsetForAccessibilityHitTest() const final;
     
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const final { return m_pdfDocument; }
+    WebCore::FloatSize pdfDocumentSizeForPrinting() const final;
     NSObject *accessibilityObject() const final;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 

@@ -145,7 +145,7 @@ public:
     virtual float footerHeight(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { return 0; }
     virtual void drawHeader(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebCore::FloatRect&&) { }
     virtual void drawFooter(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebCore::FloatRect&&) { }
-    virtual void printFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual void printFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy&) { }

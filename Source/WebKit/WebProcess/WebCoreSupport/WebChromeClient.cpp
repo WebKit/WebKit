@@ -39,6 +39,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
+#include "PluginView.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedBufferCopy.h"
 #include "UserData.h"
@@ -736,8 +737,16 @@ void WebChromeClient::print(Frame& frame, const StringWithDirection& title)
     }
 #endif
 
+    WebCore::FloatSize pdfFirstPageSize;
+#if PLATFORM(COCOA)
+    if (auto* pluginView = WebPage::pluginViewForFrame(&frame)) {
+        if (auto* plugin = pluginView->plugin())
+            pdfFirstPageSize = plugin->pdfDocumentSizeForPrinting();
+    }
+#endif
+
     auto truncatedTitle = truncateFromEnd(title, maxTitleLength);
-    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string), Messages::WebPageProxy::PrintFrame::Reply());
+    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
 void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseName, DatabaseDetails details)

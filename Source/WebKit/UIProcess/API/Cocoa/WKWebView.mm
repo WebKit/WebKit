@@ -2259,6 +2259,13 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     [self createPDFWithConfiguration:pdfConfiguration.autorelease() completionHandler:completionHandler];
 }
 
+- (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler
+{
+    _page->getPDFFirstPageSize(frame->_frameHandle->frameID(), [completionHandler = makeBlockPtr(completionHandler)](WebCore::FloatSize size) {
+        completionHandler(static_cast<CGSize>(size));
+    });
+}
+
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.

@@ -1,3 +1,53 @@
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for getting size of PDF document during printing
+        https://bugs.webkit.org/show_bug.cgi?id=222064
+        <rdar://problem/74370891>
+
+        Reviewed by Geoff Garen and Tim Horton.
+
+        When printing a PDF, we want to know its page size.  If the print is initiated by the web process (such as when window.print is called
+        or if the PDF contains JavaScript that tells the browser to print it) then we would like that information with the print request so we
+        don't have to ask the web process, which is hung waiting for a synchronous message reply.  If the print is initiated by the UI process
+        (such as if the user prints from a menu or keyboard shortcut) then we need a way to ask what the size of a PDF is.
+
+        I reused the SPI in WKUIDelegatePrivate because it was only briefly adopted before we knew we needed this and then reverted.
+        I'm also adding an SPI way to get from a WKPageRef to a WKWebView so this can be adopted without redoing all of Safari.
+
+        Covered by API tests.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::printFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getPDFFirstPageSizeInFrame:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::printFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::getPDFFirstPageSize):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentSizeForPrinting const):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::pdfDocumentSizeForPrinting const):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getPDFFirstPageSize):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getPDFFirstPageSize):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ThreadMessageReceiverRefCounted subclasses are accessed in non-thread-safe way

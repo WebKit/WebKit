@@ -416,6 +416,27 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 #endif
 }
 
+void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
+{
+    auto* webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame)
+        return completionHandler({ });
+
+    auto* coreFrame = webFrame->coreFrame();
+    if (!coreFrame)
+        return completionHandler({ });
+
+    auto* pluginView = pluginViewForFrame(coreFrame);
+    if (!pluginView)
+        return completionHandler({ });
+    
+    auto* plugin = pluginView->plugin();
+    if (!plugin)
+        return completionHandler({ });
+
+    completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)
