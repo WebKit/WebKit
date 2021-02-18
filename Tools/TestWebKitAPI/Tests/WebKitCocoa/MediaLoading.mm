@@ -152,7 +152,7 @@ TEST(MediaLoading, RangeRequestSynthesisWithContentLength)
         {"/", { videoPlayTestHTML }},
         {"/video.mp4", { testVideoBytes() }}
     });
-    runVideoTest(server.request(), "playing");
+    runVideoTest(server.request(), "error");
     EXPECT_EQ(server.totalRequests(), 2u);
 }
 

@@ -1,3 +1,11 @@
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable RangeResponseGenerator again.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL contexts do not work as source for Context2D drawImage calls in GPU process
