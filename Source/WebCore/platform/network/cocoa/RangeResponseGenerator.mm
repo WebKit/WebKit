@@ -263,14 +263,15 @@ private:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final
     {
         ASSERT(isMainThread());
-        if (!m_generator)
+        auto generator = makeRefPtr(m_generator.get());
+        if (!generator)
             return;
-        auto* data = m_generator->m_map.get(m_urlString);
+        auto* data = generator->m_map.get(m_urlString);
         if (!data)
             return;
         data->successfullyFinishedLoading = Data::SuccessfullyFinishedLoading::Yes;
-        data->resource = nullptr;
-        m_generator->giveResponseToTasksWithFinishedRanges(*data);
+        data->resource = nullptr; // This line can delete this MediaResourceClient.
+        generator->giveResponseToTasksWithFinishedRanges(*data);
     }
 
     WeakPtr<RangeResponseGenerator> m_generator;
@@ -279,10 +280,6 @@ private:
 
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    bool rangeResponseGeneratorDisabled = true;
-     if (rangeResponseGeneratorDisabled)
-         return false;
-
     ASSERT(isMainThread());
     NSURLRequest *originalRequest = task.originalRequest;
     if (!originalRequest.URL)

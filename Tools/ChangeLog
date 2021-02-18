@@ -1,3 +1,13 @@
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix null dereferencing in RangeResponseGenerator::giveResponseToTasksWithFinishedRanges
+        https://bugs.webkit.org/show_bug.cgi?id=222126
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Add support for non app-bound requests
