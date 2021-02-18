@@ -455,15 +455,23 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
 
 const RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
 {
-    auto& renderBox = enclosingBox();
-    if (auto* scrollableContainer = renderBox.findEnclosingScrollableContainerForSnapping()) {
-        // The scrollable container for snapping cannot be the node itself.
-        if (scrollableContainer != this)
-            return scrollableContainer;
-        if (renderBox.parentBox())
-            return renderBox.parentBox()->findEnclosingScrollableContainerForSnapping();
+    // Walk up the container chain to find the scrollable container that contains
+    // this RenderObject. The important thing here is that `container()` respects
+    // the containing block chain for positioned elements. This is important because
+    // scrollable overflow does not establish a new containing block for children.
+    auto* candidate = container();
+    while (candidate) {
+        // Currently the RenderView can look like it has scrollable overflow, but we never
+        // want to return this as our container. Instead we should use the root element.
+        if (candidate->isRenderView())
+            break;
+        if (candidate->hasOverflowClip())
+            return static_cast<RenderBox*>(candidate);
+        candidate = candidate->container();
     }
-    return nullptr;
+
+    // If we reach the root, then the root element is the scrolling container.
+    return document().documentElement() ? document().documentElement()->renderBox() : nullptr;
 }
 
 RenderBlock* RenderObject::firstLineBlock() const

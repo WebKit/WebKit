@@ -1,3 +1,13 @@
+2021-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Root scroll snapping broken when overflow:scroll is set on the <body>
+        https://bugs.webkit.org/show_bug.cgi?id=221407
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps-expected.txt: Removed.
+        This baseline no longer differs between platforms.
+
 2021-02-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Implement section 9.8 Definite and Indefinite Sizes case 1

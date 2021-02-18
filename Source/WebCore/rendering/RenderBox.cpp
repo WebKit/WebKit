@@ -5178,21 +5178,6 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
 }
 
-const RenderBox* RenderBox::findEnclosingScrollableContainerForSnapping() const
-{
-    for (auto& candidate : lineageOfType<RenderBox>(*this)) {
-        if (candidate.hasOverflowClip())
-            return &candidate;
-    }
-
-    // If all parent elements are not overflow scrollable and the frame is, then return
-    // the root element.
-    if (document().documentElement() && frame().view() && frame().view()->isScrollable())
-        return document().documentElement()->renderBox();
-
-    return nullptr;
-}
-
 LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
 {
     LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
