@@ -637,6 +637,8 @@ public:
     // the message entirely.
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
 
+    WebCore::Color scrollAreaBackgroundColor() const;
+
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 

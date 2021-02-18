@@ -3832,6 +3832,13 @@ void Document::processThemeColor(const String& themeColorString)
 
     if (auto* page = this->page())
         page->chrome().client().themeColorChanged(m_themeColor);
+
+#if ENABLE(RUBBER_BANDING)
+    if (auto* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor().updateLayerForOverhangAreasBackgroundColor();
+    }
+#endif // ENABLE(RUBBER_BANDING)
 }
 
 #if ENABLE(DARK_MODE_CSS)

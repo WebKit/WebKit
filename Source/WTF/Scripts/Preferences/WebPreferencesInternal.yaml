@@ -787,6 +787,18 @@ UseGPUProcessForWebGLEnabled:
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
 
+UseThemeColorForScrollAreaBackgroundColor:
+  type: bool
+  humanReadableName: "Use theme-color for scroll area background color"
+  humanReadableDescription: "Use theme-color for scroll area background color"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Remove once <rdar://73830961> has been fixed
 UseiTunesAVOutputContext:
   type: bool

@@ -1907,6 +1907,14 @@ void WebPageProxy::setUnderlayColor(const Color& color)
         send(Messages::WebPage::SetUnderlayColor(color));
 }
 
+Color WebPageProxy::scrollAreaBackgroundColor() const
+{
+    if (m_preferences->useThemeColorForScrollAreaBackgroundColor())
+        return m_themeColor;
+
+    return m_pageExtendedBackgroundColor;
+}
+
 void WebPageProxy::viewWillStartLiveResize()
 {
     if (!hasRunningProcess())

@@ -1,3 +1,19 @@
+2021-02-18  Devin Rousso  <drousso@apple.com>
+
+        Experiment with using the theme-color as the scroll area background if provided
+        https://bugs.webkit.org/show_bug.cgi?id=222078
+        <rdar://problem/74158818>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (baseScrollViewBackgroundColor):
+        * UIProcess/ViewSnapshotStore.cpp:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebPageProxy::scrollAreaBackgroundColor): Added.
+
 2021-02-18  Per Arne  <pvollan@apple.com>
 
         [macOS] Observe system sleep events in the UI process
