@@ -1,5 +1,18 @@
 2021-02-17  Don Olmstead  <don.olmstead@sony.com>
 
+        [Python-3] Child process environment on Windows can only contain strings
+        https://bugs.webkit.org/show_bug.cgi?id=222012
+        <rdar://problem/74437205>
+
+        Unreviewed test runner fix.
+
+        Use old Python 2 behavior of encoding when running with that version.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
         _W3CTestConverter tests don't run on Windows
         https://bugs.webkit.org/show_bug.cgi?id=221855
 

@@ -512,12 +512,20 @@ class Executive(AbstractExecutive):
         env = kwargs.pop('env', None)
         if self._is_native_win and env is not None:
             mod_env = {}
-            for key, value in env.items():
-                if not isinstance(key, str):
-                    key = key.decode('utf-8')
-                if not isinstance(value, str):
-                    value = value.decode('utf-8')
-                mod_env[key] = value
+            if sys.version_info.major >= 3:
+                for key, value in env.items():
+                    if not isinstance(key, str):
+                        key = key.decode('utf-8')
+                    if not isinstance(value, str):
+                        value = value.decode('utf-8')
+                    mod_env[key] = value
+            else:
+                for key, value in env.items():
+                    if not isinstance(key, bytes):
+                        key = key.encode('utf-8')
+                    if not isinstance(value, bytes):
+                        value = value.encode('utf-8')
+                    mod_env[key] = value
             env = mod_env
 
         # Python 3 treats Popen as a context manager, we should allow this in Python 2
