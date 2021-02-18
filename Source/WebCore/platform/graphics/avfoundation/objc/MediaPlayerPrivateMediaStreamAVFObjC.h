@@ -38,10 +38,6 @@
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebRootSampleBufferBoundsChangeListener;
 
-namespace PAL {
-class Clock;
-}
-
 namespace WebCore {
 
 class AudioTrackPrivateMediaStream;
@@ -211,8 +207,6 @@ private:
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 
-    MediaTime streamTime() const;
-
     AudioSourceProvider* audioSourceProvider() final;
 
     void applicationDidBecomeActive() final;
@@ -224,8 +218,8 @@ private:
     MediaPlayer* m_player { nullptr };
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<VideoTrackPrivateMediaStream> m_activeVideoTrack;
-    std::unique_ptr<PAL::Clock> m_clock;
 
+    MediaTime m_startTime;
     MediaTime m_pausedTime;
 
     struct CurrentFramePainter {

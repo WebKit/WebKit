@@ -40,7 +40,6 @@
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
-#import <pal/system/Clock.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
@@ -134,7 +133,6 @@ using namespace PAL;
 
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_clock(PAL::Clock::create())
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
@@ -512,8 +510,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
         return;
 
     m_playbackState = PlaybackState::Playing;
-    if (!m_clock->isRunning())
-        m_clock->start();
+    if (m_startTime.isInvalid())
+        m_startTime = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value());
 
     for (const auto& track : m_audioTrackMap.values())
         track->play();
@@ -608,12 +606,7 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
     if (paused())
         return m_pausedTime;
 
-    return streamTime();
-}
-
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::streamTime() const
-{
-    return MediaTime::createWithDouble(m_clock->currentTime());
+    return MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value()) - m_startTime;
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaStreamAVFObjC::networkState() const
