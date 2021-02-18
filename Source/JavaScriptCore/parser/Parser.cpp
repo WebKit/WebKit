@@ -2881,6 +2881,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     classScope->setStrictMode();
     bool declaresPrivateMethod = false;
     bool declaresPrivateAccessor = false;
+    bool declaresStaticPrivateMethod = false;
+    bool declaresStaticPrivateAccessor = false;
     next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
@@ -3007,9 +3009,14 @@ parseMethod:
             ASSERT(ident);
             next();
             if (Options::usePrivateMethods() && match(OPENPAREN)) {
-                semanticFailIfTrue(tag == ClassElementTag::Static, "Cannot declare a static private method");
-                semanticFailIfTrue(classScope->declarePrivateMethod(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
-                declaresPrivateMethod = true;
+                semanticFailIfTrue(classScope->declarePrivateMethod(*ident, tag) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
+                semanticFailIfTrue(tag == ClassElementTag::Static && *ident == propertyNames.constructorPrivateField, "Cannot declare a static private method named 'constructor'");
+
+                if (tag == ClassElementTag::Static)
+                    declaresStaticPrivateAccessor = true;
+                else
+                    declaresPrivateMethod = true;
+
                 type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateMethod);
                 break;
             }
@@ -3029,15 +3036,21 @@ parseMethod:
         if (isGetter || isSetter) {
             if (Options::usePrivateMethods() && match(PRIVATENAME)) {
                 ident = m_token.m_data.ident;
-                if (isSetter) {
-                    semanticFailIfTrue(classScope->declarePrivateSetter(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Declared private setter with an already used name");
-                    declaresPrivateAccessor = true;
-                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateSetter);
+
+                auto declarationResult = isSetter ? classScope->declarePrivateSetter(*ident, tag) : classScope->declarePrivateGetter(*ident, tag);
+                semanticFailIfTrue(declarationResult & DeclarationResult::InvalidDuplicateDeclaration, "Declared private setter with an already used name");
+                if (tag == ClassElementTag::Static) {
+                    semanticFailIfTrue(declarationResult & DeclarationResult::InvalidPrivateStaticNonStatic, "Cannot declare a private static ", (isSetter ? "setter" : "getter")  , " if there is a non-static private ", (isSetter ? "getter" : "setter"), " with used name");
+                    declaresStaticPrivateAccessor = true;
                 } else {
-                    semanticFailIfTrue(classScope->declarePrivateGetter(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Declared private getter with an already used name");
+                    semanticFailIfTrue(declarationResult & DeclarationResult::InvalidPrivateStaticNonStatic, "Cannot declare a private non-static ", (isSetter ? "setter" : "getter"), " if there is a static private ", (isSetter ? "getter" : "setter"), " with used name");
                     declaresPrivateAccessor = true;
-                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateGetter);
                 }
+
+                if (isSetter)
+                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateSetter);
+                else 
+                    type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateGetter);
             } else {
                 type = static_cast<PropertyNode::Type>(type & ~PropertyNode::Constant);
                 type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
@@ -3125,7 +3138,15 @@ parseMethod:
 
     if constexpr (std::is_same_v<TreeBuilder, ASTBuilder>) {
         if (classElements)
-            classElements->setHasPrivateAccessors(declaresPrivateAccessor);
+            classElements->setHasPrivateAccessors(declaresPrivateAccessor || declaresStaticPrivateAccessor);
+    }
+
+    if (declaresStaticPrivateMethod || declaresPrivateAccessor) {
+        Identifier privateClassBrandIdentifier = m_vm.propertyNames->builtinNames().privateClassBrandPrivateName();
+        DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateClassBrandIdentifier, true);
+        ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+        classScope->useVariable(&privateClassBrandIdentifier, false);
+        classScope->addClosedVariableCandidateUnconditionally(privateClassBrandIdentifier.impl());
     }
 
     if (Options::usePrivateClassFields()) {
@@ -4456,10 +4477,8 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
         semanticFailIfTrue(tag == ClassElementTag::Instance && *stringPropertyName == m_vm.propertyNames->constructor,
             "Cannot declare a getter or setter named 'constructor'");
 
-        if (match(PRIVATENAME)) {
+        if (match(PRIVATENAME))
             semanticFailIfTrue(tag == ClassElementTag::No, "Cannot declare a private setter or getter outside a class");
-            semanticFailIfTrue(tag == ClassElementTag::Static, "Cannot declare a private setter or getter as static");
-        }
         next();
     } else if (match(DOUBLE) || match(INTEGER)) {
         numericPropertyName = m_token.m_data.doubleValue;

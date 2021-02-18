@@ -1,3 +1,63 @@
+2021-02-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Implement private static method
+        https://bugs.webkit.org/show_bug.cgi?id=219181
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is implementing static private methods and accessors
+        proposal based on https://github.com/tc39/proposal-static-class-features.
+        This implementation diverge a bit from private methods&accessors on the
+        brand check, because we are using a simpler way to perform static
+        brand checks. Since only the class constructor is allowed to access
+        its private methods and accessors, we save it on `@privateClassBrand`
+        on class lexical scope and compare it with the receiver of the static
+        private method (and accessors) using `===` operation.
+        While this genenrates more bytecodes than `check_private_brand`, we
+        don't need to perform a Structure transition to install a brand, 
+        and avoid allocation of a private symbol. Since each evaluation of a
+        class generates a different constructor object, we preserve the semantics
+        that private methods are lexically scoped.
+
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCreatePrivateBrand):
+        (JSC::BytecodeGenerator::emitInstallPrivateBrand):
+        (JSC::BytecodeGenerator::emitInstallPrivateClassBrand):
+        (JSC::BytecodeGenerator::emitGetPrivateBrand):
+        (JSC::BytecodeGenerator::emitCheckPrivateBrand):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BaseDotNode::emitGetPropertyValue):
+        (JSC::BaseDotNode::emitPutProperty):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitDot):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        * parser/Parser.h:
+        (JSC::Scope::declarePrivateMethod):
+        (JSC::Scope::declarePrivateAccessor):
+        (JSC::Scope::declarePrivateSetter):
+        (JSC::Scope::declarePrivateGetter):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironment::declarePrivateAccessor):
+        (JSC::VariableEnvironment::declarePrivateSetter):
+        (JSC::VariableEnvironment::declarePrivateGetter):
+        (JSC::VariableEnvironment::declarePrivateMethod):
+        * parser/VariableEnvironment.h:
+        (JSC::PrivateNameEntry::isStatic const):
+        (JSC::VariableEnvironment::isEmpty const):
+        (JSC::VariableEnvironment::declareStaticPrivateMethod):
+        (JSC::VariableEnvironment::declarePrivateSetter):
+        (JSC::VariableEnvironment::declareStaticPrivateSetter):
+        (JSC::VariableEnvironment::declarePrivateGetter):
+        (JSC::VariableEnvironment::declareStaticPrivateGetter):
+        (JSC::VariableEnvironment::hasStaticPrivateMethodOrAccessor const):
+        (JSC::VariableEnvironment::hasInstancePrivateMethodOrAccessor const):
+        (JSC::VariableEnvironment::hasPrivateMethodOrAccessor const): Deleted.
+
 2021-02-18  Daniel Kolesa  <dkolesa@igalia.com>
 
         [JSC] Fix segfaults on 32-bit big endian systems

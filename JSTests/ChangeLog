@@ -1,3 +1,19 @@
+2021-02-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Implement private static method
+        https://bugs.webkit.org/show_bug.cgi?id=219181
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/class-private-method-access.js: Added.
+        * stress/private-accessor-static-non-static.js: Added.
+        * stress/private-getter-inner-class.js:
+        * stress/static-private-methods-and-accessor-inner-class.js: Added.
+        * stress/static-private-methods-and-accessor-multiple-evaluation.js: Added.
+        * stress/static-private-methods-and-accessors-postfix-node.js: Added.
+        * stress/static-private-methods-and-accessors-prefix-node.js: Added.
+        * test262/config.yaml:
+
 2021-02-18  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Implement RegExp Match Indices proposal

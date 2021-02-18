@@ -2776,20 +2776,29 @@ void BytecodeGenerator::emitCreatePrivateBrand(RegisterID* scope, const JSTextPo
 
     Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
 
-    emitPutToScope(scope, privateBrandVar, newSymbol, DoNotThrowIfNotFound, InitializationMode::Initialization);
+    emitPutToScope(scope, privateBrandVar, newSymbol, DoNotThrowIfNotFound, InitializationMode::ConstInitialization);
 }
 
 void BytecodeGenerator::emitInstallPrivateBrand(RegisterID* target)
 {
     Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
     RefPtr<RegisterID> privateBrandVarScope = emitResolveScope(nullptr, privateBrandVar);
-    RegisterID* privateBrandSymbol = emitGetPrivateBrand(newTemporary(), privateBrandVarScope.get());
+    bool isStatic = false;
+    RegisterID* privateBrandSymbol = emitGetPrivateBrand(newTemporary(), privateBrandVarScope.get(), isStatic);
     OpSetPrivateBrand::emit(this, target, privateBrandSymbol);
 }
 
-RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope)
+void BytecodeGenerator::emitInstallPrivateClassBrand(RegisterID* target)
 {
-    Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
+    Variable privateBrandVar = variable(propertyNames().builtinNames().privateClassBrandPrivateName());
+    emitPutToScope(scopeRegister(), privateBrandVar, target, DoNotThrowIfNotFound, InitializationMode::ConstInitialization);
+}
+
+RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic)
+{
+    Variable privateBrandVar = isStatic
+        ? variable(propertyNames().builtinNames().privateClassBrandPrivateName())
+        : variable(propertyNames().builtinNames().privateBrandPrivateName());
     return emitGetFromScope(dst, scope, privateBrandVar, ThrowIfNotFound);
 }
 
@@ -2799,9 +2808,17 @@ RegisterID* BytecodeGenerator::emitPrivateFieldPut(RegisterID* base, RegisterID*
     return value;
 }
 
-void BytecodeGenerator::emitCheckPrivateBrand(RegisterID* base, RegisterID* brandSymbol)
+void BytecodeGenerator::emitCheckPrivateBrand(RegisterID* base, RegisterID* brand, bool isStatic)
 {
-    OpCheckPrivateBrand::emit(this, base, brandSymbol);
+    if (isStatic) {
+        Ref<Label> brandCheckOkLabel = newLabel();
+        emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), base, brand), brandCheckOkLabel.get());
+        emitThrowTypeError("Cannot access static private method or acessor");
+        emitLabel(brandCheckOkLabel.get());
+        return;
+    
+    }
+    OpCheckPrivateBrand::emit(this, base, brand);
 }
 
 void BytecodeGenerator::emitSuperSamplerBegin()

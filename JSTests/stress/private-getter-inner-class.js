@@ -126,7 +126,7 @@ let assert = {
     assert.sameValue(c.method(), 'outer class');
 
     assert.throws(TypeError, function() {
-        innerB.method(c);
+        C.prototype.method.call(innerB);
     });
 })();
 
