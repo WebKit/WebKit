@@ -1904,3 +1904,10 @@ webanimations/transform-property-and-transform-animation-with-delay-on-forced-la
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
 webkit.org/b/221821 platform/ios/media/mediacapabilities/mediacapabilities-encodingInfo-undefined.html [ Failure ]
+
+# @counter-style WPT failures specific to ios-wk2
+imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-129.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]

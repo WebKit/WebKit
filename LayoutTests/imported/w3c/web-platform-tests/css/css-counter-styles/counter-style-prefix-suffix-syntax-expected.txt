@@ -1,0 +1,28 @@
+
+FAIL @counter-style 'prefix: "string"' is valid assert_equals: expected (undefined) undefined but got (string) "\"string\""
+FAIL @counter-style 'suffix: "string"' is valid assert_equals: expected (undefined) undefined but got (string) "\"string\""
+FAIL @counter-style 'prefix: "initial"' is valid assert_equals: expected (undefined) undefined but got (string) "\"initial\""
+FAIL @counter-style 'suffix: "initial"' is valid assert_equals: expected (undefined) undefined but got (string) "\"initial\""
+FAIL @counter-style 'prefix: "inherit"' is valid assert_equals: expected (undefined) undefined but got (string) "\"inherit\""
+FAIL @counter-style 'suffix: "inherit"' is valid assert_equals: expected (undefined) undefined but got (string) "\"inherit\""
+FAIL @counter-style 'prefix: "unset"' is valid assert_equals: expected (undefined) undefined but got (string) "\"unset\""
+FAIL @counter-style 'suffix: "unset"' is valid assert_equals: expected (undefined) undefined but got (string) "\"unset\""
+FAIL @counter-style 'prefix: custom-ident' is valid assert_equals: expected (undefined) undefined but got (string) "custom-ident"
+FAIL @counter-style 'suffix: custom-ident' is valid assert_equals: expected (undefined) undefined but got (string) "custom-ident"
+PASS @counter-style 'prefix: initial' is invalid
+PASS @counter-style 'suffix: initial' is invalid
+PASS @counter-style 'prefix: inherit' is invalid
+PASS @counter-style 'suffix: inherit' is invalid
+PASS @counter-style 'prefix: unset' is invalid
+PASS @counter-style 'suffix: unset' is invalid
+FAIL @counter-style 'prefix: url("https://example.com/foo.png")' is valid assert_equals: expected (undefined) undefined but got (string) "url(\"https://example.com/foo.png\")"
+FAIL @counter-style 'suffix: url("https://example.com/foo.png")' is valid assert_equals: expected (undefined) undefined but got (string) "url(\"https://example.com/foo.png\")"
+FAIL @counter-style 'prefix: url(https://example.com/foo.png)' is valid assert_equals: expected (undefined) undefined but got (string) "url(\"https://example.com/foo.png\")"
+FAIL @counter-style 'suffix: url(https://example.com/foo.png)' is valid assert_equals: expected (undefined) undefined but got (string) "url(\"https://example.com/foo.png\")"
+FAIL @counter-style 'prefix: linear-gradient(yellow, blue)' is valid assert_equals: expected (undefined) undefined but got (string) "linear-gradient(yellow, blue)"
+FAIL @counter-style 'suffix: linear-gradient(yellow, blue)' is valid assert_equals: expected (undefined) undefined but got (string) "linear-gradient(yellow, blue)"
+PASS @counter-style 'prefix: ' is invalid
+PASS @counter-style 'suffix: ' is invalid
+PASS @counter-style 'prefix: foo bar' is invalid
+PASS @counter-style 'suffix: foo bar' is invalid
+

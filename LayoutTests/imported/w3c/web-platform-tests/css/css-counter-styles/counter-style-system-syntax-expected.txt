@@ -1,0 +1,17 @@
+
+FAIL @counter-style 'system: cyclic' is valid assert_equals: expected (undefined) undefined but got (string) "cyclic"
+FAIL @counter-style 'system: fixed' is valid assert_equals: expected (undefined) undefined but got (string) "fixed"
+FAIL @counter-style 'system: fixed 100' is valid assert_equals: expected (undefined) undefined but got (string) "fixed 100"
+FAIL @counter-style 'system: fixed -1' is valid assert_equals: expected (undefined) undefined but got (string) "fixed -1"
+FAIL @counter-style 'system: symbolic' is valid assert_equals: expected (undefined) undefined but got (string) "symbolic"
+FAIL @counter-style 'system: alphabetic' is valid assert_equals: expected (undefined) undefined but got (string) "alphabetic"
+FAIL @counter-style 'system: numeric' is valid assert_equals: expected (undefined) undefined but got (string) "numeric"
+FAIL @counter-style 'system: additive' is valid assert_equals: expected (undefined) undefined but got (string) "additive"
+FAIL @counter-style 'system: extends bar' is valid assert_equals: expected (undefined) undefined but got (string) "extends bar"
+PASS @counter-style 'system: float' is invalid
+PASS @counter-style 'system: cyclic cyclic' is invalid
+PASS @counter-style 'system: extends none' is invalid
+PASS @counter-style 'system: extends initial' is invalid
+PASS @counter-style 'system: extends inherit' is invalid
+PASS @counter-style 'system: extends unset' is invalid
+

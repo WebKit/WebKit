@@ -1,0 +1,10 @@
+
+FAIL @counter-style 'range: auto' is valid assert_equals: expected (undefined) undefined but got (string) "auto"
+FAIL @counter-style 'range: infinite infinite' is valid assert_equals: expected (undefined) undefined but got (string) "infinite infinite"
+FAIL @counter-style 'range: infinite 0' is valid assert_equals: expected (undefined) undefined but got (string) "infinite 0"
+FAIL @counter-style 'range: 0 infinite' is valid assert_equals: expected (undefined) undefined but got (string) "0 infinite"
+FAIL @counter-style 'range: infinite 0, 5 10, 100 infinite' is valid assert_equals: expected (undefined) undefined but got (string) "infinite 0, 5 10, 100 infinite"
+FAIL @counter-style 'range: infinite 10, 5 20, 15 infinite' is valid assert_equals: expected (undefined) undefined but got (string) "infinite 10, 5 20, 15 infinite"
+PASS @counter-style 'range: ' is invalid
+PASS @counter-style 'range: 0 -1' is invalid
+

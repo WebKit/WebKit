@@ -1,0 +1,5 @@
+
+FAIL @counter-style 'negative: "X"' is valid assert_equals: expected (undefined) undefined but got (string) "\"X\""
+FAIL @counter-style 'negative: "X" "X"' is valid assert_equals: expected (undefined) undefined but got (string) "\"X\" \"X\""
+PASS @counter-style 'negative: "X" "X" "X"' is invalid
+

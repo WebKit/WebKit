@@ -2283,3 +2283,9 @@ webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
 webkit.org/b/221218 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
 webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
+
+# @counter-style WPT failures specific to Mac platforms
+imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]

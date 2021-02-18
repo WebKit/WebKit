@@ -1,0 +1,10 @@
+
+PASS @counter-style 'pad: 10' is invalid
+PASS @counter-style 'pad: "X"' is invalid
+FAIL @counter-style 'pad: 10 "X"' is valid assert_equals: expected (undefined) undefined but got (string) "10 \"X\""
+FAIL @counter-style 'pad: "X" 10' is valid assert_equals: expected (undefined) undefined but got (string) "10 \"X\""
+PASS @counter-style 'pad: -1 "X"' is invalid
+PASS @counter-style 'pad: "X" -1' is invalid
+PASS @counter-style 'pad: 10 "X" "Y"' is invalid
+PASS @counter-style 'pad: 10 10 "X"' is invalid
+

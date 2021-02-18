@@ -1,3 +1,13 @@
+2021-02-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import CSS @counter-style WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=222024
+
+        Reviewed by Fujii Hironori.
+
+        * TestExpectations: Update test expectations to reflect newly imported
+        css-counter-style WPTs.
+
 2021-02-17  Robert Jenner  <jenner@apple.com>
 
         media/track/track-in-band-style.html needs to be rebaselined after changes in r272055
