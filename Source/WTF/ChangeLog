@@ -1,3 +1,9 @@
+2021-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed tiny cleanup after r273056.
+
+        * wtf/Forward.h:
+
 2021-02-17  Sam Weinig  <weinig@apple.com>
 
         Enable separated graphics layer experiments on internal variant

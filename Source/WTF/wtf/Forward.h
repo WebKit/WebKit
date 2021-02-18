@@ -71,7 +71,7 @@ template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
 template<typename T, typename = RawPtrTraits<T>> class Ref;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
-template<typename T> class RetainPtr;
+template<typename> class RetainPtr;
 template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
