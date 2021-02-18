@@ -1,3 +1,15 @@
+2021-02-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Remove RemoteLegacyCDMSessionProxy and RemoteLegacyCDMSessionProxy from the message receiver map in the destructor of RemoteLegacyCDMFactoryProxy
+        https://bugs.webkit.org/show_bug.cgi?id=222079
+
+        Reviewed by Jer Noble.
+
+        Fix a GPU process crash when running http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html.
+
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy):
+
 2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
