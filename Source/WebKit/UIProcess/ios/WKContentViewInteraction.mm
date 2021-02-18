@@ -2031,6 +2031,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
         return NO;
 
+    if (_focusedElementInformation.isFocusingWithDataListDropdown && !UIKeyboard.isInHardwareKeyboardMode)
+        return NO;
+
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode];
 }
 
@@ -4574,6 +4577,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _page->setFocusedElementValue(valueAsString);
     _focusedElementInformation.value = valueAsString;
     _focusedElementInformation.colorValue = color;
+}
+
+- (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value
+{
+    _focusedElementInformation.isFocusingWithDataListDropdown = value;
+    [self reloadInputViews];
 }
 
 - (void)accessoryTab:(BOOL)isNext
@@ -9572,6 +9581,18 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [_contactPicker dismissWithContacts:contacts];
 #endif
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+- (void)_selectDataListOption:(NSInteger)optionIndex
+{
+    [_dataListSuggestionsControl.getAutoreleased() didSelectOptionAtIndex:optionIndex];
+}
+
+- (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control
+{
+    _dataListSuggestionsControl = control;
+}
+#endif
 
 @end
 

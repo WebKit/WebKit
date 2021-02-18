@@ -1672,6 +1672,11 @@ void HTMLInputElement::dataListMayHaveChanged()
     m_inputType->dataListMayHaveChanged();
 }
 
+bool HTMLInputElement::isFocusingWithDataListDropdown() const
+{
+    return m_inputType->isFocusingWithDataListDropdown();
+}
+
 #endif // ENABLE(DATALIST_ELEMENT)
 
 bool HTMLInputElement::isPresentingAttachedView() const

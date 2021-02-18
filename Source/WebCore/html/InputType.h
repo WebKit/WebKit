@@ -349,6 +349,9 @@ public:
     virtual Color valueAsColor() const;
     virtual void selectColor(StringView);
     virtual Vector<Color> suggestedColors() const;
+#if ENABLE(DATALIST_ELEMENT)
+    virtual bool isFocusingWithDataListDropdown() const { return false; };
+#endif
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

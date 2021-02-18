@@ -135,6 +135,7 @@ struct FocusedElementInformation {
     String ariaLabel;
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions { false };
+    bool isFocusingWithDataListDropdown { false };
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::Color colorValue;
     Vector<WebCore::Color> suggestedColors;

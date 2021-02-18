@@ -1,3 +1,20 @@
+2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new datalist dropdown for text inputs
+        https://bugs.webkit.org/show_bug.cgi?id=222008
+        <rdar://problem/74410513>
+
+        Reviewed by Wenson Hsieh.
+
+        Modified two tests from fast/forms/datalist to work with the new
+        dropdown. These tests will replace the old ones once the form control
+        refresh is enabled by default.
+
+        * fast/forms/ios/form-control-refresh/datalist/datalist-show-hide-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/datalist/datalist-show-hide.html: Added.
+        * fast/forms/ios/form-control-refresh/datalist/datalist-textinput-suggestions-order-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/datalist/datalist-textinput-suggestions-order.html: Added.
+
 2021-02-17  Robert Jenner  <jenner@apple.com>
 
         [Mac] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html flakey text failure

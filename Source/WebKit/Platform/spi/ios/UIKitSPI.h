@@ -305,6 +305,7 @@ typedef enum {
 - (void)geometryChangeDone:(BOOL)keyboardVisible;
 - (void)prepareForGeometryChange;
 + (BOOL)isInHardwareKeyboardMode;
++ (BOOL)isOnScreen;
 + (void)removeAllDynamicDictionaries;
 @end
 
@@ -1156,8 +1157,16 @@ typedef NSInteger UICompositingMode;
 + (UIBlurEffect *)effectWithBlurRadius:(CGFloat)blurRadius;
 @end
 
+typedef NS_ENUM(NSInteger, _UIPopoverPresentationHorizontalAlignment) {
+    _UIPopoverPresentationHorizontalAlignmentCenter,
+    _UIPopoverPresentationHorizontalAlignmentLeading,
+    _UIPopoverPresentationHorizontalAlignmentTrailing,
+};
+
 @interface UIPopoverPresentationController ()
 @property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
+@property (assign, nonatomic, setter=_setShouldHideArrow:, getter=_shouldHideArrow) BOOL _shouldHideArrow;
+@property (assign, nonatomic, setter=_setPreferredHorizontalAlignment:) _UIPopoverPresentationHorizontalAlignment _preferredHorizontalAlignment;
 @end
 
 @interface UIWKDocumentContext : NSObject

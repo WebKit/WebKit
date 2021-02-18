@@ -167,6 +167,13 @@
     [_contentView setSelectedColorForColorPicker:color];
 }
 
+- (void)_selectDataListOption:(int)optionIndex
+{
+#if ENABLE(DATALIST_ELEMENT)
+    [_contentView _selectDataListOption:optionIndex];
+#endif
+}
+
 - (NSString *)textContentTypeForTesting
 {
     return [_contentView textContentTypeForTesting];

@@ -1,3 +1,77 @@
+2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new datalist dropdown for text inputs
+        https://bugs.webkit.org/show_bug.cgi?id=222008
+        <rdar://problem/74410513>
+
+        Reviewed by Wenson Hsieh.
+
+        The new datalist dropdown appears as a popover on both iPhones and iPads.
+        Previously, iPhones displayed a UIPickerView when tapping on the datalist
+        button, while iPads displayed a popover. Furthermore, the datalist button
+        was only visible after focusing the field. Now, the button can be used at
+        any time.
+
+        If the dropdown is presented while the software keyboard is visible, the
+        keyboard will be dismissed to create space for the dropdown. On devices
+        with a hardware keyboard, the dropdown is updated as characters are typed.
+
+        Tests: fast/forms/ios/form-control-refresh/datalist/datalist-show-hide.html
+               fast/forms/ios/form-control-refresh/datalist/datalist-textinput-suggestions-order.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Added SPI declarations to configure the presentation of the presented
+        dropdown and to check whether the keyboard is visible.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Added the isFocusingWithDataListDropdown member to control the presentation
+        of the keyboard when presenting a datalist dropdown.
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _selectDataListOption:]):
+
+        Added a testing hook to select an option from the presented dropdown.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldShowAutomaticKeyboardUI]):
+
+        Do not show the keyboard when a datalist dropdown is visible, unless a
+        hardware keyboard is attached.
+
+        (-[WKContentView updateFocusedElementFocusedWithDataListDropdown:]):
+
+        Toggle keyboard visibility depending on the visibility of the dropdown.
+
+        (-[WKContentView _selectDataListOption:]):
+        (-[WKContentView _setDataListSuggestionsControl:]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        (-[WKDataListSuggestionsControl initWithInformation:inView:]):
+        (-[WKDataListSuggestionsViewController reloadData]):
+        (-[WKDataListSuggestionsDropdown initWithInformation:inView:]):
+        (-[WKDataListSuggestionsDropdown updateWithInformation:]):
+        (-[WKDataListSuggestionsDropdown showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsDropdown invalidate]):
+        (-[WKDataListSuggestionsDropdown didSelectOptionAtIndex:]):
+        (-[WKDataListSuggestionsDropdown dealloc]):
+        (-[WKDataListSuggestionsDropdown _displayWithActivationType:]):
+        (-[WKDataListSuggestionsDropdown _showSuggestions]):
+        (-[WKDataListSuggestionsDropdown _presentSuggestionsViewController]):
+        (-[WKDataListSuggestionsDropdown _updateTextSuggestions]):
+        (-[WKDataListSuggestionsDropdown _removeKeyboardDismissalObserver]):
+        (-[WKDataListSuggestionsDropdown presentationControllerDidDismiss:]):
+        (-[WKDataListSuggestionsDropdown adaptivePresentationStyleForPresentationController:traitCollection:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2021-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         Follow-up fix after r273023.

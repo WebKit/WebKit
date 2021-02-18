@@ -3201,6 +3201,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
+        information.isFocusingWithDataListDropdown = element.isFocusingWithDataListDropdown();
         information.hasSuggestions = !!element.list();
 #endif
         information.inputMode = element.canonicalInputMode();

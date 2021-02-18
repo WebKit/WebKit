@@ -1,3 +1,22 @@
+2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new datalist dropdown for text inputs
+        https://bugs.webkit.org/show_bug.cgi?id=222008
+        <rdar://problem/74410513>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+
+        Implemented this method to enable testing selection of datalist options
+        on iOS.
+
+        (WTR::UIScriptControllerIOS::isShowingDataListSuggestions const):
+
+        The new appearance does not use a UIPickerView, check for the presence
+        of the new view controller instead.
+
 2021-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         Follow-up fix after r273023.

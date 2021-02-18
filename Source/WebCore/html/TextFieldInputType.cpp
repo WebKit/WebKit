@@ -54,6 +54,7 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
@@ -462,10 +463,14 @@ void TextFieldInputType::createDataListDropdownIndicator()
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
 }
 
-bool TextFieldInputType::shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited()
+bool TextFieldInputType::shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited() const
 {
 #if PLATFORM(IOS_FAMILY)
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    return !element()->document().settings().iOSFormControlRefreshEnabled();
+#else
     return true;
+#endif
 #else
     return false;
 #endif
@@ -856,8 +861,15 @@ HTMLElement* TextFieldInputType::dataListButtonElement() const
 
 void TextFieldInputType::dataListButtonElementWasClicked()
 {
-    if (element()->list())
+    Ref<HTMLInputElement> input(*element());
+    if (input->list()) {
+        m_isFocusingWithDataListDropdown = true;
+        unsigned max = visibleValue().length();
+        input->setSelectionRange(max, max);
+        m_isFocusingWithDataListDropdown = false;
+
         displaySuggestions(DataListSuggestionActivationType::IndicatorClicked);
+    }
 }
 
 IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
@@ -944,6 +956,11 @@ void TextFieldInputType::closeSuggestions()
 bool TextFieldInputType::isPresentingAttachedView() const
 {
     return !!m_suggestionPicker;
+}
+
+bool TextFieldInputType::isFocusingWithDataListDropdown() const
+{
+    return m_isFocusingWithDataListDropdown;
 }
 
 #endif
