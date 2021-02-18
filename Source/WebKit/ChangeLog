@@ -1,3 +1,13 @@
+2021-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove unused IPC shared memory reads in WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=222083
+        <rdar://problem/73509623>
+
+        Reviewed by Per Arne Vollan.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r273063.
