@@ -1,3 +1,13 @@
+2021-02-18  Rob Buis  <rbuis@igalia.com>
+
+        Treat <ratio> that ends with forward slash as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=221978
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid-expected.txt:
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html:
+
 2021-02-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Import CSS @counter-style WPTs

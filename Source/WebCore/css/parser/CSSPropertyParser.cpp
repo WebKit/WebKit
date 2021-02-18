@@ -3925,7 +3925,7 @@ static RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
     bool slashSeen = consumeSlashIncludingWhitespace(range);
 
     auto rightValue = consumeNumber(range, ValueRangeNonNegative);
-    if (rightValue && !slashSeen)
+    if ((rightValue && !slashSeen) || (!rightValue && slashSeen))
         return nullptr;
     if (!slashSeen && !rightValue) // A missing right-hand is treated as 1.
         rightValue = CSSValuePool::singleton().createValue(1, CSSUnitType::CSS_NUMBER);
