@@ -1,3 +1,16 @@
+2021-02-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add additions to LocalConnection.mm
+        https://bugs.webkit.org/show_bug.cgi?id=222029
+        <rdar://problem/69031303>
+
+        Reviewed by Jiewen Tan.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm:
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+
 2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r273019.
