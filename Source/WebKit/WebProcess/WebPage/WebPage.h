@@ -1406,6 +1406,9 @@ public:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
+    void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
+    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2227,6 +2230,9 @@ private:
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
 #endif
+
+    bool m_lastNavigationWasAppBound { false };
+
     bool m_canUseCredentialStorage { true };
 
     Vector<String> m_corsDisablingPatterns;

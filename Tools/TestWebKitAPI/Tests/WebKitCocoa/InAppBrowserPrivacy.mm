@@ -43,6 +43,10 @@
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/InAppBrowserPrivacyAdditions.h>
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
 
 static bool isDone;
@@ -1412,3 +1416,55 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if USE(APPLE_INTERNAL_SDK)
+TEST(InAppBrowserPrivacy, AppBoundRequest)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSString *url = @"https://webkit.org";
+
+    static bool isDone = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView loadRequest:nonAppBoundRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, AppBoundRequestWithNavigation)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSString *startingURL = @"https://www.webkit.org";
+    NSString *nonAppBoundURL = @"https://www.apple.com";
+
+    NSMutableURLRequest *startingRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:startingURL]];
+
+    [webView loadRequest:startingRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    static bool isDone = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:nonAppBoundURL]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView loadRequest:nonAppBoundRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+#endif

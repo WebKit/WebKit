@@ -1,3 +1,18 @@
+2021-02-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add support for non app-bound requests
+        https://bugs.webkit.org/show_bug.cgi?id=221909
+        <rdar://problem/73512988>
+
+        API test coverage.
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView lastNavigationWasAppBound:]):
+
 2021-02-18  Sam Sneddon  <gsnedders@apple.com>
 
         Undeprecate some webkit-patch commands

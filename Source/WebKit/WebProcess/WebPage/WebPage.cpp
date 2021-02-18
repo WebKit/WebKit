@@ -515,6 +515,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(APP_BOUND_DOMAINS)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
+    , m_lastNavigationWasAppBound(parameters.lastNavigationWasAppBound)
 {
     ASSERT(m_identifier);
 
@@ -1634,6 +1635,8 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
+    setLastNavigationWasAppBound(loadParameters.request.isAppBound());
+
 #if ENABLE(APP_BOUND_DOMAINS)
     setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
 #endif
@@ -6472,6 +6475,8 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
 {
     Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
+    documentLoader->setlastNavigationWasAppBound(m_lastNavigationWasAppBound);
+
     if (frame.isMainFrame()) {
         if (m_pendingNavigationID) {
             documentLoader->setNavigationID(m_pendingNavigationID);
@@ -7345,6 +7350,11 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 {
 }
 #endif
+
+void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppBound());
+}
 
 } // namespace WebKit
 

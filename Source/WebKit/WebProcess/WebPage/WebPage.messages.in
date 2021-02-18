@@ -631,4 +631,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
+
+    LastNavigationWasAppBound() -> (bool wasAppBound) Async
 }

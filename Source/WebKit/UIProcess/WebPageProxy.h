@@ -1854,6 +1854,11 @@ public:
     void resetImageExtractionPreview();
 #endif
 
+#if PLATFORM(COCOA)
+    void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
+    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2907,6 +2912,8 @@ private:
     bool m_canUseCredentialStorage { true };
 
     size_t m_suspendMediaPlaybackCounter { 0 };
+
+    bool m_lastNavigationWasAppBound { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 

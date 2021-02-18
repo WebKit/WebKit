@@ -213,6 +213,7 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
     encoder << resourceRequest.requester();
     encoder << resourceRequest.cachePolicy();
+    encoder << resourceRequest.isAppBound();
 }
 
 bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decoder, WebCore::ResourceRequest& resourceRequest)
@@ -255,6 +256,11 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     if (!decoder.decode(cachePolicy))
         return false;
     resourceRequest.setCachePolicy(cachePolicy);
+
+    bool isAppBound;
+    if (!decoder.decode(isAppBound))
+        return false;
+    resourceRequest.setIsAppBound(isAppBound);
 
     return true;
 }

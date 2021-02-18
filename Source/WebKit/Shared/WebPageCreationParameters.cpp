@@ -174,6 +174,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
 #endif
+    encoder << lastNavigationWasAppBound;
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
@@ -570,6 +571,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return WTF::nullopt;
 #endif
+    if (!decoder.decode(parameters.lastNavigationWasAppBound))
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldRelaxThirdPartyCookieBlocking))
         return WTF::nullopt;

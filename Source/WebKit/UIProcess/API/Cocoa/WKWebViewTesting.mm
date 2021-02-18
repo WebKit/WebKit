@@ -326,4 +326,11 @@
 #endif
 }
 
+- (void)_lastNavigationWasAppBound:(void(^)(BOOL))completionHandler
+{
+    _page->lastNavigationWasAppBound([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
+        completionHandler(isAppBound);
+    });
+}
+
 @end

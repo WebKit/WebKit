@@ -1,3 +1,66 @@
+2021-02-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add support for non app-bound requests
+        https://bugs.webkit.org/show_bug.cgi?id=221909
+        <rdar://problem/73512988>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new parameter to the ResourceRequest class specifying app
+        bound requests and populate subresource loads, redirects, and
+        preconnect tasks with this value.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * Scripts/webkit/messages.py:
+        * Shared/NavigatingToAppBoundDomain.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _lastNavigationWasAppBound:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setLastNavigationWasAppBound):
+        (WebKit::WebPageProxy::lastNavigationWasAppBound):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::preconnectTo):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        For the case of a main resource load without a navigation, like from about:blank,
+        the main resource load uses the original document loader which was created before
+        WebPage::loadRequest sets the value of m_lastNavigationWasAppBound. For this reason,
+        we should not check the document loader value for the main resource and
+        know that the resource request has the correct value.
+
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::createDocumentLoader):
+        We should store lastNavigationWasAppBound in the document loader
+        instead of the page so we don't affect previous loads while initiating
+        the navigation to the next site.
+
+        (WebKit::WebPage::lastNavigationWasAppBound):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setLastNavigationWasAppBound):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove unused IPC shared memory reads in WebContent process

@@ -80,6 +80,12 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #import <WebKitAdditions/WebPageProxyCocoaAdditionsBefore.mm>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyAdditions.h>
+#else
+#define WEB_PAGE_PROXY_ADDITIONS
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
 
@@ -597,6 +603,17 @@ void WebPageProxy::handleContextMenuRevealImage()
 void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
+}
+
+void WebPageProxy::setLastNavigationWasAppBound(ResourceRequest& request)
+{
+    WEB_PAGE_PROXY_ADDITIONS
+    m_lastNavigationWasAppBound = request.isAppBound();
+}
+
+void WebPageProxy::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPage::LastNavigationWasAppBound(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit
