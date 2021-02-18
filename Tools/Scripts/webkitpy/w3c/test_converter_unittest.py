@@ -370,7 +370,7 @@ CONTENT OF TEST
         self.assertEquals(len(converted.findAll(src=orig_path_pattern)), 0, 'testharness src path was not converted')
         self.assertEquals(len(converted.findAll(href=orig_path_pattern)), 0, 'testharness href path was not converted')
 
-        new_relpath = os.path.relpath(resources_dir, test_path)
+        new_relpath = os.path.relpath(resources_dir, test_path).replace(os.sep, '/')
         relpath_pattern = re.compile(new_relpath)
         self.assertEquals(len(converted.findAll(src=relpath_pattern)), num_src_paths, 'testharness src relative path not correct')
         self.assertEquals(len(converted.findAll(href=relpath_pattern)), num_href_paths, 'testharness href relative path not correct')

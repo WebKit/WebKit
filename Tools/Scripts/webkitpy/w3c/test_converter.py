@@ -29,6 +29,7 @@
 
 import json
 import logging
+import os
 import re
 import sys
 
@@ -83,7 +84,7 @@ class _W3CTestConverter(HTMLParser):
 
         resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
         resources_relpath = self._filesystem.relpath(resources_path, new_path)
-        self.new_test_harness_path = resources_relpath
+        self.new_test_harness_path = resources_relpath.replace(os.sep, '/')
         self.convert_test_harness_links = convert_test_harness_links
 
         # These settings might vary between WebKit and Blink

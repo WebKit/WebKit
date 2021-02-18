@@ -1,3 +1,19 @@
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        _W3CTestConverter tests don't run on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=221855
+
+        Reviewed by Jonathan Bedard.
+
+        In _W3CTestConverter it retrieves a relative path and then uses that to populate a
+        regular expression. On Windows the path separator is `\` which causes a re.error due to
+        a bad escape. Normalize the path to use `/` in this code.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (W3CTestConverterTest.verify_test_harness_paths):
+
 2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new datalist dropdown for text inputs
