@@ -1,3 +1,16 @@
+2021-02-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, reverting r273063.
+
+        GTK port layout tests are timint out.
+
+        Reverted changeset:
+
+        "[CoordinatedGraphics] The whole content is unnecessarily
+        repainted by animations in non-AC mode pages"
+        https://bugs.webkit.org/show_bug.cgi?id=221391
+        https://commits.webkit.org/r273063
+
 2021-02-18  Per Arne  <pvollan@apple.com>
 
         [macOS] Remove access to audio IOKit
