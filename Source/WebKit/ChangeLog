@@ -1,3 +1,37 @@
+2021-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages
+        https://bugs.webkit.org/show_bug.cgi?id=221391
+
+        Reviewed by Carlos Garcia Campos.
+
+        When triggerRenderingUpdate was called back, it added the whole
+        view area into the dirty region to repaint in non-AC mode pages.
+        This caused a problem that the whole content was unnecessarily
+        repainted by animations in non-AC mode pages.
+
+        Call scheduleDisplay instead of setNeedsDisplay in
+        triggerRenderingUpdate.
+
+        However, if the dirty region is empty, display() exited early. If
+        triggerRenderingUpdate is called back,
+        DrawingAreaCoordinatedGraphics::display should be called to ensure
+        WebPage::updateRendering() called even if m_dirtyRegion is empty.
+
+        Added a new flag m_scheduledWhileWaitingForDidUpdate.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::triggerRenderingUpdate):
+        Call scheduleDisplay() instead of setNeedsDisplay().
+        (WebKit::DrawingAreaCoordinatedGraphics::didUpdate):
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleDisplay): Don't
+        return early even if m_dirtyRegion is empty.
+        (WebKit::DrawingAreaCoordinatedGraphics::display()): Ditto.
+        (WebKit::DrawingAreaCoordinatedGraphics::display(UpdateInfo&)):
+        Return early if m_dirtyRegion is empty.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        Added m_scheduledWhileWaitingForDidUpdate.
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit even further
