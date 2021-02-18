@@ -675,7 +675,7 @@ static void registerMockScrollbars()
 }
 #endif
 
-WebView *createWebViewAndOffscreenWindow()
+RetainPtr<WebView> createWebViewAndOffscreenWindow()
 {
 #if !PLATFORM(IOS_FAMILY)
     NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
@@ -778,7 +778,7 @@ WebView *createWebViewAndOffscreenWindow()
 #endif
 
     [webView setMediaVolume:0];
-    return webView.leakRef();
+    return webView;
 }
 
 static void destroyGlobalWebViewAndOffscreenWindow()
@@ -812,7 +812,7 @@ static void destroyGlobalWebViewAndOffscreenWindow()
 static void createGlobalWebViewAndOffscreenWindow()
 {
     destroyGlobalWebViewAndOffscreenWindow();
-    globalWebView() = adoptNS(createWebViewAndOffscreenWindow());
+    globalWebView() = createWebViewAndOffscreenWindow();
     mainFrame = [globalWebView() mainFrame];
 }
 

@@ -1,3 +1,17 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        DumpRenderTree's createWebViewAndOffscreenWindow() should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=222068
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (createGlobalWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
 2021-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Effectively revert r272908

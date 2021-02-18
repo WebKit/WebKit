@@ -26,6 +26,10 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#ifdef __cplusplus
+#include <wtf/Forward.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 #import <UIKit/UIKit.h>
 #endif
@@ -59,8 +63,8 @@ extern NSWindow *mainWindow;
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
 bool shouldSetWaitToDumpWatchdog(void);
 
-#ifdef __OBJC__
-WebView *createWebViewAndOffscreenWindow(void) NS_RETURNS_RETAINED;
+#ifdef __cplusplus
+RetainPtr<WebView> createWebViewAndOffscreenWindow(void);
 #endif
 
 void setPersistentUserStyleSheetLocation(CFStringRef);

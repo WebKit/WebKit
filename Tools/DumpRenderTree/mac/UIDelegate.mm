@@ -178,7 +178,7 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     // Make sure that waitUntilDone has been called.
     ASSERT(gTestRunner->waitToDump());
 
-    auto webView = adoptNS(createWebViewAndOffscreenWindow());
+    auto webView = createWebViewAndOffscreenWindow();
     [webView setPreferences:[sender preferences]];
 
     if (gTestRunner->newWindowsCopyBackForwardList())
