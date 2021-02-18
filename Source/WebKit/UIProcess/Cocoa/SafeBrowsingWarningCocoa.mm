@@ -131,9 +131,9 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
     auto malwareOrUnwantedSoftwareDetails = [&] (NSString *description, NSString *statusStringToReplace, bool confirmMalware) {
         auto malwareDescription = adoptNS([[NSMutableAttributedString alloc] initWithString:description]);
         replace(malwareDescription.get(), @"%safeBrowsingProvider%", localizedProvider(result));
-        NSMutableAttributedString *statusLink = [[[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")] autorelease];
-        replace(statusLink, @"%site%", url.host().toString());
-        addLinkAndReplace(malwareDescription.get(), statusStringToReplace, statusLink.string, malwareDetailsURL(url, result));
+        auto statusLink = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")]);
+        replace(statusLink.get(), @"%site%", url.host().toString());
+        addLinkAndReplace(malwareDescription.get(), statusStringToReplace, [statusLink string], malwareDetailsURL(url, result));
 
         auto ifYouUnderstand = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"If you understand the risks involved, you can %visit-this-unsafe-site-link%.", "Action from safe browsing warning")]);
         addLinkAndReplace(ifYouUnderstand.get(), @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? SafeBrowsingWarning::confirmMalwareSentinel() : SafeBrowsingWarning::visitUnsafeWebsiteSentinel());

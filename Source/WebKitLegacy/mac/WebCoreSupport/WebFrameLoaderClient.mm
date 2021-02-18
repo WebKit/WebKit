@@ -305,9 +305,9 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(WebCore::DocumentLo
     if (!mainResourceLoader) {
         // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        WebDownload *webDownload = [[WebDownload alloc] initWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody) delegate:[webView downloadDelegate]];
+        auto webDownload = adoptNS([[WebDownload alloc] initWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody) delegate:[webView downloadDelegate]]);
         ALLOW_DEPRECATED_DECLARATIONS_END
-        [webDownload autorelease];
+        webDownload.autorelease();
         return;
     }
 
@@ -928,10 +928,10 @@ static NSDictionary *makeFormFieldValuesDictionary(WebCore::FormState& formState
 {
     auto& textFieldValues = formState.textFieldValues();
     size_t size = textFieldValues.size();
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:size];
+    auto dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
     for (auto& value : textFieldValues)
         [dictionary setObject:value.second forKey:value.first];
-    return [dictionary autorelease];
+    return dictionary.autorelease();
 }
 
 void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&& formState)
@@ -1169,12 +1169,11 @@ WebCore::ResourceError WebFrameLoaderClient::fileDoesNotExistError(const WebCore
 
 WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const WebCore::ResourceResponse& response) const
 {
-    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+    return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                     contentURL:response.url()
                                                  pluginPageURL:nil
                                                     pluginName:nil
-                                                      MIMEType:response.mimeType()];
-    return [error autorelease];
+                                                      MIMEType:response.mimeType()]).autorelease();
 }
 
 bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error) const
@@ -1940,7 +1939,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
                 view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys.get(), createNSArray(paramValues).get(), baseURL, kit(&element), loadManually);
 #if ENABLE(NETSCAPE_PLUGIN_API)
             else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-                WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
+                auto pluginView = adoptNS([[NETSCAPE_PLUGIN_VIEW alloc]
                     initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                     pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                     URL:pluginURL
@@ -1949,9 +1948,9 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
                     attributeKeys:attributeKeys.get()
                     attributeValues:createNSArray(paramValues).get()
                     loadManually:loadManually
-                    element:&element] autorelease];
+                    element:&element]);
 
-                return adoptRef(new NetscapePluginWidget(pluginView));
+                return adoptRef(new NetscapePluginWidget(pluginView.get()));
             }
 #endif
         }

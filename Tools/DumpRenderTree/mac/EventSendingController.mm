@@ -41,6 +41,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS_FAMILY)
@@ -91,9 +92,14 @@ NSPoint lastMousePosition;
 NSPoint lastClickPosition;
 int lastClickButton = NoMouseButton;
 NSArray *webkitDomEventNames;
-NSMutableArray *savedMouseEvents; // mouse events sent between mouseDown and mouseUp are stored here, and then executed at once.
 BOOL replayingSavedEvents;
 unsigned mouseButtonsCurrentlyDown = 0;
+
+static RetainPtr<NSMutableArray>& savedMouseEvents()
+{
+    static NeverDestroyed<RetainPtr<NSMutableArray>> _savedMouseEvents; // mouse events sent between mouseDown and mouseUp are stored here, and then executed at once.
+    return _savedMouseEvents;
+}
 
 #if PLATFORM(IOS_FAMILY)
 @interface SyntheticTouch : NSObject {
@@ -119,7 +125,7 @@ unsigned mouseButtonsCurrentlyDown = 0;
 
 + (id)touchWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier
 {
-    return [[[SyntheticTouch alloc] initWithLocation:location phase:phase identifier:identifier] autorelease];
+    return adoptNS([[SyntheticTouch alloc] initWithLocation:location phase:phase identifier:identifier]).autorelease();
 }
 
 - (id)initWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier
@@ -456,8 +462,8 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     assert([pboard propertyListForType:NSFilenamesPboardType]); // setPropertyList will silently fail on error, assert that it didn't fail
 
     // Provide a source, otherwise [DumpRenderTreeDraggingInfo draggingSourceOperationMask] defaults to NSDragOperationNone
-    DumpRenderTreeFileDraggingSource *source = [[[DumpRenderTreeFileDraggingSource alloc] init] autorelease];
-    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pboard source:source];
+    auto source = adoptNS([[DumpRenderTreeFileDraggingSource alloc] init]);
+    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pboard source:source.get()];
     [[mainFrame webView] draggingEntered:draggingInfo];
 
     dragMode = NO; // dragMode saves events and then replays them later.  We don't need/want that.
@@ -944,18 +950,20 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 + (void)saveEvent:(NSInvocation *)event
 {
-    if (!savedMouseEvents)
-        savedMouseEvents = [[NSMutableArray alloc] init];
-    [savedMouseEvents addObject:event];
+    auto& savedEvents = savedMouseEvents();
+    if (!savedEvents)
+        savedEvents = adoptNS([[NSMutableArray alloc] init]);
+    [savedEvents addObject:event];
 }
 
 + (void)replaySavedEvents
 {
     replayingSavedEvents = YES;
-    while ([savedMouseEvents count]) {
+    auto& savedEvents = savedMouseEvents();
+    while ([savedEvents count]) {
         // if a drag is initiated, the remaining saved events will be dispatched from our dragging delegate
-        NSInvocation *invocation = [[[savedMouseEvents objectAtIndex:0] retain] autorelease];
-        [savedMouseEvents removeObjectAtIndex:0];
+        auto invocation = retainPtr(savedEvents.get()[0]);
+        [savedEvents removeObjectAtIndex:0];
         [invocation invoke];
     }
     replayingSavedEvents = NO;
@@ -963,7 +971,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 + (void)clearSavedEvents
 {
-    auto oldEvents = adoptNS(std::exchange(savedMouseEvents, nil));
+    savedMouseEvents() = nil;
 }
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location

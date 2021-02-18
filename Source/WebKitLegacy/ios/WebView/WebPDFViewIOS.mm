@@ -287,16 +287,16 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     if (!_PDFDocument)
         return;
 
-    NSString *title = nil;
+    RetainPtr<CFStringRef> title;
 
     CGPDFDictionaryRef info = CGPDFDocumentGetInfo(_PDFDocument);
     CGPDFStringRef value;
     if (CGPDFDictionaryGetString(info, "Title", &value))
-        title = [(NSString *)CGPDFStringCopyTextString(value) autorelease];
+        title = adoptCF(CGPDFStringCopyTextString(value));
 
-    if ([title length]) {
-        _title = adoptNS([title copy]);
-        core([self _frame])->loader().client().dispatchDidReceiveTitle({ title, TextDirection::LTR });
+    if (title && CFStringGetLength(title.get())) {
+        _title = (NSString *)title.get();
+        core([self _frame])->loader().client().dispatchDidReceiveTitle({ _title.get(), TextDirection::LTR });
     }
 }
 

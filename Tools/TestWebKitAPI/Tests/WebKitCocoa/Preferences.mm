@@ -70,9 +70,9 @@ TEST(WebKit, ExperimentalFeatures)
 TEST(WebKit, WebAudioPreference)
 {
     auto check = [](bool value) {
-        WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
-        configuration.preferences._webAudioEnabled = value;
-        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration preferences]._webAudioEnabled = value;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
         __block bool done = false;
         __block RetainPtr<NSString> result;
         [webView evaluateJavaScript:@"new Boolean(window.AudioContext).toString()" completionHandler:^(id resultFromJS, NSError *error) {

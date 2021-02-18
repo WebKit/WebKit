@@ -82,16 +82,14 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return appLinks.firstObject;
 #else
     BinarySemaphore semaphore;
-    __block LSAppLink *syncAppLink = nil;
-    __block BinarySemaphore* semaphorePtr = &semaphore;
-
-    [LSAppLink getAppLinkWithURL:url completionHandler:^(LSAppLink *appLink, NSError *error) {
-        syncAppLink = [appLink retain];
-        semaphorePtr->signal();
+    RetainPtr<LSAppLink> syncAppLink;
+    [LSAppLink getAppLinkWithURL:url completionHandler:[&semaphore, &syncAppLink](LSAppLink *appLink, NSError *error) {
+        syncAppLink = retainPtr(appLink);
+        semaphore.signal();
     }];
     semaphore.wait();
 
-    return [syncAppLink autorelease];
+    return syncAppLink.autorelease();
 #endif
 }
 #endif

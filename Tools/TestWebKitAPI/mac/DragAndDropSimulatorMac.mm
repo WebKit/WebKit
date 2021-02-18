@@ -76,9 +76,9 @@ IGNORE_WARNINGS_END
 const double initialMouseDragDistance = 45;
 const double dragUpdateProgressIncrement = 0.05;
 
-static NSImage *defaultExternalDragImage()
+static RetainPtr<NSImage> defaultExternalDragImage()
 {
-    return [[[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]] autorelease];
+    return adoptNS([[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]);
 }
 
 @implementation DragAndDropSimulator {
@@ -111,7 +111,7 @@ static NSImage *defaultExternalDragImage()
 - (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
     if (self = [super init]) {
-        _webView = adoptNS([[DragAndDropTestWKWebView alloc] initWithFrame:frame configuration:configuration ?: [[[WKWebViewConfiguration alloc] init] autorelease] simulator:self]);
+        _webView = adoptNS([[DragAndDropTestWKWebView alloc] initWithFrame:frame configuration:configuration ?: adoptNS([[WKWebViewConfiguration alloc] init]).get() simulator:self]);
         _filePromiseDestinationURLs = adoptNS([NSMutableArray new]);
         [_webView setUIDelegate:self];
         self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
@@ -162,8 +162,8 @@ static NSImage *defaultExternalDragImage()
 
     if (NSPasteboard *pasteboard = self.externalDragPasteboard) {
         NSPoint startLocationInView = [_webView convertPoint:_startLocationInWindow fromView:nil];
-        NSImage *dragImage = self.externalDragImage ?: defaultExternalDragImage();
-        [self performDragInWebView:_webView.get() atLocation:startLocationInView withImage:dragImage pasteboard:pasteboard source:nil];
+        auto dragImage = !self.externalDragImage ? defaultExternalDragImage(): nil;
+        [self performDragInWebView:_webView.get() atLocation:startLocationInView withImage:dragImage.get() pasteboard:pasteboard source:nil];
         TestWebKitAPI::Util::run(&_doneWaitingForDrop);
         return;
     }

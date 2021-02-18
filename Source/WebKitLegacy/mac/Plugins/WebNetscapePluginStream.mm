@@ -106,11 +106,11 @@ NPReason WebNetscapePluginStream::reasonForError(NSError *error)
 
 NSError *WebNetscapePluginStream::pluginCancelledConnectionError() const
 {
-    return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+    return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:m_responseURL ? m_responseURL.get() : (NSURL *)m_requestURL
                                         pluginPageURL:nil
                                            pluginName:[[m_pluginView.get() pluginPackage] pluginInfo].name
-                                             MIMEType:(NSString *)String::fromUTF8(m_mimeType.data(), m_mimeType.length())] autorelease];
+                                             MIMEType:(NSString *)String::fromUTF8(m_mimeType.data(), m_mimeType.length())]).autorelease();
 }
 
 NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const

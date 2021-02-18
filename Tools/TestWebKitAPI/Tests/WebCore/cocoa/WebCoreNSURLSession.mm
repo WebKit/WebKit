@@ -118,7 +118,7 @@ public:
         JSC::initialize();
 #endif
         view = adoptNS([[WebView alloc] initWithFrame:NSZeroRect]);
-        [view setFrameLoadDelegate:[[[TestNSURLSessionLoaderDelegate alloc] init] autorelease]];
+        [view setFrameLoadDelegate:adoptNS([[TestNSURLSessionLoaderDelegate alloc] init]).autorelease()];
 
         didLoadMainResource = false;
         [view setMainFrameURL:documentURL.absoluteString];

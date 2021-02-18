@@ -231,8 +231,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 {
     if ([self _isDisplayingWebArchive]) {            
         SharedBuffer *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
-        NSString *result = [[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding];
-        return [result autorelease];
+        return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 
     Frame* coreFrame = core([_private->dataSource webFrame]);
@@ -270,7 +269,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
     if (!startNode || !endNode)
-        return [[[NSAttributedString alloc] init] autorelease];
+        return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
     return editingAttributedString(range).string.autorelease();
 }

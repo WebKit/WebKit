@@ -158,9 +158,9 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 
 -(NSString *)_webkit_stringByTrimmingWhitespace
 {
-    NSMutableString *trimmed = [[self mutableCopy] autorelease];
-    CFStringTrimWhitespace((__bridge CFMutableStringRef)trimmed);
-    return trimmed;
+    auto trimmed = adoptNS([self mutableCopy]);
+    CFStringTrimWhitespace((__bridge CFMutableStringRef)trimmed.get());
+    return trimmed.autorelease();
 }
 
 #if PLATFORM(MAC)

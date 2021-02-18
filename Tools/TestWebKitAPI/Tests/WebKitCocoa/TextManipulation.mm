@@ -404,7 +404,7 @@ TEST(TextManipulation, StartTextManipulationApplySingleExcluionRuleForElement)
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"code"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"code"]).autorelease(),
     ]];
 
     done = false;
@@ -440,8 +440,8 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForAttri
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forAttribute:@"data-exclude" value:@"yes"] autorelease],
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)NO forAttribute:@"data-exclude" value:@"no"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forAttribute:@"data-exclude" value:@"yes"]).autorelease(),
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)NO forAttribute:@"data-exclude" value:@"no"]).autorelease(),
     ]];
 
     done = false;
@@ -468,7 +468,7 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
 
     auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"]).autorelease(),
     ]];
 
     done = false;
@@ -495,9 +495,9 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
 
     auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forAttribute:@"data-exclude" value:@"yes"] autorelease],
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:NO forAttribute:@"data-exclude" value:@"no"] autorelease],
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:YES forAttribute:@"data-exclude" value:@"yes"]).autorelease(),
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:NO forAttribute:@"data-exclude" value:@"no"]).autorelease(),
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"]).autorelease(),
     ]];
 
     done = false;
@@ -2406,7 +2406,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExclusionIsViolated)
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"]).autorelease(),
     ]];
 
     done = false;
@@ -2451,7 +2451,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExcludedContentAppearsMor
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"]).autorelease(),
     ]];
 
     done = false;
@@ -2496,7 +2496,7 @@ TEST(TextManipulation, CompleteTextManipulationPreservesExcludedContent)
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
-        [[[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"] autorelease],
+        adoptNS([[_WKTextManipulationExclusionRule alloc] initExclusion:(BOOL)YES forElement:@"em"]).autorelease(),
     ]];
 
     done = false;

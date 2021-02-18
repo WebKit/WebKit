@@ -176,12 +176,12 @@ DOMTreeWalker *kit(WebCore::TreeWalker* value)
     if (!value)
         return nil;
     if (DOMTreeWalker *wrapper = getDOMWrapper(value))
-        return [[wrapper retain] autorelease];
-    DOMTreeWalker *wrapper = [[DOMTreeWalker alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS([[DOMTreeWalker alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
-    addDOMWrapper(wrapper, value);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), value);
+    return wrapper.autorelease();
 }
 
 #undef IMPL

@@ -154,11 +154,11 @@ static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>&
     if (!impl)
         return nil;
     if (WKDOMType wrapper = cache.get(impl))
-        return [[wrapper retain] autorelease];
-    WKDOMType wrapper = initWithImpl(impl);
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS(initWithImpl(impl));
     if (!wrapper)
         return nil;
-    return [wrapper autorelease];
+    return wrapper.autorelease();
 }
 
 } // namespace WebKit

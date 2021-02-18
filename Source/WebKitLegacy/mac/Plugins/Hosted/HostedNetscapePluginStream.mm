@@ -261,11 +261,11 @@ void HostedNetscapePluginStream::cancelLoad(NSError *error)
 
 NSError *HostedNetscapePluginStream::pluginCancelledConnectionError() const
 {
-    return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+    return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:m_responseURL ? m_responseURL.get() : m_requestURL.get()
                                         pluginPageURL:nil
                                            pluginName:[[m_instance->pluginView() pluginPackage] pluginInfo].name
-                                             MIMEType:m_mimeType.get()] autorelease];
+                                             MIMEType:m_mimeType.get()]).autorelease();
 }
 
 NSError *HostedNetscapePluginStream::errorForReason(NPReason reason) const

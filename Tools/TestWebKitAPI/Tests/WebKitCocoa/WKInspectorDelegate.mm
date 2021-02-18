@@ -125,9 +125,9 @@ static void resetGlobalState()
     [inspector setDelegate:sharedInspectorDelegate.get()];
 
     sharedURLSchemeHandler = [[SimpleURLSchemeHandler alloc] init];
-    RetainPtr<_WKInspectorConfiguration> inspectorConfiguration = [[_WKInspectorConfiguration alloc] init];
+    auto inspectorConfiguration = adoptNS([[_WKInspectorConfiguration alloc] init]);
     [inspectorConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"testing"];
-    return [inspectorConfiguration autorelease];
+    return inspectorConfiguration.autorelease();
 }
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector

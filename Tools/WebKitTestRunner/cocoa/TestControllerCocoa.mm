@@ -132,16 +132,16 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
     bool useEphemeralSession = options.useEphemeralSession();
     auto standaloneWebApplicationURL = options.standaloneWebApplicationURL();
     if (useEphemeralSession || standaloneWebApplicationURL.length() || options.enableInAppBrowserPrivacy()) {
-        auto websiteDataStoreConfig = useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        auto websiteDataStoreConfig = useEphemeralSession ? adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]) : adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
         if (!useEphemeralSession)
-            configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
+            configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig.get());
         if (standaloneWebApplicationURL.length())
             [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:standaloneWebApplicationURL.c_str()]]];
 #if PLATFORM(IOS_FAMILY)
         if (options.enableInAppBrowserPrivacy())
             [websiteDataStoreConfig setEnableInAppBrowserPrivacyForTesting:YES];
 #endif
-        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig.get()]).get();
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)globalWebViewConfiguration.websiteDataStore;
 }
@@ -191,11 +191,11 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
-    WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];
-    newConfiguration._relatedWebView = static_cast<WKWebView*>(parentView->platformView());
-    if (newConfiguration._relatedWebView)
-        newConfiguration.websiteDataStore = newConfiguration._relatedWebView.configuration.websiteDataStore;
-    PlatformWebView* view = new PlatformWebView(newConfiguration, options);
+    auto newConfiguration = adoptNS([globalWebViewConfiguration copy]);
+    [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
+    if ([newConfiguration _relatedWebView])
+        [newConfiguration setWebsiteDataStore:[newConfiguration _relatedWebView].configuration.websiteDataStore];
+    PlatformWebView* view = new PlatformWebView(newConfiguration.get(), options);
     finishCreatingPlatformWebView(view, options);
     return view;
 }

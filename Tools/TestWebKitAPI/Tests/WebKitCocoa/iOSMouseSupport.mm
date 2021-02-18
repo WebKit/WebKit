@@ -286,10 +286,10 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
 
     // If loaded with _WKWebsiteMouseEventPolicySynthesizeTouchEvents, it should send touch events instead.
 
-    WKWebpagePreferences *preferences = [[[WKWebpagePreferences alloc] init] autorelease];
-    preferences._mouseEventPolicy = _WKWebsiteMouseEventPolicySynthesizeTouchEvents;
+    auto preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences _setMouseEventPolicy:_WKWebsiteMouseEventPolicySynthesizeTouchEvents];
 
-    [webView synchronouslyLoadHTMLString:@"two" preferences:preferences];
+    [webView synchronouslyLoadHTMLString:@"two" preferences:preferences.get()];
 
     // FIXME: Because we're directly calling mouseGestureRecognizerChanged: to emulate the gesture recognizer,
     // we can't just tapAndWait() again and expect the fact that it's disabled to stop the mouse events.

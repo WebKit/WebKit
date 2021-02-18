@@ -113,19 +113,19 @@ TEST(WebKit, ConfigurationHTTPSUpgrade)
 
     auto runTest = [&] (bool upgrade) {
         done = false;
-        auto storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease];
-        storeConfiguration.allowsServerPreconnect = NO;
-        storeConfiguration.proxyConfiguration = @{
+        auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setAllowsServerPreconnect:NO];
+        [storeConfiguration setProxyConfiguration:@{
             (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port()),
             (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
             (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port()),
-        };
-        auto store = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
-        auto configuration = [[WKWebViewConfiguration new] autorelease];
-        configuration.websiteDataStore = store;
-        configuration.upgradeKnownHostsToHTTPS = upgrade;
-        auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+        }];
+        auto store = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration setWebsiteDataStore:store.get()];
+        [configuration setUpgradeKnownHostsToHTTPS:upgrade];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.opengl.org/"]];
         [webView loadRequest:request];
         Util::run(&done);

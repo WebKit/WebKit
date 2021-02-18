@@ -68,11 +68,11 @@ NSData *readHTMLDataFromPasteboard()
 
 NSString *readHTMLStringFromPasteboard()
 {
-    id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeHTML];
+    RetainPtr<id> value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeHTML];
     if ([value isKindOfClass:[NSData class]])
-        value = [[[NSString alloc] initWithData:(NSData *)value encoding:NSUTF8StringEncoding] autorelease];
+        value = adoptNS([[NSString alloc] initWithData:(NSData *)value encoding:NSUTF8StringEncoding]);
     ASSERT([value isKindOfClass:[NSString class]]);
-    return (NSString *)value;
+    return (NSString *)value.autorelease();
 }
 
 #endif

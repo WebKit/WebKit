@@ -784,13 +784,13 @@ DOMNodeFilter *kit(WebCore::NodeFilter* impl)
         return nil;
     
     if (DOMNodeFilter *wrapper = getDOMWrapper(impl))
-        return [[wrapper retain] autorelease];
+        return retainPtr(wrapper).autorelease();
     
-    DOMNodeFilter *wrapper = [[DOMNodeFilter alloc] _init];
+    auto wrapper = adoptNS([[DOMNodeFilter alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(wrapper, impl);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), impl);
+    return wrapper.autorelease();
 }
 
 WebCore::NodeFilter* core(DOMNodeFilter *wrapper)

@@ -302,7 +302,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response);
+    auto coreResource = ArchiveResource::create(SharedBuffer::create(copyData ? adoptNS([data copy]).get() : data), URL, MIMEType, textEncodingName, frameName, response);
     if (!coreResource) {
         [self release];
         return nil;
@@ -338,12 +338,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 #if !PLATFORM(IOS_FAMILY)
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[self data]] autorelease];
+    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[self data]]);
     NSString *filename = [self _suggestedFilename];
     if (!filename || ![filename length])
         filename = [[self URL] _webkit_suggestedFilenameWithMIMEType:[self MIMEType]];
     [wrapper setPreferredFilename:filename];
-    return wrapper;
+    return wrapper.autorelease();
 }
 #endif
 
@@ -354,7 +354,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     NSURLResponse *response = nil;
     if (_private->coreResource)
         response = _private->coreResource->response().nsURLResponse();
-    return response ? response : [[[NSURLResponse alloc] init] autorelease];        
+    return response ? response : adoptNS([[NSURLResponse alloc] init]).autorelease();
 }
 
 - (NSString *)_stringValue

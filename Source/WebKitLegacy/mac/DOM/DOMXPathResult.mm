@@ -118,12 +118,12 @@ DOMXPathResult *kit(WebCore::XPathResult* value)
     if (!value)
         return nil;
     if (DOMXPathResult *wrapper = getDOMWrapper(value))
-        return [[wrapper retain] autorelease];
-    DOMXPathResult *wrapper = [[DOMXPathResult alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS([[DOMXPathResult alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
-    addDOMWrapper(wrapper, value);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), value);
+    return wrapper.autorelease();
 }
 
 #undef IMPL

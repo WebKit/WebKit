@@ -233,14 +233,14 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
 
-    NSColorList *suggestedColors = nil;
+    RetainPtr<NSColorList> suggestedColors;
     if (suggestions.size()) {
-        suggestedColors = [[[NSColorList alloc] init] autorelease];
+        suggestedColors = adoptNS([[NSColorList alloc] init]);
         for (size_t i = 0; i < std::min(suggestions.size(), maxColorSuggestions); i++)
             [suggestedColors insertColor:nsColor(suggestions.at(i)) key:@(i).stringValue atIndex:i];
     }
 
-    [_popoverWell setSuggestedColors:suggestedColors];
+    [_popoverWell setSuggestedColors:suggestedColors.get()];
     [_popoverWell _showPopover];
 
     [[NSColorPanel sharedColorPanel] setDelegate:self];

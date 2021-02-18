@@ -2730,11 +2730,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!count)
         return nil;
 
-    NSMenu *menu = [[NSMenu alloc] init];
+    auto menu = adoptNS([[NSMenu alloc] init]);
     for (unsigned i = 0; i < count; i++)
         [menu addItem:[menuItems objectAtIndex:i]];
 
-    return [menu autorelease];
+    return menu.autorelease();
 }
 #endif
 
@@ -3218,7 +3218,7 @@ IGNORE_WARNINGS_END
     if (schemesWithRepresentationsSet == nil) {
         schemesWithRepresentationsSet = [[NSMutableSet alloc] init];
     }
-    [schemesWithRepresentationsSet addObject:[[[URLScheme lowercaseString] copy] autorelease]];
+    [schemesWithRepresentationsSet addObject:adoptNS([[URLScheme lowercaseString] copy]).get()];
 }
 
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
@@ -3626,10 +3626,9 @@ IGNORE_WARNINGS_END
     WebDataSource *dataSource = [frame provisionalDataSource];
     if (!dataSource)
         dataSource = [frame dataSource];
-    NSURL *unreachableURL = [dataSource unreachableURL];
-    NSURL *URL = unreachableURL != nil ? unreachableURL : [[dataSource request] URL];
-    [[URL retain] autorelease];
-    return URL;
+    auto unreachableURL = retainPtr([dataSource unreachableURL]);
+    auto url = unreachableURL != nil ? unreachableURL : retainPtr([[dataSource request] URL]);
+    return url.autorelease();
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -4090,7 +4089,7 @@ IGNORE_WARNINGS_END
     auto intRect = WebCore::enclosingIntRect(rect);
     auto range = WebCore::VisibleSelection(coreFrame->visiblePositionForPoint(intRect.minXMinYCorner()),
         coreFrame->visiblePositionForPoint(intRect.maxXMaxYCorner())).toNormalizedRange();
-    return [[[WebTextIterator alloc] initWithRange:kit(range)] autorelease];
+    return adoptNS([[WebTextIterator alloc] initWithRange:kit(range)]).autorelease();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -5262,14 +5261,14 @@ IGNORE_WARNINGS_END
     NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
     id key;
-    NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
+    auto array = adoptNS([[NSMutableArray alloc] init]);
 
     while ((key = [enumerator nextObject])) {
         if ([viewTypes objectForKey:key] == [WebHTMLView class])
             [array addObject:key];
     }
 
-    return array;
+    return array.autorelease();
 }
 
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes

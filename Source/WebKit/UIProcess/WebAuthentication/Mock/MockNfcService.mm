@@ -188,9 +188,9 @@ NSData* MockNfcService::transceive()
     if (m_configuration.nfc->payloadBase64.isEmpty())
         return nil;
 
-    auto result = [[NSData alloc] initWithBase64EncodedString:m_configuration.nfc->payloadBase64[0] options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    auto result = adoptNS([[NSData alloc] initWithBase64EncodedString:m_configuration.nfc->payloadBase64[0] options:NSDataBase64DecodingIgnoreUnknownCharacters]);
     m_configuration.nfc->payloadBase64.remove(0);
-    return [result autorelease];
+    return result.autorelease();
 }
 
 void MockNfcService::receiveStopPolling()

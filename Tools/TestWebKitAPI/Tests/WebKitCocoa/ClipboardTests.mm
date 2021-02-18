@@ -129,14 +129,14 @@ static void writeMultipleObjectsToPlatformPasteboard()
 #endif
 }
 
-static NSString *readMarkupFromPasteboard()
+static RetainPtr<NSString> readMarkupFromPasteboard()
 {
 #if PLATFORM(MAC)
     NSData *rawData = [NSPasteboard.generalPasteboard dataForType:WebCore::legacyHTMLPasteboardType()];
 #else
     NSData *rawData = [UIPasteboard.generalPasteboard dataForPasteboardType:(__bridge NSString *)kUTTypeHTML];
 #endif
-    return [[[NSString alloc] initWithData:rawData encoding:NSUTF8StringEncoding] autorelease];
+    return adoptNS([[NSString alloc] initWithData:rawData encoding:NSUTF8StringEncoding]);
 }
 
 TEST(ClipboardTests, ReadMultipleItems)
@@ -160,7 +160,7 @@ TEST(ClipboardTests, WriteSanitizedMarkup)
     auto webView = createWebViewForClipboardTests();
     [webView writeString:@"<script>/* super secret */</script>This is a test." toClipboardWithType:@"text/html"];
 
-    NSString *writtenMarkup = readMarkupFromPasteboard();
+    auto writtenMarkup = readMarkupFromPasteboard();
     EXPECT_TRUE([writtenMarkup containsString:@"This is a test."]);
     EXPECT_FALSE([writtenMarkup containsString:@"super secret"]);
     EXPECT_FALSE([writtenMarkup containsString:@"<script>"]);

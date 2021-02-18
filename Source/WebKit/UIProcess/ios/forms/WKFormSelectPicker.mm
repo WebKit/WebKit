@@ -79,10 +79,10 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if (!(self = [self init]))
         return nil;
 
-    NSMutableString *trimmedText = [[item.text mutableCopy] autorelease];
-    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
+    auto trimmedText = adoptNS([item.text mutableCopy]);
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    [[self titleLabel] setText:trimmedText];
+    [[self titleLabel] setText:trimmedText.get()];
     [self setChecked:item.isSelected];
     [self setDisabled:item.disabled];
     if (_disabled)
@@ -105,10 +105,10 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if (!(self = [self init]))
         return nil;
 
-    NSMutableString *trimmedText = [[item.text mutableCopy] autorelease];
-    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
+    auto trimmedText = adoptNS([item.text mutableCopy]);
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    [[self titleLabel] setText:trimmedText];
+    [[self titleLabel] setText:trimmedText.get()];
     [self setChecked:NO];
     [[self titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:GroupOptionTextColorAlpha]];
     [self setDisabled:YES];
@@ -223,14 +223,18 @@ static const float GroupOptionTextColorAlpha = 0.5;
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
     auto& item = [_view focusedSelectElementOptions][rowIndex];
-    UIPickerContentView *pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
+    RetainPtr<WKOptionPickerCell> pickerItem;
+    if (item.isGroup)
+        pickerItem = adoptNS([[WKOptionGroupPickerCell alloc] initWithOptionItem:item]);
+    else
+        pickerItem = adoptNS([[WKOptionPickerCell alloc] initWithOptionItem:item]);
 
     // The cell starts out with a null frame. We need to set its frame now so we can find the right font size.
     UITableView *table = [pickerView tableViewForColumn:0];
     CGRect frame = [table rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowIndex inSection:0]];
-    pickerItem.frame = frame;
+    [pickerItem setFrame:frame];
 
-    UILabel *titleTextLabel = pickerItem.titleLabel;
+    UILabel *titleTextLabel = [pickerItem titleLabel];
     float width = [pickerItem labelWidthForBounds:CGRectMake(0, 0, CGRectGetWidth(frame), CGRectGetHeight(frame))];
     ASSERT(width > 0);
 
@@ -246,7 +250,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [titleTextLabel setNumberOfLines:2];
     [titleTextLabel setTextAlignment:_textAlignment];
 
-    return pickerItem;
+    return pickerItem.autorelease();
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)aPickerView
@@ -407,14 +411,14 @@ static const float GroupOptionTextColorAlpha = 0.5;
         return nil;
 
     const OptionItem& option = [_view focusedSelectElementOptions][row];
-    NSMutableString *trimmedText = [[option.text mutableCopy] autorelease];
-    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
+    auto trimmedText = adoptNS([option.text mutableCopy]);
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:trimmedText];
+    auto attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:trimmedText.get()]);
     if (option.disabled)
         [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0.0 alpha:DisabledOptionAlpha] range:NSMakeRange(0, [trimmedText length])];
 
-    return [attributedString autorelease];
+    return attributedString.autorelease();
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
@@ -839,39 +843,39 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     if (!section)
         return nil;
 
-    UIView *sectionView = [[[UIView alloc] init] autorelease];
+    auto sectionView = adoptNS([[UIView alloc] init]);
 
-    UILabel *sectionLabel = [[[UILabel alloc] init] autorelease];
-    sectionLabel.text = [self tableView:tableView titleForHeaderInSection:section];
-    sectionLabel.textColor = UIColor.blackColor;
-    sectionLabel.font = [UIFont boldSystemFontOfSize:sectionHeaderFontSize];
-    sectionLabel.adjustsFontSizeToFitWidth = NO;
-    sectionLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    [sectionView addSubview:sectionLabel];
+    auto sectionLabel = adoptNS([[UILabel alloc] init]);
+    [sectionLabel setText:[self tableView:tableView titleForHeaderInSection:section]];
+    [sectionLabel setTextColor:UIColor.blackColor];
+    [sectionLabel setFont:[UIFont boldSystemFontOfSize:sectionHeaderFontSize]];
+    [sectionLabel setAdjustsFontSizeToFitWidth:NO];
+    [sectionLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+    [sectionView addSubview:sectionLabel.get()];
 
-    sectionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [sectionLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [NSLayoutConstraint activateConstraints:@[
-        [sectionLabel.leadingAnchor constraintEqualToAnchor:sectionView.leadingAnchor constant:sectionHeaderMargin],
-        [sectionLabel.topAnchor constraintEqualToAnchor:sectionView.topAnchor constant:0],
+        [[sectionLabel leadingAnchor] constraintEqualToAnchor:[sectionView leadingAnchor] constant:sectionHeaderMargin],
+        [[sectionLabel topAnchor] constraintEqualToAnchor:[sectionView topAnchor] constant:0],
     ]];
 
-    UIButton *collapseButton = [[[UIButton alloc] init] autorelease];
-    collapseButton.tag = section;
+    auto collapseButton = adoptNS([[UIButton alloc] init]);
+    [collapseButton setTag:section];
     [collapseButton setImage:[UIImage systemImageNamed:@"chevron.down" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:sectionHeaderCollapseButtonSize weight:UIImageSymbolWeightSemibold]] forState:UIControlStateNormal];
     [collapseButton addTarget:self action:@selector(collapseSection:) forControlEvents:UIControlEventTouchUpInside];
-    [sectionView addSubview:collapseButton];
+    [sectionView addSubview:collapseButton.get()];
 
     if ([_collapsedSections containsObject:@(section)])
-        collapseButton.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+        [collapseButton setTransform:CGAffineTransformMakeRotation(-M_PI / 2)];
 
-    collapseButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [collapseButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [NSLayoutConstraint activateConstraints:@[
-        [collapseButton.trailingAnchor constraintEqualToAnchor:sectionView.trailingAnchor constant:-sectionHeaderMargin],
-        [collapseButton.topAnchor constraintEqualToAnchor:sectionLabel.topAnchor constant:0],
-        [collapseButton.bottomAnchor constraintEqualToAnchor:sectionLabel.bottomAnchor constant:0],
+        [[collapseButton trailingAnchor] constraintEqualToAnchor:[sectionView trailingAnchor] constant:-sectionHeaderMargin],
+        [[collapseButton topAnchor] constraintEqualToAnchor:[sectionLabel topAnchor] constant:0],
+        [[collapseButton bottomAnchor] constraintEqualToAnchor:[sectionLabel bottomAnchor] constant:0],
     ]];
 
-    return sectionView;
+    return sectionView.autorelease();
 }
 
 - (void)collapseSection:(UIButton *)button
@@ -939,34 +943,34 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:optionCellReuseIdentifier];
+    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:optionCellReuseIdentifier]);
     if (!cell)
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:optionCellReuseIdentifier] autorelease];
+        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:optionCellReuseIdentifier]);
 
     if (_contentView.focusedSelectElementOptions.isEmpty()) {
-        cell.textLabel.enabled = NO;
-        cell.textLabel.text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list");
-        cell.userInteractionEnabled = NO;
-        cell.imageView.image = nil;
-        return cell;
+        [cell textLabel].enabled = NO;
+        [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list");
+        [cell setUserInteractionEnabled:NO];
+        [cell imageView].image = nil;
+        return cell.autorelease();
     }
 
     auto option = [self optionItemAtIndexPath:indexPath];
     if (!option)
-        return cell;
+        return cell.autorelease();
 
-    cell.textLabel.text = option->text;
-    cell.textLabel.enabled = !option->disabled;
-    cell.userInteractionEnabled = !option->disabled;
+    [cell textLabel].text = option->text;
+    [cell textLabel].enabled = !option->disabled;
+    [cell setUserInteractionEnabled:!option->disabled];
 
     if (option->isSelected)
-        cell.imageView.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
+        [cell imageView].image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
     else if (option->disabled)
-        cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.quaternaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [cell imageView].image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.quaternaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
     else
-        cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [cell imageView].image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
 
-    return cell;
+    return cell.autorelease();
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

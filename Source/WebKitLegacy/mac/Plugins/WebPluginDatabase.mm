@@ -419,9 +419,9 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
         // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
         // which simply saved a copy of the additional paths and did not cause the plugin DB to 
         // refresh.  See Radars 4608487 and 4609047.
-        NSMutableArray *modifiedPlugInPaths = [[plugInPaths mutableCopy] autorelease];
+        auto modifiedPlugInPaths = adoptNS([plugInPaths mutableCopy]);
         [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths().get()];
-        return modifiedPlugInPaths;
+        return modifiedPlugInPaths.autorelease();
     }
     return plugInPaths;
 }

@@ -161,18 +161,18 @@ static void checkFrame(NSRect frame, CGFloat x, CGFloat y, CGFloat width, CGFloa
 
 TEST(PDFHUD, MainResourcePDF)
 {
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:[[WKWebViewConfiguration new] autorelease]] autorelease];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).autorelease()]);
     [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 0, 0, 800, 600);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 0, 0, 800, 600);
     
-    TestUIDelegate *delegate = [[TestUIDelegate new] autorelease];
-    webView.UIDelegate = delegate;
+    auto delegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
     __block bool saveRequestReceived = false;
-    delegate.saveDataToFile = ^(WKWebView *webViewFromDelegate, NSData *data, NSString *suggestedFilename, NSString *mimeType, NSURL *originatingURL) {
-        EXPECT_EQ(webView, webViewFromDelegate);
+    delegate.get().saveDataToFile = ^(WKWebView *webViewFromDelegate, NSData *data, NSString *suggestedFilename, NSString *mimeType, NSURL *originatingURL) {
+        EXPECT_EQ(webView.get(), webViewFromDelegate);
         EXPECT_TRUE([data isEqualToData:pdfData()]);
         EXPECT_WK_STREQ(suggestedFilename, "testPath.pdf");
         EXPECT_WK_STREQ(mimeType, "application/pdf");
@@ -181,9 +181,9 @@ TEST(PDFHUD, MainResourcePDF)
     [[webView _pdfHUDs].anyObject performSelector:NSSelectorFromString(@"_performActionForControl:") withObject:@"arrow.down.circle"];
     TestWebKitAPI::Util::run(&saveRequestReceived);
 
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
     [webView _killWebContentProcess];
-    while (webView._pdfHUDs.count)
+    while ([webView _pdfHUDs].count)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
@@ -191,163 +191,163 @@ TEST(PDFHUD, MainResourcePDF)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(PDFHUD, MoveIFrame)
 {
-    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
-    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease];
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
             const char* html = "<br/><iframe src='test.pdf' id='pdfframe'></iframe>";
-            [task didReceiveResponse:response];
+            [task didReceiveResponse:response.get()];
             [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
             [task didFinish];
         } else {
             EXPECT_WK_STREQ(task.request.URL.path, "/test.pdf");
             NSData *data = pdfData();
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil] autorelease];
-            [task didReceiveResponse:response];
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
             [task didReceiveData:data];
             [task didFinish];
         }
     };
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
-    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
 
     // If the TestWKWebView is not visible, visibilityDidChange will be called with false, and there will be no HUD.
-    if (!webView._pdfHUDs.count)
+    if (![webView _pdfHUDs].count)
         return;
 
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 10, 28, 300, 150);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 10, 28, 300, 150);
 
     [webView evaluateJavaScript:@"pdfframe.width=400" completionHandler:nil];
-    while (webView._pdfHUDs.anyObject.frame.size.width != 400)
+    while ([webView _pdfHUDs].anyObject.frame.size.width != 400)
         TestWebKitAPI::Util::spinRunLoop();
-    checkFrame(webView._pdfHUDs.anyObject.frame, 10, 28, 400, 150);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 10, 28, 400, 150);
 
     [webView evaluateJavaScript:@"var frameReference = pdfframe; document.body.removeChild(pdfframe)" completionHandler:nil];
-    while (webView._pdfHUDs.count)
+    while ([webView _pdfHUDs].count)
         TestWebKitAPI::Util::spinRunLoop();
     [webView evaluateJavaScript:@"document.body.appendChild(frameReference)" completionHandler:nil];
-    while (!webView._pdfHUDs.count)
+    while (![webView _pdfHUDs].count)
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 0, 0, 0, 0);
-    while (webView._pdfHUDs.anyObject.frame.size.width != 400)
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 0, 0, 0, 0);
+    while ([webView _pdfHUDs].anyObject.frame.size.width != 400)
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 10, 28, 400, 150);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 10, 28, 400, 150);
 
-    webView.pageZoom = 1.4;
-    while (webView._pdfHUDs.anyObject.frame.size.width != 560)
+    [webView setPageZoom:1.4];
+    while ([webView _pdfHUDs].anyObject.frame.size.width != 560)
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 14, 40, 560, 210);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 14, 40, 560, 210);
 }
 #endif
 
 TEST(PDFHUD, NestedIFrames)
 {
-    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
-    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSURLResponse *htmlResponse = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto htmlResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
             const char* html = "<iframe src='frame.html' id='parentframe'></iframe>";
-            [task didReceiveResponse:htmlResponse];
+            [task didReceiveResponse:htmlResponse.get()];
             [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
             [task didFinish];
         } else if ([task.request.URL.path isEqualToString:@"/frame.html"]) {
             const char* html = "<iframe src='test.pdf'></iframe>";
-            [task didReceiveResponse:htmlResponse];
+            [task didReceiveResponse:htmlResponse.get()];
             [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
             [task didFinish];
         } else {
             EXPECT_WK_STREQ(task.request.URL.path, "/test.pdf");
             NSData *data = pdfData();
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil] autorelease];
-            [task didReceiveResponse:response];
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
             [task didReceiveData:data];
             [task didFinish];
         }
     };
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
-    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 20, 20, 300, 150);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 20, 20, 300, 150);
     
     [webView evaluateJavaScript:@"document.body.removeChild(parentframe)" completionHandler:nil];
-    while (webView._pdfHUDs.count)
+    while ([webView _pdfHUDs].count)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
 TEST(PDFHUD, IFrame3DTransform)
 {
-    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
-    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSURLResponse *htmlResponse = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto htmlResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
             const char* html = "<iframe src='test.pdf' height=500 width=500 style='transform:rotateY(235deg);'></iframe>";
-            [task didReceiveResponse:htmlResponse];
+            [task didReceiveResponse:htmlResponse.get()];
             [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
             [task didFinish];
         } else {
             EXPECT_WK_STREQ(task.request.URL.path, "/test.pdf");
             NSData *data = pdfData();
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil] autorelease];
-            [task didReceiveResponse:response];
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
             [task didReceiveData:data];
             [task didFinish];
         }
     };
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
-    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 403, 10, 500, 500);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 403, 10, 500, 500);
 }
 
 TEST(PDFHUD, MultipleIFrames)
 {
-    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
-    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSURLResponse *htmlResponse = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto htmlResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
             const char* html = "<iframe src='test.pdf' height=100 width=150></iframe><iframe src='test.pdf' height=123 width=134></iframe>";
-            [task didReceiveResponse:htmlResponse];
+            [task didReceiveResponse:htmlResponse.get()];
             [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
             [task didFinish];
         } else {
             EXPECT_WK_STREQ(task.request.URL.path, "/test.pdf");
             NSData *data = pdfData();
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil] autorelease];
-            [task didReceiveResponse:response];
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"application/pdf" expectedContentLength:data.length textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
             [task didReceiveData:data];
             [task didFinish];
         }
     };
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
-    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
-    EXPECT_EQ(webView._pdfHUDs.count, 2u);
+    EXPECT_EQ([webView _pdfHUDs].count, 2u);
     bool hadLeftFrame = false;
     bool hadRightFrame = false;
-    for (NSView *hud in webView._pdfHUDs) {
+    for (NSView *hud in [webView _pdfHUDs]) {
         if (hud.frame.origin.x == 10) {
             checkFrame(hud.frame, 10, 33, 150, 100);
             hadLeftFrame = true;
@@ -364,12 +364,12 @@ TEST(PDFHUD, LoadPDFTypeWithPluginsBlocked)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setOverrideContentSecurityPolicy:@"object-src 'none'"];
-    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()] autorelease];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
-    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];
-    EXPECT_EQ(webView._pdfHUDs.count, 1u);
-    checkFrame(webView._pdfHUDs.anyObject.frame, 0, 0, 800, 600);
+    EXPECT_EQ([webView _pdfHUDs].count, 1u);
+    checkFrame([webView _pdfHUDs].anyObject.frame, 0, 0, 800, 600);
 }
 
 #endif

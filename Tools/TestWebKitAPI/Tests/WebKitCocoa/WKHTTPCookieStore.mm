@@ -611,7 +611,7 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolWithPrewarming)
 
 TEST(WebKit, WKHTTPCookieStoreMultipleViews)
 {
-    TestWKWebView *webView1 = [[TestWKWebView new] autorelease];
+    auto webView1 = adoptNS([TestWKWebView new]);
     [webView1 synchronouslyLoadHTMLString:@"start network process"];
 
     NSHTTPCookie *sessionCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -622,7 +622,7 @@ TEST(WebKit, WKHTTPCookieStoreMultipleViews)
     }];
 
     __block bool setCookieDone = false;
-    [webView1.configuration.websiteDataStore.httpCookieStore setCookie:sessionCookie completionHandler:^{
+    [[webView1 configuration].websiteDataStore.httpCookieStore setCookie:sessionCookie completionHandler:^{
         setCookieDone = true;
     }];
     TestWebKitAPI::Util::run(&setCookieDone);
@@ -633,7 +633,7 @@ TEST(WebKit, WKHTTPCookieStoreMultipleViews)
     [webView1 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
 
-    TestWKWebView *webView2 = [[TestWKWebView new] autorelease];
+    auto webView2 = adoptNS([TestWKWebView new]);
     [webView2 setUIDelegate:delegate.get()];
     [webView2 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");

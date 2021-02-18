@@ -1143,7 +1143,7 @@ static NSControlStateValue kit(TriState state)
 
 + (NSArray *)_excludedElementsForAttributedStringConversion
 {
-    NSMutableArray *elements = [[NSMutableArray alloc] initWithObjects:
+    auto elements = adoptNS([[NSMutableArray alloc] initWithObjects:
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
@@ -1157,14 +1157,14 @@ static NSControlStateValue kit(TriState state)
         // Omit object so no file attachments are part of the fragment.
         @"object",
 #endif
-        nil];
+        nil]);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!WebCore::RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
         [elements addObject:@"object"];
 #endif
 
-    return [elements autorelease];
+    return elements.autorelease();
 }
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText
@@ -1221,7 +1221,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (attributedString == nil && [types containsObject:WebCore::legacyRTFPasteboardType()])
         attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:WebCore::legacyRTFPasteboardType()] documentAttributes:NULL]);
     if (attributedString)
-        return [[[attributedString string] copy] autorelease];
+        return adoptNS([[attributedString string] copy]).autorelease();
 
     if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
         if (NSString *string = [[pasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()] componentsJoinedByString:@"\n"])
@@ -1880,7 +1880,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return [[_private->toolTip copy] autorelease];
+    return adoptNS([_private->toolTip copy]).autorelease();
 }
 
 static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
@@ -3383,7 +3383,7 @@ IGNORE_WARNINGS_END
     // There's a chance that if we run a nested event loop the event will be released.
     // Retaining and then autoreleasing prevents that from causing a problem later here or
     // inside AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     [super rightMouseUp:event];
 
@@ -3720,7 +3720,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
     // There's a chance that if we run a nested event loop the event will be released.
     // Retaining and then autoreleasing prevents that from causing a problem later here or
     // inside AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     [_private->completionController endRevertingChange:NO moveLeft:NO];
 
@@ -4081,7 +4081,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     // FIXME: Why not do this on iOS too?
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 #endif
 
     auto* frame = core([self _frame]);
@@ -4121,7 +4121,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
@@ -4150,7 +4150,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
@@ -4181,7 +4181,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 #endif
 
     RetainPtr<WebHTMLView> protector = self;
@@ -4287,7 +4287,7 @@ IGNORE_WARNINGS_END
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
@@ -4363,14 +4363,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    NSFileWrapper *wrapper = nil;
+    RetainPtr<NSFileWrapper> wrapper;
     NSURL *draggingElementURL = nil;
     
     if (auto tiffResource = _private->promisedDragTIFFDataSource) {
         if (auto* buffer = tiffResource->resourceBuffer()) {
             NSURLResponse *response = tiffResource->response().nsURLResponse();
             draggingElementURL = [response URL];
-            wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().get()] autorelease];
+            wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().get()]);
             NSString* filename = [response suggestedFilename];
             NSString* trueExtension(tiffResource->image()->filenameExtension());
             if (!matchesExtensionOrEquivalent(filename, trueExtension))
@@ -4458,7 +4458,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 #endif
 
     [self _setMouseDownEvent:nil];
@@ -4939,7 +4939,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 #endif
 
     RetainPtr<WebHTMLView> selfProtector = self;
@@ -4982,7 +4982,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 #endif
 
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
@@ -5002,7 +5002,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     RetainPtr<WebHTMLView> selfProtector = self;
 
@@ -5097,7 +5097,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (data == nil || [data length] == 0)
         return nil;
     // NSTextView does something more efficient by parsing the attributes only, but that's not available in API.
-    NSAttributedString *string = [[[NSAttributedString alloc] initWithRTF:data documentAttributes:NULL] autorelease];
+    auto string = adoptNS([[NSAttributedString alloc] initWithRTF:data documentAttributes:NULL]);
     if (string == nil || [string length] == 0)
         return nil;
     return [string fontAttributesInRange:NSMakeRange(0, 1)];
@@ -5260,7 +5260,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    retainPtr(event).autorelease();
 
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
     BOOL ret = NO;
@@ -6316,7 +6316,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     LOG(TextInput, "textStorage -> \"%@\"", result ? [result string] : @"");
     
     // We have to return an empty string rather than null to prevent TSM from calling -string
-    return result ? result : [[[NSAttributedString alloc] init] autorelease];
+    return result ? result : adoptNS([[NSAttributedString alloc] init]).autorelease();
 }
 
 #endif // PLATFORM(MAC)
@@ -6963,9 +6963,9 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 - (NSArray *)pasteboardTypesForSelection
 {
     if ([self _canSmartCopyOrDelete]) {
-        NSMutableArray *types = [[[[self class] _selectionPasteboardTypes] mutableCopy] autorelease];
+        auto types = adoptNS([[[self class] _selectionPasteboardTypes] mutableCopy]);
         [types addObject:WebSmartPastePboardType];
-        return types;
+        return types.autorelease();
     }
     return [[self class] _selectionPasteboardTypes];
 }
@@ -7002,7 +7002,7 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 - (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode *)startContainer offset:(int)startOffset to:(DOMNode *)endContainer offset:(int)endOffset
 {
     if (!startContainer || !endContainer)
-        return [[[NSAttributedString alloc] init] autorelease];
+        return adoptNS([[NSAttributedString alloc] init]).autorelease();
     return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
         { *core(endContainer), static_cast<unsigned>(endOffset) } }).string.autorelease();
 }
@@ -7011,7 +7011,7 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 {
     auto document = core([[self _frame] DOMDocument]);
     if (!document)
-        return [[[NSAttributedString alloc] init] autorelease];
+        return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = makeRangeSelectingNodeContents(*document);
     if (auto result = attributedString(range).string)
         return result.autorelease();
@@ -7022,10 +7022,10 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 {
     auto frame = core([self _frame]);
     if (!frame)
-        return [[[NSAttributedString alloc] init] autorelease];
+        return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = frame->selection().selection().firstRange();
     if (!range)
-        return [[[NSAttributedString alloc] init] autorelease];
+        return adoptNS([[NSAttributedString alloc] init]).autorelease();
     if (auto result = attributedString(*range).string)
         return result.autorelease();
     return editingAttributedString(*range).string.autorelease();
@@ -7067,7 +7067,7 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
     OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
     if (!allowShadowContent)
         hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
-    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint { point }, hitType)] autorelease];
+    return adoptNS([[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint { point }, hitType)]).autorelease();
 }
 
 - (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches

@@ -1,3 +1,86 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm:
+        (WebKit::safeBrowsingDetailsText):
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        (WebKit::MockNfcService::transceive):
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::DragDropInteractionState::updatePreviewsForActiveDragSources):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (appLinkForURL):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (ensureLocalDragSessionContext):
+        (-[WKContentView insertTextPlaceholderWithSize:completionHandler:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _presentationSnapshotForPreviewItemController:]):
+        (+[WKTextRange textRangeWithState:isRange:isEditable:startRect:endRect:selectionRects:selectedTextLength:]):
+        (+[WKTextPosition textPositionWithRect:]):
+        * UIProcess/ios/WKTextPlaceholder.mm:
+        (-[WKTextPlaceholder rects]):
+        * UIProcess/ios/WKWebEvent.mm:
+        (-[WKWebEvent initWithEvent:]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsPopover showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsViewController tableView:cellForRowAtIndexPath:]):
+        * UIProcess/ios/forms/WKDatePickerViewController.mm:
+        (-[WKDatePickerViewController _dateComponentForDay:month:year:era:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKOptionPickerCell initWithOptionItem:]):
+        (-[WKOptionGroupPickerCell initWithOptionItem:]):
+        (-[WKMultipleSelectPicker pickerView:viewForRow:forComponent:reusingView:]):
+        (-[WKSelectSinglePicker pickerView:attributedTitleForRow:forComponent:]):
+        (-[WKSelectPickerTableViewController tableView:viewForHeaderInSection:]):
+        (-[WKSelectPickerTableViewController tableView:cellForRowAtIndexPath:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        * UIProcess/ios/forms/WKNumberPadView.mm:
+        (-[WKNumberPadView _buttonForPosition:]):
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        (-[WKNumberPadViewController _handleKeyPress:]):
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        (-[WKQuickboardListViewController actionController]):
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        (-[WKTextInputListViewController enterText:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController enterFullScreen]):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:viewImpl:mode:]):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionsController tableView:rowViewForRow:]):
+        (-[WKDataListSuggestionsController tableView:viewForTableColumn:row:]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame _certificateChain]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:width:]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocument parserYieldToken]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::toWKDOMType):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController handle]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitialize):
+
 2021-02-17  Mark Lam  <mark.lam@apple.com>
 
         Build fix for Debug builds using --force-opt=O3.

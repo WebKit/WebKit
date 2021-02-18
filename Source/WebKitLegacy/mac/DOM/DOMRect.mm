@@ -83,12 +83,12 @@ DOMRect *kit(WebCore::DeprecatedCSSOMRect* value)
     if (!value)
         return nil;
     if (DOMRect *wrapper = getDOMWrapper(value))
-        return [[wrapper retain] autorelease];
-    DOMRect *wrapper = [[DOMRect alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS([[DOMRect alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
-    addDOMWrapper(wrapper, value);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), value);
+    return wrapper.autorelease();
 }
 
 #undef IMPL

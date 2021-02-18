@@ -56,7 +56,7 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
     readyToContinue = false;
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    webView.get().UIDelegate = [[[LocalStorageUIDelegate alloc] init] autorelease];
+    webView.get().UIDelegate = adoptNS([[LocalStorageUIDelegate alloc] init]).autorelease();
     [webView loadHTMLString:@"<script>localStorage.setItem('testKey', 'testValue');alert(localStorage.getItem('testKey'));</script>" baseURL:[NSURL URLWithString:@"http://localhost"]];
     TestWebKitAPI::Util::run(&readyToContinue);
 

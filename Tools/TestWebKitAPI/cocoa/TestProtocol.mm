@@ -76,17 +76,20 @@ static RetainPtr<NSString>& testScheme()
     testScheme() = nil;
 }
 
-static NSDictionary<NSString *, NSString *> *additionalResponseHeaders;
+static RetainPtr<NSDictionary<NSString *, NSString *>>& additionalResponseHeaders()
+{
+    static NeverDestroyed<RetainPtr<NSDictionary<NSString *, NSString *>>> _additionalResponseHeaders;
+    return _additionalResponseHeaders;
+}
 
 + (NSDictionary<NSString *, NSString *> *)additionalResponseHeaders
 {
-    return additionalResponseHeaders;
+    return additionalResponseHeaders().get();
 }
 
 + (void)setAdditionalResponseHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
 {
-    [additionalResponseHeaders autorelease];
-    additionalResponseHeaders = [additionalHeaders copy];
+    additionalResponseHeaders() = adoptNS([additionalHeaders copy]);
 }
 
 static NSURL *createRedirectURL(NSString *query)
@@ -136,8 +139,8 @@ static NSString *contentTypeForFileExtension(NSString *fileExtension)
     NSMutableDictionary *responseHeaders = [NSMutableDictionary dictionaryWithCapacity:2];
     responseHeaders[@"Content-Type"] = contentType;
     responseHeaders[@"Content-Length"] = [NSString stringWithFormat:@"%tu", data.length];
-    if (additionalResponseHeaders)
-        [responseHeaders addEntriesFromDictionary:additionalResponseHeaders];
+    if (auto& headers = additionalResponseHeaders())
+        [responseHeaders addEntriesFromDictionary:headers.get()];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:responseHeaders]);
 

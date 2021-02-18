@@ -81,7 +81,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (WebBackForwardList *webBackForwardList = backForwardLists().get(backForwardList))
         return webBackForwardList;
 
-    return [[[WebBackForwardList alloc] initWithBackForwardList:*backForwardList] autorelease];
+    return adoptNS([[WebBackForwardList alloc] initWithBackForwardList:*backForwardList]).autorelease();
 }
 
 - (id)initWithBackForwardList:(Ref<BackForwardList>&&)backForwardList
@@ -139,7 +139,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     // Since the assumed contract with WebBackForwardList is that it retains its WebHistoryItems,
     // the following line prevents a whole class of problems where a history item will be created in
     // a function, added to the BFlist, then used in the rest of that function.
-    [[entry retain] autorelease];
+    retainPtr(entry).autorelease();
 }
 
 - (void)removeItem:(WebHistoryItem *)item
@@ -214,17 +214,17 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
 
 - (WebHistoryItem *)backItem
 {
-    return [[kit(core(self)->backItem().get()) retain] autorelease];
+    return retainPtr(kit(core(self)->backItem().get())).autorelease();
 }
 
 - (WebHistoryItem *)currentItem
 {
-    return [[kit(core(self)->currentItem().get()) retain] autorelease];
+    return retainPtr(kit(core(self)->currentItem().get())).autorelease();
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    return [[kit(core(self)->forwardItem().get()) retain] autorelease];
+    return retainPtr(kit(core(self)->forwardItem().get())).autorelease();
 }
 
 static bool bumperCarBackForwardHackNeeded()
@@ -333,7 +333,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return [[kit(core(self)->itemAtIndex(index).get()) retain] autorelease];
+    return retainPtr(kit(core(self)->itemAtIndex(index).get())).autorelease();
 }
 
 @end

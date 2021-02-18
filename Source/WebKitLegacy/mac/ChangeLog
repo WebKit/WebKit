@@ -1,3 +1,189 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * DOM/DOM.mm:
+        (kit):
+        * DOM/DOMAbstractView.mm:
+        (kit):
+        * DOM/DOMBlob.mm:
+        (kit):
+        * DOM/DOMCSSRule.mm:
+        (kit):
+        * DOM/DOMCSSRuleList.mm:
+        (kit):
+        * DOM/DOMCSSStyleDeclaration.mm:
+        (kit):
+        * DOM/DOMCSSValue.mm:
+        (kit):
+        * DOM/DOMCounter.mm:
+        (kit):
+        * DOM/DOMEvent.mm:
+        (kit):
+        * DOM/DOMFileList.mm:
+        (kit):
+        * DOM/DOMHTMLCollection.mm:
+        (kit):
+        * DOM/DOMHTMLOptionsCollection.mm:
+        (kit):
+        * DOM/DOMImplementation.mm:
+        (kit):
+        * DOM/DOMMediaError.mm:
+        (kit):
+        * DOM/DOMMediaList.mm:
+        (kit):
+        * DOM/DOMNamedNodeMap.mm:
+        (kit):
+        * DOM/DOMNode.mm:
+        (kit):
+        * DOM/DOMNodeIterator.mm:
+        (kit):
+        * DOM/DOMNodeList.mm:
+        (kit):
+        * DOM/DOMRGBColor.mm:
+        (kit):
+        * DOM/DOMRange.mm:
+        (kit):
+        * DOM/DOMRect.mm:
+        (kit):
+        * DOM/DOMStyleSheet.mm:
+        (kit):
+        * DOM/DOMStyleSheetList.mm:
+        (kit):
+        * DOM/DOMTimeRanges.mm:
+        (kit):
+        * DOM/DOMTokenList.mm:
+        (kit):
+        * DOM/DOMTreeWalker.mm:
+        (kit):
+        * DOM/DOMXPath.mm:
+        (kit):
+        * DOM/DOMXPathExpression.mm:
+        (kit):
+        * DOM/DOMXPathResult.mm:
+        (kit):
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode webArchive]):
+        (-[DOMNode webArchiveByFilteringSubframes:]):
+        (-[DOMRange webArchive]):
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        * History/WebBackForwardList.mm:
+        (kit):
+        (-[WebBackForwardList addItem:]):
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (-[WebBackForwardList itemAtIndex:]):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]):
+        * History/WebHistoryItem.mm:
+        (kit):
+        (+[WebHistoryItem entryWithURL:]):
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _webkit_stringByTrimmingWhitespace]):
+        * Misc/WebNSDataExtras.mm:
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker forwardInvocation:]):
+        (-[WebMainThreadInvoker handleException:]):
+        (+[NSObject _webkit_invokeOnMainThread]):
+        (-[NSObject _webkit_invokeOnMainThread]):
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsString]):
+        (-[NSURL _web_hostString]):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::pluginCancelledConnectionError const):
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage pluginWithPath:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::pluginCancelledConnectionError const):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        * Plugins/WebPluginContainerCheck.mm:
+        (+[WebPluginContainerCheck checkWithRequest:target:resultObject:selector:controller:contextInfo:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase _plugInPaths]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebUndoStep stepWithUndoStep:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        (makeFormFieldValuesDictionary):
+        (WebFrameLoaderClient::pluginWillHandleLoadError const):
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController webView:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        * WebView/WebArchive.mm:
+        (-[WebArchive data]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _fileWrapperForURL:]):
+        (-[WebDataSource webArchive]):
+        (-[WebDataSource mainResource]):
+        (-[WebDataSource subresourceForURL:]):
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (-[WebDeviceOrientationProviderMockInternal lastOrientation]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame elementAtPoint:]):
+        (-[WebFrame parentFrame]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView _setCustomScrollViewClass:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation documentSource]):
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+        (-[WebHTMLView _plainTextFromPasteboard:]):
+        (-[WebHTMLView view:stringForToolTip:point:userData:]):
+        (-[WebHTMLView rightMouseUp:]):
+        (-[WebHTMLView menuForEvent:]):
+        (-[WebHTMLView scrollWheel:]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView flagsChanged:]):
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+        (-[WebHTMLView performKeyEquivalent:]):
+        (-[WebHTMLView textStorage]):
+        (-[WebHTMLView pasteboardTypesForSelection]):
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]):
+        (-[WebHTMLView attributedString]):
+        (-[WebHTMLView selectedAttributedString]):
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        * WebView/WebNotification.mm:
+        (-[WebNotification origin]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView selectionImageForcingBlackText:]):
+        (-[WebPDFView _scaledAttributedString:]):
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        (-[WebResource _fileWrapperRepresentation]):
+        (-[WebResource _response]):
+        * WebView/WebScriptWorld.mm:
+        (+[WebScriptWorld world]):
+        (+[WebScriptWorld findOrCreateWorld:]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+        * WebView/WebView.mm:
+        (-[WebView _menuForElement:defaultItems:]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (-[WebView _displayURL]):
+        (-[WebView textIteratorForRect:]):
+        (+[WebView MIMETypesShownAsHTML]):
+
 2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Introduce a new context menu item to preview images

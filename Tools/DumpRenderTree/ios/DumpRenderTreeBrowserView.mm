@@ -33,6 +33,7 @@
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebUIKitDelegate.h>
 #import <WebKit/WebView.h>
+#import <wtf/RetainPtr.h>
 
 @interface UIWebBrowserView (WebUIKitDelegate)
 - (BOOL)webView:(WebView *)webView shouldScrollToPoint:(CGPoint)point forFrame:(WebFrame *)frame;
@@ -113,7 +114,7 @@
     if (!self)
         return nil;
     
-    self.scrollViewDelegate = [[[DumpRenderTreeWebScrollViewDelegate alloc] initWithScrollView:self] autorelease];
+    self.scrollViewDelegate = adoptNS([[DumpRenderTreeWebScrollViewDelegate alloc] initWithScrollView:self]).get();
     self.delegate = self.scrollViewDelegate;
 
     return self;

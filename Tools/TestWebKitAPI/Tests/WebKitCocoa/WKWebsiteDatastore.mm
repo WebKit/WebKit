@@ -153,8 +153,8 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
     [webView setNavigationDelegate:navigationDelegate.get()];
 
     // Make sure no credential left by previous tests.
-    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
-    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
+    auto protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic]);
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
     [navigationDelegate waitForDidFinishNavigation];
@@ -168,7 +168,7 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 
     // Clear persistent credentials created by this test.
-    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace.get()];
 }
 
 TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)

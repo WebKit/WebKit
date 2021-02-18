@@ -681,7 +681,7 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
     NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
     auto webView = adoptNS([[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"]);
 #else
-    DumpRenderTreeBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
+    auto webBrowserView = adoptNS([[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect]);
     [webBrowserView setInputViewObeysDOMFocus:YES];
     auto webView = retainPtr([webBrowserView webView]);
     [webView setGroupName:@"org.webkit.DumpRenderTree"];
@@ -744,21 +744,21 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
 
     CGRect uiWindowRect = layoutTestViewportRect;
     uiWindowRect.origin.y += [UIApp statusBarHeight];
-    UIWindow *uiWindow = [[[UIWindow alloc] initWithFrame:uiWindowRect] autorelease];
+    auto uiWindow = adoptNS([[UIWindow alloc] initWithFrame:uiWindowRect]);
 
     auto viewController = adoptNS([[UIViewController alloc] init]);
     [uiWindow setRootViewController:viewController.get()];
 
     // The UIWindow and UIWebBrowserView are released when the DumpRenderTreeWindow is closed.
-    drtWindow.uiWindow = uiWindow;
-    drtWindow.browserView = webBrowserView;
+    drtWindow.uiWindow = uiWindow.get();
+    drtWindow.browserView = webBrowserView.get();
 
     auto scrollView = adoptNS([[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect]);
-    [scrollView addSubview:webBrowserView];
+    [scrollView addSubview:webBrowserView.get()];
 
     [[viewController view] addSubview:scrollView.get()];
 
-    adjustWebDocumentForStandardViewport(webBrowserView, scrollView.get());
+    adjustWebDocumentForStandardViewport(webBrowserView.get(), scrollView.get());
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1413,7 +1413,7 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
-static NSString *dumpFramesAsText(WebFrame *frame)
+static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
 {
     DOMDocument *document = [frame DOMDocument];
     DOMElement *documentElement = [document documentElement];
@@ -1421,11 +1421,13 @@ static NSString *dumpFramesAsText(WebFrame *frame)
     if (!documentElement)
         return @"";
 
-    NSMutableString *result = [[[NSMutableString alloc] init] autorelease];
+    RetainPtr<NSMutableString> result;
 
     // Add header for all but the main frame.
     if ([frame parentFrame])
-        result = [NSMutableString stringWithFormat:@"\n--------\nFrame: '%@'\n--------\n", [frame name]];
+        result = adoptNS([[NSMutableString alloc] initWithFormat:@"\n--------\nFrame: '%@'\n--------\n", [frame name]]);
+    else
+        result = adoptNS([[NSMutableString alloc] init]);
 
     NSString *innerText = [documentElement innerText];
     // We use WKStringGetUTF8CStringNonStrict() to convert innerText to a WK String since
@@ -1443,13 +1445,13 @@ static NSString *dumpFramesAsText(WebFrame *frame)
         NSArray *kids = [frame childFrames];
         if (kids) {
             for (unsigned i = 0; i < [kids count]; i++)
-                [result appendString:dumpFramesAsText([kids objectAtIndex:i])];
+                [result appendString:dumpFramesAsText([kids objectAtIndex:i]).get()];
         }
     }
 
     // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
-    [result replaceOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
-    [result replaceOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
+    [result replaceOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [result length])];
 
     return result;
 }
@@ -1635,7 +1637,7 @@ void dump()
     ASSERT(!gTestRunner->hasPendingWebNotificationClick());
 
     if (dumpTree) {
-        NSString *resultString = nil;
+        RetainPtr<NSString> resultString;
         NSData *resultData = nil;
         NSString *resultMimeType = @"text/plain";
 

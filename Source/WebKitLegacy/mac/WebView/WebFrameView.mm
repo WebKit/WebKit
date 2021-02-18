@@ -369,7 +369,7 @@ enum {
 #if PLATFORM(IOS_FAMILY)
     [scrollView setDelegate:self];
 #else
-    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
 #endif
     [scrollView setDrawsBackground:NO];
     [scrollView setHasVerticalScroller:NO];
@@ -1229,7 +1229,7 @@ enum {
     auto documentView = retainPtr([self documentView]);
 
     RetainPtr<WebDynamicScrollBarsView> scrollView  = adoptNS([[customClass alloc] initWithFrame:[oldScrollView frame]]);
-    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
     [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
     [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
     [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];

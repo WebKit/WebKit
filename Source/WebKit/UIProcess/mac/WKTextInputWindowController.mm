@@ -139,7 +139,7 @@
 
         NSString *text = [[_inputTextView textStorage] string];
         if ([text length] > 0)
-            *string = [[text copy] autorelease];
+            *string = adoptNS([text copy]).autorelease();
     }
             
     [_inputTextView setString:@""];

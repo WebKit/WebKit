@@ -84,5 +84,5 @@ TEST(WebKit, NetworkProcessCrashNonPersistentDataStore)
 
 TEST(WebKit, NetworkProcessCrashNonDefaultPersistentDataStore)
 {
-    checkRecoveryAfterCrash([[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease]);
+    checkRecoveryAfterCrash(adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]).get());
 }

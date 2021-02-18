@@ -624,7 +624,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // that clients can learn of discarded items by listening to WebHistoryItemsDiscardedWhileLoadingNotification.
     WebHistoryWriter writer(_entriesByDate.get());
     writer.writePropertyList();
-    return [[(NSData *)writer.releaseData().get() retain] autorelease];
+    return retainPtr((NSData *)writer.releaseData().get()).autorelease();
 }
 
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error

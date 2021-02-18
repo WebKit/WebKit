@@ -203,16 +203,16 @@ static NSString *overrideBundleIdentifier(id, SEL)
         *errorOut = nil;
 
     RetainPtr<id> evalResult;
+    RetainPtr<NSError> strongError;
     [self callAsyncJavaScript:script arguments:arguments inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
-        if (errorOut)
-            *errorOut = [error retain];
+        strongError = error;
         isWaitingForJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&isWaitingForJavaScript);
 
     if (errorOut)
-        [*errorOut autorelease];
+        *errorOut = strongError.autorelease();
 
     return evalResult.autorelease();
 }
@@ -416,8 +416,8 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    WKWebViewConfiguration *defaultConfiguration = [[[WKWebViewConfiguration alloc] init] autorelease];
-    return [self initWithFrame:frame configuration:defaultConfiguration];
+    auto defaultConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    return [self initWithFrame:frame configuration:defaultConfiguration.get()];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
@@ -454,7 +454,7 @@ static UICalloutBar *suppressUICalloutBar()
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration processPoolConfiguration:(_WKProcessPoolConfiguration *)processPoolConfiguration
 {
-    [configuration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration] autorelease]];
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration]).get()];
     return [self initWithFrame:frame configuration:configuration];
 }
 

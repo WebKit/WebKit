@@ -355,7 +355,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 
     // Temporarily retain self in case the plug-in view is released while sending an event. 
-    [[self retain] autorelease];
+    retainPtr(self).autorelease();
 
     BOOL acceptedEvent;
     [self willCallPlugInFunction];

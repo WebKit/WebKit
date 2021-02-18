@@ -101,11 +101,11 @@ TEST(EventAttribution, Basic)
     NSURL *serverURL = server.request().URL;
 
     auto exampleURL = [NSURL URLWithString:@"https://example.com/"];
-    auto attribution = [[[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL] autorelease];
-    auto webView = [[WKWebView new] autorelease];
-    webView._uiEventAttribution = (UIEventAttribution *)attribution;
-    [webView.configuration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView.configuration.websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
+    auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL]);
+    auto webView = adoptNS([WKWebView new]);
+    webView.get()._uiEventAttribution = (UIEventAttribution *)attribution.get();
+    [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+    [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
     [webView _setPrivateClickMeasurementConversionURLForTesting:serverURL completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];

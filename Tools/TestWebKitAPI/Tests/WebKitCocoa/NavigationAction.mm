@@ -198,11 +198,11 @@ TEST(WKNavigationAction, BlobRequestBody)
             "}"
         "</script>"
         "<body onload='bodyLoaded()'>";
-    auto delegate = [[TestNavigationDelegate new] autorelease];
-    auto webView = [[WKWebView new] autorelease];
-    webView.navigationDelegate = delegate;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
     __block bool done = false;
-    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
         EXPECT_NULL(action.request.HTTPBody);
         if ([action.request.URL.absoluteString isEqualToString:@"about:blank"])
             completionHandler(WKNavigationActionPolicyAllow);

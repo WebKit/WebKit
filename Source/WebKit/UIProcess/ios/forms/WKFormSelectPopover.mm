@@ -255,26 +255,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:WKPopoverTableViewCellReuseIdentifier];
+    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:WKPopoverTableViewCellReuseIdentifier]);
     if (!cell)
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:WKPopoverTableViewCellReuseIdentifier] autorelease];
+        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:WKPopoverTableViewCellReuseIdentifier]);
     
-    cell.semanticContentAttribute = self.view.semanticContentAttribute;
-    cell.textLabel.textAlignment = _textAlignment;
+    [cell setSemanticContentAttribute:self.view.semanticContentAttribute];
+    [cell textLabel].textAlignment = _textAlignment;
     
     if (_contentView.focusedElementInformation.selectOptions.isEmpty()) {
-        cell.textLabel.enabled = NO;
-        cell.textLabel.text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list");
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        return cell;
+        [cell textLabel].enabled = NO;
+        [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list");
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        return cell.autorelease();
     }
     
     CGRect textRect = [cell textRectForContentRect:[cell contentRectForBounds:[cell bounds]]];
     ASSERT_IMPLIES(CGRectGetWidth(tableView.bounds) > 0, textRect.size.width > 0);
     
     // Assume all cells have the same available text width.
-    UIFont *font = cell.textLabel.font;
+    UIFont *font = [cell textLabel].font;
     CGFloat initialFontSize = font.pointSize;
     ASSERT(initialFontSize);
     if (textRect.size.width != _maximumTextWidth || _fontSize == 0) {
@@ -285,11 +285,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     const OptionItem* item = [self findItemAt:indexPath];
     ASSERT(item);
     
-    [self populateCell:cell withItem:*item];
-    [cell.textLabel setFont:[font fontWithSize:_fontSize]];
-    [cell.textLabel setLineBreakMode:NSLineBreakByWordWrapping];
-    [cell.textLabel setNumberOfLines:2];
-    return cell;
+    [self populateCell:cell.get() withItem:*item];
+    [[cell textLabel] setFont:[font fontWithSize:_fontSize]];
+    [[cell textLabel] setLineBreakMode:NSLineBreakByWordWrapping];
+    [[cell textLabel] setNumberOfLines:2];
+    return cell.autorelease();
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -413,7 +413,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [popoverViewController setPreferredContentSize: popoverSize];
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()] autorelease];
+    self.popoverController = adoptNS([[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()]).get();
     ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)

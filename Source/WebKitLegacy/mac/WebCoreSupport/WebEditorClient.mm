@@ -164,7 +164,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
 
 + (WebUndoStep *)stepWithUndoStep:(Ref<UndoStep>&&)step
 {
-    return [[[WebUndoStep alloc] initWithUndoStep:WTFMove(step)] autorelease];
+    return adoptNS([[WebUndoStep alloc] initWithUndoStep:WTFMove(step)]).autorelease();
 }
 
 - (UndoStep&)step

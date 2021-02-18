@@ -1,3 +1,18 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * WebCoreSupport/WebSelectionRect.m:
+        (+[WebSelectionRect selectionRect]):
+        * WebCoreSupport/WebVisiblePosition.mm:
+        * WebView/WebPDFViewIOS.mm:
+        (-[WebPDFView _checkPDFTitle]):
+
 2021-02-12  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit

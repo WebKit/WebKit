@@ -74,7 +74,7 @@ static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver(Class delegateC
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
     {
-        return [[[UIViewController alloc] init] autorelease];
+        return adoptNS([[UIViewController alloc] init]).autorelease();
     };
     UIContextMenuActionProvider actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions)
     {
@@ -141,7 +141,7 @@ TEST(ContextMenu, DISABLED_End)
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
     {
-        return [[[UIViewController alloc] init] autorelease];
+        return adoptNS([[UIViewController alloc] init]).autorelease();
     };
     UIContextMenuActionProvider actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions)
     {
@@ -309,7 +309,7 @@ TEST(ContextMenu, DISABLED_Legacy)
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
     {
-        return [[[UIViewController alloc] init] autorelease];
+        return adoptNS([[UIViewController alloc] init]).autorelease();
     };
     UIContextMenuActionProvider actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions)
     {

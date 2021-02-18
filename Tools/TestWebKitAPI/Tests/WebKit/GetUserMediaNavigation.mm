@@ -115,7 +115,7 @@ TEST(WebKit, DefaultDeviceIdHashSaltsDirectory)
     }
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).autorelease()];
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
@@ -145,7 +145,7 @@ TEST(WebKit, DeviceIdHashSaltsDirectory)
     [websiteDataStoreConfiguration setDeviceIdHashSaltsStorageDirectory:tempDir];
     
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).autorelease()];
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;

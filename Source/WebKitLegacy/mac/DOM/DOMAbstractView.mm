@@ -87,11 +87,11 @@ DOMAbstractView *kit(WebCore::DOMWindow* value)
     if (!frame)
         return nil;
     if (DOMAbstractView *wrapper = getDOMWrapper(frame))
-        return [[wrapper retain] autorelease];
-    DOMAbstractView *wrapper = [[DOMAbstractView alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS([[DOMAbstractView alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(frame);
-    addDOMWrapper(wrapper, frame);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), frame);
+    return wrapper.autorelease();
 }
 
 DOMAbstractView *kit(WebCore::AbstractDOMWindow* value)

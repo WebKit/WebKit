@@ -51,7 +51,7 @@ static bool didFinishLoad = false;
 
 static UITableViewCell * cellForRowAtIndexPath(id, SEL)
 {
-    return [[[UITableViewCell alloc] init] autorelease];
+    return adoptNS([[UITableViewCell alloc] init]).autorelease();
 }
 
 static void runTestWithInputType(NSString *type)

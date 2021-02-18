@@ -334,7 +334,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     self.view.dataListTextSuggestions = self.textSuggestions;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_popover setPopoverController:[[[UIPopoverController alloc] initWithContentViewController:_suggestionsViewController.get()] autorelease]];
+    [_popover setPopoverController:adoptNS([[UIPopoverController alloc] initWithContentViewController:_suggestionsViewController.get()]).get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_popover presentPopoverAnimated:NO];
@@ -374,15 +374,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:suggestionCellReuseIdentifier];
+    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:suggestionCellReuseIdentifier]);
     if (!cell)
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:suggestionCellReuseIdentifier] autorelease];
+        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:suggestionCellReuseIdentifier]);
 
-    cell.textLabel.text = [self.control suggestionAtIndex:indexPath.row];
-    cell.textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    cell.textLabel.textAlignment = [self.control textAlignment];
+    [cell textLabel].text = [self.control suggestionAtIndex:indexPath.row];
+    [cell textLabel].lineBreakMode = NSLineBreakByTruncatingTail;
+    [cell textLabel].textAlignment = [self.control textAlignment];
 
-    return cell;
+    return cell.autorelease();
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

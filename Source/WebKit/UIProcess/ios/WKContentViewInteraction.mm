@@ -664,7 +664,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         ASSERT_NOT_REACHED();
     }
 
-    session.localContext = [[[WKDragSessionContext alloc] init] autorelease];
+    session.localContext = adoptNS([[WKDragSessionContext alloc] init]).get();
     return (WKDragSessionContext *)session.localContext;
 }
 
@@ -8292,7 +8292,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
         }
         WebCore::ElementContext placeholderToUse { *placeholder };
         placeholderToUse.boundingRect = [strongSelf convertRect:placeholderToUse.boundingRect fromView:[strongSelf webView]];
-        completionHandler([[[WKTextPlaceholder alloc] initWithElementContext:placeholderToUse] autorelease]);
+        completionHandler(adoptNS([[WKTextPlaceholder alloc] initWithElementContext:placeholderToUse]).get());
     });
 }
 
@@ -10021,7 +10021,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 if (!strongSelf)
                     return nil;
 
-                return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()] autorelease];
+                return adoptNS([[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()]).autorelease();
             };
 
             continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
@@ -10352,13 +10352,13 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         canShowLinkPreview = NO;
     }
 
-    NSMutableDictionary *dataForPreview = [[[NSMutableDictionary alloc] init] autorelease];
+    auto dataForPreview = adoptNS([[NSMutableDictionary alloc] init]);
     if (canShowLinkPreview) {
         *type = UIPreviewItemTypeLink;
         if (useImageURLForLink)
-            dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
+            dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
         else
-            dataForPreview[UIPreviewDataLink] = (NSURL *)linkURL;
+            dataForPreview.get()[UIPreviewDataLink] = (NSURL *)linkURL;
 #if ENABLE(DATA_DETECTION)
         if (isDataDetectorLink) {
             NSDictionary *context = nil;
@@ -10368,9 +10368,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
             NSDictionary *newContext = nil;
             RetainPtr<NSMutableDictionary> extendedContext;
-            DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
+            DDResultRef ddResult = [controller resultForURL:dataForPreview.get()[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
             if (ddResult)
-                dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
+                dataForPreview.get()[UIPreviewDataDDResult] = (__bridge id)ddResult;
             if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
                 extendedContext = adoptNS([@{
                     getkDataDetectorsLeadingText() : _positionInformation.textBefore,
@@ -10382,12 +10382,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 newContext = extendedContext.get();
             }
             if (newContext)
-                dataForPreview[UIPreviewDataDDContext] = newContext;
+                dataForPreview.get()[UIPreviewDataDDContext] = newContext;
         }
 #endif // ENABLE(DATA_DETECTION)
     } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;
-        dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
+        dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
         *type = UIPreviewItemTypeAttachment;
         auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
@@ -10395,15 +10395,15 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (index != NSNotFound) {
             BOOL sourceIsManaged = NO;
             if (respondsToAttachmentListForWebViewSourceIsManaged)
-                dataForPreview[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView sourceIsManaged:&sourceIsManaged];
+                dataForPreview.get()[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView sourceIsManaged:&sourceIsManaged];
             else
-                dataForPreview[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView];
-            dataForPreview[UIPreviewDataAttachmentIndex] = [NSNumber numberWithUnsignedInteger:index];
-            dataForPreview[UIPreviewDataAttachmentListIsContentManaged] = [NSNumber numberWithBool:sourceIsManaged];
+                dataForPreview.get()[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView];
+            dataForPreview.get()[UIPreviewDataAttachmentIndex] = [NSNumber numberWithUnsignedInteger:index];
+            dataForPreview.get()[UIPreviewDataAttachmentListIsContentManaged] = [NSNumber numberWithBool:sourceIsManaged];
         }
     }
 
-    return dataForPreview;
+    return dataForPreview.autorelease();
 }
 
 - (CGRect)_presentationRectForPreviewItemController:(UIPreviewItemController *)controller
@@ -10499,7 +10499,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 return previewViewController;
         }
 
-        return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActions elementInfo:elementInfo] autorelease];
+        return adoptNS([[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActions elementInfo:elementInfo]).autorelease();
     }
 
     return nil;
@@ -10574,7 +10574,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!nativeImage)
         return nullptr;
 
-    return [[[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()] autorelease];
+    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]).autorelease();
 }
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller
@@ -10622,15 +10622,15 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 +(WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength
 {
-    WKTextRange *range = [[WKTextRange alloc] init];
-    range.isNone = isNone;
-    range.isRange = isRange;
-    range.isEditable = isEditable;
-    range.startRect = startRect;
-    range.endRect = endRect;
-    range.selectedTextLength = selectedTextLength;
-    range.selectionRects = selectionRects;
-    return [range autorelease];
+    auto range = adoptNS([[WKTextRange alloc] init]);
+    [range setIsNone:isNone];
+    [range setIsRange:isRange];
+    [range setIsEditable:isEditable];
+    [range setStartRect:startRect];
+    [range setEndRect:endRect];
+    [range setSelectedTextLength:selectedTextLength];
+    [range setSelectionRects:selectionRects];
+    return range.autorelease();
 }
 
 - (void)dealloc
@@ -10696,9 +10696,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 + (WKTextPosition *)textPositionWithRect:(CGRect)positionRect
 {
-    WKTextPosition *pos =[[WKTextPosition alloc] init];
-    pos.positionRect = positionRect;
-    return [pos autorelease];
+    auto pos = adoptNS([[WKTextPosition alloc] init]);
+    [pos setPositionRect:positionRect];
+    return pos.autorelease();
 }
 
 // FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into a NSSet or is the key in an NSDictionary,

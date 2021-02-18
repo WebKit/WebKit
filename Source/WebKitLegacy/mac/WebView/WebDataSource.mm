@@ -178,15 +178,15 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL])
-        return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
+        return adoptNS([[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr]).autorelease();
 
     if (auto resource = [self subresourceForURL:URL])
         return [resource _fileWrapperRepresentation];
 
     if (auto cachedResponse = [[self _webView] _cachedResponseForURL:URL]) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
+        auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]]);
         [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
-        return wrapper;
+        return wrapper.autorelease();
     }
     
     return nil;
@@ -532,7 +532,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     if (!toPrivate(_private)->loader->isCommitted())
         return nil;
         
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(*core([self webFrame]))] autorelease];
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(*core([self webFrame]))]).autorelease();
 }
 
 - (WebResource *)mainResource
@@ -540,7 +540,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     auto coreResource = toPrivate(_private)->loader->mainResource();
     if (!coreResource)
         return nil;
-    return [[[WebResource alloc] _initWithCoreResource:coreResource.releaseNonNull()] autorelease];
+    return adoptNS([[WebResource alloc] _initWithCoreResource:coreResource.releaseNonNull()]).autorelease();
 }
 
 - (NSArray *)subresources
@@ -553,7 +553,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
     auto subresource = toPrivate(_private)->loader->subresource(URL);
-    return subresource ? [[[WebResource alloc] _initWithCoreResource:subresource.releaseNonNull()] autorelease] : nil;
+    return subresource ? adoptNS([[WebResource alloc] _initWithCoreResource:subresource.releaseNonNull()]).autorelease() : nil;
 }
 
 - (void)addSubresource:(WebResource *)subresource

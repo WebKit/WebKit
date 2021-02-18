@@ -1,3 +1,213 @@
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm:
+        (-[DumpRenderTreeWebScrollView initWithFrame:]):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (createJSStringRef):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (dumpFramesAsText):
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[SyntheticTouch touchWithLocation:phase:identifier:]):
+        (-[EventSendingController beginDragWithFiles:]):
+        (+[EventSendingController replaySavedEvents]):
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (dispositionTypeFromContentDispositionHeader):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        (+[EventSerializer dictionaryForEvent:relativeToTime:]):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSValue:inContext:]):
+        * TestWebKitAPI/Tests/JavaScriptCore/JSRunLoopTimer.mm:
+        (TestWebKitAPI::triggerGC):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleFormDelegatePlugIn.mm:
+        (-[BundleFormDelegatePlugIn _webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:userIsInteracting:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+        (readMarkupFromPasteboard):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (-[ContentRuleListNotificationDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (-[TestContextMenuUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuSuggestedActionsUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        (readHTMLStringFromPasteboard):
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceManagementRestrictions.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        (TestWebKitAPI::mutateFile):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        (getNextMessage):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        (getNextMessage):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/JITEnabled.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NavigationAction.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Preferences.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        (-[ResourceLoadStatisticsSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (+[TestServiceLookupResult resultWithProvider:phishing:malware:unwantedSoftware:]):
+        (+[TestLookupResult resultWithResults:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::makeWebViewWith):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (-[UITestDelegate webView:startURLSchemeTask:]):
+        (-[ModalDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (TEST):
+        (-[AsyncScriptMessageHandler userContentController:didReceiveScriptMessage:replyHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorld.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (platformCopyRichTextWithImage):
+        (platformImageWithData):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[UIDelegate _webView:configurationForLocalInspector:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[TaskSchemeHandler webView:startURLSchemeTask:]):
+        (-[SyncErrorScheme webView:startURLSchemeTask:]):
+        (-[FrameSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebGLPolicy.mm:
+        (-[WebGLTestDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm:
+        (getNextMessage):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (getNextMessage):
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[ContentBlockingWebsitePoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[AutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[AsyncAutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (TEST):
+        (-[TestSchemeHandler webView:startURLSchemeTask:]):
+        (respond):
+        (-[CustomHeaderFieldsDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomNavigatorPlatformDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[PopUpPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm:
+        (cellForRowAtIndexPath):
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::swizzledResizableSnapshotViewFromRect):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/InspectorBar.mm:
+        (-[InspectorBarController convertAttributes:]):
+        * TestWebKitAPI/Tests/mac/JavascriptURLNavigation.mm:
+        (-[JavascriptURLNavigationDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/mac/LegacyDragAndDropTests.mm:
+        (+[FrameLoadCompletionListener listenerWithCompletionBlock:]):
+        (TestWebKitAPI::getTestImage):
+        * TestWebKitAPI/Tests/mac/MemoryPressureHandler.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WKWebViewMacEditingTests.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/mac/WebViewIconLoading.mm:
+        (imageFromData):
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (additionalResponseHeaders):
+        (+[TestProtocol additionalResponseHeaders]):
+        (+[TestProtocol setAdditionalResponseHeaders:]):
+        (-[TestProtocol startLoading]):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView objectByCallingAsyncFunction:withArguments:error:]):
+        (-[TestWKWebView initWithFrame:]):
+        (-[TestWKWebView initWithFrame:configuration:processPoolConfiguration:]):
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[MockDropSession initWithProviders:location:window:allowMove:]):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator _webView:willUpdateDropProposalToProposal:forSession:]):
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (defaultExternalDragImage):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator runFrom:to:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::createJSStringRef):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformInitializeDataStore):
+        (WTR::TestController::platformCreateOtherPage):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator sendEventStream:completionBlock:]):
+
 2021-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix a few issues with RangeResponseGenerator

@@ -62,14 +62,14 @@ DOMNode *kit(Node* value)
     if (!value)
         return nil;
     if (DOMNode *wrapper = getDOMWrapper(value))
-        return [[wrapper retain] autorelease];
-    DOMNode *wrapper = [[kitClass(value) alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    RetainPtr<DOMNode> wrapper = adoptNS([[kitClass(value) alloc] _init]);
     if (!wrapper)
         return nil;
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
-    addDOMWrapper(wrapper, value);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), value);
+    return wrapper.autorelease();
 }
 
 @implementation DOMNode

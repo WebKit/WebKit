@@ -70,9 +70,7 @@
     if (!_shouldUseCustomClass)
         return nil;
 
-    NSUnitConverterLinear *kilometersToMeters = [[NSUnitConverterLinear alloc] initWithCoefficient:1000.0 constant:0.0];
-
-    return [kilometersToMeters autorelease];
+    return adoptNS([[NSUnitConverterLinear alloc] initWithCoefficient:1000.0 constant:0.0]).autorelease();
 }
 
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFocusTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame

@@ -270,13 +270,13 @@ WebHistoryItem *kit(HistoryItem* item)
     if (!item)
         return nil;
     if (auto wrapper = historyItemWrappers().get(item))
-        return [[wrapper retain] autorelease];
-    return [[[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item] autorelease];
+        return retainPtr(wrapper).autorelease();
+    return adoptNS([[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item]).autorelease();
 }
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
-    return [[[self alloc] initWithURL:URL title:nil] autorelease];
+    return adoptNS([[self alloc] initWithURL:URL title:nil]).autorelease();
 }
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time

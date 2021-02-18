@@ -883,13 +883,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:0.0f alpha:1.0f] range:wholeStringRange];
     [attributedString endEditing];
     
-    NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionRect].size] autorelease];
+    auto selectionImage = adoptNS([[NSImage alloc] initWithSize:[self selectionRect].size]);
     
     [selectionImage lockFocus];
     [attributedString drawAtPoint:NSZeroPoint];
     [selectionImage unlockFocus];
 
-    return selectionImage;
+    return selectionImage.autorelease();
 }
 
 - (NSRect)selectionImageRect
@@ -1333,7 +1333,7 @@ IGNORE_WARNINGS_END
     if (scaleFactor == 1.0)
         return unscaledAttributedString;
     
-    NSMutableAttributedString *result = [[unscaledAttributedString mutableCopy] autorelease];
+    auto result = adoptNS([unscaledAttributedString mutableCopy]);
     unsigned int length = [result length];
     NSRange effectiveRange = NSMakeRange(0,0);
     
@@ -1345,7 +1345,7 @@ IGNORE_WARNINGS_END
             // FIXME: We can't scale the font if we don't know what it is. We should always know what it is,
             // but sometimes don't due to PDFKit issue 5089411. When that's addressed, we can remove this
             // early continue.
-            LOG_ERROR("no font attribute found in range %@ for attributed string \"%@\" on page %@ (see radar 5089411)", NSStringFromRange(effectiveRange), result, [[dataSource request] URL]);
+            LOG_ERROR("no font attribute found in range %@ for attributed string \"%@\" on page %@ (see radar 5089411)", NSStringFromRange(effectiveRange), result.get(), [[dataSource request] URL]);
             continue;
         }
         
@@ -1354,7 +1354,7 @@ IGNORE_WARNINGS_END
     }
     [result endEditing];
     
-    return result;
+    return result.autorelease();
 }
 
 - (void)_setTextMatches:(NSArray *)array

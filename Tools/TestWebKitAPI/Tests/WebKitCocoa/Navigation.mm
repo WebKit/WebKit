@@ -225,8 +225,8 @@ TEST(WKNavigation, UserAgentAndAccept)
 
 TEST(WKNavigation, Frames)
 {
-    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
-    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([TestURLSchemeHandler new]);
     [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSString *responseString = nil;
         if ([task.request.URL.absoluteString isEqualToString:@"frame://host1/"])
@@ -244,9 +244,9 @@ TEST(WKNavigation, Frames)
         [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
         [task didFinish];
     }];
-    [configuration setURLSchemeHandler:handler forURLScheme:@"frame"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"frame"];
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([FrameNavigationDelegate new]);
         webView.get().navigationDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
@@ -743,33 +743,33 @@ TEST(WKNavigation, FrameBackLoading)
         { "/frame1.html", { "<a href='frame2.html'>link</a>" } },
         { "/frame2.html", { "<script>alert('frame2 loaded')</script>" } },
     });
-    auto webView = [[WKWebView new] autorelease];
-    auto delegate = [[TestUIDelegate new] autorelease];
-    auto observer = [[LoadingObserver new] autorelease];
-    webView.UIDelegate = delegate;
-    [webView addObserver:observer forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:nil];
-    EXPECT_FALSE(webView.loading);
-    EXPECT_EQ(observer.changesObserved, 0u);
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestUIDelegate new]);
+    auto observer = adoptNS([LoadingObserver new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView addObserver:observer.get() forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:nil];
+    EXPECT_FALSE([webView isLoading]);
+    EXPECT_EQ([observer changesObserved], 0u);
     [webView loadRequest:server.request()];
-    EXPECT_TRUE(webView.loading);
-    EXPECT_EQ(observer.changesObserved, 1u);
-    while (observer.changesObserved < 2u)
+    EXPECT_TRUE([webView isLoading]);
+    EXPECT_EQ([observer changesObserved], 1u);
+    while ([observer changesObserved] < 2u)
         Util::spinRunLoop();
-    EXPECT_FALSE(webView.loading);
-    EXPECT_EQ(observer.changesObserved, 2u);
-    EXPECT_FALSE(webView.canGoBack);
+    EXPECT_FALSE([webView isLoading]);
+    EXPECT_EQ([observer changesObserved], 2u);
+    EXPECT_FALSE([webView canGoBack]);
     [webView evaluateJavaScript:@"document.querySelector('iframe').contentWindow.document.querySelector('a').click()" completionHandler:nil];
     EXPECT_WK_STREQ([delegate waitForAlert], "frame2 loaded");
-    EXPECT_EQ(observer.changesObserved, 2u);
-    EXPECT_TRUE(webView.canGoBack);
+    EXPECT_EQ([observer changesObserved], 2u);
+    EXPECT_TRUE([webView canGoBack]);
     [webView goBack];
-    while (observer.changesObserved < 3)
+    while ([observer changesObserved] < 3)
         Util::spinRunLoop();
-    EXPECT_TRUE(webView.loading);
-    while (observer.changesObserved < 4)
+    EXPECT_TRUE([webView isLoading]);
+    while ([observer changesObserved] < 4)
         Util::spinRunLoop();
-    EXPECT_FALSE(webView.loading);
-    [webView removeObserver:observer forKeyPath:@"loading"];
+    EXPECT_FALSE([webView isLoading]);
+    [webView removeObserver:observer.get() forKeyPath:@"loading"];
 
 }
 
@@ -804,11 +804,11 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
         { "/iframesrc.html", { "frame content" } },
     });
 
-    auto webView = [[WKWebView new] autorelease];
-    auto delegate = [[TestNavigationDelegate new] autorelease];
-    webView.navigationDelegate = delegate;
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
 
-    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
         if ([action.request.URL.scheme isEqualToString:@"refresh-nav"])
             completionHandler(WKNavigationActionPolicyCancel);
         else
@@ -816,7 +816,7 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
     };
 
     __block bool finishedNavigation = false;
-    delegate.didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
         finishedNavigation = true;
     };
 

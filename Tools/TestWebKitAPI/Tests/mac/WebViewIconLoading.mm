@@ -62,7 +62,7 @@ static NSData *customFaviconData()
 
 static NSImage *imageFromData(NSData *data)
 {
-    auto *image = [[NSImage alloc] initWithData:data];
+    auto image = adoptNS([[NSImage alloc] initWithData:data]);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -70,7 +70,7 @@ static NSImage *imageFromData(NSData *data)
 #pragma clang diagnostic pop
     [image setSize:NSMakeSize(16, 16)];
 
-    return [image autorelease];
+    return image.autorelease();
 }
 
 @interface IconLoadingProtocol : NSURLProtocol

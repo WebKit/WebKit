@@ -48,7 +48,7 @@ using namespace WebCore;
     if (!origin)
         return nil;
 
-    return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin->securityOrigin().ptr()] autorelease];
+    return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin->securityOrigin().ptr()]).autorelease();
 }
 
 - (id)initWithURL:(NSURL *)url

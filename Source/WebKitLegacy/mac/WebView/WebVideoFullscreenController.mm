@@ -151,7 +151,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     _playbackInterface = WebCore::PlaybackSessionInterfaceAVKit::create(*_playbackModel);
     _contentOverlay = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
     _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
-    _contentOverlay.get().layer = [[[WebVideoFullscreenOverlayLayer alloc] init] autorelease];
+    _contentOverlay.get().layer = adoptNS([[WebVideoFullscreenOverlayLayer alloc] init]).autorelease();
     [_contentOverlay setWantsLayer:YES];
     [_contentOverlay setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [self windowDidLoad];

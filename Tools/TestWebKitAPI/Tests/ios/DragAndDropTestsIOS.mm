@@ -1277,8 +1277,8 @@ TEST(DragAndDropTests, OverrideDrop)
     [simulator setDropCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
         EXPECT_FALSE(handled);
         [itemProviders.firstObject loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
-            NSString *text = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-            EXPECT_WK_STREQ("<body></body>", text.UTF8String);
+            auto text = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            EXPECT_WK_STREQ("<body></body>", [text UTF8String]);
             EXPECT_FALSE(!!error);
             finishedLoadingData = true;
         }];
@@ -1546,10 +1546,10 @@ TEST(DragAndDropTests, CustomActionSheetPopover)
 
 TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
 {
-    _WKProcessPoolConfiguration *processPoolConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
-    processPoolConfiguration.ignoreSynchronousMessagingTimeoutsForTesting = YES;
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:[[[WKWebViewConfiguration alloc] init] autorelease] processPoolConfiguration:processPoolConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get() processPoolConfiguration:processPoolConfiguration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
@@ -2076,7 +2076,7 @@ TEST(DragAndDropTests, DataTransferSanitizeHTML)
         auto *item = session.items[0].itemProvider;
         EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeHTML]);
         [item loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
-            NSString *markup = [[[NSString alloc] initWithData:(NSData *)data encoding:NSUTF8StringEncoding] autorelease];
+            auto markup = adoptNS([[NSString alloc] initWithData:(NSData *)data encoding:NSUTF8StringEncoding]);
             EXPECT_TRUE([markup containsString:@"hello"]);
             EXPECT_TRUE([markup containsString:@", world"]);
             EXPECT_FALSE([markup containsString:@"secret"]);
