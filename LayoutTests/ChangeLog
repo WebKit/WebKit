@@ -1,3 +1,12 @@
+2021-02-17  Robert Jenner  <jenner@apple.com>
+
+        media/track/track-in-band-style.html needs to be rebaselined after changes in r272055
+        https://bugs.webkit.org/show_bug.cgi?id=221835
+
+        Unreviewed test gardening. 
+
+        * media/track/track-in-band-style-expected.txt: rebaseline
+
 2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new datalist dropdown for text inputs
