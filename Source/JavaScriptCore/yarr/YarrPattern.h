@@ -524,6 +524,7 @@ struct YarrPattern {
     bool global() const { return m_flags.contains(Flags::Global); }
     bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
     bool multiline() const { return m_flags.contains(Flags::Multiline); }
+    bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }

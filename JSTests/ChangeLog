@@ -1,3 +1,16 @@
+2021-02-18  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] Implement RegExp Match Indices proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202475
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated tests.
+
+        * es6/Proxy_internal_get_calls_RegExp.prototype.flags.js:
+        * stress/static-getter-in-names.js:
+        * test262/config.yaml:
+
 2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com> and Sergey Rubanov <chi187@gmail.com>
 
         WebAssembly: implement non-trapping float to int conversion

@@ -15,25 +15,32 @@ shouldBe('execResult1.groups.year', '"2001"');
 shouldBe('Object.getOwnPropertyNames(execResult1).sort()', '["0","1","2","3","groups","index","input","length"]');
 shouldBe('Object.getOwnPropertyNames(execResult1.groups).sort()', '["day","month","year"]');
 
-var matchResult1 = src1.match(re1);
+var matchResult1 = src1.match(new RegExp(re1, 'd'));
 shouldBe('matchResult1[0]', '"01/02/2001"');
 shouldBe('matchResult1.groups.month', '"01"');
 shouldBe('matchResult1.groups.day', '"02"');
 shouldBe('matchResult1.groups.year', '"2001"');
-shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","input","length"]');
+shouldBe('matchResult1.indices.groups.month', '[0,2]');
+shouldBe('matchResult1.indices.groups.day', '[3,5]');
+shouldBe('matchResult1.indices.groups.year', '[6,10]');
+shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","indices","input","length"]');
 shouldBe('Object.getOwnPropertyNames(matchResult1.groups).sort()', '["day","month","year"]');
+shouldBe('Object.getOwnPropertyNames(matchResult1.indices.groups).sort()', '["day","month","year"]');
 
-var re2 = /(?<first_name>\w+)\s(?:(?<middle_initial>\w\.)\s)?(?<last_name>\w+)/;
+var re2 = /(?<first_name>\w+)\s(?:(?<middle_initial>\w\.)\s)?(?<last_name>\w+)/d;
 var matchResult2a = "John W. Smith".match(re2);
 
 shouldBe('matchResult2a[0]', '"John W. Smith"');
 shouldBe('matchResult2a[1]', '"John"');
 shouldBe('matchResult2a[2]', '"W."');
 shouldBe('matchResult2a[3]', '"Smith"');
+shouldBe('matchResult2a.indices[1]', '[0,4]');
+shouldBe('matchResult2a.indices[2]', '[5,7]');
+shouldBe('matchResult2a.indices[3]', '[8,13]');
 shouldBe('matchResult2a[1]', 'matchResult2a.groups.first_name');
 shouldBe('matchResult2a[2]', 'matchResult2a.groups.middle_initial');
 shouldBe('matchResult2a[3]', 'matchResult2a.groups.last_name');
-shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","input","length"]');
+shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","indices","input","length"]');
 
 // Verify that named groups that aren't matched are undefined.
 var matchResult2b = "Sally Brown".match(re2);
@@ -42,10 +49,13 @@ shouldBe('matchResult2b[0]', '"Sally Brown"');
 shouldBe('matchResult2b[1]', '"Sally"');
 shouldBeUndefined('matchResult2b[2]');
 shouldBe('matchResult2b[3]', '"Brown"');
+shouldBe('matchResult2b.indices[1]', '[0,5]');
+shouldBeUndefined('matchResult2b.indices[2]');
+shouldBe('matchResult2b.indices[3]', '[6,11]');
 shouldBe('matchResult2b[1]', 'matchResult2b.groups.first_name');
 shouldBe('matchResult2b[2]', 'matchResult2b.groups.middle_initial');
 shouldBe('matchResult2b[3]', 'matchResult2b.groups.last_name');
-shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","input","length"]');
+shouldBe('Object.getOwnPropertyNames(matchResult1).sort()', '["0","1","2","3","groups","index","indices","input","length"]');
 
 // Verify that named backreferences work.
 var re3 = /^(?<part1>.*):(?<part2>.*):\k<part2>:\k<part1>$/;

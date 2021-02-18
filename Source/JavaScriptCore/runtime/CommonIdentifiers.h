@@ -128,6 +128,7 @@
     macro(granularity) \
     macro(groups) \
     macro(has) \
+    macro(hasIndices) \
     macro(hasOwnProperty) \
     macro(hash) \
     macro(header) \
@@ -138,6 +139,7 @@
     macro(ignoreCase) \
     macro(ignorePunctuation) \
     macro(index) \
+    macro(indices) \
     macro(inferredName) \
     macro(input) \
     macro(instructionCount) \
