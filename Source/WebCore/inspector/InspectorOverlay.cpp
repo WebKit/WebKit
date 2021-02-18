@@ -32,6 +32,9 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#include "CSSGridAutoRepeatValue.h"
+#include "CSSGridIntegerRepeatValue.h"
+#include "CSSGridLineNamesValue.h"
 #include "DOMCSSNamespace.h"
 #include "DOMTokenList.h"
 #include "Element.h"
@@ -60,6 +63,7 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -78,8 +82,10 @@ static constexpr float rulerStepLength = 8;
 static constexpr float rulerSubStepIncrement = 5;
 static constexpr float rulerSubStepLength = 5;
 
+static constexpr UChar bullet = 0x2022;
 static constexpr UChar ellipsis = 0x2026;
 static constexpr UChar multiplicationSign = 0x00D7;
+static constexpr UChar thinSpace = 0x2009;
 
 static void truncateWithEllipsis(String& string, size_t length)
 {
@@ -1181,8 +1187,9 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
     context.translate(point);
     
     FontCascadeDescription fontDescription;
-    fontDescription.setFamilies({ m_page.settings().fixedFontFamily() });
-    fontDescription.setComputedSize(13);
+    fontDescription.setFamilies({ "system-ui" });
+    fontDescription.setWeight(FontSelectionValue(500));
+    fontDescription.setComputedSize(12);
 
     FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
@@ -1214,7 +1221,7 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
         labelPath.addLineTo({ arrowSize, -arrowSize });
         labelPath.addLineTo({ (textWidth / 2) + padding, -arrowSize });
         labelPath.addLineTo({ (textWidth / 2) + padding, -textHeight - (padding * 2) - arrowSize });
-        textPosition = FloatPoint(-(textWidth / 2), -(textHeight / 2) + textDescent - arrowSize - padding);
+        textPosition = FloatPoint(-(textWidth / 2), -textDescent - arrowSize - padding);
         break;
     case InspectorOverlay::LabelArrowDirection::Up:
         labelPath.moveTo({ -(textWidth / 2) - padding, textHeight + (padding * 2) + arrowSize });
@@ -1224,7 +1231,7 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
         labelPath.addLineTo({ arrowSize, arrowSize });
         labelPath.addLineTo({ (textWidth / 2) + padding, arrowSize });
         labelPath.addLineTo({ (textWidth / 2) + padding, textHeight + (padding * 2) + arrowSize });
-        textPosition = FloatPoint(-(textWidth / 2), (textHeight / 2) + textDescent + arrowSize + padding);
+        textPosition = FloatPoint(-(textWidth / 2), textHeight - textDescent + arrowSize + padding);
         break;
     case InspectorOverlay::LabelArrowDirection::Right:
         labelPath.moveTo({ -textWidth - (padding * 2) - arrowSize, (textHeight / 2) + padding });
@@ -1264,6 +1271,66 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
     context.drawText(font, TextRun(label), textPosition);
 }
 
+static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirection direction, unsigned expectedTrackCount)
+{
+    if (!is<Element>(node))
+        return { };
+    
+    auto element = downcast<Element>(node);
+    auto styleRules = element->styleResolver().styleRulesForElement(element);
+    styleRules.reverse();
+    RefPtr<CSSValue> cssValue;
+    for (auto styleRule : styleRules) {
+        ASSERT(styleRule);
+        if (!styleRule)
+            continue;
+        cssValue = styleRule->properties().getPropertyCSSValue(direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows);
+        if (cssValue)
+            break;
+    }
+    
+    if (!cssValue || !is<CSSValueList>(cssValue))
+        return { };
+    
+    Vector<String> trackSizes;
+    
+    auto handleValueIgnoringLineNames = [&](const CSSValue& currentValue) {
+        if (!is<CSSGridLineNamesValue>(currentValue))
+            trackSizes.append(currentValue.cssText());
+    };
+    
+    for (auto& currentValue : downcast<CSSValueList>(*cssValue)) {
+        if (is<CSSGridAutoRepeatValue>(currentValue)) {
+            // Auto-repeated values will be looped through until no more values were used in layout based on the expected track count.
+            while (trackSizes.size() < expectedTrackCount) {
+                for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
+                    handleValueIgnoringLineNames(autoRepeatValue);
+                    if (trackSizes.size() >= expectedTrackCount)
+                        break;
+                }
+            }
+            break;
+        }
+        
+        if (is<CSSGridIntegerRepeatValue>(currentValue)) {
+            size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue.get()).repetitions();
+            for (size_t i = 0; i < repetitions; ++i) {
+                for (auto& integerRepeatValue : downcast<CSSValueList>(currentValue.get()))
+                    handleValueIgnoringLineNames(integerRepeatValue);
+            }
+            continue;
+        }
+        
+        handleValueIgnoringLineNames(currentValue);
+    }
+    
+    // Remaining tracks will be `auto`.
+    while (trackSizes.size() < expectedTrackCount)
+        trackSizes.append("auto"_s);
+    
+    return trackSizes;
+}
+
 void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Grid& gridOverlay)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
@@ -1282,6 +1349,8 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         removeGridOverlayForNode(*node);
         return;
     }
+    
+    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
 
     auto* renderGrid = downcast<RenderGrid>(renderer);
     auto columnPositions = renderGrid->columnPositions();
@@ -1325,6 +1394,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
     // Draw columns and rows.
     auto columnWidths = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
+    auto authoredTrackColumnSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForColumns, columnWidths.size());
     float previousColumnX = 0;
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
         // Column positions are (apparently) relative to the element's content area.
@@ -1345,6 +1415,24 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             columnPaths.moveTo({ position + width, scrollY });
             columnPaths.addLineTo({ position + width, scrollY + viewportSize.height() });
             previousColumnX = position + width;
+            
+            if (gridOverlay.config.showTrackSizes) {
+                auto trackSizeLabel = String::number(roundf(width));
+                trackSizeLabel.append("px"_s);
+                
+                String authoredTrackSize;
+                if (i < authoredTrackColumnSizes.size()) {
+                    auto authoredTrackSize = authoredTrackColumnSizes[i];
+                    if (authoredTrackSize.length() && authoredTrackSize != trackSizeLabel) {
+                        trackSizeLabel.append(thinSpace);
+                        trackSizeLabel.append(bullet);
+                        trackSizeLabel.append(thinSpace);
+                        trackSizeLabel.append(authoredTrackSize);
+                    }
+                }
+                
+                drawLayoutLabel(context, trackSizeLabel, FloatPoint(position + (width / 2), gridBoundingBox.y()), LabelArrowDirection::Up, translucentLabelBackgroundColor);
+            }
         } else
             previousColumnX = position;
         
@@ -1358,6 +1446,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     }
 
     auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
+    auto authoredTrackRowSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForRows, rowHeights.size());
     float previousRowY = 0;
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
         auto position = rowPositions[i] + gridBoundingBox.y();
@@ -1377,6 +1466,24 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             rowPaths.moveTo({ scrollX, position + height });
             rowPaths.addLineTo({ scrollX + viewportSize.width(), position + height });
             previousRowY = position + height;
+            
+            if (gridOverlay.config.showTrackSizes) {
+                auto trackSizeLabel = String::number(roundf(height));
+                trackSizeLabel.append("px"_s);
+                
+                String authoredTrackSize;
+                if (i < authoredTrackRowSizes.size()) {
+                    auto authoredTrackSize = authoredTrackRowSizes[i];
+                    if (authoredTrackSize.length() && authoredTrackSize != trackSizeLabel) {
+                        trackSizeLabel.append(thinSpace);
+                        trackSizeLabel.append(bullet);
+                        trackSizeLabel.append(thinSpace);
+                        trackSizeLabel.append(authoredTrackSize);
+                    }
+                }
+                
+                drawLayoutLabel(context, trackSizeLabel, FloatPoint(gridBoundingBox.x(), position + (height / 2)), LabelArrowDirection::Left, translucentLabelBackgroundColor);
+            }
         } else
             previousRowY = position;
 
@@ -1408,7 +1515,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             };
             
             context.strokeRect(areaRect, 3);
-            drawLayoutLabel(context, name, areaRect.location(), LabelArrowDirection::None, Color::white.colorWithAlphaByte(153), areaRect.width());
+            drawLayoutLabel(context, name, areaRect.location(), LabelArrowDirection::None, translucentLabelBackgroundColor, areaRect.width());
         }
     }
 }
