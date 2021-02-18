@@ -1,3 +1,18 @@
+2021-02-18  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [JSC] Fix segfaults on 32-bit big endian systems
+        https://bugs.webkit.org/show_bug.cgi?id=221710
+
+        Reviewed by Yusuke Suzuki.
+
+        In these cases, we are loading values from memory into registers.
+        Seemingly, these values are present at an offset on 32-bit big
+        endian targets; therefore, add PayloadOffset, which is 4 on BE
+        and 0 on LE (same behavior as right now) and is already present
+        in other similar accesses in the file.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2021-02-18  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Implement RegExp Match Indices proposal

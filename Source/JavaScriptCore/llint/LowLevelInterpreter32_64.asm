@@ -1579,13 +1579,13 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
 
-    loadp Structure::m_prototype[t2], t2
+    loadp Structure::m_prototype + PayloadOffset[t2], t2
     btpz t2, .opPutByIdTransitionChainDone
 .opPutByIdTransitionChainLoop:
     loadp [t3], t1
     bineq t1, JSCell::m_structureID[t2], .opPutByIdSlow
     addp 4, t3
-    loadp Structure::m_prototype[t1], t2
+    loadp Structure::m_prototype + PayloadOffset[t1], t2
     btpnz t2, .opPutByIdTransitionChainLoop
 
 .opPutByIdTransitionChainDone:
@@ -2251,7 +2251,7 @@ end)
 
 
 op(llint_throw_from_slow_path_trampoline, macro()
-    loadp Callee[cfr], t1
+    loadp Callee + PayloadOffset[cfr], t1
     convertCalleeToVM(t1)
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
 
@@ -2260,7 +2260,7 @@ op(llint_throw_from_slow_path_trampoline, macro()
     # When throwing from the interpreter (i.e. throwing from LLIntSlowPaths), so
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
-    loadp Callee[cfr], t1
+    loadp Callee + PayloadOffset[cfr], t1
     convertCalleeToVM(t1)
     jmp VM::targetMachinePCForThrow[t1]
 end)
