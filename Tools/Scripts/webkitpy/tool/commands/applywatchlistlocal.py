@@ -31,7 +31,6 @@ from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCom
 from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 
 
-@DeprecatedCommand
 class ApplyWatchListLocal(AbstractSequencedCommand):
     name = "apply-watchlist-local"
     help_text = "Applies the watchlist to local changes"

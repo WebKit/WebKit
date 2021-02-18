@@ -45,7 +45,6 @@ from webkitpy.tool.multicommandtool import Command
 _log = logging.getLogger(__name__)
 
 
-@DeprecatedCommand
 class Clean(AbstractSequencedCommand):
     name = "clean"
     help_text = "Clean the working copy"
@@ -262,7 +261,6 @@ class ProcessURLsMixin(object):
         return all_patches
 
 
-@DeprecatedCommand
 class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "check-style"
     help_text = "Run check-webkit-style on the specified attachments"
@@ -388,7 +386,6 @@ class LandFromURL(AbstractPatchLandingCommand, ProcessURLsMixin):
     argument_names = "URL [URLS]"
 
 
-@DeprecatedCommand
 class ValidateChangelog(AbstractSequencedCommand):
     name = "validate-changelog"
     help_text = "Validate that the ChangeLogs and reviewers look reasonable"
@@ -455,7 +452,6 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
         return state
 
 
-@DeprecatedCommand
 class PrepareRevert(AbstractRevertPrepCommand):
     name = "prepare-revert"
     help_text = "Revert the given revision(s) in the working copy and prepare ChangeLogs with revert reason"
@@ -480,7 +476,6 @@ class PrepareRollout(PrepareRevert):
         return PrepareRevert._prepare_state(self, options, args, tool)
 
 
-@DeprecatedCommand
 class CreateRevert(AbstractRevertPrepCommand):
     name = "create-revert"
     help_text = "Creates a bug to track the broken SVN revision(s) and uploads a revert patch."
