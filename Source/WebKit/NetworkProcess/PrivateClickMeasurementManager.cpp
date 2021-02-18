@@ -47,6 +47,7 @@ using namespace WebCore;
 using SourceSite = PrivateClickMeasurement::SourceSite;
 using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
 using AttributionTriggerData = PrivateClickMeasurement::AttributionTriggerData;
+using EphemeralSourceNonce = PrivateClickMeasurement::EphemeralSourceNonce;
 
 constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
@@ -73,12 +74,76 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     clearExpired();
 
+    if (attribution.ephemeralSourceNonce())
+        getSignedUnlinkableToken(attribution);
+
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an ad click."_s);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
         resourceLoadStatistics->insertPrivateClickMeasurement(WTFMove(attribution), PrivateClickMeasurementAttributionType::Unattributed);
 #endif
+}
+
+static NetworkResourceLoadParameters generateNetworkResourceLoadParameters(URL&& url, Ref<JSON::Object> jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried)
+{
+    static uint64_t identifier = 0;
+    
+    ResourceRequest request { WTFMove(url) };
+    request.setHTTPMethod("POST"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
+    request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
+    request.setHTTPBody(WebCore::FormData::create(jsonPayload->toJSONString().utf8().data()));
+
+    FetchOptions options;
+    options.credentials = FetchOptions::Credentials::Omit;
+    options.redirect = FetchOptions::Redirect::Error;
+
+    NetworkResourceLoadParameters loadParameters;
+    loadParameters.identifier = ++identifier;
+    loadParameters.request = request;
+    loadParameters.parentPID = presentingApplicationPID();
+    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
+    loadParameters.options = options;
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
+    loadParameters.shouldRestrictHTTPResponseAccess = false;
+    loadParameters.pcmDataCarried = dataTypeCarried;
+    
+    return loadParameters;
+}
+
+void PrivateClickMeasurementManager::getSignedUnlinkableToken(const PrivateClickMeasurement& attribution)
+{
+    if (!featureEnabled())
+        return;
+
+    auto tokenSignatureURL = attribution.tokenSignatureURL();
+    auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
+    if (m_tokenSignatureURLForTesting) {
+        tokenSignatureURL = *m_tokenSignatureURLForTesting;
+        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
+    }
+
+    if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
+        return;
+
+    auto loadParameters = generateNetworkResourceLoadParameters(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried);
+
+    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
+    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
+
+    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
+        if (!weakThis)
+            return;
+
+        if (!error.isNull()) {
+            weakThis->m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for unlinkable token signing request."_s));
+            return;
+        }
+        
+        // FIXME: Receive and store the signed unlinkable token, rdar://73582032.
+    });
+
 }
 
 void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
@@ -138,33 +203,11 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     if (!featureEnabled())
         return;
 
-    auto attributionURL = m_attributionBaseURLForTesting ? *m_attributionBaseURLForTesting : attribution.reportURL();
+    auto attributionURL = m_attributionReportBaseURLForTesting ? *m_attributionReportBaseURLForTesting : attribution.attributionReportURL();
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
-    ResourceRequest request { WTFMove(attributionURL) };
-    
-    request.setHTTPMethod("POST"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
-
-    request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
-    request.setHTTPBody(WebCore::FormData::create(attribution.json()->toJSONString().utf8().data()));
-
-    FetchOptions options;
-    options.credentials = FetchOptions::Credentials::Omit;
-    options.redirect = FetchOptions::Redirect::Error;
-
-    static uint64_t identifier = 0;
-    
-    NetworkResourceLoadParameters loadParameters;
-    loadParameters.identifier = ++identifier;
-    loadParameters.request = request;
-    loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
-    loadParameters.options = options;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
-    loadParameters.shouldRestrictHTTPResponseAccess = false;
-    loadParameters.pcmDataCarried = WebCore::PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
+    auto loadParameters = generateNetworkResourceLoadParameters(WTFMove(attributionURL), attribution.attributionReportJSON(), PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable);
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
@@ -293,12 +336,20 @@ void PrivateClickMeasurementManager::toString(CompletionHandler<void(String)>&& 
     completionHandler("\nNo stored Private Click Measurement data.\n"_s);
 }
 
-void PrivateClickMeasurementManager::setConversionURLForTesting(URL&& testURL)
+void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testURL)
 {
     if (testURL.isEmpty())
-        m_attributionBaseURLForTesting = { };
+        m_tokenSignatureURLForTesting = { };
     else
-        m_attributionBaseURLForTesting = WTFMove(testURL);
+        m_tokenSignatureURLForTesting = WTFMove(testURL);
+}
+
+void PrivateClickMeasurementManager::setAttributionReportURLForTesting(URL&& testURL)
+{
+    if (testURL.isEmpty())
+        m_attributionReportBaseURLForTesting = { };
+    else
+        m_attributionReportBaseURLForTesting = WTFMove(testURL);
 }
 
 void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()

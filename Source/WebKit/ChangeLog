@@ -1,3 +1,61 @@
+2021-02-18  John Wilander  <wilander@apple.com>
+
+        PCM: Request signature for unlinkable token using attributionSourceNonce
+        https://bugs.webkit.org/show_bug.cgi?id=222076
+        <rdar://73581651>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes PrivateClickMeasurementManager::storeUnattributed() look
+        for incoming source nonces and if found, call the new function
+        PrivateClickMeasurementManager::getSignedUnlinkableToken().
+
+        A new static function generateNetworkResourceLoadParameters() was added
+        to reuse code between PrivateClickMeasurementManager::getSignedUnlinkableToken()
+        and the existing PrivateClickMeasurementManager::fireConversionRequest().
+
+        To enable testing, there is a new function called
+        NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting() and
+        function setPrivateClickMeasurementConversionURLForTesting() was renamed
+        setPrivateClickMeasurementAttributionReportURLForTesting() in NetworkProcess,
+        NetworkSession, WKPagePrivate, WKWebViewPrivateForTesting, and
+        PrivateClickMeasurementManager to align with the naming used in other places.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WebKit::NetworkSession::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WebKit::NetworkSession::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::generateNetworkResourceLoadParameters):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::setTokenSignatureURLForTesting):
+        (WebKit::PrivateClickMeasurementManager::setAttributionReportURLForTesting):
+        (WebKit::PrivateClickMeasurementManager::setConversionURLForTesting): Deleted.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WKPageSetPrivateClickMeasurementAttributionReportURLForTesting):
+        (WKPageSetPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setPrivateClickMeasurementAttributionReportURLForTesting:completionHandler:]):
+        (-[WKWebView _setPrivateClickMeasurementConversionURLForTesting:completionHandler:]): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2021-02-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Avoid another child setup function in process launcher code

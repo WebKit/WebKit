@@ -346,7 +346,8 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void simulateResourceLoadStatisticsSessionRestart();
-    void setPrivateClickMeasurementConversionURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
 
     void didSetAppBoundDomains() const;

@@ -302,9 +302,9 @@
     });
 }
 
-- (void)_setPrivateClickMeasurementConversionURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+- (void)_setPrivateClickMeasurementAttributionReportURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementConversionURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setPrivateClickMeasurementAttributionReportURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }

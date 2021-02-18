@@ -1,3 +1,31 @@
+2021-02-18  John Wilander  <wilander@apple.com>
+
+        PCM: Request signature for unlinkable token using attributionSourceNonce
+        https://bugs.webkit.org/show_bug.cgi?id=222076
+        <rdar://73581651>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/contentextensions/block-private-click-measurement.html:
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html:
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+        * http/tests/privateClickMeasurement/resources/getConversionData.php:
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+        * http/tests/privateClickMeasurement/resources/getTokenSigningData.php: Added.
+        * http/tests/privateClickMeasurement/resources/signToken.php: Added.
+        * http/tests/privateClickMeasurement/resources/tokenSigningFilePath.php: Added.
+        * http/tests/privateClickMeasurement/resources/util.js:
+        (tearDownAndFinish):
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+            Now also calls setPrivateClickMeasurementTokenSignatureURLForTesting().
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+            Adoption of renamed TestRunner function setPrivateClickMeasurementAttributionReportURLForTesting().
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt: Added.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html: Added.
+
 2021-02-18  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Implement RegExp Match Indices proposal

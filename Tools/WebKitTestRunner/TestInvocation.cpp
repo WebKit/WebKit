@@ -1338,10 +1338,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().simulateResourceLoadStatisticsSessionRestart();
         return nullptr;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementConversionURLForTesting")) {
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementTokenSignatureURLForTesting")) {
         ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
-        TestController::singleton().setPrivateClickMeasurementConversionURLForTesting(static_cast<WKURLRef>(messageBody));
+        TestController::singleton().setPrivateClickMeasurementTokenSignatureURLForTesting(static_cast<WKURLRef>(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAttributionReportURLForTesting")) {
+        ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
+        TestController::singleton().setPrivateClickMeasurementAttributionReportURLForTesting(static_cast<WKURLRef>(messageBody));
         return nullptr;
     }
 

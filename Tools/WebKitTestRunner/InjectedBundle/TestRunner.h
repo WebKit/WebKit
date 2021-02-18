@@ -512,7 +512,8 @@ public:
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
-    void setPrivateClickMeasurementConversionURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(JSStringRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void simulateResourceLoadStatisticsSessionRestart();

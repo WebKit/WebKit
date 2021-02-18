@@ -1,0 +1,21 @@
+Tests that the presence of a source nonce triggers a token signing request.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Token signing request received.
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+No cookies in token signing request.
+Request body:
+{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","unlinkable_token":"TODO","version":2}
+
+Unattributed Private Click Measurements:
+WebCore::PrivateClickMeasurement 1
+Source site: 127.0.0.1
+Attribute on site: localhost
+Source ID: 3
+No attribution trigger data.

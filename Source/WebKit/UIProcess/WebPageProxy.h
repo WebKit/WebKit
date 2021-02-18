@@ -1691,7 +1691,8 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementConversionURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(const URL&, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)

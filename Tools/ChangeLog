@@ -1,3 +1,42 @@
+2021-02-18  John Wilander  <wilander@apple.com>
+
+        PCM: Request signature for unlinkable token using attributionSourceNonce
+        https://bugs.webkit.org/show_bug.cgi?id=222076
+        <rdar://73581651>
+
+        Reviewed by Chris Dumez.
+
+        The changes to the TestRunner are:
+        - Rename setPrivateClickMeasurementConversionURLForTesting() to
+        setPrivateClickMeasurementAttributionReportURLForTesting() to align with other
+        naming and make it clear that it does.
+        - Add the new setPrivateClickMeasurementTokenSignatureURLForTesting() used for
+        testing the token signing request.
+
+        The changes to API tests are to adopt renamed functions in
+        WebCore::PrivateClickMeasurement:
+        - reportURL() renamed attributionReportURL().
+        - json() renamed attributionReportJSON().
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WTR::TestRunner::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WTR::TestRunner::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WTR::TestController::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WTR::TestController::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-02-18  Youenn Fablet  <youenn@apple.com>
 
         Set ENABLE_VP9 to 1 on IOS

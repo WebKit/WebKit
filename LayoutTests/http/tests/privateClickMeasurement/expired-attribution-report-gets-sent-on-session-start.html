@@ -18,7 +18,7 @@
     prepareTest();
 
     if (window.testRunner) {
-        testRunner.setPrivateClickMeasurementConversionURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.php?nonce=" + nonce);
+        testRunner.setPrivateClickMeasurementAttributionReportURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.php?nonce=" + nonce);
     }
 
     function activateElement(elementID) {

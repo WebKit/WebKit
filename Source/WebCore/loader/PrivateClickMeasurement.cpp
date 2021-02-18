@@ -37,6 +37,7 @@
 namespace WebCore {
 
 static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
+static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
@@ -114,7 +115,37 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
     return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
-URL PrivateClickMeasurement::reportURL() const
+URL PrivateClickMeasurement::tokenSignatureURL() const
+{
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return URL();
+
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenSignaturePath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
+{
+    auto reportDetails = JSON::Object::create();
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return reportDetails;
+
+    reportDetails->setString("source_engagement_type"_s, "click"_s);
+    reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
+    reportDetails->setString("unlinkable_token"_s, "TODO"_s);
+    reportDetails->setInteger("version"_s, 2);
+    return reportDetails;
+}
+
+URL PrivateClickMeasurement::attributionReportURL() const
 {
     if (!isValid())
         return URL();
@@ -131,7 +162,7 @@ URL PrivateClickMeasurement::reportURL() const
     return URL();
 }
 
-Ref<JSON::Object> PrivateClickMeasurement::json() const
+Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
 {
     auto reportDetails = JSON::Object::create();
     if (!m_attributionTriggerData || !isValid())

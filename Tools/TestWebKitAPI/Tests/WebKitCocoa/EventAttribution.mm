@@ -106,7 +106,7 @@ TEST(EventAttribution, Basic)
     webView.get()._uiEventAttribution = (UIEventAttribution *)attribution.get();
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
-    [webView _setPrivateClickMeasurementConversionURLForTesting:serverURL completionHandler:^{
+    [webView _setPrivateClickMeasurementAttributionReportURLForTesting:serverURL completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
             [webView loadHTMLString:html baseURL:exampleURL];

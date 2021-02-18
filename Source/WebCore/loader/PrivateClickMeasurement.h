@@ -221,6 +221,9 @@ public:
         }
 
         String nonce;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<EphemeralSourceNonce> decode(Decoder&);
     };
 
     struct Priority {
@@ -274,8 +277,10 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
-    WEBCORE_EXPORT URL reportURL() const;
-    WEBCORE_EXPORT Ref<JSON::Object> json() const;
+    WEBCORE_EXPORT URL tokenSignatureURL() const;
+    WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON() const;
+    WEBCORE_EXPORT URL attributionReportURL() const;
+    WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };
     void setEphemeralSourceNonce(EphemeralSourceNonce&& nonce) { m_ephemeralSourceNonce = WTFMove(nonce); };
@@ -318,6 +323,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
         << m_sourceDescription
         << m_purchaser
         << m_timeOfAdClick
+        << m_ephemeralSourceNonce
         << m_attributionTriggerData
         << m_earliestTimeToSend;
 }
@@ -354,7 +360,12 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     decoder >> timeOfAdClick;
     if (!timeOfAdClick)
         return WTF::nullopt;
-    
+
+    Optional<Optional<EphemeralSourceNonce>> ephemeralSourceNonce;
+    decoder >> ephemeralSourceNonce;
+    if (!ephemeralSourceNonce)
+        return WTF::nullopt;
+
     Optional<Optional<AttributionTriggerData>> attributionTriggerData;
     decoder >> attributionTriggerData;
     if (!attributionTriggerData)
@@ -373,10 +384,28 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
         WTFMove(*purchaser),
         WTFMove(*timeOfAdClick)
     };
+    attribution.m_ephemeralSourceNonce = WTFMove(*ephemeralSourceNonce);
     attribution.m_attributionTriggerData = WTFMove(*attributionTriggerData);
     attribution.m_earliestTimeToSend = WTFMove(*earliestTimeToSend);
     
     return attribution;
+}
+
+template<class Encoder>
+void PrivateClickMeasurement::EphemeralSourceNonce::encode(Encoder& encoder) const
+{
+    encoder << nonce;
+}
+
+template<class Decoder>
+Optional<PrivateClickMeasurement::EphemeralSourceNonce> PrivateClickMeasurement::EphemeralSourceNonce::decode(Decoder& decoder)
+{
+    Optional<String> nonce;
+    decoder >> nonce;
+    if (!nonce)
+        return WTF::nullopt;
+    
+    return EphemeralSourceNonce { WTFMove(*nonce) };
 }
 
 template<class Encoder>

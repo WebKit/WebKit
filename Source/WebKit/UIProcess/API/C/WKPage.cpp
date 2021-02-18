@@ -2945,9 +2945,16 @@ void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef page, WKPageSi
     });
 }
 
-void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext)
+void WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementTokenSignatureURLForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setPrivateClickMeasurementConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+    toImpl(page)->setPrivateClickMeasurementTokenSignatureURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setPrivateClickMeasurementAttributionReportURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }

@@ -61,12 +61,14 @@ public:
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
-    void setConversionURLForTesting(URL&&);
+    void setTokenSignatureURLForTesting(URL&&);
+    void setAttributionReportURLForTesting(URL&&);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void startTimer(Seconds);
 
 private:
+    void getSignedUnlinkableToken(const PrivateClickMeasurement&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
@@ -77,7 +79,8 @@ private:
 
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
-    Optional<URL> m_attributionBaseURLForTesting;
+    Optional<URL> m_tokenSignatureURLForTesting;
+    Optional<URL> m_attributionReportBaseURLForTesting;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;

@@ -167,7 +167,8 @@ messages -> NetworkProcess LegacyReceiver {
     SetPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
     MarkAttributedPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     SimulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID) -> () Async
-    SetPrivateClickMeasurementConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    SetPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    SetPrivateClickMeasurementAttributionReportURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
     MarkPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     GetLocalStorageOriginDetails(PAL::SessionID sessionID) -> (Vector<WebKit::LocalStorageDatabaseTracker::OriginDetails> details) Async
 

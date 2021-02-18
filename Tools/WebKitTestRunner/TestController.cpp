@@ -3630,10 +3630,17 @@ void TestController::simulateResourceLoadStatisticsSessionRestart()
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementConversionURLForTesting(WKURLRef url)
+void TestController::setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef url)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementConversionURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef url)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
