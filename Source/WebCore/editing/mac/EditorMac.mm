@@ -42,6 +42,7 @@
 #import "HTMLNames.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
+#import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
@@ -100,7 +101,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
-    Pasteboard pasteboard(pasteboardName);
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
     if (m_document.selection().selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
     else
@@ -143,7 +144,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     auto range = makeRangeSelectingNodeContents(*node);
     m_document.selection().setSelection(VisibleSelection(range), FrameSelection::DoNotSetFocus);
 
-    Pasteboard pasteboard(pasteboardName);
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
 
     if (!m_document.selection().selection().isContentRichlyEditable()) {
         pasteAsPlainTextWithPasteboard(pasteboard);

@@ -1,3 +1,31 @@
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through Pasteboard-related codepaths
+        https://bugs.webkit.org/show_bug.cgi?id=221987
+
+        Reviewed by Tim Horton.
+
+        Update more `DragData` and `Pasteboard` initialization sites by passing in a `PageIdentifier` or
+        `PasteboardContext`, respectively. See WebCore ChangeLog for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+
 2021-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for getting size of PDF document during printing

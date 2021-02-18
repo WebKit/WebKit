@@ -4197,7 +4197,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
         return;
     }
 
-    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags);
+    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags, anyDragDestinationAction(), m_identifier);
     switch (action) {
     case DragControllerAction::Entered: {
         auto resolvedDragOperation = m_page->dragController().dragEntered(dragData);

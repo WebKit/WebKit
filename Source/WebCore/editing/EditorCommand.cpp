@@ -49,6 +49,7 @@
 #include "InsertListCommand.h"
 #include "InsertNestedListCommand.h"
 #include "Page.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Range.h"
 #include "RenderBox.h"
@@ -914,7 +915,7 @@ static bool executePasteGlobalSelection(Frame& frame, Event*, EditorCommandSourc
 
     ASSERT_UNUSED(source, source == CommandFromMenuOrKeyBinding);
     UserTypingGestureIndicator typingGestureIndicator(frame);
-    frame.editor().paste(*Pasteboard::createForGlobalSelection());
+    frame.editor().paste(*Pasteboard::createForGlobalSelection(PagePasteboardContext::create(frame.pageID())));
     return true;
 }
 

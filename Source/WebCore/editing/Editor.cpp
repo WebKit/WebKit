@@ -83,6 +83,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Range.h"
 #include "RemoveFormatCommand.h"
@@ -399,7 +400,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
     case ClipboardEventKind::PasteAsPlainText:
         if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
             auto plainTextType = "text/plain"_s;
-            auto plainText = Pasteboard::createForCopyAndPaste()->readString(plainTextType);
+            auto plainText = Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document.pageID()))->readString(plainTextType);
             auto pasteboard = makeUnique<StaticPasteboard>();
             pasteboard->writeString(plainTextType, plainText);
             return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, WTFMove(pasteboard));
@@ -407,7 +408,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
         FALLTHROUGH;
     case ClipboardEventKind::Paste:
     case ClipboardEventKind::PasteAsQuotation:
-        return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, Pasteboard::createForCopyAndPaste());
+        return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document.pageID())));
     case ClipboardEventKind::BeforeCopy:
     case ClipboardEventKind::BeforeCut:
     case ClipboardEventKind::BeforePaste:
@@ -433,7 +434,7 @@ static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind 
     target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
     if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut) && dataTransfer->pasteboard().hasData())
-        dataTransfer->commitToPasteboard(*Pasteboard::createForCopyAndPaste());
+        dataTransfer->commitToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(target->document().pageID())));
 
     dataTransfer->makeInvalidForSecurity();
 
@@ -618,7 +619,7 @@ void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smart
 
 void Editor::pasteAsPlainTextBypassingDHTML()
 {
-    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
+    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())));
 }
 
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
@@ -1411,7 +1412,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
     }
 
     if (enclosingTextFormControl(m_document.selection().selection().start()))
-        Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForDataTransfer(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
+        Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()))->writePlainText(selectedTextForDataTransfer(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
     else {
         HTMLImageElement* imageElement = nullptr;
         if (action == CopyAction)
@@ -1419,17 +1420,17 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
 
         if (imageElement) {
 #if !PLATFORM(WIN)
-            writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *imageElement, document().url(), document().title());
+            writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())), *imageElement, document().url(), document().title());
 #else
             // FIXME: Delete after <http://webkit.org/b/177618> lands.
-            Pasteboard::createForCopyAndPaste()->writeImage(*imageElement, document().url(), document().title());
+            Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()))->writeImage(*imageElement, document().url(), document().title());
 #endif
         } else {
 #if !PLATFORM(WIN)
-            writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
+            writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())));
 #else
             // FIXME: Delete after <http://webkit.org/b/177618> lands.
-            Pasteboard::createForCopyAndPaste()->writeSelection(*selection, canSmartCopyOrDelete(), *m_document.frame(), IncludeImageAltTextForDataTransfer);
+            Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()))->writeSelection(*selection, canSmartCopyOrDelete(), *m_document.frame(), IncludeImageAltTextForDataTransfer);
 #endif
         }
     }
@@ -1447,7 +1448,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
 
 void Editor::paste(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
-    paste(*Pasteboard::createForCopyAndPaste(), fromMenuOrKeyBinding);
+    paste(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())), fromMenuOrKeyBinding);
 }
 
 void Editor::paste(Pasteboard& pasteboard, FromMenuOrKeyBinding fromMenuOrKeyBinding)
@@ -1475,7 +1476,7 @@ void Editor::pasteAsPlainText(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     if (!canPaste())
         return;
     updateMarkersForWordsAffectedByEditing(false);
-    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
+    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())));
 }
 
 void Editor::pasteAsQuotation(FromMenuOrKeyBinding fromMenuOrKeyBinding)
@@ -1488,7 +1489,7 @@ void Editor::pasteAsQuotation(FromMenuOrKeyBinding fromMenuOrKeyBinding)
         return;
     updateMarkersForWordsAffectedByEditing(false);
     ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
-    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    auto pasteboard = Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()));
     if (m_document.selection().selection().isContentRichlyEditable())
         pasteWithPasteboard(pasteboard.get(), { PasteOption::AllowPlainText, PasteOption::AsQuotation });
     else
@@ -1555,7 +1556,7 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
 
 void Editor::copyURL(const URL& url, const String& title)
 {
-    copyURL(url, title, *Pasteboard::createForCopyAndPaste());
+    copyURL(url, title, *Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())));
 }
 
 void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard)
@@ -1597,10 +1598,10 @@ void Editor::copyImage(const HitTestResult& result)
         url = result.absoluteImageURL();
 
 #if !PLATFORM(WIN)
-    writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, url, result.altDisplayString());
+    writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID())), *element, url, result.altDisplayString());
 #else
     // FIXME: Delete after <http://webkit.org/b/177618> lands.
-    Pasteboard::createForCopyAndPaste()->writeImage(*element, url, result.altDisplayString());
+    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()))->writeImage(*element, url, result.altDisplayString());
 #endif
 }
 

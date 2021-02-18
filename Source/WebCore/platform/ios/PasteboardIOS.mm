@@ -52,8 +52,9 @@
 
 namespace WebCore {
 
-Pasteboard::Pasteboard(const String& pasteboardName)
-    : m_pasteboardName(pasteboardName)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& pasteboardName)
+    : m_context(WTFMove(context))
+    , m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName))
 {
 }
@@ -70,14 +71,14 @@ String Pasteboard::nameOfDragPasteboard()
     return "drag and drop pasteboard";
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(Pasteboard::nameOfDragPasteboard());
+    return makeUnique<Pasteboard>(WTFMove(context), Pasteboard::nameOfDragPasteboard());
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
 {
-    return makeUnique<Pasteboard>(dragData.pasteboardName());
+    return makeUnique<Pasteboard>(dragData.createPasteboardContext(), dragData.pasteboardName());
 }
 
 #endif // ENABLE(DRAG_SUPPORT)
@@ -91,13 +92,15 @@ static int64_t changeCountForPasteboard(const String& pasteboardName = { })
 WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 NSString *UIColorPboardType = @"com.apple.uikit.color";
 
-Pasteboard::Pasteboard()
-    : m_changeCount(0)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
+    : m_context(WTFMove(context))
+    , m_changeCount(0)
 {
 }
 
-Pasteboard::Pasteboard(int64_t changeCount)
-    : m_changeCount(changeCount)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, int64_t changeCount)
+    : m_context(WTFMove(context))
+    , m_changeCount(changeCount)
 {
 }
 
@@ -105,9 +108,9 @@ void Pasteboard::writeMarkup(const String&)
 {
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(PAL::get_UIKit_UIPasteboardNameGeneral());
+    return makeUnique<Pasteboard>(WTFMove(context), PAL::get_UIKit_UIPasteboardNameGeneral());
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)

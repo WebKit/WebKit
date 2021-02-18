@@ -3989,7 +3989,10 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // FIXME: Consider doing this earlier in this function as the earliest point we're sure it would be safe to drop an old drag.
     invalidateDataTransfer();
 
-    dragState().dataTransfer = DataTransfer::createForDrag();
+    if (!m_frame.document())
+        return false;
+
+    dragState().dataTransfer = DataTransfer::createForDrag(*m_frame.document());
     auto hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {

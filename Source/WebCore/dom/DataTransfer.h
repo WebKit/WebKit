@@ -89,7 +89,7 @@ public:
     void commitToPasteboard(Pasteboard&);
 
 #if ENABLE(DRAG_SUPPORT)
-    static Ref<DataTransfer> createForDrag();
+    static Ref<DataTransfer> createForDrag(const Document&);
     static Ref<DataTransfer> createForDragStartEvent(const Document&);
     static Ref<DataTransfer> createForDrop(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     static Ref<DataTransfer> createForUpdatingDropTarget(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);

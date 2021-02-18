@@ -1,3 +1,15 @@
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through Pasteboard-related codepaths
+        https://bugs.webkit.org/show_bug.cgi?id=221987
+
+        Reviewed by Tim Horton.
+
+        Create and pass in a `PasteboardContext` when creating a `Pasteboard`. See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::declareAndWriteDragImage):
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit even further

@@ -897,6 +897,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageIdentifier.h
     page/PageOverlay.h
     page/PageOverlayController.h
+    page/PagePasteboardContext.h
     page/PerformanceLogging.h
     page/PerformanceLoggingClient.h
     page/PointerCaptureController.h
@@ -1043,6 +1044,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PODIntervalTree.h
     platform/PODRedBlackTree.h
     platform/Pasteboard.h
+    platform/PasteboardContext.h
     platform/PasteboardCustomData.h
     platform/PasteboardItemInfo.h
     platform/PasteboardStrategy.h

@@ -30,6 +30,7 @@
 #import "LegacyNSPasteboardTypes.h"
 #import "MIMETypeRegistry.h"
 #import "NotImplemented.h"
+#import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
@@ -130,13 +131,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
     , m_dragDestinationActionMask(destinationActionMask)
+    , m_pageID(pageID)
 #if PLATFORM(MAC)
     , m_pasteboardName([[m_platformDragData draggingPasteboard] name])
 #else
@@ -145,13 +147,14 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
 {
 }
 
-DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
     , m_dragDestinationActionMask(destinationActionMask)
+    , m_pageID(pageID)
     , m_pasteboardName(dragStorageName)
 {
 }
@@ -165,7 +168,7 @@ bool DragData::containsURLTypeIdentifier() const
     
 bool DragData::canSmartReplace() const
 {
-    return Pasteboard(m_pasteboardName).canSmartReplace();
+    return Pasteboard(createPasteboardContext(), m_pasteboardName).canSmartReplace();
 }
 
 bool DragData::containsColor() const
@@ -217,7 +220,7 @@ bool DragData::containsPlainText() const
 
 String DragData::asPlainText() const
 {
-    Pasteboard pasteboard(m_pasteboardName);
+    Pasteboard pasteboard(createPasteboardContext(), m_pasteboardName);
     PasteboardPlainText text;
     pasteboard.read(text);
     String string = text.text;

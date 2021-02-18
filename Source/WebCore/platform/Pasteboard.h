@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DragImage.h"
+#include "PasteboardContext.h"
 #include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
 #include <wtf/HashMap.h>
@@ -176,24 +177,24 @@ struct PasteboardFileReader {
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
-    Pasteboard();
+    Pasteboard(std::unique_ptr<PasteboardContext>&&);
     virtual ~Pasteboard();
 
 #if PLATFORM(GTK)
-    explicit Pasteboard(const String& name);
-    explicit Pasteboard(SelectionData&);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& name);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&);
 #if ENABLE(DRAG_SUPPORT)
-    explicit Pasteboard(SelectionData&&);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&&);
 #endif
 #endif
 
 #if PLATFORM(WIN)
-    explicit Pasteboard(IDataObject*);
-    explicit Pasteboard(WCDataObject*);
-    explicit Pasteboard(const DragDataMap&);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, IDataObject*);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, WCDataObject*);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const DragDataMap&);
 #endif
 
-    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste();
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste(std::unique_ptr<PasteboardContext>&&);
 
     static bool isSafeTypeForDOMToReadAndWrite(const String&);
     static bool canExposeURLToDOMWhenPasteboardContainsFiles(const String&);
@@ -235,8 +236,8 @@ public:
     virtual WEBCORE_EXPORT void writePlainText(const String&, SmartReplaceOption); // FIXME: Two separate functions would be clearer than one function with an argument.
 
 #if ENABLE(DRAG_SUPPORT)
-    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop();
-    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop(const DragData&);
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop(std::unique_ptr<PasteboardContext>&&);
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> create(const DragData&);
 
     virtual void setDragImage(DragImage, const IntPoint& hotSpot);
 #endif
@@ -249,19 +250,19 @@ public:
 
 #if PLATFORM(GTK)
     const SelectionData& selectionData() const;
-    static std::unique_ptr<Pasteboard> createForGlobalSelection();
+    static std::unique_ptr<Pasteboard> createForGlobalSelection(std::unique_ptr<PasteboardContext>&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    explicit Pasteboard(int64_t changeCount);
-    explicit Pasteboard(const String& pasteboardName);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, int64_t changeCount);
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& pasteboardName);
 
     static NSArray *supportedWebContentPasteboardTypes();
     static String resourceMIMEType(NSString *mimeType);
 #endif
 
 #if PLATFORM(MAC)
-    explicit Pasteboard(const String& pasteboardName, const Vector<String>& promisedFilePaths = { });
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& pasteboardName, const Vector<String>& promisedFilePaths = { });
 #endif
 
 #if PLATFORM(COCOA)
@@ -298,6 +299,8 @@ public:
     RefPtr<WebCore::SharedBuffer> readBuffer(size_t index, const String& type);
     URL readURL(size_t index, String& title);
 
+    const PasteboardContext* context() const { return m_context.get(); }
+
 private:
 #if PLATFORM(IOS_FAMILY)
     bool respectsUTIFidelities() const;
@@ -327,6 +330,8 @@ private:
     Vector<String> readTypesWithSecurityCheck();
     RefPtr<SharedBuffer> readBufferForTypeWithSecurityCheck(const String&);
 #endif
+
+    std::unique_ptr<PasteboardContext> m_context;
 
 #if PLATFORM(GTK)
     Optional<SelectionData> m_selectionData;

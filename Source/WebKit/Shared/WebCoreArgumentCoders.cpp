@@ -1409,6 +1409,7 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
     encoder << dragData.fileNames();
 #endif
     encoder << dragData.dragDestinationActionMask();
+    encoder << dragData.pageID();
 }
 
 bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
@@ -1443,7 +1444,11 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
     if (!decoder.decode(dragDestinationActionMask))
         return false;
 
-    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags, dragDestinationActionMask);
+    Optional<PageIdentifier> pageID;
+    if (!decoder.decode(pageID))
+        return false;
+
+    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags, dragDestinationActionMask, pageID);
     dragData.setFileNames(fileNames);
 
     return true;

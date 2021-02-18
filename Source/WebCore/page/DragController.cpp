@@ -148,7 +148,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
     chosePlainText = false;
 
     if (dragData.containsCompatibleContent()) {
-        if (auto fragment = frame.editor().webContentFromPasteboard(*Pasteboard::createForDragAndDrop(dragData), context, allowPlainText, chosePlainText))
+        if (auto fragment = frame.editor().webContentFromPasteboard(*Pasteboard::create(dragData), context, allowPlainText, chosePlainText))
             return fragment;
 
         if (dragData.containsURL(DragData::DoNotConvertFilenames)) {
@@ -220,7 +220,7 @@ void DragController::dragExited(const DragData& dragData)
 {
     auto& mainFrame = m_page.mainFrame();
     if (mainFrame.view())
-        mainFrame.eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::createForDragAndDrop(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
+        mainFrame.eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
     mouseMovedIntoDocument(nullptr);
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
@@ -263,7 +263,7 @@ bool DragController::performDragOperation(const DragData& dragData)
         Ref<Frame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
         if (mainFrame->view())
-            preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::createForDragAndDrop(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
+            preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
         if (preventedDefault) {
             clearDragCaret();
             m_documentUnderMouse = nullptr;
@@ -724,7 +724,7 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, Optional<DragOperati
 
     auto sourceOperationMask = dragData.draggingSourceOperationMask();
     auto targetResponse = mainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() {
-        return Pasteboard::createForDragAndDrop(dragData);
+        return Pasteboard::create(dragData);
     }, sourceOperationMask, dragData.containsFiles());
     if (!targetResponse.accept)
         return false;
@@ -1387,7 +1387,7 @@ bool DragController::tryToUpdateDroppedImagePlaceholders(const DragData& dragDat
         return false;
 
     WebContentReader reader(*frame, *m_droppedImagePlaceholderRange, true);
-    auto pasteboard = Pasteboard::createForDragAndDrop(dragData);
+    auto pasteboard = Pasteboard::create(dragData);
     pasteboard->read(reader);
 
     if (!reader.fragment)

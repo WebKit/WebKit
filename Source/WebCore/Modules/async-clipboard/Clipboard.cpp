@@ -35,6 +35,7 @@
 #include "JSClipboardItem.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -105,7 +106,7 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    auto pasteboard = Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()));
     auto changeCountAtStart = pasteboard->changeCount();
     if (!frame->requestDOMPasteAccess()) {
         promise->reject(NotAllowedError);
@@ -146,7 +147,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
     PasteboardCustomData customData;
     customData.writeString("text/plain"_s, data);
     customData.setOrigin(document->originIdentifierForPasteboard());
-    Pasteboard::createForCopyAndPaste()->writeCustomData({ WTFMove(customData) });
+    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTFMove(customData) });
     promise->resolve();
 }
 
@@ -163,7 +164,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    auto pasteboard = Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()));
     auto changeCountAtStart = pasteboard->changeCount();
 
     if (!frame->requestDOMPasteAccess()) {
@@ -303,7 +304,7 @@ Pasteboard& Clipboard::activePasteboard()
 Clipboard::ItemWriter::ItemWriter(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
     : m_clipboard(makeWeakPtr(clipboard))
     , m_promise(WTFMove(promise))
-    , m_pasteboard(Pasteboard::createForCopyAndPaste())
+    , m_pasteboard(Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(clipboard.frame()->pageID())))
 {
 }
 

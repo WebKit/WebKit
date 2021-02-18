@@ -83,24 +83,26 @@ NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
     return @[ (NSString *)legacyFilesPromisePasteboardType(), (NSString *)legacyFilenamesPasteboardType() ];
 }
 
-Pasteboard::Pasteboard()
-    : m_pasteboardName(emptyString())
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
+    : m_context(WTFMove(context))
+    , m_pasteboardName(emptyString())
     , m_changeCount(0)
 {
 }
 
-Pasteboard::Pasteboard(const String& pasteboardName, const Vector<String>& promisedFilePaths)
-    : m_pasteboardName(pasteboardName)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& pasteboardName, const Vector<String>& promisedFilePaths)
+    : m_context(WTFMove(context))
+    , m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
     , m_promisedFilePaths(promisedFilePaths)
 {
     ASSERT(pasteboardName);
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return makeUnique<Pasteboard>(NSGeneralPboard);
+    return makeUnique<Pasteboard>(WTFMove(context), NSGeneralPboard);
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
@@ -110,16 +112,16 @@ String Pasteboard::nameOfDragPasteboard()
     return NSPasteboardNameDrag;
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return makeUnique<Pasteboard>(NSDragPboard);
+    return makeUnique<Pasteboard>(WTFMove(context), NSDragPboard);
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
 {
-    return makeUnique<Pasteboard>(dragData.pasteboardName(), dragData.fileNames());
+    return makeUnique<Pasteboard>(dragData.createPasteboardContext(), dragData.pasteboardName(), dragData.fileNames());
 }
 #endif
 

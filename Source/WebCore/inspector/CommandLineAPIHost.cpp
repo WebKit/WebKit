@@ -39,6 +39,7 @@
 #include "JSCommandLineAPIHost.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Storage.h"
 #include "WebConsoleAgent.h"
@@ -149,7 +150,7 @@ void CommandLineAPIHost::clearConsoleMessages()
 
 void CommandLineAPIHost::copyText(const String& text)
 {
-    Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
+    Pasteboard::createForCopyAndPaste({ })->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 JSC::JSValue CommandLineAPIHost::InspectableObject::get(JSC::JSGlobalObject&)
