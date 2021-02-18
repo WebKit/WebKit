@@ -521,6 +521,7 @@
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
 		6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
+		712E4BC125DDC52A0007201C /* AnimationFrameRate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 712E4BC025DDC52A0007201C /* AnimationFrameRate.cpp */; };
 		71E88C4124B5299C00665160 /* ShareSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71E88C4024B5299C00665160 /* ShareSheetTests.mm */; };
 		71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 71E88C4324B533EC00665160 /* img-with-base64-url.html */; };
 		725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */; };
@@ -2315,6 +2316,7 @@
 		6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrableDomain.cpp; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoggedInStatus.cpp; sourceTree = "<group>"; };
+		712E4BC025DDC52A0007201C /* AnimationFrameRate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationFrameRate.cpp; sourceTree = "<group>"; };
 		71E88C4024B5299C00665160 /* ShareSheetTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareSheetTests.mm; sourceTree = "<group>"; };
 		71E88C4324B533EC00665160 /* img-with-base64-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-base64-url.html"; sourceTree = "<group>"; };
 		725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AdditionalSupportedImageTypes.html; sourceTree = "<group>"; };
@@ -3545,6 +3547,7 @@
 				A1EC11851F4253D900D0146E /* ios */,
 				ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */,
 				7A909A6F1D877475007E10F8 /* AffineTransform.cpp */,
+				712E4BC025DDC52A0007201C /* AnimationFrameRate.cpp */,
 				57152B5D21CC2045000C37CA /* ApduTest.cpp */,
 				6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */,
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,
@@ -5132,6 +5135,7 @@
 				C1F7B7392449083F00124557 /* AGXCompilerService.mm in Sources */,
 				A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */,
 				2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */,
+				712E4BC125DDC52A0007201C /* AnimationFrameRate.cpp in Sources */,
 				57152B5E21CC2045000C37CA /* ApduTest.cpp in Sources */,
 				A1798B8222431D65000764BD /* ApplePay.mm in Sources */,
 				63F668221F97F7F90032EE51 /* ApplicationManifest.mm in Sources */,

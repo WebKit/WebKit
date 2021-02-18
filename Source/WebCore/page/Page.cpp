@@ -1743,7 +1743,9 @@ void Page::resumeScriptedAnimations()
 
 Seconds Page::preferredRenderingUpdateInterval() const
 {
-    return preferredFrameInterval(m_throttlingReasons);
+    if (settings().forcePageRenderingUpdatesAt60FPSEnabled())
+        return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
+    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)

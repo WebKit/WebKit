@@ -1,3 +1,16 @@
+2021-02-18  Antoine Quint  <graouts@webkit.org>
+
+        Page updates and rAF callbacks should run at a frequency close to 60Hz on high refresh-rate displays
+        https://bugs.webkit.org/show_bug.cgi?id=221673
+        <rdar://problem/72398605>
+
+        Reviewed by Simon Fraser.
+
+        Add a new internal preference to force the refresh rate for page rendering updates to 60fps
+        rather than use the display's refresh rate. This setting defaults to false.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address post-landing review comments from Darin Adler for r273046.

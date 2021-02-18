@@ -79,7 +79,12 @@ Seconds ScriptedAnimationController::interval() const
 
 Seconds ScriptedAnimationController::preferredScriptedAnimationInterval() const
 {
-    return preferredFrameInterval(m_throttlingReasons);
+    Optional<FramesPerSecond> preferredFPS;
+    if (auto* page = this->page()) {
+        if (!page->settings().forcePageRenderingUpdatesAt60FPSEnabled())
+            preferredFPS = page->displayNominalFramesPerSecond();
+    }
+    return preferredFrameInterval(m_throttlingReasons, preferredFPS);
 }
 
 OptionSet<ThrottlingReason> ScriptedAnimationController::throttlingReasons() const

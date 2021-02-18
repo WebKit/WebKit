@@ -268,6 +268,18 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
+ForcePageRenderingUpdatesAt60FPSEnabled:
+  type: bool
+  humanReadableName: "Force Page Rendering Updates at 60fps"
+  humanReadableDescription: "Force the rate for updates to software Web Animations, requestAnimationFrame() and anything triggering the page rendering steps to 60 frames per second rather than use the display's refresh rate"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This should be reconciled with 'FrameFlattening' in WebPreferences.yaml .
 FrameFlatteningEnabled:
   type: bool

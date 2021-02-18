@@ -1,3 +1,16 @@
+2021-02-18  Antoine Quint  <graouts@webkit.org>
+
+        Page updates and rAF callbacks should run at a frequency close to 60Hz on high refresh-rate displays
+        https://bugs.webkit.org/show_bug.cgi?id=221673
+        <rdar://problem/72398605>
+
+        Reviewed by Simon Fraser.
+
+        Add API tests for the methods in AnimationFrameRate.h.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/AnimationFrameRate.cpp: Added.
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit even further
