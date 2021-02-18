@@ -38,31 +38,10 @@ class WebGLLayerSwapChain final : public WebCore::GraphicsContextGLIOSurfaceSwap
 public:
     explicit WebGLLayerSwapChain(WebGLLayer* layer)  : m_layer(layer) { };
     ~WebGLLayerSwapChain() override = default;
-    void present(Buffer) override;
-    const Buffer& displayBuffer() const override
-    {
-        return m_displayBuffer;
-    }
-    Buffer recycleBuffer() override
-    {
-        if (m_spareBuffer.surface) {
-            if (m_spareBuffer.surface->isInUse())
-                m_spareBuffer.surface.reset();
-            return WTFMove(m_spareBuffer);
-        }
-        return { };
-    }
-    void* detachClient() override
-    {
-        ASSERT(!m_spareBuffer.surface);
-        void* result = m_displayBuffer.handle;
-        m_displayBuffer.handle = nullptr;
-        return result;
-    }
+    void present(Buffer&&) override;
+
     WebCore::IOSurface* displaySurface() { return m_displayBuffer.surface.get(); }
 private:
-    Buffer m_displayBuffer;
-    Buffer m_spareBuffer;
     WebGLLayer* const m_layer;
 };
 
@@ -130,11 +109,10 @@ private:
 
 @end
 
-void WebGLLayerSwapChain::present(Buffer buffer)
+void WebGLLayerSwapChain::present(Buffer&& buffer)
 {
     ASSERT(!m_spareBuffer.surface);
-    m_spareBuffer = WTFMove(m_displayBuffer);
-    m_displayBuffer = WTFMove(buffer);
+    GraphicsContextGLIOSurfaceSwapChain::present(WTFMove(buffer));
     [m_layer prepareForDisplay];
 }
 

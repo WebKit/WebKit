@@ -196,7 +196,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 }
 #endif
 
-void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
+void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
 {
     if (!makeContextCurrent())
         return;
@@ -205,10 +205,10 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBu
     auto imageData = readRenderingResults();
     if (!imageData)
         return;
-    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
+void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
 {
     if (!makeContextCurrent())
         return;
@@ -217,20 +217,33 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer* imageB
     auto imageData = readCompositedResults();
     if (!imageData)
         return;
-    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
+{
+    // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
+    if (contextAttributes().premultipliedAlpha)
+        return nullptr;
+    return readRenderingResultsForPainting();
+}
+
+RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
         return nullptr;
     if (getInternalFramebufferSize().isEmpty())
         return nullptr;
-    // Reading premultiplied alpha would involve unpremultiplying, which is
-    // lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
     return readRenderingResults();
+}
+
+RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+{
+    if (!makeContextCurrent())
+        return nullptr;
+    if (getInternalFramebufferSize().isEmpty())
+        return nullptr;
+    return readCompositedResults();
 }
 
 #if !PLATFORM(COCOA)

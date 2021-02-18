@@ -80,6 +80,9 @@ public:
 
     void disconnect();
 
+    // Runs Function in RemoteRenderingBackend task queue.
+    void dispatch(Function<void()>&&);
+
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&&);
 

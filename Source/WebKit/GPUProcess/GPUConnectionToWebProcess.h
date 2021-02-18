@@ -138,7 +138,7 @@ private:
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
 #if ENABLE(WEBGL)
-    void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier);
+    void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier);
     void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
 #endif
 
@@ -211,7 +211,7 @@ private:
     public:
         RemoteRenderingBackendWrapper(Ref<RemoteRenderingBackend>&&);
         ~RemoteRenderingBackendWrapper();
-
+        RemoteRenderingBackend& get() const { return m_remoteRenderingBackend.get(); }
     private:
         Ref<RemoteRenderingBackend> m_remoteRenderingBackend;
     };

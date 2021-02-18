@@ -33,6 +33,7 @@
 #include "MessageSender.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteResourceCacheProxy.h"
+#include "RenderingBackendIdentifier.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RemoteGraphicsContextGLProxyBase.h>
@@ -50,7 +51,7 @@ class RemoteGraphicsContextGLProxy final
     , private GPUProcessConnection::Client
     , public WebCore::RemoteGraphicsContextGLProxyBase {
 public:
-    static RefPtr<RemoteGraphicsContextGLProxy> create(const WebCore::GraphicsContextGLAttributes&);
+    static RefPtr<RemoteGraphicsContextGLProxy> create(const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
     ~RemoteGraphicsContextGLProxy() final;
 
     // IPC::MessageReceiver overrides.
@@ -63,8 +64,8 @@ public:
     void ensureExtensionEnabled(const String& extension) final;
     void notifyMarkContextChanged() final;
     void simulateContextChanged() final;
-    void paintRenderingResultsToCanvas(WebCore::ImageBuffer*) final;
-    void paintCompositedResultsToCanvas(WebCore::ImageBuffer*) final;
+    void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
+    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
     void synthesizeGLError(GCGLenum error) final;
     GCGLenum getError() final;
 
@@ -356,7 +357,7 @@ private:
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
 
-    RemoteGraphicsContextGLProxy(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&);
+    RemoteGraphicsContextGLProxy(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
     GPUProcessConnection* m_gpuProcessConnection;
     bool m_didInitialize { false };
     GCGLenum m_errorWhenContextIsLost = NO_ERROR;

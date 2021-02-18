@@ -1,3 +1,75 @@
+2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL contexts do not work as source for Context2D drawImage calls in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=221811
+
+        Reviewed by Darin Adler.
+
+        Implements rudimentary support for reading the WebGL context and transfering
+        it to a ImageBuffer.
+
+        Fixes many tests that are removed from gpu-process/TestExpectations.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::get const):
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+       * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const):
+
+        RemoteGraphicsContextGL takes a ref of the respective RemoteRenderingBackend.
+        RemoteRenderingBackend is the one that can handle ImageBuffers.
+
+        (WebKit::RemoteGraphicsContextGL::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintImageDataToImageBuffer):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+
+        Implement the functions by:
+         1) Wait for the pending changes to the ImageBuffer
+         2) Send a synchronous message from Web process to GPU process WebGL sequence
+         3) Reading the buffer, post the task to RenderingBackend sequence
+         4) Paint the results to the ImageBuffer
+         5) Return the synchronous message result
+
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+
+        RemoteGraphicsContextGL now retains the reference to display buffer.
+        Before, just sent the display buffer to Web process and forgot
+        about it.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::dispatch):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
+        Add function to dispatch work to rendering backend sequence.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::create):
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+
+        Send the messages.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::connectToGPUProcess):
+
+        Use IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply to
+        send CreateRenderingBackend. It must be dispatched in order compared to other
+        messages such as CreateRemoteGraphicsContextGL.
+
 2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb an Optional<PageIdentifier> through Pasteboard-related codepaths

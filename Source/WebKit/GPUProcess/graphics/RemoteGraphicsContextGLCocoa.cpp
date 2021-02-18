@@ -37,63 +37,35 @@ using namespace WebCore;
 
 namespace {
 
-class RemoteGraphicsContextGLCocoa final : public RemoteGraphicsContextGL, private WebCore::GraphicsContextGLIOSurfaceSwapChain {
+class RemoteGraphicsContextGLCocoa final : public RemoteGraphicsContextGL {
 public:
-    RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier);
+    RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&);
     ~RemoteGraphicsContextGLCocoa() final = default;
 
     // RemoteGraphicsContextGL overrides.
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-
-    // GraphicsContextGLIOSurfaceSwapChain overrides.
-    Buffer recycleBuffer() final;
-    void present(Buffer) final;
-    const Buffer& displayBuffer() const final;
-    void* detachClient() final;
 private:
-    GraphicsContextGLIOSurfaceSwapChain::Buffer m_displayBuffer;
+    WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain;
 };
 
 }
 
-std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend)
 {
-    return std::unique_ptr<RemoteGraphicsContextGL>(new RemoteGraphicsContextGLCocoa(attributes, gpuConnectionToWebProcess, graphicsContextGLIdentifier));
+    return makeUnique<RemoteGraphicsContextGLCocoa>(attributes, connection, identifier, renderingBackend);
 }
 
-RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier)
-    : RemoteGraphicsContextGL(attributes, connection, identifier, GraphicsContextGLOpenGL::createForGPUProcess(attributes, this))
+RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend)
+    : RemoteGraphicsContextGL(attributes, connection, identifier, GraphicsContextGLOpenGL::createForGPUProcess(attributes, &m_swapChain), renderingBackend)
 {
-}
-
-GraphicsContextGLIOSurfaceSwapChain::Buffer RemoteGraphicsContextGLCocoa::recycleBuffer()
-{
-    return WTFMove(m_displayBuffer);
-}
-
-void RemoteGraphicsContextGLCocoa::present(Buffer buffer)
-{
-    ASSERT(!m_displayBuffer.surface);
-    m_displayBuffer = WTFMove(buffer);
-}
-
-const GraphicsContextGLIOSurfaceSwapChain::Buffer& RemoteGraphicsContextGLCocoa::displayBuffer() const
-{
-    return m_displayBuffer;
-}
-
-void* RemoteGraphicsContextGLCocoa::detachClient()
-{
-    return std::exchange(m_displayBuffer.handle, nullptr);
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
     m_context->prepareForDisplay();
-    auto displayBuffer = WTFMove(m_displayBuffer.surface);
     MachSendRight sendRight;
-    if (displayBuffer)
-        sendRight = displayBuffer->createSendRight();
+    if (auto* surface = m_swapChain.displayBuffer().surface.get())
+        sendRight = surface->createSendRight();
     completionHandler(WTFMove(sendRight));
 }
 

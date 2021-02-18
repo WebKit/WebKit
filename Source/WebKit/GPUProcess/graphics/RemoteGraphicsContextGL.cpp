@@ -39,20 +39,21 @@ namespace WebKit {
 using namespace WebCore;
 
 #if !PLATFORM(COCOA)
-std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 #endif
 
-RemoteGraphicsContextGL::RemoteGraphicsContextGL(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, Ref<GraphicsContextGLOpenGL> context)
+RemoteGraphicsContextGL::RemoteGraphicsContextGL(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, Ref<GraphicsContextGLOpenGL> context, RemoteRenderingBackend& renderingBackend)
     : m_context(WTFMove(context))
-    , m_gpuConnectionToWebProcess(makeWeakPtr(gpuConnectionToWebProcess))
-    , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
+    , m_gpuConnectionToWebProcess(makeWeakPtr(connection))
+    , m_graphicsContextGLIdentifier(identifier)
+    , m_renderingBackend(makeRef(renderingBackend))
 {
     if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGL::messageReceiverName(), graphicsContextGLIdentifier.toUInt64(), *this);
+        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
     m_context->addClient(*this);
     String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
     String requestableExtensions = m_context->getString(ExtensionsGL::REQUESTABLE_EXTENSIONS_ANGLE);
@@ -135,6 +136,45 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 void RemoteGraphicsContextGL::notifyMarkContextChanged()
 {
     m_context->markContextChanged();
+}
+
+void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
+{
+    paintImageDataToImageBuffer(m_context->readRenderingResultsForPainting(), imageBuffer, WTFMove(completionHandler));
+}
+
+void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
+{
+    paintImageDataToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
+}
+
+void RemoteGraphicsContextGL::paintImageDataToImageBuffer(RefPtr<WebCore::ImageData>&& imageData, WebCore::RenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
+{
+    // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
+    // as are the messages that call these.
+    Lock mutex;
+    Condition conditionVariable;
+    bool isFinished = false;
+    m_renderingBackend->dispatch([&]() mutable {
+        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
+            // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
+            // image buffers and there's no good way to add display lists.
+            if (imageData)
+                GraphicsContextGLOpenGL::paintToCanvas(m_context->contextAttributes(), imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+            else
+                imageBuffer->context().clearRect({ IntPoint(), imageBuffer->backendSize() });
+            // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
+            imageBuffer->flushContext();
+        }
+        auto locker = holdLock(mutex);
+        isFinished = true;
+        conditionVariable.notifyOne();
+    });
+    std::unique_lock<Lock> lock(mutex);
+    conditionVariable.wait(lock, [&] {
+        return isFinished;
+    });
+    completionHandler();
 }
 
 } // namespace WebKit

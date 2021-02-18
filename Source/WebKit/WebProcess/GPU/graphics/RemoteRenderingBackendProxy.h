@@ -98,6 +98,7 @@ public:
     DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
     bool waitForDidFlush();
 
+    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
 private:
     RemoteRenderingBackendProxy();
 

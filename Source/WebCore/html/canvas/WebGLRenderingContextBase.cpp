@@ -1210,7 +1210,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
             auto& base = canvasBase();
             base.clearCopiedImage();
             m_markedCanvasDirty = false;
-            m_context->paintCompositedResultsToCanvas(base.buffer());
+            m_context->paintCompositedResultsToCanvas(*base.buffer());
         }
         return;
     }
@@ -1225,7 +1225,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
 
     m_markedCanvasDirty = false;
 
-    m_context->paintRenderingResultsToCanvas(base.buffer());
+    m_context->paintRenderingResultsToCanvas(*base.buffer());
 }
 
 RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()

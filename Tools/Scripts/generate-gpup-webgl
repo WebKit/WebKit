@@ -101,6 +101,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted {{
     void NotifyMarkContextChanged()
     void SynthesizeGLError(uint32_t error)
     void GetError() -> (uint32_t returnValue) Synchronous
+    void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+
 {}
 }}
 

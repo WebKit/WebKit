@@ -337,10 +337,14 @@ GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::~RemoteRenderingBacken
 }
 
 #if ENABLE(WEBGL)
-void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier)
 {
+    auto* renderingBackend = m_remoteRenderingBackendMap.get(renderingBackendIdentifier);
+    if (!renderingBackend)
+        return;
+
     auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&]() {
-        return RemoteGraphicsContextGL::create(attributes, *this, graphicsContextGLIdentifier);
+        return RemoteGraphicsContextGL::create(attributes, *this, graphicsContextGLIdentifier, renderingBackend->get());
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

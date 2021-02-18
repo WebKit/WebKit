@@ -458,9 +458,12 @@ public:
     void dispatchContextChangedNotification();
     void simulateContextChanged() final;
 
-    void paintRenderingResultsToCanvas(ImageBuffer*) final;
+    void paintRenderingResultsToCanvas(ImageBuffer&) final;
     RefPtr<ImageData> paintRenderingResultsToImageData() final;
-    void paintCompositedResultsToCanvas(ImageBuffer*) final;
+    void paintCompositedResultsToCanvas(ImageBuffer&) final;
+
+    RefPtr<ImageData> readRenderingResultsForPainting();
+    RefPtr<ImageData> readCompositedResultsForPainting();
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);
@@ -515,6 +518,8 @@ public:
     static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
 #endif // !USE(ANGLE)
 
+    static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<ImageData>&&, const IntSize& canvasSize, GraphicsContext&);
+
 private:
 #if PLATFORM(COCOA)
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
@@ -542,7 +547,6 @@ private:
     RefPtr<ImageData> readRenderingResults();
     RefPtr<ImageData> readCompositedResults();
     RefPtr<ImageData> readPixelsForPaintResults();
-    void paintToCanvas(Ref<ImageData>&&, const IntSize& canvasSize, GraphicsContext&);
 
     bool reshapeFBOs(const IntSize&);
     void prepareTextureImpl();

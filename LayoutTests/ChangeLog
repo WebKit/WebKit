@@ -1,3 +1,14 @@
+2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL contexts do not work as source for Context2D drawImage calls in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=221811
+
+        Reviewed by Darin Adler.
+
+        Remove now passing tests from the expectations.
+
+        * gpu-process/TestExpectations:
+
 2021-02-17  Sam Weinig  <weinig@apple.com>
 
         lch() colors should serialize as lch(), not lab()

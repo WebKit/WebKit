@@ -58,19 +58,23 @@ public:
     // - Buffer with empty surface and non-empty metadata handle if the recycled buffer was available
     //   but the surface is still in use.
     // - Surface and handle.
-    virtual Buffer recycleBuffer() = 0;
+    virtual Buffer recycleBuffer();
 
     // Prepares the target for display with a contents buffer.
-    virtual void present(Buffer) = 0;
+    virtual void present(Buffer&&);
 
     // Returns the most recent presented display buffer. The reference is valid until
     // next present, recycleBuffer or detachClient call.
-    virtual const Buffer& displayBuffer() const = 0;
+    virtual const Buffer& displayBuffer() const;
 
     // Detaches the client and returns the current contents buffer metadata handle.
     // The if multiple buffers have been submitted, recycleBuffer must have been called before calling
     // this.
-    virtual void* detachClient() = 0;
+    virtual void* detachClient();
+
+protected:
+    Buffer m_displayBuffer;
+    Buffer m_spareBuffer;
 };
 
 }

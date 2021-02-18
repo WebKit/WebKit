@@ -31,7 +31,7 @@
 #include "GraphicsContextGLIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-
+#include "RemoteRenderingBackend.h"
 #include <WebCore/ExtensionsGL.h>
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/NotImplemented.h>
@@ -58,14 +58,15 @@ class RemoteGraphicsContextGL
     : public IPC::MessageSender
     , private IPC::MessageReceiver
     , private WebCore::GraphicsContextGL::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteGraphicsContextGL> create(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier);
+    static std::unique_ptr<RemoteGraphicsContextGL> create(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&);
     ~RemoteGraphicsContextGL() override;
 
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
 
 protected:
-    RemoteGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, Ref<WebCore::GraphicsContextGLOpenGL>);
+    RemoteGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, Ref<WebCore::GraphicsContextGLOpenGL>, RemoteRenderingBackend&);
 
     // IPC::MessageSender overrides.
     IPC::Connection* messageSenderConnection() const final;
@@ -92,12 +93,17 @@ protected:
 #endif
     void getError(CompletionHandler<void(uint32_t)>&&);
     void synthesizeGLError(uint32_t error);
+    void paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
+
+    void paintImageDataToImageBuffer(RefPtr<WebCore::ImageData>&&, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
 
     Ref<WebCore::GraphicsContextGLOpenGL> m_context;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
+    Ref<RemoteRenderingBackend> m_renderingBackend;
 };
 
 } // namespace WebKit

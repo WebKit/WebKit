@@ -106,7 +106,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-void GraphicsContextGLOpenGL::paintToCanvas(Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
 {
     ASSERT(!imageData->size().isEmpty());
     if (canvasSize.isEmpty())
@@ -122,7 +122,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(Ref<ImageData>&& imageData, const In
     for (size_t i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
-    if (!contextAttributes().premultipliedAlpha) {
+    if (!sourceContextAttributes.premultipliedAlpha) {
         for (size_t i = 0; i < totalBytes; i += 4) {
             pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
             pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);

@@ -36,6 +36,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted {
     void NotifyMarkContextChanged()
     void SynthesizeGLError(uint32_t error)
     void GetError() -> (uint32_t returnValue) Synchronous
+    void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier identifier) -> () Synchronous
+    void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier identifier) -> () Synchronous
+
 
     void SetFailNextGPUStatusCheck()
     void MoveErrorsToSyntheticErrorList() -> (bool returnValue) Synchronous
@@ -292,4 +295,3 @@ messages -> RemoteGraphicsContextGL NotRefCounted {
 }
 
 #endif
-

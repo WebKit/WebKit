@@ -32,6 +32,32 @@ namespace WebCore {
 
 GraphicsContextGLIOSurfaceSwapChain::~GraphicsContextGLIOSurfaceSwapChain() = default;
 
+const GraphicsContextGLIOSurfaceSwapChain::Buffer& GraphicsContextGLIOSurfaceSwapChain::displayBuffer() const
+{
+    return m_displayBuffer;
+}
+
+GraphicsContextGLIOSurfaceSwapChain::Buffer GraphicsContextGLIOSurfaceSwapChain::recycleBuffer()
+{
+    if (m_spareBuffer.surface) {
+        if (m_spareBuffer.surface->isInUse())
+            m_spareBuffer.surface.reset();
+        return WTFMove(m_spareBuffer);
+    }
+    return { };
+}
+
+void* GraphicsContextGLIOSurfaceSwapChain::detachClient()
+{
+    ASSERT(!m_spareBuffer.surface);
+    return std::exchange(m_displayBuffer.handle, nullptr);
+}
+
+void GraphicsContextGLIOSurfaceSwapChain::present(Buffer&& buffer)
+{
+    m_spareBuffer = std::exchange(m_displayBuffer, WTFMove(buffer));
+}
+
 }
 
 #endif

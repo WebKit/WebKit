@@ -92,6 +92,11 @@ void RemoteRenderingBackend::disconnect()
     m_gpuConnectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
 }
 
+void RemoteRenderingBackend::dispatch(Function<void()>&& task)
+{
+    m_workQueue->dispatch(WTFMove(task));
+}
+
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
 {
     return &m_gpuConnectionToWebProcess->connection();

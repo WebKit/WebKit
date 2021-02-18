@@ -1291,9 +1291,9 @@ public:
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
-    virtual void paintRenderingResultsToCanvas(ImageBuffer*) = 0;
+    virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
     virtual RefPtr<ImageData> paintRenderingResultsToImageData() = 0;
-    virtual void paintCompositedResultsToCanvas(ImageBuffer*) = 0;
+    virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree
