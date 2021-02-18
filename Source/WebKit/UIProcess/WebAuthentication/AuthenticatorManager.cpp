@@ -387,9 +387,9 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
 
-    // Local authenticator might invoke system UI which should definitely not be able to trigger by scripts automatically.
+    // For the modern UI, we should only consider invoking it when the operation is triggered by users.
     if (!m_pendingRequestData.processingUserGesture)
-        transports.remove(AuthenticatorTransport::Internal);
+        transports.clear();
 }
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
@@ -435,6 +435,11 @@ void AuthenticatorManager::runPanel()
     // Get available transports and start discovering authenticators on them.
     auto& options = m_pendingRequestData.options;
     auto transports = getTransports();
+    if (transports.isEmpty()) {
+        cancel();
+        return;
+    }
+
     m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options));
     auto& panel = *m_pendingRequestData.panel;
     page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
@@ -451,6 +456,11 @@ void AuthenticatorManager::runPresenter()
 {
     // Get available transports and start discovering authenticators on them.
     auto transports = getTransports();
+    if (transports.isEmpty()) {
+        cancel();
+        return;
+    }
+
     startDiscovery(transports);
 
     // For native API support, we skip the UI part. The native API will handle that.
@@ -500,7 +510,7 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
 {
     auto weakPanel = m_pendingRequestData.weakPanel;
     if (!weakPanel)
-        weakPanel = makeWeakPtr(*m_pendingRequestData.panel.get());
+        weakPanel = makeWeakPtr(m_pendingRequestData.panel.get());
     if (!weakPanel)
         return;
 
