@@ -1,3 +1,16 @@
+2021-02-17  Sam Weinig  <weinig@apple.com>
+
+        lch() colors should serialize as lch(), not lab()
+        https://bugs.webkit.org/show_bug.cgi?id=222085
+
+        Reviewed by Darin Adler.
+
+        The spec was updated to require lch() to serialize to itself.
+
+        * fast/css/parsing-lab-colors-expected.txt:
+        * fast/css/parsing-lab-colors.html:
+        Update test to reflect new serialization of lch().
+
 2021-02-18  Martin Robinson  <mrobinson@igalia.com>
 
         Root scroll snapping broken when overflow:scroll is set on the <body>

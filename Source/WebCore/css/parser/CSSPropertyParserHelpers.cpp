@@ -959,7 +959,7 @@ static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserConte
     auto normalizedChroma = std::max(0.0, *chroma);
     auto normalizedHue = normalizeHue(*hue);
 
-    return convertColor<Lab<float>>(LCHA<float> { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) });
+    return LCHA<float> { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) };
 }
 
 template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)

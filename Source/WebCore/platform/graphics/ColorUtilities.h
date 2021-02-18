@@ -60,10 +60,12 @@ template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const Col
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
+constexpr bool isBlack(const LCHA<float>&);
 constexpr bool isBlack(const Lab<float>&);
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isWhite(const ColorType&);
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>&);
+constexpr bool isWhite(const LCHA<float>&);
 constexpr bool isWhite(const Lab<float>&);
 
 constexpr uint16_t fastMultiplyBy255(uint16_t);
@@ -152,6 +154,11 @@ template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>& color)
     return color.y == 0 && color.alpha == AlphaTraits<float>::opaque;
 }
 
+constexpr bool isBlack(const LCHA<float>& color)
+{
+    return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
+}
+
 constexpr bool isBlack(const Lab<float>& color)
 {
     return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
@@ -168,6 +175,11 @@ constexpr bool isBlack(const ColorType& color)
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>& color)
 {
     return color.y == 1 && color.alpha == AlphaTraits<float>::opaque;
+}
+
+constexpr bool isWhite(const LCHA<float>& color)
+{
+    return color.lightness == 100 && color.alpha == AlphaTraits<float>::opaque;
 }
 
 constexpr bool isWhite(const Lab<float>& color)

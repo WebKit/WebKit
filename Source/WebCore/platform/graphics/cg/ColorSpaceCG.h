@@ -80,6 +80,8 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 #else
         return nullptr;
 #endif
+    case ColorSpace::LCH:
+        return nullptr;
     case ColorSpace::Lab:
 #if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
         return labColorSpaceRef();

@@ -44,6 +44,10 @@ static String serializationForCSS(const DisplayP3<float>&);
 static String serializationForHTML(const DisplayP3<float>&);
 static String serializationForRenderTreeAsText(const DisplayP3<float>&);
 
+static String serializationForCSS(const LCHA<float>&);
+static String serializationForHTML(const LCHA<float>&);
+static String serializationForRenderTreeAsText(const LCHA<float>&);
+
 static String serializationForCSS(const Lab<float>&);
 static String serializationForHTML(const Lab<float>&);
 static String serializationForRenderTreeAsText(const Lab<float>&);
@@ -101,6 +105,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "a98-rgb"_s;
     case ColorSpace::DisplayP3:
         return "display-p3"_s;
+    case ColorSpace::LCH:
+        return "lch"_s;
     case ColorSpace::Lab:
         return "lab"_s;
     case ColorSpace::LinearSRGB:
@@ -159,6 +165,28 @@ String serializationForHTML(const DisplayP3<float>& color)
 String serializationForRenderTreeAsText(const DisplayP3<float>& color)
 {
     return serialization(color);
+}
+
+// MARK: LCHA<float> overloads
+
+String serializationForCSS(const LCHA<float>& color)
+{
+    // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
+
+    auto [c1, c2, c3, alpha] = color;
+    if (WTF::areEssentiallyEqual(alpha, 1.0f))
+        return makeString("lch(", c1, "% ", c2, ' ', c3, ')');
+    return makeString("lch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+}
+
+String serializationForHTML(const LCHA<float>& color)
+{
+    return serializationForCSS(color);
+}
+
+String serializationForRenderTreeAsText(const LCHA<float>& color)
+{
+    return serializationForCSS(color);
 }
 
 // MARK: Lab<float> overloads
