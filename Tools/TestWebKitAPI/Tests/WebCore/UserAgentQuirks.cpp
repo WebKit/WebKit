@@ -54,17 +54,6 @@ static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Version"));
 }
 
-static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
-{
-    String uaString = standardUserAgentForURL(URL({ }, url));
-
-    EXPECT_TRUE(uaString.contains("Linux"));
-    EXPECT_FALSE(uaString.contains("Macintosh"));
-    EXPECT_FALSE(uaString.contains("Mac OS X"));
-    EXPECT_FALSE(uaString.contains("Chrome"));
-    EXPECT_FALSE(uaString.contains("FreeBSD"));
-}
-
 static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL({ }, url));
@@ -82,12 +71,6 @@ TEST(UserAgentTest, Quirks)
     String uaString = standardUserAgentForURL(URL({ }, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
-#if !OS(LINUX) || !CPU(X86_64)
-    // Google quirk should not affect sites with similar domains.
-    uaString = standardUserAgentForURL(URL({ }, "http://www.googleblog.com/"));
-    EXPECT_FALSE(uaString.contains("Linux x86_64"));
-#endif
-
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
@@ -99,12 +82,6 @@ TEST(UserAgentTest, Quirks)
 #if ENABLE(THUNDER)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.netflix.com/");
 #endif
-
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://calendar.google.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://plus.google.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://fonts.googleapis.com/");
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://finance.yahoo.com/");

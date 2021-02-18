@@ -147,11 +147,6 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     return false;
 }
 
-static bool urlRequiresLinuxDesktopPlatform(const URL& url)
-{
-    return isGoogle(url) && chassisType() != WTF::ChassisType::Mobile;
-}
-
 UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 {
     ASSERT(!url.isNull());
@@ -165,8 +160,6 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresMacintoshPlatform(url))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
-    else if (urlRequiresLinuxDesktopPlatform(url))
-        quirks.add(UserAgentQuirks::NeedsLinuxDesktopPlatform);
 
     return quirks;
 }
@@ -181,8 +174,6 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
         return "; rv:87.0) Gecko/20100101 Firefox/87.0"_s;
     case NeedsMacintoshPlatform:
         return "Macintosh; Intel Mac OS X 10_15"_s;
-    case NeedsLinuxDesktopPlatform:
-        return "X11; Linux x86_64"_s;
     case NumUserAgentQuirks:
     default:
         ASSERT_NOT_REACHED();

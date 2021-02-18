@@ -1,3 +1,14 @@
+2021-02-18  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Remove all Google user agent quirks except for Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=222039
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::assertUserAgentForURLHasLinuxPlatformQuirk): Deleted.
+
 2021-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Disable RangeResponseGenerator again.
