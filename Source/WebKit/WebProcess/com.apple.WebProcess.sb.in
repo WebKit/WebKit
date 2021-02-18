@@ -1831,19 +1831,6 @@
         )
     )
 )
-(allow iokit-open (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-user-client-class
-            "AudioAUUC"
-            "IOAudioControlUserClient"
-            "IOAudioEngineUserClient"
-        )
-    )
-)
 (when (equal? (param "CPU") "arm64")
     (allow iokit-open (with report)
     #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
@@ -1866,6 +1853,20 @@
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection
             "IOAccelerator"
+        )
+    )
+)
+
+(deny iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+#endif
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "AudioAUUC"
+            "IOAudioControlUserClient"
+            "IOAudioEngineUserClient"
         )
     )
 )

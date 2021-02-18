@@ -1,3 +1,15 @@
+2021-02-18  Per Arne  <pvollan@apple.com>
+
+        [macOS] Remove access to audio IOKit
+        https://bugs.webkit.org/show_bug.cgi?id=222062
+        <rdar://problem/70496648>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to audio IOKit in the WebContent process on macOS when GPUP is enabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-18  John Wilander  <wilander@apple.com>
 
         PCM: Request signature for unlinkable token using attributionSourceNonce
