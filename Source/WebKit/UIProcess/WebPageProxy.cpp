@@ -1516,6 +1516,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain();
 
     simulatedResponse.setExpectedContentLength(data.size());
+    simulatedResponse.includeCertificateInfo();
 
     addPlatformLoadParameters(m_process, loadParameters);
 

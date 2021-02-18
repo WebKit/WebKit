@@ -34,10 +34,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
-static NSString *exampleURLString = @"https://example.com";
+static NSString *exampleURLString = @"https://example.com/";
 static NSURL *exampleURL = [NSURL URLWithString:exampleURLString];
 static NSString *htmlString = @"<html><body><h1>Hello, world!</h1></body></html>";
-static NSString *exampleURLString2 = @"https://example.org";
+static NSString *exampleURLString2 = @"https://example.org/";
 static NSURL *exampleURL2 = [NSURL URLWithString:exampleURLString2];
 static NSString *htmlString2 = @"<html><body><h1>Hello, new world!</h1></body></html>";
 
