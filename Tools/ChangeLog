@@ -1,3 +1,16 @@
+2021-02-18  Don Olmstead  <don.olmstead@sony.com>
+
+        Skip platform specific Python tests
+        https://bugs.webkit.org/show_bug.cgi?id=222066
+
+        Reviewed by Jonathan Bedard.
+
+        Catalog platform specific tests based on operating system. Skip those tests that don't
+        apply to the platform. Mac should continue to run all tests since it runs the webkitpy
+        tests in EWS.
+
+        * Scripts/webkitpy/test/main.py:
+
 2021-02-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Ensure that uat instance doesn't comment on bugs
