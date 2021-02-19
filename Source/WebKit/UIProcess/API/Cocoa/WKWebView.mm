@@ -2577,7 +2577,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     _page->getMainResourceDataOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
-        completionHandler(wrapper(*data), nil);
+        completionHandler(wrapper(data), nil);
     });
 }
 

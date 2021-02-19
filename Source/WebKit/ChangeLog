@@ -1,3 +1,14 @@
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add null check in _getMainResourceDataWithCompletionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=222139
+        <rdar://problem/74449438>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]):
+
 2021-02-18  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for using custom process pool and page group identifier
