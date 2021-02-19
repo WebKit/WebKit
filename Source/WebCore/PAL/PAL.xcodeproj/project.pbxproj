@@ -138,6 +138,8 @@
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
 		572A107822B456F500F410C8 /* AuthKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A107722B456F500F410C8 /* AuthKitSPI.h */; };
 		576CA9D622B854AB0030143C /* AppSSOSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 576CA9D522B854AB0030143C /* AppSSOSPI.h */; };
+		57F1C90925DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57F1C90725DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.h */; };
+		57F1C90A25DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F1C90825DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm */; };
 		57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */; };
 		57FD318B22B35989008D0E8B /* AppSSOSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */; };
 		5C7C787323AC3E770065F47E /* ManagedConfigurationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7C787123AC3E770065F47E /* ManagedConfigurationSoftLink.h */; };
@@ -341,6 +343,8 @@
 		570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSXPCConnectionSPI.h; sourceTree = "<group>"; };
 		572A107722B456F500F410C8 /* AuthKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthKitSPI.h; sourceTree = "<group>"; };
 		576CA9D522B854AB0030143C /* AppSSOSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppSSOSPI.h; sourceTree = "<group>"; };
+		57F1C90725DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoKitCBridgingSoftLink.h; sourceTree = "<group>"; };
+		57F1C90825DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CryptoKitCBridgingSoftLink.mm; sourceTree = "<group>"; };
 		57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSSOSoftLink.h; sourceTree = "<group>"; };
 		57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppSSOSoftLink.mm; sourceTree = "<group>"; };
 		5C7C787123AC3E770065F47E /* ManagedConfigurationSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedConfigurationSoftLink.h; sourceTree = "<group>"; };
@@ -691,6 +695,8 @@
 				57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
+				57F1C90725DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.h */,
+				57F1C90825DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm */,
 				F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */,
 				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
 				CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */,
@@ -828,6 +834,7 @@
 				1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */,
 				0C5AF9191F43A4C7002EAC02 /* CoreUISPI.h in Headers */,
 				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
+				57F1C90925DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.h in Headers */,
 				0C2DA1411F3BEB4900DBC317 /* DataDetectorsCoreSPI.h in Headers */,
 				0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */,
 				0C5AF91A1F43A4C7002EAC02 /* DataDetectorsUISPI.h in Headers */,
@@ -1037,6 +1044,7 @@
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
 				1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
+				57F1C90A25DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,

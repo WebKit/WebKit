@@ -18,7 +18,7 @@ Content type: application/json
 REQUEST_URI: /privateClickMeasurement/resources/signToken.php
 No cookies in token signing request.
 Request body:
-{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","unlinkable_token":"TODO","version":2}
+{}
 
 Unattributed Private Click Measurements:
 WebCore::PrivateClickMeasurement 1

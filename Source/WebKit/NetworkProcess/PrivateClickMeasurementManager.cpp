@@ -157,12 +157,12 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
         }
 
         // FIXME: Receive and extra the server public key, rdar://73582032.
-        getSignedUnlinkableToken(WTFMove(attribution));
+        getSignedSecretToken(WTFMove(attribution), emptyString());
     });
 
 }
 
-void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasurement&& attribution)
+void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasurement&& attribution, const String& tokenPublicKeyBase64URL)
 {
     if (!featureEnabled())
         return;
@@ -178,21 +178,21 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkResourceLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried);
+    auto loadParameters = generateNetworkResourceLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(tokenPublicKeyBase64URL), pcmDataCarried);
 
-    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
+    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a secret token signing request.");
+    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a secret token signing request."_s);
 
     m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            weakThis->m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for unlinkable token signing request."_s));
+            weakThis->m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for secret token signing request."_s));
             return;
         }
         
-        // FIXME: Receive and store the signed unlinkable token, rdar://73582032.
+        // FIXME: Receive and store the signed secret token, rdar://73582032.
     });
 
 }

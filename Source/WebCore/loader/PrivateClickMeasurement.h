@@ -36,6 +36,16 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(COCOA)
+OBJC_CLASS RSABSSATokenReady;
+OBJC_CLASS RSABSSATokenWaitingActivation;
+OBJC_CLASS RSABSSATokenBlinder;
+#endif
+
 namespace WebCore {
 
 class PrivateClickMeasurement {
@@ -201,31 +211,6 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    struct EphemeralSourceNonce {
-        static constexpr uint32_t RequiredNumberOfBytes = 16;
-
-        EphemeralSourceNonce() = default;
-        explicit EphemeralSourceNonce(const String& nonceString)
-            : nonce { nonceString }
-        {
-        }
-
-        // FIXME: Investigate if we can do with a simple length check instead of decoding.
-        // https://bugs.webkit.org/show_bug.cgi?id=221945
-        bool isValid() const
-        {
-            Vector<uint8_t> digest;
-            if (!base64URLDecode(nonce, digest))
-                return false;
-            return digest.size() == RequiredNumberOfBytes;
-        }
-
-        String nonce;
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<EphemeralSourceNonce> decode(Decoder&);
-    };
-
     struct Priority {
         static constexpr uint32_t MaxEntropy = 63;
 
@@ -277,16 +262,10 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
-    WEBCORE_EXPORT URL tokenPublicKeyURL() const;
-    WEBCORE_EXPORT URL tokenSignatureURL() const;
-    WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON() const;
     WEBCORE_EXPORT URL attributionReportURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };
-    void setEphemeralSourceNonce(EphemeralSourceNonce&& nonce) { m_ephemeralSourceNonce = WTFMove(nonce); };
-    Optional<EphemeralSourceNonce> ephemeralSourceNonce() const { return !m_ephemeralSourceNonce ? WTF::nullopt : m_ephemeralSourceNonce->isValid() ? m_ephemeralSourceNonce : WTF::nullopt; };
-    void clearEphemeralSourceNonce() { m_ephemeralSourceNonce  = WTF::nullopt; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
     void setEarliestTimeToSend(WallTime time) { m_earliestTimeToSend = time; }
@@ -297,11 +276,40 @@ public:
     const String& sourceDescription() const { return m_sourceDescription; }
     const String& purchaser() const { return m_purchaser; }
 
+    // MARK: - Fraud Prevention
+    struct EphemeralSourceNonce {
+        String nonce;
+
+        WEBCORE_EXPORT bool isValid() const;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<EphemeralSourceNonce> decode(Decoder&);
+    };
+
+    WEBCORE_EXPORT void setEphemeralSourceNonce(EphemeralSourceNonce&&);
+    Optional<EphemeralSourceNonce> ephemeralSourceNonce() const { return m_ephemeralSourceNonce; };
+    void clearEphemeralSourceNonce() { m_ephemeralSourceNonce.reset(); };
+
+    struct SourceUnlinkableToken {
+        String tokenBase64URL;
+        String keyIDBase64URL;
+        String signatureBase64URL;
+    };
+
+    WEBCORE_EXPORT URL tokenPublicKeyURL() const;
+    WEBCORE_EXPORT URL tokenSignatureURL() const;
+
+    WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON(const String& serverPublicKeyBase64URL);
+    WEBCORE_EXPORT Optional<SourceUnlinkableToken> calculateSourceUnlinkableToken(const String& serverResponseBase64URL);
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PrivateClickMeasurement> decode(Decoder&);
 
 private:
     bool isValid() const;
+#if PLATFORM(COCOA)
+    String sourceSecretToken(const String& serverPublicKeyBase64URL);
+#endif
 
     SourceID m_sourceID;
     SourceSite m_sourceSite;
@@ -310,9 +318,19 @@ private:
     String m_purchaser;
     WallTime m_timeOfAdClick;
 
-    Optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
     Optional<AttributionTriggerData> m_attributionTriggerData;
     Optional<WallTime> m_earliestTimeToSend;
+
+    struct SourceSecretToken {
+#if PLATFORM(COCOA)
+        RetainPtr<RSABSSATokenBlinder> blinder;
+        RetainPtr<RSABSSATokenWaitingActivation> waitingToken;
+        RetainPtr<RSABSSATokenReady> readyToken;
+#endif
+    };
+
+    Optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
+    SourceSecretToken m_sourceSecretToken;
 };
 
 template<class Encoder>

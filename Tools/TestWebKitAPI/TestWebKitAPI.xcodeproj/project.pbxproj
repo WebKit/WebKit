@@ -441,6 +441,7 @@
 		57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */; };
 		57EDFC5C245A1A3F00959521 /* web-authentication-make-credential-la-no-mock.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */; };
 		57EDFC60245A299C00959521 /* web-authentication-get-assertion-la-no-mock.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57EDFC5F245A279900959521 /* web-authentication-get-assertion-la-no-mock.html */; };
+		57F1C91125DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */; };
 		57F4AAA0208FAEF000A68E9E /* SSLKeyGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */; };
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
 		5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C0160C021A132320077FA32 /* JITEnabled.mm */; };
@@ -2233,6 +2234,7 @@
 		57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la-no-mock.html"; sourceTree = "<group>"; };
 		57EDFC5F245A279900959521 /* web-authentication-get-assertion-la-no-mock.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-la-no-mock.html"; sourceTree = "<group>"; };
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
+		57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementCocoa.mm; sourceTree = "<group>"; };
 		57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGenerator.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
 		5C0160C021A132320077FA32 /* JITEnabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JITEnabled.mm; sourceTree = "<group>"; };
@@ -4711,6 +4713,7 @@
 			children = (
 				0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
+				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
 				CD89D0381C4EDB2A00040A04 /* WebCoreNSURLSession.mm */,
@@ -5486,6 +5489,7 @@
 				A1EC11881F42541200D0146E /* PreviewConverter.cpp in Sources */,
 				7CCE7F0C1A411AE600447C4C /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */,
 				6B0A07F721FA9C2B00D57391 /* PrivateClickMeasurement.cpp in Sources */,
+				57F1C91125DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm in Sources */,
 				4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */,
 				41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */,
 				CDA4438E21F7A47700379489 /* ProcessSuspendMediaBuffering.mm in Sources */,

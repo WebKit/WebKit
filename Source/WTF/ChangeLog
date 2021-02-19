@@ -1,3 +1,14 @@
+2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Generate secret token and corresponding unlinkable token
+        https://bugs.webkit.org/show_bug.cgi?id=222019
+        <rdar://problem/73581412>
+
+        Reviewed by John Wilander.
+
+        * wtf/PlatformHave.h:
+        Adds a compile time flag for RSABSSA.
+
 2021-02-19  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Enable Opus decode support by default

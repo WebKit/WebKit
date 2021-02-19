@@ -37,7 +37,7 @@
 namespace WebCore {
 
 static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
-static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
+static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-secret-token/";
 static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-unlinkable-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
@@ -116,50 +116,6 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
     return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
-URL PrivateClickMeasurement::tokenSignatureURL() const
-{
-    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
-        return URL();
-
-    StringBuilder builder;
-    builder.appendLiteral("https://");
-    builder.append(m_sourceSite.registrableDomain.string());
-    builder.appendLiteral(privateClickMeasurementTokenSignaturePath);
-
-    URL url { URL(), builder.toString() };
-    if (url.isValid())
-        return url;
-
-    return URL();
-}
-
-URL PrivateClickMeasurement::tokenPublicKeyURL() const
-{
-    StringBuilder builder;
-    builder.appendLiteral("https://");
-    builder.append(m_sourceSite.registrableDomain.string());
-    builder.appendLiteral(privateClickMeasurementTokenPublicKeyPath);
-
-    URL url { URL(), builder.toString() };
-    if (url.isValid())
-        return url;
-
-    return URL();
-}
-
-Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
-{
-    auto reportDetails = JSON::Object::create();
-    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
-        return reportDetails;
-
-    reportDetails->setString("source_engagement_type"_s, "click"_s);
-    reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
-    reportDetails->setString("unlinkable_token"_s, "TODO"_s);
-    reportDetails->setInteger("version"_s, 2);
-    return reportDetails;
-}
-
 URL PrivateClickMeasurement::attributionReportURL() const
 {
     if (!isValid())
@@ -192,4 +148,76 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     return reportDetails;
 }
 
+// MARK: - Fraud Prevention
+
+static constexpr uint32_t EphemeralSourceNonceRequiredNumberOfBytes = 16;
+
+bool PrivateClickMeasurement::EphemeralSourceNonce::isValid() const
+{
+    // FIXME: Investigate if we can do with a simple length check instead of decoding.
+    // https://bugs.webkit.org/show_bug.cgi?id=221945
+    Vector<uint8_t> digest;
+    if (!base64URLDecode(nonce, digest))
+        return false;
+    return digest.size() == EphemeralSourceNonceRequiredNumberOfBytes;
 }
+
+void PrivateClickMeasurement::setEphemeralSourceNonce(EphemeralSourceNonce&& nonce)
+{
+    if (!nonce.isValid())
+        return;
+    m_ephemeralSourceNonce = WTFMove(nonce);
+}
+
+URL PrivateClickMeasurement::tokenSignatureURL() const
+{
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return URL();
+
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenSignaturePath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+URL PrivateClickMeasurement::tokenPublicKeyURL() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenPublicKeyPath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON(const String& serverPublicKeyBase64URL)
+{
+    auto reportDetails = JSON::Object::create();
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return reportDetails;
+
+    String token;
+#if PLATFORM(COCOA)
+    token = sourceSecretToken(serverPublicKeyBase64URL);
+#endif
+    if (token.isEmpty())
+        return reportDetails;
+
+    reportDetails->setString("source_engagement_type"_s, "click"_s);
+    reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
+    reportDetails->setString("source_secret_token"_s, token);
+    reportDetails->setInteger("version"_s, 2);
+    return reportDetails;
+}
+
+} // namespace WebCore

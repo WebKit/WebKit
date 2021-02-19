@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "Test.h"
 
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/URL.h>
@@ -299,5 +300,26 @@ TEST(PrivateClickMeasurement, InvalidSourceNonce)
     ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { StringImpl::empty() };
     ASSERT_FALSE(ephemeralNonce.isValid());
 }
+
+#if HAVE(RSA_BSSA)
+TEST(PrivateClickMeasurement, InvalidBlindedSecret)
+{
+    const char serverPublicKeyBase64URL[] = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzb1dThrtYwVh46SjInegKhAqpbJwm1XnTBCvybSK8zk53R0Am1hG33AVF5J1lqYf36wp663GasclHtqzvxFZIvDA1DUSH4aZz_fDHCTTxEeJVPORS3zNN2UjWwbtnwsh4BmDTi-z_cDn0LAz2JuZyKlyFt5GgVLAQvL9H3VLHU9_XHNK-uboyXfcHRTtrDnpu3c6wvX5dd-AJoLmIQTZBEJfVkxBGznk1qKHjc6nASAirKF_wJCnuwAK8C6BAcjNcwUWCeKp0YECzCXU--JXd2OEU-QhxPC67faiDOh3V0vlfqZLtrlbnanUCKrvhw7GaGOGYotIrnZtuNfxC14d_XNVd1FS8nHjRTHnEgw_jnlSssfgStz0uJtcmkfgoJBvOE4mIRpi7iSlRfXNkKsWX1J-gwcnCVo5u0uJEW6X6NyvEGYJ8w5BPfwsQuK9y-4Z7ikt9IOucEHY7ThDmi9TNNhHBVj0Gu4wGoSjq3a6vL5N10ZSHXoq1XgfGPrmHhhL90cjvWonoyOXsUqlXEzTjD2W9897Q-Mx9BUNrGQPqmIx8F5MwxWcOrye8WRp4Q88n2YSUnV7C8ayld3v1Fh7N5jeSqeVmtDVRYTn2sVfNqgXrzgdigJcQR8vFENu6nzFPwsrXPMaCiLUnZNUmQ1ZSLQeQyhYXxHqRJrnuCDWXLkCAwEAAQ";
+
+    PrivateClickMeasurement pcm;
+    auto sourceSecretToken = pcm.tokenSignatureJSON(serverPublicKeyBase64URL);
+    EXPECT_EQ(sourceSecretToken->asObject()->size(), 0ul);
+
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    EXPECT_TRUE(ephemeralNonce.isValid());
+    pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
+
+    sourceSecretToken = pcm.tokenSignatureJSON(serverPublicKeyBase64URL);
+    EXPECT_EQ(sourceSecretToken->asObject()->size(), 4ul);
+
+    auto persistentToken = pcm.calculateSourceUnlinkableToken(emptyString());
+    EXPECT_FALSE(persistentToken);
+}
+#endif
 
 } // namespace TestWebKitAPI

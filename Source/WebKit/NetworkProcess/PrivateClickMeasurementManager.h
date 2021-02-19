@@ -70,7 +70,7 @@ public:
 
 private:
     void getTokenPublicKey(PrivateClickMeasurement&&);
-    void getSignedUnlinkableToken(PrivateClickMeasurement&&);
+    void getSignedSecretToken(PrivateClickMeasurement&&, const String& tokenPublicKeyBase64URL);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);

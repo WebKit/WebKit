@@ -1,3 +1,15 @@
+2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Generate secret token and corresponding unlinkable token
+        https://bugs.webkit.org/show_bug.cgi?id=222019
+        <rdar://problem/73581412>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests.
+
 2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Enable the new appearance by default
