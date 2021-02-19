@@ -115,7 +115,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
             },
             "/webkit/WebKitWebContext/proxy": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188111"}}
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/222090"}}
             }
         }
     },

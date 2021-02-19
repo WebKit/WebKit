@@ -1,3 +1,12 @@
+2021-02-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening debug OffscreenCanvas crashes
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json: Update bug number after
+        last gardening.
+
 2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         MotionMark scores are super sensitive to a single long frame

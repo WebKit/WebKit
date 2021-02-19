@@ -1,3 +1,11 @@
+2021-02-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening debug OffscreenCanvas crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Temporarily disable drawing OT-SVG glyphs in the GPU process until it can be implemented properly
