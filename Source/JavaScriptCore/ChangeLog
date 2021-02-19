@@ -1,5 +1,18 @@
 2021-02-19  Mark Lam  <mark.lam@apple.com>
 
+        Need to rebase builtins generator tests results.
+        https://bugs.webkit.org/show_bug.cgi?id=222184
+        rdar://74528501
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
+2021-02-19  Mark Lam  <mark.lam@apple.com>
+
         Implement a GC verifier.
         https://bugs.webkit.org/show_bug.cgi?id=217274
         rdar://56255683

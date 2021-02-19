@@ -199,7 +199,7 @@ class JSBuiltinInternalFunctions {
 public:
     explicit JSBuiltinInternalFunctions(JSC::VM&);
 
-    void visit(JSC::SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
     void initialize(JSDOMGlobalObject&);
 
 #if ENABLE(FETCH_API)
@@ -286,7 +286,8 @@ JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)
     UNUSED_PARAM(vm);
 }
 
-void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSBuiltinInternalFunctions::visit(Visitor& visitor)
 {
 #if ENABLE(FETCH_API)
     m_anotherGuardedInternalBuiltin.visit(visitor);
@@ -299,6 +300,9 @@ void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     UNUSED_PARAM(visitor);
 }
+
+template void JSBuiltinInternalFunctions::visit(AbstractSlotVisitor&);
+template void JSBuiltinInternalFunctions::visit(SlotVisitor&);
 
 void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
 {

@@ -143,7 +143,7 @@ public:
     explicit xmlCasingTestBuiltinFunctions(JSC::VM& vm) : m_vm(vm) { }
 
     void init(JSC::JSGlobalObject&);
-    void visit(JSC::SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
 
 public:
     JSC::VM& m_vm;
@@ -162,12 +162,17 @@ inline void xmlCasingTestBuiltinFunctions::init(JSC::JSGlobalObject& globalObjec
 #undef EXPORT_FUNCTION
 }
 
-inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+inline void xmlCasingTestBuiltinFunctions::visit(Visitor& visitor)
 {
 #define VISIT_FUNCTION(name) visitor.append(m_##name##Function);
     WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(VISIT_FUNCTION)
 #undef VISIT_FUNCTION
 }
+
+template void xmlCasingTestBuiltinFunctions::visit(JSC::AbstractSlotVisitor&);
+template void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor&);
+
 
 
 } // namespace WebCore
