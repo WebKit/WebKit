@@ -491,9 +491,8 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
         return true;
     });
 
-    auto data = encodeLegacySessionState(sessionState);
     if (shouldReturnData)
-        return toAPI(data.leakRef());
+        return toAPI(encodeLegacySessionState(sessionState).leakRef());
 
     return toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());
 }

@@ -212,7 +212,6 @@ private:
 
     void encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
     {
-        RELEASE_ASSERT(data || !size);
         ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
 
         uint8_t* buffer = grow(alignment, size);
@@ -323,9 +322,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 {
     encoder << static_cast<uint64_t>(frameState.children.size());
 
-    RELEASE_ASSERT(!frameState.isDestructed);
     for (const auto& childFrameState : frameState.children) {
-        RELEASE_ASSERT(!childFrameState.isDestructed);
         encoder << childFrameState.originalURLString;
         encoder << childFrameState.urlString;
 
