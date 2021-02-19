@@ -1,3 +1,18 @@
+2021-02-18  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in IPC::decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
+        https://bugs.webkit.org/show_bug.cgi?id=222084
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a check for a CFDataRef of 0 length so that we do not pass those
+        to SecKeychainItemCopyFromPersistentReference(), which crashes with them.
+
+        Test: ipc/argument-coders-crash.html
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+
 2021-02-18  Ricky Mondello  <rmondello@apple.com>
 
         Unconditionally return information in _autofillContext SPI when a field is focused

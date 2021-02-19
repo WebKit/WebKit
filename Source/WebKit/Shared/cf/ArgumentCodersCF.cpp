@@ -668,8 +668,13 @@ bool decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
     if (!IPC::decode(decoder, data))
         return false;
 
+    CFDataRef dref = data.get();
+    // SecKeychainItemCopyFromPersistentReference() cannot handle 0-length CFDataRefs.
+    if (!CFDataGetLength(dref))
+        return false;
+
     SecKeychainItemRef item;
-    if (SecKeychainItemCopyFromPersistentReference(data.get(), &item) != errSecSuccess || !item)
+    if (SecKeychainItemCopyFromPersistentReference(dref, &item) != errSecSuccess || !item)
         return false;
     
     result = adoptCF(item);
