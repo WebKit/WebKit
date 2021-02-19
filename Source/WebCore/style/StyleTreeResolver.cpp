@@ -249,12 +249,12 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     }
 
     PseudoIdToElementUpdateMap pseudoUpdates;
+    if (auto markerElementUpdate = resolvePseudoStyle(element, update, PseudoId::Marker))
+        pseudoUpdates.set(PseudoId::Marker, WTFMove(*markerElementUpdate));
     if (auto beforeElementUpdate = resolvePseudoStyle(element, update, PseudoId::Before))
         pseudoUpdates.set(PseudoId::Before, WTFMove(*beforeElementUpdate));
     if (auto afterElementUpdate = resolvePseudoStyle(element, update, PseudoId::After))
         pseudoUpdates.set(PseudoId::After, WTFMove(*afterElementUpdate));
-    if (auto markerElementUpdate = resolvePseudoStyle(element, update, PseudoId::Marker))
-        pseudoUpdates.set(PseudoId::Marker, WTFMove(*markerElementUpdate));
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.

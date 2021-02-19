@@ -1,5 +1,43 @@
 2021-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272927. rdar://problem/74500651
+
+    REGRESSION(r271515): ::marker fired at wrong time
+    https://bugs.webkit.org/show_bug.cgi?id=221961
+    <rdar://problem/74397846>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Restore the order in which we generate CSS Animations for pseudo-elements as it was prior to r271515.
+    
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::resolveElement):
+    
+    LayoutTests:
+    
+    Remove flakiness for this test since it didn't allow us to spot the regression introduced by r271515.
+    
+    * TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272927 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r271515): ::marker fired at wrong time
+            https://bugs.webkit.org/show_bug.cgi?id=221961
+            <rdar://problem/74397846>
+
+            Reviewed by Dean Jackson.
+
+            Remove flakiness for this test since it didn't allow us to spot the regression introduced by r271515.
+
+            * TestExpectations:
+
+2021-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272379. rdar://problem/74500599
 
     Supplementary code points (U+10000 - U+10FFFF) are not shaped correctly in the fast text codepath
