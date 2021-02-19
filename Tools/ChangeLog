@@ -1,3 +1,21 @@
+2021-02-18  Ricky Mondello  <rmondello@apple.com>
+
+        Unconditionally return information in _autofillContext SPI when a field is focused
+        https://bugs.webkit.org/show_bug.cgi?id=221828
+        rdar://74211237
+
+        Reviewed by Darin Adler.
+
+        Tests updated by Wenson Hsieh.
+
+        Rebaseline tests.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (-[AutoFillTestView acceptsAutoFillLoginCredentials]): Renamed in line with the Password AutoFill-related
+            contract these tests are about.
+
 2021-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Add null check in _getMainResourceDataWithCompletionHandler

@@ -689,6 +689,7 @@ TEST(KeyboardInputTests, TestWebViewAdditionalContextForStrongPasswordAssistance
 
     NSDictionary *actual = [[webView textInputContentView] _autofillContext];
     EXPECT_TRUE([[actual allValues] containsObject:expected]);
+    EXPECT_TRUE([actual[@"_automaticPasswordKeyboard"] boolValue]);
 }
 
 TEST(KeyboardInputTests, TestWebViewAccessoryDoneDuringStrongPasswordAssistance)
