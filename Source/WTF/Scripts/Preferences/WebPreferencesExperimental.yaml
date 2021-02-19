@@ -634,9 +634,9 @@ OpusDecoderEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 OverscrollBehaviorEnabled:
   type: bool
