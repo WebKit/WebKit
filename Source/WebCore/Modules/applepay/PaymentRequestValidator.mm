@@ -76,7 +76,7 @@ ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPayment
     return { };
 }
 
-ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePaySessionPaymentRequest::LineItem& total)
+ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem& total)
 {
     if (!total.label)
         return Exception { TypeError, "Missing total label." };

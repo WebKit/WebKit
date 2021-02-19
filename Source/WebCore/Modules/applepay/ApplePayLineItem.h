@@ -27,18 +27,65 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayLineItemData.h"
+#include <wtf/Forward.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ApplePayLineItem {
-    using Type = ApplePaySessionPaymentRequest::LineItem::Type;
+struct ApplePayLineItem final : public ApplePayLineItemData {
+    enum class Type : bool {
+        Pending,
+        Final,
+    };
 
     Type type { Type::Final };
     String label;
     String amount;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayLineItem> decode(Decoder&);
 };
 
+template<class Encoder>
+void ApplePayLineItem::encode(Encoder& encoder) const
+{
+    ApplePayLineItemData::encode(encoder);
+    encoder << type;
+    encoder << label;
+    encoder << amount;
 }
+
+template<class Decoder>
+Optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
+{
+    ApplePayLineItem result;
+
+    if (!result.decodeData(decoder))
+        return WTF::nullopt;
+
+    Optional<Type> type;
+    decoder >> type;
+    if (!type)
+        return WTF::nullopt;
+    result.type = WTFMove(*type);
+
+    Optional<String> label;
+    decoder >> label;
+    if (!label)
+        return WTF::nullopt;
+    result.label = WTFMove(*label);
+
+    Optional<String> amount;
+    decoder >> amount;
+    if (!amount)
+        return WTF::nullopt;
+    result.amount = WTFMove(*amount);
+
+    return result;
+}
+
+} // namespace WebCore
 
 #endif

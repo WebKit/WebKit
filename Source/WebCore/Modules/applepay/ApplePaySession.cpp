@@ -145,41 +145,34 @@ static bool validateAmount(const String& amountString)
     return state == State::Digit || state == State::DotDigit || state == State::End;
 }
 
-static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
+static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {
     if (!validateAmount(lineItem.amount))
         return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
 
-    ApplePaySessionPaymentRequest::LineItem total { lineItem.type, lineItem.amount, lineItem.label };
-
-    auto validatedTotal = PaymentRequestValidator::validateTotal(total);
+    auto validatedTotal = PaymentRequestValidator::validateTotal(lineItem);
     if (validatedTotal.hasException())
         return validatedTotal.releaseException();
 
-    return WTFMove(total);
+    return WTFMove(lineItem);
 }
 
-static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(ApplePayLineItem&& lineItem)
+static ExceptionOr<ApplePayLineItem> convertAndValidate(ApplePayLineItem&& lineItem)
 {
-    ApplePaySessionPaymentRequest::LineItem result;
-
-    // It is OK for pending types to not have an amount.
-    if (lineItem.type != ApplePaySessionPaymentRequest::LineItem::Type::Pending) {
+    if (lineItem.type == ApplePayLineItem::Type::Pending) {
+        // It is OK for pending types to not have an amount.
+        lineItem.amount = nullString();
+    } else {
         if (!validateAmount(lineItem.amount))
             return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
-
-        result.amount = lineItem.amount;
     }
 
-    result.type = lineItem.type;
-    result.label = lineItem.label;
-
-    return WTFMove(result);
+    return WTFMove(lineItem);
 }
 
-static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(Optional<Vector<ApplePayLineItem>>&& lineItems)
+static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(Optional<Vector<ApplePayLineItem>>&& lineItems)
 {
-    Vector<ApplePaySessionPaymentRequest::LineItem> result;
+    Vector<ApplePayLineItem> result;
     if (!lineItems)
         return WTFMove(result);
 

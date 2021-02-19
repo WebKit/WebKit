@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayLineItem.h"
 #include "PaymentContact.h"
 #include "PaymentInstallmentConfigurationWebCore.h"
 #include <wtf/EnumTraits.h>
@@ -85,16 +86,6 @@ public:
     const MerchantCapabilities& merchantCapabilities() const { return m_merchantCapabilities; }
     void setMerchantCapabilities(const MerchantCapabilities& merchantCapabilities) { m_merchantCapabilities = merchantCapabilities; }
 
-    struct LineItem {
-        enum class Type : bool {
-            Pending,
-            Final,
-        } type { Type::Final };
-
-        String amount;
-        String label;
-    };
-
     enum class ShippingType {
         Shipping,
         Delivery,
@@ -114,15 +105,15 @@ public:
     const Vector<ShippingMethod>& shippingMethods() const { return m_shippingMethods; }
     void setShippingMethods(const Vector<ShippingMethod>& shippingMethods) { m_shippingMethods = shippingMethods; }
 
-    const Vector<LineItem>& lineItems() const { return m_lineItems; }
-    void setLineItems(const Vector<LineItem>& lineItems) { m_lineItems = lineItems; }
+    const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
+    void setLineItems(const Vector<ApplePayLineItem>& lineItems) { m_lineItems = lineItems; }
 
-    const LineItem& total() const { return m_total; };
-    void setTotal(const LineItem& total) { m_total = total; }
+    const ApplePayLineItem& total() const { return m_total; };
+    void setTotal(const ApplePayLineItem& total) { m_total = total; }
 
     struct TotalAndLineItems {
-        ApplePaySessionPaymentRequest::LineItem total;
-        Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
+        ApplePayLineItem total;
+        Vector<ApplePayLineItem> lineItems;
     };
 
     const String& applicationData() const { return m_applicationData; }
@@ -162,8 +153,8 @@ private:
     ShippingType m_shippingType { ShippingType::Shipping };
     Vector<ShippingMethod> m_shippingMethods;
 
-    Vector<LineItem> m_lineItems;
-    LineItem m_total;
+    Vector<ApplePayLineItem> m_lineItems;
+    ApplePayLineItem m_total;
 
     String m_applicationData;
     Vector<String> m_supportedCountries;

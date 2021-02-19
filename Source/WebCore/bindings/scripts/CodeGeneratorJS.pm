@@ -2693,6 +2693,8 @@ sub GenerateDictionaryImplementationContent
         AddToImplIncludes("JSDOMGlobalObject.h");
         AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
 
+        my $hasUnconditionalMember = 0;
+
         $result .= "JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ${className}& dictionary)\n";
         $result .= "{\n";
         $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n\n";
@@ -2717,6 +2719,8 @@ sub GenerateDictionaryImplementationContent
                 if ($conditional) {
                     my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
                     $result .= "#if ${conditionalString}\n";
+                } else {
+                    $hasUnconditionalMember = 1;
                 }
 
                 # 1. Let key be the identifier of member.
@@ -2753,6 +2757,11 @@ sub GenerateDictionaryImplementationContent
 
                 $result .= "#endif\n" if $conditional;
             }
+        }
+
+        if (!$hasUnconditionalMember) {
+            $result .= "    UNUSED_PARAM(dictionary);\n";
+            $result .= "    UNUSED_PARAM(vm);\n\n";
         }
 
         $result .= "    return result;\n";

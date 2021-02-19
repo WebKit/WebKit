@@ -129,21 +129,10 @@ void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSes
     });
 }
 
-static ApplePayLineItem convert(const ApplePaySessionPaymentRequest::LineItem& lineItem)
-{
-    ApplePayLineItem result;
-    result.type = lineItem.type;
-    result.label = lineItem.label;
-    result.amount = lineItem.amount;
-    return result;
-}
-
 void MockPaymentCoordinator::updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
-    m_total = convert(totalAndLineItems.total);
-    m_lineItems.clear();
-    for (auto& lineItem : totalAndLineItems.lineItems)
-        m_lineItems.append(convert(lineItem));
+    m_total = totalAndLineItems.total;
+    m_lineItems = totalAndLineItems.lineItems;
 }
 
 void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& shippingMethodUpdate)

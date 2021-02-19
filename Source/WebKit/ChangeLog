@@ -1,3 +1,19 @@
+2021-02-18  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add an `object data` to `PaymentItem` so that data specific to Apple Pay can be provided
+        https://bugs.webkit.org/show_bug.cgi?id=221970
+        <rdar://problem/69806999>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode): Deleted.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode): Deleted.
+        Just use `ApplePayLineItem` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::LineItem`).
+
 2021-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Add null check in _getMainResourceDataWithCompletionHandler

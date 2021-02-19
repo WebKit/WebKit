@@ -61,6 +61,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
+    $(WebCore)/Modules/applepay/ApplePayLineItemData.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl \
@@ -1722,7 +1723,7 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
-    $(IDL_PATHS)
+    $(ADDITIONAL_BINDING_IDLS_PATHS)
 
 IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
 
@@ -1800,7 +1801,7 @@ $(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(IDL_ATTRIBUTES_FILE)
 # generate file information without paths, and those still need to benefit from
 # setting search paths with vpath.
 
-vpath %.idl $(IDL_PATHS) $(WebCore)/bindings/scripts
+vpath %.idl $(ADDITIONAL_BINDING_IDLS_PATHS) $(WebCore)/bindings/scripts
 
 # -------------------------------------------------
 define GENERATE_BINDINGS_template

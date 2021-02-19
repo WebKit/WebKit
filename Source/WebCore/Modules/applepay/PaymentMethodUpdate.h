@@ -36,10 +36,9 @@ namespace WebCore {
 
 class WEBCORE_EXPORT PaymentMethodUpdate {
 public:
-    using LineItem = ApplePaySessionPaymentRequest::LineItem;
     using TotalAndLineItems = ApplePaySessionPaymentRequest::TotalAndLineItems;
 
-    PaymentMethodUpdate(LineItem&& total, Vector<LineItem>&&);
+    PaymentMethodUpdate(ApplePayLineItem&& total, Vector<ApplePayLineItem>&&);
     explicit PaymentMethodUpdate(RetainPtr<PKPaymentRequestPaymentMethodUpdate>&&);
     explicit PaymentMethodUpdate(TotalAndLineItems&&);
 

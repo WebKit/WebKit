@@ -54,10 +54,6 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreArgumentCodersAdditions.h>
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
 #include <WebCore/CDMInstance.h>
 #include <WebCore/CDMInstanceSession.h>
@@ -705,15 +701,9 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest> {
     static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest&);
 };
-
 template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactFields> {
     static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::ContactFields&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::ContactFields&);
-};
-
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::LineItem> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::LineItem&);
-    static Optional<WebCore::ApplePaySessionPaymentRequest::LineItem> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities> {

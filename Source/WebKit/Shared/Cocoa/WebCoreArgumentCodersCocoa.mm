@@ -279,12 +279,12 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setShippingMethods(shippingMethods);
 
-    Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
+    Vector<ApplePayLineItem> lineItems;
     if (!decoder.decode(lineItems))
         return false;
     request.setLineItems(lineItems);
 
-    Optional<ApplePaySessionPaymentRequest::LineItem> total;
+    Optional<ApplePayLineItem> total;
     decoder >> total;
     if (!total)
         return false;
@@ -342,26 +342,6 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder
     return true;
 }
 
-void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::LineItem& lineItem)
-{
-    encoder << lineItem.type;
-    encoder << lineItem.label;
-    encoder << lineItem.amount;
-}
-
-Optional<ApplePaySessionPaymentRequest::LineItem> ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder)
-{
-    WebCore::ApplePaySessionPaymentRequest::LineItem lineItem;
-    if (!decoder.decode(lineItem.type))
-        return WTF::nullopt;
-    if (!decoder.decode(lineItem.label))
-        return WTF::nullopt;
-    if (!decoder.decode(lineItem.amount))
-        return WTF::nullopt;
-
-    return WTFMove(lineItem);
-}
-
 void ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     encoder << merchantCapabilities.supports3DS;
@@ -414,12 +394,12 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Enc
 
 Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder)
 {
-    Optional<ApplePaySessionPaymentRequest::LineItem> total;
+    Optional<ApplePayLineItem> total;
     decoder >> total;
     if (!total)
         return WTF::nullopt;
     
-    Optional<Vector<ApplePaySessionPaymentRequest::LineItem>> lineItems;
+    Optional<Vector<ApplePayLineItem>> lineItems;
     decoder >> lineItems;
     if (!lineItems)
         return WTF::nullopt;

@@ -39,27 +39,33 @@ static NSDecimalNumber *toDecimalNumber(const String& amount)
     return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
-static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePaySessionPaymentRequest::LineItem::Type type)
+static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
 {
     switch (type) {
-    case ApplePaySessionPaymentRequest::LineItem::Type::Final:
+    case ApplePayLineItem::Type::Final:
         return PKPaymentSummaryItemTypeFinal;
-    case ApplePaySessionPaymentRequest::LineItem::Type::Pending:
+    case ApplePayLineItem::Type::Pending:
         return PKPaymentSummaryItemTypePending;
     }
 }
 
-static PKPaymentSummaryItem *toPKPaymentSummaryItem(const ApplePaySessionPaymentRequest::LineItem& lineItem)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PaymentSummaryItemsCocoaAdditions.mm>
+#endif
+
+#if !ENABLE(APPLE_PAY_LINE_ITEM_DATA)
+static PKPaymentSummaryItem *toPKPaymentSummaryItem(const ApplePayLineItem& lineItem)
 {
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
+#endif
 
 NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     return platformSummaryItems(totalAndLineItems.total, totalAndLineItems.lineItems);
 }
 
-NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::LineItem& total, const Vector<ApplePaySessionPaymentRequest::LineItem>& lineItems)
+NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>& lineItems)
 {
     NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:lineItems.size() + 1];
     for (auto& lineItem : lineItems) {

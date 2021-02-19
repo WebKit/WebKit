@@ -141,6 +141,21 @@ static bool isValidDecimalMonetaryValue(StringView value)
     return false;
 }
 
+template<typename T>
+static ExceptionOr<String> checkAndCanonicalizeData(ScriptExecutionContext& context, T& value)
+{
+    String serializedData;
+    if (value.data) {
+        auto* globalObject = context.globalObject();
+        auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+        serializedData = JSONStringify(globalObject, value.data.get(), 0);
+        if (scope.exception())
+            return Exception { ExistingExceptionError };
+        value.data.clear();
+    }
+    return { WTFMove(serializedData) };
+}
+
 // Implements the "check and canonicalize amount" validity checker
 // https://www.w3.org/TR/payment-request/#dfn-check-and-canonicalize-amount
 static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amount)
@@ -155,18 +170,32 @@ static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amoun
     return { };
 }
 
-// Implements the "check and canonicalize total" validity checker
-// https://www.w3.org/TR/payment-request/#dfn-check-and-canonicalize-total
-static ExceptionOr<void> checkAndCanonicalizeTotal(PaymentCurrencyAmount& total)
+enum class NegativeAmountAllowed { Yes, No };
+static ExceptionOr<void> checkAndCanonicalizePaymentItem(ScriptExecutionContext& context, PaymentItem& item, NegativeAmountAllowed negativeAmountAllowed)
 {
-    auto exception = checkAndCanonicalizeAmount(total);
+    auto exception = checkAndCanonicalizeAmount(item.amount);
     if (exception.hasException())
-        return exception;
+        return exception.releaseException();
 
-    if (total.value[0] == '-')
+    if (negativeAmountAllowed == NegativeAmountAllowed::No && item.amount.value[0] == '-')
         return Exception { TypeError, "Total currency values cannot be negative."_s };
 
+    if (item.data) {
+        auto dataResult = checkAndCanonicalizeData(context, item);
+        if (dataResult.hasException())
+            return dataResult.releaseException();
+
+        item.serializedData = dataResult.releaseReturnValue();
+    }
+
     return { };
+}
+
+// Implements the "check and canonicalize total" validity checker
+// https://www.w3.org/TR/payment-request/#dfn-check-and-canonicalize-total
+static ExceptionOr<void> checkAndCanonicalizeTotal(ScriptExecutionContext& context, PaymentItem& total)
+{
+    return checkAndCanonicalizePaymentItem(context, total, NegativeAmountAllowed::No);
 }
 
 // Implements "validate a standardized payment method identifier"
@@ -249,9 +278,9 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 {
     if (details.displayItems) {
         for (auto& item : *details.displayItems) {
-            auto exception = checkAndCanonicalizeAmount(item.amount);
-            if (exception.hasException())
-                return exception.releaseException();
+            auto paymentItemResult = checkAndCanonicalizePaymentItem(context, item, NegativeAmountAllowed::Yes);
+            if (paymentItemResult.hasException())
+                return paymentItemResult.releaseException();
         }
     }
 
@@ -292,25 +321,24 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
             }
 
             if (modifier.total) {
-                auto exception = checkAndCanonicalizeTotal(modifier.total->amount);
-                if (exception.hasException())
-                    return exception.releaseException();
+                auto totalResult = checkAndCanonicalizeTotal(context, *modifier.total);
+                if (totalResult.hasException())
+                    return totalResult.releaseException();
             }
 
             for (auto& item : modifier.additionalDisplayItems) {
-                auto exception = checkAndCanonicalizeAmount(item.amount);
-                if (exception.hasException())
-                    return exception.releaseException();
+                auto paymentItemResult = checkAndCanonicalizePaymentItem(context, item, NegativeAmountAllowed::Yes);
+                if (paymentItemResult.hasException())
+                    return paymentItemResult.releaseException();
             }
 
             String serializedData;
             if (modifier.data) {
-                auto* globalObject = context.globalObject();
-                auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-                serializedData = JSONStringify(globalObject, modifier.data.get(), 0);
-                if (scope.exception())
-                    return Exception { ExistingExceptionError };
-                modifier.data.clear();
+                auto dataResult = checkAndCanonicalizeData(context, modifier);
+                if (dataResult.hasException())
+                    return dataResult.releaseException();
+
+                serializedData = dataResult.releaseReturnValue();
             }
             serializedModifierData.uncheckedAppend(WTFMove(serializedData));
         }
@@ -380,7 +408,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         serializedMethodData.uncheckedAppend({ WTFMove(*identifier), WTFMove(serializedData) });
     }
 
-    auto totalResult = checkAndCanonicalizeTotal(details.total.amount);
+    auto totalResult = checkAndCanonicalizeTotal(document, details.total);
     if (totalResult.hasException())
         return totalResult.releaseException();
 
@@ -681,7 +709,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
     }
 
     if (detailsUpdate.total) {
-        auto totalResult = checkAndCanonicalizeTotal(detailsUpdate.total->amount);
+        auto totalResult = checkAndCanonicalizeTotal(context, *detailsUpdate.total);
         if (totalResult.hasException()) {
             abortWithException(totalResult.releaseException());
             return;

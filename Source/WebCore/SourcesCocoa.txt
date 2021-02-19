@@ -31,6 +31,7 @@ JSApplePayInstallmentItem.cpp
 JSApplePayInstallmentItemType.cpp
 JSApplePayInstallmentRetailChannel.cpp
 JSApplePayLineItem.cpp
+JSApplePayLineItemData.cpp
 JSApplePayMerchantCapability.cpp
 JSApplePayModifier.cpp
 JSApplePayPayment.cpp

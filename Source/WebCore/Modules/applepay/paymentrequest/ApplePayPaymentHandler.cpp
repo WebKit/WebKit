@@ -30,6 +30,7 @@
 
 #include "AddressErrors.h"
 #include "ApplePayContactField.h"
+#include "ApplePayLineItem.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayModifier.h"
 #include "ApplePayPayment.h"
@@ -38,6 +39,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "JSApplePayError.h"
+#include "JSApplePayLineItemData.h"
 #include "JSApplePayPayment.h"
 #include "JSApplePayPaymentMethod.h"
 #include "JSApplePayRequest.h"
@@ -60,6 +62,10 @@
 #include <JavaScriptCore/JSONObject.h>
 
 namespace WebCore {
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayPaymentHandlerAdditions.cpp>
+#endif
 
 static ExceptionOr<ApplePayRequest> convertAndValidate(ScriptExecutionContext& context, JSC::JSValue data)
 {
@@ -128,25 +134,48 @@ static ExceptionOr<void> validate(const PaymentCurrencyAmount& amount, const Str
     return { };
 }
 
-static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(const PaymentItem& item, const String& expectedCurrency)
+#if !ENABLE(APPLE_PAY_LINE_ITEM_DATA)
+static void merge(ApplePayLineItem&, ApplePayLineItemData&&) { }
+#endif // ENABLE(APPLE_PAY_LINE_ITEM_DATA)
+
+static ExceptionOr<ApplePayLineItem> convertAndValidate(ScriptExecutionContext& context, const PaymentItem& item, const String& expectedCurrency)
 {
     auto exception = validate(item.amount, expectedCurrency);
     if (exception.hasException())
         return exception.releaseException();
 
-    ApplePaySessionPaymentRequest::LineItem lineItem;
+
+    ApplePayLineItem lineItem;
     lineItem.amount = item.amount.value;
-    lineItem.type = item.pending ? ApplePaySessionPaymentRequest::LineItem::Type::Pending : ApplePaySessionPaymentRequest::LineItem::Type::Final;
+    lineItem.type = item.pending ? ApplePayLineItem::Type::Pending : ApplePayLineItem::Type::Final;
     lineItem.label = item.label;
+
+    if (!item.serializedData.isEmpty()) {
+        auto& lexicalGlobalObject = *context.globalObject();
+        auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        JSC::JSValue data;
+        {
+            JSC::JSLockHolder lock(&lexicalGlobalObject);
+            data = JSONParse(&lexicalGlobalObject, item.serializedData);
+            if (scope.exception())
+                return Exception { ExistingExceptionError };
+        }
+
+        auto applePayLineItemData = convertDictionary<ApplePayLineItemData>(lexicalGlobalObject, WTFMove(data));
+        if (scope.exception())
+            return Exception { ExistingExceptionError };
+        merge(lineItem, WTFMove(applePayLineItemData));
+    }
+
     return { WTFMove(lineItem) };
 }
 
-static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(const Vector<PaymentItem>& lineItems, const String& expectedCurrency)
+static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(ScriptExecutionContext& context, const Vector<PaymentItem>& lineItems, const String& expectedCurrency)
 {
-    Vector<ApplePaySessionPaymentRequest::LineItem> result;
+    Vector<ApplePayLineItem> result;
     result.reserveInitialCapacity(lineItems.size());
     for (auto& lineItem : lineItems) {
-        auto convertedLineItem = convertAndValidate(lineItem, expectedCurrency);
+        auto convertedLineItem = convertAndValidate(context, lineItem, expectedCurrency);
         if (convertedLineItem.hasException())
             return convertedLineItem.releaseException();
         result.uncheckedAppend(convertedLineItem.releaseReturnValue());
@@ -223,12 +252,12 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     String expectedCurrency = details.total.amount.currency;
     request.setCurrencyCode(expectedCurrency);
 
-    auto total = convertAndValidate(details.total, expectedCurrency);
+    auto total = convertAndValidate(*scriptExecutionContext(), details.total, expectedCurrency);
     ASSERT(!total.hasException());
     request.setTotal(total.releaseReturnValue());
 
     if (details.displayItems) {
-        auto convertedLineItems = convertAndValidate(*details.displayItems, expectedCurrency);
+        auto convertedLineItems = convertAndValidate(*scriptExecutionContext(), *details.displayItems, expectedCurrency);
         if (convertedLineItems.hasException())
             return convertedLineItems.releaseException();
         request.setLineItems(convertedLineItems.releaseReturnValue());
@@ -286,14 +315,14 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
     auto& details = m_paymentRequest->paymentDetails();
     String currency = details.total.amount.currency;
 
-    auto convertedTotal = convertAndValidate(details.total, currency);
+    auto convertedTotal = convertAndValidate(*scriptExecutionContext(), details.total, currency);
     if (convertedTotal.hasException())
         return convertedTotal.releaseException();
     auto total = convertedTotal.releaseReturnValue();
 
-    Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
+    Vector<ApplePayLineItem> lineItems;
     if (details.displayItems) {
-        auto convertedLineItems = convertAndValidate(*details.displayItems, currency);
+        auto convertedLineItems = convertAndValidate(*scriptExecutionContext(), *details.displayItems, currency);
         if (convertedLineItems.hasException())
             return convertedLineItems.releaseException();
         lineItems = convertedLineItems.releaseReturnValue();
@@ -333,13 +362,13 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
                 continue;
 
             if (modifier.total) {
-                auto totalOverride = convertAndValidate(*modifier.total, currency);
+                auto totalOverride = convertAndValidate(*scriptExecutionContext(), *modifier.total, currency);
                 if (totalOverride.hasException())
                     return totalOverride.releaseException();
                 total = totalOverride.releaseReturnValue();
             }
 
-            auto additionalDisplayItems = convertAndValidate(modifier.additionalDisplayItems, currency);
+            auto additionalDisplayItems = convertAndValidate(*scriptExecutionContext(), modifier.additionalDisplayItems, currency);
             if (additionalDisplayItems.hasException())
                 return additionalDisplayItems.releaseException();
             lineItems.appendVector(additionalDisplayItems.releaseReturnValue());

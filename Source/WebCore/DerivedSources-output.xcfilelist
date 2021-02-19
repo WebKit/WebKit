@@ -102,6 +102,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentRetailChannel.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentRetailChannel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItemData.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItemData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayMerchantCapability.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayMerchantCapability.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayModifier.cpp

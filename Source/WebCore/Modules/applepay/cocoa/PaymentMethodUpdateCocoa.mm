@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-PaymentMethodUpdate::PaymentMethodUpdate(LineItem&& total, Vector<LineItem>&& lineItems)
+PaymentMethodUpdate::PaymentMethodUpdate(ApplePayLineItem&& total, Vector<ApplePayLineItem>&& lineItems)
     : m_totalAndLineItems { { WTFMove(total), WTFMove(lineItems) } }
     , m_platformUpdate { adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:platformSummaryItems(*m_totalAndLineItems)]) }
 {

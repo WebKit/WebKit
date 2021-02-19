@@ -624,6 +624,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayInstallmentConfiguration.idl
     Modules/applepay/ApplePayInstallmentRetailChannel.idl
     Modules/applepay/ApplePayLineItem.idl
+    Modules/applepay/ApplePayLineItemData.idl
     Modules/applepay/ApplePayMerchantCapability.idl
     Modules/applepay/ApplePayPayment.idl
     Modules/applepay/ApplePayPaymentAuthorizationResult.idl

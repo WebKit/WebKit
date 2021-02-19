@@ -34,7 +34,7 @@ OBJC_CLASS NSArray;
 namespace WebCore {
 
 WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
-WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::LineItem& total, const Vector<ApplePaySessionPaymentRequest::LineItem>&);
+WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
 
 } // namespace WebCore
 

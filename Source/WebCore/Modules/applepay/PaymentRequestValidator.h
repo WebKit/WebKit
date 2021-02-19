@@ -35,7 +35,7 @@ namespace WebCore {
 class PaymentRequestValidator {
 public:
     static ExceptionOr<void> validate(const ApplePaySessionPaymentRequest&);
-    static ExceptionOr<void> validateTotal(const ApplePaySessionPaymentRequest::LineItem&);
+    static ExceptionOr<void> validateTotal(const ApplePayLineItem&);
 };
 
 }

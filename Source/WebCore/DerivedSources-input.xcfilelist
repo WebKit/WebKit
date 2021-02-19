@@ -32,6 +32,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItem.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItemType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentRetailChannel.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayLineItem.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayLineItemData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayMerchantCapability.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPayment.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl
