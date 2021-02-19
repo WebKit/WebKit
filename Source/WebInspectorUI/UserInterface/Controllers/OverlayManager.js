@@ -31,11 +31,16 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
         this._gridOverlayForNodeMap = new Map;
 
+        // Can't reuse `this._gridOverlayForNodeMap` because nodes are removed from it when overlay isn't visible.
+        this._colorForNodeMap = new WeakMap;
+        this._nextDOMNodeColorIndex = 0;
+
         WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
         WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
         WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
         WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
         WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleMainResourceDidChange, this);
     }
 
     // Public
@@ -55,8 +60,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         console.assert(!color || color instanceof WI.Color, color);
         console.assert(domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid, domNode.layoutContextType);
 
-        color ||= WI.Color.fromString("magenta"); // fallback color
-
+        color ||= this.colorForNode(domNode);
         let target = WI.assumingMainTarget();
         let commandArguments = {
             nodeId: domNode.id,
@@ -71,6 +75,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
         let overlay = {domNode, ...commandArguments};
         this._gridOverlayForNodeMap.set(domNode, overlay);
+        this._colorForNodeMap.set(domNode, color);
 
         domNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayShown, overlay);
@@ -108,6 +113,27 @@ WI.OverlayManager = class OverlayManager extends WI.Object
             this.showGridOverlay(domNode);
     }
 
+    colorForNode(domNode)
+    {
+        let color = this._colorForNodeMap.get(domNode);
+        if (color)
+            return color;
+
+        const hslColors = [
+            [329, 91, 70],
+            [207, 96, 69],
+            [92, 90, 64],
+            [291, 73, 68],
+            [40, 97, 57],
+        ];
+
+        color = new WI.Color(WI.Color.Format.HSL, hslColors[this._nextDOMNodeColorIndex]);
+        this._colorForNodeMap.set(domNode, color);
+        this._nextDOMNodeColorIndex = (this._nextDOMNodeColorIndex + 1) % hslColors.length;
+
+        return color;
+    }
+
     // Private
 
     _handleLayoutContextTypeChanged(event)
@@ -128,6 +154,20 @@ WI.OverlayManager = class OverlayManager extends WI.Object
             // Refresh all shown overlays. Latest settings values will be used.
             this.showGridOverlay(domNode, {color: overlay.color});
         }
+    }
+
+    _handleMainResourceDidChange(event)
+    {
+        // Consider the following scenario:
+        // 1. Click on the badge of an element with `display: grid`. The 1st overlay color is used.
+        // 2. Reload the webpage.
+        // 3. Click on the badge of the same element.
+        //
+        // We should see the same 1st default overlay color. If we don't reset _nextDOMNodeColorIndex,
+        // the 2nd default color would be used instead.
+        //
+        // `domNode.id` is different for the same DOM element after page reload.
+        this._nextDOMNodeColorIndex = 0;
     }
 };
 

@@ -1,3 +1,20 @@
+2021-02-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: CSS Grid Inspector: use a color palette for default grid overlay colors
+        https://bugs.webkit.org/show_bug.cgi?id=222161
+
+        Reviewed by Devin Rousso.
+
+        Define a 5-color palette.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.colorForNode):
+        (WI.OverlayManager.prototype._handleMainResourceDidChange):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
 2021-02-19  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Truncate long node display names in Grid Overlay list
