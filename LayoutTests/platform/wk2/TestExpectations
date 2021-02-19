@@ -340,6 +340,8 @@ webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 
 webkit.org/b/221820 media/video-canvas-drawing-output.html [ Failure ]
 
+webkit.org/b/221783 [ Debug ] loader/change-src-during-iframe-load-crash.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
