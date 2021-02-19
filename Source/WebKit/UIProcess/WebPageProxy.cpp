@@ -7663,7 +7663,6 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
 #if PLATFORM(IOS_FAMILY)
         "AGXDeviceUserClient"_s,
-        "AppleJPEGDriverUserClient"_s,
         "IOGPU"_s,
         "IOSurfaceRootUserClient"_s,
 #endif

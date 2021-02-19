@@ -404,22 +404,6 @@
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AppleJPEGDriverUserClient")
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-trap)
-                (allow
-                    iokit-external-method)
-            )
-        )
-    )
-
     ; WebKit-required IOKit classes
     (allow iokit-open
         (require-all
@@ -1007,10 +991,15 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
-            "AppleJPEGDriverUserClient"
             "IOSurfaceAcceleratorClient"
             "IOSurfaceRootUserClient"
         )
+    )
+)
+
+(deny iokit-open (with no-log)
+    (iokit-user-client-class
+        "AppleJPEGDriverUserClient"
     )
 )
 

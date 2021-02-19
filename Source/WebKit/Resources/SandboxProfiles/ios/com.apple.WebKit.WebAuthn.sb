@@ -198,7 +198,6 @@
 
     ; UIKit-required IOKit nodes.
     (allow iokit-open
-        (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
         (iokit-user-client-class "IOSurfaceSendRight")
         ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
