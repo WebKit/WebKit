@@ -37,28 +37,25 @@
 
 namespace WebCore {
 
+class WebXRFrame;
 class WebXRRigidTransform;
 
 class WebXRView : public RefCounted<WebXRView> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<WebXRView> create();
+    WEBCORE_EXPORT static Ref<WebXRView> create(XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();
 
     XREye eye() const { return m_eye; }
-    const Float32Array& projectionMatrix() const { return *m_projectionMatrix; }
-    const WebXRRigidTransform& transform() const { return *m_transform; }
-
-    void setEye(XREye eye) { m_eye = eye; }
-    WEBCORE_EXPORT void setProjectionMatrix(const Vector<float>&);
-    void setTransform(RefPtr<WebXRRigidTransform>&& viewOffset) { m_transform = WTFMove(viewOffset); }
+    const Float32Array& projectionMatrix() const { return m_projection.get(); }
+    const WebXRRigidTransform& transform() const { return m_transform.get(); }
 
 private:
-    WebXRView();
+    WebXRView(XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
 
     XREye m_eye;
-    RefPtr<Float32Array> m_projectionMatrix;
-    RefPtr<WebXRRigidTransform> m_transform;
+    Ref<WebXRRigidTransform> m_transform;
+    Ref<Float32Array> m_projection;
 };
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2021-02-19  Imanol Fernandez  <ifernandez@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        Implement WebXR getViewerPose and getPose
+        https://bugs.webkit.org/show_bug.cgi?id=221225
+        <rdar://problem/74112910>
+
+        Reviewed by Youenn Fablet.
+
+        Mark pose related WebXR tests as passing.
+
+        * platform/wpe/TestExpectations:
+
 2021-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling on https://www.apple.com/ipad-air/ can jitter on certain sections

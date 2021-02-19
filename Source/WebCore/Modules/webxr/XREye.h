@@ -27,13 +27,11 @@
 
 #if ENABLE(WEBXR)
 
+#include "PlatformXR.h"
+
 namespace WebCore {
 
-enum class XREye {
-    None,
-    Left,
-    Right,
-};
+using XREye = PlatformXR::Eye;
 
 } // namespace WebCore
 

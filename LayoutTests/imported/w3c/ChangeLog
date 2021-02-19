@@ -1,3 +1,24 @@
+2021-02-19  Imanol Fernandez  <ifernandez@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        Implement WebXR getViewerPose and getPose
+        https://bugs.webkit.org/show_bug.cgi?id=221225
+        <rdar://problem/74112910>
+
+        Reviewed by Youenn Fablet.
+
+        Mark pose and reference space WebXR tests as passing.
+
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_match.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt: Added.
+
 2021-02-18  Martin Robinson  <mrobinson@igalia.com>
 
         Root scroll snapping broken overflow:scroll is set on the <body>

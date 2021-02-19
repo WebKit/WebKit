@@ -521,10 +521,19 @@ void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFra
         return;
 
     auto raf = InlineRequestAnimationFrameCallback::create(*m_scriptExecutionContext, [callback = WTFMove(callback)]() mutable {
-        callback({ });
+        PlatformXR::Device::FrameData data;
+        data.isTrackingValid = true;
+        data.isPositionValid = true;
+        data.views.append({ });
+        callback(WTFMove(data));
     });
 
     document->requestAnimationFrame(raf);
+}
+
+Vector<PlatformXR::Device::ViewData> WebXRSystem::DummyInlineDevice::views(XRSessionMode) const
+{
+    return { { .active = true, PlatformXR::Eye::None } };
 }
 
 

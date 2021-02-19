@@ -1,0 +1,3 @@
+
+PASS XRFrame getViewerPose(refSpace) matches getPose(viewer, refSpace).
+

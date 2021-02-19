@@ -28,7 +28,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRPose
 ] interface WebXRPose {
     [SameObject] readonly attribute WebXRRigidTransform transform;

@@ -1,0 +1,4 @@
+
+PASS XRFrame getViewerPose updates on the next frame for non-immersive sessions
+PASS XRFrame getViewerPose updates on the next frame for immersive sessions
+

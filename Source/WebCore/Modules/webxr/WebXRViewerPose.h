@@ -37,18 +37,24 @@
 namespace WebCore {
 
 class WebXRViewerPose : public WebXRPose {
+    WTF_MAKE_ISO_ALLOCATED(WebXRViewerPose);
 public:
-    static Ref<WebXRViewerPose> create();
-    ~WebXRViewerPose();
+    static Ref<WebXRViewerPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
+    virtual ~WebXRViewerPose();
 
     const Vector<Ref<WebXRView>>& views() const;
+    void setViews(Vector<Ref<WebXRView>>&&);
 
 private:
-    WebXRViewerPose();
+    WebXRViewerPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
+
+    bool isViewerPose() const final { return true; }
 
     Vector<Ref<WebXRView>> m_views;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBXRPOSE(WebXRViewerPose, isViewerPose())
 
 #endif // ENABLE(WEBXR)

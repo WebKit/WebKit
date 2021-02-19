@@ -29,37 +29,67 @@
 
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "TransformationMatrix.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Document;
 class ScriptExecutionContext;
+class WebXRRigidTransform;
 class WebXRSession;
 
-class WebXRSpace : public RefCounted<WebXRSpace>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class WebXRSpace : public EventTargetWithInlineData, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRSpace);
 public:
     virtual ~WebXRSpace();
 
-    using RefCounted<WebXRSpace>::ref;
-    using RefCounted<WebXRSpace>::deref;
+    virtual WebXRSession& session() const = 0;
+    virtual TransformationMatrix nativeOrigin() const = 0;
+    TransformationMatrix effectiveOrigin() const;
+
+    virtual bool isReferenceSpace() const { return false; }
+    virtual bool isBoundedReferenceSpace() const { return false; }
 
 protected:
-    WebXRSpace(Document&, Ref<WebXRSession>&&);
+    WebXRSpace(Document&, Ref<WebXRRigidTransform>&&);
+
+    const WebXRRigidTransform& originOffset() const { return m_originOffset.get(); }
 
     // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
-
-    Ref<WebXRSession> m_session;
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
 private:
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override { return WebXRSpaceEventTargetInterfaceType; }
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return WebXRSpaceEventTargetInterfaceType; }
+
+    Ref<WebXRRigidTransform> m_originOffset;
+};
+
+// https://immersive-web.github.io/webxr/#xrsession-viewer-reference-space
+// This is a helper class to implement the viewer space owned by a WebXRSession.
+// It avoids a circular reference between the session and the reference space.
+class WebXRViewerSpace : public WebXRSpace {
+    WTF_MAKE_ISO_ALLOCATED(WebXRViewerSpace);
+public:
+    WebXRViewerSpace(Document&, WebXRSession&);
+    virtual ~WebXRViewerSpace();
+
+private:
+    WebXRSession& session() const final { return m_session; }
+    TransformationMatrix nativeOrigin() const final;
+
+    void refEventTarget() final { RELEASE_ASSERT_NOT_REACHED(); }
+    void derefEventTarget() final { RELEASE_ASSERT_NOT_REACHED(); }
+
+    WebXRSession& m_session;
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_WEBXRSPACE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::WebXRSpace& context) { return context.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR)

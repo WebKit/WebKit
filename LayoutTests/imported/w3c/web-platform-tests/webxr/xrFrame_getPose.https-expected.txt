@@ -1,0 +1,4 @@
+
+PASS XRFrame.getPose works for immersive sessions
+PASS XRFrame.getPose works for non-immersive sessions
+
