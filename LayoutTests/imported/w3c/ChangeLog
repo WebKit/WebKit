@@ -1,3 +1,17 @@
+2021-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Fix Selenium key code for ENTER in testdriver-vendor.js
+        https://bugs.webkit.org/show_bug.cgi?id=222037
+
+        Reviewed by Carlos Garcia Campos.
+
+        In r272726 we added a bunch of Selenium key codes,
+        but the one for 0XE007 (ENTER) was wrong
+        as eventSender.keyDown() expects "\n" and not "enter".
+        This patch fixes the wrong code.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+
 2021-02-19  Imanol Fernandez  <ifernandez@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         Implement WebXR getViewerPose and getPose
