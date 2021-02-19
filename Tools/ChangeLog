@@ -1,3 +1,24 @@
+2021-02-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add clean command
+        https://bugs.webkit.org/show_bug.cgi?id=222135
+        <rdar://problem/74496504>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git):
+        (Git.clean): Throw away all local changes.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn):
+        (Svn.clean): Throw away all local changes, delete untracked files.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Clean command
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/clean.py: Added.
+        (Clean): Command to remove all local changes from the current checkout.
+
 2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Request server public key to generate secret token
