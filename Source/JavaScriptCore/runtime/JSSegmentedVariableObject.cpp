@@ -62,7 +62,8 @@ ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesTo
     return ScopeOffset(oldSize);
 }
 
-void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSSegmentedVariableObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -74,6 +75,8 @@ void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& visitor
     for (unsigned i = thisObject->m_variables.size(); i--;)
         visitor.appendHidden(thisObject->m_variables[i]);
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSSegmentedVariableObject);
 
 void JSSegmentedVariableObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {

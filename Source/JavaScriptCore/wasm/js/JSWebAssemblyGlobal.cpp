@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,8 @@ void JSWebAssemblyGlobal::destroy(JSCell* cell)
     static_cast<JSWebAssemblyGlobal*>(cell)->JSWebAssemblyGlobal::~JSWebAssemblyGlobal();
 }
 
-void JSWebAssemblyGlobal::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWebAssemblyGlobal::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSWebAssemblyGlobal* thisObject = jsCast<JSWebAssemblyGlobal*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -79,6 +80,8 @@ void JSWebAssemblyGlobal::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     thisObject->global()->visitAggregate(visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSWebAssemblyGlobal);
 
 } // namespace JSC
 

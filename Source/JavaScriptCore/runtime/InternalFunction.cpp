@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -64,7 +64,8 @@ void InternalFunction::finishCreation(VM& vm, unsigned length, const String& nam
     }
 }
 
-void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void InternalFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     InternalFunction* thisObject = jsCast<InternalFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -72,6 +73,8 @@ void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     visitor.append(thisObject->m_originalName);
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, InternalFunction);
 
 const String& InternalFunction::name()
 {

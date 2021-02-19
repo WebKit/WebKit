@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,7 +146,8 @@ void UnlinkedFunctionExecutable::destroy(JSCell* cell)
     static_cast<UnlinkedFunctionExecutable*>(cell)->~UnlinkedFunctionExecutable();
 }
 
-void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void UnlinkedFunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -168,6 +169,8 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
         visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
     }
 }
+
+DEFINE_VISIT_CHILDREN(UnlinkedFunctionExecutable);
 
 SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passedParentSource) const
 {

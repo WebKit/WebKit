@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,8 @@ void IntlDateTimeFormat::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlDateTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     IntlDateTimeFormat* thisObject = jsCast<IntlDateTimeFormat*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -99,6 +100,8 @@ void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(thisObject->m_boundFormat);
 }
+
+DEFINE_VISIT_CHILDREN(IntlDateTimeFormat);
 
 void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
 {

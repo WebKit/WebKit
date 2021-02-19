@@ -102,7 +102,8 @@ SetPrivateBrandStatus* RecordedStatuses::addSetPrivateBrandStatus(const CodeOrig
     return result;
 }
 
-void RecordedStatuses::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void RecordedStatuses::visitAggregateImpl(Visitor& visitor)
 {
     for (auto& pair : gets)
         pair.second->visitAggregate(visitor);
@@ -114,7 +115,10 @@ void RecordedStatuses::visitAggregate(SlotVisitor& visitor)
         pair.second->visitAggregate(visitor);
 }
 
-void RecordedStatuses::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(RecordedStatuses);
+
+template<typename Visitor>
+void RecordedStatuses::markIfCheap(Visitor& visitor)
 {
     for (auto& pair : gets)
         pair.second->markIfCheap(visitor);
@@ -129,6 +133,9 @@ void RecordedStatuses::markIfCheap(SlotVisitor& visitor)
     for (auto& pair : setPrivateBrands)
         pair.second->markIfCheap(visitor);
 }
+
+template void RecordedStatuses::markIfCheap(AbstractSlotVisitor&);
+template void RecordedStatuses::markIfCheap(SlotVisitor&);
 
 void RecordedStatuses::finalizeWithoutDeleting(VM& vm)
 {

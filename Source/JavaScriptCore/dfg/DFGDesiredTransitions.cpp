@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
 #include "JSCellInlines.h"
+#include "SlotVisitorInlines.h"
 
 namespace JSC { namespace DFG {
 
@@ -52,12 +53,16 @@ void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
             m_oldStructure, m_newStructure));
 }
 
-void DesiredTransition::visitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void DesiredTransition::visitChildren(Visitor& visitor)
 {
     visitor.appendUnbarriered(m_codeOriginOwner);
     visitor.appendUnbarriered(m_oldStructure);
     visitor.appendUnbarriered(m_newStructure);
 }
+
+template void DesiredTransition::visitChildren(AbstractSlotVisitor&);
+template void DesiredTransition::visitChildren(SlotVisitor&);
 
 DesiredTransitions::DesiredTransitions()
 {
@@ -78,11 +83,15 @@ void DesiredTransitions::reallyAdd(VM& vm, CommonData* common)
         m_transitions[i].reallyAdd(vm, common);
 }
 
-void DesiredTransitions::visitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void DesiredTransitions::visitChildren(Visitor& visitor)
 {
     for (unsigned i = 0; i < m_transitions.size(); i++)
         m_transitions[i].visitChildren(visitor);
 }
+
+template void DesiredTransitions::visitChildren(AbstractSlotVisitor&);
+template void DesiredTransitions::visitChildren(SlotVisitor&);
 
 } } // namespace JSC::DFG
 

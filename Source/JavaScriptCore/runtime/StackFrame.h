@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Heap.h"
+#include "SlotVisitorMacros.h"
 #include "VM.h"
 #include "WasmIndexOrName.h"
 #include "WriteBarrier.h"
@@ -35,7 +36,6 @@ namespace JSC {
 
 class CodeBlock;
 class JSObject;
-class SlotVisitor;
 
 class StackFrame {
 public:
@@ -57,8 +57,16 @@ public:
         ASSERT(hasBytecodeIndex());
         return m_bytecodeIndex;
     }
-    
-    void visitChildren(SlotVisitor&);
+
+    template<typename Visitor>
+    void visitAggregate(Visitor& visitor)
+    {
+        if (m_callee)
+            visitor.append(m_callee);
+        if (m_codeBlock)
+            visitor.append(m_codeBlock);
+    }
+
     bool isMarked(VM& vm) const { return (!m_callee || vm.heap.isMarked(m_callee.get())) && (!m_codeBlock || vm.heap.isMarked(m_codeBlock.get())); }
 
 private:

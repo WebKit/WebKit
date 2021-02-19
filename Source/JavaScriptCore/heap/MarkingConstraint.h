@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 namespace JSC {
 
 class MarkingConstraintSet;
+class AbstractSlotVisitor;
 class SlotVisitor;
 
 class MarkingConstraint {
@@ -60,11 +61,13 @@ public:
     
     size_t lastVisitCount() const { return m_lastVisitCount; }
     
+    // The following functions are only used by the real GC via the MarkingConstraintSolver.
+    // Hence, we only need the SlotVisitor version.
     void execute(SlotVisitor&);
+
+    JS_EXPORT_PRIVATE virtual double quickWorkEstimate(SlotVisitor&);
     
-    JS_EXPORT_PRIVATE virtual double quickWorkEstimate(SlotVisitor& visitor);
-    
-    double workEstimate(SlotVisitor& visitor);
+    double workEstimate(SlotVisitor&);
     
     void prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
     
@@ -76,9 +79,14 @@ public:
     ConstraintParallelism parallelism() const { return m_parallelism; }
 
 protected:
+    virtual void executeImpl(AbstractSlotVisitor&) = 0;
     virtual void executeImpl(SlotVisitor&) = 0;
-    JS_EXPORT_PRIVATE virtual void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
-    
+    JS_EXPORT_PRIVATE virtual void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, AbstractSlotVisitor&);
+
+    // This function is only used by the verifier GC via Heap::verifyGC().
+    // Hence, we only need the AbstractSlotVisitor version.
+    void executeSynchronously(AbstractSlotVisitor&);
+
 private:
     friend class MarkingConstraintSet; // So it can set m_index.
     

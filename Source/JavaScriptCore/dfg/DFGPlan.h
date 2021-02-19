@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,6 @@
 namespace JSC {
 
 class CodeBlock;
-class SlotVisitor;
 
 namespace DFG {
 
@@ -70,10 +69,11 @@ public:
     
     CompilationKey key();
     
-    template<typename Func>
-    void iterateCodeBlocksForGC(const Func&);
-    void checkLivenessAndVisitChildren(SlotVisitor&);
-    bool isKnownToBeLiveDuringGC();
+    template<typename Func, typename Visitor>
+    void iterateCodeBlocksForGC(Visitor&, const Func&);
+    template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
+    template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
+    bool isKnownToBeLiveAfterGC();
     void finalizeInGC();
     void cancel();
 

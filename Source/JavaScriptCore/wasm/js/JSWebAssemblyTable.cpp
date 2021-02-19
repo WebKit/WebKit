@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,8 @@ void JSWebAssemblyTable::destroy(JSCell* cell)
     static_cast<JSWebAssemblyTable*>(cell)->JSWebAssemblyTable::~JSWebAssemblyTable();
 }
 
-void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWebAssemblyTable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSWebAssemblyTable* thisObject = jsCast<JSWebAssemblyTable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -80,6 +81,8 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     thisObject->table()->visitAggregate(visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSWebAssemblyTable);
 
 bool JSWebAssemblyTable::grow(uint32_t delta, JSValue defaultValue)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -672,9 +672,10 @@ CompilationKey Plan::key()
     return CompilationKey(m_codeBlock->alternative(), m_mode);
 }
 
-void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void Plan::checkLivenessAndVisitChildren(Visitor& visitor)
 {
-    if (!isKnownToBeLiveDuringGC())
+    if (!isKnownToBeLiveDuringGC(visitor))
         return;
 
     cleanMustHandleValuesIfNecessary();
@@ -702,13 +703,33 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
     m_transitions.visitChildren(visitor);
 }
 
+template void Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor&);
+template void Plan::checkLivenessAndVisitChildren(SlotVisitor&);
+
 void Plan::finalizeInGC()
 {
     ASSERT(m_vm);
     m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
 }
 
-bool Plan::isKnownToBeLiveDuringGC()
+template<typename Visitor>
+bool Plan::isKnownToBeLiveDuringGC(Visitor& visitor)
+{
+    if (m_stage == Cancelled)
+        return false;
+    if (!visitor.isMarked(m_codeBlock->ownerExecutable()))
+        return false;
+    if (!visitor.isMarked(m_codeBlock->alternative()))
+        return false;
+    if (!!m_profiledDFGCodeBlock && !visitor.isMarked(m_profiledDFGCodeBlock))
+        return false;
+    return true;
+}
+
+template bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor&);
+template bool Plan::isKnownToBeLiveDuringGC(SlotVisitor&);
+
+bool Plan::isKnownToBeLiveAfterGC()
 {
     if (m_stage == Cancelled)
         return false;

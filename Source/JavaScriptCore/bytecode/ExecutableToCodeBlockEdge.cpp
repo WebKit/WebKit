@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,8 @@ void ExecutableToCodeBlockEdge::finishCreation(VM& vm)
     ASSERT(!isActive());
 }
 
-void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void ExecutableToCodeBlockEdge::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     VM& vm = visitor.vm();
     ExecutableToCodeBlockEdge* edge = jsCast<ExecutableToCodeBlockEdge*>(cell);
@@ -61,7 +62,7 @@ void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor
     Base::visitChildren(cell, visitor);
 
     CodeBlock* codeBlock = edge->m_codeBlock.get();
-    
+
     // It's possible for someone to hold a pointer to the edge after the edge has cleared its weak
     // reference to the codeBlock. In a conservative GC like ours, that could happen at random for
     // no good reason and it's Totally OK (TM). See finalizeUnconditionally() for where we clear
@@ -75,11 +76,11 @@ void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor
     }
     
     ConcurrentJSLocker locker(codeBlock->m_lock);
-    
-    if (codeBlock->shouldVisitStrongly(locker))
+
+    if (codeBlock->shouldVisitStrongly(locker, visitor))
         visitor.appendUnbarriered(codeBlock);
     
-    if (!vm.heap.isMarked(codeBlock))
+    if (!visitor.isMarked(codeBlock))
         vm.executableToCodeBlockEdgesWithFinalizers.add(edge);
     
     if (JITCode::isOptimizingJIT(codeBlock->jitType())) {
@@ -117,13 +118,18 @@ void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor
     edge->runConstraint(locker, vm, visitor);
 }
 
-void ExecutableToCodeBlockEdge::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)
+DEFINE_VISIT_CHILDREN(ExecutableToCodeBlockEdge);
+
+template<typename Visitor>
+void ExecutableToCodeBlockEdge::visitOutputConstraintsImpl(JSCell* cell, Visitor& visitor)
 {
     VM& vm = visitor.vm();
     ExecutableToCodeBlockEdge* edge = jsCast<ExecutableToCodeBlockEdge*>(cell);
     
     edge->runConstraint(NoLockingNecessary, vm, visitor);
 }
+
+DEFINE_VISIT_OUTPUT_CONSTRAINTS(ExecutableToCodeBlockEdge);
 
 void ExecutableToCodeBlockEdge::finalizeUnconditionally(VM& vm)
 {
@@ -186,16 +192,21 @@ ExecutableToCodeBlockEdge::ExecutableToCodeBlockEdge(VM& vm, CodeBlock* codeBloc
 {
 }
 
-void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker& locker, VM& vm, SlotVisitor& visitor)
+template<typename Visitor>
+void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker& locker, VM& vm, Visitor& visitor)
 {
     CodeBlock* codeBlock = m_codeBlock.get();
     
     codeBlock->propagateTransitions(locker, visitor);
     codeBlock->determineLiveness(locker, visitor);
-    
-    if (vm.heap.isMarked(codeBlock))
+
+    if (visitor.isMarked(codeBlock))
         vm.executableToCodeBlockEdgesWithConstraints.remove(this);
 }
+
+template void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker&, VM&, AbstractSlotVisitor&);
+template void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker&, VM&, SlotVisitor&);
+
 
 } // namespace JSC
 

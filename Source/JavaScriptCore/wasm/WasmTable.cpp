@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,13 +166,16 @@ JSValue Table::get(uint32_t index) const
     return m_jsValues.get()[index & m_mask].get();
 }
 
-void Table::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void Table::visitAggregateImpl(Visitor& visitor)
 {
     RELEASE_ASSERT(m_owner);
     auto locker = holdLock(m_owner->cellLock());
     for (unsigned i = 0; i < m_length; ++i)
         visitor.append(m_jsValues.get()[i]);
 }
+
+DEFINE_VISIT_AGGREGATE(Table);
 
 Type Table::wasmType() const
 {

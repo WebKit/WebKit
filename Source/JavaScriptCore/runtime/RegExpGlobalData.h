@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     void setInput(JSGlobalObject*, JSString*);
     JSString* input() { return m_cachedResult.input(); }
 
-    void visitAggregate(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
 
     JSValue getBackref(JSGlobalObject*, unsigned);
     JSValue getLastParen(JSGlobalObject*);

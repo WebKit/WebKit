@@ -51,6 +51,7 @@
 #include "JSLexicalEnvironment.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
+#include "SlotVisitorInlines.h"
 #include "Snippet.h"
 #include "StackAlignment.h"
 #include "StructureInlines.h"
@@ -1448,13 +1449,17 @@ void Graph::registerFrozenValues()
     m_codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
 }
 
-void Graph::visitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+ALWAYS_INLINE void Graph::visitChildrenImpl(Visitor& visitor)
 {
     for (FrozenValue* value : m_frozenValues) {
         visitor.appendUnbarriered(value->value());
         visitor.appendUnbarriered(value->structure());
     }
 }
+
+void Graph::visitChildren(AbstractSlotVisitor& visitor) { visitChildrenImpl(visitor); }
+void Graph::visitChildren(SlotVisitor& visitor) { visitChildrenImpl(visitor); }
 
 FrozenValue* Graph::freeze(JSValue value)
 {

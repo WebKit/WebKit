@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -3087,8 +3087,8 @@ sub GenerateHeader
 
     # visit function
     if ($needsVisitChildren) {
-        push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n");
-        push(@headerContent, "    void visitAdditionalChildren(JSC::SlotVisitor&);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
+        push(@headerContent, "    DECLARE_VISIT_CHILDREN;\n");
+        push(@headerContent, "    template<typename Visitor> void visitAdditionalChildren(Visitor&);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         push(@headerContent, "\n");
 
         if ($interface->extendedAttributes->{JSCustomMarkFunction}) {
@@ -3103,7 +3103,7 @@ sub GenerateHeader
             # that the GC calls to ask an object is it would like to mark anything else after the
             # program resumed since the last call to visitChildren or visitOutputConstraints. Since
             # this just calls visitAdditionalChildren, you usually don't have to worry about this.
-            push(@headerContent, "    static void visitOutputConstraints(JSCell*, JSC::SlotVisitor&);\n");
+            push(@headerContent, "    template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);\n");
         }
     }
 
@@ -3224,7 +3224,7 @@ sub GenerateHeader
         }
         $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");
-        push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) ${overrideDecl};\n");
+        push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, const char**) ${overrideDecl};\n");
         push(@headerContent, "    void finalize(JSC::Handle<JSC::Unknown>, void* context) ${overrideDecl};\n");
         push(@headerContent, "};\n");
         push(@headerContent, "\n");
@@ -4948,6 +4948,7 @@ sub GenerateImplementation
     AddToImplIncludes("DOMIsoSubspaces.h");
     AddToImplIncludes("WebCoreJSClientData.h");
     AddToImplIncludes("<JavaScriptCore/JSDestructibleObjectHeapCellType.h>");
+    AddToImplIncludes("<JavaScriptCore/SlotVisitorMacros.h>");
     AddToImplIncludes("<JavaScriptCore/SubspaceInlines.h>");
     push(@implContent, "JSC::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
     push(@implContent, "{\n");
@@ -4967,7 +4968,10 @@ sub GenerateImplementation
     push(@implContent, "    auto* space = spaces.m_subspaceFor${interfaceName}.get();\n");
     push(@implContent, "IGNORE_WARNINGS_BEGIN(\"unreachable-code\")\n");
     push(@implContent, "IGNORE_WARNINGS_BEGIN(\"tautological-compare\")\n");
-    push(@implContent, "    if (&${className}::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)\n");
+    push(@implContent, "    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = ${className}::visitOutputConstraints;\n");
+    push(@implContent, "    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;\n");
+    push(@implContent, "    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)\n");
+#    push(@implContent, "    if (&${className}::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)\n");
     push(@implContent, "        clientData.outputConstraintSpaces().append(space);\n");
     push(@implContent, "IGNORE_WARNINGS_END\n");
     push(@implContent, "IGNORE_WARNINGS_END\n");
@@ -4975,7 +4979,8 @@ sub GenerateImplementation
     push(@implContent, "}\n\n");
 
     if ($needsVisitChildren) {
-        push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
+        push(@implContent, "template<typename Visitor>\n");
+        push(@implContent, "void ${className}::visitChildrenImpl(JSCell* cell, Visitor& visitor)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
@@ -5000,14 +5005,19 @@ sub GenerateImplementation
             }
         }
         push(@implContent, "}\n\n");
+        push(@implContent, "DEFINE_VISIT_CHILDREN(${className});\n\n");
+
         if ($interface->extendedAttributes->{JSCustomMarkFunction}) {
-            push(@implContent, "void ${className}::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)\n");
+            push(@implContent, "template<typename Visitor>\n");
+            push(@implContent, "void ${className}::visitOutputConstraints(JSCell* cell, Visitor& visitor)\n");
             push(@implContent, "{\n");
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             push(@implContent, "    Base::visitOutputConstraints(thisObject, visitor);\n");
             push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n");
             push(@implContent, "}\n\n");
+            push(@implContent, "template void ${className}::visitOutputConstraints(JSCell*, AbstractSlotVisitor&);\n");
+            push(@implContent, "template void ${className}::visitOutputConstraints(JSCell*, SlotVisitor&);\n");
         }
     }
 
@@ -5042,7 +5052,7 @@ sub GenerateImplementation
     }
 
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface) && !GetCustomIsReachable($interface)) {
-        push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)\n");
+        push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)\n");
         push(@implContent, "{\n");
         # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
         # increment their C++ reference counts when hasPendingActivity() becomes
@@ -6441,6 +6451,7 @@ sub GenerateCallbackHeaderContent
         push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
     }
 
+    push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
     push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
 
     push(@$contentRef, "    ${callbackDataType}* m_data;\n");
@@ -6632,6 +6643,10 @@ sub GenerateCallbackImplementationContent
     }
 
     if ($interfaceOrCallback->extendedAttributes->{IsWeakCallback}) {
+        push(@$contentRef, "void ${className}::visitJSFunction(JSC::AbstractSlotVisitor& visitor)\n");
+        push(@$contentRef, "{\n");
+        push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");
+        push(@$contentRef, "}\n\n");
         push(@$contentRef, "void ${className}::visitJSFunction(JSC::SlotVisitor& visitor)\n");
         push(@$contentRef, "{\n");
         push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");
@@ -6743,6 +6758,7 @@ sub GenerateIterableDefinition
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
 
     AddToImplIncludes("JSDOMIterator.h");
+    AddToImplIncludes("<JavaScriptCore/SlotVisitorMacros.h>");
 
     return unless IsKeyValueIterableInterface($interface);
 
@@ -6786,7 +6802,9 @@ public:
         auto* space = spaces.m_subspaceFor${iteratorName}.get();
 IGNORE_WARNINGS_BEGIN(\"unreachable-code\")
 IGNORE_WARNINGS_BEGIN(\"tautological-compare\")
-        if (&${iteratorName}::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = ${iteratorName}::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
             clientData.outputConstraintSpaces().append(space);
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END

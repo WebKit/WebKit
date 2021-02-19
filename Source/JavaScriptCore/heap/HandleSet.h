@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ namespace JSC {
 class HandleSet;
 class VM;
 class JSValue;
-class SlotVisitor;
 
 class HandleNode {
 public:
@@ -73,7 +72,7 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
 
-    void visitStrongHandles(SlotVisitor&);
+    template<typename Visitor> void visitStrongHandles(Visitor&);
 
     JS_EXPORT_PRIVATE void writeBarrier(HandleSlot, const JSValue&);
 

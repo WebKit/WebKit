@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,13 +61,16 @@ void IntlPluralRules::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlPluralRules::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlPluralRules::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     IntlPluralRules* thisObject = jsCast<IntlPluralRules*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(IntlPluralRules);
 
 Vector<String> IntlPluralRules::localeData(const String&, RelevantExtensionKey)
 {

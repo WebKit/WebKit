@@ -1,3 +1,1004 @@
+2021-02-19  Mark Lam  <mark.lam@apple.com>
+
+        Implement a GC verifier.
+        https://bugs.webkit.org/show_bug.cgi?id=217274
+        rdar://56255683
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        The idea behind the GC verifier is that in the GC End phase before we finalize
+        and sweep, we'll do a simple stop the world synchronous full GC with the
+        VerifierSlotVisitor.  The VerifierSlotVisitor will collect it's own information
+        on whether a JS cell should be marked or not.  After this verifier GC pass, we'll
+        compare the mark results.
+
+        If the verifier GC says a cell should be marked, then the real GC should have
+        marked the cell.  The reverse is not true: if the verifier does not mark a cell,
+        it is still OK for the real GC to mark it.  For example, in an eden GC, all old
+        generation cells would be considered mark by the real GC though the verifier would
+        know better if they are already dead.
+
+        Implementation details:
+
+        1. SlotVisitor (only used by the real GC) now inherits from a new abstract class,
+           AbstractSlotVisitor.
+
+           VerifierSlotVisitor (only used by the verifier GC) also inherits from
+           AbstractSlotVisitor.
+
+        2. AbstractSlotVisitor declares many virtual methods.
+
+           SlotVisitor implements some of these virtual methods as inline and final.
+           If the client is invoking one these methods and knows that it will be operating
+           on a SlotVisitor, the method being final allows it to be inlined into the client
+           instead of going through the virtual dispatch.
+
+           For the VerifierSlotVisitor, these methods will always be invoked by virtual
+           dispatch via the AbstractSlotVisitor abstraction.
+
+        3. Almost all methods that takes a SlotVisitor previously (with a few exceptions)
+           will now be templatized, and specialized to either take a SlotVisitor or an
+           AbstractSlotVisitor.
+
+           The cell MethodTable will now have 2 versions of visitChildren and visitOutputConstraints:
+           one for SlotVisitor, and one for AbstractSlotVisitor.
+
+           The reason we don't wire the 2nd version to VerifierSlotVisitor (instead of
+           AbstractSlotVisitor) is because we don't need the GC verifier to run at top
+           speed (though we don't want it to be too slow).  Also, having hooks for using
+           an AbstractSlotVisitor gives us more utility for implementing other types of
+           GC checkers / analyzers in the future as subclasses of AbstractSlotVisitor.
+
+        4. Some minority of methods that used to take a SlotVisitor but are not critical
+           to performance, will now just take an AbstractSlotVisitor instead.  For example,
+           see TypeProfilerLog::visit().
+
+        5. isReachableFromOpaqueRoots() methods will also only take an AbstractSlotVisitor.
+
+           The reason this is OK is because isReachableFromOpaqueRoots() only uses the
+           visitor's addOpaqueRoot() and containsOpaqueRoot() methods, which are implemented
+           in the AbstractSlotVisitor itself.
+
+           For SlotVisitor, the m_opaqueRoot field will reference Heap::m_opaqueRoots.
+           For VerifierSlotVisitor, the m_opaqueRoot field will reference its own
+           opaque roots storage.
+
+           This implementation of addOpaqueRoot() is perf neutral for SlotVisitor because
+           where it would previously invoke m_heap.m_opaqueRoots.add(), it will now
+           invoke m_opaqueRoot.add() instead where m_opaqueRoot points to m_heap.m_opaqueRoots.
+
+           Ditto for AbstractSlotVisitor::containsOpaqueRoot().
+
+        6. When reifying a templatized visit method, we do it in 2 ways:
+
+           a. Implement the template method as an ALWAYS_INLINE Impl method, and have
+              2 visit methods (taking a SlotVisitor and an AbstractSlotVisitor respectively)
+              inline the Impl method.  For example, see JSObject::visitChildrenImpl().
+
+           b. Just templatize the visit method, and explicitly instantiate it with a SlotVisitor
+              and an AbstractSlotVisitor.  For example, see DesiredTransition::visitChildren().
+
+           The reason we need form (a) is if:
+
+            i. we need to export the visit methods.
+               For example, see JSObject:visitChildren().
+
+               Note: A Clang engineer told me that "there's no way to export an explicit
+               instantiation that will make it a strong symbol."  This is because "C++ does not
+               provide any standard way to guarantee that an explicit instantiation is unique,
+               and Clang hasn't added any extension to do so."
+
+           ii. the visit method is an override of a virtual method.
+               For example, see DFG::Scannable::visitChildren() and DFG::Graph::visitChildren().
+
+           Otherwise, we'll prefer form (b) as it is natural C++.
+
+        7. Because templatizing all the visit methods requires a lot of boiler plate code,
+           we introduce some macros in SlotVisitorMacros.h to reduce some of the boiler
+           plate burden.
+
+           We especially try to do this for methods of form (a) (see (6) above) which
+           require more boiler plate.
+
+        8. The driver of the real GC is MarkingConstraintSet::executeConvergence() which
+           runs with the MarkingConstraintSolver.
+
+           The driver of the verifier GC is Heap::verifyGC(), which has a loop to drain
+           marked objects and execute contraints.
+
+        9. The GC verifier is built in by default but disabled.  The relevant options are:
+           JSC_verifyGC and JSC_verboseVerifyGC.
+
+           JSC_verifyGC will enable the GC verifier.
+
+           If JSC_verifyGC is true and the verifier finds a cell that is
+           erroneously not marked by the real GC, it will dump an error message and then
+           crash with a RELEASE_ASSERT.
+
+           JSC_verboseVerifyGC will enable the GC verifier along with some more heavy
+           weight record keeping (i.e. tracking the parent / owner cell that marked a
+           cell, and capturing the call stack when the marked cell is appended to the mark
+           stack).
+
+           If JSC_verboseVerifyGC is true and the verifier finds a cell that is
+           erroneously not marked by the real GC, it will dump the parent cell and
+           captured stack along with an error message before crashing.  This extra
+           information provides the starting point for debugging GC bugs found by the
+           verifier.
+
+           Enabling JSC_verboseVerifyGC will automatically enable JSC_verifyGC.
+
+        10. Non-determinism in the real GC.
+
+           The GC verifier's algorithm relies on the real GC being deterministic.  However,
+           there are a few places where this is not true:
+
+           a. Marking conservative roots on the mutator stacks.
+
+              By the time the verifier GC runs (in the GC End phase), the mutator stacks
+              will look completely different than what the real GC saw.  To work around
+              this, if the verifier is enabled, then every conservative root captured by
+              the real GC will also be added to the verifier's mark stack.
+
+              When running verifyGC() in the End phase, the conservative root scans will be
+              treated as no-ops.
+
+           b. CodeBlock::shouldJettisonDueToOldAge() may return a different value.
+
+              This is possible because the codeBlock may be in mid compilation while the
+              real GC is in progress.
+
+              CodeBlock::shouldVisitStrongly() calls shouldJettisonDueToOldAge(), and may
+              see an old LLInt codeBlock whose timeToLive has expired.  As a result,
+              shouldJettisonDueToOldAge() returns true and shouldVisitStrongly() will
+              return false for the real GC, leading to it not marking the codeBlock.
+
+              However, before the verifier GC gets to run, baseline compilation on the
+              codeBlock may finish.  As a baseline codeBlock now, it gets a longer time
+              to live.
+
+              As a result, when the verifier GC runs, shouldJettisonDueToOldAge() will
+              return false, and shouldVisitStrongly() in turn returns true.  This results
+              in the verifier GC marking the codeBlock (and its children) when the real
+              GC did not, which leads to a false error.  This is not a real error because
+              if the real GC did not mark the code block, it will simply get jettisoned,
+              and can be reinstantiated when needed later.  There's no GC bug here.
+              However, we do need to work around this to prevent the false error for the
+              GC verifier.
+
+              The work around is to introduce a CodeBlock::m_visitChildrenSkippedDueToOldAge
+              flag that records what the real GC decided in shouldJettisonDueToOldAge().
+              This allows the verifier GC to replay the same decision and get a consistent
+              result.
+
+           c. CodeBlock::propagateTransitions() will only do a best effort at visiting
+              cells in ICs, etc.  If a cell is not already strongly marked by the time
+              CodeBlock::propagateTransitions() checks it, propagateTransitions() will
+              not mark other cells that are reachable from it.
+
+              Since the real GC does marking on concurrent threads, marking order is not
+              deterministic.  CodeBlock::propagateTransitions() may or may not see a cell
+              as already marked by the time it runs.
+
+              The verifier GC may mark some of these cells in a different order than the
+              real GC.  As a result, in the verifier GC, CodeBlock::propagateTransitions()
+              may see a cell as marked (and therefore, visit its children) when it did
+              not for the real GC.
+
+              To work around this, we currently add a SuppressGCVerifierScope to
+              CodeBlock::propagateTransitions() to pessimize the verifier, and assume that
+              propagateTransitions() will mark nothing.
+
+              SuppressGCVerifierScope is a blunt hammer that stops the verifier GC from
+              analyzing all cells potentially reachable via CodeBlock::propagateTransitions().
+              In the future, it may be possible to refine this and track which cells were
+              actually skipped over (like we did for shouldJettisonDueToOldAge()).
+              However, this decision tracking needs to be done in the real GC, and can be
+              very expensive in terms of performance.  The shouldJettisonDueToOldAge()
+              case is rare, and as such lends itself to this more fine grain tracking
+              without hurting performance.  The decisions made in CodeBlock::propagateTransitions()
+              are not as rare, and hence, it would hurt performance if we did fine grain
+              decision tracking there (at least or now).
+
+        11. Marking in the verifier GC.
+
+            The real GC tracks cell marks using a Bitmap in the MarkedBlocks.  The verifier
+            GC keeps tracks of MarkedBlock cell marks using a Bitmap on the side, stashed
+            away in a HashMap.
+
+            To improve the verifier marking performance, we reserve a void* m_verifierMemo
+            pointer in the MarkedBlock, which the verifier will employ to cache its
+            MarkedBlockData for that MarkedBlock.  This allows the verifier to get to its
+            side Bitmap without having to do a HashMap look up for every cell.
+
+            Size-wise, in the current 16K MarkBlocks, there is previously room for 1005.5
+            atoms after reserving space for the MarkedBlock::Footer.  Since we can never
+            allocate half an atom anyway, that .5 atom gives us the 8 bytes we need for
+            the m_verifierMemo pointer, which we'll put in the MarkedBlock::Footer.  With
+            this patch, each MarkedBlock will now have exactly 1005 atoms available for
+            allocation.
+
+        I ran JetStream2 and Speedometer2 locally on a MacBookAir10,1, MacBookPro16,1,
+        and a 12.9” 4th Gen iPad Pro.  The benchmark results for these were all neutral.
+
+        The design of the GC verifier is such that it incurs almost no additional runtime
+        memory overhead if not in use.  Code size does increase significantly because
+        there are now 2 variants of most of the methods that take a SlotVisitor.
+
+        When in use, the additional runtime memory is encapsulated in the
+        VerifierSlotVisitor, which is instantiated and destructed every GC cycle.  Hence,
+        it can affect peak memory usage during GCs, but the cost is transient.  It does
+        not persist past the GC End phase.
+
+        * API/JSAPIWrapperObject.h:
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::JSAPIWrapperObject::visitChildrenImpl):
+        (JSC::JSAPIWrapperObject::visitChildren): Deleted.
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::visitChildren):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        (JSC::JSCallbackObject<Parent>::visitChildrenImpl):
+        * API/JSManagedValue.mm:
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots):
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSC::isMarked):
+        (JSContextGroupAddMarkingConstraint):
+        * API/JSVirtualMachine.mm:
+        (scanExternalObjectGraph):
+        (scanExternalRememberedSet):
+        * API/JSVirtualMachineInternal.h:
+        * API/MarkedJSValueRefArray.cpp:
+        (JSC::MarkedJSValueRefArray::visitAggregate):
+        * API/MarkedJSValueRefArray.h:
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        (JSC::JSAPIWrapperGlobalObject::visitChildren): Deleted.
+        * API/glib/JSAPIWrapperGlobalObject.h:
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::JSAPIWrapperObject::visitChildrenImpl):
+        (JSC::JSAPIWrapperObject::visitChildren): Deleted.
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py:
+        (BuiltinsInternalsWrapperHeaderGenerator):
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_visit_method):
+        * Scripts/wkbuiltins/builtins_templates.py:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::propagateTransitions const):
+        (JSC::AccessCase::visitAggregateImpl const):
+        (JSC::AccessCase::visitAggregate const): Deleted.
+        * bytecode/AccessCase.h:
+        * bytecode/ByValInfo.cpp:
+        (JSC::ByValInfo::visitAggregateImpl):
+        (JSC::ByValInfo::visitAggregate): Deleted.
+        * bytecode/ByValInfo.h:
+        * bytecode/CheckPrivateBrandStatus.cpp:
+        (JSC::CheckPrivateBrandStatus::visitAggregateImpl):
+        (JSC::CheckPrivateBrandStatus::markIfCheap):
+        (JSC::CheckPrivateBrandStatus::visitAggregate): Deleted.
+        * bytecode/CheckPrivateBrandStatus.h:
+        * bytecode/CheckPrivateBrandVariant.cpp:
+        (JSC::CheckPrivateBrandVariant::markIfCheap):
+        (JSC::CheckPrivateBrandVariant::visitAggregateImpl):
+        (JSC::CheckPrivateBrandVariant::visitAggregate): Deleted.
+        * bytecode/CheckPrivateBrandVariant.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitChildrenImpl):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::shouldVisitStrongly):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::shouldMarkTransition):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        * bytecode/CodeBlock.h:
+        * bytecode/DeleteByIdVariant.cpp:
+        (JSC::DeleteByIdVariant::visitAggregateImpl):
+        (JSC::DeleteByIdVariant::markIfCheap):
+        (JSC::DeleteByIdVariant::visitAggregate): Deleted.
+        * bytecode/DeleteByIdVariant.h:
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::visitAggregateImpl):
+        (JSC::DeleteByStatus::markIfCheap):
+        (JSC::DeleteByStatus::visitAggregate): Deleted.
+        * bytecode/DeleteByStatus.h:
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::visitAggregateImpl):
+        (JSC::DirectEvalCodeCache::visitAggregate): Deleted.
+        * bytecode/DirectEvalCodeCache.h:
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::visitChildrenImpl):
+        (JSC::ExecutableToCodeBlockEdge::visitOutputConstraintsImpl):
+        (JSC::ExecutableToCodeBlockEdge::runConstraint):
+        (JSC::ExecutableToCodeBlockEdge::visitChildren): Deleted.
+        (JSC::ExecutableToCodeBlockEdge::visitOutputConstraints): Deleted.
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::visitAggregateImpl):
+        (JSC::GetByIdVariant::markIfCheap):
+        (JSC::GetByIdVariant::visitAggregate): Deleted.
+        * bytecode/GetByIdVariant.h:
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::visitAggregateImpl):
+        (JSC::GetByStatus::markIfCheap):
+        (JSC::GetByStatus::visitAggregate): Deleted.
+        * bytecode/GetByStatus.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::markIfCheap):
+        * bytecode/InByIdStatus.h:
+        * bytecode/InByIdVariant.cpp:
+        (JSC::InByIdVariant::markIfCheap):
+        * bytecode/InByIdVariant.h:
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::visitAggregate):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfileBase::visitAggregate):
+        (JSC::ObjectAllocationProfileWithPrototype::visitAggregate):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::propagateTransitions const):
+        (JSC::PolymorphicAccess::visitAggregateImpl):
+        (JSC::PolymorphicAccess::visitAggregate): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::markIfCheap):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::markIfCheap):
+        * bytecode/PutByIdVariant.h:
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::visitAggregateImpl):
+        (JSC::RecordedStatuses::markIfCheap):
+        (JSC::RecordedStatuses::visitAggregate): Deleted.
+        * bytecode/RecordedStatuses.h:
+        * bytecode/SetPrivateBrandStatus.cpp:
+        (JSC::SetPrivateBrandStatus::visitAggregateImpl):
+        (JSC::SetPrivateBrandStatus::markIfCheap):
+        (JSC::SetPrivateBrandStatus::visitAggregate): Deleted.
+        * bytecode/SetPrivateBrandStatus.h:
+        * bytecode/SetPrivateBrandVariant.cpp:
+        (JSC::SetPrivateBrandVariant::markIfCheap):
+        (JSC::SetPrivateBrandVariant::visitAggregateImpl):
+        (JSC::SetPrivateBrandVariant::visitAggregate): Deleted.
+        * bytecode/SetPrivateBrandVariant.h:
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::markIfCheap const):
+        * bytecode/StructureSet.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitAggregateImpl):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::visitAggregate): Deleted.
+        * bytecode/StructureStubInfo.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        (JSC::UnlinkedCodeBlock::visitChildren): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildrenImpl):
+        (JSC::UnlinkedFunctionExecutable::visitChildren): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::visitChildrenImpl):
+        (JSC::DebuggerScope::visitChildren): Deleted.
+        * debugger/DebuggerScope.h:
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::visitChildren):
+        (JSC::DFG::DesiredTransitions::visitChildren):
+        * dfg/DFGDesiredTransitions.h:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::visitChildren):
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::visitChildrenImpl):
+        (JSC::DFG::Graph::visitChildren):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Plan::isKnownToBeLiveAfterGC):
+        * dfg/DFGPlan.h:
+        * dfg/DFGPlanInlines.h:
+        (JSC::DFG::Plan::iterateCodeBlocksForGC):
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::checkLivenessAndVisitChildren):
+        (JSC::DFG::Safepoint::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Safepoint::isKnownToBeLiveAfterGC):
+        * dfg/DFGSafepoint.h:
+        * dfg/DFGScannable.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        * dfg/DFGWorklist.h:
+        * dfg/DFGWorklistInlines.h:
+        (JSC::DFG::iterateCodeBlocksForGC):
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * heap/AbstractSlotVisitor.h: Added.
+        (JSC::AbstractSlotVisitor::Context::cell const):
+        (JSC::AbstractSlotVisitor::SuppressGCVerifierScope::SuppressGCVerifierScope):
+        (JSC::AbstractSlotVisitor::SuppressGCVerifierScope::~SuppressGCVerifierScope):
+        (JSC::AbstractSlotVisitor::DefaultMarkingViolationAssertionScope::DefaultMarkingViolationAssertionScope):
+        (JSC::AbstractSlotVisitor::collectorMarkStack):
+        (JSC::AbstractSlotVisitor::mutatorMarkStack):
+        (JSC::AbstractSlotVisitor::collectorMarkStack const):
+        (JSC::AbstractSlotVisitor::mutatorMarkStack const):
+        (JSC::AbstractSlotVisitor::isEmpty):
+        (JSC::AbstractSlotVisitor::setIgnoreNewOpaqueRoots):
+        (JSC::AbstractSlotVisitor::visitCount const):
+        (JSC::AbstractSlotVisitor::addToVisitCount):
+        (JSC::AbstractSlotVisitor::rootMarkReason const):
+        (JSC::AbstractSlotVisitor::setRootMarkReason):
+        (JSC::AbstractSlotVisitor::didRace):
+        (JSC::AbstractSlotVisitor::codeName const):
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        (JSC::SetRootMarkReasonScope::~SetRootMarkReasonScope):
+        * heap/AbstractSlotVisitorInlines.h: Added.
+        (JSC::AbstractSlotVisitor::Context::Context):
+        (JSC::AbstractSlotVisitor::Context::~Context):
+        (JSC::AbstractSlotVisitor::AbstractSlotVisitor):
+        (JSC::AbstractSlotVisitor::heap const):
+        (JSC::AbstractSlotVisitor::vm):
+        (JSC::AbstractSlotVisitor::vm const):
+        (JSC::AbstractSlotVisitor::addOpaqueRoot):
+        (JSC::AbstractSlotVisitor::containsOpaqueRoot const):
+        (JSC::AbstractSlotVisitor::append):
+        (JSC::AbstractSlotVisitor::appendHidden):
+        (JSC::AbstractSlotVisitor::appendHiddenUnbarriered):
+        (JSC::AbstractSlotVisitor::appendValues):
+        (JSC::AbstractSlotVisitor::appendValuesHidden):
+        (JSC::AbstractSlotVisitor::appendUnbarriered):
+        (JSC::AbstractSlotVisitor::parentCell const):
+        (JSC::AbstractSlotVisitor::reset):
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::visitStrongHandles):
+        * heap/HandleSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::willStartCollection):
+        (JSC::scanExternalRememberedSet):
+        (JSC::serviceSamplingProfiler):
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::verifyGC):
+        (JSC::Heap::isAnalyzingHeap const): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::isMarkingForGCVerifier const):
+        (JSC::Heap::numOpaqueRoots const): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::isMarked):
+        * heap/HeapProfiler.cpp:
+        (JSC::HeapProfiler::setActiveHeapAnalyzer):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+        * heap/MarkStackMergingConstraint.cpp:
+        (JSC::MarkStackMergingConstraint::prepareToExecuteImpl):
+        (JSC::MarkStackMergingConstraint::executeImplImpl):
+        (JSC::MarkStackMergingConstraint::executeImpl):
+        * heap/MarkStackMergingConstraint.h:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::atomAt const):
+        (JSC::MarkedBlock::setVerifierMemo):
+        (JSC::MarkedBlock::verifierMemo const):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::visitWeakSets):
+        * heap/MarkedSpace.h:
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::execute):
+        (JSC::MarkingConstraint::executeSynchronously):
+        (JSC::MarkingConstraint::prepareToExecute):
+        (JSC::MarkingConstraint::doParallelWork):
+        (JSC::MarkingConstraint::prepareToExecuteImpl):
+        * heap/MarkingConstraint.h:
+        * heap/MarkingConstraintExecutorPair.h: Added.
+        (JSC::MarkingConstraintExecutorPair::MarkingConstraintExecutorPair):
+        (JSC::MarkingConstraintExecutorPair::execute):
+        * heap/MarkingConstraintSet.cpp:
+        (JSC::MarkingConstraintSet::add):
+        (JSC::MarkingConstraintSet::executeAllSynchronously):
+        (JSC::MarkingConstraintSet::executeAll): Deleted.
+        * heap/MarkingConstraintSet.h:
+        (JSC::MarkingConstraintSet::add):
+        * heap/MarkingConstraintSolver.cpp:
+        * heap/MarkingConstraintSolver.h:
+        * heap/SimpleMarkingConstraint.cpp:
+        (JSC::SimpleMarkingConstraint::SimpleMarkingConstraint):
+        (JSC::SimpleMarkingConstraint::executeImplImpl):
+        (JSC::SimpleMarkingConstraint::executeImpl):
+        * heap/SimpleMarkingConstraint.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::appendSlow):
+        (JSC::SlotVisitor::addParallelConstraintTask):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::collectorMarkStack): Deleted.
+        (JSC::SlotVisitor::mutatorMarkStack): Deleted.
+        (JSC::SlotVisitor::collectorMarkStack const): Deleted.
+        (JSC::SlotVisitor::mutatorMarkStack const): Deleted.
+        (JSC::SlotVisitor::isEmpty): Deleted.
+        (JSC::SlotVisitor::isFirstVisit const): Deleted.
+        (JSC::SlotVisitor::bytesVisited const): Deleted.
+        (JSC::SlotVisitor::visitCount const): Deleted.
+        (JSC::SlotVisitor::addToVisitCount): Deleted.
+        (JSC::SlotVisitor::isAnalyzingHeap const): Deleted.
+        (JSC::SlotVisitor::heapAnalyzer const): Deleted.
+        (JSC::SlotVisitor::rootMarkReason const): Deleted.
+        (JSC::SlotVisitor::setRootMarkReason): Deleted.
+        (JSC::SlotVisitor::markingVersion const): Deleted.
+        (JSC::SlotVisitor::mutatorIsStopped const): Deleted.
+        (JSC::SlotVisitor::rightToRun): Deleted.
+        (JSC::SlotVisitor::didRace): Deleted.
+        (JSC::SlotVisitor::setIgnoreNewOpaqueRoots): Deleted.
+        (JSC::SlotVisitor::codeName const): Deleted.
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope): Deleted.
+        (JSC::SetRootMarkReasonScope::~SetRootMarkReasonScope): Deleted.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::isMarked const):
+        (JSC::SlotVisitor::addOpaqueRoot): Deleted.
+        (JSC::SlotVisitor::containsOpaqueRoot const): Deleted.
+        (JSC::SlotVisitor::heap const): Deleted.
+        (JSC::SlotVisitor::vm): Deleted.
+        (JSC::SlotVisitor::vm const): Deleted.
+        * heap/SlotVisitorMacros.h: Added.
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        * heap/VerifierSlotVisitor.cpp: Added.
+        (JSC::MarkerData::MarkerData):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::MarkedBlockData):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::addMarkerData):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::markerData const):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::PreciseAllocationData):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::markerData const):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::addMarkerData):
+        (JSC::VerifierSlotVisitor::VerifierSlotVisitor):
+        (JSC::VerifierSlotVisitor::~VerifierSlotVisitor):
+        (JSC::VerifierSlotVisitor::addParallelConstraintTask):
+        (JSC::VerifierSlotVisitor::executeConstraintTasks):
+        (JSC::VerifierSlotVisitor::append):
+        (JSC::VerifierSlotVisitor::appendToMarkStack):
+        (JSC::VerifierSlotVisitor::appendUnbarriered):
+        (JSC::VerifierSlotVisitor::appendHiddenUnbarriered):
+        (JSC::VerifierSlotVisitor::drain):
+        (JSC::VerifierSlotVisitor::dumpMarkerData):
+        (JSC::VerifierSlotVisitor::isFirstVisit const):
+        (JSC::VerifierSlotVisitor::isMarked const):
+        (JSC::VerifierSlotVisitor::markAuxiliary):
+        (JSC::VerifierSlotVisitor::mutatorIsStopped const):
+        (JSC::VerifierSlotVisitor::testAndSetMarked):
+        (JSC::VerifierSlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::VerifierSlotVisitor::visitAsConstraint):
+        (JSC::VerifierSlotVisitor::visitChildren):
+        * heap/VerifierSlotVisitor.h: Added.
+        (JSC::VerifierSlotVisitor::MarkedBlockData::block const):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::atoms const):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::isMarked):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::testAndSetMarked):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::allocation const):
+        (JSC::VerifierSlotVisitor::appendSlow):
+        * heap/VerifierSlotVisitorInlines.h: Added.
+        (JSC::VerifierSlotVisitor::forEachLiveCell):
+        (JSC::VerifierSlotVisitor::forEachLivePreciseAllocation):
+        (JSC::VerifierSlotVisitor::forEachLiveMarkedBlockCell):
+        * heap/VisitCounter.h:
+        (JSC::VisitCounter::VisitCounter):
+        (JSC::VisitCounter::visitor const):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        (JSC::WeakBlock::visitImpl):
+        (JSC::WeakBlock::visit):
+        * heap/WeakBlock.h:
+        * heap/WeakHandleOwner.cpp:
+        (JSC::WeakHandleOwner::isReachableFromOpaqueRoots):
+        * heap/WeakHandleOwner.h:
+        * heap/WeakSet.cpp:
+        * heap/WeakSet.h:
+        (JSC::WeakSet::visit):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::visitChildren):
+        * interpreter/ShadowChicken.h:
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::MarkingGCAwareJITStubRoutine::markRequiredObjectsInternalImpl):
+        (JSC::MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal):
+        (JSC::GCAwareJITStubRoutine::markRequiredObjectsInternal): Deleted.
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::GCAwareJITStubRoutine::markRequiredObjects):
+        (JSC::GCAwareJITStubRoutine::markRequiredObjectsInternal):
+        * jit/JITWorklist.cpp:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::markRequiredObjectsInternalImpl):
+        (JSC::PolymorphicCallStubRoutine::markRequiredObjectsInternal):
+        * jit/PolymorphicCallStubRoutine.h:
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::visitChildrenImpl):
+        (JSC::AbstractModuleRecord::visitChildren): Deleted.
+        * runtime/AbstractModuleRecord.h:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        * runtime/ArgList.h:
+        * runtime/CacheableIdentifier.h:
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::visitAggregate const):
+        * runtime/ClassInfo.h:
+        (JSC::MethodTable::visitChildren const):
+        (JSC::MethodTable::visitOutputConstraints const):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::visitChildrenImpl):
+        (JSC::ClonedArguments::visitChildren): Deleted.
+        * runtime/ClonedArguments.h:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildrenImpl):
+        (JSC::DirectArguments::visitChildren): Deleted.
+        * runtime/DirectArguments.h:
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildrenImpl):
+        (JSC::EvalExecutable::visitChildren): Deleted.
+        * runtime/EvalExecutable.h:
+        * runtime/Exception.cpp:
+        (JSC::Exception::visitChildrenImpl):
+        (JSC::Exception::visitChildren): Deleted.
+        * runtime/Exception.h:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildrenImpl):
+        (JSC::FunctionExecutable::visitChildren): Deleted.
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::visitChildrenImpl):
+        (JSC::FunctionRareData::visitChildren): Deleted.
+        * runtime/FunctionRareData.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::visitChildrenImpl):
+        (JSC::GenericArguments<Type>::visitChildren): Deleted.
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildrenImpl):
+        (JSC::GetterSetter::visitChildren): Deleted.
+        * runtime/GetterSetter.h:
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapBucket<Data>::visitChildrenImpl):
+        (JSC::HashMapImpl<HashMapBucket>::visitChildrenImpl):
+        (JSC::HashMapBucket<Data>::visitChildren): Deleted.
+        (JSC::HashMapImpl<HashMapBucket>::visitChildren): Deleted.
+        * runtime/HashMapImpl.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::visitChildrenImpl):
+        (JSC::InternalFunction::visitChildren): Deleted.
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::visitChildrenImpl):
+        (JSC::IntlCollator::visitChildren): Deleted.
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::visitChildrenImpl):
+        (JSC::IntlDateTimeFormat::visitChildren): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::visitChildrenImpl):
+        (JSC::IntlLocale::visitChildren): Deleted.
+        * runtime/IntlLocale.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::visitChildrenImpl):
+        (JSC::IntlNumberFormat::visitChildren): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::visitChildrenImpl):
+        (JSC::IntlPluralRules::visitChildren): Deleted.
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::visitChildrenImpl):
+        (JSC::IntlRelativeTimeFormat::visitChildren): Deleted.
+        * runtime/IntlRelativeTimeFormat.h:
+        * runtime/IntlSegmentIterator.cpp:
+        (JSC::IntlSegmentIterator::visitChildrenImpl):
+        (JSC::IntlSegmentIterator::visitChildren): Deleted.
+        * runtime/IntlSegmentIterator.h:
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::visitChildrenImpl):
+        (JSC::IntlSegments::visitChildren): Deleted.
+        * runtime/IntlSegments.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::visitChildrenImpl):
+        (JSC::JSArrayBufferView::visitChildren): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::visitChildrenImpl):
+        (JSC::JSArrayIterator::visitChildren): Deleted.
+        * runtime/JSArrayIterator.h:
+        * runtime/JSAsyncGenerator.cpp:
+        (JSC::JSAsyncGenerator::visitChildrenImpl):
+        (JSC::JSAsyncGenerator::visitChildren): Deleted.
+        * runtime/JSAsyncGenerator.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::visitChildrenImpl):
+        (JSC::JSBigInt::visitChildren): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::visitChildrenImpl):
+        (JSC::JSBoundFunction::visitChildren): Deleted.
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::visitChildrenImpl):
+        (JSC::JSCallee::visitChildren): Deleted.
+        * runtime/JSCallee.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::visitChildrenImpl):
+        (JSC::JSCell::visitOutputConstraintsImpl):
+        (JSC::JSCell::visitChildren): Deleted.
+        (JSC::JSCell::visitOutputConstraints): Deleted.
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::visitChildrenImpl):
+        (JSC::JSFinalizationRegistry::visitChildren): Deleted.
+        * runtime/JSFinalizationRegistry.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildrenImpl):
+        (JSC::JSFunction::visitChildren): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSGenerator.cpp:
+        (JSC::JSGenerator::visitChildrenImpl):
+        (JSC::JSGenerator::visitChildren): Deleted.
+        * runtime/JSGenerator.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildrenImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        (JSC::JSGlobalObject::visitChildren): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSImmutableButterfly.cpp:
+        (JSC::JSImmutableButterfly::visitChildrenImpl):
+        (JSC::JSImmutableButterfly::visitChildren): Deleted.
+        * runtime/JSImmutableButterfly.h:
+        * runtime/JSInternalFieldObjectImpl.h:
+        * runtime/JSInternalFieldObjectImplInlines.h:
+        (JSC::JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildrenImpl):
+        (JSC::JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildren): Deleted.
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::visitChildrenImpl):
+        (JSC::JSLexicalEnvironment::visitChildren): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::visitChildrenImpl):
+        (JSC::JSMapIterator::visitChildren): Deleted.
+        * runtime/JSMapIterator.h:
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::visitChildrenImpl):
+        (JSC::JSModuleEnvironment::visitChildren): Deleted.
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::visitChildrenImpl):
+        (JSC::JSModuleNamespaceObject::visitChildren): Deleted.
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::visitChildrenImpl):
+        (JSC::JSModuleRecord::visitChildren): Deleted.
+        * runtime/JSModuleRecord.h:
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::visitChildrenImpl):
+        (JSC::JSNativeStdFunction::visitChildren): Deleted.
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markAuxiliaryAndVisitOutOfLineProperties):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitButterflyImpl):
+        (JSC::JSObject::visitChildrenImpl):
+        (JSC::JSFinalObject::visitChildrenImpl):
+        (JSC::JSObject::visitChildren): Deleted.
+        (JSC::JSFinalObject::visitChildren): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::visitChildrenImpl):
+        (JSC::JSPromise::visitChildren): Deleted.
+        * runtime/JSPromise.h:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+        (JSC::JSPropertyNameEnumerator::visitChildren): Deleted.
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::visitChildrenImpl):
+        (JSC::JSProxy::visitChildren): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildrenImpl):
+        (JSC::JSScope::visitChildren): Deleted.
+        * runtime/JSScope.h:
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildrenImpl):
+        (JSC::JSSegmentedVariableObject::visitChildren): Deleted.
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::visitChildrenImpl):
+        (JSC::JSSetIterator::visitChildren): Deleted.
+        * runtime/JSSetIterator.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildrenImpl):
+        (JSC::JSString::visitChildren): Deleted.
+        * runtime/JSString.h:
+        * runtime/JSStringIterator.cpp:
+        (JSC::JSStringIterator::visitChildrenImpl):
+        (JSC::JSStringIterator::visitChildren): Deleted.
+        * runtime/JSStringIterator.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::visitChildrenImpl):
+        (JSC::JSSymbolTableObject::visitChildren): Deleted.
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSWeakObjectRef.cpp:
+        (JSC::JSWeakObjectRef::visitChildrenImpl):
+        (JSC::JSWeakObjectRef::visitChildren): Deleted.
+        * runtime/JSWeakObjectRef.h:
+        * runtime/JSWithScope.cpp:
+        (JSC::JSWithScope::visitChildrenImpl):
+        (JSC::JSWithScope::visitChildren): Deleted.
+        * runtime/JSWithScope.h:
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildrenImpl):
+        (JSC::JSWrapperObject::visitChildren): Deleted.
+        * runtime/JSWrapperObject.h:
+        * runtime/LazyClassStructure.cpp:
+        (JSC::LazyClassStructure::visit):
+        * runtime/LazyClassStructure.h:
+        * runtime/LazyProperty.h:
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::visit):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildrenImpl):
+        (JSC::ModuleProgramExecutable::visitChildren): Deleted.
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildrenImpl):
+        (JSC::ProgramExecutable::visitChildren): Deleted.
+        * runtime/ProgramExecutable.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::visitChildrenImpl):
+        (JSC::PropertyTable::visitChildren): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::visitChildrenImpl):
+        (JSC::ProxyObject::visitChildren): Deleted.
+        * runtime/ProxyObject.h:
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::visitChildrenImpl):
+        (JSC::ProxyRevoke::visitChildren): Deleted.
+        * runtime/ProxyRevoke.h:
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::visitAggregateImpl):
+        (JSC::RegExpCachedResult::visitAggregate): Deleted.
+        * runtime/RegExpCachedResult.h:
+        * runtime/RegExpGlobalData.cpp:
+        (JSC::RegExpGlobalData::visitAggregateImpl):
+        (JSC::RegExpGlobalData::visitAggregate): Deleted.
+        * runtime/RegExpGlobalData.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildrenImpl):
+        (JSC::RegExpObject::visitChildren): Deleted.
+        * runtime/RegExpObject.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::visit):
+        * runtime/SamplingProfiler.h:
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::visitChildrenImpl):
+        (JSC::ScopedArguments::visitChildren): Deleted.
+        * runtime/ScopedArguments.h:
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        * runtime/SimpleTypedArrayController.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::visitChildrenImpl):
+        (JSC::SparseArrayValueMap::visitChildren): Deleted.
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::visitChildren): Deleted.
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::visitChildren):
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildrenImpl):
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::markIfCheap):
+        (JSC::Structure::visitChildren): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildrenImpl):
+        (JSC::StructureChain::visitChildren): Deleted.
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildrenImpl):
+        (JSC::StructureRareData::visitChildren): Deleted.
+        * runtime/StructureRareData.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildrenImpl):
+        (JSC::SymbolTable::visitChildren): Deleted.
+        * runtime/SymbolTable.h:
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::visit):
+        * runtime/TypeProfilerLog.h:
+        * runtime/VM.h:
+        (JSC::VM::isAnalyzingHeap const):
+        (JSC::VM::activeHeapAnalyzer const):
+        (JSC::VM::setActiveHeapAnalyzer):
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<WeakMapBucket>::visitChildrenImpl):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints):
+        (JSC::WeakMapImpl<BucketType>::visitOutputConstraints):
+        (JSC::WeakMapImpl<WeakMapBucket>::visitChildren): Deleted.
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints): Deleted.
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapBucket::visitAggregate):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::visitChildrenImpl):
+        (JSC::JSDollarVM::visitChildren): Deleted.
+        * tools/JSDollarVM.h:
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::visitAggregateImpl):
+        (JSC::Wasm::Global::visitAggregate): Deleted.
+        * wasm/WasmGlobal.h:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::visitAggregateImpl):
+        (JSC::Wasm::Table::visitAggregate): Deleted.
+        * wasm/WasmTable.h:
+        * wasm/js/JSToWasmICCallee.cpp:
+        (JSC::JSToWasmICCallee::visitChildrenImpl):
+        (JSC::JSToWasmICCallee::visitChildren): Deleted.
+        * wasm/js/JSToWasmICCallee.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::visitChildrenImpl):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::visitChildrenImpl):
+        (JSC::JSWebAssemblyGlobal::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyGlobal.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+        (JSC::JSWebAssemblyInstance::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::visitChildrenImpl):
+        (JSC::JSWebAssemblyMemory::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::visitChildrenImpl):
+        (JSC::JSWebAssemblyModule::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::visitChildrenImpl):
+        (JSC::JSWebAssemblyTable::visitChildren): Deleted.
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::visitChildrenImpl):
+        (JSC::WebAssemblyFunction::visitChildren): Deleted.
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        (JSC::WebAssemblyFunctionBase::visitChildrenImpl):
+        (JSC::WebAssemblyFunctionBase::visitChildren): Deleted.
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::visitChildrenImpl):
+        (JSC::WebAssemblyModuleRecord::visitChildren): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::visitChildrenImpl):
+        (JSC::WebAssemblyWrapperFunction::visitChildren): Deleted.
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Simplify excludedSet handling in object rest expression

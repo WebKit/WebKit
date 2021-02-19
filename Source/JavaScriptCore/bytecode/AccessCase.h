@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -280,9 +280,9 @@ private:
     template<typename Functor>
     void forEachDependentCell(VM&, const Functor&) const;
 
-    void visitAggregate(SlotVisitor&) const;
+    DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
     bool visitWeak(VM&) const;
-    bool propagateTransitions(SlotVisitor&) const;
+    template<typename Visitor> bool propagateTransitions(Visitor&) const;
 
     // FIXME: This only exists because of how AccessCase puts post-generation things into itself.
     // https://bugs.webkit.org/show_bug.cgi?id=156456

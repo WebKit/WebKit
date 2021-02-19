@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,14 +93,14 @@ public:
     void deref();
     void aboutToDie();
 
-    void visitAggregate(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
 
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
     void visitWeakReferences(const ConcurrentJSLockerBase&, CodeBlock*);
     
     // This returns true if it has marked everything that it will ever mark.
-    bool propagateTransitions(SlotVisitor&);
+    template<typename Visitor> bool propagateTransitions(Visitor&);
         
     StubInfoSummary summary(VM&) const;
     

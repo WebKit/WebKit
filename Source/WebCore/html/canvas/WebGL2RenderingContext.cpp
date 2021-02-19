@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3078,7 +3078,7 @@ bool WebGL2RenderingContext::checkAndTranslateAttachments(const char* functionNa
     return true;
 }
 
-void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::SlotVisitor& visitor)
+void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)
 {
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
 

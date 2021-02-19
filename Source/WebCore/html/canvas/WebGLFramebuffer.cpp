@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ namespace {
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
-        void addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor&) override;
+        void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&) override;
 
         WebGLRenderbufferAttachment() { };
 
@@ -145,7 +145,7 @@ namespace {
             context->framebufferRenderbuffer(target, attachment, GraphicsContextGL::RENDERBUFFER, 0);
     }
 
-    void WebGLRenderbufferAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor& visitor)
+    void WebGLRenderbufferAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
     {
         visitor.addOpaqueRoot(m_renderbuffer.get());
     }
@@ -169,7 +169,7 @@ namespace {
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
-        void addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor&) override;
+        void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&) override;
 
         WebGLTextureAttachment() { };
 
@@ -267,7 +267,7 @@ namespace {
 #endif
     }
 
-    void WebGLTextureAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor& visitor)
+    void WebGLTextureAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
     {
         visitor.addOpaqueRoot(m_texture.get());
     }
@@ -721,7 +721,7 @@ GCGLenum WebGLFramebuffer::getDrawBuffer(GCGLenum drawBuffer)
     return GraphicsContextGL::NONE;
 }
 
-void WebGLFramebuffer::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::SlotVisitor& visitor)
+void WebGLFramebuffer::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::AbstractSlotVisitor& visitor)
 {
     for (auto& entry : m_attachments)
         entry.value->addMembersToOpaqueRoots(locker, visitor);

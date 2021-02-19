@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
@@ -384,7 +384,8 @@ void EventTarget::removeAllEventListeners()
     threadData.setIsInRemoveAllEventListeners(false);
 }
 
-void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void EventTarget::visitJSEventListeners(Visitor& visitor)
 {
     EventTargetData* data = eventTargetDataConcurrently();
     if (!data)
@@ -395,6 +396,9 @@ void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     while (auto* listener = iterator.nextListener())
         listener->visitJSFunction(visitor);
 }
+
+template void EventTarget::visitJSEventListeners(JSC::AbstractSlotVisitor&);
+template void EventTarget::visitJSEventListeners(JSC::SlotVisitor&);
 
 void EventTarget::invalidateEventListenerRegions()
 {

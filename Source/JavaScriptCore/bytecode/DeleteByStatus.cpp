@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -254,17 +254,24 @@ CacheableIdentifier DeleteByStatus::singleIdentifier() const
     return result;
 }
 
-void DeleteByStatus::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void DeleteByStatus::visitAggregateImpl(Visitor& visitor)
 {
     for (DeleteByIdVariant& variant : m_variants)
         variant.visitAggregate(visitor);
 }
 
-void DeleteByStatus::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(DeleteByStatus);
+
+template<typename Visitor>
+void DeleteByStatus::markIfCheap(Visitor& visitor)
 {
     for (DeleteByIdVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
+
+template void DeleteByStatus::markIfCheap(AbstractSlotVisitor&);
+template void DeleteByStatus::markIfCheap(SlotVisitor&);
 
 bool DeleteByStatus::finalize(VM& vm)
 {

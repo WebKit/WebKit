@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkletGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);
 
-    static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
 private:
     RefPtr<WorkletGlobalScope> m_wrapped;

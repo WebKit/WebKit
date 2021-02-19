@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -238,7 +238,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     return nullptr;
 }
 
-void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSDOMGlobalObject* thisObject = jsCast<JSDOMGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -259,6 +260,8 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSDOMGlobalObject);
 
 void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, JSPromise* promise, JSPromiseRejectionOperation operation)
 {

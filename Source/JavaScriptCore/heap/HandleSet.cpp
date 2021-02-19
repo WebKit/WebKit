@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,8 @@ void HandleSet::grow()
     }
 }
 
-void HandleSet::visitStrongHandles(SlotVisitor& visitor)
+template<typename Visitor>
+void HandleSet::visitStrongHandles(Visitor& visitor)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
@@ -66,6 +67,9 @@ void HandleSet::visitStrongHandles(SlotVisitor& visitor)
         visitor.appendUnbarriered(*node->slot());
     }
 }
+
+template void HandleSet::visitStrongHandles(AbstractSlotVisitor&);
+template void HandleSet::visitStrongHandles(SlotVisitor&);
 
 void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
 {

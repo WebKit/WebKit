@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -73,7 +73,8 @@ const ClassInfo JSObject::s_info = { "Object", nullptr, nullptr, nullptr, CREATE
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalObject) };
 
-ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
+template<typename Visitor>
+ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(Visitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
 {
     // We call this when we found everything without races.
     ASSERT(structure);
@@ -104,7 +105,8 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisito
     visitor.appendValuesHidden(butterfly->propertyStorage() - outOfLineSize, outOfLineSize);
 }
 
-ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
+template<typename Visitor>
+ALWAYS_INLINE Structure* JSObject::visitButterfly(Visitor& visitor)
 {
     static const char* const raceReason = "JSObject::visitButterfly";
     Structure* result = visitButterflyImpl(visitor);
@@ -113,7 +115,8 @@ ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
     return result;
 }
 
-ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
+template<typename Visitor>
+ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 {
     VM& vm = visitor.vm();
     
@@ -413,23 +416,19 @@ size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
     return Base::estimatedSize(cell, vm) + butterflyOutOfLineSize;
 }
 
-void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if ASSERT_ENABLED
-    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
-    visitor.m_isCheckingForDefaultMarkViolation = false;
-#endif
-    
+    typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
+
     JSCell::visitChildren(thisObject, visitor);
-    
+
     thisObject->visitButterfly(visitor);
-    
-#if ASSERT_ENABLED
-    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
-#endif
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSObject);
 
 void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
@@ -469,14 +468,12 @@ void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     }
 }
 
-void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if ASSERT_ENABLED
-    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
-    visitor.m_isCheckingForDefaultMarkViolation = false;
-#endif
+    typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
     
     JSCell::visitChildren(thisObject, visitor);
     
@@ -484,11 +481,9 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         if (unsigned storageSize = structure->inlineSize())
             visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
     }
-    
-#if ASSERT_ENABLED
-    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
-#endif
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSFinalObject);
 
 String JSObject::className(const JSObject* object, VM& vm)
 {

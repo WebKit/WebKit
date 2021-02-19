@@ -72,6 +72,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "VM.h"
+#include "VerifierSlotVisitorInlines.h"
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
@@ -643,19 +644,19 @@ void Heap::completeAllJITPlans()
     DFG::completeAllPlansForVM(m_vm);
 }
 
-template<typename Func>
-void Heap::iterateExecutingAndCompilingCodeBlocks(const Func& func)
+template<typename Func, typename Visitor>
+void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, const Func& func)
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
     if (Options::useJIT())
-        DFG::iterateCodeBlocksForGC(m_vm, func);
+        DFG::iterateCodeBlocksForGC(visitor, m_vm, func);
 }
 
-template<typename Func>
-void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(const Func& func)
+template<typename Func, typename Visitor>
+void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor& visitor, const Func& func)
 {
     Vector<CodeBlock*, 256> codeBlocks;
-    iterateExecutingAndCompilingCodeBlocks(
+    iterateExecutingAndCompilingCodeBlocks(visitor,
         [&] (CodeBlock* codeBlock) {
             codeBlocks.append(codeBlock);
         });
@@ -731,14 +732,6 @@ void Heap::removeDeadCompilerWorklistEntries()
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::existingWorklistForIndex(i).removeDeadPlans(m_vm);
 #endif
-}
-
-bool Heap::isAnalyzingHeap() const
-{
-    HeapProfiler* heapProfiler = m_vm.heapProfiler();
-    if (UNLIKELY(heapProfiler))
-        return heapProfiler->activeHeapAnalyzer();
-    return false;
 }
 
 struct GatherExtraHeapData : MarkedBlock::CountFunctor {
@@ -1485,13 +1478,20 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     }
     m_helperClient.finish();
     
-    iterateExecutingAndCompilingCodeBlocks(
+    ASSERT(m_mutatorMarkStack->isEmpty());
+    ASSERT(m_raceMarkStack->isEmpty());
+
+    SlotVisitor& visitor = *m_collectorSlotVisitor;
+    iterateExecutingAndCompilingCodeBlocks(visitor,
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
         });
-        
+
     updateObjectCounts();
     endMarking();
+
+    if (UNLIKELY(Options::verifyGC()))
+        verifyGC();
 
     if (UNLIKELY(m_verifier)) {
         m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
@@ -2170,6 +2170,11 @@ void Heap::suspendCompilerThreads()
 
 void Heap::willStartCollection()
 {
+    if (UNLIKELY(Options::verifyGC())) {
+        m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this);
+        ASSERT(!m_isMarkingForGCVerifier);
+    }
+
     dataLogIf(Options::logGC(), "=> ");
     
     if (shouldDoFullCollection()) {
@@ -2697,13 +2702,49 @@ void Heap::didFreeBlock(size_t capacity)
 #endif
 }
 
+// The following are pulled out of the body of Heap::addCoreConstraints() only
+// because the WinCairo port is not able to handle #if's inside the body of the
+// lambda passed into the MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR macro. This works
+// around that issue.
+
+#if JSC_OBJC_API_ENABLED
+constexpr bool objcAPIEnabled = true;
+#else
+constexpr bool objcAPIEnabled = false;
+static UNUSED_FUNCTION void scanExternalRememberedSet(VM&, AbstractSlotVisitor&) { }
+#endif
+
+#if ENABLE(SAMPLING_PROFILER)
+constexpr bool samplingProfilerSupported = true;
+template<typename Visitor>
+static ALWAYS_INLINE void visitSamplingProfiler(VM& vm, Visitor& visitor)
+{
+    SamplingProfiler* samplingProfiler = vm.samplingProfiler();
+    if (UNLIKELY(samplingProfiler)) {
+        auto locker = holdLock(samplingProfiler->getLock());
+        samplingProfiler->processUnverifiedStackTraces(locker);
+        samplingProfiler->visit(visitor);
+        if (Options::logGC() == GCLogging::Verbose)
+            dataLog("Sampling Profiler data:\n", visitor);
+    }
+};
+#else
+constexpr bool samplingProfilerSupported = false;
+static UNUSED_FUNCTION void visitSamplingProfiler(VM&, AbstractSlotVisitor&) { };
+#endif
+
 void Heap::addCoreConstraints()
 {
     m_constraintSet->add(
         "Cs", "Conservative Scan",
-        [this, lastVersion = static_cast<uint64_t>(0)] (SlotVisitor& visitor) mutable {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this, lastVersion = static_cast<uint64_t>(0)] (auto& visitor) mutable {
             bool shouldNotProduceWork = lastVersion == m_phaseVersion;
-            if (shouldNotProduceWork)
+
+            // For the GC Verfier, we would like to use the identical set of conservative roots
+            // as the real GC. Otherwise, the GC verifier may report false negatives due to
+            // variations in stack values. For this same reason, we will skip this constraint
+            // when we're running the GC verification in the End phase.
+            if (shouldNotProduceWork || m_isMarkingForGCVerifier)
                 return;
             
             TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
@@ -2720,24 +2761,31 @@ void Heap::addCoreConstraints()
 
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
                 visitor.append(conservativeRoots);
+                if (UNLIKELY(m_verifierSlotVisitor))
+                    m_verifierSlotVisitor->append(conservativeRoots);
             }
             if (Options::useJIT()) {
                 // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITStubRoutines);
                 m_jitStubRoutines->traceMarkedStubRoutines(visitor);
+                if (UNLIKELY(m_verifierSlotVisitor)) {
+                    // It's important to cast m_verifierSlotVisitor to an AbstractSlotVisitor here
+                    // so that we'll call the AbstractSlotVisitor version of traceMarkedStubRoutines().
+                    AbstractSlotVisitor& visitor = *m_verifierSlotVisitor;
+                    m_jitStubRoutines->traceMarkedStubRoutines(visitor);
+                }
             }
             
             lastVersion = m_phaseVersion;
-        },
+        })),
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Msr", "Misc Small Roots",
-        [this] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
+            if constexpr (objcAPIEnabled)
+                scanExternalRememberedSet(m_vm, visitor);
 
-#if JSC_OBJC_API_ENABLED
-            scanExternalRememberedSet(m_vm, visitor);
-#endif
             if (m_vm.smallStrings.needsToBeVisited(*m_collectionScope)) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongReferences);
                 m_vm.smallStrings.visitStrongReferences(visitor);
@@ -2763,68 +2811,66 @@ void Heap::addCoreConstraints()
                 visitor.appendUnbarriered(m_vm.exception());
                 visitor.appendUnbarriered(m_vm.lastException());
             }
-        },
+        })),
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Sh", "Strong Handles",
-        [this] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
             m_handleSet.visitStrongHandles(visitor);
-        },
+        })),
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "D", "Debugger",
-        [this] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Debugger);
 
-#if ENABLE(SAMPLING_PROFILER)
-            if (SamplingProfiler* samplingProfiler = m_vm.samplingProfiler()) {
-                auto locker = holdLock(samplingProfiler->getLock());
-                samplingProfiler->processUnverifiedStackTraces(locker);
-                samplingProfiler->visit(visitor);
-                if (Options::logGC() == GCLogging::Verbose)
-                    dataLog("Sampling Profiler data:\n", visitor);
-            }
-#endif // ENABLE(SAMPLING_PROFILER)
+            if constexpr (samplingProfilerSupported)
+                visitSamplingProfiler(m_vm, visitor);
 
             if (m_vm.typeProfiler())
                 m_vm.typeProfilerLog()->visit(visitor);
             
             if (auto* shadowChicken = m_vm.shadowChicken())
                 shadowChicken->visitChildren(visitor);
-        },
+        })),
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Ws", "Weak Sets",
-        [this] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
             m_objectSpace.visitWeakSets(visitor);
-        },
+        })),
         ConstraintVolatility::GreyedByMarking);
     
     m_constraintSet->add(
         "O", "Output",
-        [] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
+            using Visitor = decltype(visitor);
             VM& vm = visitor.vm();
 
-            auto callOutputConstraint = [] (SlotVisitor& visitor, HeapCell* heapCell, HeapCell::Kind) {
-                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Output);
-                VM& vm = visitor.vm();
+            // The `visitor2` argument is strangely named because the WinCairo port
+            // gets confused  and thinks we're trying to capture the outer visitor
+            // arg here. Giving it a unique name works around this issue.
+            auto callOutputConstraint = [] (Visitor& visitor2, HeapCell* heapCell, HeapCell::Kind) {
+                SetRootMarkReasonScope rootScope(visitor2, RootMarkReason::Output);
+                VM& vm = visitor2.vm();
                 JSCell* cell = static_cast<JSCell*>(heapCell);
-                cell->methodTable(vm)->visitOutputConstraints(cell, visitor);
+                cell->methodTable(vm)->visitOutputConstraints(cell, visitor2);
             };
             
             auto add = [&] (auto& set) {
-                visitor.addParallelConstraintTask(set.forEachMarkedCellInParallel(callOutputConstraint));
+                RefPtr<SharedTask<void(Visitor&)>> task = set.template forEachMarkedCellInParallel<Visitor>(callOutputConstraint);
+                visitor.addParallelConstraintTask(task);
             };
             
             add(vm.executableToCodeBlockEdgesWithConstraints);
             if (vm.m_weakMapSpace)
                 add(*vm.m_weakMapSpace);
-        },
+        })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);
     
@@ -2832,7 +2878,7 @@ void Heap::addCoreConstraints()
     if (Options::useJIT()) {
         m_constraintSet->add(
             "Dw", "DFG Worklists",
-            [this] (SlotVisitor& visitor) {
+            MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::DFGWorkLists);
 
                 for (unsigned i = DFG::numberOfWorklists(); i--;)
@@ -2840,7 +2886,7 @@ void Heap::addCoreConstraints()
                 
                 // FIXME: This is almost certainly unnecessary.
                 // https://bugs.webkit.org/show_bug.cgi?id=166829
-                DFG::iterateCodeBlocksForGC(
+                DFG::iterateCodeBlocksForGC(visitor,
                     m_vm,
                     [&] (CodeBlock* codeBlock) {
                         visitor.appendUnbarriered(codeBlock);
@@ -2848,23 +2894,23 @@ void Heap::addCoreConstraints()
                 
                 if (Options::logGC() == GCLogging::Verbose)
                     dataLog("DFG Worklists:\n", visitor);
-            },
+            })),
             ConstraintVolatility::GreyedByMarking);
     }
 #endif
     
     m_constraintSet->add(
         "Cb", "CodeBlocks",
-        [this] (SlotVisitor& visitor) {
+        MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::CodeBlocks);
-            iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(
+            iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(visitor,
                 [&] (CodeBlock* codeBlock) {
                     // Visit the CodeBlock as a constraint only if it's black.
-                    if (isMarked(codeBlock)
+                    if (visitor.isMarked(codeBlock)
                         && codeBlock->cellState() == CellState::PossiblyBlack)
                         visitor.visitAsConstraint(codeBlock);
                 });
-        },
+        })),
         ConstraintVolatility::SeldomGreyed);
     
     m_constraintSet->add(makeUnique<MarkStackMergingConstraint>(*this));
@@ -3021,6 +3067,36 @@ void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)
         while (task->refCount() > initialRefCount)
             m_markingConditionVariable.wait(m_markingMutex);
     }
+}
+
+void Heap::verifyGC()
+{
+    RELEASE_ASSERT(m_verifierSlotVisitor);
+    RELEASE_ASSERT(!m_isMarkingForGCVerifier);
+    m_isMarkingForGCVerifier = true;
+
+    VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
+
+    do {
+        while (!visitor.isEmpty())
+            visitor.drain();
+        m_constraintSet->executeAllSynchronously(visitor);
+        visitor.executeConstraintTasks();
+    } while (!visitor.isEmpty());
+
+    m_isMarkingForGCVerifier = false;
+
+    visitor.forEachLiveCell([&] (HeapCell* cell) {
+        if (Heap::isMarked(cell))
+            return;
+
+        dataLogLn("\n" "GC Verifier: ERROR cell ", RawPointer(cell), " was not marked");
+        if (UNLIKELY(Options::verboseVerifyGC()))
+            visitor.dumpMarkerData(cell);
+        RELEASE_ASSERT(this->isMarked(cell));
+    });
+
+    m_verifierSlotVisitor = nullptr;
 }
 
 } // namespace JSC

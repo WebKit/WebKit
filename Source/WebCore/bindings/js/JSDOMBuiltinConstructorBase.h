@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ protected:
     {
     }
 
-    static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     JSC::JSFunction* initializeFunction();
     void setInitializeFunction(JSC::VM&, JSC::JSFunction&);

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,7 +37,7 @@
 
 namespace JSC {
 
-class SlotVisitor;
+class AbstractSlotVisitor;
 
 }
 
@@ -72,7 +73,7 @@ public:
 
     virtual String oldValue() { return String(); }
 
-    virtual void visitNodesConcurrently(JSC::SlotVisitor&) const = 0;
+    virtual void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const = 0;
 };
 
 } // namespace WebCore

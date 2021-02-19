@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
+class AbstractSlotVisitor;
 class JSObject;
 class SlotVisitor;
 }
@@ -52,6 +53,7 @@ public:
     virtual void handleEvent(ScriptExecutionContext&, Event&) = 0;
     virtual bool wasCreatedFromMarkup() const { return false; }
 
+    virtual void visitJSFunction(JSC::AbstractSlotVisitor&) { }
     virtual void visitJSFunction(JSC::SlotVisitor&) { }
 
     virtual bool isAttribute() const { return false; }

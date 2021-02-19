@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,9 @@ void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
     }
 }
 
-void TypeProfilerLog::visit(SlotVisitor& visitor)
+// We don't need a SlotVisitor version of this because TypeProfilerLog is only used by
+// dev tools, and is therefore not on the critical path for performance.
+void TypeProfilerLog::visit(AbstractSlotVisitor& visitor)
 {
     for (LogEntry* entry = m_logStartPtr; entry != m_currentLogEntryPtr; ++entry) {
         visitor.appendUnbarriered(entry->value);

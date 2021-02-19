@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 namespace JSC {
 
+class AbstractSlotVisitor;
 class SlotVisitor;
 
 namespace DFG {
@@ -37,7 +38,8 @@ class Scannable {
 public:
     Scannable() { }
     virtual ~Scannable() { }
-    
+
+    virtual void visitChildren(AbstractSlotVisitor&) = 0;
     virtual void visitChildren(SlotVisitor&) = 0;
 };
 

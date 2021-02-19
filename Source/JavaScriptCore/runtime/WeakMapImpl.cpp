@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #include "WeakMapImpl.h"
 
 #include "AuxiliaryBarrierInlines.h"
+#include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include "WeakMapImplInlines.h"
 
@@ -39,14 +40,17 @@ void WeakMapImpl<WeakMapBucket>::destroy(JSCell* cell)
     static_cast<WeakMapImpl*>(cell)->~WeakMapImpl();
 }
 
-template <typename WeakMapBucket>
-void WeakMapImpl<WeakMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename WeakMapBucket>
+template<typename Visitor>
+void WeakMapImpl<WeakMapBucket>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     WeakMapImpl* thisObject = jsCast<WeakMapImpl*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.reportExtraMemoryVisited(thisObject->m_capacity * sizeof(WeakMapBucket));
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename WeakMapBucket>, WeakMapImpl<WeakMapBucket>);
 
 template <typename WeakMapBucket>
 size_t WeakMapImpl<WeakMapBucket>::estimatedSize(JSCell* cell, VM& vm)
@@ -56,15 +60,25 @@ size_t WeakMapImpl<WeakMapBucket>::estimatedSize(JSCell* cell, VM& vm)
 }
 
 template <>
-void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints(JSCell*, SlotVisitor&)
+template <>
+void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints(JSCell*, AbstractSlotVisitor&)
 {
     // Only JSWeakMap needs to harvest value references
 }
 
 template <>
-void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)
+template <>
+void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints(JSCell*, SlotVisitor&)
 {
-    VM& vm = visitor.vm();
+    // Only JSWeakMap needs to harvest value references
+}
+
+template<typename BucketType>
+template<typename Visitor>
+ALWAYS_INLINE void WeakMapImpl<BucketType>::visitOutputConstraints(JSCell* cell, Visitor& visitor)
+{
+    static_assert(std::is_same<BucketType, WeakMapBucket<WeakMapBucketDataKeyValue>>::value);
+
     auto* thisObject = jsCast<WeakMapImpl*>(cell);
     auto locker = holdLock(thisObject->cellLock());
     auto* buffer = thisObject->buffer();
@@ -72,11 +86,14 @@ void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstrain
         auto* bucket = buffer + index;
         if (bucket->isEmpty() || bucket->isDeleted())
             continue;
-        if (!vm.heap.isMarked(bucket->key()))
+        if (!visitor.isMarked(bucket->key()))
             continue;
         bucket->visitAggregate(visitor);
     }
 }
+
+template void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints(JSCell*, AbstractSlotVisitor&);
+template void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints(JSCell*, SlotVisitor&);
 
 template <typename WeakMapBucket>
 template<typename Appender>

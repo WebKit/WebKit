@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2016 Apple Inc. All rights reserved.
+# Copyright (c) 2016-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ class BuiltinsInternalsWrapperHeaderGenerator(BuiltinsGenerator):
 
     def generate_methods(self):
         return """
-    void visit(JSC::SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
     void initialize(JSDOMGlobalObject&);
 """
 

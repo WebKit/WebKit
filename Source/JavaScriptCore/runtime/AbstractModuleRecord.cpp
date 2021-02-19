@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,8 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
     putDirect(vm, Identifier::fromString(vm, "dependenciesMap"_s), m_dependenciesMap.get());
 }
 
-void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void AbstractModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -69,6 +70,8 @@ void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_moduleNamespaceObject);
     visitor.append(thisObject->m_dependenciesMap);
 }
+
+DEFINE_VISIT_CHILDREN(AbstractModuleRecord);
 
 void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName)
 {

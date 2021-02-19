@@ -613,6 +613,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     domjit/DOMJITHeapRange.h
     domjit/DOMJITSignature.h
 
+    heap/AbstractSlotVisitor.h
+    heap/AbstractSlotVisitorInlines.h
     heap/AlignedMemoryAllocator.h
     heap/AllocationFailureMode.h
     heap/Allocator.h
@@ -678,6 +680,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MarkedBlockSet.h
     heap/MarkedSpace.h
     heap/MarkingConstraint.h
+    heap/MarkingConstraintExecutorPair.h
     heap/MutatorState.h
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
@@ -687,12 +690,14 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
     heap/SlotVisitorInlines.h
+    heap/SlotVisitorMacros.h
     heap/Strong.h
     heap/StrongInlines.h
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
     heap/TinyBloomFilter.h
+    heap/VerifierSlotVisitor.h
     heap/VisitRaceKey.h
     heap/Weak.h
     heap/WeakBlock.h

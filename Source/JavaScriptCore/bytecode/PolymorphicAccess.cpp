@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -358,7 +358,8 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
     return true;
 }
 
-bool PolymorphicAccess::propagateTransitions(SlotVisitor& visitor) const
+template<typename Visitor>
+bool PolymorphicAccess::propagateTransitions(Visitor& visitor) const
 {
     bool result = true;
     for (unsigned i = 0; i < size(); ++i)
@@ -366,11 +367,17 @@ bool PolymorphicAccess::propagateTransitions(SlotVisitor& visitor) const
     return result;
 }
 
-void PolymorphicAccess::visitAggregate(SlotVisitor& visitor)
+template bool PolymorphicAccess::propagateTransitions(AbstractSlotVisitor&) const;
+template bool PolymorphicAccess::propagateTransitions(SlotVisitor&) const;
+
+template<typename Visitor>
+void PolymorphicAccess::visitAggregateImpl(Visitor& visitor)
 {
     for (unsigned i = 0; i < size(); ++i)
         at(i).visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE(PolymorphicAccess);
 
 void PolymorphicAccess::dump(PrintStream& out) const
 {

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,7 +33,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GetterSetter);
 
 const ClassInfo GetterSetter::s_info = { "GetterSetter", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(GetterSetter) };
 
-void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void GetterSetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     GetterSetter* thisObject = jsCast<GetterSetter*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -42,6 +43,8 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_getter);
     visitor.append(thisObject->m_setter);
 }
+
+DEFINE_VISIT_CHILDREN(GetterSetter);
 
 JSValue callGetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter)
 {

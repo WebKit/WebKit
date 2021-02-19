@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Julien Chaffraix <jchaffraix@webkit.org>
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +32,8 @@
 
 namespace WebCore {
 
-void JSXPathResult::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSXPathResult::visitAdditionalChildren(Visitor& visitor)
 {
     auto& value = wrapped().value();
     if (value.isNodeSet()) {
@@ -40,5 +42,7 @@ void JSXPathResult::visitAdditionalChildren(JSC::SlotVisitor& visitor)
             visitor.addOpaqueRoot(root(node.get()));
     }
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSXPathResult);
 
 } // namespace WebCore

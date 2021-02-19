@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ public:
     bool isEmpty() const;
     bool isTriviallyDestructible() const;
 
-    void visit(SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
 
     void reap();
     void sweep();
@@ -114,7 +114,8 @@ inline void WeakSet::lastChanceToFinalize()
         block->lastChanceToFinalize();
 }
 
-inline void WeakSet::visit(SlotVisitor& visitor)
+template<typename Visitor>
+inline void WeakSet::visit(Visitor& visitor)
 {
     for (WeakBlock* block = m_blocks.head(); block; block = block->next())
         block->visit(visitor);

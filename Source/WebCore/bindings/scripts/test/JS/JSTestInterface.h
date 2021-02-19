@@ -91,7 +91,7 @@ protected:
 
 class WEBCORE_EXPORT JSTestInterfaceOwner final : public JSC::WeakHandleOwner {
 public:
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) final;
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, const char**) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
 };
 

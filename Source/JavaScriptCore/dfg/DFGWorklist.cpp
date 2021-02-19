@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -372,7 +372,8 @@ void Worklist::resumeAllThreads()
     m_suspensionLock.unlock();
 }
 
-void Worklist::visitWeakReferences(SlotVisitor& visitor)
+template<typename Visitor>
+void Worklist::visitWeakReferences(Visitor& visitor)
 {
     VM* vm = &visitor.heap()->vm();
     {
@@ -396,6 +397,9 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor)
     }
 }
 
+template void Worklist::visitWeakReferences(AbstractSlotVisitor&);
+template void Worklist::visitWeakReferences(SlotVisitor&);
+
 void Worklist::removeDeadPlans(VM& vm)
 {
     {
@@ -405,7 +409,7 @@ void Worklist::removeDeadPlans(VM& vm)
             Plan* plan = iter->value.get();
             if (plan->vm() != &vm)
                 continue;
-            if (plan->isKnownToBeLiveDuringGC()) {
+            if (plan->isKnownToBeLiveAfterGC()) {
                 plan->finalizeInGC();
                 continue;
             }
@@ -440,7 +444,7 @@ void Worklist::removeDeadPlans(VM& vm)
             continue;
         if (safepoint->vm() != &vm)
             continue;
-        if (safepoint->isKnownToBeLiveDuringGC())
+        if (safepoint->isKnownToBeLiveAfterGC())
             continue;
         safepoint->cancel();
     }

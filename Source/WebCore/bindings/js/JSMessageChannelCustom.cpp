@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-void JSMessageChannel::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSMessageChannel::visitAdditionalChildren(Visitor& visitor)
 {
     if (MessagePort* port = wrapped().port1())
         visitor.addOpaqueRoot(port);
@@ -41,6 +42,8 @@ void JSMessageChannel::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     if (MessagePort* port = wrapped().port2())
         visitor.addOpaqueRoot(port);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessageChannel);
 
 } // namespace WebCore
 

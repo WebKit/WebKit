@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,6 @@ class PropertyNameArrayData;
 class PropertyTable;
 class StructureChain;
 class StructureShape;
-class SlotVisitor;
 class JSString;
 struct DumpContext;
 struct HashTable;
@@ -310,7 +309,7 @@ public:
     JSValue prototypeForLookup(JSGlobalObject*, JSCell* base) const;
     StructureChain* prototypeChain(VM&, JSGlobalObject*, JSObject* base) const;
     StructureChain* prototypeChain(JSGlobalObject*, JSObject* base) const;
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
     
     // A Structure is cheap to mark during GC if doing so would only add a small and bounded amount
     // to our heap footprint. For example, if the structure refers to a global object that is not
@@ -318,10 +317,10 @@ public:
     // increase in footprint because no other object refers to that global object. This method
     // returns true if all user-controlled (and hence unbounded in size) objects referenced from the
     // Structure are already marked.
-    bool isCheapDuringGC(VM&);
+    template<typename Visitor> bool isCheapDuringGC(Visitor&);
     
     // Returns true if this structure is now marked.
-    bool markIfCheap(SlotVisitor&);
+    template<typename Visitor> bool markIfCheap(Visitor&);
     
     bool hasRareData() const
     {

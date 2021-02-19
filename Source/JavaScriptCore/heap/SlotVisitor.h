@@ -25,59 +25,76 @@
 
 #pragma once
 
+#include "AbstractSlotVisitor.h"
 #include "HandleTypes.h"
 #include "IterationStatus.h"
-#include "MarkStack.h"
-#include "RootMarkReason.h"
-#include "VisitRaceKey.h"
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/SharedTask.h>
-#include <wtf/text/CString.h>
 
 namespace JSC {
 
-class ConservativeRoots;
 class GCThreadSharedData;
-class Heap;
 class HeapCell;
 class HeapAnalyzer;
-class MarkedBlock;
 class MarkingConstraint;
 class MarkingConstraintSolver;
-template<typename T> class Weak;
-template<typename T, typename Traits> class WriteBarrierBase;
 
 typedef uint32_t HeapVersion;
 
-class SlotVisitor {
+class SlotVisitor final : public AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);
     WTF_MAKE_FAST_ALLOCATED;
+
+    using Base = AbstractSlotVisitor;
 
     friend class SetCurrentCellScope;
     friend class Heap;
 
 public:
+    class Context {
+    public:
+        ALWAYS_INLINE Context(AbstractSlotVisitor&, HeapCell*) { }
+    };
+
+    class SuppressGCVerifierScope {
+    public:
+        SuppressGCVerifierScope(SlotVisitor&) { }
+    };
+
+    class DefaultMarkingViolationAssertionScope {
+    public:
+#if ASSERT_ENABLED
+        DefaultMarkingViolationAssertionScope(SlotVisitor& visitor)
+            : m_visitor(visitor)
+        {
+            m_wasCheckingForDefaultMarkViolation = m_visitor.m_isCheckingForDefaultMarkViolation;
+            m_visitor.m_isCheckingForDefaultMarkViolation = false;
+        }
+
+        ~DefaultMarkingViolationAssertionScope()
+        {
+            m_visitor.m_isCheckingForDefaultMarkViolation = m_wasCheckingForDefaultMarkViolation;
+        }
+
+    private:
+        SlotVisitor& m_visitor;
+        bool m_wasCheckingForDefaultMarkViolation;
+#else
+        DefaultMarkingViolationAssertionScope(SlotVisitor&) { }
+#endif
+    };
+
     SlotVisitor(Heap&, CString codeName);
     ~SlotVisitor();
 
-    MarkStackArray& collectorMarkStack() { return m_collectorStack; }
-    MarkStackArray& mutatorMarkStack() { return m_mutatorStack; }
-    const MarkStackArray& collectorMarkStack() const { return m_collectorStack; }
-    const MarkStackArray& mutatorMarkStack() const { return m_mutatorStack; }
-    
-    VM& vm();
-    const VM& vm() const;
-    Heap* heap() const;
+    void append(const ConservativeRoots&) final;
 
-    void append(const ConservativeRoots&);
-    
     template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
     template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
-    void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
-    void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
-    
+    ALWAYS_INLINE void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
+    ALWAYS_INLINE void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
+
     // These don't require you to prove that you have a WriteBarrier<>. That makes sense
     // for:
     //
@@ -87,32 +104,27 @@ public:
     //
     // If you are not a root and you don't know what kind of barrier you have, then you
     // shouldn't call these methods.
-    void appendUnbarriered(JSValue);
-    void appendUnbarriered(JSValue*, size_t);
-    void appendUnbarriered(JSCell*);
+    ALWAYS_INLINE void appendUnbarriered(JSValue);
+    ALWAYS_INLINE void appendUnbarriered(JSValue*, size_t);
+    void appendUnbarriered(JSCell*) final;
     
     template<typename T>
     void append(const Weak<T>& weak);
     
-    void appendHiddenUnbarriered(JSValue);
-    void appendHiddenUnbarriered(JSCell*);
+    ALWAYS_INLINE void appendHiddenUnbarriered(JSValue);
+    void appendHiddenUnbarriered(JSCell*) final;
 
-    bool addOpaqueRoot(void*); // Returns true if the root was new.
-    
-    bool containsOpaqueRoot(void*) const;
+    bool isFirstVisit() const final { return m_isFirstVisit; }
 
-    bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
-
-    bool isFirstVisit() const { return m_isFirstVisit; }
+    bool isMarked(const void*) const final;
+    bool isMarked(MarkedBlock&, HeapCell*) const final;
+    bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
     void didStartMarking();
     void reset();
     void clearMarkStacks();
 
     size_t bytesVisited() const { return m_bytesVisited; }
-    size_t visitCount() const { return m_visitCount; }
-    
-    void addToVisitCount(size_t value) { m_visitCount += value; }
 
     void donate();
     void drain(MonotonicTime timeout = MonotonicTime::infinity());
@@ -135,24 +147,18 @@ public:
     
     // This informs the GC about auxiliary of some size that we are keeping alive. If you don't do
     // this then the space will be freed at end of GC.
-    void markAuxiliary(const void* base);
+    void markAuxiliary(const void* base) final;
 
-    void reportExtraMemoryVisited(size_t);
+    void reportExtraMemoryVisited(size_t) final;
 #if ENABLE(RESOURCE_USAGE)
-    void reportExternalMemoryVisited(size_t);
+    void reportExternalMemoryVisited(size_t) final;
 #endif
     
-    void dump(PrintStream&) const;
-
-    bool isAnalyzingHeap() const { return !!m_heapAnalyzer; }
-    HeapAnalyzer* heapAnalyzer() const { return m_heapAnalyzer; }
-    
-    RootMarkReason rootMarkReason() const { return m_rootMarkReason; }
-    void setRootMarkReason(RootMarkReason reason) { m_rootMarkReason = reason; }
+    void dump(PrintStream&) const final;
 
     HeapVersion markingVersion() const { return m_markingVersion; }
 
-    bool mutatorIsStopped() const { return m_mutatorIsStopped; }
+    bool mutatorIsStopped() const final { return m_mutatorIsStopped; }
     
     Lock& rightToRun() { return m_rightToRun; }
     
@@ -164,20 +170,17 @@ public:
     
     void optimizeForStoppedMutator();
     
-    void didRace(const VisitRaceKey&);
+    void didRace(const VisitRaceKey&) final;
     void didRace(JSCell* cell, const char* reason) { didRace(VisitRaceKey(cell, reason)); }
     
-    void visitAsConstraint(const JSCell*);
+    void visitAsConstraint(const JSCell*) final;
     
     bool didReachTermination();
     
-    void setIgnoreNewOpaqueRoots(bool value) { m_ignoreNewOpaqueRoots = value; }
-
     void donateAll();
-    
-    const char* codeName() const { return m_codeName.data(); }
-    
-    JS_EXPORT_PRIVATE void addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>>);
+
+    NO_RETURN_DUE_TO_CRASH void addParallelConstraintTask(RefPtr<SharedTask<void(AbstractSlotVisitor&)>>) final;
+    JS_EXPORT_PRIVATE void addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>>) final;
 
 private:
     friend class ParallelModeEnabler;
@@ -216,39 +219,25 @@ private:
 
     MarkStackArray& correspondingGlobalStack(MarkStackArray&);
 
-    MarkStackArray m_collectorStack;
-    MarkStackArray m_mutatorStack;
-    
-    size_t m_bytesVisited;
-    size_t m_visitCount;
-    size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
-    CheckedSize m_extraMemorySize { 0 };
-    bool m_isInParallelMode;
-    bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
+    bool m_isInParallelMode { false };
 
     HeapVersion m_markingVersion;
-    
-    Heap& m_heap;
+
+    size_t m_bytesVisited { 0 };
+    size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
+    CheckedSize m_extraMemorySize { 0 };
 
     HeapAnalyzer* m_heapAnalyzer { nullptr };
     JSCell* m_currentCell { nullptr };
-    RootMarkReason m_rootMarkReason { RootMarkReason::None };
     bool m_isFirstVisit { false };
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
     Lock m_rightToRun;
     
-    CString m_codeName;
-    
-    MarkingConstraint* m_currentConstraint { nullptr };
-    MarkingConstraintSolver* m_currentSolver { nullptr };
-    
     // Put padding here to mitigate false sharing between multiple SlotVisitors.
     char padding[64];
-public:
 #if ASSERT_ENABLED
-    bool m_isCheckingForDefaultMarkViolation;
-    bool m_isDraining;
+    bool m_isCheckingForDefaultMarkViolation { false };
 #endif
 };
 
@@ -269,25 +258,6 @@ public:
     
 private:
     SlotVisitor& m_stack;
-};
-
-class SetRootMarkReasonScope {
-public:
-    SetRootMarkReasonScope(SlotVisitor& visitor, RootMarkReason reason)
-        : m_visitor(visitor)
-        , m_previousReason(visitor.rootMarkReason())
-    {
-        m_visitor.setRootMarkReason(reason);
-    }
-
-    ~SetRootMarkReasonScope()
-    {
-        m_visitor.setRootMarkReason(m_previousReason);
-    }
-
-private:
-    SlotVisitor& m_visitor;
-    RootMarkReason m_previousReason;
 };
 
 } // namespace JSC

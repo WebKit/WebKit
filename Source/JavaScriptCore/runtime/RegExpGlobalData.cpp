@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,13 @@
 
 namespace JSC {
 
-void RegExpGlobalData::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void RegExpGlobalData::visitAggregateImpl(Visitor& visitor)
 {
     m_cachedResult.visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE(RegExpGlobalData);
 
 JSValue RegExpGlobalData::getBackref(JSGlobalObject* globalObject, unsigned i)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,31 +32,31 @@ namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 
-template<typename Func>
-void iterateCodeBlocksForGC(VM& vm, const Func& func)
+template<typename Func, typename Visitor>
+void iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
 {
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i))
-            worklist->iterateCodeBlocksForGC(vm, func);
+            worklist->iterateCodeBlocksForGC(visitor, vm, func);
     }
 }
 
-template<typename Func>
-void Worklist::iterateCodeBlocksForGC(VM& vm, const Func& func)
+template<typename Func, typename Visitor>
+void Worklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
 {
     LockHolder locker(*m_lock);
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
         Plan* plan = iter->value.get();
         if (plan->vm() != &vm)
             continue;
-        plan->iterateCodeBlocksForGC(func);
+        plan->iterateCodeBlocksForGC(visitor, func);
     }
 }
 
 #else // ENABLE(DFG_JIT)
 
-template<typename Func>
-void iterateCodeBlocksForGC(VM&, const Func&)
+template<typename Func, typename Visitor>
+void iterateCodeBlocksForGC(Visitor&, VM&, const Func&)
 {
 }
 

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -32,6 +32,7 @@
 #include "JSLock.h"
 #include "JSTypeInfo.h"
 #include "SlotVisitor.h"
+#include "SlotVisitorMacros.h"
 #include "SubspaceAccess.h"
 #include "TypedArrayType.h"
 #include "WriteBarrier.h"
@@ -167,8 +168,8 @@ public:
     size_t estimatedSizeInBytes(VM&) const;
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
 
-    static void visitChildren(JSCell*, SlotVisitor&);
-    static void visitOutputConstraints(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(inline);
+    DECLARE_VISIT_OUTPUT_CONSTRAINTS_WITH_MODIFIER(inline);
 
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 

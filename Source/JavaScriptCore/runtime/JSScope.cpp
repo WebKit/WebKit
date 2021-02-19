@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,13 +39,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSScope);
 
 const ClassInfo JSScope::s_info = { "Scope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
 
-void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSScope* thisObject = jsCast<JSScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_next);
 }
+
+DEFINE_VISIT_CHILDREN(JSScope);
 
 // Returns true if we found enough information to terminate optimization.
 static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op, InitializationMode initializationMode)

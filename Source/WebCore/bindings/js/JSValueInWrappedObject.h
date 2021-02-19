@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ public:
     operator JSC::JSValue() const;
     explicit operator bool() const;
     JSValueInWrappedObject& operator=(const JSValueInWrappedObject& other);
-    void visit(JSC::SlotVisitor&) const;
+    template<typename Visitor> void visit(Visitor&) const;
     void clear();
 
 private:
@@ -98,7 +98,8 @@ inline JSValueInWrappedObject& JSValueInWrappedObject::operator=(const JSValueIn
     return *this;
 }
 
-inline void JSValueInWrappedObject::visit(JSC::SlotVisitor& visitor) const
+template<typename Visitor>
+inline void JSValueInWrappedObject::visit(Visitor& visitor) const
 {
     return WTF::switchOn(m_value, [] (JSC::JSValue) {
         // Nothing to visit.
@@ -106,6 +107,9 @@ inline void JSValueInWrappedObject::visit(JSC::SlotVisitor& visitor) const
         visitor.append(value);
     });
 }
+
+template void JSValueInWrappedObject::visit(JSC::AbstractSlotVisitor&) const;
+template void JSValueInWrappedObject::visit(JSC::SlotVisitor&) const;
 
 inline void JSValueInWrappedObject::clear()
 {

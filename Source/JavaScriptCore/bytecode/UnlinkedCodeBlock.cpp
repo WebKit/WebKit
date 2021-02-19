@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,8 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     }
 }
 
-void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -93,6 +94,8 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
         extraMemory += thisObject->m_instructions->sizeInBytes();
     visitor.reportExtraMemoryVisited(extraMemory);
 }
+
+DEFINE_VISIT_CHILDREN(UnlinkedCodeBlock);
 
 size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {

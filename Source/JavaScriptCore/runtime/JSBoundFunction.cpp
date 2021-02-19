@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,7 +249,8 @@ void JSBoundFunction::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSBoundFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSBoundFunction* thisObject = jsCast<JSBoundFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -260,5 +261,7 @@ void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_boundArgs);
     visitor.append(thisObject->m_nameMayBeNull);
 }
+
+DEFINE_VISIT_CHILDREN(JSBoundFunction);
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -119,7 +119,8 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_postMessageNonCaching, (JSG
     return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_postMessage, 2>(globalObject, propertyName);
 }
 
-void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
 {
     if (Frame* frame = wrapped().frame())
         visitor.addOpaqueRoot(frame);
@@ -131,6 +132,8 @@ void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
     // to do this here.
     wrapped().visitJSEventListeners(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDOMWindow);
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

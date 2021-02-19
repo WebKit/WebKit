@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2006 Maks Orlovich
- *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -64,7 +64,7 @@ public:
 protected:
     explicit JSWrapperObject(VM&, Structure*);
 
-    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 };
 
 inline JSWrapperObject::JSWrapperObject(VM& vm, Structure* structure)

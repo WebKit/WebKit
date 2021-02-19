@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,13 +82,16 @@ void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
     ASSERT(inherits(vm, info()));
 }
 
-void JSWorkletGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWorkletGlobalScopeBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<JSWorkletGlobalScopeBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_proxy);
 }
+
+DEFINE_VISIT_CHILDREN(JSWorkletGlobalScopeBase);
 
 void JSWorkletGlobalScopeBase::destroy(JSCell* cell)
 {

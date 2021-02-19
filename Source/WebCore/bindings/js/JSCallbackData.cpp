@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,12 +95,16 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     return result;
 }
 
-void JSCallbackDataWeak::visitJSFunction(JSC::SlotVisitor& vistor)
+template<typename Visitor>
+void JSCallbackDataWeak::visitJSFunction(Visitor& visitor)
 {
-    vistor.append(m_callback);
+    visitor.append(m_callback);
 }
 
-bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor, const char** reason)
+template void JSCallbackDataWeak::visitJSFunction(JSC::AbstractSlotVisitor&);
+template void JSCallbackDataWeak::visitJSFunction(JSC::SlotVisitor&);
+
+bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, AbstractSlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))
         *reason = "Context is opaque root"; // FIXME: what is the context.

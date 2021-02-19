@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,14 +152,14 @@ public:
     const AccessCase& at(unsigned i) const { return *m_list[i]; }
     const AccessCase& operator[](unsigned i) const { return *m_list[i]; }
 
-    void visitAggregate(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;
     
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.
-    bool propagateTransitions(SlotVisitor&) const;
+    template<typename Visitor> bool propagateTransitions(Visitor&) const;
 
     void aboutToDie();
 

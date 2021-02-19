@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,8 @@ void SmallStrings::initializeCommonStrings(VM& vm)
     setIsInitialized(true);
 }
 
-void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
+template<typename Visitor>
+void SmallStrings::visitStrongReferences(Visitor& visitor)
 {
     m_needsToBeVisited = false;
     visitor.appendUnbarriered(m_emptyString);
@@ -83,6 +84,9 @@ void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
     visitor.appendUnbarriered(m_timedOutString);
     visitor.appendUnbarriered(m_okString);
 }
+
+template void SmallStrings::visitStrongReferences(AbstractSlotVisitor&);
+template void SmallStrings::visitStrongReferences(SlotVisitor&);
 
 SmallStrings::~SmallStrings()
 {

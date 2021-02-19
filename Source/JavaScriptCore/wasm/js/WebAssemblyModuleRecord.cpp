@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,8 @@ void WebAssemblyModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& v
     }
 }
 
-void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void WebAssemblyModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -87,6 +88,8 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_startFunction);
     visitor.append(thisObject->m_exportsObject);
 }
+
+DEFINE_VISIT_CHILDREN(WebAssemblyModuleRecord);
 
 void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instance)
 {

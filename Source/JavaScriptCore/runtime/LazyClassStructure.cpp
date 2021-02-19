@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,11 +72,15 @@ void LazyClassStructure::Initializer::setConstructor(JSObject* constructor)
     classStructure.m_constructor.set(vm, global, constructor);
 }
 
-void LazyClassStructure::visit(SlotVisitor& visitor)
+template<typename Visitor>
+void LazyClassStructure::visit(Visitor& visitor)
 {
     m_structure.visit(visitor);
     visitor.append(m_constructor);
 }
+
+template void LazyClassStructure::visit(AbstractSlotVisitor&);
+template void LazyClassStructure::visit(SlotVisitor&);
 
 void LazyClassStructure::dump(PrintStream& out) const
 {

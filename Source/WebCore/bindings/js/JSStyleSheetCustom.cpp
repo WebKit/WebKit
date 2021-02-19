@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,13 @@
 
 namespace WebCore {
 
-void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSStyleSheet::visitAdditionalChildren(Visitor& visitor)
 {
     visitor.addOpaqueRoot(root(&wrapped()));
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStyleSheet);
 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<StyleSheet>&& styleSheet)
 {

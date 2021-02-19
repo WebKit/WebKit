@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,10 @@ public:
         m_privateProperties->deletePrivateProperty(propertyName);
     }
 
-    void visitChildren(SlotVisitor& visitor)
+    DECLARE_VISIT_CHILDREN;
+
+    template<typename Visitor>
+    void visitChildren(Visitor& visitor)
     {
         JSPrivatePropertyMap* properties = m_privateProperties.get();
         if (!properties)
@@ -103,7 +106,8 @@ public:
             m_propertyMap.remove(propertyName.impl());
         }
 
-        void visitChildren(SlotVisitor& visitor)
+        template<typename Visitor>
+        void visitChildren(Visitor& visitor)
         {
             LockHolder locker(m_lock);
             for (auto& pair : m_propertyMap) {
@@ -216,13 +220,7 @@ private:
     static CallData getConstructData(JSCell*);
     static CallData getCallData(JSCell*);
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
-        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), JSCallbackObject<Parent>::info());
-        Parent::visitChildren(thisObject, visitor);
-        thisObject->m_callbackObjectData->visitChildren(visitor);
-    }
+    DECLARE_VISIT_CHILDREN;
 
     void init(JSGlobalObject*);
  
@@ -242,6 +240,16 @@ private:
     std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
     const ClassInfo* m_classInfo { nullptr };
 };
+
+template <class Parent>
+template<typename Visitor>
+void JSCallbackObject<Parent>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), JSCallbackObject<Parent>::info());
+    Parent::visitChildren(thisObject, visitor);
+    thisObject->m_callbackObjectData->visitChildren(visitor);
+}
 
 } // namespace JSC
 

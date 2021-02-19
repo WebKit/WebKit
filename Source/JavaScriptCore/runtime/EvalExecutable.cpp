@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,8 @@ auto EvalExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
     return ensureTemplateObjectMapImpl(m_templateObjectMap);
 }
 
-void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void EvalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -63,5 +64,7 @@ void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
             visitor.append(entry.value);
     }
 }
+
+DEFINE_VISIT_CHILDREN(EvalExecutable);
 
 } // namespace JSC

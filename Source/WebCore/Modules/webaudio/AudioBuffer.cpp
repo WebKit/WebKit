@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,11 +154,15 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
     return constructJSArray();
 }
 
-void AudioBuffer::visitChannelWrappers(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void AudioBuffer::visitChannelWrappers(Visitor& visitor)
 {
     for (auto& channelWrapper : m_channelWrappers)
         channelWrapper.visit(visitor);
 }
+
+template void AudioBuffer::visitChannelWrappers(JSC::AbstractSlotVisitor&);
+template void AudioBuffer::visitChannelWrappers(JSC::SlotVisitor&);
 
 RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
 {

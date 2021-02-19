@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,12 +39,15 @@
 namespace WebCore {
 using namespace JSC;
 
-void JSMutationObserver::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSMutationObserver::visitAdditionalChildren(Visitor& visitor)
 {
     wrapped().callback().visitJSFunction(visitor);
 }
 
-bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char**reason)
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMutationObserver);
+
+bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char**reason)
 {
     for (auto* node : jsCast<JSMutationObserver*>(handle.slot()->asCell())->wrapped().observedNodes()) {
         if (visitor.containsOpaqueRoot(root(node))) {

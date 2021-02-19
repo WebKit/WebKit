@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,11 +87,15 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
     }
 }
 
-void DesiredWeakReferences::visitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void DesiredWeakReferences::visitChildren(Visitor& visitor)
 {
     for (JSCell* target : m_references)
         visitor.appendUnbarriered(target);
 }
+
+template void DesiredWeakReferences::visitChildren(AbstractSlotVisitor&);
+template void DesiredWeakReferences::visitChildren(SlotVisitor&);
 
 } } // namespace JSC::DFG
 

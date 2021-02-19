@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +57,15 @@ void JSSetIterator::finishCreation(VM& vm)
         Base::internalField(index).set(vm, this, values[index]);
 }
 
-void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSSetIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<JSSetIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSSetIterator);
 
 JSValue JSSetIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSValue value)
 {

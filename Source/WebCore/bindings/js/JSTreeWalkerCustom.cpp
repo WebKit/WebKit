@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,10 +25,13 @@
 
 namespace WebCore {
 
-void JSTreeWalker::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSTreeWalker::visitAdditionalChildren(Visitor& visitor)
 {
     if (NodeFilter* filter = wrapped().filter())
         visitor.addOpaqueRoot(filter);
 }
 
-}
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTreeWalker);
+
+} // namespace WebCore

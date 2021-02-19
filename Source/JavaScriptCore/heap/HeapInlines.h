@@ -69,6 +69,7 @@ inline bool Heap::worldIsStopped() const
 
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
+    ASSERT(!m_isMarkingForGCVerifier);
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return cell->preciseAllocation().isMarked();

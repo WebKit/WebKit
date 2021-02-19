@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -267,13 +267,16 @@ void ClonedArguments::materializeSpecialsIfNecessary(JSGlobalObject* globalObjec
         materializeSpecials(globalObject);
 }
 
-void ClonedArguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void ClonedArguments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_callee);
 }
+
+DEFINE_VISIT_CHILDREN(ClonedArguments);
 
 } // namespace JSC
 

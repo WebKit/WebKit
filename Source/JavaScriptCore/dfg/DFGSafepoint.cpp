@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,28 +83,46 @@ void Safepoint::begin()
     }
 }
 
-void Safepoint::checkLivenessAndVisitChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void Safepoint::checkLivenessAndVisitChildren(Visitor& visitor)
 {
     RELEASE_ASSERT(m_didCallBegin);
 
     if (m_result.m_didGetCancelled)
         return; // We were cancelled during a previous GC!
     
-    if (!isKnownToBeLiveDuringGC())
+    if (!isKnownToBeLiveDuringGC(visitor))
         return;
     
     for (unsigned i = m_scannables.size(); i--;)
         m_scannables[i]->visitChildren(visitor);
 }
 
-bool Safepoint::isKnownToBeLiveDuringGC()
+template void Safepoint::checkLivenessAndVisitChildren(AbstractSlotVisitor&);
+template void Safepoint::checkLivenessAndVisitChildren(SlotVisitor&);
+
+template<typename Visitor>
+bool Safepoint::isKnownToBeLiveDuringGC(Visitor& visitor)
 {
     RELEASE_ASSERT(m_didCallBegin);
     
     if (m_result.m_didGetCancelled)
         return true; // We were cancelled during a previous GC, so let's not mess with it this time around - pretend it's live and move on.
     
-    return m_plan.isKnownToBeLiveDuringGC();
+    return m_plan.isKnownToBeLiveDuringGC(visitor);
+}
+
+template bool Safepoint::isKnownToBeLiveDuringGC(AbstractSlotVisitor&);
+template bool Safepoint::isKnownToBeLiveDuringGC(SlotVisitor&);
+
+bool Safepoint::isKnownToBeLiveAfterGC()
+{
+    RELEASE_ASSERT(m_didCallBegin);
+    
+    if (m_result.m_didGetCancelled)
+        return true; // We were cancelled during a previous GC, so let's not mess with it this time around - pretend it's live and move on.
+    
+    return m_plan.isKnownToBeLiveAfterGC();
 }
 
 void Safepoint::cancel()

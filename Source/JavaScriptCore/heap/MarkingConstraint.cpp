@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,11 +53,18 @@ void MarkingConstraint::resetStats()
 
 void MarkingConstraint::execute(SlotVisitor& visitor)
 {
+    ASSERT(!visitor.heap()->isMarkingForGCVerifier());
     VisitCounter visitCounter(visitor);
     executeImpl(visitor);
     m_lastVisitCount += visitCounter.visitCount();
     if (verboseMarkingConstraint && visitCounter.visitCount())
         dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in execute)");
+}
+
+void MarkingConstraint::executeSynchronously(AbstractSlotVisitor& visitor)
+{
+    prepareToExecuteImpl(NoLockingNecessary, visitor);
+    executeImpl(visitor);
 }
 
 double MarkingConstraint::quickWorkEstimate(SlotVisitor&)
@@ -72,6 +79,7 @@ double MarkingConstraint::workEstimate(SlotVisitor& visitor)
 
 void MarkingConstraint::prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor& visitor)
 {
+    ASSERT(!visitor.heap()->isMarkingForGCVerifier());
     dataLogIf(Options::logGC(), abbreviatedName());
     VisitCounter visitCounter(visitor);
     prepareToExecuteImpl(constraintSolvingLocker, visitor);
@@ -82,6 +90,7 @@ void MarkingConstraint::prepareToExecute(const AbstractLocker& constraintSolving
 
 void MarkingConstraint::doParallelWork(SlotVisitor& visitor, SharedTask<void(SlotVisitor&)>& task)
 {
+    ASSERT(!visitor.heap()->isMarkingForGCVerifier());
     VisitCounter visitCounter(visitor);
     task.run(visitor);
     if (verboseMarkingConstraint && visitCounter.visitCount())
@@ -92,7 +101,7 @@ void MarkingConstraint::doParallelWork(SlotVisitor& visitor, SharedTask<void(Slo
     }
 }
 
-void MarkingConstraint::prepareToExecuteImpl(const AbstractLocker&, SlotVisitor&)
+void MarkingConstraint::prepareToExecuteImpl(const AbstractLocker&, AbstractSlotVisitor&)
 {
 }
 

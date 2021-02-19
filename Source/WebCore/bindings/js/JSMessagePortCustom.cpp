@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,14 @@
 namespace WebCore {
 using namespace JSC;
 
-void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSMessagePort::visitAdditionalChildren(Visitor& visitor)
 {
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
     if (MessagePort* port = wrapped().locallyEntangledPort())
         visitor.addOpaqueRoot(port);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessagePort);
 
 } // namespace WebCore

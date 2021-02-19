@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,8 @@ void DirectEvalCodeCache::clear()
     m_cacheMap.clear();
 }
 
-void DirectEvalCodeCache::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void DirectEvalCodeCache::visitAggregateImpl(Visitor& visitor)
 {
     LockHolder locker(m_lock);
     EvalCacheMap::iterator end = m_cacheMap.end();
@@ -53,5 +54,6 @@ void DirectEvalCodeCache::visitAggregate(SlotVisitor& visitor)
         visitor.append(ptr->value);
 }
 
-} // namespace JSC
+DEFINE_VISIT_AGGREGATE(DirectEvalCodeCache);
 
+} // namespace JSC

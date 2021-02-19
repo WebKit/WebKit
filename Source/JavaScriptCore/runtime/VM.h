@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,6 +121,7 @@ class FastMallocAlignedMemoryAllocator;
 class GigacageAlignedMemoryAllocator;
 class HandleStack;
 class HasOwnPropertyCache;
+class HeapAnalyzer;
 class HeapProfiler;
 class Identifier;
 class Interpreter;
@@ -308,6 +309,10 @@ public:
 
     HeapProfiler* heapProfiler() const { return m_heapProfiler.get(); }
     JS_EXPORT_PRIVATE HeapProfiler& ensureHeapProfiler();
+
+    bool isAnalyzingHeap() const { return m_activeHeapAnalyzer; }
+    HeapAnalyzer* activeHeapAnalyzer() const { return m_activeHeapAnalyzer; }
+    void setActiveHeapAnalyzer(HeapAnalyzer* analyzer) { m_activeHeapAnalyzer = analyzer; }
 
 #if ENABLE(SAMPLING_PROFILER)
     SamplingProfiler* samplingProfiler() { return m_samplingProfiler.get(); }
@@ -1194,9 +1199,10 @@ public:
     bool didEnterVM { false };
 private:
     bool m_failNextNewCodeBlock { false };
-    DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     bool m_globalConstRedeclarationShouldThrow { true };
     bool m_shouldBuildPCToCodeOriginMapping { false };
+    DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
+    HeapAnalyzer* m_activeHeapAnalyzer { nullptr };
     std::unique_ptr<CodeCache> m_codeCache;
     std::unique_ptr<IntlCache> m_intlCache;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;

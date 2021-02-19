@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,11 +251,15 @@ void InByIdStatus::filter(const StructureSet& structureSet)
         m_state = NoInformation;
 }
 
-void InByIdStatus::markIfCheap(SlotVisitor& visitor)
+template<typename Visitor>
+void InByIdStatus::markIfCheap(Visitor& visitor)
 {
     for (InByIdVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
+
+template void InByIdStatus::markIfCheap(AbstractSlotVisitor&);
+template void InByIdStatus::markIfCheap(SlotVisitor&);
 
 bool InByIdStatus::finalize(VM& vm)
 {

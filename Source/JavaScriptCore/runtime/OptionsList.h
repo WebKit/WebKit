@@ -369,6 +369,8 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, alwaysGeneratePCToCodeOriginMap, false, Normal, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
     \
     v(Double, randomIntegrityAuditRate, 0.05, Normal, "Probability of random integrity audits [0.0 - 1.0]") \
+    v(Bool, verifyGC, false, Normal, nullptr) \
+    v(Bool, verboseVerifyGC, false, Normal, nullptr) \
     v(Bool, verifyHeap, false, Normal, nullptr) \
     v(Unsigned, numberOfGCCyclesToRecordForVerification, 3, Normal, nullptr) \
     \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2011, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,8 @@
 namespace WebCore {
 using namespace JSC;
 
-void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* location = wrapped().optionalLocation())
         visitor.addOpaqueRoot(location);
@@ -47,6 +48,8 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
     // JSEventTarget, so we need to do this here.
     wrapped().visitJSEventListeners(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWorkerGlobalScope);
 
 JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,14 @@
 namespace WebCore {
 using namespace JSC;
 
-void JSTextTrackList::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSTextTrackList::visitAdditionalChildren(Visitor& visitor)
 {
     visitor.addOpaqueRoot(root(wrapped().element()));
 }
     
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTextTrackList);
+
 } // namespace WebCore
 
 #endif

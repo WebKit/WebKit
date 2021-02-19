@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,14 +141,20 @@ ALWAYS_INLINE Structure* JSCell::structure(VM& vm) const
     return vm.getStructure(m_structureID);
 }
 
-inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSCell::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     visitor.appendUnbarriered(cell->structure(visitor.vm()));
 }
 
-inline void JSCell::visitOutputConstraints(JSCell*, SlotVisitor&)
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(inline, JSCell);
+
+template<typename Visitor>
+ALWAYS_INLINE void JSCell::visitOutputConstraintsImpl(JSCell*, Visitor&)
 {
 }
+
+DEFINE_VISIT_OUTPUT_CONSTRAINTS_WITH_MODIFIER(inline, JSCell);
 
 ALWAYS_INLINE VM& CallFrame::deprecatedVM() const
 {

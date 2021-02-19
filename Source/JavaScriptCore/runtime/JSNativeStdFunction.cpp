@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,12 +41,15 @@ JSNativeStdFunction::JSNativeStdFunction(VM& vm, NativeExecutable* executable, J
 {
 }
 
-void JSNativeStdFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSNativeStdFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSNativeStdFunction* thisObject = jsCast<JSNativeStdFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSNativeStdFunction);
 
 void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name)
 {

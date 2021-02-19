@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -312,7 +312,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 @end
 
-static void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void* root, bool lockAcquired)
+static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root, bool lockAcquired)
 {
     @autoreleasepool {
         JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:toRef(&vm)];
@@ -344,13 +344,13 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void
     }
 }
 
-void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void* root)
+void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root)
 {
     bool lockAcquired = false;
     scanExternalObjectGraph(vm, visitor, root, lockAcquired);
 }
 
-void scanExternalRememberedSet(JSC::VM& vm, JSC::SlotVisitor& visitor)
+void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
 {
     @autoreleasepool {
         JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:toRef(&vm)];

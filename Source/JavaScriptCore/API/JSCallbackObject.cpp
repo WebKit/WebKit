@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,9 @@ static JSC_DECLARE_CUSTOM_GETTER(callbackGetterJSNonFinalObjectCallbackObject);
 static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSNonFinalObjectCallbackObject);
 static JSC_DECLARE_CUSTOM_GETTER(callbackGetterJSGlobalObjectCallbackObject);
 static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSGlobalObjectCallbackObject);
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, JSCallbackObject<JSNonFinalObject>);
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, JSCallbackObject<JSGlobalObject>);
 
 // Define the two types of JSCallbackObjects we support.
 template <> const ClassInfo JSCallbackObject<JSNonFinalObject>::s_info = { "CallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };

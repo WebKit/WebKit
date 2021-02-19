@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -530,7 +530,8 @@ void GetByStatus::filter(const StructureSet& set)
         m_state = NoInformation;
 }
 
-void GetByStatus::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void GetByStatus::visitAggregateImpl(Visitor& visitor)
 {
     if (isModuleNamespace())
         m_moduleNamespaceData->m_identifier.visitAggregate(visitor);
@@ -538,11 +539,17 @@ void GetByStatus::visitAggregate(SlotVisitor& visitor)
         variant.visitAggregate(visitor);
 }
 
-void GetByStatus::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(GetByStatus);
+
+template<typename Visitor>
+void GetByStatus::markIfCheap(Visitor& visitor)
 {
     for (GetByIdVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
+
+template void GetByStatus::markIfCheap(AbstractSlotVisitor&);
+template void GetByStatus::markIfCheap(SlotVisitor&);
 
 bool GetByStatus::finalize(VM& vm)
 {

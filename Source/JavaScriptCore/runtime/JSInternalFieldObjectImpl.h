@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ public:
     static ptrdiff_t offsetOfInternalField(unsigned index) { return OBJECT_OFFSETOF(JSInternalFieldObjectImpl, m_internalFields) + index * sizeof(WriteBarrier<Unknown>); }
 
 protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     JSInternalFieldObjectImpl(VM& vm, Structure* structure)
         : Base(vm, structure)

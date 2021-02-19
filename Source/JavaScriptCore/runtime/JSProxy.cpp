@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012, 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSProxy);
 
 const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSProxy) };
 
-void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSProxy::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_target);
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSProxy);
 
 void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 {

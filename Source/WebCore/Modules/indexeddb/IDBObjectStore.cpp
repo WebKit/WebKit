@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -728,7 +728,8 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     }
 }
 
-void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
+template<typename Visitor>
+void IDBObjectStore::visitReferencedIndexes(Visitor& visitor) const
 {
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())
@@ -736,6 +737,9 @@ void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
     for (auto& index : m_deletedIndexes.values())
         visitor.addOpaqueRoot(index.get());
 }
+
+template void IDBObjectStore::visitReferencedIndexes(AbstractSlotVisitor&) const;
+template void IDBObjectStore::visitReferencedIndexes(SlotVisitor&) const;
 
 void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newName)
 {

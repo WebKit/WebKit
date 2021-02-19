@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -108,8 +108,9 @@ class JSObject : public JSCell {
 public:
     using Base = JSCell;
 
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
+
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
-    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*, VM&);
@@ -982,11 +983,11 @@ protected:
     JSObject(VM&, Structure*, Butterfly* = nullptr);
     
     // Visits the butterfly unless there is a race. Returns the structure if there was no race.
-    Structure* visitButterfly(SlotVisitor&);
+    template<typename Visitor> Structure* visitButterfly(Visitor&);
     
-    Structure* visitButterflyImpl(SlotVisitor&);
+    template<typename Visitor> Structure* visitButterflyImpl(Visitor&);
     
-    void markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor&, Butterfly*, Structure*, PropertyOffset maxOffset);
+    template<typename Visitor> void markAuxiliaryAndVisitOutOfLineProperties(Visitor&, Butterfly*, Structure*, PropertyOffset maxOffset);
 
     // Call this if you know that the object is in a mode where it has array
     // storage. This will assert otherwise.
@@ -1174,8 +1175,6 @@ protected:
     }
 };
 
-class JSFinalObject;
-
 // JSFinalObject is a type of JSObject that contains sufficient internal
 // storage to fully make use of the collector cell containing it.
 class JSFinalObject final : public JSObject {
@@ -1214,14 +1213,12 @@ public:
         return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
     }
 
-    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
     DECLARE_EXPORT_INFO;
 
 private:
     friend class LLIntOffsetsExtractor;
-
-    void visitChildrenCommon(SlotVisitor&);
 
     explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly)
         : JSObject(vm, structure, butterfly)
