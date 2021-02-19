@@ -204,9 +204,9 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 #endif
     preferences->setAllowFileAccessFromFileURLs(true);
     preferences->setJavaScriptRuntimeFlags({ });
-    auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
     auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(&inspectorProcessPool(inspectionLevel()));
+    pageConfiguration->setProcessPool(&WebKit::defaultInspectorProcessPool(inspectionLevel()));
     pageConfiguration->setPreferences(preferences.ptr());
     pageConfiguration->setPageGroup(pageGroup.ptr());
 

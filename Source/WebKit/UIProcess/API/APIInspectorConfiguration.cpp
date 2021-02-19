@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APIInspectorConfiguration.h"
 
+#include "WebProcessPool.h"
 #include "WebURLSchemeHandler.h"
 
 namespace API {
@@ -38,6 +39,16 @@ Ref<InspectorConfiguration> InspectorConfiguration::create()
 void InspectorConfiguration::addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&& urlSchemeHandler, const WTF::String& urlScheme)
 {
     m_customURLSchemes.append(std::make_pair(WTFMove(urlSchemeHandler), urlScheme));
+}
+
+WebKit::WebProcessPool* InspectorConfiguration::processPool()
+{
+    return m_processPool.get();
+}
+
+void InspectorConfiguration::setProcessPool(WebKit::WebProcessPool* processPool)
+{
+    m_processPool = processPool;
 }
 
 } // namespace API

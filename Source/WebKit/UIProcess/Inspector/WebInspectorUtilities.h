@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,12 @@ class WebProcessPool;
 // The inspector page groups are used to give different preferences to each
 // inspector level by setting a per-level page group identifier.
 unsigned inspectorLevelForPage(WebPageProxy*);
-String inspectorPageGroupIdentifierForPage(WebPageProxy*);
+String defaultInspectorPageGroupIdentifierForPage(WebPageProxy*);
 void trackInspectorPage(WebPageProxy* inspectorPage, WebPageProxy* inspectedPage);
 void untrackInspectorPage(WebPageProxy* inspectorPage);
 
-WebProcessPool& inspectorProcessPool(unsigned inspectionLevel);
+void prepareProcessPoolForInspector(WebProcessPool&);
+WebProcessPool& defaultInspectorProcessPool(unsigned inspectionLevel);
 bool isInspectorProcessPool(WebProcessPool&);
 bool isInspectorPage(WebPageProxy&);
 

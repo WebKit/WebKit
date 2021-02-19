@@ -1,3 +1,55 @@
+2021-02-18  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for using custom process pool and page group identifier
+        https://bugs.webkit.org/show_bug.cgi?id=222046
+        <rdar://74180162>
+
+        Reviewed by Timothy Hatcher.
+
+        These additions are necessary for clients to inject Web Extensions API into the tabs created
+        using _WKInspectorExtension.
+
+        Currently, Web Inspector pages use a private process pool that is separate from page content.
+        Since there is no way to set the pool's injected bundle path prior to opening Web Inspector,
+        we need to allow clients to explicitly configure and set a process pool to be used for
+        WebInspectorUI and any iframe tabs created using _WKInspectorExtension.
+
+        * UIProcess/API/APIInspectorConfiguration.cpp:
+        (API::InspectorConfiguration::processPool):
+        (API::InspectorConfiguration::setProcessPool):
+        * UIProcess/API/APIInspectorConfiguration.h:
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.h:
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.mm:
+        (-[_WKInspectorConfiguration setProcessPool:]):
+        (-[_WKInspectorConfiguration processPool]):
+        (-[_WKInspectorConfiguration applyToWebViewConfiguration:]):
+        (-[_WKInspectorConfiguration copyWithZone:]):
+        Add some plumbing for the new properties.
+
+        * UIProcess/Inspector/WebInspectorUtilities.h:
+        * UIProcess/Inspector/WebInspectorUtilities.cpp:
+        (WebKit::defaultInspectorPageGroupIdentifierForPage): Renamed.
+        (WebKit::defaultInspectorProcessPool): Renamed.
+        (WebKit::allInspectorProcessPools): Move to using a WeakHashSet since there could
+        be a number of pools specified by the client for different inspector instances.
+        (WebKit::prepareProcessPoolForInspector): Added.
+        (WebKit::isInspectorProcessPool): Turn this into a set lookup.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webViewConfiguration]):
+        Add logic to use a custom process pool or a default process pool (existing behavior).
+        Add logic to use a custom page group identifier or a default value (existing behavior).
+
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        Adapt to renames.
+
 2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb an Optional<PageIdentifier> through WebPasteboardProxy
