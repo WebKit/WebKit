@@ -150,8 +150,9 @@ private:
 
     void openITPDatabase();
     void addMissingTablesIfNecessary();
+    bool needsUpdatedPrivateClickMeasurementSchema();
     void enableForeignKeys();
-    bool isMigrationNecessary();
+    bool missingReferenceToObservedDomains();
     void migrateDataToNewTablesIfNecessary();
     void destroyStatements();
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String&, const String&) const;

@@ -1,3 +1,51 @@
+2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create SQLite skeleton implementation for PCM fraud prevention
+        https://bugs.webkit.org/show_bug.cgi?id=222149
+        <rdar://problem/74502655>
+
+        Reviewed by Jiewen Tan.
+
+        This patch updates the PCM sqlite tables to hold 3 extra values:
+        token content, a signature, and a keyID. Since we are updating the
+        schema of an existing table, we need to migrate existing PCM data to
+        the new tables. These will have "null" values in the new fields.
+
+        Extensive local testing.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::unattributedPrivateClickMeasurementSchemaV1):
+        (WebKit::unattributedPrivateClickMeasurementSchemaV1Alternate):
+        (WebKit::outdatedUnattributedColumns):
+        (WebKit::outdatedAttributedColumns):
+        Strings that will help us determine if the schema needs to be updated
+        and hold the existing columns so we can populate the new tables with
+        this data.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema):
+        Compare the existing schema with the new one. We only need to do this
+        for one PCM table because they are being changed in the same patch.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::missingReferenceToObservedDomains):
+        Name update now that there are various reasons to migrate data.
+
+        (WebKit::columnsToCopy):
+        I chose to migrate all tables even if only PCM tables need updating 
+        because it was simpler with existing code, and it gives us more
+        flexibility if we need to change more schemas in the future. Since
+        the migration happens only once each time we update the schema, this
+        is probably low cost. The columnsToCopy() function gives us the option
+        to specify data we need from existing tables when we migrate.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        For now, these are empty values that we will implement when PCM fraud
+        prevention pieces are in place.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isMigrationNecessary): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Request server public key to generate secret token
