@@ -28,7 +28,7 @@
               (event region
                 (rect (8,8) width=784 height=25)
               (editable region
-                (rect (10,10) width=138 height=22)
+                (rect (10,10) width=155 height=22)
               )
               )
             )

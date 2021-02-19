@@ -19,7 +19,7 @@ layer at (8,44) size 260x39
 layer at (8,44) size 260x39
   RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
 layer at (12,44) size 42x39 blendMode: plus-darker
-  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+  RenderButton {BUTTON} at (4,0) size 42x39 [color=#007AFF] [bgcolor=#000000]
 layer at (8,83) size 260x39 isolatesBlending
   RenderMedia {AUDIO} at (0,39) size 260x39
 layer at (8,83) size 260x39 scrollHeight 89
@@ -29,7 +29,7 @@ layer at (8,83) size 260x39
 layer at (8,83) size 260x39
   RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
 layer at (12,83) size 42x39 blendMode: plus-darker
-  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+  RenderButton {BUTTON} at (4,0) size 42x39 [color=#007AFF] [bgcolor=#000000]
 layer at (8,174) size 260x39 isolatesBlending
   RenderMedia {AUDIO} at (0,130) size 260x39
 layer at (8,174) size 260x39 scrollHeight 89
@@ -39,4 +39,4 @@ layer at (8,174) size 260x39 backgroundClip at (17,141) size 260x39 clip at (17,
 layer at (8,174) size 260x39 backgroundClip at (17,141) size 260x39 clip at (17,141) size 260x39
   RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
 layer at (12,174) size 42x39 backgroundClip at (17,141) size 260x39 clip at (17,141) size 260x39 blendMode: plus-darker
-  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+  RenderButton {BUTTON} at (4,0) size 42x39 [color=#007AFF] [bgcolor=#000000]

@@ -128,8 +128,8 @@ layer at (496,90) size 48x79
       RenderBR {BR} at (0,0) size 0x25
       RenderSlider {INPUT} at (2,27) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,11) size 25x3
-            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (0,12) size 25x0
+            RenderBlock {DIV} at (0,0) size 25x0 [bgcolor=#FFFFFF]
 layer at (608,84) size 116x76
   RenderBlock {DIV} at (600,30) size 116x76 [color=#ADD8E6] [border: (3px solid #000000)]
     RenderBlock {DIV} at (8,8) size 100x10 [bgcolor=#C0C0C0]
@@ -219,8 +219,8 @@ layer at (546,180) size 79x48
       RenderBR {BR} at (0,0) size 25x0
       RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,11) size 25x3
-            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (0,12) size 25x0
+            RenderBlock {DIV} at (0,0) size 25x0 [bgcolor=#FFFFFF]
 layer at (638,172) size 76x116
   RenderBlock {DIV} at (630,118) size 76x116 [color=#ADD8E6] [border: (3px solid #000000)]
     RenderBlock {DIV} at (8,8) size 10x100 [bgcolor=#C0C0C0]
@@ -310,8 +310,8 @@ layer at (507,301) size 79x48
       RenderBR {BR} at (0,0) size 25x0
       RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,11) size 25x3
-            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (0,12) size 25x0
+            RenderBlock {DIV} at (0,0) size 25x0 [bgcolor=#FFFFFF]
 layer at (618,293) size 76x116
   RenderBlock {DIV} at (610,239) size 76x116 [color=#ADD8E6] [border: (3px solid #000000)]
     RenderBlock {DIV} at (8,8) size 10x100 [bgcolor=#C0C0C0]

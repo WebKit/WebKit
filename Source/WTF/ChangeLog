@@ -1,3 +1,15 @@
+2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Enable the new appearance by default
+        https://bugs.webkit.org/show_bug.cgi?id=222015
+        <rdar://problem/74415537>
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+        Enable the iOS Form Control Refresh.
+
 2021-02-18  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 Relative Color Syntax

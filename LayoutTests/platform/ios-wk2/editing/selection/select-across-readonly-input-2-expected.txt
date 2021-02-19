@@ -15,11 +15,11 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (0,2) size 59x30 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
         RenderText {#text} at (58,7) size 5x19
           text run at (58,7) width 5: " "
-        RenderInline {SPAN} at (0,0) size 38x19
-          RenderText {#text} at (62,7) size 38x19
-            text run at (62,7) width 38: "world"
+        RenderInline {SPAN} at (0,0) size 39x19
+          RenderText {#text} at (62,7) size 39x19
+            text run at (62,7) width 39: "world"
         RenderText {#text} at (0,0) size 0x0
 layer at (17,126) size 41x20
   RenderBlock {DIV} at (9,4) size 41x21
-    RenderText {#text} at (0,0) size 34x20
-      text run at (0,0) width 34: "hello"
+    RenderText {#text} at (0,0) size 35x20
+      text run at (0,0) width 35: "hello"

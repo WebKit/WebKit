@@ -327,11 +327,11 @@ IOSFormControlRefreshEnabled:
   condition: ENABLE(IOS_FORM_CONTROL_REFRESH)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 IPCTestingAPIEnabled:
   type: bool

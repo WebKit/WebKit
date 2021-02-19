@@ -292,7 +292,7 @@ TEST(DragAndDropTests, ImageInLinkToInput)
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2156, 241, 2, 232), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 241, 2, 240), [simulator finalSelectionStartRect]);
     checkSuggestedNameAndEstimatedSize(simulator.get(), @"icon.png", { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypePNG, 0);
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
@@ -384,7 +384,7 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1089, 203, 2, 232), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 203, 2, 240), [simulator finalSelectionStartRect]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
@@ -465,7 +465,7 @@ TEST(DragAndDropTests, TextAreaToInput)
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1089, 241, 2, 232), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1033, 241, 2, 240), [simulator finalSelectionStartRect]);
 }
 
 TEST(DragAndDropTests, SinglePlainTextWordTypeIdentifiers)
@@ -532,7 +532,7 @@ TEST(DragAndDropTests, LinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2156, 273, 2, 232), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 273, 2, 240), [simulator finalSelectionStartRect]);
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypeURL, 0);
 }
 
@@ -550,7 +550,7 @@ TEST(DragAndDropTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2156, 241, 2, 232), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 241, 2, 240), [simulator finalSelectionStartRect]);
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypeURL, 0);
 }
 

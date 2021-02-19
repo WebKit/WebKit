@@ -7,7 +7,7 @@ window.jsTestIsAsync = true;
 
 function runTest() {
     var bounds = color_input_element.getBoundingClientRect();
-    var range = document.caretRangeFromPoint(bounds.left + 10, bounds.top + 10);
+    var range = document.caretRangeFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
     var shadow_tree_container = range.commonAncestorContainer;
     shadow_tree_container.prepend("foo");
     color_input_element.disabled = true;

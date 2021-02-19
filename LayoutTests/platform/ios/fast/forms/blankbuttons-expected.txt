@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (12,3) size 35x14
-          RenderText at (0,0) size 35x14
-            text run at (0,0) width 35: "Submit"
-      RenderBR {BR} at (62,1) size 1x19
-      RenderButton {INPUT} at (2,26) size 53x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (12,3) size 29x14
-          RenderText at (0,0) size 29x14
-            text run at (0,0) width 29: "Reset"
-      RenderBR {BR} at (56,25) size 1x19
+      RenderButton {INPUT} at (2,2) size 62x20 [color=#FFFFFF] [bgcolor=#167AFF]
+        RenderBlock (anonymous) at (11,3) size 40x14
+          RenderText at (0,0) size 40x14
+            text run at (0,0) width 40: "Submit"
+      RenderBR {BR} at (65,1) size 1x19
+      RenderButton {INPUT} at (2,26) size 52x20 [color=#007AFF] [bgcolor=#EEEEEE]
+        RenderBlock (anonymous) at (11,3) size 30x14
+          RenderText at (0,0) size 30x14
+            text run at (0,0) width 30: "Reset"
+      RenderBR {BR} at (55,25) size 1x19

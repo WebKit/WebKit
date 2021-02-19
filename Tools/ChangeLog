@@ -1,3 +1,25 @@
+2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Enable the new appearance by default
+        https://bugs.webkit.org/show_bug.cgi?id=222015
+        <rdar://problem/74415537>
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined tests to account for changes to <input> and
+        <textarea> elements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (DocumentEditingContext.SpatialRequestInTextField):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (DragAndDropTests.BackgroundImageLinkToInput):
+        (DragAndDropTests.ContentEditableToTextarea):
+        (DragAndDropTests.ImageInLinkToInput):
+        (DragAndDropTests.LinkToInput):
+        (DragAndDropTests.TextAreaToInput):
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (KeyboardInputTests.SelectionClipRectsWhenPresentingInputView):
+
 2021-02-19  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Ensure that the test failures are listed in sorted order

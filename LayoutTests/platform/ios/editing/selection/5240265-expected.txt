@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
           text run at (475,20) width 298: "The editable region should not be focused, but"
           text run at (0,40) width 246: "the text inside of it should be selected."
       RenderBlock (anonymous) at (0,76) size 784x24
-        RenderButton {INPUT} at (2,2) size 82x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (12,3) size 58x14
-            RenderText at (0,0) size 58x14
-              text run at (0,0) width 58: "Click on me"
+        RenderButton {INPUT} at (2,2) size 84x20 [color=#007AFF] [bgcolor=#EEEEEE]
+          RenderBlock (anonymous) at (11,3) size 62x14
+            RenderText at (0,0) size 62x14
+              text run at (0,0) width 62: "Click on me"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,100) size 784x20
         RenderText {#text} at (0,0) size 182x19

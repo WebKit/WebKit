@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 22x19
                   text run at (2,2) width 22: "foo"
         RenderBlock (anonymous) at (0,30) size 784x24
-          RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 35x14
-              RenderText at (0,0) size 35x14
-                text run at (0,0) width 35: "Submit"
+          RenderButton {INPUT} at (2,2) size 62x20 [color=#FFFFFF] [bgcolor=#167AFF]
+            RenderBlock (anonymous) at (11,3) size 40x14
+              RenderText at (0,0) size 40x14
+                text run at (0,0) width 40: "Submit"
           RenderText {#text} at (0,0) size 0x0
