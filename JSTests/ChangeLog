@@ -1,3 +1,12 @@
+2021-02-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Fix Test262 expectations for static private methods
+        https://bugs.webkit.org/show_bug.cgi?id=222170
+
+        Unreviewed, update test262/expectations.yaml
+
+        * test262/expectations.yaml:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Simplify excludedSet handling in object rest expression
