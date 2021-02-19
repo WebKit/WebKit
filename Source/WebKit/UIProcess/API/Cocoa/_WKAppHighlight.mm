@@ -27,8 +27,13 @@
 #import "_WKAppHighlight.h"
 
 #import "CocoaImage.h"
+#import <wtf/RetainPtr.h>
 
-@implementation _WKAppHighlight
+@implementation _WKAppHighlight {
+    RetainPtr<NSData> _highlight;
+    RetainPtr<NSString> _text;
+    RetainPtr<CocoaImage> _image;
+}
 
 - (instancetype)initWithHighlight:(NSData *)highlight text:(NSString *)text image:(CocoaImage *)image
 {
@@ -40,6 +45,21 @@
     _image = image;
 
     return self;
+}
+
+- (NSData *)highlight
+{
+    return _highlight.get();
+}
+
+- (NSString *)text
+{
+    return _text.get();
+}
+
+- (CocoaImage *)image
+{
+    return _image.get();
 }
 
 @end

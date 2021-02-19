@@ -1,3 +1,17 @@
+2021-02-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly retain properties in _WKAppHighlight
+        https://bugs.webkit.org/show_bug.cgi?id=222151
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/_WKAppHighlight.h:
+        * UIProcess/API/Cocoa/_WKAppHighlight.mm:
+        (-[_WKAppHighlight initWithHighlight:text:image:]):
+        (-[_WKAppHighlight highlight]):
+        (-[_WKAppHighlight text]):
+        (-[_WKAppHighlight image]):
+
 2021-02-18  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in IPC::decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)

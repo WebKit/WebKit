@@ -36,14 +36,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic, readonly, copy) NSData *highlight;
+@property (nonatomic, readonly, strong) NSData *highlight;
 
-@property (nonatomic, readonly, copy) NSString *text;
+@property (nonatomic, readonly, strong) NSString *text;
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly, copy) UIImage *image;
+@property (nonatomic, readonly, strong) UIImage *image;
 #else
-@property (nonatomic, readonly, copy) NSImage *image;
+@property (nonatomic, readonly, strong) NSImage *image;
 #endif
 
 
