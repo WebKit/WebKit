@@ -1,3 +1,15 @@
+2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        MotionMark scores are super sensitive to a single long frame
+        https://bugs.webkit.org/show_bug.cgi?id=220847
+        <rdar://problem/74152743>
+
+        Unreviewed.
+
+        Upgrade motionmark1.1.plan to r273122.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+
 2021-02-18  Ricky Mondello  <rmondello@apple.com>
 
         Unconditionally return information in _autofillContext SPI when a field is focused
