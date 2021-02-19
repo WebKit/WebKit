@@ -1,3 +1,14 @@
+2021-02-18  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 Relative Color Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=221880
+
+        Reviewed by Darin Adler.
+
+        * fast/css/parsing-relative-color-syntax-expected.txt: Added.
+        * fast/css/parsing-relative-color-syntax.html: Added.
+        Add basic parsing and computed style computation tests for relative color syntax.
+
 2021-02-18  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening debug OffscreenCanvas crashes

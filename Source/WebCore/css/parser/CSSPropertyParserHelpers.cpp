@@ -690,6 +690,27 @@ RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(url.toString(), CSSUnitType::CSS_URI);
 }
 
+static Color consumeOriginColor(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    auto value = consumeColor(args, context);
+    if (!value)
+        return { };
+
+    if (value->isRGBColor())
+        return value->color();
+
+    ASSERT(value->isValueID());
+    auto keyword = value->valueID();
+
+    // FIXME: We don't have enough context in the parser to resolving a system keyword
+    // correctly. We should package up the relative color parameters and resolve the
+    // whole thing at the appropriate time when the origin color is a system keyword.
+    if (StyleColor::isSystemColor(keyword))
+        return { };
+
+    return StyleColor::colorFromKeyword(keyword, { });
+}
+
 static Optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
 {
     if (!consumeSlashIncludingWhitespace(range))
@@ -697,6 +718,17 @@ static Optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
 
     if (auto alphaParameter = consumeNumberOrPercentDividedBy100Raw(range))
         return clampTo(*alphaParameter, 0.0, 1.0);
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeOptionalAlphaOrIdent(CSSParserTokenRange& range)
+{
+    if (auto alpha = consumeOptionalAlpha(range))
+        return { *alpha };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
 
     return WTF::nullopt;
 }
@@ -709,9 +741,78 @@ static Optional<double> consumeHue(CSSParserTokenRange& range, const CSSParserCo
     return consumeNumberRaw(range);
 }
 
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeHueOrIdent(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (auto hue = consumeHue(range, context))
+        return { *hue };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
 static double normalizeHue(double hue)
 {
     return std::fmod(std::fmod(hue, 360.0) + 360.0, 360.0);
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeNumberOrIdent(CSSParserTokenRange& range)
+{
+    if (auto number = consumeNumberRaw(range))
+        return { *number };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumePercentOrIdent(CSSParserTokenRange& range)
+{
+    if (auto percent = consumePercentRaw(range))
+        return { *percent };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType> static auto extractChannelValue(CSSValueID channel, const ColorType& originColor) -> typename ColorType::ComponentType
+{
+    auto components = asColorComponents(originColor);
+    switch (channel) {
+    case C1:
+        return components[0];
+    case C2:
+        return components[1];
+    case C3:
+        return components[2];
+    case AlphaChannel:
+        return components[3];
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return 0;
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType, typename ValueTransformer> static decltype(auto) resolveRelativeColorChannel(const Variant<double, CSSValueID>& parsedChannel, const ColorType& originColor, ValueTransformer&& valueTransformer)
+{
+    return switchOn(parsedChannel,
+        [&] (double value) {
+            return valueTransformer(value);
+        },
+        [&] (CSSValueID channel) {
+            return extractChannelValue<C1, C2, C3, AlphaChannel>(channel, originColor);
+        }
+    );
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType> static decltype(auto) resolveRelativeColorChannel(const Variant<double, CSSValueID>& parsedChannel, const ColorType& originColor)
+{
+    return resolveRelativeColorChannel<C1, C2, C3, AlphaChannel>(parsedChannel, originColor, [](auto value) { return value; });
 }
 
 enum class RGBComponentType { Number, Percentage };
@@ -748,10 +849,109 @@ static Optional<double> consumeRGBOrHSLOptionalAlpha(CSSParserTokenRange& args, 
     return consumeNumberOrPercentDividedBy100Raw(args);
 }
 
-static Color parseRGBParameters(CSSParserTokenRange& range, const CSSParserContext&)
+struct RelativeRGBComponent {
+    Variant<double, CSSValueID> value;
+    Optional<RGBComponentType> type;
+};
+
+template<CSSValueID C> static Optional<RelativeRGBComponent> consumeRelativeRGBComponent(CSSParserTokenRange& args, Optional<RGBComponentType> componentType)
+{
+    if (!componentType) {
+        if (auto number = consumeNumberRaw(args))
+            return RelativeRGBComponent { *number, RGBComponentType::Number };
+        if (auto percent = consumePercentRaw(args))
+            return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, WTF::nullopt };
+        return WTF::nullopt;
+    }
+
+    switch (*componentType) {
+    case RGBComponentType::Number: {
+        if (auto number = consumeNumberRaw(args))
+            return RelativeRGBComponent { *number, RGBComponentType::Number };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, RGBComponentType::Number };
+        return WTF::nullopt;
+    }
+    case RGBComponentType::Percentage: {
+        if (auto percent = consumePercentRaw(args))
+            return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, RGBComponentType::Percentage };
+        return WTF::nullopt;
+    }
+    }
+}
+
+static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    Optional<RGBComponentType> componentType;
+    auto redResult = consumeRelativeRGBComponent<CSSValueR>(args, componentType);
+    if (!redResult)
+        return { };
+    auto red = redResult->value;
+    componentType = redResult->type;
+
+    auto greenResult = consumeRelativeRGBComponent<CSSValueG>(args, componentType);
+    if (!greenResult)
+        return { };
+    auto green = greenResult->value;
+    componentType = greenResult->type;
+
+    auto blueResult = consumeRelativeRGBComponent<CSSValueB>(args, componentType);
+    if (!blueResult)
+        return { };
+    auto blue = blueResult->value;
+    componentType = blueResult->type;
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    // FIXME: Do we want to being doing this in uint8_t values? Or should we use 
+    // higher precision and clamp at the end? It won't make a difference until we
+    // support calculations on the origin's components.
+    auto originColorAsSRGB = originColor.toSRGBALossy<uint8_t>();
+
+    auto resolvedComponentType = componentType.valueOr(RGBComponentType::Percentage);
+    auto channelResolver = [resolvedComponentType](auto value) {
+        return clampRGBComponent(value, resolvedComponentType);
+    };
+
+    auto resolvedRed = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(red, originColorAsSRGB, channelResolver);
+    auto resolvedGreen = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(green, originColorAsSRGB, channelResolver);
+    auto resolvedBlue = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(blue, originColorAsSRGB, channelResolver);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(*alpha, originColorAsSRGB, [](auto value) {
+        return convertFloatAlphaTo<uint8_t>(value);
+    });
+
+    return SRGBA<uint8_t> { resolvedRed, resolvedGreen, resolvedBlue, resolvedAlpha };
+}
+
+enum class RGBFunctionMode { RGB, RGBA };
+
+template<RGBFunctionMode Mode> static Color parseRGBParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
     auto args = consumeFunction(range);
+
+    if constexpr (Mode == RGBFunctionMode::RGB) {
+        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+            return parseRelativeRGBParameters(args, context);
+    }
 
     struct InitialComponent {
         double value;
@@ -811,10 +1011,63 @@ static Color parseRGBParameters(CSSParserTokenRange& range, const CSSParserConte
     return SRGBA<uint8_t> { normalizedRed, normalizedGreen, normalizedBlue, normalizedAlpha };
 }
 
-static Color parseHSLParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto saturation = consumePercentOrIdent<CSSValueS>(args);
+    if (!saturation)
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>();
+
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*hue, originColorAsHSL, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedSaturation = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*saturation, originColorAsHSL, [](auto saturation) {
+        return clampTo(saturation, 0.0, 100.0);
+    });
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*lightness, originColorAsHSL, [](auto lightness) {
+        return clampTo(lightness, 0.0, 100.0);
+    });
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*alpha, originColorAsHSL);
+
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(resolvedHue), static_cast<float>(resolvedSaturation), static_cast<float>(resolvedLightness), static_cast<float>(resolvedAlpha) });
+}
+
+enum class HSLFunctionMode { HSL, HSLA };
+
+template<HSLFunctionMode Mode> static Color parseHSLParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     auto args = consumeFunction(range);
+
+    if constexpr (Mode == HSLFunctionMode::HSL) {
+        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+            return parseRelativeHSLParameters(args, context);
+    }
 
     auto hue = consumeHue(args, context);
     if (!hue)
@@ -841,9 +1094,9 @@ static Color parseHSLParameters(CSSParserTokenRange& range, const CSSParserConte
         return { };
 
     auto normalizedHue = normalizeHue(*hue);
-    auto normalizedSaturation = clampTo<double>(*saturation, 0.0, 100.0);
-    auto normalizedLightness = clampTo<double>(*lightness, 0.0, 100.0);
-    auto normalizedAlpha = clampTo<double>(*alpha, 0.0, 1.0);
+    auto normalizedSaturation = clampTo(*saturation, 0.0, 100.0);
+    auto normalizedLightness = clampTo(*lightness, 0.0, 100.0);
+    auto normalizedAlpha = clampTo(*alpha, 0.0, 1.0);
 
     return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(normalizedAlpha) });
 }
@@ -854,12 +1107,12 @@ struct WhitenessBlackness {
 };
 static WhitenessBlackness normalizeWhitenessBlackness(double whiteness, double blackness)
 {
-    WhitenessBlackness result;
-
     //   Values outside of these ranges are not invalid, but are clamped to the
     //   ranges defined here at computed-value time.
-    result.whiteness = clampTo<double>(whiteness, 0, 100);
-    result.blackness = clampTo<double>(blackness, 0, 100);
+    WhitenessBlackness result {
+        clampTo(whiteness, 0.0, 100.0),
+        clampTo(blackness, 0.0, 100.0)
+    };
 
     //   If the sum of these two arguments is greater than 100%, then at
     //   computed-value time they are further normalized to add up to 100%, with
@@ -872,10 +1125,57 @@ static WhitenessBlackness normalizeWhitenessBlackness(double whiteness, double b
     return result;
 }
 
+static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto whiteness = consumePercentOrIdent<CSSValueW>(args);
+    if (!whiteness)
+        return { };
+
+    auto blackness = consumePercentOrIdent<CSSValueB>(args);
+    if (!blackness)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>();
+
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*hue, originColorAsHWB, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedWhiteness = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*whiteness, originColorAsHWB);
+    auto resolvedBlackness = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*blackness, originColorAsHWB);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*alpha, originColorAsHWB);
+
+    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(resolvedWhiteness, resolvedBlackness);
+
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(resolvedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(resolvedAlpha) });
+}
+
 static Color parseHWBParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueHwb);
     auto args = consumeFunction(range);
+
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeHWBParameters(args, context);
 
     auto hue = consumeHue(args, context);
     if (!hue)
@@ -902,10 +1202,55 @@ static Color parseHWBParameters(CSSParserTokenRange& range, const CSSParserConte
     return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) });
 }
 
-static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserContext&)
+static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto aValue = consumeNumberOrIdent<CSSValueA>(args);
+    if (!aValue)
+        return { };
+
+    auto bValue = consumeNumberOrIdent<CSSValueB>(args);
+    if (!bValue)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsLab = originColor.toColorTypeLossy<Lab<float>>();
+
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*lightness, originColorAsLab, [](auto lightness) {
+        return std::max(0.0, lightness);
+    });
+    auto resolvedAValue = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*aValue, originColorAsLab);
+    auto resolvedBValue = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*bValue, originColorAsLab);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*alpha, originColorAsLab);
+
+    return Lab<float> { static_cast<float>(resolvedLightness), static_cast<float>(resolvedAValue), static_cast<float>(resolvedBValue), static_cast<float>(resolvedAlpha) };
+}
+
+static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLab);
     auto args = consumeFunction(range);
+
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeLabParameters(args, context);
 
     auto lightness = consumePercentRaw(args);
     if (!lightness)
@@ -931,10 +1276,57 @@ static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserConte
     return Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(*aValue), static_cast<float>(*bValue), static_cast<float>(*alpha) };
 }
 
+static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto chroma = consumeNumberOrIdent<CSSValueC>(args);
+    if (!chroma)
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    auto originColorAsLCH = originColor.toColorTypeLossy<LCHA<float>>();
+
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*lightness, originColorAsLCH, [](auto lightness) {
+        return std::max(0.0, lightness);
+    });
+    auto resolvedChroma = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*chroma, originColorAsLCH, [](auto chroma) {
+        return std::max(0.0, chroma);
+    });
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*hue, originColorAsLCH, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*alpha, originColorAsLCH);
+
+    return LCHA<float> { static_cast<float>(resolvedLightness), static_cast<float>(resolvedChroma), static_cast<float>(resolvedHue), static_cast<float>(resolvedAlpha) };
+}
+
 static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLch);
     auto args = consumeFunction(range);
+
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeLCHParameters(args, context);
 
     auto lightness = consumePercentRaw(args);
     if (!lightness)
@@ -1131,12 +1523,16 @@ static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserConte
     Color color;
     switch (functionId) {
     case CSSValueRgb:
+        color = parseRGBParameters<RGBFunctionMode::RGB>(colorRange, context);
+        break;
     case CSSValueRgba:
-        color = parseRGBParameters(colorRange, context);
+        color = parseRGBParameters<RGBFunctionMode::RGBA>(colorRange, context);
         break;
     case CSSValueHsl:
+        color = parseHSLParameters<HSLFunctionMode::HSL>(colorRange, context);
+        break;
     case CSSValueHsla:
-        color = parseHSLParameters(colorRange, context);
+        color = parseHSLParameters<HSLFunctionMode::HSLA>(colorRange, context);
         break;
     case CSSValueHwb:
         color = parseHWBParameters(colorRange, context);

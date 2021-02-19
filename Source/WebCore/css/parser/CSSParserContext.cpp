@@ -77,6 +77,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , legacyOverflowScrollingTouchEnabled { shouldEnableLegacyOverflowScrollingTouch(document) }
 #endif
     , overscrollBehaviorEnabled { document.settings().overscrollBehaviorEnabled() }
+    , relativeColorSyntaxEnabled { document.settings().cssRelativeColorSyntaxEnabled() }
     , scrollBehaviorEnabled { document.settings().CSSOMViewSmoothScrollingEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
 #if ENABLE(TEXT_AUTOSIZING)
@@ -113,6 +114,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.legacyOverflowScrollingTouchEnabled == b.legacyOverflowScrollingTouchEnabled
 #endif
         && a.overscrollBehaviorEnabled == b.overscrollBehaviorEnabled
+        && a.relativeColorSyntaxEnabled == b.relativeColorSyntaxEnabled
         && a.scrollBehaviorEnabled == b.scrollBehaviorEnabled
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
 #if ENABLE(TEXT_AUTOSIZING)

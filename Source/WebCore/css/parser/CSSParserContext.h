@@ -67,6 +67,7 @@ public:
     bool legacyOverflowScrollingTouchEnabled { false };
 #endif
     bool overscrollBehaviorEnabled { false };
+    bool relativeColorSyntaxEnabled { false };
     bool scrollBehaviorEnabled { false };
     bool springTimingFunctionEnabled { false };
 #if ENABLE(TEXT_AUTOSIZING)
@@ -102,30 +103,34 @@ struct CSSParserContextHash {
         if (!key.charset.isEmpty())
             hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0
-#if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 1
-#endif
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-            & key.legacyOverflowScrollingTouchEnabled       << 2
-#endif
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 3
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 4
-            & key.springTimingFunctionEnabled               << 5
+            & key.hasDocumentSecurityOrigin                 << 1
+            & key.isContentOpaque                           << 2
+            & key.useSystemAppearance                       << 3
+            & key.aspectRatioEnabled                        << 4
+            & key.colorFilterEnabled                        << 5
             & key.constantPropertiesEnabled                 << 6
-            & key.colorFilterEnabled                        << 7
-            & key.deferredCSSParserEnabled                  << 8
-            & key.hasDocumentSecurityOrigin                 << 9
-            & key.useSystemAppearance                       << 10
-#if ENABLE(ATTACHMENT_ELEMENT)
-            & key.attachmentEnabled                         << 11
+            & key.deferredCSSParserEnabled                  << 7
+            & key.enforcesCSSMIMETypeInNoQuirksMode         << 8
+            & key.individualTransformPropertiesEnabled      << 9
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+            & key.legacyOverflowScrollingTouchEnabled       << 10
 #endif
-            & key.scrollBehaviorEnabled                     << 12
-            & key.individualTransformPropertiesEnabled      << 13
-            & key.overscrollBehaviorEnabled                 << 14
+            & key.overscrollBehaviorEnabled                 << 11
+            & key.relativeColorSyntaxEnabled                << 12
+            & key.scrollBehaviorEnabled                     << 13
+            & key.springTimingFunctionEnabled               << 14
+#if ENABLE(TEXT_AUTOSIZING)
+            & key.textAutosizingEnabled                     << 15
+#endif
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-            & key.transformStyleOptimized3DEnabled          << 15
+            & key.transformStyleOptimized3DEnabled          << 16
 #endif
-            & key.mode                                      << 16; // Keep this last.
+            & key.useLegacyBackgroundSizeShorthandBehavior  << 17
+            & key.focusVisibleEnabled                       << 18
+#if ENABLE(ATTACHMENT_ELEMENT)
+            & key.attachmentEnabled                         << 19
+#endif
+            & key.mode                                      << 20; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

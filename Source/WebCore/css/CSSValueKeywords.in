@@ -1269,6 +1269,25 @@ lab
 lch
 //color
 
+// relative color identifiers
+// from
+r
+g
+b
+h
+s
+l
+// h
+w
+// b
+// l
+a
+// b
+// l
+c
+// h
+// alpha
+
 // transform
 matrix
 matrix3d

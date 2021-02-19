@@ -1,3 +1,14 @@
+2021-02-18  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 Relative Color Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=221880
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add new experimental preference for CSS Color 5 Relative Color Syntax
+        which is off by default.
+
 2021-02-18  Youenn Fablet  <youenn@apple.com>
 
         Set ENABLE_VP9 to 1 on IOS
