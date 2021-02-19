@@ -42,17 +42,17 @@ static bool okToProceed = false;
 static bool shouldReleaseInEnumerate = false;
 
 @interface NavigationWhileGetUserMediaPromptDisplayedUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
 @end
 
 @implementation NavigationWhileGetUserMediaPromptDisplayedUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler
 {
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     [webView release];
     okToProceed = true;
-    decisionHandler(YES);
+    decisionHandler(_WKPermissionDecisionGrant);
 }
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler

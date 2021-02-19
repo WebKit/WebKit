@@ -30,53 +30,13 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
-
-static bool wasPrompted = false;
-static int numberOfPrompts = 0;
-
-@interface GetUserMediaRepromptUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
-@end
-
-@implementation GetUserMediaRepromptUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
-{
-    numberOfPrompts++;
-    wasPrompted = true;
-    decisionHandler(YES);
-}
-
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
-{
-    decisionHandler(@"0x987654321", YES);
-}
-@end
-
-@interface GetUserMediaOnlyAudioUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
-@end
-
-@implementation GetUserMediaOnlyAudioUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
-{
-    numberOfPrompts++;
-    wasPrompted = true;
-    decisionHandler((devices == _WKCaptureDeviceMicrophone) ? YES : NO);
-}
-
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
-{
-    decisionHandler(@"0x987654321", YES);
-}
-@end
 
 @interface GetUserMediaRepromptTestView : TestWKWebView
 - (BOOL)haveStream:(BOOL)expected;
@@ -109,22 +69,21 @@ TEST(WebKit2, GetUserMediaReprompt)
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     webView.UIDelegate = delegate.get();
 
-    wasPrompted = false;
     [webView loadTestPageNamed:@"getUserMedia"];
-    TestWebKitAPI::Util::run(&wasPrompted);
+    [delegate waitUntilPrompted];
 
     EXPECT_TRUE([webView haveStream:YES]);
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE([webView haveStream:NO]);
 
-    wasPrompted = false;
+    EXPECT_FALSE([delegate wasPrompted]);
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     EXPECT_TRUE([webView haveStream:YES]);
-    EXPECT_FALSE(wasPrompted);
+    EXPECT_FALSE([delegate wasPrompted]);
 
     preferences._inactiveMediaCaptureSteamRepromptIntervalInMinutes = .5 / 60;
     [webView stringByEvaluatingJavaScript:@"stop()"];
@@ -133,10 +92,8 @@ TEST(WebKit2, GetUserMediaReprompt)
     // Sleep long enough for the reprompt timer to fire and clear cached state.
     Util::sleep(1);
 
-    wasPrompted = false;
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
-    TestWebKitAPI::Util::run(&wasPrompted);
-    EXPECT_TRUE([webView haveStream:YES]);
+    [delegate waitUntilPrompted];
 }
 
 TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
@@ -148,17 +105,17 @@ TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaOnlyAudioUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [delegate setAudioDecision:_WKPermissionDecisionGrant];
+    [delegate setVideoDecision:_WKPermissionDecisionDeny];
     webView.UIDelegate = delegate.get();
 
-    wasPrompted = false;
     [webView loadTestPageNamed:@"getUserMediaAudioVideoCapture"];
-    TestWebKitAPI::Util::run(&wasPrompted);
+    [delegate waitUntilPrompted];
     EXPECT_TRUE([webView haveStream:NO]);
 
-    wasPrompted = false;
     [webView stringByEvaluatingJavaScript:@"promptForAudioOnly()"];
-    TestWebKitAPI::Util::run(&wasPrompted);
+    [delegate waitUntilPrompted];
     EXPECT_TRUE([webView haveStream:YES]);
 }
 
@@ -171,20 +128,16 @@ TEST(WebKit2, MultipleGetUserMediaSynchronously)
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     webView.UIDelegate = delegate.get();
 
-    wasPrompted = false;
-    numberOfPrompts = 0;
     [webView loadTestPageNamed:@"getUserMedia"];
-    TestWebKitAPI::Util::run(&wasPrompted);
-    EXPECT_EQ(numberOfPrompts, 1);
+    [delegate waitUntilPrompted];
+    EXPECT_EQ([delegate numberOfPrompts], 1);
 
-    wasPrompted = false;
-    numberOfPrompts = 0;
     [webView stringByEvaluatingJavaScript:@"doMultipleGetUserMediaSynchronously()"];
-    TestWebKitAPI::Util::run(&wasPrompted);
-    EXPECT_EQ(numberOfPrompts, 1);
+    [delegate waitUntilPrompted];
+    EXPECT_EQ([delegate numberOfPrompts], 2);
 }
 
 } // namespace TestWebKitAPI

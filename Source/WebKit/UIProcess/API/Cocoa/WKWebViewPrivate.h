@@ -61,6 +61,12 @@ typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceDisplay = 1 << 2,
 } WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+typedef NS_OPTIONS(NSUInteger, _WKPermissionDecision) {
+    _WKPermissionDecisionPrompt = 1 << 0,
+    _WKPermissionDecisionGrant = 1 << 1,
+    _WKPermissionDecisionDeny = 1 << 2,
+} WK_API_AVAILABLE(macos(12.00), ios(15.0));
+
 typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
     _WKSelectionAttributeNoSelection = 0,
     _WKSelectionAttributeIsCaret = 1 << 0,

@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
@@ -6480,23 +6481,11 @@ TEST(ProcessSwap, LoadAlternativeHTML)
 
 static bool isCapturing = false;
 static bool isNotCapturing = false;
-@interface GetUserMediaUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler;
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
+@interface GetUserMediaUIDelegate : UserMediaCaptureUIDelegate
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state;
 @end
 
 @implementation GetUserMediaUIDelegate
-- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler
-{
-    decisionHandler(YES);
-}
-
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
-{
-    decisionHandler(@"0x987654321", YES);
-}
-
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state
 {
     isCapturing = state == _WKMediaCaptureStateActiveCamera;

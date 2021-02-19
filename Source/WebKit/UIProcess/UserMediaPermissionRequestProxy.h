@@ -44,7 +44,8 @@ public:
 
     void allow(const String& audioDeviceUID, const String& videoDeviceUID);
     void allow();
-
+    void prompt();
+    void doDefaultAction() { prompt(); }
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
@@ -88,7 +89,6 @@ public:
 #if ENABLE(MEDIA_STREAM)
     bool isUserGesturePriviledged() const { return m_request.isUserGesturePriviledged; }
 #endif
-    void doDefaultAction();
 
     CompletionHandler<void(bool)> decisionCompletionHandler() { return std::exchange(m_decisionCompletionHandler, { }); }
 

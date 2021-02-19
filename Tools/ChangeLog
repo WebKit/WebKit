@@ -1,3 +1,42 @@
+2021-02-19  Youenn Fablet  <youenn@apple.com>
+
+        Update WKWebView getUserMedia delegate to latest proposal
+        https://bugs.webkit.org/show_bug.cgi?id=222103
+
+        Reviewed by Eric Carlson.
+
+        Introduce UserMediaCaptureUIDelegate to share more code between tests.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (-[MediaStreamTrackDetachedUIDelegate _webView:mediaCaptureStateDidChange:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (-[SimulateFailedSandboxUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.h: Added.
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.mm: Added.
+        (-[UserMediaCaptureUIDelegate init]):
+        (-[UserMediaCaptureUIDelegate wasPrompted]):
+        (-[UserMediaCaptureUIDelegate resetWasPrompted]):
+        (-[UserMediaCaptureUIDelegate waitUntilPrompted]):
+        (-[UserMediaCaptureUIDelegate setAudioDecision:]):
+        (-[UserMediaCaptureUIDelegate setVideoDecision:]):
+        (-[UserMediaCaptureUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        (-[UserMediaCaptureUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+
 2021-02-18  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening debug OffscreenCanvas crashes

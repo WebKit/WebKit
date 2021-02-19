@@ -1062,15 +1062,55 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
-    bool respondsToRequestMediaCaptureAuthorization = [delegate respondsToSelector:@selector(_webView:requestMediaCaptureAuthorization:decisionHandler:)];
+    bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(_webView:requestMediaCapturePermission:video:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
 
-    if (!respondsToRequestMediaCaptureAuthorization && !respondsToRequestUserMediaAuthorizationForDevices) {
+    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices) {
         request.doDefaultAction();
         return;
     }
 
-    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCaptureAuthorization:decisionHandler:));
+    // FIXME: Provide a specific delegate for display capture.
+    if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
+        auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCapturePermission:video:decisionHandler:));
+        auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](_WKPermissionDecision decision) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+
+            switch (decision) {
+            case _WKPermissionDecisionPrompt:
+                protectedRequest->prompt();
+                break;
+            case _WKPermissionDecisionGrant: {
+                const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
+                const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
+                protectedRequest->allow(audioDeviceUID, videoDeviceUID);
+                break;
+            }
+            case _WKPermissionDecisionDeny:
+                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                break;
+            }
+        });
+        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermission:request.requiresAudioCapture() video:request.requiresVideoCapture() decisionHandler:decisionHandler.get()];
+        return;
+    }
+
+    URL requestFrameURL { frame.url() };
+    URL mainFrameURL { frame.page()->mainFrame()->url() };
+
+    _WKCaptureDevices devices = 0;
+    if (request.requiresAudioCapture())
+        devices |= _WKCaptureDeviceMicrophone;
+    if (request.requiresVideoCapture())
+        devices |= _WKCaptureDeviceCamera;
+    if (request.requiresDisplayCapture()) {
+        devices |= _WKCaptureDeviceDisplay;
+        ASSERT(!(devices & _WKCaptureDeviceCamera));
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](BOOL authorized) {
         if (checker->completionHandlerHasBeenCalled())
             return;
@@ -1084,26 +1124,6 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
         protectedRequest->allow(audioDeviceUID, videoDeviceUID);
     });
-
-    _WKCaptureDevices devices = 0;
-    if (request.requiresAudioCapture())
-        devices |= _WKCaptureDeviceMicrophone;
-    if (request.requiresVideoCapture())
-        devices |= _WKCaptureDeviceCamera;
-    if (request.requiresDisplayCapture()) {
-        devices |= _WKCaptureDeviceDisplay;
-        ASSERT(!(devices & _WKCaptureDeviceCamera));
-    }
-
-    // FIXME: Provide a specific delegate for display capture.
-    if (!request.requiresDisplayCapture() && respondsToRequestMediaCaptureAuthorization) {
-        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCaptureAuthorization:devices decisionHandler:decisionHandler.get()];
-        return;
-    }
-
-    URL requestFrameURL { frame.url() };
-    URL mainFrameURL { frame.page()->mainFrame()->url() };
-
     [delegate _webView:m_uiDelegate->m_webView.get().get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 #endif
 }

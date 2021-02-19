@@ -140,7 +140,7 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-void UserMediaPermissionRequestProxy::doDefaultAction()
+void UserMediaPermissionRequestProxy::prompt()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     ASSERT(m_manager);
@@ -166,7 +166,7 @@ void UserMediaPermissionRequestProxy::doDefaultAction()
         else
             allow();
     });
-# else
+#else
     deny();
 #endif
 }
