@@ -2296,3 +2296,5 @@ webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-suppor
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
 webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
+
+webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
