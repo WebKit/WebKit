@@ -24,7 +24,11 @@
  */
 
 .details-section.layout-css-grid > .content > .group > .row > .css-grid-section {
-    margin-inline-start: 6px;
-    margin-inline-end: 4px;
+    margin-inline: 6px;
     margin-bottom: 4px;
+}
+
+.details-section.layout-css-grid > .content,
+.details-section.layout-css-grid > .content > .group {
+    display: block;
 }

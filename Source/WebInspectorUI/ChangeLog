@@ -1,3 +1,27 @@
+2021-02-19  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Truncate long node display names in Grid Overlay list
+        https://bugs.webkit.org/show_bug.cgi?id=222057
+
+        Reviewed by BJ Burg.
+
+        Truncate long node display names for grid overlays in the Layout panel.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-link,):
+        (.css-grid-section .node-overlay-list):
+        (.css-grid-section .node-overlay-list-item-container):
+        (.css-grid-section .node-overlay-list-item-container label):
+        (.css-grid-section .node-overlay-list-item-container .inline-swatch):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css:
+        (.details-section.layout-css-grid > .content > .group > .row > .css-grid-section):
+        (.details-section.layout-css-grid > .content,):
+        Resetting to `display: block` for .details-section and descendants that use `display: table-*`
+        otherwise it messes with the Flexbox layout of nested children.
+
 2021-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Elements: show badges for CSS Grid container elements

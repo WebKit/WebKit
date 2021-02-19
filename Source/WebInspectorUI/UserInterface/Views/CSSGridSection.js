@@ -72,7 +72,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         listHeading.textContent = WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes");
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
-        this._listElement.classList.add("node-link-list");
+        this._listElement.classList.add("node-overlay-list");
 
         let settingsGroup = new WI.SettingsGroup(WI.UIString("Grid Overlay Settings", "Page Overlay Settings @ Layout Panel Section Header", "Heading for list of grid overlay settings"));
         this.element.append(settingsGroup.element);
@@ -94,7 +94,10 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         for (let domNode of this._gridNodeSet) {
             let itemElement = this._listElement.appendChild(document.createElement("li"));
-            let labelElement = itemElement.appendChild(document.createElement("label"));
+            let itemContainerElement = itemElement.appendChild(document.createElement("span"));
+            itemContainerElement.classList.add("node-overlay-list-item-container");
+
+            let labelElement = itemContainerElement.appendChild(document.createElement("label"));
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             checkboxElement.type = "checkbox";
             checkboxElement.checked = nodesWithGridOverlay.includes(domNode);
@@ -110,7 +113,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             });
 
             let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, WI.Color.fromString("magenta"));
-            itemElement.append(swatch.element);
+            itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
                 if (checkboxElement.checked)

@@ -26,6 +26,30 @@
 .css-grid-section .node-link,
 .css-grid-section .editor-group > .editor > label {
     margin-inline: 5px;
+    text-decoration: none;
+}
+
+.css-grid-section .node-overlay-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.css-grid-section .node-overlay-list-item-container {
+    display: flex;
+    align-items: center;
+}
+
+.css-grid-section .node-overlay-list-item-container label {
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.css-grid-section .node-overlay-list-item-container .inline-swatch {
+    flex-shrink: 0;
 }
 
 .css-grid-section :is(.heading, .title) {
