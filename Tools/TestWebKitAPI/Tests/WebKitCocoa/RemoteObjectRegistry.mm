@@ -150,18 +150,7 @@ TEST(WebKit, RemoteObjectRegistry)
         [child setValue:dictionaryWithCycle forKey:@"parent"]; // Creates a cycle.
         @try {
             [object takeDictionary:dictionaryWithCycle completionHandler:^(NSDictionary* value) {
-                NSString *name = [value objectForKey:@"name"];
-                EXPECT_WK_STREQ(@"root", name);
-                NSDictionary *child = [value objectForKey:@"child"];
-                EXPECT_TRUE(!!child);
-                NSString* childName = [child objectForKey:@"name"];
-                EXPECT_WK_STREQ(@"foo", childName);
-                NSNumber *childValue = [child objectForKey:@"value"];
-                EXPECT_EQ(1, [childValue integerValue]);
-                // We should have encoded parent as an empty NSDictionary.
-                NSDictionary *childParent = [child objectForKey:@"parent"];
-                EXPECT_TRUE(!!childParent);
-                EXPECT_EQ(0U, [childParent count]);
+                EXPECT_TRUE(!value.count);
                 isDone = true;
             }];
             TestWebKitAPI::Util::run(&isDone);

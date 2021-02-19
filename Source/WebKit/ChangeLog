@@ -1,3 +1,49 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Norton Safe Web extension is causing crashes / hangs under [WKRemoteObjectEncoder encodeObject:forKey:]
+        https://bugs.webkit.org/show_bug.cgi?id=222172
+
+        Reviewed by Alex Christensen.
+
+        The extension appears to be trying to send a JSValue that is a DOM Node. WebKit makes the following
+        call to convert it into a NSDictionary:
+        `[[JSValue valueWithJSValueRef:value inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]] toObject]`
+
+        JSC very aggressively iterates over all of the properties of the DOM Node and recursively ends up
+        converting the whole DOM tree with all their properties. This leads to a lot of cycles to as JSC
+        maintains the JSObject <-> NSObject identity during the conversion (Each time the JSDocument is
+        serialized, the same NSDictionary* pointer is used to represent it).
+
+        The logic introduced in r270559 to detect cycles was flawed because it relied on a NSSet of
+        NSObject* and [NSSet containsObject:] to detect the cycles. The issue is that [NSSet containsObject:]
+        doesn't do a simple pointer comparison but instead calls [NSObject isEqual:] which is very
+        expensive for types like NSDictionary and leads to trouble when the dictionary contains a cycle.
+        To address this I replaced the NSSet with a WTF::HashSet<NSObject *> so that key lookup ends up
+        doing a simple pointer comparison.
+
+        Even after the previous fix, the extension would still cause massive hangs because it would take
+        a very long time to try and encode the whole DOM tree with all the properties of each Node (even
+        without cycles). To address this, we now abort encoding when detecting a cycle instead of encoding
+        an empty object to break the cycle.
+
+        After this change, Safari becomes usable with this extension again. However, there are still much
+        shorter hangs that occur due to the converting of the JSNode into a JSDictionary via
+        [JSValue toObject]. We should probably improve this in a follow-up.
+
+        Easy way to reproduce the crash / hang:
+        1. Install Norton Safe Web & Norton Password Manager extension (may require a subscription)
+        2. Make sure the extensions are activated and turned on by clicking on their icons next to the
+           URL bar
+        3. Go to https://bugs.webkit.org/attachment.cgi?id=420530&action=edit
+        4. Click on the combo box next to "Review" -> Hang / Crash
+
+        No new tests, covered by WebKit.RemoteObjectRegistry API test.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder init]):
+        (encodeInvocationArguments):
+        (encodeObject):
+
 2021-02-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteRenderingBackend is accessed in non-thread-safe manner
