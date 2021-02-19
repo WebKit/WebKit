@@ -2025,6 +2025,12 @@ void TestRunner::simulateResourceLoadStatisticsSessionRestart()
     postSynchronousPageMessage("SimulateResourceLoadStatisticsSessionRestart");
 }
 
+void TestRunner::setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef urlString)
+{
+    postSynchronousPageMessage("SetPrivateClickMeasurementTokenPublicKeyURLForTesting",
+        adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().data())));
+}
+
 void TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef urlString)
 {
     postSynchronousPageMessage("SetPrivateClickMeasurementTokenSignatureURLForTesting",

@@ -2608,6 +2608,14 @@ void NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting(P
     completionHandler();
 }
 
+void NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setPrivateClickMeasurementTokenPublicKeyURLForTesting(WTFMove(url));
+
+    completionHandler();
+}
+
 void NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))

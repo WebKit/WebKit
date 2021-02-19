@@ -123,6 +123,7 @@ public:
     void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&);
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(URL&&);
     void setPrivateClickMeasurementAttributionReportURLForTesting(URL&&);
     void markPrivateClickMeasurementsAsExpiredForTesting();

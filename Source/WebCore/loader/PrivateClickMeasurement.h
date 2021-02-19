@@ -277,6 +277,7 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
+    WEBCORE_EXPORT URL tokenPublicKeyURL() const;
     WEBCORE_EXPORT URL tokenSignatureURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON() const;
     WEBCORE_EXPORT URL attributionReportURL() const;

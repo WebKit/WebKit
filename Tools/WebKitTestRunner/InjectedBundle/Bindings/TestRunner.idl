@@ -403,6 +403,7 @@ interface TestRunner {
     undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
     undefined markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     undefined simulateResourceLoadStatisticsSessionRestart();
+    undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementAttributionReportURLForTesting(DOMString url);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();

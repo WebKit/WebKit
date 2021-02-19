@@ -50,7 +50,8 @@
                 const currentTimeMillis = (new Date()).getTime();
                 const highEntropyBits = currentTimeMillis - (Math.floor(currentTimeMillis / 1000000) * 1000000);
                 const dummy = highEntropyBits + "" + Math.floor(Math.random() * 100);
-                testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/signToken.php?dummy=" + dummy);
+                testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/signToken.php?dummy=" + dummy);
+                testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/signToken.php?dummy=" + dummy + "&second=true");
                 targetLink.href = "http://localhost:8000/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html?dummy=" + dummy;
                 activateElement("targetLink");
             } else {

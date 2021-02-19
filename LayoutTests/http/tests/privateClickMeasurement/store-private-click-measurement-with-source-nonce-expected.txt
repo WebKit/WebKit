@@ -6,6 +6,13 @@ Tests that the presence of a source nonce triggers a token signing request.
 Frame: '<!--frame1-->'
 --------
 Token signing request received.
+REQUEST_METHOD: GET
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+No cookies in token signing request.
+Request body:
+
+REQUEST_METHOD: POST
 HTTP_HOST: 127.0.0.1:8000
 Content type: application/json
 REQUEST_URI: /privateClickMeasurement/resources/signToken.php

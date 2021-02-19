@@ -338,6 +338,11 @@ void NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting(C
     privateClickMeasurement().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
+void NetworkSession::setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL&& url)
+{
+    privateClickMeasurement().setTokenPublicKeyURLForTesting(WTFMove(url));
+}
+
 void NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting(URL&& url)
 {
     privateClickMeasurement().setTokenSignatureURLForTesting(WTFMove(url));

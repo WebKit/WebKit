@@ -1,3 +1,19 @@
+2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Request server public key to generate secret token
+        https://bugs.webkit.org/show_bug.cgi?id=222141
+        <rdar://problem/74462955>
+
+        Reviewed by John Wilander.
+
+        * http/tests/privateClickMeasurement/resources/getTokenSigningData.php:
+        * http/tests/privateClickMeasurement/resources/signToken.php:
+        * http/tests/privateClickMeasurement/resources/util.js:
+        (tearDownAndFinish):
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+        This patch modifies the above tests to be able to record two consecutive server requests.
+
 2021-02-19  Imanol Fernandez  <ifernandez@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         Implement WebXR getViewerPose and getPose

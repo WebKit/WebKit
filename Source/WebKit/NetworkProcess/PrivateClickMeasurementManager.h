@@ -61,6 +61,7 @@ public:
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
+    void setTokenPublicKeyURLForTesting(URL&&);
     void setTokenSignatureURLForTesting(URL&&);
     void setAttributionReportURLForTesting(URL&&);
     void markAllUnattributedAsExpiredForTesting();
@@ -68,7 +69,8 @@ public:
     void startTimer(Seconds);
 
 private:
-    void getSignedUnlinkableToken(const PrivateClickMeasurement&);
+    void getTokenPublicKey(PrivateClickMeasurement&&);
+    void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
@@ -79,6 +81,7 @@ private:
 
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
+    Optional<URL> m_tokenPublicKeyURLForTesting;
     Optional<URL> m_tokenSignatureURLForTesting;
     Optional<URL> m_attributionReportBaseURLForTesting;
     WeakPtr<NetworkSession> m_networkSession;

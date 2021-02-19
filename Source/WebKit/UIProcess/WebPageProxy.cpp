@@ -10023,6 +10023,11 @@ void WebPageProxy::simulateResourceLoadStatisticsSessionRestart(CompletionHandle
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SimulateResourceLoadStatisticsSessionRestart(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
+void WebPageProxy::setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
+{
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenPublicKeyURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
+}
+
 void WebPageProxy::setPrivateClickMeasurementTokenSignatureURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));

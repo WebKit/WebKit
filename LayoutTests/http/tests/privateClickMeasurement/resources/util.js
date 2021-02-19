@@ -13,6 +13,7 @@ function tearDownAndFinish() {
         testRunner.setPrivateClickMeasurementOverrideTimerForTesting(false);
         testRunner.setPrivateClickMeasurementAttributionReportURLForTesting("");
         testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("");
+        testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("");
         testRunner.notifyDone();
     }
 }

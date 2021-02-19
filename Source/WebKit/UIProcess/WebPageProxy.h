@@ -1691,6 +1691,7 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementAttributionReportURLForTesting(const URL&, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);

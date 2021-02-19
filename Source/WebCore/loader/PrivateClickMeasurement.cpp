@@ -38,6 +38,7 @@ namespace WebCore {
 
 static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
 static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
+static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-unlinkable-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
@@ -124,6 +125,20 @@ URL PrivateClickMeasurement::tokenSignatureURL() const
     builder.appendLiteral("https://");
     builder.append(m_sourceSite.registrableDomain.string());
     builder.appendLiteral(privateClickMeasurementTokenSignaturePath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+URL PrivateClickMeasurement::tokenPublicKeyURL() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenPublicKeyPath);
 
     URL url { URL(), builder.toString() };
     if (url.isValid())

@@ -1,3 +1,41 @@
+2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Request server public key to generate secret token
+        https://bugs.webkit.org/show_bug.cgi?id=222141
+        <rdar://problem/74462955>
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * NetworkProcess/NetworkSession.h:
+        Paperwork to add a way to set test URL.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::generateNetworkResourceLoadParameters):
+        (WebKit::generateNetworkResourceLoadParametersForPost):
+        (WebKit::generateNetworkResourceLoadParametersForGet):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::setTokenPublicKeyURLForTesting):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        Teaches the PCMM to send the token public key request.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::simulateResourceLoadStatisticsSessionRestart):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * UIProcess/WebPageProxy.h:
+        Paperwork to add a way to set test URL.
+
 2021-02-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE] User-Agent quirks not implemented

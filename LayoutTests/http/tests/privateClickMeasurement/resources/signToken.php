@@ -1,9 +1,16 @@
 <?php
 require_once "tokenSigningFilePath.php";
 
-$tokenSigningFile = fopen($tokenSigningFilePath . ".tmp", 'w');
+$tokenSigningFile = fopen($tokenSigningFilePath . ".tmp", 'a');
 $httpHeaders = $_SERVER;
 $cookiesFound = false;
+// This php will respond to two consecutive server requests.
+// It will only complete the transaction when the second request finishes.
+$isSecondRequest = false;
+
+if ($value = $httpHeaders["REQUEST_METHOD"]) {
+    fwrite($tokenSigningFile, "REQUEST_METHOD: $value\n");
+}
 
 if ($value = $httpHeaders["HTTP_HOST"]) {
     fwrite($tokenSigningFile, "HTTP_HOST: $value\n");
@@ -26,6 +33,10 @@ if ($value = $httpHeaders["REQUEST_URI"]) {
     else
         $outputURL = substr($value, 0, $positionOfDummy);
     fwrite($tokenSigningFile, "REQUEST_URI: $outputURL\n");
+
+    $positionOfDummy = strpos($value, "&second=");
+    if ($positionOfDummy != false)
+        $isSecondRequest = true;
 }
 
 if (!$cookiesFound) {
@@ -36,7 +47,9 @@ $requestBody = file_get_contents("php://input");
 fwrite($tokenSigningFile, "Request body:\n$requestBody\n");
 
 fclose($tokenSigningFile);
-rename($tokenSigningFilePath . ".tmp", $tokenSigningFilePath);
+// Complete the transaction.
+if ($isSecondRequest)
+    rename($tokenSigningFilePath . ".tmp", $tokenSigningFilePath);
 
 header("HTTP/1.1 201 Created");
 setcookie("cookieSetInTokenSigningResponse", "1", 0, "/");
