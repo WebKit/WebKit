@@ -2294,3 +2294,5 @@ webkit.org/b/222117 media/modern-media-controls/volume-support/volume-support-dr
 webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
 
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
+
+webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
