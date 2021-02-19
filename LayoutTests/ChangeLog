@@ -1,3 +1,12 @@
+2021-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        A number of offscreencanvas tests are asserting isMainThread trying to access strictCSSParserContext
+        https://bugs.webkit.org/show_bug.cgi?id=222156
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/glib/TestExpectations:
+
 2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Enable the new appearance by default
