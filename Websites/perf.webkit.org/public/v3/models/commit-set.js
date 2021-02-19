@@ -76,8 +76,8 @@ class CommitSet extends DataModelObject {
 
     areAllRootsAvailable(earliestCreationTime)
     {
-        return this.allRootFiles().every(rootFile => (!rootFile.deletedAt() || this.customRoots().find(rootFile))
-            && rootFile.createdAt() >= earliestCreationTime);
+        return this.allRootFiles().every(rootFile => this.customRoots().includes(rootFile)
+            || (!rootFile.deletedAt() && rootFile.createdAt() >= earliestCreationTime));
     }
 
     revisionForRepository(repository)
