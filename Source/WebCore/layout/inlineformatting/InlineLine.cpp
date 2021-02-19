@@ -271,7 +271,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
         m_contentLogicalWidth = std::max(oldContentLogicalWidth, runLogicalLeft + logicalWidth);
     } else {
         m_runs.last().expand(inlineTextItem, logicalWidth);
-        m_contentLogicalWidth += logicalWidth;
+        // Do not let negative letter spacing make the content shorter than it already is.
+        m_contentLogicalWidth += std::max(0.0f, logicalWidth);
     }
     // Set the trailing trimmable content.
     if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
