@@ -1495,6 +1495,10 @@
     )
 )
 
+;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.
+(allow system-fsctl
+    (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
+
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix

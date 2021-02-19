@@ -1,3 +1,15 @@
+2021-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Re-add fsctl support for marking files as potentially 'hot'
+        https://bugs.webkit.org/show_bug.cgi?id=222120
+        <rdar://problem/74387453>
+
+        Reviewed by Per Arne Vollan.
+
+        Rolled out r271959.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-18  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] add an `object data` to `PaymentItem` so that data specific to Apple Pay can be provided
