@@ -885,12 +885,15 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
 #endif
 
     for (auto& page : pages)
-        page->processDidTerminate(ProcessTerminationReason::Crash);
+        page->resetStateAfterProcessTermination(ProcessTerminationReason::Crash);
 
     for (auto& provisionalPage : provisionalPages) {
         if (provisionalPage)
             provisionalPage->processDidTerminate();
     }
+
+    for (auto& page : pages)
+        page->dispatchProcessDidTerminate(ProcessTerminationReason::Crash);
 
     m_sleepDisablers.clear();
 }
@@ -1254,12 +1257,15 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     shutDown();
 
     for (auto& page : pages)
-        page->processDidTerminate(reason);
+        page->resetStateAfterProcessTermination(reason);
         
     for (auto& provisionalPage : provisionalPages) {
         if (provisionalPage)
             provisionalPage->processDidTerminate();
     }
+
+    for (auto& page : pages)
+        page->dispatchProcessDidTerminate(reason);
 }
 
 bool WebProcessProxy::isReleaseLoggingAllowed() const
