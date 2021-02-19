@@ -1,3 +1,18 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify excludedSet handling in object rest expression
+        https://bugs.webkit.org/show_bug.cgi?id=221668
+
+        Reviewed by Alexey Shvayka.
+
+        * microbenchmarks/object-rest-computed-destructuring.js: Added.
+        * stress/object-rest-computed-inlined-numbers.js: Added.
+        (inner):
+        (outer):
+        * stress/object-rest-computed-inlined.js: Added.
+        (inner):
+        (outer):
+
 2021-02-18  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] Implement private static method

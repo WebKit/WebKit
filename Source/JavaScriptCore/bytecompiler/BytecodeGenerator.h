@@ -705,7 +705,7 @@ namespace JSC {
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
         RegisterID* emitLoad(RegisterID* dst, JSValue, SourceCodeRepresentation = SourceCodeRepresentation::Other);
-        RegisterID* emitLoad(RegisterID* dst, IdentifierSet& excludedList);
+        RegisterID* emitLoad(RegisterID* dst, IdentifierSet&& excludedList);
 
         template<typename UnaryOp, typename = std::enable_if_t<UnaryOp::opcodeID != op_negate>>
         RegisterID* emitUnaryOp(RegisterID* dst, RegisterID* src)

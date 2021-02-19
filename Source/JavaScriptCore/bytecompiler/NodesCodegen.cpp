@@ -5508,113 +5508,110 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
 {
     generator.emitRequireObjectCoercible(rhs, "Right side of assignment cannot be destructured"_s);
 
-    RefPtr<RegisterID> excludedList;
-    IdentifierSet excludedSet;
-    RefPtr<RegisterID> addMethod;
-    if (m_containsRestElement && m_containsComputedProperty) {
-        RefPtr<RegisterID> setConstructor = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::Set);
-
-        CallArguments args(generator, nullptr, 0);
-        excludedList = generator.emitConstruct(generator.newTemporary(), setConstructor.get(), setConstructor.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd());
-
-        addMethod = generator.emitGetById(generator.newTemporary(), excludedList.get(), generator.propertyNames().builtinNames().addPrivateName());
-    }
-
     BytecodeGenerator::PreservedTDZStack preservedTDZStack;
     generator.preserveTDZStack(preservedTDZStack);
 
-    for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        const auto& target = m_targetPatterns[i];
-        if (target.bindingType == BindingType::Element) {
-            // If the destructuring becomes get_by_id and mov, then we should store results directly to the local's binding.
-            // From
-            //     get_by_id          dst:loc10, base:loc9, property:0
-            //     mov                dst:loc6, src:loc10
-            // To
-            //     get_by_id          dst:loc6, base:loc9, property:0
-            auto writableDirectBindingIfPossible = [&]() -> RegisterID* {
-                // The following pattern is possible. In that case, after setting |data| local variable, we need to store property name into the set.
-                // So, old property name |data| result must be kept before setting it into |data|.
-                //     ({ [data]: data, ...obj } = object);
-                if (m_containsRestElement && m_containsComputedProperty && target.propertyExpression)
-                    return nullptr;
-                // default value can include a reference to local variable. So filling value to a local variable can differ result.
-                // We give up fast path if default value includes non constant.
-                // For example,
-                //     ({ data = data } = object);
-                if (target.defaultValue && !target.defaultValue->isConstant())
-                    return nullptr;
-                return target.pattern->writableDirectBindingIfPossible(generator);
-            };
-
-            auto finishDirectBindingAssignment = [&]() {
-                ASSERT(writableDirectBindingIfPossible());
-                target.pattern->finishDirectBindingAssignment(generator);
-            };
-
-            RefPtr<RegisterID> temp;
-            RegisterID* directBinding = writableDirectBindingIfPossible();
-            if (directBinding)
-                temp = directBinding;
-            else
-                temp = generator.newTemporary();
-
-            RefPtr<RegisterID> propertyName;
-            if (!target.propertyExpression) {
-                Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
-                if (!optionalIndex)
-                    generator.emitGetById(temp.get(), rhs, target.propertyName);
-                else {
-                    RefPtr<RegisterID> propertyIndex = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
-                    generator.emitGetByVal(temp.get(), rhs, propertyIndex.get());
+    {
+        RefPtr<RegisterID> newObject;
+        IdentifierSet excludedSet;
+        Optional<CallArguments> args;
+        unsigned numberOfComputedProperties = 0;
+        unsigned indexInArguments = 2;
+        if (m_containsRestElement) {
+            if (m_containsComputedProperty) {
+                for (const auto& target : m_targetPatterns) {
+                    if (target.bindingType == BindingType::Element) {
+                        if (target.propertyExpression)
+                            ++numberOfComputedProperties;
+                    }
                 }
+            }
+            newObject = generator.newTemporary();
+            args.emplace(generator, nullptr, indexInArguments + numberOfComputedProperties);
+        }
+
+        for (size_t i = 0; i < m_targetPatterns.size(); i++) {
+            const auto& target = m_targetPatterns[i];
+            if (target.bindingType == BindingType::Element) {
+                // If the destructuring becomes get_by_id and mov, then we should store results directly to the local's binding.
+                // From
+                //     get_by_id          dst:loc10, base:loc9, property:0
+                //     mov                dst:loc6, src:loc10
+                // To
+                //     get_by_id          dst:loc6, base:loc9, property:0
+                auto writableDirectBindingIfPossible = [&]() -> RegisterID* {
+                    // The following pattern is possible. In that case, after setting |data| local variable, we need to store property name into the set.
+                    // So, old property name |data| result must be kept before setting it into |data|.
+                    //     ({ [data]: data, ...obj } = object);
+                    if (m_containsRestElement && m_containsComputedProperty && target.propertyExpression)
+                        return nullptr;
+                    // default value can include a reference to local variable. So filling value to a local variable can differ result.
+                    // We give up fast path if default value includes non constant.
+                    // For example,
+                    //     ({ data = data } = object);
+                    if (target.defaultValue && !target.defaultValue->isConstant())
+                        return nullptr;
+                    return target.pattern->writableDirectBindingIfPossible(generator);
+                };
+
+                auto finishDirectBindingAssignment = [&]() {
+                    ASSERT(writableDirectBindingIfPossible());
+                    target.pattern->finishDirectBindingAssignment(generator);
+                };
+
+                RefPtr<RegisterID> temp;
+                RegisterID* directBinding = writableDirectBindingIfPossible();
+                if (directBinding)
+                    temp = directBinding;
+                else
+                    temp = generator.newTemporary();
+
+                if (!target.propertyExpression) {
+                    Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+                    if (!optionalIndex)
+                        generator.emitGetById(temp.get(), rhs, target.propertyName);
+                    else {
+                        RefPtr<RegisterID> propertyIndex = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
+                        generator.emitGetByVal(temp.get(), rhs, propertyIndex.get());
+                    }
+                    if (m_containsRestElement)
+                        excludedSet.add(target.propertyName.impl());
+                } else {
+                    RefPtr<RegisterID> propertyName;
+                    if (m_containsRestElement) {
+                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments++), target.propertyExpression);
+                        // ToPropertyKey(Number | String) does not have side-effect.
+                        // And @copyDataProperties performs ToPropertyKey internally.
+                        // And for Number case, passing it to GetByVal is better for performance.
+                        if (!target.propertyExpression->isNumber() || !target.propertyExpression->isString())
+                            propertyName = generator.emitToPropertyKey(propertyName.get(), propertyName.get());
+                    } else
+                        propertyName = generator.emitNodeForProperty(target.propertyExpression);
+                    generator.emitGetByVal(temp.get(), rhs, propertyName.get());
+                }
+
+                if (target.defaultValue)
+                    assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
+                if (directBinding)
+                    finishDirectBindingAssignment();
+                else
+                    target.pattern->bindValue(generator, temp.get());
             } else {
-                propertyName = generator.emitNodeForProperty(target.propertyExpression);
-                generator.emitGetByVal(temp.get(), rhs, propertyName.get());
+                ASSERT(target.bindingType == BindingType::RestElement);
+                ASSERT(i == m_targetPatterns.size() - 1);
+
+                generator.emitNewObject(newObject.get());
+
+                // load and call @copyDataProperties
+                RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
+
+                // This must be non-tail-call because @copyDataProperties accesses caller-frame.
+                generator.move(args->thisRegister(), newObject.get());
+                generator.move(args->argumentRegister(0), rhs);
+                generator.emitLoad(args->argumentRegister(1), WTFMove(excludedSet));
+                generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args.value(), divot(), divotStart(), divotEnd(), DebuggableCall::No);
+                target.pattern->bindValue(generator, newObject.get());
             }
-
-            if (m_containsRestElement) {
-                if (m_containsComputedProperty) {
-                    if (target.propertyExpression)
-                        propertyName = generator.emitToPropertyKey(generator.tempDestination(propertyName.get()), propertyName.get());
-                    else
-                        propertyName = generator.emitLoad(nullptr, target.propertyName);
-
-                    CallArguments args(generator, nullptr, 1);
-                    generator.move(args.thisRegister(), excludedList.get());
-                    generator.move(args.argumentRegister(0), propertyName.get());
-                    generator.emitCall(generator.newTemporary(), addMethod.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
-                } else
-                    excludedSet.add(target.propertyName.impl());
-            }
-
-            if (target.defaultValue)
-                assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
-            if (directBinding)
-                finishDirectBindingAssignment();
-            else
-                target.pattern->bindValue(generator, temp.get());
-        } else {
-            ASSERT(target.bindingType == BindingType::RestElement);
-            ASSERT(i == m_targetPatterns.size() - 1);
-            RefPtr<RegisterID> newObject = generator.emitNewObject(generator.newTemporary());
-            
-            // load and call @copyDataProperties
-            RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
-            
-            CallArguments args(generator, nullptr, 3);
-            generator.emitLoad(args.thisRegister(), jsUndefined());
-            generator.move(args.argumentRegister(0), newObject.get());
-            generator.move(args.argumentRegister(1), rhs);
-            if (m_containsComputedProperty)
-                generator.move(args.argumentRegister(2), excludedList.get());
-            else {
-                RefPtr<RegisterID> excludedSetReg = generator.emitLoad(generator.newTemporary(), excludedSet);
-                generator.move(args.argumentRegister(2), excludedSetReg.get());
-            }
-
-            generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
-            target.pattern->bindValue(generator, newObject.get());
         }
     }
 
@@ -5825,11 +5822,11 @@ RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generato
     
     RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
     
-    CallArguments args(generator, nullptr, 2);
-    generator.emitLoad(args.thisRegister(), jsUndefined());
-    generator.move(args.argumentRegister(0), dst);
-    generator.move(args.argumentRegister(1), src.get());
+    CallArguments args(generator, nullptr, 1);
+    generator.move(args.thisRegister(), dst);
+    generator.move(args.argumentRegister(0), src.get());
     
+    // This must be non-tail-call because @copyDataProperties accesses caller-frame.
     generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
     
     return dst;

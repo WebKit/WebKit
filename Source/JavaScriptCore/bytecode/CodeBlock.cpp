@@ -422,9 +422,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (unlinkedCodeBlock->hasRareData()) {
         createRareDataIfNecessary();
 
-        setConstantIdentifierSetRegisters(vm, unlinkedCodeBlock->constantIdentifierSets());
-        RETURN_IF_EXCEPTION(throwScope, false);
-
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
             m_rareData->m_exceptionHandlers.resizeToFit(count);
             for (size_t i = 0; i < count; i++) {
@@ -888,28 +885,6 @@ CodeBlock::~CodeBlock()
         }
     }
 #endif // ENABLE(JIT)
-}
-
-void CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const RefCountedArray<ConstantIdentifierSetEntry>& constants)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* globalObject = m_globalObject.get();
-
-    for (const auto& entry : constants) {
-        const IdentifierSet& set = entry.first;
-
-        Structure* setStructure = globalObject->setStructure();
-        RETURN_IF_EXCEPTION(scope, void());
-        JSSet* jsSet = JSSet::create(globalObject, vm, setStructure, set.size());
-        RETURN_IF_EXCEPTION(scope, void());
-
-        for (const auto& setEntry : set) {
-            JSString* jsString = jsOwnedString(vm, setEntry.get()); 
-            jsSet->add(globalObject, jsString);
-            RETURN_IF_EXCEPTION(scope, void());
-        }
-        m_constantRegisters[entry.second].set(vm, this, jsSet);
-    }
 }
 
 void CodeBlock::setConstantRegisters(const RefCountedArray<WriteBarrier<Unknown>>& constants, const RefCountedArray<SourceCodeRepresentation>& constantsSourceCodeRepresentation, ScriptExecutable* topLevelExecutable)

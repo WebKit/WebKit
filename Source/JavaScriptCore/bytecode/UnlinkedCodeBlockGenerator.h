@@ -111,14 +111,13 @@ public:
     }
 
     unsigned numberOfConstantIdentifierSets() const { return m_constantIdentifierSets.size(); }
-    const Vector<ConstantIdentifierSetEntry>& constantIdentifierSets() { return m_constantIdentifierSets; }
-    void addSetConstant(IdentifierSet& set)
+    const Vector<IdentifierSet>& constantIdentifierSets() { return m_constantIdentifierSets; }
+    unsigned addSetConstant(IdentifierSet&& set)
     {
         ASSERT(m_vm.heap.isDeferred());
-        unsigned result = m_constantRegisters.size();
-        m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
-        m_constantIdentifierSets.append(ConstantIdentifierSetEntry(set, result));
+        unsigned result = m_constantIdentifierSets.size();
+        m_constantIdentifierSets.append(WTFMove(set));
+        return result;
     }
 
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
@@ -210,7 +209,7 @@ private:
     HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;
-    Vector<ConstantIdentifierSetEntry> m_constantIdentifierSets;
+    Vector<IdentifierSet> m_constantIdentifierSets;
 };
 
 } // namespace JSC

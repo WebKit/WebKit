@@ -1840,25 +1840,10 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
     return constantID;
 }
 
-RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
+RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet&& set)
 {
-    if (m_codeBlock->numberOfConstantIdentifierSets()) {
-        for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
-            if (entry.first != set)
-                continue;
-            
-            return &m_constantPoolRegisters[entry.second];
-        }
-    }
-    
-    unsigned index = addConstantIndex();
-    m_codeBlock->addSetConstant(set);
-    RegisterID* m_setRegister = &m_constantPoolRegisters[index];
-    
-    if (dst)
-        return move(dst, m_setRegister);
-    
-    return m_setRegister;
+    unsigned setIndex = m_codeBlock->addSetConstant(WTFMove(set));
+    return emitLoad(dst, jsNumber(setIndex));
 }
 
 template<typename LookUpVarKindFunctor>

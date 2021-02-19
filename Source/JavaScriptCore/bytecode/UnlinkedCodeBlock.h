@@ -74,7 +74,6 @@ typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
-using ConstantIdentifierSetEntry = std::pair<IdentifierSet, unsigned>;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
@@ -162,7 +161,7 @@ public:
     const RefCountedArray<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
     unsigned numberOfConstantIdentifierSets() const { return m_rareData ? m_rareData->m_constantIdentifierSets.size() : 0; }
-    const RefCountedArray<ConstantIdentifierSetEntry>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
+    const RefCountedArray<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
 
     // Jumps
     size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
@@ -411,7 +410,7 @@ public:
         HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
         RefCountedArray<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
         RefCountedArray<BitVector> m_bitVectors;
-        RefCountedArray<ConstantIdentifierSetEntry> m_constantIdentifierSets;
+        RefCountedArray<IdentifierSet> m_constantIdentifierSets;
 
         unsigned m_needsClassFieldInitializer : 1;
         unsigned m_privateBrandRequirement : 1;

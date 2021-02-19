@@ -1,3 +1,50 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify excludedSet handling in object rest expression
+        https://bugs.webkit.org/show_bug.cgi?id=221668
+
+        Reviewed by Alexey Shvayka.
+
+        This patch simplifies Object rest/spread by avoiding use of JSSet.
+        Instead, we store IdentifierSet into UnlinkedCodeBlock's vector and
+        access this directly through JS constant number.
+        And for additional properties, we collect it during destructuring,
+        and pass it to @copyDataProperties as an argument so that we do not
+        need to call Set#add in JS side.
+
+        We also check (isNumber() || isString) conditions for properties to
+        avoid calling ToPropertyKey for constant case. This is OK since we
+        will call ToPropertyKey inside @copyDataProperties, and this is
+        side-effect free if the input is number or string.
+
+        This patch shows 2x improvement in microbenchmarking.
+
+                                                       ToT                     Patched
+
+        object-rest-computed-destructuring       62.9960+-6.5072     ^     30.2157+-1.1420        ^ definitely 2.0849x faster
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::constantIdentifierSets):
+        (JSC::UnlinkedCodeBlockGenerator::addSetConstant):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedConstantIdentifierSetEntry::encode): Deleted.
+        (JSC::CachedConstantIdentifierSetEntry::decode const): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::getCallerCodeBlock):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-02-18  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit

@@ -27,6 +27,7 @@
 
 #include "CallFrame.h"
 #include "IndirectEvalExecutable.h"
+#include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "IntlDateTimeFormat.h"
 #include "JSCInlines.h"
@@ -834,34 +835,57 @@ static bool canPerformFastPropertyEnumerationForCopyDataProperties(Structure* st
     return true;
 };
 
+static CodeBlock* getCallerCodeBlock(CallFrame* callFrame)
+{
+    CallFrame* callerFrame = callFrame->callerFrame();
+    CodeOrigin codeOrigin = callerFrame->codeOrigin();
+    if (codeOrigin && codeOrigin.inlineCallFrame())
+        return baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame());
+    return callerFrame->codeBlock();
+}
+
 // https://tc39.es/ecma262/#sec-copydataproperties
 JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFinalObject* target = jsCast<JSFinalObject*>(callFrame->uncheckedArgument(0));
+    JSFinalObject* target = jsCast<JSFinalObject*>(callFrame->thisValue());
     ASSERT(target->isStructureExtensible(vm));
 
-    JSValue sourceValue = callFrame->uncheckedArgument(1);
+    JSValue sourceValue = callFrame->uncheckedArgument(0);
     if (sourceValue.isUndefinedOrNull())
-        return JSValue::encode(jsUndefined());
+        return JSValue::encode(target);
 
     JSObject* source = sourceValue.toObject(globalObject);
     scope.assertNoException();
 
-    JSSet* excludedSet = nullptr;
-    if (callFrame->argumentCount() > 2)
-        excludedSet = jsCast<JSSet*>(callFrame->uncheckedArgument(2));
+    UnlinkedCodeBlock* unlinkedCodeBlock = nullptr;
+    const IdentifierSet* excludedSet = nullptr;
+    Optional<IdentifierSet> newlyCreatedSet;
+    if (callFrame->argumentCount() > 1) {
+        int32_t setIndex = callFrame->uncheckedArgument(1).asUInt32AsAnyInt();
+        CodeBlock* codeBlock = getCallerCodeBlock(callFrame);
+        ASSERT(codeBlock);
+        unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
+        excludedSet = &unlinkedCodeBlock->constantIdentifierSets()[setIndex];
+        if (callFrame->argumentCount() > 2) {
+            newlyCreatedSet.emplace(*excludedSet);
+            for (unsigned index = 2; index < callFrame->argumentCount(); ++index) {
+                // This isn't observable since ObjectPatternNode::bindValue() also performs ToPropertyKey.
+                auto propertyName = callFrame->uncheckedArgument(index).toPropertyKey(globalObject);
+                RETURN_IF_EXCEPTION(scope, { });
+                newlyCreatedSet->add(propertyName.impl());
+            }
+            excludedSet = &newlyCreatedSet.value();
+        }
+    }
 
-    auto isPropertyNameExcluded = [&] (JSGlobalObject* globalObject, PropertyName propertyName) -> bool {
+    auto isPropertyNameExcluded = [&] (PropertyName propertyName) -> bool {
         ASSERT(!propertyName.isPrivateName());
         if (!excludedSet)
             return false;
-
-        JSValue propertyNameValue = identifierToJSValue(vm, Identifier::fromUid(vm, propertyName.uid()));
-        RETURN_IF_EXCEPTION(scope, false);
-        return excludedSet->has(globalObject, propertyNameValue);
+        return excludedSet->contains(propertyName.uid());
     };
 
     if (!source->staticPropertiesReified(vm)) {
@@ -888,6 +912,9 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             if (entry.attributes & PropertyAttribute::DontEnum)
                 return true;
 
+            if (isPropertyNameExcluded(propertyName))
+                return true;
+
             properties.append(entry.key);
             values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
             return true;
@@ -898,10 +925,6 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         for (size_t i = 0; i < properties.size(); ++i) {
             // FIXME: We could put properties in a batching manner to accelerate CopyDataProperties more.
             // https://bugs.webkit.org/show_bug.cgi?id=185358
-            bool excluded = isPropertyNameExcluded(globalObject, properties[i].get());
-            RETURN_IF_EXCEPTION(scope, { });
-            if (excluded)
-                continue;
             target->putDirect(vm, properties[i].get(), values.at(i));
         }
     } else {
@@ -910,9 +933,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& propertyName : propertyNames) {
-            bool excluded = isPropertyNameExcluded(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (excluded)
+            if (isPropertyNameExcluded(propertyName))
                 continue;
 
             PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
@@ -935,7 +956,8 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         }
     }
 
-    return JSValue::encode(jsUndefined());
+    ensureStillAliveHere(unlinkedCodeBlock);
+    return JSValue::encode(target);
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncDateTimeFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
