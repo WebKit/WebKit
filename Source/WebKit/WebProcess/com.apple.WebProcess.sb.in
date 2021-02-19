@@ -1852,25 +1852,41 @@
 )
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
-
-;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
-;; These should only be accessed through an iokit-extension, so log if they are not.
-(allow iokit-open (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-registry-entry-class
-            "IOSurfaceRootUserClient"
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-registry-entry-class
+                "IOSurfaceRootUserClient"
+            )
+        )
+        (apply-message-filter
+            (allow
+                iokit-async-external-method
+                iokit-external-method
+            )
+            (deny (with telemetry)
+                iokit-external-trap
+            )
+        )
+    )
+    ; else
+    (allow iokit-open
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-registry-entry-class
+                "IOSurfaceRootUserClient"
+            )
         )
     )
 )
+
 (when (equal? (param "CPU") "arm64")
     (allow iokit-open (with report)
-    #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
         (with telemetry-backtrace)
-    #endif
+#endif
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-user-client-class
@@ -1880,14 +1896,33 @@
         )
     )
 )
-(allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-connection
-            "IOAccelerator"
+
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-connection
+                "IOAccelerator"
+            )
+        )
+        (apply-message-filter
+            (allow
+                iokit-async-external-method
+                iokit-external-method
+            )
+            (deny (with telemetry)
+                iokit-external-trap
+            )
+        )
+    )
+    ; else
+    (allow iokit-open
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-connection
+                "IOAccelerator"
+            )
         )
     )
 )
