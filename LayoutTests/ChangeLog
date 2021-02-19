@@ -1,3 +1,12 @@
+2021-02-19  Rini Patel  <rini_patel@apple.com>
+
+        [GPU Process] Repopulate the TestExpectations file #4
+        https://bugs.webkit.org/show_bug.cgi?id=222147
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+
 2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Request server public key to generate secret token
