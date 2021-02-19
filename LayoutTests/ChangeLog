@@ -1,3 +1,12 @@
+2021-02-18  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ]inspector/indexeddb/clearObjectStore.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=222140
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         ASSERTION FAILED: m_state == State::Committed in WebKit::FrameLoadState::didFailLoad()

@@ -1374,3 +1374,5 @@ webkit.org/b/221857 fast/selectors/text-field-selection-window-inactive-text-sha
 webkit.org/b/221853 inspector/debugger/stepping/stepInto.html [ Pass Timeout ]
 
 webkit.org/b/221849 inspector/model/remote-object/array-large.html [ Pass Timeout ]
+
+webkit.org/b/222140 inspector/indexeddb/clearObjectStore.html [ Pass Timeout ]
