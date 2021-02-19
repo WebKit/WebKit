@@ -1,3 +1,43 @@
+2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through WebPasteboardProxy
+        https://bugs.webkit.org/show_bug.cgi?id=222071
+
+        Reviewed by Tim Horton.
+
+        Add `const PasteboardContext*` arguments to the `PasteboardStrategy` methods on `WebPlatformStrategies`.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getTypes):
+        (WebPlatformStrategies::bufferForType):
+        (WebPlatformStrategies::getPathnamesForType):
+        (WebPlatformStrategies::allStringsForType):
+        (WebPlatformStrategies::stringForType):
+        (WebPlatformStrategies::changeCount):
+        (WebPlatformStrategies::color):
+        (WebPlatformStrategies::url):
+        (WebPlatformStrategies::addTypes):
+        (WebPlatformStrategies::setTypes):
+        (WebPlatformStrategies::setBufferForType):
+        (WebPlatformStrategies::setURL):
+        (WebPlatformStrategies::setColor):
+        (WebPlatformStrategies::setStringForType):
+        (WebPlatformStrategies::getNumberOfFiles):
+        (WebPlatformStrategies::typesSafeForDOMToReadAndWrite):
+        (WebPlatformStrategies::writeCustomData):
+        (WebPlatformStrategies::containsStringSafeForDOMToReadForType):
+        (WebPlatformStrategies::informationForItemAtIndex):
+        (WebPlatformStrategies::allPasteboardItemInfo):
+        (WebPlatformStrategies::getPasteboardItemsCount):
+        (WebPlatformStrategies::readBufferFromPasteboard):
+        (WebPlatformStrategies::readURLFromPasteboard):
+        (WebPlatformStrategies::readStringFromPasteboard):
+        (WebPlatformStrategies::containsURLStringSuitableForLoading):
+        (WebPlatformStrategies::urlStringSuitableForLoading):
+        (WebPlatformStrategies::writeToPasteboard):
+        (WebPlatformStrategies::updateSupportedTypeIdentifiers):
+
 2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb an Optional<PageIdentifier> through Pasteboard-related codepaths

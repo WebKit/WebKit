@@ -112,159 +112,159 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
     return new WebBlobRegistry;
 }
 
-void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
+void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
-RefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
+RefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
 }
 
-void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
-Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName)
+Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType);
 }
 
-String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
+String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
-int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
+int64_t WebPlatformStrategies::changeCount(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).changeCount();
 }
 
-Color WebPlatformStrategies::color(const String& pasteboardName)
+Color WebPlatformStrategies::color(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).color();    
 }
 
-URL WebPlatformStrategies::url(const String& pasteboardName)
+URL WebPlatformStrategies::url(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).url();
 }
 
-int64_t WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+int64_t WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName)
+int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-int64_t WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName)
+int64_t WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
 }
 
-int64_t WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName)
+int64_t WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setColor(color);
 }
 
-int64_t WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
+int64_t WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
-int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
+int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).numberOfFiles();
 }
 
-Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin)
+Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin);
 }
 
-int64_t WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardCustomData>& data, const String& pasteboardName)
+int64_t WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardCustomData>& data, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).write(data);
 }
 
-bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& pasteboardName, const String& type)
+bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& pasteboardName, const String& type, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).containsStringSafeForDOMToReadForType(type);
 }
 
-Optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount)
+Optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount);
 }
 
-Optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount)
+Optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).allPasteboardItemInfo(changeCount);
 }
 
-int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
+int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).count();
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& type, const String& pasteboardName)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& type, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }
 
-URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pasteboardName, String& title)
+URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).readURL(index, title);
 }
 
-String WebPlatformStrategies::readStringFromPasteboard(size_t index, const String& type, const String& pasteboardName)
+String WebPlatformStrategies::readStringFromPasteboard(size_t index, const String& type, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).readString(index, type);
 }
 
-bool WebPlatformStrategies::containsURLStringSuitableForLoading(const String& pasteboardName)
+bool WebPlatformStrategies::containsURLStringSuitableForLoading(const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).containsURLStringSuitableForLoading();
 }
 
-String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboardName, String& title)
+String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboardName, String& title, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).urlStringSuitableForLoading(title);
 }
 
 #if PLATFORM(IOS_FAMILY)
 
-void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)
+void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).write(url);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).write(content);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image, const String& pasteboardName)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).write(image);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName)
+void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).write(pasteboardType, text);
 }
 
-void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
+void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName, const PasteboardContext*)
 {
     PlatformPasteboard(pasteboardName).updateSupportedTypeIdentifiers(identifiers);
 }

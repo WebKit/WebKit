@@ -47,6 +47,7 @@
 #import "HTMLSpanElement.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
+#import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
@@ -247,9 +248,10 @@ void Editor::takeFindStringFromSelection()
 #if PLATFORM(MAC)
     Vector<String> types;
     types.append(String(legacyStringPasteboardType()));
+    auto context = PagePasteboardContext::create(m_document.pageID());
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
-    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardType(), NSFindPboard);
+    platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard, context.get());
+    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardType(), NSFindPboard, context.get());
     ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     if (auto* client = this->client()) {

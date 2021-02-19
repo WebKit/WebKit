@@ -355,7 +355,7 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
         return copyToVector(types);
     }
 
-    return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin);
+    return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin, context());
 }
 
 Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
@@ -476,7 +476,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
         return;
     }
 
-    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name);
+    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name, context());
 }
 
 void Pasteboard::write(const Color&)

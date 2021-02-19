@@ -1,3 +1,102 @@
+2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through WebPasteboardProxy
+        https://bugs.webkit.org/show_bug.cgi?id=222071
+
+        Reviewed by Tim Horton.
+
+        Add `const PasteboardContext*` arguments to the `PasteboardStrategy` methods on `WebPlatformStrategies`, convert
+        them to `PageIdentifier`s, and send them over to the UI process via `WebPasteboardProxy` methods.
+
+        While currently unused inside `WebPasteboardProxy`, the next patch will attempt to use these page identifiers to
+        retrieve a data owner type from the corresponding `WebPageProxy`, and then forward this data owner type to the
+        `PlatformPasteboard`.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardTypes):
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getPasteboardChangeCount):
+        (WebKit::WebPasteboardProxy::getPasteboardColor):
+        (WebKit::WebPasteboardProxy::getPasteboardURL):
+        (WebKit::WebPasteboardProxy::addPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::containsURLStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::urlStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getNumberOfFiles):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::containsStringSafeForDOMToReadForType):
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+        (WebKit::WebPasteboardProxy::updateSupportedTypeIdentifiers):
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::containsStringSafeForDOMToReadForType):
+        (WebKit::WebPasteboardProxy::containsURLStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::urlStringSuitableForLoading):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp:
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::pageIdentifier):
+        (WebKit::WebPlatformStrategies::getTypes):
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        (WebKit::WebPlatformStrategies::stringForType):
+        (WebKit::WebPlatformStrategies::allStringsForType):
+        (WebKit::WebPlatformStrategies::changeCount):
+        (WebKit::WebPlatformStrategies::color):
+        (WebKit::WebPlatformStrategies::url):
+        (WebKit::WebPlatformStrategies::addTypes):
+        (WebKit::WebPlatformStrategies::setTypes):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::setURL):
+        (WebKit::WebPlatformStrategies::setColor):
+        (WebKit::WebPlatformStrategies::setStringForType):
+        (WebKit::WebPlatformStrategies::getNumberOfFiles):
+        (WebKit::WebPlatformStrategies::containsURLStringSuitableForLoading):
+        (WebKit::WebPlatformStrategies::urlStringSuitableForLoading):
+        (WebKit::WebPlatformStrategies::writeToPasteboard):
+        (WebKit::WebPlatformStrategies::updateSupportedTypeIdentifiers):
+        (WebKit::WebPlatformStrategies::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPlatformStrategies::writeCustomData):
+        (WebKit::WebPlatformStrategies::containsStringSafeForDOMToReadForType):
+        (WebKit::WebPlatformStrategies::getPasteboardItemsCount):
+        (WebKit::WebPlatformStrategies::allPasteboardItemInfo):
+        (WebKit::WebPlatformStrategies::informationForItemAtIndex):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        (WebKit::WebPlatformStrategies::readURLFromPasteboard):
+        (WebKit::WebPlatformStrategies::readStringFromPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2021-02-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Add support for non app-bound requests
