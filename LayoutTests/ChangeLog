@@ -1,3 +1,13 @@
+2021-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling on https://www.apple.com/ipad-air/ can jitter on certain sections
+        https://bugs.webkit.org/show_bug.cgi?id=222136
+        rdar://71881767
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac/compositing/layer-creation/compositing-policy-expected.txt: Added.
+
 2021-02-18  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 Relative Color Syntax

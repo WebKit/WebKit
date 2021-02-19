@@ -3112,8 +3112,11 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
         return false;
 #endif
 
+#if !PLATFORM(MAC)
+    // Ugly workaround for rdar://71881767. Undo when webkit.org/b/222092 and webkit.org/b/222132 are fixed.
     if (m_compositingPolicy == CompositingPolicy::Conservative)
         return false;
+#endif
 
     if (is<RenderBox>(renderer))
         return true;
