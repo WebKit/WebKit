@@ -1,3 +1,12 @@
+2021-02-19  Robert Jenner  <jenner@apple.com>
+
+        [ MacOS Wk2 ] media/media-fragments/TC0034.html  is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=221930
+
+        Uneviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skipping test until it can be fixed.
+
 2021-02-19  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Repopulate the TestExpectations file #4
