@@ -63,6 +63,7 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "Settings.h"
+#include "StyleGridData.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -1331,6 +1332,44 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
     return trackSizes;
 }
 
+static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, GridTrackSizingDirection direction, unsigned expectedLineCount)
+{
+    if (!renderStyle)
+        return { };
+    
+    OrderedNamedGridLinesMap combinedGridLineNames;
+    auto appendLineNames = [&](unsigned index, Vector<String> newNames) {
+        if (combinedGridLineNames.contains(index)) {
+            auto names = combinedGridLineNames.take(index);
+            names.appendVector(newNames);
+            combinedGridLineNames.add(index, names);
+        } else
+            combinedGridLineNames.add(index, newNames);
+    };
+    
+    auto orderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->orderedNamedGridColumnLines() : renderStyle->orderedNamedGridRowLines();
+    for (auto& [i, names] : orderedGridLineNames)
+        appendLineNames(i, names);
+    
+    auto autoRepeatOrderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->autoRepeatOrderedNamedGridColumnLines() : renderStyle->autoRepeatOrderedNamedGridRowLines();
+    auto autoRepeatInsertionPoint = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridAutoRepeatColumnsInsertionPoint() : renderStyle->gridAutoRepeatRowsInsertionPoint();
+    unsigned autoRepeatIndex = 0;
+    while (autoRepeatOrderedGridLineNames.size() && autoRepeatIndex < expectedLineCount - autoRepeatInsertionPoint) {
+        auto names = autoRepeatOrderedGridLineNames.get(autoRepeatIndex % autoRepeatOrderedGridLineNames.size());
+        auto lineIndex = autoRepeatIndex + autoRepeatInsertionPoint;
+        appendLineNames(lineIndex, names);
+        ++autoRepeatIndex;
+    }
+
+    auto implicitGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->implicitNamedGridColumnLines() : renderStyle->implicitNamedGridRowLines();
+    for (auto& [name, indexes] : implicitGridLineNames) {
+        for (auto i : indexes)
+            appendLineNames(i, {name});
+    }
+    
+    return combinedGridLineNames;
+}
+
 void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Grid& gridOverlay)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
@@ -1394,6 +1433,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
     // Draw columns and rows.
     auto columnWidths = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
+    auto columnLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForColumns, columnPositions.size());
     auto authoredTrackColumnSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForColumns, columnWidths.size());
     float previousColumnX = 0;
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
@@ -1438,14 +1478,28 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         
         context.strokePath(columnPaths);
         
+        Vector<String> lineLabelParts;
         if (gridOverlay.config.showLineNumbers) {
+            lineLabelParts.append(String::number(i + 1));
+            lineLabelParts.append(String::number(-static_cast<int>(columnPositions.size() - i)));
+        }
+        if (gridOverlay.config.showLineNames && columnLineNames.contains(i))
+            lineLabelParts.appendVector(columnLineNames.get(i));
+        if (lineLabelParts.size()) {
+            auto lineLabel = lineLabelParts[0];
+            for (size_t i = 1; i < lineLabelParts.size(); ++i) {
+                lineLabel.append(thinSpace);
+                lineLabel.append(bullet);
+                lineLabel.append(thinSpace);
+                lineLabel.append(lineLabelParts[i]);
+            }
             // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-            drawLayoutLabel(context, String::number(i + 1), FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
-            drawLayoutLabel(context, String::number(-static_cast<int>(columnPositions.size() - i)), FloatPoint(labelX, gridBoundingBox.y() + gridBoundingBox.height()), LabelArrowDirection::Up);
+            drawLayoutLabel(context, lineLabel, FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
         }
     }
 
     auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
+    auto rowLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForRows, rowPositions.size());
     auto authoredTrackRowSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForRows, rowHeights.size());
     float previousRowY = 0;
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
@@ -1489,10 +1543,23 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
         context.strokePath(rowPaths);
         
+        Vector<String> lineLabelParts;
         if (gridOverlay.config.showLineNumbers) {
+            lineLabelParts.append(String::number(i + 1));
+            lineLabelParts.append(String::number(-static_cast<int>(rowPositions.size() - i)));
+        }
+        if (gridOverlay.config.showLineNames && rowLineNames.contains(i))
+            lineLabelParts.appendVector(rowLineNames.get(i));
+        if (lineLabelParts.size()) {
+            auto lineLabel = lineLabelParts[0];
+            for (size_t i = 1; i < lineLabelParts.size(); ++i) {
+                lineLabel.append(thinSpace);
+                lineLabel.append(bullet);
+                lineLabel.append(thinSpace);
+                lineLabel.append(lineLabelParts[i]);
+            }
             // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-            drawLayoutLabel(context, String::number(i + 1), FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
-            drawLayoutLabel(context, String::number(-static_cast<int>(rowPositions.size() - i)), FloatPoint(gridBoundingBox.x() + gridBoundingBox.width(), labelY), LabelArrowDirection::Left);
+            drawLayoutLabel(context, lineLabel, FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
         }
     }
     
