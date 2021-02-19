@@ -1,3 +1,46 @@
+2021-02-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r272379. rdar://problem/74500599
+
+    Supplementary code points (U+10000 - U+10FFFF) are not shaped correctly in the fast text codepath
+    https://bugs.webkit.org/show_bug.cgi?id=221356
+    <rdar://problem/72555297>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Supplementary code points are represented in UTF-16 as two adjacent (surrogate) code units. When we map code
+    points to glyphs, we were originally mapping these two code units to a single glyph. However, shaping
+    routines require that the number of code units and glyphs be equal, by injecting a 0 glyph for the trailing
+    surrogate.
+    
+    Luckily, we don't actually have to delete these extra 0 glyphs, because the shaping engine will do that for us.
+    
+    Test: fast/text/multi-code-unit-simple-path.html
+    
+    * platform/graphics/WidthIterator.cpp:
+    (WebCore::WidthIterator::advanceInternal):
+    
+    LayoutTests:
+    
+    * fast/text/multi-code-unit-simple-path-expected-mismatch.html: Added.
+    * fast/text/multi-code-unit-simple-path.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Supplementary code points (U+10000 - U+10FFFF) are not shaped correctly in the fast text codepath
+            https://bugs.webkit.org/show_bug.cgi?id=221356
+            <rdar://problem/72555297>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/text/multi-code-unit-simple-path-expected-mismatch.html: Added.
+            * fast/text/multi-code-unit-simple-path.html: Added.
+
 2021-02-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r272345. rdar://problem/74195248
