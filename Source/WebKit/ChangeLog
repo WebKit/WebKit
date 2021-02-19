@@ -1,3 +1,19 @@
+2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add better error handling to ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
+        https://bugs.webkit.org/show_bug.cgi?id=222169
+        <rdar://problem/74522283>
+
+        Reviewed by Darin Adler.
+
+        Add better error handling for the case where the query to find the
+        UnattributedPrivateClickMeasurement table fails. This is unlikely to
+        happen in practice, however, if it does, we should add logging and
+        a debug ASSERT.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema):
+
 2021-02-19  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] add an `object data` to `PaymentDetailsBase` so that data specific to Apple Pay can be provided

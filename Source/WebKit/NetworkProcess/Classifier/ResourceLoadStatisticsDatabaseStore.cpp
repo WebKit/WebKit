@@ -435,13 +435,18 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSch
     // Fetch the schema for the existing UnattributedPrivateClickMeasurement table.
     SQLiteStatement statement(m_database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='UnattributedPrivateClickMeasurement' AND type = 'table'");
     if (statement.prepare() != SQLITE_OK) {
-        LOG_ERROR("Unable to prepare statement to fetch schema for the UnattributedPrivateClickMeasurement table.");
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema Unable to prepare statement to fetch schema for the UnattributedPrivateClickMeasurement table, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    if (statement.step() == SQLITE_ROW)
-        currentSchema = statement.getColumnText(1);
+    if (statement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema error executing statement to fetch UnattributedPrivateClickMeasurement schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    currentSchema = statement.getColumnText(1);
 
     if (!currentSchema.isEmpty()
         && currentSchema != unattributedPrivateClickMeasurementSchemaV1()
