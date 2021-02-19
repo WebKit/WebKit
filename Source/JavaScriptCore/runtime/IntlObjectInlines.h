@@ -30,6 +30,7 @@
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
 #include "JSObject.h"
+#include "ObjectConstructor.h"
 #include <unicode/ucol.h>
 
 namespace JSC {
@@ -178,6 +179,19 @@ inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* character
     if (length1 == length2)
         return UCOL_EQUAL;
     return length1 > length2 ? UCOL_GREATER : UCOL_LESS;
+}
+
+// https://tc39.es/ecma402/#sec-getoptionsobject
+inline JSObject* intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (options.isUndefined())
+        return constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+    if (LIKELY(options.isObject()))
+        return asObject(options);
+    throwTypeError(globalObject, scope, "options argument is not an object or undefined"_s);
+    return nullptr;
 }
 
 } // namespace JSC

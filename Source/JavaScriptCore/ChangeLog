@@ -1,3 +1,31 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use toObject for options in new Intl constructors
+        https://bugs.webkit.org/show_bug.cgi?id=222164
+
+        Reviewed by Alexey Shvayka.
+
+        New spec change[1] introduced stricter GetOptionsObject for relatively new Intl constructors: Intl.DisplayNames, Intl.ListFormat, and Intl.Segmenter[2].
+        This does not perform `ToObject`, and instead,
+
+            1. If the input is an undefined, then it returns empty object.
+            2. If the input is an object, then it returns this object.
+            3. Otherwise, throwing a TypeError.
+
+        This patch implements it.
+
+        [1]: https://github.com/tc39/ecma402/pull/538
+        [2]: https://github.com/tc39/proposal-intl-segmenter/issues/132
+
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::initializeListFormat):
+        * runtime/IntlObjectInlines.h:
+        (JSC::intlGetOptionsObject):
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::initializeSegmenter):
+
 2021-02-19  Mark Lam  <mark.lam@apple.com>
 
         Need to rebase builtins generator tests results.

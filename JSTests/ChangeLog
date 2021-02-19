@@ -1,3 +1,13 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use toObject for options in new Intl constructors
+        https://bugs.webkit.org/show_bug.cgi?id=222164
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/intl-get-options-not-using-toobject.js: Added.
+        (shouldThrow):
+
 2021-02-19  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext] Fix Test262 expectations for static private methods
