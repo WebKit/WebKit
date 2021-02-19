@@ -106,7 +106,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
 
             Structure* indicesStructure = globalObject->regExpMatchesIndicesArrayStructure();
 
-            indicesArray->putDirect(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups);
+            indicesArray->putDirect(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups ? indicesGroups : jsUndefined());
 
             ASSERT(!indicesArray->butterfly()->indexingHeader()->preCapacity(indicesStructure));
             auto indicesCapacity = indicesStructure->outOfLineCapacity();

@@ -1,3 +1,18 @@
+2021-02-19  Michael Saboff  <msaboff@apple.com>
+
+        Minor fixes to RegExp match indices after r273086
+        https://bugs.webkit.org/show_bug.cgi?id=222157
+
+        Reviewed by Yusuke Suzuki.
+
+        When hasIndices is true, but there aren't any named groups, the spec says that we should
+        create the indices.groups property is the value undefined.
+        Increased the size of FlagsString to 7 plus terminater to account for the new 'd' flags.
+
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/RegExpPrototype.cpp:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not use toObject for options in new Intl constructors

@@ -162,7 +162,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     return JSValue::encode(thisRegExp);
 }
 
-typedef std::array<char, 6 + 1> FlagsString; // 6 different flags and a null character terminator.
+typedef std::array<char, 7 + 1> FlagsString; // 6 different flags and a null character terminator.
 
 static inline FlagsString flagsString(JSGlobalObject* globalObject, JSObject* regexp)
 {

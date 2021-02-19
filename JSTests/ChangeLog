@@ -1,3 +1,65 @@
+2021-02-19  Michael Saboff  <msaboff@apple.com>
+
+        Minor fixes to RegExp match indices after r273086
+        https://bugs.webkit.org/show_bug.cgi?id=222157
+
+        Reviewed by Yusuke Suzuki.
+
+        Added a new test to verify that all flag RegExp flag combinations work round tripping
+        from flags to flag proerties and back.
+        Added standalone versions of the updated regexp-match-indices from the PR
+        https://github.com/tc39/test262/pull/2934 as JSTest/stress test.
+        Disabled the regexp-match-indices feature test in test262 until the pull request
+        with updated tests land and we update the WebKit version.
+        This is tracked in https://bugs.webkit.org/show_bug.cgi?id=222142.
+
+        * stress/regexp-all-flags.js: Added.
+        (flagsFromVariation):
+        (setPropertiesForVariation):
+        (missingPropertiesForVariation):
+        (test.let.flagsSet.get call):
+        (test):
+        * stress/test262-indices-array-element.js: Added.
+        (assertSameValue):
+        * stress/test262-indices-array-matched.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        * stress/test262-indices-array-non-unicode-match.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (assertDeepEqual):
+        (verifyProperty):
+        * stress/test262-indices-array-properties.js: Added.
+        (verifyProperty):
+        * stress/test262-indices-array-unicode-match.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (assertDeepEqual):
+        (verifyProperty):
+        * stress/test262-indices-array-unicode-property-names.js: Added.
+        (assertCompareArray):
+        * stress/test262-indices-array-unmatched.js: Added.
+        (assertSameValue):
+        * stress/test262-indices-array.js: Added.
+        (assert):
+        (assertSameValue):
+        * stress/test262-indices-groups-object-undefined.js: Added.
+        (verifyProperty):
+        * stress/test262-indices-groups-object-unmatched.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        * stress/test262-indices-groups-object.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (verifyProperty):
+        * stress/test262-indices-groups-properties.js: Added.
+        (assertCompareArray):
+        (verifyProperty):
+        * stress/test262-indices-property.js: Added.
+        (assertSameValue):
+        (verifyProperty):
+        * test262/config.yaml:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not use toObject for options in new Intl constructors
