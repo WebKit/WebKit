@@ -1,3 +1,22 @@
+2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Temporarily disable drawing OT-SVG glyphs in the GPU process until it can be implemented properly
+        https://bugs.webkit.org/show_bug.cgi?id=221744
+
+        Reviewed by Simon Fraser.
+
+        This patch soft-links the OTSVG framework because it's a private framework that doesn't exist on watchOS.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cf/CoreTextSoftLink.cpp: Added.
+        * pal/cf/CoreTextSoftLink.h: Added.
+        * pal/cf/OTSVGTable.cpp: Added.
+        (PAL::OTSVGTable::OTSVGTable):
+        (PAL::OTSVGTable::~OTSVGTable):
+        (PAL::OTSVGTable::operator=):
+        * pal/cf/OTSVGTable.h: Added.
+        * pal/spi/cf/CoreTextSPI.h:
+
 2021-02-18  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] add an `object data` to `PaymentItem` so that data specific to Apple Pay can be provided

@@ -362,6 +362,55 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     m_owner.translate(0, -(rect.size.height + 2 * rect.origin.y));
 }
 
+struct GlyphsAndAdvancesStorage {
+    Vector<GlyphBufferGlyph> glyphs;
+    Vector<GlyphBufferAdvance> advances;
+};
+
+struct GlyphsAndAdvances {
+    const GlyphBufferGlyph* glyphs;
+    const GlyphBufferAdvance* advances;
+    unsigned numGlyphs;
+    GlyphBufferAdvance initialAdvance;
+    Optional<GlyphsAndAdvancesStorage> storage;
+};
+
+static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs)
+{
+    auto otsvgGlyphs = font.findOTSVGGlyphs(glyphs, numGlyphs);
+    if (!otsvgGlyphs)
+        return { glyphs, advances, numGlyphs, makeGlyphBufferAdvance(), { }};
+
+    ASSERT(otsvgGlyphs->size() >= numGlyphs);
+
+    GlyphsAndAdvances result;
+    result.initialAdvance = makeGlyphBufferAdvance();
+    result.storage = GlyphsAndAdvancesStorage();
+
+    result.storage->glyphs.reserveInitialCapacity(numGlyphs);
+    result.storage->advances.reserveInitialCapacity(numGlyphs);
+
+    for (unsigned i = 0; i < numGlyphs; ++i) {
+        ASSERT(result.storage->glyphs.size() == result.storage->advances.size());
+        if (otsvgGlyphs->quickGet(i)) {
+            if (result.storage->advances.isEmpty())
+                result.initialAdvance = makeGlyphBufferAdvance(size(result.initialAdvance) + size(advances[i]));
+            else
+                result.storage->advances.last() = makeGlyphBufferAdvance(size(result.storage->advances.last()) + size(advances[i]));
+        } else {
+            result.storage->glyphs.uncheckedAppend(glyphs[i]);
+            result.storage->advances.uncheckedAppend(advances[i]);
+        }
+        ASSERT(result.storage->glyphs.size() == result.storage->advances.size());
+    }
+
+    result.glyphs = result.storage->glyphs.data();
+    result.advances = result.storage->advances.data();
+    result.numGlyphs = result.storage->glyphs.size();
+
+    return result;
+}
+
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
@@ -371,8 +420,13 @@ void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* gl
 
     ASSERT(m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::Deconstruct);
 
+    // FIXME: <rdar://problem/70166552> Record OTSVG glyphs.
+    GlyphsAndAdvances glyphsAndAdvancesWithoutOTSVGGlyphs = filterOutOTSVGGlyphs(font, glyphs, advances, numGlyphs);
+    ASSERT(glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs == glyphs || glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs == glyphsAndAdvancesWithoutOTSVGGlyphs.storage->glyphs.data());
+    ASSERT(glyphsAndAdvancesWithoutOTSVGGlyphs.advances == advances || glyphsAndAdvancesWithoutOTSVGGlyphs.advances == glyphsAndAdvancesWithoutOTSVGGlyphs.storage->advances.data());
+
     prepareInternalContext(font, smoothingMode);
-    FontCascade::drawGlyphs(m_internalContext, font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    FontCascade::drawGlyphs(m_internalContext, font, glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs, glyphsAndAdvancesWithoutOTSVGGlyphs.advances, glyphsAndAdvancesWithoutOTSVGGlyphs.numGlyphs, startPoint + size(glyphsAndAdvancesWithoutOTSVGGlyphs.initialAdvance), smoothingMode);
     concludeInternalContext();
 }
 

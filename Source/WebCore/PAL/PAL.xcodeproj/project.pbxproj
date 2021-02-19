@@ -109,6 +109,8 @@
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
 		1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4876D71F8D7F4E00CCEEBD /* Logging.h */; };
+		1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */; };
+		1C77C8CE25D7A4A300635E0C /* OTSVGTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */; };
 		1CC3ACE822BD7EC500F360F0 /* MetalSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */; };
 		1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F420D871930047B097 /* CoreUISPI.h */; };
 		1CCEE4F720D8743F0047B097 /* NSAppearanceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */; };
@@ -306,6 +308,10 @@
 		1C4876D71F8D7F4E00CCEEBD /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		1C4876DC1F8D7FC600CCEEBD /* LogMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogMacros.h; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextSoftLink.cpp; sourceTree = "<group>"; };
+		1C77C8C825D7972000635E0C /* CoreTextSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSoftLink.h; sourceTree = "<group>"; };
+		1C77C8CB25D79B6C00635E0C /* OTSVGTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTSVGTable.h; sourceTree = "<group>"; };
+		1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OTSVGTable.cpp; sourceTree = "<group>"; };
 		1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalSPI.h; sourceTree = "<group>"; };
 		1CCEE4F420D871930047B097 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
 		1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAppearanceSPI.h; sourceTree = "<group>"; };
@@ -594,6 +600,10 @@
 				416E995223DAE6BE00E871CB /* AudioToolboxSoftLink.h */,
 				0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */,
 				0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */,
+				1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */,
+				1C77C8C825D7972000635E0C /* CoreTextSoftLink.h */,
+				1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */,
+				1C77C8CB25D79B6C00635E0C /* OTSVGTable.h */,
 				416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */,
 				416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */,
 			);
@@ -1025,6 +1035,7 @@
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
 				0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
+				1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
@@ -1038,6 +1049,7 @@
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
 				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
 				31647FB0251759DD0010F8FB /* OpenGLSoftLinkCocoa.mm in Sources */,
+				1C77C8CE25D7A4A300635E0C /* OTSVGTable.cpp in Sources */,
 				CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */,
 				CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,

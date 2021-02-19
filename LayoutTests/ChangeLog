@@ -1,3 +1,26 @@
+2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Temporarily disable drawing OT-SVG glyphs in the GPU process until it can be implemented properly
+        https://bugs.webkit.org/show_bug.cgi?id=221744
+        <rdar://problem/74222334>
+
+        Reviewed by Simon Fraser.
+
+        Create an OTSVG font for testing.
+        The A glyph is a green rectangle.
+        The B glyph is an image.
+        The C glyph is another image, with a different EXIF orientation than the B glyph.
+
+        This test makes sure that two glyphs with an OTSVG glyph between them don't get smooshed together in canvas.
+
+        I'm explicitly not testing the behavior of OTSVG itself in canvas, because this test explicitly disables
+        that behavior. I think it's wrong to create tests that make sure some functionality is broken, because the
+        functionality, philosophically, shouldn't be broken. 
+
+        * fast/text/otsvg-spacing-expected.html: Added.
+        * fast/text/otsvg-spacing.html: Added.
+        * fast/text/resources/Ahem-SVG.ttf: Added.
+
 2021-02-18  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in IPC::decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
