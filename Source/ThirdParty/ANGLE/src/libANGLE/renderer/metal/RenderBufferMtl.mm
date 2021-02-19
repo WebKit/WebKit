@@ -175,7 +175,11 @@ angle::Result RenderbufferMtl::getAttachmentRenderTarget(const gl::Context *cont
 angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
                                                   const gl::ImageIndex &imageIndex)
 {
-    return mtl::InitializeTextureContents(context, mTexture, mFormat,
+    if (imageIndex.valid())
+        return mtl::InitializeTextureContents(context, mTexture, mFormat,
                                           mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
+    else
+        return mtl::InitializeTextureContents(context, mTexture, mFormat,
+                                          mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
 }
 }

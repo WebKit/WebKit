@@ -1,3 +1,18 @@
+2021-02-19  Kyle Piddington  <kpiddington@apple.com>
+
+        Crash in readPixels with ANGLE Metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=220877
+
+        RenderbufferMtl::initializeContents is sometimes bound with a
+        default level index, which doesn't specify type, layer count, or
+        other information. When this path is called with an invalid index,
+        assume a 2d index.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::initializeContents):
+
 2021-02-17  Dean Jackson  <dino@apple.com>
 
         Metal-Angle on IOS fails in ValidateCreatePbufferFromClientBuffer
