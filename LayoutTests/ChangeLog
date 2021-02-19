@@ -1,3 +1,13 @@
+2021-02-19  Youenn Fablet  <youenn@apple.com>
+
+        Allow to use BigInt as key identifier
+        https://bugs.webkit.org/show_bug.cgi?id=222165
+
+        Reviewed by Darin Adler.
+
+        * webrtc/sframe-keys-expected.txt:
+        * webrtc/sframe-keys.html:
+
 2021-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         A number of offscreencanvas tests are asserting isMainThread trying to access strictCSSParserContext
