@@ -635,7 +635,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
             return m_classMap.get()[(id)cls] = [self classInfoForClass:class_getSuperclass(cls)];
     }
 
-    return m_classMap.get()[(id)cls] = adoptNS([[JSObjCClassInfo alloc] initForClass:cls]).autorelease();
+    return m_classMap.get()[(id)cls] = adoptNS([[JSObjCClassInfo alloc] initForClass:cls]).get();
 }
 
 - (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context

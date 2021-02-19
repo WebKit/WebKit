@@ -68,7 +68,7 @@
 
 - (instancetype)init
 {
-    return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).autorelease()];
+    return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).get()];
 }
 
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine

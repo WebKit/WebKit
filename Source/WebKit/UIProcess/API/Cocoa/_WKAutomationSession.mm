@@ -41,7 +41,7 @@
 
 - (instancetype)init
 {
-    return [self initWithConfiguration:adoptNS([[_WKAutomationSessionConfiguration alloc] init]).autorelease()];
+    return [self initWithConfiguration:adoptNS([[_WKAutomationSessionConfiguration alloc] init]).get()];
 }
 
 - (instancetype)initWithConfiguration:(_WKAutomationSessionConfiguration *)configuration

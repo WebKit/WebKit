@@ -920,7 +920,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
         && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)]) {
         RefPtr<PlatformMediaResourceLoader> mediaResourceLoader = player()->createResourceLoader();
         if (mediaResourceLoader)
-            resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).autorelease();
+            resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
     }
 
     m_haveCheckedPlayability = false;

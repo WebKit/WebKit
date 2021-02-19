@@ -294,7 +294,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
             [contact setPhoneNumbers:numbers];
         }
 
-        [contacts addObject:contact.autorelease()];
+        [contacts addObject:contact.get()];
     }
 
     return contacts;

@@ -72,7 +72,7 @@ static NSError *toUserContentRuleListStoreError(const NSError *error)
 {
     [_contentRuleListStore _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
         auto contentFilter = contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]) : nil;
-        completionHandler(contentFilter.autorelease(), toUserContentRuleListStoreError(error));
+        completionHandler(contentFilter.get(), toUserContentRuleListStoreError(error));
     }];
 }
 
@@ -80,7 +80,7 @@ static NSError *toUserContentRuleListStoreError(const NSError *error)
 {
     [_contentRuleListStore lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
         auto contentFilter = contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]) : nil;
-        completionHandler(contentFilter.autorelease(), toUserContentRuleListStoreError(error));
+        completionHandler(contentFilter.get(), toUserContentRuleListStoreError(error));
     }];
 }
 

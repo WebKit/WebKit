@@ -169,20 +169,24 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         applyBasicAuthorizationHeader(firstRequest(), d->m_initialCredential);
     }
 
-    NSURLRequest *nsRequest = firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    nsRequest = applySniffingPoliciesIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
+    auto nsRequest = retainPtr(firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody));
+    nsRequest = applySniffingPoliciesIfNeeded(nsRequest.get(), shouldContentSniff, shouldContentEncodingSniff);
 
     if (d->m_storageSession)
-        nsRequest = copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest).autorelease();
+        nsRequest = copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest.get());
 
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This code is different from iOS code in ResourceHandleCFNet.cpp in that here we respect stream properties that were present in client properties.
     NSDictionary *streamPropertiesFromClient = [connectionProperties objectForKey:@"kCFURLConnectionSocketStreamProperties"];
-    NSMutableDictionary *streamProperties = streamPropertiesFromClient ? adoptNS([streamPropertiesFromClient mutableCopy]).autorelease() : [NSMutableDictionary dictionary];
+    RetainPtr<NSMutableDictionary> streamProperties;
+    if (streamPropertiesFromClient)
+        streamProperties = adoptNS([streamPropertiesFromClient mutableCopy]);
+    else
+        streamProperties = retainPtr([NSMutableDictionary dictionary]);
 #else
-    NSMutableDictionary *streamProperties = [NSMutableDictionary dictionary];
+    auto streamProperties = retainPtr([NSMutableDictionary dictionary]);
 #endif
 
     if (!shouldUseCredentialStorage) {
@@ -205,14 +209,14 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 
 #if PLATFORM(IOS_FAMILY)
     NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithDictionary:connectionProperties];
-    [propertyDictionary setObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
+    [propertyDictionary setObject:streamProperties.get() forKey:@"kCFURLConnectionSocketStreamProperties"];
     const bool usesCache = false;
 #if !PLATFORM(MACCATALYST)
     if (synchronousWillSendRequestEnabled())
         CFURLRequestSetShouldStartSynchronously([nsRequest _CFURLRequest], 1);
 #endif
 #else
-    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithObject:streamProperties.get() forKey:@"kCFURLConnectionSocketStreamProperties"];
     const bool usesCache = true;
 #endif
     [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(_TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
@@ -222,7 +226,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     [propertyDictionary setObject:@{@"NSAllowsArbitraryLoadsInWebContent": @YES} forKey:@"_kCFURLConnectionPropertyATSFrameworkOverrides"];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
+    d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest.get() delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

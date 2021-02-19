@@ -1211,12 +1211,12 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
 {
     if (!string.length) {
-        completionHandler(adoptNS([[WKFindResult alloc] _initWithMatchFound:NO]).autorelease());
+        completionHandler(adoptNS([[WKFindResult alloc] _initWithMatchFound:NO]).get());
         return;
     }
 
     _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found) {
-        handler(adoptNS([[WKFindResult alloc] _initWithMatchFound:found]).autorelease());
+        handler(adoptNS([[WKFindResult alloc] _initWithMatchFound:found]).get());
     });
 }
 
@@ -1713,8 +1713,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
-        auto node = retainPtr(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
-        completionHandler(node.autorelease());
+        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
     });
 }
 
@@ -2604,7 +2603,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     _page->getContentsAsAttributedString([handler = makeBlockPtr(completionHandler)](auto& attributedString) {
         if (attributedString.string)
-            handler(retainPtr(attributedString.string.get()).autorelease(), retainPtr(attributedString.documentAttributes.get()).autorelease(), nil);
+            handler(attributedString.string.get(), attributedString.documentAttributes.get(), nil);
         else
             handler(nil, nil, createNSError(WKErrorUnknown).get());
     });

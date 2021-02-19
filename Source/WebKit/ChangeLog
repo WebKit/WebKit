@@ -1,3 +1,33 @@
+2021-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=221932
+        <rdar://problem/74410900>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r272936 in order to address post-landing review comments.
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (+[NSAttributedString _loadFromHTMLWithOptions:contentLoader:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        (-[WKWebView _frames:]):
+        (-[WKWebView _getContentsAsAttributedStringWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession init]):
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector registerExtensionWithID:displayName:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController registerExtensionWithID:displayName:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        * UIProcess/Cocoa/WKContactPicker.mm:
+        (-[WKContactPicker _contactsFromJSContacts:]):
+
 2021-02-18  Peng Liu  <peng.liu6@apple.com>
 
         [ MacOS Wk2 Debug ] http/tests/misc/copy-resolves-urls.html is a flakey crash in RemoteMediaPlayerProxy

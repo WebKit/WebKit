@@ -310,7 +310,7 @@ static WKWebViewConfiguration *configuration;
             [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
                 if (error)
                     return cancel(WKErrorUnknown, error);
-                finish(retainPtr(attributedString).autorelease(), retainPtr(documentAttributes).autorelease(), nil);
+                finish(attributedString, documentAttributes, nil);
             }];
         };
 

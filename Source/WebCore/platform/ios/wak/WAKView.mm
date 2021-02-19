@@ -238,7 +238,7 @@ static void invalidateGStateCallback(WKViewRef view)
 
 - (void)dealloc
 {
-    [adoptNS([subviewReferences copy]).autorelease() makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [adoptNS([subviewReferences copy]) makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     if (viewRef) {
         _WKViewSetViewContext (viewRef, 0);

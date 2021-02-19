@@ -2555,18 +2555,18 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     const unichar attachmentChar = NSAttachmentCharacter;
     NSInteger count = [array count];
     for (NSInteger k = 0; k < count; ++k) {
-        id object = [array objectAtIndex:k];
+        auto object = retainPtr([array objectAtIndex:k]);
 
         if (attributed && [object isKindOfClass:[WebAccessibilityObjectWrapper class]])
-            object = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object }]).autorelease();
+            object = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object.get() }]);
         
         if (![object isKindOfClass:returnClass])
             continue;
         
         if (attributed)
-            [(NSMutableAttributedString *)returnValue.get() appendAttributedString:object];
+            [(NSMutableAttributedString *)returnValue.get() appendAttributedString:object.get()];
         else
-            [(NSMutableString *)returnValue.get() appendString:object];
+            [(NSMutableString *)returnValue.get() appendString:object.get()];
     }
     return returnValue.autorelease();
 }
