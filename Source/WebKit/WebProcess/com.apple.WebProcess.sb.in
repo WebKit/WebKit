@@ -1256,7 +1256,39 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     (with report) (with telemetry)
 #endif
-    (global-name "com.apple.system.notification_center"))
+    (global-name "com.apple.system.notification_center")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+    (apply-message-filter
+        (deny mach-message-send (with telemetry-backtrace))
+        (deny mach-message-send (with no-report) (message-number 1023))
+        (allow mach-message-send (with telemetry-backtrace) (message-number
+            1002
+            1003
+            1004
+            1005
+            1011
+            1012
+            1013
+            1014
+            1015
+            1016
+            1017
+            1018
+            1021
+            1025
+            1026
+            1027
+        ))
+        (allow mach-message-send (message-number
+            1028
+            1029
+            1030
+            1031
+            1032
+        ))
+    )
+#endif
+)
 #endif
 
 ;; <rdar://problem/63943836>

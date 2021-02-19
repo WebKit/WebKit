@@ -1,3 +1,16 @@
+2021-02-19  Per Arne  <pvollan@apple.com>
+
+        Add notifyd message filter
+        https://bugs.webkit.org/show_bug.cgi?id=222129
+        <rdar://problem/73987767>
+
+        Reviewed by Brent Fulgham.
+
+        Add notifyd message filter in the WebContent process' sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Add better error handling to ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
