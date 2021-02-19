@@ -1506,14 +1506,14 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('jsc_rerun_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
-        self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8 ... (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
 
     def test_multiple_new_binary_failure(self):
         self.configureStep()
         self.setProperty('jsc_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
         self.setProperty('jsc_rerun_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
-        self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testb3, testmasm, testapi, testdfg, testair (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testair, testapi, testb3, testdfg, testmasm (failure)')
         return self.runStep()
 
     def test_new_stress_and_binary_failure(self):
@@ -1673,16 +1673,16 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         rc = self.runStep()
         self.assertEqual(self.getProperty(self.property_exceed_failure_limit), True)
         self.assertEqual(self.getProperty(self.property_failures),
-                            ["imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html",
-                             "imported/blink/storage/indexeddb/blob-valid-before-commit.html"])
+                            ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
+                             'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
         return rc
 
     def test_parse_results_json_flakes(self):

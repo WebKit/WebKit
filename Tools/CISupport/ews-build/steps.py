@@ -1779,7 +1779,7 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
         first_run_failures = set(self.getProperty('jsc_stress_test_failures', []) + self.getProperty('jsc_binary_failures', []))
         second_run_failures = set(self.getProperty('jsc_rerun_stress_test_failures', []) + self.getProperty('jsc_rerun_binary_failures', []))
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
-        flaky_failures_string = ', '.join(flaky_failures)
+        flaky_failures_string = ', '.join(sorted(flaky_failures))
 
         if rc == SUCCESS or rc == WARNINGS:
             pluralSuffix = 's' if len(flaky_failures) > 1 else ''
@@ -1828,13 +1828,13 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
 
         flaky_stress_failures = first_run_stress_failures.union(second_run_stress_failures) - first_run_stress_failures.intersection(second_run_stress_failures)
         flaky_binary_failures = first_run_binary_failures.union(second_run_binary_failures) - first_run_binary_failures.intersection(second_run_binary_failures)
-        flaky_failures = (list(flaky_binary_failures) + list(flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
+        flaky_failures = sorted(list(flaky_binary_failures) + list(flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
         new_stress_failures = stress_failures_with_patch - clean_tree_stress_failures
         new_binary_failures = binary_failures_with_patch - clean_tree_binary_failures
-        new_stress_failures_to_display = ', '.join(list(new_stress_failures)[:self.NUM_FAILURES_TO_DISPLAY])
-        new_binary_failures_to_display = ', '.join(list(new_binary_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+        new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
+        new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
 
         self._addToLog('stderr', '\nFailures in first run: {}'.format((list(first_run_binary_failures) + list(first_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
         self._addToLog('stderr', '\nFailures in second run: {}'.format((list(second_run_binary_failures) + list(second_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
@@ -2075,7 +2075,7 @@ class RunWebKitTests(shell.Test):
 
         if first_results:
             self.setProperty('first_results_exceed_failure_limit', first_results.did_exceed_test_failure_limit)
-            self.setProperty('first_run_failures', first_results.failing_tests)
+            self.setProperty('first_run_failures', sorted(first_results.failing_tests))
             if first_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
         self._parseRunWebKitTestsOutput(logText)
@@ -2142,7 +2142,7 @@ class ReRunWebKitTests(RunWebKitTests):
         second_results_failing_tests = set(self.getProperty('second_run_failures', []))
         tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
-        flaky_failures = list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]
+        flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
         if rc == SUCCESS or rc == WARNINGS:
@@ -2177,7 +2177,7 @@ class ReRunWebKitTests(RunWebKitTests):
 
         if second_results:
             self.setProperty('second_results_exceed_failure_limit', second_results.did_exceed_test_failure_limit)
-            self.setProperty('second_run_failures', second_results.failing_tests)
+            self.setProperty('second_run_failures', sorted(second_results.failing_tests))
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
         self._parseRunWebKitTestsOutput(logText)
