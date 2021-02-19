@@ -1,3 +1,47 @@
+2021-02-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE] User-Agent quirks not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=222109
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have WPE benefit from GTK's existing user agent code by moving the bits in WebPageGtk.cpp
+        and WebPageProxyGtk.cpp to WebPageGLib.cpp and a new WebPageProxyGLib.cpp. This also moves
+        over a few stub functions that are unimplemented in both WPE and GTK. Finally, it moves a
+        WebsiteDataStore function that had gotten very lost.
+
+        No new tests. Unfortunately, our existing user agent quirks tests do not exercise these
+        higher-level functions, and so were already running and passing for WPE.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/glib/WebPageProxyGLib.cpp: Copied from Source/WebKit/UIProcess/wpe/WebPageProxyWPE.cpp.
+        (WebKit::WebPageProxy::userAgentForURL):
+        (WebKit::WebPageProxy::standardUserAgent):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/glib/WebsiteDataStoreGLib.cpp:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::userAgentForURL): Deleted.
+        (WebKit::WebPageProxy::standardUserAgent): Deleted.
+        (WebKit::WebPageProxy::saveRecentSearches): Deleted.
+        (WebKit::WebPageProxy::loadRecentSearches): Deleted.
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches): Deleted.
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::platformInitialize):
+        (WebKit::WebPageProxy::userAgentForURL): Deleted.
+        (WebKit::WebPageProxy::standardUserAgent): Deleted.
+        (WebKit::WebPageProxy::saveRecentSearches): Deleted.
+        (WebKit::WebPageProxy::loadRecentSearches): Deleted.
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches): Deleted.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformUserAgent const):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformUserAgent const): Deleted.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformUserAgent const): Deleted.
+
 2021-02-19  Youenn Fablet  <youenn@apple.com>
 
         Update WKWebView getUserMedia delegate to latest proposal

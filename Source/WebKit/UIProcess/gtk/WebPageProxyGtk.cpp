@@ -35,10 +35,7 @@
 #include "WebPageMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessProxy.h"
-#include "WebsiteDataStore.h"
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
-#include <WebCore/UserAgent.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -52,20 +49,6 @@ GtkWidget* WebPageProxy::viewWidget()
     return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
 
-String WebPageProxy::userAgentForURL(const URL& url)
-{
-    if (url.isNull() || !preferences().needsSiteSpecificQuirks())
-        return this->userAgent();
-
-    auto userAgent = WebCore::standardUserAgentForURL(url);
-    return userAgent.isNull() ? this->userAgent() : userAgent;
-}
-
-String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
-{
-    return WebCore::standardUserAgent(applicationNameForUserAgent);
-}
-
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if !USE(GTK4)
@@ -73,23 +56,6 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID)
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
 #endif
-}
-
-void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&)
-{
-    notImplemented();
-}
-
-void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
-{
-    notImplemented();
-    completionHandler({ });
-}
-
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
-{
-    UNUSED_PARAM(oldestTimeToRemove);
-    notImplemented();
 }
 
 void WebPageProxy::updateEditorState(const EditorState& editorState)

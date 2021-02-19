@@ -41,6 +41,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/Range.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/UserAgent.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 
@@ -154,6 +155,14 @@ void WebPage::setInputMethodState(Element* element)
 
     m_inputMethodState = state;
     send(Messages::WebPageProxy::SetInputMethodState(state));
+}
+
+String WebPage::platformUserAgent(const URL& url) const
+{
+    if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
+        return String();
+
+    return WebCore::standardUserAgentForURL(url);
 }
 
 } // namespace WebKit
