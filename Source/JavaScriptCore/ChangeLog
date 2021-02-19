@@ -1,3 +1,54 @@
+2021-02-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r272938. rdar://problem/74500752
+
+    operationNewArrayWithSize should call tryCreate instead of create
+    https://bugs.webkit.org/show_bug.cgi?id=221983
+    <rdar://74265630>
+    
+    Reviewed by Mark Lam.
+    
+    I disassembled crashlogs inside operationNewArrayWithSize. They are crashing
+    inside array allocation. They are crashing on OOM. By code inspection,
+    operationNewArrayWithSizeAndHint has the same problem.
+    
+    Callsites to both functions already handle exceptions being thrown, so
+    converting both operationNewArrayWithSize and operationNewArrayWithSizeAndHint
+    to throw instead of crash on OOM is trivial.
+    
+    I wasn't able to come up with a test case for this.
+    
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * runtime/ObjectConstructor.cpp:
+    (JSC::ownPropertyKeys):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272938 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Saam Barati  <sbarati@apple.com>
+
+            operationNewArrayWithSize should call tryCreate instead of create
+            https://bugs.webkit.org/show_bug.cgi?id=221983
+            <rdar://74265630>
+
+            Reviewed by Mark Lam.
+
+            I disassembled crashlogs inside operationNewArrayWithSize. They are crashing
+            inside array allocation. They are crashing on OOM. By code inspection,
+            operationNewArrayWithSizeAndHint has the same problem.
+
+            Callsites to both functions already handle exceptions being thrown, so
+            converting both operationNewArrayWithSize and operationNewArrayWithSizeAndHint
+            to throw instead of crash on OOM is trivial.
+
+            I wasn't able to come up with a test case for this.
+
+            * dfg/DFGOperations.cpp:
+            (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+            * runtime/ObjectConstructor.cpp:
+            (JSC::ownPropertyKeys):
+
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272685. rdar://problem/74410538
