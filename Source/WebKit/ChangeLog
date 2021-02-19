@@ -1,3 +1,17 @@
+2021-02-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Remove access to IOSurfaceAcceleratorClient
+        https://bugs.webkit.org/show_bug.cgi?id=222199
+        <rdar://problem/73518610>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to IOSurfaceAcceleratorClient in the WebContent process on iOS when the GPU process is enabled.
+        This patch also adds the IOKit filter from IOSurfaceRootUserClient when the GPU process is not enabled, to
+        the rule for IOSurfaceRootUserClient when the GPU process is enabled.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-02-19  Jean-Yves Avenard  <jya@apple.com>
 
         Legacy CDM doesn't work when GPU media process is enabled

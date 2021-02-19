@@ -1016,13 +1016,29 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "IOSurfaceRootUserClient"
+        )
+    )
+    (when (defined? 'iokit-external-method)
+        (apply-message-filter
+            (deny (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap)
+            (allow
+                iokit-external-method)
+        )
+    )
+)
+
+(deny iokit-open (with telemetry-backtrace)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
             "IOSurfaceAcceleratorClient"
-            "IOSurfaceRootUserClient"
         )
     )
 )
