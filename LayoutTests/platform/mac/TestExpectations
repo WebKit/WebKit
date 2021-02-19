@@ -2292,3 +2292,5 @@ webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-
 
 webkit.org/b/222117 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
 webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
+
+webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
