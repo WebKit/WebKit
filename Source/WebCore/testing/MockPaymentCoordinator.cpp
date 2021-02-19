@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayPaymentMethodModeUpdate.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingContactUpdate.h"
@@ -162,6 +163,21 @@ void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPay
     m_total = WTFMove(paymentMethodUpdate->newTotal);
     m_lineItems = WTFMove(paymentMethodUpdate->newLineItems);
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void MockPaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&& paymentMethodModeUpdate)
+{
+    if (!paymentMethodModeUpdate)
+        return;
+
+    m_total = WTFMove(paymentMethodModeUpdate->newTotal);
+    m_lineItems = WTFMove(paymentMethodModeUpdate->newLineItems);
+    m_errors = convert(WTFMove(paymentMethodModeUpdate->errors));
+    m_shippingMethods = WTFMove(paymentMethodModeUpdate->newShippingMethods);
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
 {

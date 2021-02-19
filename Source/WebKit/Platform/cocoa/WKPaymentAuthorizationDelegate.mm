@@ -32,6 +32,10 @@
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditions.mm>
+#endif
+
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
     RetainPtr<NSArray<PKShippingMethod *>> _shippingMethods;
@@ -42,6 +46,9 @@
     WebKit::DidSelectPaymentMethodCompletion _didSelectPaymentMethodCompletion;
     WebKit::DidSelectShippingContactCompletion _didSelectShippingContactCompletion;
     WebKit::DidSelectShippingMethodCompletion _didSelectShippingMethodCompletion;
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_members)
+    WKPaymentAuthorizationDelegateAdditions_implementation_members
+#endif
 }
 
 - (NSArray<PKPaymentSummaryItem *> *)summaryItems
@@ -85,6 +92,10 @@
     _summaryItems = adoptNS([update.paymentSummaryItems copy]);
     std::exchange(_didSelectShippingMethodCompletion, nil)(update);
 }
+
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_public)
+    WKPaymentAuthorizationDelegateAdditions_implementation_public
+#endif
 
 - (void)invalidate
 {
@@ -196,6 +207,10 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
 
     presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod));
 }
+
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_protected)
+    WKPaymentAuthorizationDelegateAdditions_implementation_protected
+#endif
 
 - (void) NO_RETURN_DUE_TO_ASSERT _getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
 {

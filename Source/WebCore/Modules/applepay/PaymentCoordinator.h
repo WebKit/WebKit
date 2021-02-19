@@ -45,6 +45,9 @@ class PaymentMethod;
 class PaymentSession;
 class PaymentSessionError;
 enum class PaymentAuthorizationStatus;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodModeUpdate;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
@@ -73,6 +76,9 @@ public:
     void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&);
     void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&);
     void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&);
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&);
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
     void cancelPaymentSession();
@@ -82,6 +88,9 @@ public:
     WEBCORE_EXPORT void didSelectPaymentMethod(const PaymentMethod&);
     WEBCORE_EXPORT void didSelectShippingMethod(const ApplePayShippingMethod&);
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    WEBCORE_EXPORT void didChangePaymentMethodMode(String&& paymentMethodMode);
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     WEBCORE_EXPORT void didCancelPaymentSession(PaymentSessionError&&);
 
     Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;

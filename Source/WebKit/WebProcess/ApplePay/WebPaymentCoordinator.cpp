@@ -36,6 +36,7 @@
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/ApplePayPaymentMethodModeUpdate.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
@@ -127,6 +128,15 @@ void WebPaymentCoordinator::completePaymentMethodSelection(Optional<WebCore::App
     send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodSelection(WTFMove(update)));
 }
 
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinator::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+{
+    send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodModeChange(WTFMove(update)));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
 void WebPaymentCoordinator::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&& result)
 {
     send(Messages::WebPaymentCoordinatorProxy::CompletePaymentSession(result));
@@ -205,6 +215,15 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
 {
     paymentCoordinator().didSelectPaymentMethod(paymentMethod);
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinator::didChangePaymentMethodMode(String&& paymentMethodMode)
+{
+    paymentCoordinator().didChangePaymentMethodMode(WTFMove(paymentMethodMode));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError&& sessionError)
 {

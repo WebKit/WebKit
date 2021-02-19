@@ -84,6 +84,14 @@ void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCor
 {
 }
 
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinatorClient::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&)
+{
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
 void WebPaymentCoordinatorClient::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&)
 {
 }

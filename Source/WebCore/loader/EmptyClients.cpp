@@ -367,6 +367,9 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final { }
     void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final { }
     void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final { }
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&) final { }
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }

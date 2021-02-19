@@ -33,6 +33,7 @@
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/ApplePayPaymentMethodModeUpdate.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
@@ -167,6 +168,22 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(Optional<WebCore
     m_state = State::Active;
 }
 
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinatorProxy::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+{
+    // It's possible that the payment has been canceled already.
+    if (m_state == State::Idle)
+        return;
+
+    MESSAGE_CHECK(m_state == State::PaymentMethodModeChanged);
+
+    platformCompletePaymentMethodModeChange(WTFMove(update));
+    m_state = State::Active;
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
 void WebPaymentCoordinatorProxy::completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
 {
     // It's possible that the payment has been canceled already.
@@ -229,6 +246,18 @@ void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthori
     send(Messages::WebPaymentCoordinator::DidSelectShippingMethod(shippingMethod));
 }
 
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinatorProxy::presenterDidChangePaymentMethodMode(PaymentAuthorizationPresenter&, const String& paymentMethodMode)
+{
+    ASSERT(m_state == State::Active);
+
+    m_state = State::PaymentMethodModeChanged;
+    send(Messages::WebPaymentCoordinator::DidChangePaymentMethodMode(paymentMethodMode));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
 void WebPaymentCoordinatorProxy::presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact& shippingContact)
 {
     ASSERT(m_state == State::Active);
@@ -258,6 +287,9 @@ bool WebPaymentCoordinatorProxy::canBegin() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         return false;
     }
 }
@@ -271,6 +303,9 @@ bool WebPaymentCoordinatorProxy::canCancel() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         return true;
 
     case State::Completing:
@@ -292,6 +327,9 @@ bool WebPaymentCoordinatorProxy::canCompletePayment() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         return false;
     }
 }
@@ -305,6 +343,9 @@ bool WebPaymentCoordinatorProxy::canAbort() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         return true;
 
     case State::Completing:

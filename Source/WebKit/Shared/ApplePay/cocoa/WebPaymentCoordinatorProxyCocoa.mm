@@ -36,6 +36,7 @@
 #import "WebPaymentCoordinatorProxy.h"
 #import "WebPaymentCoordinatorProxyMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/ApplePayPaymentMethodModeUpdate.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
@@ -292,6 +293,15 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(Optional
 {
     m_authorizationPresenter->completePaymentMethodSelection(WTFMove(update));
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+{
+    m_authorizationPresenter->completePaymentMethodModeChange(WTFMove(update));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, Messages::WebPaymentCoordinatorProxy::GetSetupFeatures::AsyncReply&& reply)
 {

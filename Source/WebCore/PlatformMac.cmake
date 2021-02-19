@@ -632,6 +632,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
     Modules/applepay/ApplePayPaymentContact.idl
     Modules/applepay/ApplePayPaymentMethod.idl
+    Modules/applepay/ApplePayPaymentMethodModeUpdate.idl
     Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
     Modules/applepay/ApplePayPaymentMethodType.idl
     Modules/applepay/ApplePayPaymentMethodUpdate.idl

@@ -57,13 +57,14 @@ private:
     ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods();
     ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> computeTotalAndLineItems() const;
     Vector<RefPtr<ApplePayError>> computeErrors(String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
+    Vector<RefPtr<ApplePayError>> computeErrors(JSC::JSObject* paymentMethodErrors) const;
     void computeAddressErrors(String&& error, AddressErrors&&, Vector<RefPtr<ApplePayError>>&) const;
     void computePayerErrors(PayerErrorFields&&, Vector<RefPtr<ApplePayError>>&) const;
     ExceptionOr<void> computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<RefPtr<ApplePayError>>&) const;
 
     ExceptionOr<void> shippingAddressUpdated(Vector<RefPtr<ApplePayError>>&& errors);
     ExceptionOr<void> shippingOptionUpdated();
-    ExceptionOr<void> paymentMethodUpdated();
+    ExceptionOr<void> paymentMethodUpdated(Vector<RefPtr<ApplePayError>>&& errors);
 
     // PaymentHandler
     ExceptionOr<void> convertData(JSC::JSValue) final;
@@ -82,13 +83,25 @@ private:
     void didSelectShippingMethod(const ApplePayShippingMethod&) final;
     void didSelectShippingContact(const PaymentContact&) final;
     void didSelectPaymentMethod(const PaymentMethod&) final;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void didChangePaymentMethodMode(String&& paymentMethodMode) final;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void didCancelPaymentSession(PaymentSessionError&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;
     Ref<PaymentRequest> m_paymentRequest;
     Optional<ApplePayRequest> m_applePayRequest;
     Optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
-    bool m_isUpdating { false };
+
+    enum class UpdateState : uint8_t {
+        None,
+        ShippingAddress,
+        ShippingOption,
+        PaymentMethod,
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+        PaymentMethodMode,
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    } m_updateState { UpdateState::None };
 };
 
 } // namespace WebCore

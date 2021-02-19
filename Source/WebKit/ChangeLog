@@ -1,3 +1,43 @@
+2021-02-19  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add support for Apple Pay payment method mode
+        https://bugs.webkit.org/show_bug.cgi?id=222128
+        <rdar://problem/72320278>
+
+        Reviewed by Wenson Hsieh.
+
+        Handle the delegate call from `PaymentAuthorization(View)Controller` by passing it along to
+        the WebProcess to be handled by WebCore. Handle the response sent by the WebProcess by
+        invoking the callback that was provided by the delegate call (which is saved to an ivar).
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completePaymentMethodModeChange): Added.
+        (WebKit::WebPaymentCoordinator::didChangePaymentMethodMode): Added.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentMethodModeChange): Added.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidChangePaymentMethodMode): Added.
+        (WebKit::WebPaymentCoordinatorProxy::canBegin const):
+        (WebKit::WebPaymentCoordinatorProxy::canCancel const):
+        (WebKit::WebPaymentCoordinatorProxy::canCompletePayment const):
+        (WebKit::WebPaymentCoordinatorProxy::canAbort const):
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange): Added.
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toPKPaymentErrorCode):
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodModeChange): Added.
+
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        * Platform/ios/PaymentAuthorizationController.mm:
+
 2021-02-19  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add IOKit filtering also when the GPU process is enabled

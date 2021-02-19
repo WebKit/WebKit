@@ -29,6 +29,10 @@
 
 #include <wtf/Forward.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayErrorCodeAdditions.h>
+#endif
+
 namespace WebCore {
 
 enum class ApplePayErrorCode {
@@ -36,6 +40,9 @@ enum class ApplePayErrorCode {
     ShippingContactInvalid,
     BillingContactInvalid,
     AddressUnserviceable,
+#if defined(ApplePayErrorCodeAdditions_values)
+    ApplePayErrorCodeAdditions_values
+#endif
 };
 
 } // namespace WebCore
@@ -49,6 +56,9 @@ template<> struct EnumTraits<WebCore::ApplePayErrorCode> {
         WebCore::ApplePayErrorCode::ShippingContactInvalid,
         WebCore::ApplePayErrorCode::BillingContactInvalid,
         WebCore::ApplePayErrorCode::AddressUnserviceable
+#if defined(ApplePayErrorCodeAdditions_EnumTraits)
+        ApplePayErrorCodeAdditions_EnumTraits
+#endif
     >;
 };
 

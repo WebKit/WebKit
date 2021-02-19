@@ -38,6 +38,9 @@ namespace WebCore {
 
 class Document;
 class PaymentMerchantSession;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodModeUpdate;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
@@ -58,6 +61,9 @@ public:
     virtual void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) = 0;
     virtual void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) = 0;
     virtual void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) = 0;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    virtual void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&) = 0;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     virtual void completePaymentSession(Optional<PaymentAuthorizationResult>&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;

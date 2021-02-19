@@ -45,6 +45,9 @@ private:
     void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
     void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&) override;
     void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&) override;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&) override;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&) override;
     void abortPaymentSession() override;
     void cancelPaymentSession() override;

@@ -34,6 +34,7 @@
 #import <WebCore/ApplePayError.h>
 #import <WebCore/ApplePayErrorCode.h>
 #import <WebCore/ApplePayErrorContactField.h>
+#import <WebCore/ApplePayPaymentMethodModeUpdate.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
@@ -92,6 +93,9 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
         return PKPaymentBillingContactInvalidError;
     case WebCore::ApplePayErrorCode::AddressUnserviceable:
         return PKPaymentShippingAddressUnserviceableError;
+#if defined(PaymentAuthorizationPresenterAdditions_toPKPaymentErrorCode)
+    PaymentAuthorizationPresenterAdditions_toPKPaymentErrorCode
+#endif
     }
 }
 
@@ -254,6 +258,24 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(Optional<Web
 #endif
     [platformDelegate() completeShippingMethodSelection:shippingMethodUpdate.get()];
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void PaymentAuthorizationPresenter::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+{
+    ASSERT(platformDelegate());
+    if (!update) {
+        [platformDelegate() completePaymentMethodModeChange:nil];
+        return;
+    }
+
+#if defined(PaymentAuthorizationPresenterAdditions_completePaymentMethodModeChange)
+    PaymentAuthorizationPresenterAdditions_completePaymentMethodModeChange
+#endif
+    [platformDelegate() completePaymentMethodModeChange:paymentMethodModeUpdate.get()];
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 } // namespace WebKit
 

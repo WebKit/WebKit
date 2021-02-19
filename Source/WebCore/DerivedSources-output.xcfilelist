@@ -122,6 +122,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethod.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethod.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeUpdate.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeUpdate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodSelectedEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodSelectedEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodType.cpp

@@ -34,6 +34,7 @@
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentAuthorizedEvent.h"
+#include "ApplePayPaymentMethodModeUpdate.h"
 #include "ApplePayPaymentMethodSelectedEvent.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePayPaymentRequest.h"
@@ -349,6 +350,30 @@ static ExceptionOr<ApplePayShippingMethodUpdate> convertAndValidate(ApplePayShip
 
     return WTFMove(update);
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+static ExceptionOr<ApplePayPaymentMethodModeUpdate> convertAndValidate(ApplePayPaymentMethodModeUpdate&& update)
+{
+    auto convertedNewShippingMethods = convertAndValidate(WTFMove(update.newShippingMethods));
+    if (convertedNewShippingMethods.hasException())
+        return convertedNewShippingMethods.releaseException();
+    update.newShippingMethods = convertedNewShippingMethods.releaseReturnValue();
+
+    auto convertedNewTotal = convertAndValidateTotal(WTFMove(update.newTotal));
+    if (convertedNewTotal.hasException())
+        return convertedNewTotal.releaseException();
+    update.newTotal = convertedNewTotal.releaseReturnValue();
+
+    auto convertedNewLineItems = convertAndValidate(WTFMove(update.newLineItems));
+    if (convertedNewLineItems.hasException())
+        return convertedNewLineItems.releaseException();
+    update.newLineItems = convertedNewLineItems.releaseReturnValue();
+
+    return WTFMove(update);
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, unsigned version, ApplePayPaymentRequest&& paymentRequest)
 {
@@ -771,6 +796,19 @@ void ApplePaySession::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
     dispatchEvent(event.get());
 }
 
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void ApplePaySession::didChangePaymentMethodMode(String&& paymentMethodMode)
+{
+    ASSERT(m_state == State::Active);
+
+#if defined(ApplePaySessionAdditions_didChangePaymentMethodMode)
+    ApplePaySessionAdditions_didChangePaymentMethodMode
+#endif
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
 void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
 {
     ASSERT(canCancel());
@@ -802,6 +840,9 @@ bool ApplePaySession::canSuspendWithoutCanceling() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
     }
@@ -852,6 +893,9 @@ bool ApplePaySession::canBegin() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
     }
@@ -871,6 +915,9 @@ bool ApplePaySession::canAbort() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return true;
     }
@@ -890,6 +937,9 @@ bool ApplePaySession::canCancel() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return true;
     }
@@ -917,6 +967,9 @@ bool ApplePaySession::canCompleteShippingMethodSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingContactSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
 
@@ -936,6 +989,9 @@ bool ApplePaySession::canCompleteShippingContactSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
 
@@ -955,6 +1011,9 @@ bool ApplePaySession::canCompletePaymentMethodSelection() const
     case State::Authorized:
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
 
@@ -962,6 +1021,30 @@ bool ApplePaySession::canCompletePaymentMethodSelection() const
         return true;
     }
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+bool ApplePaySession::canCompletePaymentMethodModeChange() const
+{
+    switch (m_state) {
+    case State::Idle:
+    case State::Aborted:
+    case State::Active:
+    case State::Completed:
+    case State::Canceled:
+    case State::Authorized:
+    case State::ShippingMethodSelected:
+    case State::ShippingContactSelected:
+    case State::CancelRequested:
+    case State::PaymentMethodSelected:
+        return false;
+
+    case State::PaymentMethodModeChanged:
+        return true;
+    }
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 bool ApplePaySession::canCompletePayment() const
 {
@@ -974,6 +1057,9 @@ bool ApplePaySession::canCompletePayment() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::CancelRequested:
         return false;
 
@@ -990,6 +1076,9 @@ bool ApplePaySession::isFinalState() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    case State::PaymentMethodModeChanged:
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     case State::Authorized:
     case State::CancelRequested:
         return false;
@@ -1006,6 +1095,10 @@ void ApplePaySession::didReachFinalState()
     ASSERT(isFinalState());
     unsetPendingActivity(*this);
 }
+
+#if defined(ApplePaySessionAdditions_definitions)
+ApplePaySessionAdditions_definitions
+#endif
 
 }
 

@@ -41,6 +41,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentContact.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethod.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodUpdate.idl
