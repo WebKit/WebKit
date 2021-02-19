@@ -512,7 +512,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, exposeProfilersOnGlobalObject, false, Normal, "If true, we will expose functions to enable/disable both the sampling profiler and the super sampler") \
     v(Bool, allowUnsupportedTiers, false, Normal, "If true, we will not disable DFG or FTL when an experimental feature is enabled.") \
     v(Bool, usePrivateClassFields, true, Normal, "If true, the parser will understand private data fields inside classes.") \
-    v(Bool, usePrivateMethods, false, Normal, "If true, the parser will understand private methods inside classes.") \
+    v(Bool, usePrivateMethods, true, Normal, "If true, the parser will understand private methods inside classes.") \
     v(Bool, returnEarlyFromInfiniteLoopsForFuzzing, false, Normal, nullptr) \
     v(Size, earlyReturnFromInfiniteLoopsLimit, 1300000000, Normal, "When returnEarlyFromInfiniteLoopsForFuzzing is true, this determines the number of executions a loop can run for before just returning. This is helpful for the fuzzer so it doesn't get stuck in infinite loops.") \
     v(Bool, useLICMFuzzing, false, Normal, nullptr) \
@@ -569,8 +569,6 @@ enum ExperimentalOptionFlags {
 };
 
 #define FOR_EACH_JSC_EXPERIMENTAL_OPTION(v) \
-    v(usePrivateClassFields, (SupportsFTL | SupportsDFG), "https://bugs.webkit.org/show_bug.cgi?id=212781", "https://bugs.webkit.org/show_bug.cgi?id=212784") \
-    v(usePrivateMethods, (SupportsFTL | SupportsDFG), "https://bugs.webkit.org/show_bug.cgi?id=194434", "https://bugs.webkit.org/show_bug.cgi?id=194434")
 
 constexpr size_t countNumberOfJSCOptions()
 {
