@@ -64,7 +64,9 @@ using namespace WebCore;
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    instance->startListeningForIPC();
+    return instance;
 }
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
@@ -74,7 +76,11 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
-    gpuConnectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
+}
+
+void RemoteRenderingBackend::startListeningForIPC()
+{
+    m_gpuConnectionToWebProcess->connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend()

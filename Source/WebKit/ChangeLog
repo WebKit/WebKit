@@ -1,3 +1,29 @@
+2021-02-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteRenderingBackend is accessed in non-thread-safe manner
+        https://bugs.webkit.org/show_bug.cgi?id=222056
+
+        Reviewed by Chris Dumez.
+
+        The class calls Connection::addWorkQueueMessageReceiver() during its
+        construction, passing 'this' as the receiver.
+
+        The virtual function pointer is not fully constructed during the call time.
+        Connection may start dispatching calls to the work queue. The work queue may
+        dispatch the task function through that pointer immediately after the call. If a
+        message comes during the constructor call, it may be dispatched during the
+        constructor still running, before the virtual function pointer being correctly
+        set up. Accessing virtual function pointer is not thread safe until it is fully
+        constructed.
+
+        No new tests, unit tests for WebKit not possible ATM.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Create SQLite skeleton implementation for PCM fraud prevention

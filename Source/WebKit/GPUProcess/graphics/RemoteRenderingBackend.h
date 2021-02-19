@@ -85,6 +85,7 @@ public:
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&&);
+    void startListeningForIPC();
 
     Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t length, WebCore::DisplayList::ItemType, uint8_t* handleLocation) override;
 
