@@ -27,11 +27,16 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayErrorCode.h"
+#include "ApplePayErrorContactField.h"
 
 namespace WebCore {
 
-using MockPaymentError = PaymentError;
+struct MockPaymentError {
+    ApplePayErrorCode code;
+    String message;
+    Optional<ApplePayErrorContactField> contactField;
+};
 
 } // namespace WebCore
 

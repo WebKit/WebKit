@@ -82,9 +82,9 @@ private:
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
-    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final;
-    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) final;
-    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) final;
+    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final;
+    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final;
+    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final;
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
@@ -96,8 +96,6 @@ private:
 
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
-
-    void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     Page& m_page;
     bool m_canMakePayments { true };

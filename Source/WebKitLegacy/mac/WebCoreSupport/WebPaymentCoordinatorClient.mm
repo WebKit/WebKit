@@ -72,15 +72,15 @@ void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::Paym
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&)
 {
 }
 

@@ -677,11 +677,6 @@ template<> struct ArgumentCoder<WebCore::PaymentContact> {
     static Optional<WebCore::PaymentContact> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentError> {
-    static void encode(Encoder&, const WebCore::PaymentError&);
-    static Optional<WebCore::PaymentError> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::PaymentMerchantSession> {
     static void encode(Encoder&, const WebCore::PaymentMerchantSession&);
     static Optional<WebCore::PaymentMerchantSession> decode(Decoder&);
@@ -690,11 +685,6 @@ template<> struct ArgumentCoder<WebCore::PaymentMerchantSession> {
 template<> struct ArgumentCoder<WebCore::PaymentMethod> {
     static void encode(Encoder&, const WebCore::PaymentMethod&);
     static Optional<WebCore::PaymentMethod> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::PaymentMethodUpdate> {
-    static void encode(Encoder&, const WebCore::PaymentMethodUpdate&);
-    static Optional<WebCore::PaymentMethodUpdate> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest> {
@@ -711,24 +701,9 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::Merchant
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 };
 
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ShippingMethod> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
-    static Optional<WebCore::ApplePaySessionPaymentRequest::ShippingMethod> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems&);
-    static Optional<WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ShippingContactUpdate> {
-    static void encode(Encoder&, const WebCore::ShippingContactUpdate&);
-    static Optional<WebCore::ShippingContactUpdate> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ShippingMethodUpdate> {
-    static void encode(Encoder&, const WebCore::ShippingMethodUpdate&);
-    static Optional<WebCore::ShippingMethodUpdate> decode(Decoder&);
+template<> struct ArgumentCoder<Vector<RefPtr<WebCore::ApplePayError>>> {
+    static void encode(Encoder&, const Vector<RefPtr<WebCore::ApplePayError>>&);
+    static Optional<Vector<RefPtr<WebCore::ApplePayError>>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentSessionError> {

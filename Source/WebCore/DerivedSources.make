@@ -53,6 +53,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayContactField.idl \
+    $(WebCore)/Modules/applepay/ApplePayDetailsUpdateBase.idl \
+    $(WebCore)/Modules/applepay/ApplePayDetailsUpdateData.idl \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorContactField.idl \

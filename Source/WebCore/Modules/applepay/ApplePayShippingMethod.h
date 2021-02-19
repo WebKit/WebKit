@@ -36,8 +36,39 @@ struct ApplePayShippingMethod {
     String detail;
     String amount;
     String identifier;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayShippingMethod> decode(Decoder&);
 };
 
+template<class Encoder>
+void ApplePayShippingMethod::encode(Encoder& encoder) const
+{
+    encoder << label;
+    encoder << detail;
+    encoder << amount;
+    encoder << identifier;
 }
+
+template<class Decoder>
+Optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    Optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return WTF::nullopt; \
+
+    DECODE(label, String)
+    DECODE(detail, String)
+    DECODE(amount, String)
+    DECODE(identifier, String)
+
+#undef DECODE
+
+    return {{ WTFMove(*label), WTFMove(*detail), WTFMove(*amount), WTFMove(*identifier) }};
+}
+
+} // namespace WebCore
 
 #endif

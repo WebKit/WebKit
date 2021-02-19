@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,49 +27,60 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/Forward.h>
+#include "ApplePayDetailsUpdateData.h"
+#include "ApplePayLineItem.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum class ApplePayErrorContactField {
-    PhoneNumber,
-    EmailAddress,
-    Name,
-    PhoneticName,
-    PostalAddress,
-    AddressLines,
-    SubLocality,
-    Locality,
-    PostalCode,
-    SubAdministrativeArea,
-    AdministrativeArea,
-    Country,
-    CountryCode,
+struct ApplePayDetailsUpdateBase : public ApplePayDetailsUpdateData {
+    ApplePayLineItem newTotal;
+    Vector<ApplePayLineItem> newLineItems;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayDetailsUpdateBase> decode(Decoder&);
+
+    template<class Decoder> WARN_UNUSED_RETURN bool decodeBase(Decoder&);
 };
+
+template<class Encoder>
+void ApplePayDetailsUpdateBase::encode(Encoder& encoder) const
+{
+    ApplePayDetailsUpdateData::encode(encoder);
+    encoder << newTotal;
+    encoder << newLineItems;
+}
+
+template<class Decoder>
+Optional<ApplePayDetailsUpdateBase> ApplePayDetailsUpdateBase::decode(Decoder& decoder)
+{
+    ApplePayDetailsUpdateBase result;
+    if (!result.decodeBase(decoder))
+        return WTF::nullopt;
+    return result;
+}
+
+template<class Decoder>
+bool ApplePayDetailsUpdateBase::decodeBase(Decoder& decoder)
+{
+    if (!decodeData(decoder))
+        return false;
+
+#define DECODE(name, type) \
+    Optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return false; \
+    this->name = WTFMove(*name); \
+
+    DECODE(newTotal, ApplePayLineItem)
+    DECODE(newLineItems, Vector<ApplePayLineItem>)
+
+#undef DECODE
+
+    return true;
+}
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayErrorContactField> {
-    using values = EnumValues<
-        WebCore::ApplePayErrorContactField,
-        WebCore::ApplePayErrorContactField::PhoneNumber,
-        WebCore::ApplePayErrorContactField::EmailAddress,
-        WebCore::ApplePayErrorContactField::Name,
-        WebCore::ApplePayErrorContactField::PhoneticName,
-        WebCore::ApplePayErrorContactField::PostalAddress,
-        WebCore::ApplePayErrorContactField::AddressLines,
-        WebCore::ApplePayErrorContactField::SubLocality,
-        WebCore::ApplePayErrorContactField::Locality,
-        WebCore::ApplePayErrorContactField::PostalCode,
-        WebCore::ApplePayErrorContactField::SubAdministrativeArea,
-        WebCore::ApplePayErrorContactField::AdministrativeArea,
-        WebCore::ApplePayErrorContactField::Country,
-        WebCore::ApplePayErrorContactField::CountryCode
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)

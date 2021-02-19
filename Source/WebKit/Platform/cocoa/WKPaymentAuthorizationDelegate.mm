@@ -173,16 +173,15 @@
     presenter->client().presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
 
-static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
+static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
 {
     ASSERT(shippingMethod);
 
-    WebCore::ApplePaySessionPaymentRequest::ShippingMethod result;
+    WebCore::ApplePayShippingMethod result;
     result.amount = shippingMethod.amount.stringValue;
     result.detail = shippingMethod.detail;
     result.identifier = shippingMethod.identifier;
     result.label = shippingMethod.label;
-
     return result;
 }
 

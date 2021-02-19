@@ -27,7 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingMethod.h"
 #include "Event.h"
 
@@ -36,7 +35,7 @@ namespace WebCore {
 class ApplePayShippingMethodSelectedEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(ApplePayShippingMethodSelectedEvent);
 public:
-    static Ref<ApplePayShippingMethodSelectedEvent> create(const AtomString& type, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+    static Ref<ApplePayShippingMethodSelectedEvent> create(const AtomString& type, const ApplePayShippingMethod& shippingMethod)
     {
         return adoptRef(*new ApplePayShippingMethodSelectedEvent(type, shippingMethod));
     }
@@ -46,7 +45,7 @@ public:
     const ApplePayShippingMethod& shippingMethod() const { return m_shippingMethod; }
 
 private:
-    ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePaySessionPaymentRequest::ShippingMethod&);
+    ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod&);
 
     // Event.
     EventInterface eventInterface() const override;

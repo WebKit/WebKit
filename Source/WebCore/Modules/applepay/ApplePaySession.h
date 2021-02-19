@@ -115,7 +115,7 @@ private:
     unsigned version() const override;
     void validateMerchant(URL&&) override;
     void didAuthorizePayment(const Payment&) override;
-    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) override;
+    void didSelectShippingMethod(const ApplePayShippingMethod&) override;
     void didSelectShippingContact(const PaymentContact&) override;
     void didSelectPaymentMethod(const PaymentMethod&) override;
     void didCancelPaymentSession(PaymentSessionError&&) override;

@@ -86,6 +86,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayContactField.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayContactField.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateBase.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateBase.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateData.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.cpp

@@ -42,9 +42,9 @@ private:
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
     bool showPaymentUI(const URL&, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
-    void completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&) override;
-    void completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&) override;
-    void completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&) override;
+    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
+    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&) override;
+    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&) override;
     void completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&) override;
     void abortPaymentSession() override;
     void cancelPaymentSession() override;

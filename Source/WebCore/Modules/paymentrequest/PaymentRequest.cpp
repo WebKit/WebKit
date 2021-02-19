@@ -345,6 +345,14 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
     } else if (isUpdate == IsUpdate::No)
         details.modifiers = { { } };
 
+    if (details.data) {
+        auto dataResult = checkAndCanonicalizeData(context, details);
+        if (dataResult.hasException())
+            return dataResult.releaseException();
+
+        details.serializedData = dataResult.releaseReturnValue();
+    }
+
     return std::make_tuple(WTFMove(selectedShippingOption), WTFMove(serializedModifierData));
 }
 
@@ -736,6 +744,8 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         m_details.modifiers = WTFMove(*detailsUpdate.modifiers);
         m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
     }
+    if (!detailsUpdate.serializedData.isEmpty())
+        m_details.serializedData = WTFMove(detailsUpdate.serializedData);
 
     auto result = activePaymentHandler()->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
     if (result.hasException()) {

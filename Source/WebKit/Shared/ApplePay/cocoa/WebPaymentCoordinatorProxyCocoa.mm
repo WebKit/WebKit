@@ -36,6 +36,10 @@
 #import "WebPaymentCoordinatorProxy.h"
 #import "WebPaymentCoordinatorProxyMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/ApplePayPaymentMethodUpdate.h>
+#import <WebCore/ApplePayShippingContactUpdate.h>
+#import <WebCore/ApplePayShippingMethod.h>
+#import <WebCore/ApplePayShippingMethodUpdate.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
@@ -45,25 +49,16 @@
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>
+#endif
+
 // FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be removed.
 @interface PKPaymentRequest ()
 @property (nonatomic, strong) NSURL *thumbnailURL;
 @end
 
 namespace WebKit {
-
-static void finishCreating(PKPaymentRequest *platformRequest, const WebCore::ApplePaySessionPaymentRequest& request)
-{
-#if HAVE(PASSKIT_INSTALLMENTS)
-    if (PKPaymentInstallmentConfiguration *configuration = request.installmentConfiguration().platformConfiguration()) {
-        platformRequest.installmentConfiguration = configuration;
-        platformRequest.requestType = PKPaymentRequestTypeInstallment;
-    }
-#else
-    UNUSED_PARAM(platformRequest);
-    UNUSED_PARAM(request);
-#endif
-}
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
     : m_client(client)
@@ -169,15 +164,14 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
     }
 }
 
-PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod& shippingMethod)
 {
     PKShippingMethod *result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
-
     return result;
 }
-    
+
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
     if (strings.isEmpty())
@@ -260,7 +254,16 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setCTDataConnectionServiceType:serviceType];
 #endif
 
-    finishCreating(result.get(), paymentRequest);
+#if HAVE(PASSKIT_INSTALLMENTS)
+    if (PKPaymentInstallmentConfiguration *configuration = paymentRequest.installmentConfiguration().platformConfiguration()) {
+        [result setInstallmentConfiguration:configuration];
+        [result setRequestType:PKPaymentRequestTypeInstallment];
+    }
+#endif
+
+#if defined(WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest)
+    WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest
+#endif
 
     return result;
 }
@@ -275,19 +278,19 @@ void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCor
     m_authorizationPresenter->completeMerchantValidation(paymentMerchantSession);
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>& update)
+void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&& update)
 {
-    m_authorizationPresenter->completeShippingMethodSelection(update);
+    m_authorizationPresenter->completeShippingMethodSelection(WTFMove(update));
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
+void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&& update)
 {
-    m_authorizationPresenter->completeShippingContactSelection(update);
+    m_authorizationPresenter->completeShippingContactSelection(WTFMove(update));
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>& update)
+void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
-    m_authorizationPresenter->completePaymentMethodSelection(update);
+    m_authorizationPresenter->completePaymentMethodSelection(WTFMove(update));
 }
 
 void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, Messages::WebPaymentCoordinatorProxy::GetSetupFeatures::AsyncReply&& reply)

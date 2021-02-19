@@ -40,6 +40,7 @@ namespace WebCore {
 class PaymentCoordinator;
 class PaymentContact;
 class PaymentSessionError;
+struct ApplePayShippingMethod;
 }
 
 namespace WebKit {
@@ -64,9 +65,9 @@ private:
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
     bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
-    void completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&) override;
-    void completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&) override;
-    void completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&) override;
+    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
+    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&) override;
+    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&) override;
     void completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&) override;
 
     void abortPaymentSession() override;
@@ -95,7 +96,7 @@ private:
     // Message handlers.
     void validateMerchant(const String& validationURLString);
     void didAuthorizePayment(const WebCore::Payment&);
-    void didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+    void didSelectShippingMethod(const WebCore::ApplePayShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);

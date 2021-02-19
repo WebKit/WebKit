@@ -30,7 +30,11 @@
 #include "PaymentDetailsModifier.h"
 #include "PaymentItem.h"
 #include "PaymentShippingOption.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -38,6 +42,10 @@ struct PaymentDetailsBase {
     Optional<Vector<PaymentItem>> displayItems;
     Optional<Vector<PaymentShippingOption>> shippingOptions;
     Optional<Vector<PaymentDetailsModifier>> modifiers;
+    JSC::Strong<JSC::JSObject> data;
+
+    // Not from the IDL. Set by `data` when this is validated by `PaymentRequest`.
+    String serializedData;
 };
 
 } // namespace WebCore

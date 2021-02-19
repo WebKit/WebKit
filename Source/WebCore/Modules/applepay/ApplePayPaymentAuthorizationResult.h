@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayError.h"
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

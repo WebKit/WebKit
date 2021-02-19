@@ -32,16 +32,17 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
 class Document;
 class PaymentMerchantSession;
-class PaymentMethodUpdate;
+struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
+struct ApplePayShippingContactUpdate;
+struct ApplePayShippingMethodUpdate;
 struct PaymentAuthorizationResult;
-struct ShippingContactUpdate;
-struct ShippingMethodUpdate;
 
 class PaymentCoordinatorClient {
 public:
@@ -54,9 +55,9 @@ public:
 
     virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;
-    virtual void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) = 0;
-    virtual void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) = 0;
-    virtual void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) = 0;
+    virtual void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) = 0;
+    virtual void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) = 0;
+    virtual void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) = 0;
     virtual void completePaymentSession(Optional<PaymentAuthorizationResult>&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;

@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "ApplePayLineItem.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
@@ -59,11 +60,6 @@ static PKPaymentSummaryItem *toPKPaymentSummaryItem(const ApplePayLineItem& line
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 #endif
-
-NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
-{
-    return platformSummaryItems(totalAndLineItems.total, totalAndLineItems.lineItems);
-}
 
 NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>& lineItems)
 {

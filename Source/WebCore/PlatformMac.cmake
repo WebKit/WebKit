@@ -435,7 +435,6 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/applepay/PaymentMethodUpdate.h
     Modules/applepay/PaymentSessionError.h
     Modules/applepay/PaymentSummaryItems.h
 
@@ -616,6 +615,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayCancelEvent.idl
     Modules/applepay/ApplePayContactField.idl
+    Modules/applepay/ApplePayDetailsUpdateBase.idl
+    Modules/applepay/ApplePayDetailsUpdateData.idl
     Modules/applepay/ApplePayError.idl
     Modules/applepay/ApplePayErrorCode.idl
     Modules/applepay/ApplePayErrorContactField.idl

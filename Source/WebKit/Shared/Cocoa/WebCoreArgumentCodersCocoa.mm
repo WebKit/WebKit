@@ -46,6 +46,10 @@
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
+#endif
+
 namespace IPC {
 using namespace WebCore;
 
@@ -112,7 +116,7 @@ Optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuth
     if (!status)
         return WTF::nullopt;
 
-    Optional<Vector<PaymentError>> errors;
+    Optional<Vector<RefPtr<ApplePayError>>> errors;
     decoder >> errors;
     if (!errors)
         return WTF::nullopt;
@@ -132,33 +136,6 @@ Optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode
         return WTF::nullopt;
 
     return WebCore::PaymentContact { WTFMove(*contact) };
-}
-
-void ArgumentCoder<WebCore::PaymentError>::encode(Encoder& encoder, const WebCore::PaymentError& error)
-{
-    encoder << error.code;
-    encoder << error.message;
-    encoder << error.contactField;
-}
-
-Optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decode(Decoder& decoder)
-{
-    Optional<WebCore::PaymentError::Code> code;
-    decoder >> code;
-    if (!code)
-        return WTF::nullopt;
-    
-    Optional<String> message;
-    decoder >> message;
-    if (!message)
-        return WTF::nullopt;
-    
-    Optional<Optional<WebCore::PaymentError::ContactField>> contactField;
-    decoder >> contactField;
-    if (!contactField)
-        return WTF::nullopt;
-
-    return {{ WTFMove(*code), WTFMove(*message), WTFMove(*contactField) }};
 }
 
 void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
@@ -189,20 +166,6 @@ Optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(D
     return PaymentMethod { WTFMove(*paymentMethod) };
 }
 
-void ArgumentCoder<WebCore::PaymentMethodUpdate>::encode(Encoder& encoder, const WebCore::PaymentMethodUpdate& update)
-{
-    encoder << update.platformUpdate();
-}
-
-Optional<WebCore::PaymentMethodUpdate> ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder)
-{
-    auto update = IPC::decode<PKPaymentRequestPaymentMethodUpdate>(decoder, PAL::getPKPaymentRequestPaymentMethodUpdateClass());
-    if (!update)
-        return WTF::nullopt;
-
-    return PaymentMethodUpdate { WTFMove(*update) };
-}
-
 void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest& request)
 {
     encoder << request.countryCode();
@@ -222,6 +185,9 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
     encoder << request.requester();
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     encoder << request.installmentConfiguration();
+#endif
+#if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode)
+    WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode
 #endif
 }
 
@@ -274,7 +240,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setShippingType(shippingType);
 
-    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
+    Vector<ApplePayShippingMethod> shippingMethods;
     if (!decoder.decode(shippingMethods))
         return false;
     request.setShippingMethods(shippingMethods);
@@ -312,6 +278,10 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
 
     request.setInstallmentConfiguration(WTFMove(*installmentConfiguration));
+#endif
+
+#if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_decode)
+    WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_decode
 #endif
 
     return true;
@@ -364,88 +334,38 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(
     return true;
 }
 
-void ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+void ArgumentCoder<Vector<RefPtr<ApplePayError>>>::encode(Encoder& encoder, const Vector<RefPtr<ApplePayError>>& errors)
 {
-    encoder << shippingMethod.label;
-    encoder << shippingMethod.detail;
-    encoder << shippingMethod.amount;
-    encoder << shippingMethod.identifier;
+    encoder << static_cast<uint64_t>(errors.size());
+    for (auto& error : errors) {
+        encoder << !!error;
+        if (error)
+            encoder << *error;
+    }
 }
 
-Optional<ApplePaySessionPaymentRequest::ShippingMethod> ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder)
+Optional<Vector<RefPtr<ApplePayError>>> ArgumentCoder<Vector<RefPtr<ApplePayError>>>::decode(Decoder& decoder)
 {
-    ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
-    if (!decoder.decode(shippingMethod.label))
+    uint64_t size;
+    if (!decoder.decode(size))
         return WTF::nullopt;
-    if (!decoder.decode(shippingMethod.detail))
-        return WTF::nullopt;
-    if (!decoder.decode(shippingMethod.amount))
-        return WTF::nullopt;
-    if (!decoder.decode(shippingMethod.identifier))
-        return WTF::nullopt;
-    return WTFMove(shippingMethod);
-}
 
-void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
-{
-    encoder << totalAndLineItems.total;
-    encoder << totalAndLineItems.lineItems;
-}
+    Vector<RefPtr<ApplePayError>> errors(size);
+    for (uint64_t i = 0; i < size; ++i) {
+        Optional<bool> isValid;
+        decoder >> isValid;
+        if (!isValid)
+            return WTF::nullopt;
 
-Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder)
-{
-    Optional<ApplePayLineItem> total;
-    decoder >> total;
-    if (!total)
-        return WTF::nullopt;
-    
-    Optional<Vector<ApplePayLineItem>> lineItems;
-    decoder >> lineItems;
-    if (!lineItems)
-        return WTF::nullopt;
-    
-    return {{ WTFMove(*total), WTFMove(*lineItems) }};
-}
-
-void ArgumentCoder<WebCore::ShippingContactUpdate>::encode(Encoder& encoder, const WebCore::ShippingContactUpdate& update)
-{
-    encoder << update.errors;
-    encoder << update.newShippingMethods;
-    encoder << update.newTotalAndLineItems;
-}
-
-Optional<WebCore::ShippingContactUpdate> ArgumentCoder<WebCore::ShippingContactUpdate>::decode(Decoder& decoder)
-{
-    Optional<Vector<PaymentError>> errors;
-    decoder >> errors;
-    if (!errors)
-        return WTF::nullopt;
-    
-    Optional<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> newShippingMethods;
-    decoder >> newShippingMethods;
-    if (!newShippingMethods)
-        return WTF::nullopt;
-    
-    Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
-    decoder >> newTotalAndLineItems;
-    if (!newTotalAndLineItems)
-        return WTF::nullopt;
-    
-    return {{ WTFMove(*errors), WTFMove(*newShippingMethods), WTFMove(*newTotalAndLineItems) }};
-}
-
-void ArgumentCoder<WebCore::ShippingMethodUpdate>::encode(Encoder& encoder, const WebCore::ShippingMethodUpdate& update)
-{
-    encoder << update.newTotalAndLineItems;
-}
-
-Optional<WebCore::ShippingMethodUpdate> ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder)
-{
-    Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
-    decoder >> newTotalAndLineItems;
-    if (!newTotalAndLineItems)
-        return WTF::nullopt;
-    return {{ WTFMove(*newTotalAndLineItems) }};
+        RefPtr<ApplePayError> error;
+        if (*isValid) {
+            error = ApplePayError::decode(decoder);
+            if (!error)
+                return WTF::nullopt;
+        }
+        errors.append(WTFMove(error));
+    }
+    return errors;
 }
 
 void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const WebCore::PaymentSessionError& error)

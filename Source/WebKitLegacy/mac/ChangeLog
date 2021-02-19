@@ -1,3 +1,18 @@
+2021-02-19  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add an `object data` to `PaymentDetailsBase` so that data specific to Apple Pay can be provided
+        https://bugs.webkit.org/show_bug.cgi?id=222002
+        <rdar://problem/72319946>
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::completeShippingMethodSelection):
+        (WebPaymentCoordinatorClient::completeShippingContactSelection):
+        (WebPaymentCoordinatorClient::completePaymentMethodSelection):
+        Use `ApplePay*Update` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::*Update`).
+
 2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb an Optional<PageIdentifier> through WebPasteboardProxy

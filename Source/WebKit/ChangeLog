@@ -1,3 +1,67 @@
+2021-02-19  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add an `object data` to `PaymentDetailsBase` so that data specific to Apple Pay can be provided
+        https://bugs.webkit.org/show_bug.cgi?id=222002
+        <rdar://problem/72319946>
+
+        Reviewed by Tim Horton.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toPKPaymentErrorCode):
+        (WebKit::toNSError):
+        (WebKit::toNSErrors):
+        (WebKit::toPKShippingMethods):
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (toShippingMethod):
+        * Scripts/webkit/messages.py:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod):
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKShippingMethod):
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+        (WebKit::finishCreating): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        (IPC::ArgumentCoder<Vector<RefPtr<ApplePayError>>>::encode): Added.
+        (IPC::ArgumentCoder<Vector<RefPtr<ApplePayError>>>::decode): Added.
+        (IPC::ArgumentCoder<WebCore::PaymentError>::encode): Deleted.
+        (IPC::ArgumentCoder<WebCore::PaymentError>::decode): Deleted.
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::encode): Deleted.
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode): Deleted.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode): Deleted.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode): Deleted.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode): Deleted.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode): Deleted.
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::encode): Deleted.
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::decode): Deleted.
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::encode): Deleted.
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::decode): Deleted.
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinator::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinator::completePaymentMethodSelection):
+        (WebKit::WebPaymentCoordinator::didSelectShippingMethod):
+        Use `ApplePay*Update` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::*Update`).
+        Use `ApplePayShippingMethod` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::ShippingMethod`).
+        Use `ApplePayError*` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::PaymentError::*`).
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Norton Safe Web extension is causing crashes / hangs under [WKRemoteObjectEncoder encodeObject:forKey:]

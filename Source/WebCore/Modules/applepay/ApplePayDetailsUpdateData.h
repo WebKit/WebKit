@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PaymentMethodUpdate.h"
+#pragma once
 
 #if ENABLE(APPLE_PAY)
 
-#import "PaymentSummaryItems.h"
-#import <pal/cocoa/PassKitSoftLink.h>
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayDetailsUpdateDataAdditions.h>
+#endif
 
 namespace WebCore {
 
-PaymentMethodUpdate::PaymentMethodUpdate(ApplePayLineItem&& total, Vector<ApplePayLineItem>&& lineItems)
-    : m_totalAndLineItems { { WTFMove(total), WTFMove(lineItems) } }
-    , m_platformUpdate { adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:platformSummaryItems(*m_totalAndLineItems)]) }
-{
-}
-
-PaymentMethodUpdate::PaymentMethodUpdate(RetainPtr<PKPaymentRequestPaymentMethodUpdate>&& platformUpdate)
-    : m_platformUpdate { WTFMove(platformUpdate) }
-{
-}
-
-PaymentMethodUpdate::PaymentMethodUpdate(TotalAndLineItems&& totalAndLineItems)
-    : PaymentMethodUpdate { WTFMove(totalAndLineItems.total), WTFMove(totalAndLineItems.lineItems) }
-{
-}
-
-const PaymentMethodUpdate::TotalAndLineItems& PaymentMethodUpdate::totalAndLineItems() const
-{
-    return *m_totalAndLineItems;
-}
-
-PKPaymentRequestPaymentMethodUpdate *PaymentMethodUpdate::platformUpdate() const
-{
-    return m_platformUpdate.get();
-}
-
-#if HAVE(PASSKIT_INSTALLMENTS)
-void PaymentMethodUpdate::setInstallmentGroupIdentifier(const String& installmentGroupIdentifier)
-{
-    [m_platformUpdate setInstallmentGroupIdentifier:installmentGroupIdentifier];
-}
+struct ApplePayDetailsUpdateData {
+#if defined(ApplePayDetailsUpdateDataAdditions_members)
+    ApplePayDetailsUpdateDataAdditions_members
 #endif
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayDetailsUpdateData> decode(Decoder&);
+
+    template<class Decoder> WARN_UNUSED_RETURN bool decodeData(Decoder&);
+};
+
+template<class Encoder>
+void ApplePayDetailsUpdateData::encode(Encoder& encoder) const
+{
+#if defined(ApplePayDetailsUpdateDataAdditions_encode)
+    ApplePayDetailsUpdateDataAdditions_encode
+#else
+    UNUSED_PARAM(encoder);
+#endif
+}
+
+template<class Decoder>
+Optional<ApplePayDetailsUpdateData> ApplePayDetailsUpdateData::decode(Decoder& decoder)
+{
+    ApplePayDetailsUpdateData result;
+    if (!result.decodeData(decoder))
+        return WTF::nullopt;
+    return result;
+}
+
+template<class Decoder>
+bool ApplePayDetailsUpdateData::decodeData(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    Optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return false; \
+    this->name = WTFMove(*name); \
+
+#if defined(ApplePayDetailsUpdateDataAdditions_decodeData)
+    ApplePayDetailsUpdateDataAdditions_decodeData
+#else
+    UNUSED_PARAM(decoder);
+#endif
+
+#undef DECODE
+
+    return true;
+}
 
 } // namespace WebCore
 

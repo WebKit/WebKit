@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayShippingContactUpdate.h"
+#include "ApplePayShippingMethodUpdate.h"
 #include "Payment.h"
 #include "PaymentContact.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
-#include "PaymentMethodUpdate.h"
 #include "PaymentSessionError.h"
 #include "PaymentSummaryItems.h"

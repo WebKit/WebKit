@@ -24,6 +24,8 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayCancelEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayContactField.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl

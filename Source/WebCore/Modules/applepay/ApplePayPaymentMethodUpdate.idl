@@ -25,8 +25,6 @@
 
 [
     Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentMethodUpdate {
-    required ApplePayLineItem newTotal;
-    sequence<ApplePayLineItem> newLineItems;
+] dictionary ApplePayPaymentMethodUpdate : ApplePayDetailsUpdateBase {
     [Conditional=APPLE_PAY_INSTALLMENTS] DOMString installmentGroupIdentifier;
 };

@@ -364,9 +364,9 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final { }
-    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) final { }
-    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) final { }
+    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final { }
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }

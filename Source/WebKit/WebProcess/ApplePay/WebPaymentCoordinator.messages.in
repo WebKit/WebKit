@@ -28,7 +28,7 @@ messages -> WebPaymentCoordinator NotRefCounted {
 
     ValidateMerchant(String validationURLString)
     DidAuthorizePayment(WebCore::Payment payment)
-    DidSelectShippingMethod(WebCore::ApplePaySessionPaymentRequest::ShippingMethod shippingMethod)
+    DidSelectShippingMethod(struct WebCore::ApplePayShippingMethod shippingMethod)
     DidSelectShippingContact(WebCore::PaymentContact shippingContact)
     DidSelectPaymentMethod(WebCore::PaymentMethod paymentMethod)
     DidCancelPaymentSession(WebCore::PaymentSessionError sessionError)

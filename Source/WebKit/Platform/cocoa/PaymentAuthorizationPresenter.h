@@ -41,8 +41,11 @@ class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
-class PaymentMethodUpdate;
 class PaymentSessionError;
+struct ApplePayPaymentMethodUpdate;
+struct ApplePayShippingContactUpdate;
+struct ApplePayShippingMethod;
+struct ApplePayShippingMethodUpdate;
 }
 
 namespace WebKit {
@@ -58,7 +61,7 @@ public:
         virtual void presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&&) = 0;
         virtual void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) = 0;
         virtual void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) = 0;
-        virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
+        virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod&) = 0;
         virtual void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) = 0;
     };
 
@@ -67,10 +70,10 @@ public:
     Client& client() { return m_client; }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void completePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
+    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&);
     void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
-    void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
-    void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
+    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&);
+    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&);
 
     virtual void dismiss() = 0;
 #if PLATFORM(IOS_FAMILY)
