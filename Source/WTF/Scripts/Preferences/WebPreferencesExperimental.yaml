@@ -671,7 +671,7 @@ PaintTimingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
 
 PassiveWheelListenersAsDefaultOnDocument:
   type: bool

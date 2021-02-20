@@ -1,3 +1,15 @@
+2021-02-20  Said Abou-Hallawa  <said@apple.com>
+
+        Make PaintTimingEnabled default to false
+        https://bugs.webkit.org/show_bug.cgi?id=222186
+
+        Reviewed by Simon Fraser.
+
+        PaintTiming causes about 4% regression in the MotionMark sub-tests:
+        Multiply and Focus. Do disable it for now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
