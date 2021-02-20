@@ -1,5 +1,24 @@
 2021-02-19  Alex Christensen  <achristensen@webkit.org>
 
+        NSError returned by WebKit API should actually conform to NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=222204
+        <rdar://problem/63893583>
+
+        Reviewed by Chris Dumez.
+
+        When an NSError is encoded, its userInfo is encoded, which means everything we put in userInfo should be encodable.
+        WKReloadFrameErrorRecoveryAttempter was not, so let's make it!  When encoded, it will just encode nothing.
+        When decoded, it will produce a WKReloadFrameErrorRecoveryAttempter that does nothing, which is valid behavior,
+        and more desirable than crashing.
+
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.h:
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter encodeWithCoder:]):
+        (-[WKReloadFrameErrorRecoveryAttempter initWithCoder:]):
+        (+[WKReloadFrameErrorRecoveryAttempter supportsSecureCoding]):
+
+2021-02-19  Alex Christensen  <achristensen@webkit.org>
+
         CrashTracer: com.apple.WebKit.Networking at WebKit: WTF::Detail::CallableWrapper<WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests()
         https://bugs.webkit.org/show_bug.cgi?id=222201
 

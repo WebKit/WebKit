@@ -1,3 +1,17 @@
+2021-02-19  Alex Christensen  <achristensen@webkit.org>
+
+        NSError returned by WebKit API should actually conform to NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=222204
+        <rdar://problem/63893583>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate waitForDidFailProvisionalNavigation]):
+
 2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Generate secret token and corresponding unlinkable token

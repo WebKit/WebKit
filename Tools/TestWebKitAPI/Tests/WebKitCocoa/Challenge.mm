@@ -573,6 +573,26 @@ TEST(WebKit, FastServerTrust)
 #endif
 }
 
+TEST(WebKit, ErrorSecureCoding)
+{
+    HTTPServer server({{ "/", { HTTPResponse::TerminateConnection::Yes }}});
+    auto webView = [[WKWebView new] autorelease];
+    auto delegate = [[TestNavigationDelegate new] autorelease];
+    webView.navigationDelegate = delegate;
+    [webView loadRequest:server.request()];
+    NSError *error = [delegate waitForDidFailProvisionalNavigation];
+
+    EXPECT_WK_STREQ(NSStringFromClass([error.userInfo[_WKRecoveryAttempterErrorKey] class]), @"WKReloadFrameErrorRecoveryAttempter");
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
+    [archiver encodeObject:error forKey:NSKeyedArchiveRootObjectKey];
+    [archiver finishEncoding];
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:archiver.get().encodedData error:nullptr]);
+    NSError *decodedError = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSString class], [NSError class], NSClassFromString(@"WKReloadFrameErrorRecoveryAttempter"), nil] forKey:NSKeyedArchiveRootObjectKey];
+    EXPECT_EQ(decodedError.code, NSURLErrorNetworkConnectionLost);
+    EXPECT_WK_STREQ(decodedError.domain, NSURLErrorDomain);
+    EXPECT_WK_STREQ(NSStringFromClass([decodedError.userInfo[_WKRecoveryAttempterErrorKey] class]), @"WKReloadFrameErrorRecoveryAttempter");
+}
+
 // FIXME: Find out why these tests time out on Mojave.
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 

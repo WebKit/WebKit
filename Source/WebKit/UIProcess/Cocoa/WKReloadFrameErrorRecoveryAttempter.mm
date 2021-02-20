@@ -36,7 +36,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-@interface WKReloadFrameErrorRecoveryAttempter () <_WKErrorRecoveryAttempting>
+@interface WKReloadFrameErrorRecoveryAttempter ()
 @end
 
 @implementation WKReloadFrameErrorRecoveryAttempter {
@@ -68,6 +68,20 @@
         return NO;
 
     webFrameProxy->loadURL(URL(URL(), _urlString));
+    return YES;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    return [super init];
+}
+
++ (BOOL)supportsSecureCoding
+{
     return YES;
 }
 
