@@ -1,3 +1,31 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Crash under Decoder::Decoder()
+        https://bugs.webkit.org/show_bug.cgi?id=222192
+        <rdar://31392681>
+
+        Reviewed by Geoffrey Garen.
+
+        We are sometimes crashing under Decoder's copyBuffer(), inside the memcpy()
+        call, with a null address. I have no idea how this is happening and this
+        code has not changed in a long time so I have made the following hardening:
+        1. Update copyBuffer() to use tryFastMalloc() instead of fastMalloc(). Log
+           and return null if tryFastMalloc() failed instead of calling memcpy().
+        2. Update Decoder::create() to log and return early if the input buffer
+           is null.
+        3. Update Connection's createMessageDecoder() to use CheckedSize when
+           computing the bodySize that is being passed to Decoder::create(). If
+           we overflow, log and return null.
+
+        No new tests, no idea how this can happen in practice.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::copyBuffer):
+        (IPC::Decoder::create):
+        (IPC::Decoder::Decoder):
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::createMessageDecoder):
+
 2021-02-19  BJ Burg  <bburg@apple.com>
 
         [Cocoa] WKBrowsingContextHandle should conform to NSCopying

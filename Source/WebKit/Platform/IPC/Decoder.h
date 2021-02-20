@@ -50,7 +50,6 @@ class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<Decoder> create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&&);
-    explicit Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&&);
     ~Decoder();
 
     Decoder(const Decoder&) = delete;
@@ -141,6 +140,8 @@ public:
     }
 
 private:
+    Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&&);
+
     enum ConstructWithoutHeaderTag { ConstructWithoutHeader };
     Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeaderTag);
 

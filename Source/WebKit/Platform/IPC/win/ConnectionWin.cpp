@@ -139,8 +139,10 @@ void Connection::readEventHandler()
 
         if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
-            Vector<Attachment> attachments(0);
-            auto decoder = makeUnique<Decoder>(m_readBuffer.data(), m_readBuffer.size(), nullptr, WTFMove(attachments));
+            auto decoder = Decoder::create(m_readBuffer.data(), m_readBuffer.size(), nullptr, { });
+            ASSERT(decoder);
+            if (!decoder)
+                return;
             processIncomingMessage(WTFMove(decoder));
         }
 
