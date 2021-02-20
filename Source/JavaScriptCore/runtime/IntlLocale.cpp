@@ -27,7 +27,7 @@
 #include "config.h"
 #include "IntlLocale.h"
 
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include <unicode/uloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -223,11 +223,8 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue options = optionsValue;
-    if (!optionsValue.isUndefined()) {
-        options = optionsValue.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, void());
 
     LocaleIDBuilder localeID;
     if (!localeID.initialize(tag)) {

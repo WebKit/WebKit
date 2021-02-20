@@ -498,18 +498,15 @@ const HashSet<String>& intlSegmenterAvailableLocales()
 }
 
 // https://tc39.es/ecma402/#sec-getoption
-TriState intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyName property)
+TriState intlBooleanOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (options.isUndefined())
+    if (!options)
         return TriState::Indeterminate;
 
-    JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, TriState::Indeterminate);
-
-    JSValue value = opts->get(globalObject, property);
+    JSValue value = options->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, TriState::Indeterminate);
 
     if (value.isUndefined())
@@ -518,7 +515,7 @@ TriState intlBooleanOption(JSGlobalObject* globalObject, JSValue options, Proper
     return triState(value.toBoolean(globalObject));
 }
 
-String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
+String intlStringOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
@@ -526,13 +523,10 @@ String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyN
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (options.isUndefined())
+    if (!options)
         return fallback;
 
-    JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, String());
-
-    JSValue value = opts->get(globalObject, property);
+    JSValue value = options->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, String());
 
     if (!value.isUndefined()) {
@@ -549,7 +543,7 @@ String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyN
     return fallback;
 }
 
-unsigned intlNumberOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+unsigned intlNumberOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
 {
     // GetNumberOption (options, property, minimum, maximum, fallback)
     // https://tc39.github.io/ecma402/#sec-getnumberoption
@@ -557,13 +551,10 @@ unsigned intlNumberOption(JSGlobalObject* globalObject, JSValue options, Propert
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (options.isUndefined())
+    if (!options)
         return fallback;
 
-    JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, 0);
-
-    JSValue value = opts->get(globalObject, property);
+    JSValue value = options->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, 0);
 
     RELEASE_AND_RETURN(scope, intlDefaultNumberOption(globalObject, value, property, minimum, maximum, fallback));
@@ -933,7 +924,7 @@ static JSArray* bestFitSupportedLocales(JSGlobalObject* globalObject, const Hash
     return lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
 }
 
-JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
+JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue optionsValue)
 {
     // SupportedLocales (availableLocales, requestedLocales, options)
     // https://tc39.github.io/ecma402/#sec-supportedlocales
@@ -941,6 +932,9 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& av
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     String matcher;
+
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, JSValue());

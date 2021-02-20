@@ -1,3 +1,50 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Not allocating empty object for Intl options
+        https://bugs.webkit.org/show_bug.cgi?id=222203
+
+        Reviewed by Mark Lam.
+
+        This patch introduces Optional<JSObject&> to Intl options to explicitly mark it as maybe-null.
+        This maybe-null object can appear when the options is undefined. According to the spec, we allocates
+        empty object (with null [[Prototype]]) for this case, but accessing this object's property is non-observable
+        since this does not have [[Prototype]]. As a result, we can skip allocation and accesses in this case.
+
+        This can also pave the way to avoiding allocations of options objects for Date#toLocaleString etc.'s specific cases.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::toDateTimeOptionsAnyDate): Deleted.
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::initializeListFormat):
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::initializeLocale):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatInlines.h:
+        (JSC::setNumberFormatDigitOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::intlBooleanOption):
+        (JSC::intlStringOption):
+        (JSC::intlNumberOption):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::intlOption):
+        (JSC::intlGetOptionsObject): Deleted.
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::initializeSegmenter):
+
 2021-02-19  Michael Saboff  <msaboff@apple.com>
 
         Minor fixes to RegExp match indices after r273086

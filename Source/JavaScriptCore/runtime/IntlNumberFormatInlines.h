@@ -33,7 +33,7 @@
 namespace JSC  {
 
 template<typename IntlType>
-void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlInstance, JSObject* options, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation notation)
+void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlInstance, Optional<JSObject&> options, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation notation)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -41,17 +41,23 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, vm.propertyNames->minimumIntegerDigits, 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue minimumFractionDigitsValue = options->get(globalObject, vm.propertyNames->minimumFractionDigits);
-    RETURN_IF_EXCEPTION(scope, void());
+    JSValue minimumFractionDigitsValue = jsUndefined();
+    JSValue maximumFractionDigitsValue = jsUndefined();
+    JSValue minimumSignificantDigitsValue = jsUndefined();
+    JSValue maximumSignificantDigitsValue = jsUndefined();
+    if (options) {
+        minimumFractionDigitsValue = options->get(globalObject, vm.propertyNames->minimumFractionDigits);
+        RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumFractionDigitsValue = options->get(globalObject, vm.propertyNames->maximumFractionDigits);
-    RETURN_IF_EXCEPTION(scope, void());
+        maximumFractionDigitsValue = options->get(globalObject, vm.propertyNames->maximumFractionDigits);
+        RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue minimumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->minimumSignificantDigits);
-    RETURN_IF_EXCEPTION(scope, void());
+        minimumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->minimumSignificantDigits);
+        RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->maximumSignificantDigits);
-    RETURN_IF_EXCEPTION(scope, void());
+        maximumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->maximumSignificantDigits);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
 
     intlInstance->m_minimumIntegerDigits = minimumIntegerDigits;
 

@@ -120,7 +120,7 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
 }
 
 template<typename ResultType>
-ResultType intlOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+ResultType intlOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
@@ -130,13 +130,10 @@ ResultType intlOption(JSGlobalObject* globalObject, JSValue options, PropertyNam
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (options.isUndefined())
+    if (!options)
         return fallback;
 
-    JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    JSValue value = opts->get(globalObject, property);
+    JSValue value = options->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!value.isUndefined()) {
@@ -182,16 +179,28 @@ inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* character
 }
 
 // https://tc39.es/ecma402/#sec-getoptionsobject
-inline JSObject* intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
+inline Optional<JSObject&> intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (options.isUndefined())
-        return constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+        return WTF::nullopt;
     if (LIKELY(options.isObject()))
-        return asObject(options);
+        return *asObject(options);
     throwTypeError(globalObject, scope, "options argument is not an object or undefined"_s);
-    return nullptr;
+    return WTF::nullopt;
+}
+
+// https://tc39.es/ecma402/#sec-coerceoptionstoobject
+inline Optional<JSObject&> intlCoerceOptionsToObject(JSGlobalObject* globalObject, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (optionsValue.isUndefined())
+        return WTF::nullopt;
+    JSObject* options = optionsValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, WTF::nullopt);
+    return *options;
 }
 
 } // namespace JSC
