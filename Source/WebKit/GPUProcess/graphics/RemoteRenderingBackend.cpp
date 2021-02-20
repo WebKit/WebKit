@@ -89,7 +89,7 @@ RemoteRenderingBackend::~RemoteRenderingBackend()
     m_workQueue->dispatch([remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
-void RemoteRenderingBackend::disconnect()
+void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
 

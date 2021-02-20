@@ -150,6 +150,10 @@ Platform/IPC/MessageReceiverMap.cpp @no-unify
 Platform/IPC/MessageSender.cpp @no-unify
 Platform/IPC/SharedBufferCopy.cpp @no-unify
 Platform/IPC/SharedBufferDataReference.cpp @no-unify
+Platform/IPC/StreamClientConnection.cpp @no-unify
+Platform/IPC/StreamConnectionBuffer.cpp @no-unify
+Platform/IPC/StreamConnectionWorkQueue.cpp @no-unify
+Platform/IPC/StreamServerConnection.cpp @no-unify
 Platform/IPC/StringReference.cpp @no-unify
 
 PluginProcess/PluginControllerProxy.cpp @no-unify

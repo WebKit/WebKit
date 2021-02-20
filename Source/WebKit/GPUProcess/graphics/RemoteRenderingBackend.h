@@ -66,6 +66,7 @@ public:
 
     static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&& resumeDisplayListSemaphore);
     virtual ~RemoteRenderingBackend();
+    void stopListeningForIPC();
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
 
@@ -77,8 +78,6 @@ public:
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
-
-    void disconnect();
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);

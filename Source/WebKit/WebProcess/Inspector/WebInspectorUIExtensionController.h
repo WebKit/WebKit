@@ -28,6 +28,7 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
 #include <WebCore/InspectorFrontendAPIDispatcher.h>

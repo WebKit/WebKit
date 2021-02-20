@@ -49,13 +49,16 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const 
     return adoptRef(new RemoteGraphicsContextGLProxy(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
 }
 
+static constexpr size_t defaultStreamSize = 1 << 21;
+
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection& gpuProcessConnection, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
     : RemoteGraphicsContextGLProxyBase(attributes)
     , m_gpuProcessConnection(&gpuProcessConnection)
+    , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
 {
     m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
-    connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, m_streamConnection.streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
@@ -184,7 +187,7 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
     return std::exchange(m_errorWhenContextIsLost, NO_ERROR);
 }
 
-void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, String&& availableExtensions, String&& requestedExtensions)
+void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& semaphore, String&& availableExtensions, String&& requestedExtensions)
 {
     if (isContextLost())
         return;
@@ -193,6 +196,7 @@ void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, String&& availabl
         return;
     }
     ASSERT(!m_didInitialize);
+    m_streamConnection.setWakeUpSemaphore(WTFMove(semaphore));
     m_didInitialize = true;
     initialize(availableExtensions, requestedExtensions);
 }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCSocketFactory.h"
 #include "WebMDNSRegister.h"

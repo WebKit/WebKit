@@ -27,6 +27,7 @@
 #include "ArgumentCoders.h"
 
 #include "DataReference.h"
+#include "StreamConnectionEncoder.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -111,7 +112,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString
     return true;
 }
 
-
+template<typename Encoder>
 void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
 {
     // Special case the null string.
@@ -130,6 +131,10 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
     else
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
 }
+template
+void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
+template
+void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
 
 template <typename CharacterType>
 static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)

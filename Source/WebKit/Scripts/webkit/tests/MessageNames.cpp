@@ -134,6 +134,10 @@ const char* description(MessageName name)
         return "InitializeConnection";
     case MessageName::LegacySessionState:
         return "LegacySessionState";
+    case MessageName::ProcessOutOfStreamMessage:
+        return "ProcessOutOfStreamMessage";
+    case MessageName::SetStreamDestinationID:
+        return "SetStreamDestinationID";
     case MessageName::SyncMessageReply:
         return "SyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
@@ -224,6 +228,8 @@ ReceiverName receiverName(MessageName messageName)
         return ReceiverName::TestWithoutAttributes;
     case MessageName::InitializeConnection:
     case MessageName::LegacySessionState:
+    case MessageName::ProcessOutOfStreamMessage:
+    case MessageName::SetStreamDestinationID:
     case MessageName::SyncMessageReply:
         return ReceiverName::IPC;
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
@@ -400,6 +406,10 @@ bool isValidMessageName(MessageName messageName)
         return true;
 #endif
     if (messageName == IPC::MessageName::LegacySessionState)
+        return true;
+    if (messageName == IPC::MessageName::ProcessOutOfStreamMessage)
+        return true;
+    if (messageName == IPC::MessageName::SetStreamDestinationID)
         return true;
     if (messageName == IPC::MessageName::SyncMessageReply)
         return true;

@@ -30,10 +30,9 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include "HandleMessage.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
-#include <atomic>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -312,6 +311,8 @@ public:
 #endif
 
     void dispatchMessageReceiverMessage(MessageReceiver&, std::unique_ptr<Decoder>&&);
+    // Can be called from any thread.
+    void dispatchDidReceiveInvalidMessage(MessageName);
 private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
@@ -339,7 +340,6 @@ private:
     void dispatchMessage(std::unique_ptr<Decoder>);
     void dispatchMessage(Decoder&);
     void dispatchSyncMessage(Decoder&);
-    void dispatchDidReceiveInvalidMessage(MessageName);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.

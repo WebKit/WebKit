@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ArgumentCoder.h"
-#include "Attachment.h"
+#include "config.h"
+#include "StreamClientConnection.h"
 
 namespace IPC {
 
-class MachPort {
-public:
-    MachPort()
-        : m_port(MACH_PORT_NULL)
-        , m_disposition(0)
-    {
-    }
+StreamClientConnection::StreamClientConnection(Connection& connection, size_t size)
+    : m_connection(connection)
+    , m_buffer(size)
+{
+    // Read starts from 0 with limit of 0 and reader sleeping.
+    sharedSenderOffset().store(StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag, std::memory_order_relaxed);
+    // Write starts from 0 with a limit of the whole buffer.
+    sharedReceiverOffset().store(0, std::memory_order_relaxed);
+}
 
-    MachPort(mach_port_name_t port, mach_msg_type_name_t disposition)
-        : m_port(port)
-        , m_disposition(disposition)
-    {
-    }
+void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
+{
+#if PLATFORM(COCOA)
+    m_wakeUpSemaphore = WTFMove(semaphore);
+#endif
+    wakeUpReceiver();
+}
 
-    void encode(Encoder& encoder) const
-    {
-        encoder << Attachment(m_port, m_disposition);
-    }
+void StreamClientConnection::wakeUpReceiver()
+{
+#if PLATFORM(COCOA)
+    if (m_wakeUpSemaphore)
+        m_wakeUpSemaphore->signal();
+#endif
+}
 
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, MachPort& p)
-    {
-        Attachment attachment;
-        if (!decoder.decode(attachment))
-            return false;
-        
-        p.m_port = attachment.port();
-        p.m_disposition = attachment.disposition();
-        return true;
-    }
-
-    mach_port_name_t port() const { return m_port; }
-    mach_msg_type_name_t disposition() const { return m_disposition; }
-
-private:
-    mach_port_name_t m_port;
-    mach_msg_type_name_t m_disposition;
-};
-
-} // namespace IPC
+}

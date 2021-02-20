@@ -6,6 +6,8 @@ TESTS = \
     TestWithIfMessage \
     TestWithSemaphore \
     TestWithImageData \
+	TestWithStream \
+	TestWithStreamBuffer \
 #
 
 all:

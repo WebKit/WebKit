@@ -93,6 +93,8 @@ enum class MessageName : uint16_t {
     , TestWithoutAttributes_TouchEvent
     , InitializeConnection
     , LegacySessionState
+    , ProcessOutOfStreamMessage
+    , SetStreamDestinationID
     , SyncMessageReply
     , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnectionReply

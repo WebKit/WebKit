@@ -1,3 +1,300 @@
+2021-02-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPU process IPC should use shared memory for asynchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=219641
+        <rdar://problem/72340651>
+
+        Reviewed by Geoff Garen.
+
+        Implement a concept of a message buffer. This is a similar concept as
+        "command buffer" or "display list" in some graphics APIs. Messages
+        can be added to the buffer by a client and then played back by a
+        server.
+
+        Current implementation adds a specific pseudo-infinite,
+        semi-duplex message buffer type IPC::StreamConnectionBuffer. This
+        is a buffer that can be attached to stream connection, an object
+        that can deliver IPC messages either through the message buffer
+        or through normal IPC::Connection. The stream connection is
+        implemented as IPC::StreamClientConnection and IPC::StreamServerConnection.
+        The connection has server and client distinction, similar to
+        IPC::Connection. Unlike IPC::Connection, a stream connection is asymmetric
+        in features: the client can send messages and receive replies, where
+        as the server can receive messages and send replies.
+
+        Messages received through IPC::StreamServerConnection can be
+        processed by StreamConnectionWorkQueue.
+
+        Currently asynchronous messages are added to the stream. Synchronous messages
+        and their replies are dispatched through normal IPC.
+
+        WebGL is implemented by having one StreamConnectionWorkQueue for all WebGL
+        in the browser. Currently each web process WebGL context in has one
+        StreamClientConnection attached to one 2mb StreamConnectionBuffer.
+
+        Later on, there will be only one WebGL stream connection and connection
+        buffer shared between all contexts in particular thread in Web process.
+        The implementation is "optimized" for the later on case. Due to single-
+        process nature of each page, it does not make much sense to have buffer
+        per context. However, it is anticipated that many of the successive calls
+        are to same context. The SHM message format implements an optimization
+        where the destination id is maintained as part of the stream connection
+        state.
+
+        In GPU process side, all WebGL is processed in one task queue,
+        "RemoteGraphicsContextGL task queue". It will process up to 1000 commands
+        per connection per iteration.
+
+        Implemented as follows:
+        Sender shares the shared memory area with the destination when creating
+        the destination.
+
+        If the message fits to the stream shared memory area, write it there.
+        Otherwise send it via normal IPC as out of line message.
+
+        Messages to the destination arrive as before, in order. For each out of line
+        message, an entry is pushed to the stream. Receiver will stop processing the
+        stream and processing will continue once the out-of-line
+        message has been processed.
+
+        Sender can write messages to the stream simultaneous to the receiver reading
+        the messages. This is implemented as a ring buffer with atomic sender and receiver
+        pointers.
+
+        Stream connection processing is implemented as a shared semaphore. This semaphore
+        is notified if the receiver is waiting on it.
+
+        Performance impact (iMac Pro):
+            - MotionMark triangles: 300 points -> 4000 points
+              (~7000 points no-GPUP)
+            - WebGL samples Aquarium: 1000 fish ~60fps -> 5000 fish ~60fps
+              (~5000 fish with no-GPUP)
+
+        No new tests, tested by existing tests.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::remoteGraphicsContextGLStreamWorkQueue):
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::~RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::connectWebProcessConnection):
+        (WebKit::RemoteGraphicsContextGL::disconnectWebProcessConnection):
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::workQueueUninitialize):
+        Initialize the OpenGL context in the work queue, since OpenGL
+        has various limitations wrt thread mobility.
+
+        (WebKit::RemoteGraphicsContextGL::forceContextLost):
+        (WebKit::RemoteGraphicsContextGL::dispatchContextChangedNotification):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        (WebKit::RemoteGraphicsContextGL::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::send const):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa):
+        (WebKit::RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/ArgumentCoders.cpp:
+        * Platform/IPC/ArgumentCoders.h:
+        Make it possible to use multiple different Encoder classes to encode
+        the IPC data.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        * Platform/IPC/Connection.h:
+        Add possibility for the stream decoding logic to send the didReceiveInvalidMessage
+        notification to the connection client.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::Decoder):
+        (IPC::m_bufferDeallocator):
+        (IPC::m_destinationID):
+        * Platform/IPC/Decoder.h:
+        Add a constructor for Decoder for constructing a decoder in place in
+        the stream buffer.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageSynchronous):
+        Adds a stream-specific handleMessageSynchronous.
+        The old ones are unneccessarily complex, as they need redundant calls through redundant
+        generated send functions.
+        The old ones need the reply encoder passed in, which is redundant and problematic
+        for the upcoming case where the stream messaging will mainly reply through the stream itself,
+        constructing the IPC::StreamConnectionEncoder instead of normal IPC::Encoder.
+
+        * Platform/IPC/StreamClientConnection.cpp: Copied from Source/WebKit/Platform/IPC/cocoa/MachPort.h.
+        (IPC::StreamClientConnection::StreamClientConnection):
+        (IPC::StreamClientConnection::setWakeUpSemaphore):
+        Add function to set the connection receive side wakeup semaphore.
+        Currently the semaphore is the semaphore that StreamConnectionWorkQueue
+        waits on. All streams processed by the same work queue will receive the same
+        semaphore and will notify it when they have written new data.
+
+        (IPC::StreamClientConnection::wakeUpReceiver):
+        * Platform/IPC/StreamClientConnection.h: Added.
+        (IPC::StreamClientConnection::send):
+        (IPC::StreamClientConnection::sendSync):
+        (IPC::StreamClientConnection::trySendDestinationIDIfNeeded):
+        (IPC::StreamClientConnection::sendProcessOutOfStreamMessage):
+        (IPC::StreamClientConnection::tryAcquire):
+        (IPC::StreamClientConnection::release):
+        (IPC::StreamClientConnection::alignedSpan):
+        (IPC::StreamClientConnection::size):
+        (IPC::StreamClientConnection::clampedLimit const):
+        Add the implementation for sending data through the shared memory.
+
+
+        * Platform/IPC/StreamConnectionBuffer.cpp: Added.
+        (IPC::createMemory):
+        (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+        (IPC::StreamConnectionBuffer::operator=):
+        (IPC::StreamConnectionBuffer::encode const):
+        (IPC::StreamConnectionBuffer::decode):
+        * Platform/IPC/StreamConnectionBuffer.h: Added.
+        (IPC::StreamConnectionBuffer::wrapOffset const):
+        (IPC::StreamConnectionBuffer::alignOffset const):
+        (IPC::StreamConnectionBuffer::senderOffset):
+        (IPC::StreamConnectionBuffer::receiverOffset):
+        (IPC::StreamConnectionBuffer::data const):
+        (IPC::StreamConnectionBuffer::dataSize const):
+        (IPC::StreamConnectionBuffer::senderWaitSemaphore):
+        (IPC::StreamConnectionBuffer::header const):
+        (IPC::StreamConnectionBuffer::headerSize):
+        Add the common implementation for the shared memory ring buffer.
+        This is the common implementation used by both the sender side
+        as well as the receiver side.
+        Due to the selection of how the size is marked up, the
+        common implementation does not contain all the non-trivial code.
+        The "algorithm" uses a "hole indicator" to differentiate between
+        cases of "buffer is empty" and "buffer is full". The other
+        alternative could be better and maybe explored later.
+
+        * Platform/IPC/StreamConnectionEncoder.h: Added.
+        * Platform/IPC/StreamConnectionWorkQueue.cpp: Added.
+        (IPC::StreamConnectionWorkQueue::StreamConnectionWorkQueue):
+        (IPC::StreamConnectionWorkQueue::dispatch):
+        (IPC::StreamConnectionWorkQueue::addStreamConnection):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        (IPC::StreamConnectionWorkQueue::stop):
+        (IPC::StreamConnectionWorkQueue::wakeUp):
+        (IPC::StreamConnectionWorkQueue::wakeUpSemaphore):
+        (IPC::StreamConnectionWorkQueue::wakeUpProcessingThread):
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        Work queue contains multiple StreamServerConnection instances.
+        For each iteration of the work queue thread, it will process
+        1000 items from each connection. If none of the connections contain
+        work, the queue will sleep on the work queue semaphore.
+        The senders will send through StreamClientConnection which
+        will wake up the work queue by signaling the semaphore.
+
+        * Platform/IPC/StreamConnectionWorkQueue.h: Copied from Source/WebKit/Platform/IPC/cocoa/MachPort.h.
+        * Platform/IPC/StreamServerConnection.cpp: Added.
+        (IPC::StreamServerConnectionBase::StreamServerConnectionBase):
+        (IPC::StreamServerConnectionBase::startReceivingMessagesImpl):
+        (IPC::StreamServerConnectionBase::stopReceivingMessagesImpl):
+        (IPC::StreamServerConnectionBase::enqueueMessage):
+        (IPC::StreamServerConnectionBase::tryAquire):
+        (IPC::StreamServerConnectionBase::release):
+        (IPC::StreamServerConnectionBase::alignedSpan):
+        (IPC::StreamServerConnectionBase::size):
+        (IPC::StreamServerConnectionBase::clampedLimit const):
+        * Platform/IPC/StreamServerConnection.h: Added.
+        (IPC::StreamServerConnectionBase::connection):
+        (IPC::StreamServerConnectionBase::wrapOffset const):
+        (IPC::StreamServerConnectionBase::alignOffset const):
+        (IPC::StreamServerConnectionBase::sharedSenderOffset):
+        (IPC::StreamServerConnectionBase::sharedReceiverOffset):
+        (IPC::StreamServerConnectionBase::data const):
+        (IPC::StreamServerConnectionBase::dataSize const):
+        (IPC::StreamServerConnectionBase::sendSyncReply):
+        (IPC::StreamServerConnection<Receiver>::startReceivingMessages):
+        (IPC::StreamServerConnection<Receiver>::stopReceivingMessages):
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessages):
+        (IPC::StreamServerConnection<Receiver>::processSetStreamDestinationID):
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessage):
+        (IPC::StreamServerConnection<Receiver>::dispatchOutOfStreamMessage):
+        StreamServerConnection will process the message buffer and dispatch
+        messages based on the buffer contents. The class is a template so
+        that the message data decode switch (generated by the normal IPC
+        generator) is perhaps inlined to the message unpack loop.
+        * Platform/IPC/cocoa/MachPort.h:
+
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        Implements a 'Stream' attribute for the message receiver. When marked as
+        'Stream', the receiver message handler is didReceiveStreamMessage and it
+        will be called for all messages, stream or normal IPC, sync or async.
+
+        * Scripts/webkit/model.py:
+        Adds IPC control message ProcessOutOfStreamMessage that is acted on if
+        it is part of the stream messages. It means that the stream processing
+        should stop until one normal IPC message, sync or non-synch, should be
+        processed.
+
+        Adds IPC control message SetStreamDestinationID that is acted on if it
+        is part of the stream messages. It will set the destination ID for all
+        the subsequent stream messages, until another SetStreamDestinationID
+        message is seen.
+
+        * Scripts/webkit/tests/Makefile:
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithStream.messages.in: Copied from Source/WebKit/WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in.
+        * Scripts/webkit/tests/TestWithStreamBuffer.messages.in: Copied from Source/WebKit/WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in.
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp: Added.
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessages.h: Added.
+        (Messages::TestWithStreamBuffer::messageReceiverName):
+        (Messages::TestWithStreamBuffer::SendStreamBuffer::name):
+        (Messages::TestWithStreamBuffer::SendStreamBuffer::SendStreamBuffer):
+        (Messages::TestWithStreamBuffer::SendStreamBuffer::arguments const):
+        * Scripts/webkit/tests/TestWithStreamBufferMessagesReplies.h: Added.
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp: Added.
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithStreamMessages.h: Added.
+        (Messages::TestWithStream::messageReceiverName):
+        (Messages::TestWithStream::SendString::name):
+        (Messages::TestWithStream::SendString::SendString):
+        (Messages::TestWithStream::SendString::arguments const):
+        (Messages::TestWithStream::SendStringSynchronized::name):
+        (Messages::TestWithStream::SendStringSynchronized::SendStringSynchronized):
+        (Messages::TestWithStream::SendStringSynchronized::arguments const):
+        * Scripts/webkit/tests/TestWithStreamMessagesReplies.h: Added.
+        * Sources.txt:
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::wasCreated):
+        Send the work queue wakeup semaphore as a result of the context creation.
+
+
+        * Platform/IPC/ScopedActiveMessageReceiveQueue.h: Added.
+        (IPC::ScopedActiveMessageReceiveQueue::ScopedActiveMessageReceiveQueue):
+        (IPC::ScopedActiveMessageReceiveQueue::operator=):
+        (IPC::ScopedActiveMessageReceiveQueue::~ScopedActiveMessageReceiveQueue):
+        (IPC::ScopedActiveMessageReceiveQueue::reset):
+        (IPC::ScopedActiveMessageReceiveQueue::get const):
+        (IPC::ScopedActiveMessageReceiveQueue::stopListeningForIPCAndRelease):
+        Add a holder to replace previous RemoteRenderingBackendWrapper.
+        Now other classes can be held similarly.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+
 2021-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, reverting r273115.

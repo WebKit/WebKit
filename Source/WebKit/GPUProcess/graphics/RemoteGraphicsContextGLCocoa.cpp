@@ -39,10 +39,11 @@ namespace {
 
 class RemoteGraphicsContextGLCocoa final : public RemoteGraphicsContextGL {
 public:
-    RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&);
+    RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamConnectionBuffer&&);
     ~RemoteGraphicsContextGLCocoa() final = default;
 
     // RemoteGraphicsContextGL overrides.
+    void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
     WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain;
@@ -50,14 +51,21 @@ private:
 
 }
 
-std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend)
+Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
-    return makeUnique<RemoteGraphicsContextGLCocoa>(attributes, connection, identifier, renderingBackend);
+    auto instance = adoptRef(*new RemoteGraphicsContextGLCocoa(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
+    instance->initialize(WTFMove(attributes));
+    return instance;
 }
 
-RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend)
-    : RemoteGraphicsContextGL(attributes, connection, identifier, GraphicsContextGLOpenGL::createForGPUProcess(attributes, &m_swapChain), renderingBackend)
+RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+    : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
 {
+}
+
+void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
+{
+    m_context = GraphicsContextGLOpenGL::createForGPUProcess(WTFMove(attributes), &m_swapChain);
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

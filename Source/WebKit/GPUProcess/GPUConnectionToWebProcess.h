@@ -34,6 +34,7 @@
 #include "RemoteAudioSessionIdentifier.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
 
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
@@ -138,7 +139,7 @@ private:
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
 #if ENABLE(WEBGL)
-    void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier);
+    void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier, IPC::StreamConnectionBuffer&&);
     void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
 #endif
 
@@ -206,20 +207,10 @@ private:
     bool m_allowsDisplayCapture { false };
 #endif
 
-    class RemoteRenderingBackendWrapper {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        RemoteRenderingBackendWrapper(Ref<RemoteRenderingBackend>&&);
-        ~RemoteRenderingBackendWrapper();
-        RemoteRenderingBackend& get() const { return m_remoteRenderingBackend.get(); }
-    private:
-        Ref<RemoteRenderingBackend> m_remoteRenderingBackend;
-    };
-
-    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendWrapper>>;
+    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
 #if ENABLE(WEBGL)
-    using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, std::unique_ptr<RemoteGraphicsContextGL>>;
+    using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGraphicsContextGL>>;
     RemoteGraphicsContextGLMap m_remoteGraphicsContextGLMap;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)

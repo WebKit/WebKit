@@ -89,7 +89,7 @@ context_messages_template = (
     template_preamble
     + """#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-messages -> RemoteGraphicsContextGL NotRefCounted {{
+messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
     void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous

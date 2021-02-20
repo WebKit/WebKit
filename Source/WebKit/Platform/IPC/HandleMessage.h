@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
+#include "StreamServerConnection.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/StdLibExtras.h>
 
@@ -162,6 +163,28 @@ void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
     callMemberFunction(connection, WTFMove(*arguments), WTFMove(completionHandler), object, function);
+}
+
+template<typename T, typename C, typename MF>
+void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& decoder, C* object, MF function)
+{
+    uint64_t syncRequestID = 0;
+    if (!decoder.decode(syncRequestID) || !syncRequestID) {
+        decoder.markInvalid();
+        return;
+    }
+
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
+        decoder.markInvalid();
+        return;
+    }
+
+    typename T::DelayedReply completionHandler = [syncRequestID, connection = makeRef(connection)] (auto&&... args) mutable {
+        connection->sendSyncReply(syncRequestID, args...);
+    };
+    callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 
 template<typename T, typename C, typename MF>

@@ -29,11 +29,12 @@
 
 #include "GPUProcessConnection.h"
 #include "GraphicsContextGLIdentifier.h"
+#include "IPCSemaphore.h"
 #include "MessageReceiver.h"
-#include "MessageSender.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
+#include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RemoteGraphicsContextGLProxyBase.h>
@@ -335,19 +336,18 @@ protected:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
-        connection().send(WTFMove(message), m_graphicsContextGLIdentifier.toUInt64(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        return true;
+        return m_streamConnection.send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
     {
-        return connection().sendSync(WTFMove(message), WTFMove(reply), m_graphicsContextGLIdentifier.toUInt64(), defaultSendTimeout);
+        return m_streamConnection.sendSync(WTFMove(message), WTFMove(reply), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
 private:
     // Messages to be received.
-    void wasCreated(bool didSucceed, String&& availableExtensions, String&& requestedExtensions);
+    void wasCreated(bool didSucceed, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
     void wasLost();
     void wasChanged();
 
@@ -361,8 +361,8 @@ private:
     GPUProcessConnection* m_gpuProcessConnection;
     bool m_didInitialize { false };
     GCGLenum m_errorWhenContextIsLost = NO_ERROR;
-
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };
+    IPC::StreamClientConnection m_streamConnection;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

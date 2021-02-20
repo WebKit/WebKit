@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,43 @@
 
 #pragma once
 
-#include "ArgumentCoder.h"
-#include "Attachment.h"
+#include "IPCSemaphore.h"
+#include "StreamServerConnection.h"
+#include <atomic>
+#include <wtf/Deque.h>
+#include <wtf/FunctionDispatcher.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/Threading.h>
 
 namespace IPC {
 
-class MachPort {
+class StreamConnectionWorkQueue final : public FunctionDispatcher {
 public:
-    MachPort()
-        : m_port(MACH_PORT_NULL)
-        , m_disposition(0)
-    {
-    }
+    StreamConnectionWorkQueue(const char*);
+    ~StreamConnectionWorkQueue() = default;
+    void addStreamConnection(StreamServerConnectionBase&);
+    void removeStreamConnection(StreamServerConnectionBase&);
 
-    MachPort(mach_port_name_t port, mach_msg_type_name_t disposition)
-        : m_port(port)
-        , m_disposition(disposition)
-    {
-    }
+    void dispatch(WTF::Function<void()>&&) final;
+    void stop();
 
-    void encode(Encoder& encoder) const
-    {
-        encoder << Attachment(m_port, m_disposition);
-    }
+    void wakeUp();
 
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, MachPort& p)
-    {
-        Attachment attachment;
-        if (!decoder.decode(attachment))
-            return false;
-        
-        p.m_port = attachment.port();
-        p.m_disposition = attachment.disposition();
-        return true;
-    }
-
-    mach_port_name_t port() const { return m_port; }
-    mach_msg_type_name_t disposition() const { return m_disposition; }
-
+    Semaphore& wakeUpSemaphore();
 private:
-    mach_port_name_t m_port;
-    mach_msg_type_name_t m_disposition;
+    void wakeUpProcessingThread();
+    void processStreams();
+
+    const char* const m_name;
+    Semaphore m_wakeUpSemaphore;
+    RefPtr<Thread> m_processingThread;
+
+    std::atomic<bool> m_shouldQuit { false };
+
+    Lock m_lock;
+    Deque<Function<void()>> m_functions;
+    HashSet<Ref<StreamServerConnectionBase>> m_connections;
 };
 
-} // namespace IPC
+}

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Connection.h"
 
+#include "ArgumentCoder.h"
 #include "Logging.h"
 #include "MessageFlags.h"
 #include "MessageReceiveQueues.h"
@@ -930,8 +931,13 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
 
 void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
 {
-    ASSERT(RunLoop::isMain());
-
+    if (!RunLoop::isMain()) {
+        RunLoop::main().dispatch([protectedThis = makeRef(*this), messageName]() mutable {
+            if (!protectedThis->isValid())
+                return;
+            protectedThis->m_client.didReceiveInvalidMessage(protectedThis, messageName);
+        });
+    }
     if (!isValid())
         return;
 

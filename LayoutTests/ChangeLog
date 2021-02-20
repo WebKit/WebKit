@@ -1,3 +1,15 @@
+2021-02-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPU process IPC should use shared memory for asynchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=219641
+        <rdar://problem/72340651>
+
+        Reviewed by Geoff Garen.
+
+        Mark few tests as not timing out now that the implementation is not so slow.
+
+        * gpu-process/TestExpectations:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JS Modules in Workers

@@ -31,56 +31,80 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
+#include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/NotImplemented.h>
-
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
+
 using namespace WebCore;
 
+// Currently we have one global WebGL processing instance.
+static IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
+{
+    static NeverDestroyed<IPC::StreamConnectionWorkQueue> instance("RemoteGraphicsContextGL work queue");
+    return instance.get();
+}
+
 #if !PLATFORM(COCOA)
-std::unique_ptr<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(const WebCore::GraphicsContextGLAttributes&, GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&)
+Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
     ASSERT_NOT_REACHED();
-    return nullptr;
+    auto instance = adoptRef(*new RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
+    instance->initialize(WTFMove(attributes));
+    return instance;
 }
 #endif
 
-RemoteGraphicsContextGL::RemoteGraphicsContextGL(const WebCore::GraphicsContextGLAttributes& attributes, GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, Ref<GraphicsContextGLOpenGL> context, RemoteRenderingBackend& renderingBackend)
-    : m_context(WTFMove(context))
-    , m_gpuConnectionToWebProcess(makeWeakPtr(connection))
-    , m_graphicsContextGLIdentifier(identifier)
+RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+    : m_streamConnection(IPC::StreamServerConnection<RemoteGraphicsContextGL>::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
+    , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(makeRef(renderingBackend))
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
-    m_context->addClient(*this);
-    String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
-    String requestableExtensions = m_context->getString(ExtensionsGL::REQUESTABLE_EXTENSIONS_ANGLE);
-    send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, extensions, requestableExtensions), m_graphicsContextGLIdentifier);
+    ASSERT(RunLoop::isMain());
 }
 
 RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
+    ASSERT(!m_streamConnection);
+    ASSERT(!m_context);
 }
 
-GPUConnectionToWebProcess* RemoteGraphicsContextGL::gpuConnectionToWebProcess() const
+void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
-    return m_gpuConnectionToWebProcess.get();
+    ASSERT(RunLoop::isMain());
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = makeRef(*this)]() mutable {
+        protectedThis->workQueueInitialize(WTFMove(attributes));
+    });
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
 }
 
-IPC::Connection* RemoteGraphicsContextGL::messageSenderConnection() const
+void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection)
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        return &gpuConnectionToWebProcess->connection();
-    return nullptr;
+    ASSERT(RunLoop::isMain());
+    m_streamConnection->stopReceivingMessages(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
+        protectedThis->workQueueUninitialize();
+    });
 }
 
-uint64_t RemoteGraphicsContextGL::messageSenderDestinationID() const
+void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    return m_graphicsContextGLIdentifier.toUInt64();
+    platformWorkQueueInitialize(WTFMove(attributes));
+    if (m_context) {
+        m_context->addClient(*this);
+        String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
+        String requestableExtensions = m_context->getString(ExtensionsGL::REQUESTABLE_EXTENSIONS_ANGLE);
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, remoteGraphicsContextGLStreamWorkQueue().wakeUpSemaphore(), extensions, requestableExtensions));
+    } else
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, IPC::Semaphore { }, "", ""));
+}
+
+void RemoteGraphicsContextGL::workQueueUninitialize()
+{
+    m_context = nullptr;
+    m_streamConnection = nullptr;
 }
 
 void RemoteGraphicsContextGL::didComposite()
@@ -89,7 +113,7 @@ void RemoteGraphicsContextGL::didComposite()
 
 void RemoteGraphicsContextGL::forceContextLost()
 {
-    send(Messages::RemoteGraphicsContextGLProxy::WasLost(), m_graphicsContextGLIdentifier);
+    send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
 void RemoteGraphicsContextGL::recycleContext()
@@ -99,7 +123,7 @@ void RemoteGraphicsContextGL::recycleContext()
 
 void RemoteGraphicsContextGL::dispatchContextChangedNotification()
 {
-    send(Messages::RemoteGraphicsContextGLProxy::WasChanged(), m_graphicsContextGLIdentifier);
+    send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)

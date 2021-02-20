@@ -110,6 +110,17 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeade
         markInvalid();
 }
 
+Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationID)
+    : m_buffer { stream }
+    , m_bufferPos { m_buffer }
+    , m_bufferEnd { m_buffer + streamSize }
+    , m_bufferDeallocator([] (const uint8_t*, size_t) { })
+    , m_destinationID(destinationID)
+{
+    if (!decode(m_messageName))
+        return;
+}
+
 Decoder::~Decoder()
 {
     ASSERT(m_buffer);

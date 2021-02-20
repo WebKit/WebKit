@@ -1335,6 +1335,16 @@
 		7B483F2025CDDA9C00120486 /* MessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */; };
 		7B483F2125CDDA9C00120486 /* MessageReceiveQueueMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B483F1D25CDDA9B00120486 /* MessageReceiveQueueMap.cpp */; };
 		7B483F2225CDDA9C00120486 /* MessageReceiveQueues.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1E25CDDA9B00120486 /* MessageReceiveQueues.h */; };
+		7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */; };
+		7B73123B25CC8525003B2796 /* StreamConnectionWorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B73123225CC8523003B2796 /* StreamConnectionWorkQueue.cpp */; };
+		7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123325CC8523003B2796 /* StreamClientConnection.h */; };
+		7B73123D25CC8525003B2796 /* StreamConnectionBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */; };
+		7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */; };
+		7B73123F25CC8525003B2796 /* StreamClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B73123625CC8524003B2796 /* StreamClientConnection.cpp */; };
+		7B73124025CC8525003B2796 /* StreamServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B73123725CC8524003B2796 /* StreamServerConnection.cpp */; };
+		7B73124125CC8525003B2796 /* StreamServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123825CC8524003B2796 /* StreamServerConnection.h */; };
+		7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */; };
+		7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */; };
 		7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C065F2A1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h */; };
 		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1BA33E1A4A0E600043E249 /* APIDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1BA33C1A4A0E600043E249 /* APIDictionary.h */; };
@@ -4545,6 +4555,15 @@
 		7B483F1D25CDDA9B00120486 /* MessageReceiveQueueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageReceiveQueueMap.cpp; sourceTree = "<group>"; };
 		7B483F1E25CDDA9B00120486 /* MessageReceiveQueues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueues.h; sourceTree = "<group>"; };
 		7B64C0B6254C5C250006B4AF /* GraphicsContextGLIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLIdentifier.h; sourceTree = "<group>"; };
+		7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamConnectionBuffer.h; sourceTree = "<group>"; };
+		7B73123225CC8523003B2796 /* StreamConnectionWorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionWorkQueue.cpp; sourceTree = "<group>"; };
+		7B73123325CC8523003B2796 /* StreamClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamClientConnection.h; sourceTree = "<group>"; };
+		7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionBuffer.cpp; sourceTree = "<group>"; };
+		7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamConnectionWorkQueue.h; sourceTree = "<group>"; };
+		7B73123625CC8524003B2796 /* StreamClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamClientConnection.cpp; sourceTree = "<group>"; };
+		7B73123725CC8524003B2796 /* StreamServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamServerConnection.cpp; sourceTree = "<group>"; };
+		7B73123825CC8524003B2796 /* StreamServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServerConnection.h; sourceTree = "<group>"; };
+		7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamConnectionEncoder.h; sourceTree = "<group>"; };
 		7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxy.cpp; sourceTree = "<group>"; };
 		7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxy.h; sourceTree = "<group>"; };
 		7B904167254AFE17006EEB8C /* RemoteGraphicsContextGLProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGraphicsContextGLProxy.messages.in; sourceTree = "<group>"; };
@@ -4552,6 +4571,7 @@
 		7B904169254AFEA7006EEB8C /* RemoteGraphicsContextGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGL.cpp; sourceTree = "<group>"; };
 		7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLFunctionsGenerated.h; sourceTree = "<group>"; };
+		7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedActiveMessageReceiveQueue.h; sourceTree = "<group>"; };
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7C065F291C8CD95F00C2D950 /* WebUserContentControllerDataTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerDataTypes.cpp; sourceTree = "<group>"; };
@@ -6987,10 +7007,20 @@
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
 				1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */,
 				1AAB0378185A7C6A00EDF501 /* MessageSender.h */,
+				7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */,
 				2DC18001D90DDD15FC6991A9 /* SharedBufferCopy.cpp */,
 				5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */,
 				2DC1855EDBFB850BA0B6D06D /* SharedBufferDataReference.cpp */,
 				2DC1881ACBCAB5D57C5C6EF0 /* SharedBufferDataReference.h */,
+				7B73123625CC8524003B2796 /* StreamClientConnection.cpp */,
+				7B73123325CC8523003B2796 /* StreamClientConnection.h */,
+				7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */,
+				7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */,
+				7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */,
+				7B73123225CC8523003B2796 /* StreamConnectionWorkQueue.cpp */,
+				7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */,
+				7B73123725CC8524003B2796 /* StreamServerConnection.cpp */,
+				7B73123825CC8524003B2796 /* StreamServerConnection.h */,
 				1AE00D6918327C1200087DD7 /* StringReference.cpp */,
 				1AE00D6A18327C1200087DD7 /* StringReference.h */,
 			);
@@ -12015,6 +12045,7 @@
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
+				7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */,
 				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,
 				0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */,
@@ -12064,6 +12095,11 @@
 				936B059823039097002FC06B /* StorageManagerSet.h in Headers */,
 				9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */,
 				465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */,
+				7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */,
+				7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */,
+				7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */,
+				7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */,
+				7B73124125CC8525003B2796 /* StreamServerConnection.h in Headers */,
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,
@@ -13890,6 +13926,10 @@
 				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */,
+				7B73123F25CC8525003B2796 /* StreamClientConnection.cpp in Sources */,
+				7B73123D25CC8525003B2796 /* StreamConnectionBuffer.cpp in Sources */,
+				7B73123B25CC8525003B2796 /* StreamConnectionWorkQueue.cpp in Sources */,
+				7B73124025CC8525003B2796 /* StreamServerConnection.cpp in Sources */,
 				2D92A783212B6A7100F493FD /* StringReference.cpp in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */,
 				2D11B7522126A282006F8878 /* UnifiedSource1.cpp in Sources */,
