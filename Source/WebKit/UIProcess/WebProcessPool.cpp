@@ -494,7 +494,7 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
 
 void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 {
-    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: PID: %d", identifier);
+    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: PID=%d", identifier);
     m_gpuProcess = nullptr;
 
     m_client.gpuProcessDidCrash(this, identifier);

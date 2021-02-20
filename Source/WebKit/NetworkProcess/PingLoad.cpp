@@ -162,7 +162,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 
 void PingLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse - httpStatusCode: %d", response.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse - httpStatusCode=%d", response.httpStatusCode());
     auto weakThis = makeWeakPtr(*this);
     completionHandler(PolicyAction::Ignore);
     if (!weakThis)
@@ -181,7 +181,7 @@ void PingLoad::didCompleteWithError(const ResourceError& error, const NetworkLoa
     if (error.isNull())
         RELEASE_LOG_IF_ALLOWED("didComplete");
     else
-        RELEASE_LOG_IF_ALLOWED("didCompleteWithError, error_code: %d", error.errorCode());
+        RELEASE_LOG_IF_ALLOWED("didCompleteWithError, error_code=%d", error.errorCode());
 
     didFinish(error);
 }

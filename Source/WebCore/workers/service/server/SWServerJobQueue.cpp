@@ -101,7 +101,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerFetchResult& resul
     // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
     // text, then:
     if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script() && doCertificatesMatch(result.certificateInfo, newestWorker->certificateInfo())) {
-        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::scriptFetchFinished, script and certificate are matching for registration ID: %llu", this, registration->identifier().toUInt64());
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::scriptFetchFinished, script and certificate are matching for registrationID=%llu", this, registration->identifier().toUInt64());
         // FIXME: for non classic scripts, check the script’s module record's [[ECMAScriptCode]].
 
         // Invoke Resolve Job Promise with job and registration.
@@ -185,7 +185,7 @@ void SWServerJobQueue::didResolveRegistrationPromise()
         return;
     }
 
-    RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::didResolveRegistrationPromise: Registration ID: %llu. Now proceeding with install", this, registration->identifier().toUInt64());
+    RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::didResolveRegistrationPromise: RegistrationID=%llu. Now proceeding with install", this, registration->identifier().toUInt64());
 
     // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
     // for all the service worker clients whose creation URL matches registration's scope url and

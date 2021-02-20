@@ -1850,7 +1850,7 @@ void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesSt
 
 void WebProcessProxy::updateServiceWorkerProcessAssertion()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::updateServiceWorkerProcessAssertion() PID: %d", this, processIdentifier());
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::updateServiceWorkerProcessAssertion() PID=%d", this, processIdentifier());
     ASSERT(m_serviceWorkerInformation);
     if (!m_serviceWorkerInformation)
         return;

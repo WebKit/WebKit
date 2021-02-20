@@ -233,7 +233,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     ASSERT(!_visibilityPropagationView);
     // Propagate the view's visibility state to the WebContent process so that it is marked as "Foreground Running" when necessary.
     _visibilityPropagationView = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
-    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID: %u) for WebContent process with PID %d", _visibilityPropagationView.get(), contextID, processIdentifier);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for WebContent process with PID=%d", _visibilityPropagationView.get(), contextID, processIdentifier);
     [self addSubview:_visibilityPropagationView.get()];
 }
 
@@ -252,7 +252,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     // Propagate the view's visibility state to the GPU process so that it is marked as "Foreground Running" when necessary.
     _visibilityPropagationViewForGPUProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
-    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID: %u) for GPU process with PID %d", _visibilityPropagationViewForGPUProcess.get(), contextID, processIdentifier);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for GPU process with PID=%d", _visibilityPropagationViewForGPUProcess.get(), contextID, processIdentifier);
     [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
 }
 

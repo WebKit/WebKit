@@ -86,7 +86,7 @@ void PreconnectTask::didFinishLoading(const NetworkLoadMetrics&)
 
 void PreconnectTask::didFailLoading(const ResourceError& error)
 {
-    RELEASE_LOG(Network, "%p - PreconnectTask::didFailLoading, error_code: %d", this, error.errorCode());
+    RELEASE_LOG(Network, "%p - PreconnectTask::didFailLoading, error_code=%d", this, error.errorCode());
     didFinish(error);
 }
 

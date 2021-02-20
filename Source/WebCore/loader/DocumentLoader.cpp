@@ -254,7 +254,7 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
 {
     if (!error.isNull())
-        RELEASE_LOG_IF_ALLOWED("setMainDocumentError: (type = %d, code = %d)", static_cast<int>(error.type()), error.errorCode());
+        RELEASE_LOG_IF_ALLOWED("setMainDocumentError: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
     m_mainDocumentError = error;    
     frameLoader()->client().setMainDocumentError(this, error);
@@ -268,7 +268,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
         return;
 
     if (!error.isNull())
-        RELEASE_LOG_IF_ALLOWED("mainReceivedError: (type = %d, code = %d)", static_cast<int>(error.type()), error.errorCode());
+        RELEASE_LOG_IF_ALLOWED("mainReceivedError: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
     if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!mainResourceLoader());
@@ -431,7 +431,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
     }
 
     if (!m_mainResource->resourceError().isNull())
-        RELEASE_LOG_IF_ALLOWED("notifyFinished: canceling load (type = %d, code = %d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
+        RELEASE_LOG_IF_ALLOWED("notifyFinished: canceling load (type=%d, code=%d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
 
     mainReceivedError(m_mainResource->resourceError());
 }
@@ -1005,7 +1005,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         return;
 
     if (!m_frame) {
-        RELEASE_LOG_IF_ALLOWED("continueAfterContentPolicy: Policy action %i received by DocumentLoader with null frame", (int)policy);
+        RELEASE_LOG_IF_ALLOWED("continueAfterContentPolicy: policyAction=%i received by DocumentLoader with null frame", (int)policy);
         return;
     }
 
@@ -1933,7 +1933,7 @@ void DocumentLoader::startLoadingMainResource()
             auto url = request.url();
             matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
                 if (!m_mainDocumentError.isNull()) {
-                    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of main document error (type = %d, code = %d)", static_cast<int>(m_mainDocumentError.type()), m_mainDocumentError.errorCode());
+                    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of main document error (type=%d, code=%d)", static_cast<int>(m_mainDocumentError.type()), m_mainDocumentError.errorCode());
                     return;
                 }
                 if (!m_frame) {
@@ -2080,7 +2080,7 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
     Ref<DocumentLoader> protectedThis(*this);
     ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
 
-    RELEASE_LOG_IF_ALLOWED("cancelMainResourceLoad: (type = %d, code = %d)", static_cast<int>(error.type()), error.errorCode());
+    RELEASE_LOG_IF_ALLOWED("cancelMainResourceLoad: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
     m_dataLoadToken.clear();
 

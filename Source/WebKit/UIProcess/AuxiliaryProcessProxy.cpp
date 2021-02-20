@@ -113,7 +113,7 @@ void AuxiliaryProcessProxy::connect()
 
 void AuxiliaryProcessProxy::terminate()
 {
-    RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID: %d", processIdentifier());
+    RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processIdentifier());
 
 #if PLATFORM(COCOA)
     if (m_connection && m_connection->kill())

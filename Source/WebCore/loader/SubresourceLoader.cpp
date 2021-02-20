@@ -754,7 +754,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
 
 void SubresourceLoader::didFail(const ResourceError& error)
 {
-    RELEASE_LOG_IF_ALLOWED("didFail: (type = %d, code = %d)", static_cast<int>(error.type()), error.errorCode());
+    RELEASE_LOG_IF_ALLOWED("didFail: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get())
@@ -792,7 +792,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
 
 void SubresourceLoader::willCancel(const ResourceError& error)
 {
-    RELEASE_LOG_IF_ALLOWED("willCancel: (type = %d, code = %d)", static_cast<int>(error.type()), error.errorCode());
+    RELEASE_LOG_IF_ALLOWED("willCancel: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
 #if PLATFORM(IOS_FAMILY)
     // Since we defer initialization to scheduling time on iOS but
