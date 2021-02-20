@@ -1,3 +1,22 @@
+2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add back old media playback API but deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=222206
+        <rdar://problem/74539125>
+
+        We should add these back in case clients adopted them before the name
+        update in https://trac.webkit.org/changeset/272923/webkit.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView pauseAllMediaPlayback:]):
+        (-[WKWebView suspendAllMediaPlayback:]):
+        (-[WKWebView resumeAllMediaPlayback:]):
+        (-[WKWebView closeAllMediaPresentations:]):
+        (-[WKWebView requestMediaPlaybackState:]):
+
 2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
