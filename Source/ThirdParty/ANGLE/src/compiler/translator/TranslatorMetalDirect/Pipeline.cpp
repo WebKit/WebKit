@@ -298,8 +298,7 @@ static int SaturateVectorOf(const TField &field)
     ASSERT(type.isScalar() || type.isVector());
 
     const bool cond = type.getBasicType() == BT && !type.isArray() &&
-                      CompareBy(Cmp, type.getNominalSize(), MatchDim) && type.getQualifier() != TQualifier::EvqFragDepth;
-
+                      CompareBy(Cmp, type.getNominalSize(), MatchDim);
 
     if (cond)
     {

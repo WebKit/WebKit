@@ -102,7 +102,6 @@ class IOSurfaceSurfaceMtl : public SurfaceMtlProtocol
 
     ContextMtl *contextMTL;
     IOSurfaceRef mIOSurface;
-    GLint mGLInternalFormat;
     mtl::TextureRef mIOSurfaceTexture;
     mtl::TextureRef mIOSurfaceTextureView;
     mtl::Format mFormat;

@@ -355,8 +355,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpEqual:
             if ((argType0->isVector() && argType1->isVector()) ||
                 (argType0->getStruct() && argType1->getStruct()) ||
-                (argType0->isArray() && argType1->isArray()) ||
-                (argType0->isMatrix() && argType1->isMatrix()))
+                (argType0->isArray() && argType1->isArray()))
 
             {
                 return "ANGLE_equal";
@@ -366,8 +365,7 @@ static const char *GetOperatorString(TOperator op,
 
         case TOperator::EOpNotEqual:
             if ((argType0->isVector() && argType1->isVector()) ||
-                (argType0->isArray() && argType1->isArray())||
-                (argType0->isMatrix() && argType1->isMatrix()))
+                (argType0->isArray() && argType1->isArray()))
             {
                 return "ANGLE_notEqual";
             }
@@ -935,7 +933,7 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
     }
 
     const bool isInvariant =
-        (decl.isField() ? mInvariants.contains(decl.field()) : mInvariants.contains(decl.variable())) && (qualifier == TQualifier::EvqPosition || qualifier == TQualifier::EvqFragCoord);
+        decl.isField() ? mInvariants.contains(decl.field()) : mInvariants.contains(decl.variable());
 
     if (isInvariant)
     {
@@ -1549,34 +1547,9 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         case TOperator::EOpIndexDirect:
         case TOperator::EOpIndexIndirect:
         {
-            TType leftType = leftNode.getType();
             groupedTraverse(leftNode);
             mOut << "[";
-            {
-                mOut << "ANGLE_int_clamp(";
-                groupedTraverse(rightNode);
-                mOut << ", 0, ";
-                if(leftType.isUnsizedArray())
-                {
-                    groupedTraverse(leftNode);
-                    mOut << ".size()";
-                }
-                else
-                {
-                    int maxSize;
-                    if (leftType.isArray())
-                    {
-                        maxSize = static_cast<int>(leftType.getOutermostArraySize()) - 1;
-                    }
-                    else
-                    {
-                        maxSize = leftType.getNominalSize() - 1;
-                    }
-                    mOut << maxSize;
-                }
-                mOut << ")";
-
-            }
+            rightNode.traverse(this);
             mOut << "]";
         }
         break;
@@ -1895,9 +1868,7 @@ GenMetalTraverser::FuncToName GenMetalTraverser::BuildFuncToName()
     putAngle("texture2D");
     putAngle("texture2DLod");
     putAngle("texture2DProj");
-    putAngle("texture2DRect");
     putAngle("texture2DProjLod");
-    putAngle("texture2DRectProj");
     putAngle("texture3D");
     putAngle("texture3DLod");
     putAngle("texture3DProjLod");

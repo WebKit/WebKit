@@ -27,13 +27,12 @@
 #include "compiler/translator/TranslatorMetalDirect/RewriteUnaddressableReferences.h"
 #include "compiler/translator/TranslatorMetalDirect/SeparateCompoundExpressions.h"
 #include "compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.h"
-#include "compiler/translator/TranslatorMetalDirect/FixTypeConstructors.h"
 #include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 #include "compiler/translator/TranslatorMetalDirect/ToposortStructs.h"
 #include "compiler/translator/TranslatorMetalDirect/WrapMain.h"
 #include "compiler/translator/TranslatorMetalUtils.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
-#include "compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.h"
+#include "compiler/translator/tree_ops/NameEmbeddedUniformStructs.h"
 #include "compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
@@ -603,19 +602,6 @@ void AddFragDepthDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
                           TIntermSequence{new TIntermDeclaration{BuiltInVariable::gl_FragDepth()}});
 }
 
-void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbolTable &symbolTable)
-{   
-    const TIntermSymbol *glFragDepthExt = FindSymbolNode(&root, ImmutableString("gl_FragDepthEXT"));
-    ASSERT(glFragDepthExt);
-
-    // Replace gl_FragData with our globally defined fragdata.
-    if (!ReplaceVariable(&compiler, &root, &(glFragDepthExt->variable()), BuiltInVariable::gl_FragDepth()))
-    {
-        return;
-    }
-    AddFragDepthDeclaration(root, symbolTable);
-}
-
 ANGLE_NO_DISCARD bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &root)
 {
     TSymbolTable &symbolTable = compiler.getSymbolTable();
@@ -953,7 +939,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
 
     if (aggregateTypesUsedForUniforms > 0)
     {
-        if (!NameEmbeddedStructUniformsMetal(this, &root, &symbolTable))
+        if (!NameEmbeddedStructUniforms(this, &root, &symbolTable))
         {
             return false;
         }
@@ -1119,7 +1105,6 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         bool usesFragColor = false;
         bool usesFragData  = false;
         bool usesFragDepth = false;
-        bool usesFragDepthEXT = false;
         for (const ShaderVariable &outputVarying : mOutputVariables)
         {
             if (outputVarying.isBuiltIn())
@@ -1135,10 +1120,6 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
                 else if (outputVarying.name == "gl_FragDepth")
                 {
                     usesFragDepth = true;
-                }
-                else if (outputVarying.name == "gl_FragDepthEXT")
-                {
-                    usesFragDepthEXT = true;
                 }
             }
         }
@@ -1160,11 +1141,8 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
                 return false;
             }
         }
-        if(usesFragDepthEXT)
-        {
-            AddFragDepthEXTDeclaration(*this, root, symbolTable);
-        }
-        else if (usesFragDepth)
+
+        if (usesFragDepth)
         {
             AddFragDepthDeclaration(root, symbolTable);
         }
@@ -1236,15 +1214,6 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         if (FindSymbolNode(&root, BuiltInVariable::gl_VertexIndex()->name()))
         {
             if (!ReplaceVariable(this, &root, BuiltInVariable::gl_VertexIndex(),
-                                 &kgl_VertexIndexMetal))
-            {
-                return false;
-            }
-            DeclareRightBeforeMain(root, kgl_VertexIndexMetal);
-        }
-        else if (FindSymbolNode(&root, BuiltInVariable::gl_VertexID()->name()))
-        {
-            if (!ReplaceVariable(this, &root, BuiltInVariable::gl_VertexID(),
                                  &kgl_VertexIndexMetal))
             {
                 return false;
@@ -1350,7 +1319,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         return false;
     }
 
-    if (!ReduceInterfaceBlocks(*this, root, idGen))
+    if (!ReduceInterfaceBlocks(*this, root))
     {
         return false;
     }
@@ -1408,16 +1377,12 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
     {
         return false;
     }
-    if(!FixTypeConstructors(*this, symbolEnv, root))
-    {
-        return false;
-    }
 
     if (!ToposortStructs(*this, symbolEnv, root, ppc))
     {
         return false;
     }
- 
+
     if (!EmitMetal(*this, root, idGen, pipelineStructs, invariants, symbolEnv, ppc))
     {
         return false;

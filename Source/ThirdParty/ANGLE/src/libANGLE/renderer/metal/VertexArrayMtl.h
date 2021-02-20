@@ -58,7 +58,8 @@ class VertexArrayMtl : public VertexArrayImpl
                                  const void *sourcePointer,
                                  mtl::BufferRef *idxBufferOut,
                                  size_t *idxBufferOffsetOut,
-                                 gl::DrawElementsType *indexTypeOut);
+                                 gl::DrawElementsType *indexTypeOut,
+                                 size_t *indexBufferCountOut);
 
     // Use to emulate instanced draw for instance <instanceId>.
     // The typical call sequence for emulated instance draw is:
@@ -88,14 +89,16 @@ class VertexArrayMtl : public VertexArrayImpl
                                      gl::PrimitiveMode mode,
                                      size_t offset,
                                      mtl::BufferRef *idxBufferOut,
-                                     size_t *idxBufferOffsetOut);
+                                     size_t *idxBufferOffsetOut,
+                                     size_t *indexBufferCountOut);
     angle::Result streamIndexBufferFromClient(const gl::Context *glContext,
                                               gl::DrawElementsType indexType,
                                               gl::PrimitiveMode primitiveType,
                                               size_t indexCount,
                                               const void *sourcePointer,
                                               mtl::BufferRef *idxBufferOut,
-                                              size_t *idxBufferOffsetOut);
+                                              size_t *idxBufferOffsetOut,
+                                              size_t *idxBufferCountOut);
 
     angle::Result convertIndexBufferGPU(const gl::Context *glContext,
                                         gl::DrawElementsType indexType,

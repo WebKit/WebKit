@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <unordered_map>
 
-#include "compiler/translator/TranslatorMetalDirect.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
@@ -20,21 +19,14 @@ using namespace sh;
 namespace
 {
 
-
 class Reducer : public TIntermRebuild
 {
-    std::unordered_map<const TInterfaceBlock *,  const TVariable *>
+    std::unordered_map<const TInterfaceBlock *, std::map<ImmutableString, const TVariable *>>
         mLiftedMap;
     std::unordered_map<const TVariable *, const TVariable *> mInstanceMap;
-    IdGen &mIdGen;
 
-public:
-    Reducer(TCompiler &compiler, IdGen &idGen)
-        : TIntermRebuild(compiler, true, false),
-          mIdGen(idGen)
-    {
-
-    }
+  public:
+    Reducer(TCompiler &compiler) : TIntermRebuild(compiler, true, false) {}
 
     PreResult visitDeclarationPre(TIntermDeclaration &declNode) override
     {
@@ -50,21 +42,23 @@ public:
             {
                 if (symbolType == SymbolType::Empty)
                 {
-                    //Create instance variable
-                    auto &structure =
-                        *new TStructure(&mSymbolTable, interfaceBlock->name(),
-                                        &interfaceBlock->fields(), interfaceBlock->symbolType());
-                    auto &structVar = CreateStructTypeVariable(mSymbolTable, structure);
+                    auto &nameToVar = mLiftedMap[interfaceBlock];
+                    std::vector<TIntermNode *> replacements;
+                    for (TField *field : interfaceBlock->fields())
+                    {
+                        auto &liftedType = CloneType(*field->type());
+                        ASSERT(liftedType.getQualifier() == TQualifier::EvqUniform ||
+                               liftedType.getQualifier() == TQualifier::EvqGlobal);
+                        liftedType.setQualifier(TQualifier::EvqUniform);
+                        auto *liftedVar = new TVariable(&mSymbolTable, field->name(), &liftedType,
+                                                        field->symbolType());
 
-                    auto &instanceVar =
-                        CreateInstanceVariable(mSymbolTable, structure, mIdGen.createNewName(interfaceBlock->name()),
-                                               TQualifier::EvqBuffer, &type.getArraySizes());
-                    mLiftedMap[interfaceBlock] = &instanceVar;
+                        nameToVar[field->name()] = liftedVar;
 
-                    TIntermNode *replacements[] = {
-                        new TIntermDeclaration{new TIntermSymbol(&structVar)},
-                        new TIntermDeclaration{new TIntermSymbol(&instanceVar)}};
-                    return PreResult::Multi(std::begin(replacements), std::end(replacements));
+                        replacements.push_back(
+                            new TIntermDeclaration{new TIntermSymbol(liftedVar)});
+                    }
+                    return PreResult::Multi(std::move(replacements));
                 }
                 else
                 {
@@ -76,7 +70,7 @@ public:
                     auto &structVar = CreateStructTypeVariable(mSymbolTable, structure);
                     auto &instanceVar =
                         CreateInstanceVariable(mSymbolTable, structure, Name(var),
-                                               TQualifier::EvqBuffer, &type.getArraySizes());
+                                               TQualifier::EvqUniform, &type.getArraySizes());
 
                     mInstanceMap[&var] = &instanceVar;
 
@@ -106,7 +100,9 @@ public:
             auto it = mLiftedMap.find(ib);
             if (it != mLiftedMap.end())
             {
-                return AccessField(*(it->second), var.name());
+                auto *liftedVar = it->second[var.name()];
+                ASSERT(liftedVar);
+                return *new TIntermSymbol(liftedVar);
             }
         }
         return symbolNode;
@@ -117,9 +113,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen & idGen)
+bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root)
 {
-    Reducer reducer(compiler, idGen);
+    Reducer reducer(compiler);
     if (!reducer.rebuildRoot(root))
     {
         return false;

@@ -20,7 +20,6 @@ namespace
 class Separator : public TIntermTraverser
 {
   public:
-    std::unordered_map<int, TIntermSymbol *> replacementMap;
     Separator(TSymbolTable &symbolTable) : TIntermTraverser(false, false, true, &symbolTable) {}
 
     bool visitDeclaration(Visit, TIntermDeclaration *declNode) override
@@ -45,25 +44,14 @@ class Separator : public TIntermTraverser
                                                   symbolType, var.extension());
 
                 TIntermSequence replacements;
-                TIntermSymbol * instanceSymbol = new TIntermSymbol(instanceVar);
                 replacements.push_back(new TIntermSymbol(structVar));
-                replacements.push_back(instanceSymbol);
-                replacementMap[symbolNode->uniqueId().get()] = instanceSymbol;
+                replacements.push_back(new TIntermSymbol(instanceVar));
                 mMultiReplacements.push_back(
                     NodeReplaceWithMultipleEntry(declNode, symbolNode, std::move(replacements)));
             }
         }
 
         return false;
-    }
-    
-    void visitSymbol(TIntermSymbol *decl) override
-    {
-        auto symbol = replacementMap.find(decl->uniqueId().get());
-        if(symbol != replacementMap.end())
-        {
-            queueReplacement(symbol->second->deepCopy(), OriginalNode::IS_DROPPED);
-        }
     }
 };
 

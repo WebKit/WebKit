@@ -305,20 +305,25 @@ angle::Result InitializeDepthStencilTextureContentsGPU(const gl::Context *contex
     // Use clear operation
     ContextMtl *contextMtl           = mtl::GetImpl(context);
     const angle::Format &angleFormat = textureObjFormat.actualAngleFormat();
-    RenderTargetMtl rtMTL;
+
+    mtl::RenderPassDesc rpDesc;
 
     uint32_t layer = index.hasLayer() ? index.getLayerIndex() : 0;
-    rtMTL.set(texture, level, layer, textureObjFormat);
-    mtl::RenderPassDesc rpDesc;
-    rtMTL.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
+
     rpDesc.sampleCount = texture->samples();
     if (angleFormat.depthBits)
     {
+        rpDesc.depthAttachment.renderTarget->texture      = texture;
+        rpDesc.depthAttachment.renderTarget->level        = level;
+        rpDesc.depthAttachment.renderTarget->sliceOrDepth = layer;
         rpDesc.depthAttachment.loadAction   = MTLLoadActionClear;
         rpDesc.depthAttachment.clearDepth   = 1.0;
     }
     if (angleFormat.stencilBits)
     {
+        rpDesc.stencilAttachment.renderTarget->texture      = texture;
+        rpDesc.stencilAttachment.renderTarget->level        = level;
+        rpDesc.stencilAttachment.renderTarget->sliceOrDepth = layer;
         rpDesc.stencilAttachment.loadAction   = MTLLoadActionClear;
     }
 
