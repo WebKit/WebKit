@@ -183,7 +183,7 @@ class ShowIdentifier(shell.ShellCommand):
         revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
         if not revision:
             revision = 'HEAD'
-        self.setCommand(['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
+        self.setCommand(['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
