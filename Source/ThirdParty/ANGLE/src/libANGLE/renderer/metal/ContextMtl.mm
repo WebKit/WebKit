@@ -658,14 +658,12 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     mtl::BufferRef idxBuffer;
     size_t convertedOffset             = 0;
     gl::DrawElementsType convertedType = type;
-    size_t convertedCount              = (size_t)count;
-
     ANGLE_TRY(mVertexArray->getIndexBuffer(context, type, mode, count, indices, &idxBuffer,
-                                           &convertedOffset, &convertedType, &convertedCount));
+                                           &convertedOffset, &convertedType));
 
     ASSERT(idxBuffer);
     ASSERT((convertedOffset % mtl::kIndexBufferOffsetAlignment) == 0);
-    uint32_t convertedCounti32 = (uint32_t)convertedCount;
+    uint32_t convertedCounti32 = (uint32_t)count;
     if (mState.isTransformFeedbackActiveUnpaused())
     {
         ANGLE_TRY(setupDraw(context, mode, 0, convertedCounti32, instances, type, indices, true));

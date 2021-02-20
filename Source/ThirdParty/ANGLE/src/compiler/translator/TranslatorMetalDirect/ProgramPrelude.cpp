@@ -33,7 +33,7 @@ class ProgramPrelude : public TIntermTraverser
         : TIntermTraverser(true, false, false), mOut(out)
     {
         ALWAYS_INLINE();
-
+        int_clamp();
         if (ppc.hasStructEq)
         {
             equalVector();
@@ -109,6 +109,7 @@ class ProgramPrelude : public TIntermTraverser
     void negateMatrix();
     void matmulAssign();
     void atan();
+    void int_clamp();
     void addMatrixScalarAssign();
     void subMatrixScalarAssign();
     void addMatrixScalar();
@@ -129,6 +130,7 @@ class ProgramPrelude : public TIntermTraverser
     void equalMatrix();
     void notEqualVector();
     void notEqualStruct();
+    void notEqualMatrix();
     void equalArray();
     void notEqualArray();
     void sign();
@@ -168,6 +170,8 @@ class ProgramPrelude : public TIntermTraverser
     void texture2DLod();
     void texture2DProj();
     void texture2DProjLod();
+    void texture2DRect();
+    void texture2DRectProj();
     void texture3DLod();
     void texture3DProj();
     void texture3DProjLod();
@@ -640,6 +644,14 @@ ANGLE_ALWAYS_INLINE T ANGLE_sign(T x)
 )",
                         include_metal_common())
 
+PROGRAM_PRELUDE_DECLARE(int_clamp,
+                        R"(
+ANGLE_ALWAYS_INLINE int ANGLE_int_clamp(int value, int minValue, int maxValue)
+{
+    return ((value < minValue) ?  minValue : ((value > maxValue) ? maxValue : value));
+};
+)")
+
 PROGRAM_PRELUDE_DECLARE(atan,
                         R"(
 template <typename T>
@@ -1054,6 +1066,7 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equal(metal::matrix<T, C, R> a, metal::matrix<T, 
 )",
                         equalVector())
 
+
 PROGRAM_PRELUDE_DECLARE(notEqualVector,
                         R"(
 template <typename T, int N>
@@ -1063,6 +1076,17 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::vec<T, N> u, metal::vec<T, N> v)
 }
 )",
                         equalVector())
+
+PROGRAM_PRELUDE_DECLARE(notEqualMatrix,
+                        R"(
+template <typename T, int C, int R>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::matrix<T, C, R> u, metal::matrix<T, C, R> v)
+{
+    return !ANGLE_equal(u, v);
+}
+)",
+                        equalMatrix())
+
 
 PROGRAM_PRELUDE_DECLARE(notEqualStruct,
                         R"(
@@ -1752,6 +1776,22 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2D_impl(
 )",
                         textureEnv())
 
+PROGRAM_PRELUDE_DECLARE(texture2DRect,
+                        R"(
+#define ANGLE_texture2DRect(env, ...) ANGLE_texture2DRect_impl(*env.texture, *env.sampler, __VA_ARGS__)
+
+template <typename Texture>
+ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRect_impl(
+    thread Texture &texture,
+    thread metal::sampler const &sampler,
+    thread metal::float2 const &coord)
+{
+    return texture.sample(sampler, coord);
+}
+)",
+                        textureEnv())
+
+
 PROGRAM_PRELUDE_DECLARE(texture2DLod,
                         R"(
 #define ANGLE_texture2DLod(env, ...) ANGLE_texture2DLod_impl(*env.texture, *env.sampler, __VA_ARGS__)
@@ -1794,6 +1834,30 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DProj_impl(
 )",
                         textureEnv())
 
+PROGRAM_PRELUDE_DECLARE(texture2DRectProj,
+                        R"(
+#define ANGLE_texture2DRectProj(env, ...) ANGLE_texture2DRectProj_impl(*env.texture, *env.sampler, __VA_ARGS__)
+                        
+template <typename Texture>
+ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRectProj_impl(
+    thread Texture &texture,
+    thread metal::sampler const &sampler,
+    thread metal::float3 const &coord)
+{
+    return texture.sample(sampler, coord.xy/coord.z);
+}
+
+template <typename Texture>
+ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRectProj_impl(
+    thread Texture &texture,
+    thread metal::sampler const &sampler,
+    thread metal::float4 const &coord)
+{
+    return texture.sample(sampler, coord.xy/coord.w);
+}
+)",
+                        textureEnv())
+
 PROGRAM_PRELUDE_DECLARE(texture2DProjLod,
                         R"(
 #define ANGLE_texture2DProjLod(env, ...) ANGLE_texture2DProjLod_impl(*env.texture, *env.sampler, __VA_ARGS__)
@@ -1819,6 +1883,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DProjLod_impl(
 }
 )",
                         textureEnv())
+
 
 PROGRAM_PRELUDE_DECLARE(texture3DLod,
                         R"(
@@ -2994,6 +3059,8 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
     putBuiltIn("texture2D", EMIT_METHOD(texture2D));
     putBuiltIn("texture2DLod", EMIT_METHOD(texture2DLod));
     putBuiltIn("texture2DProj", EMIT_METHOD(texture2DProj));
+    putBuiltIn("texture2DRect", EMIT_METHOD(texture2DRect));
+    putBuiltIn("texture2DRectProj", EMIT_METHOD(texture2DRectProj));
     putBuiltIn("texture3DLod", EMIT_METHOD(texture3DLod));
     putBuiltIn("texture3DProj", EMIT_METHOD(texture3DProj));
     putBuiltIn("texture3DProjLod", EMIT_METHOD(texture3DProjLod));
@@ -3325,6 +3392,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 equalArray();
             }
+            if(argType0->isMatrix() && argType1->isMatrix())
+            {
+                equalMatrix();
+            }
             break;
 
         case TOperator::EOpNotEqual:
@@ -3340,6 +3411,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             if (argType0->isArray() && argType1->isArray())
             {
                 notEqualArray();
+            }
+            if(argType0->isMatrix() && argType1->isMatrix())
+            {
+                notEqualMatrix();
             }
             break;
 
