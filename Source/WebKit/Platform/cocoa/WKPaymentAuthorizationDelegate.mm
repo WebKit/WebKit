@@ -69,9 +69,9 @@
 
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
-    PKPaymentRequestPaymentMethodUpdate *update = paymentMethodUpdate ?: adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]).autorelease();
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    std::exchange(_didSelectPaymentMethodCompletion, nil)(update);
+    auto update = !paymentMethodUpdate ? adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]) : nil;
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    std::exchange(_didSelectPaymentMethodCompletion, nil)(update.get());
 }
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors
@@ -81,17 +81,17 @@
 }
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
-    PKPaymentRequestShippingContactUpdate *update = shippingContactUpdate ?: adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]).autorelease();
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    _shippingMethods = adoptNS([update.shippingMethods copy]);
-    std::exchange(_didSelectShippingContactCompletion, nil)(update);
+    auto update = !shippingContactUpdate ? adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]) : nil;
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    _shippingMethods = adoptNS([[update shippingMethods] copy]);
+    std::exchange(_didSelectShippingContactCompletion, nil)(update.get());
 }
 
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate
 {
-    PKPaymentRequestShippingMethodUpdate *update = shippingMethodUpdate ?: adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]).autorelease();
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    std::exchange(_didSelectShippingMethodCompletion, nil)(update);
+    auto update = !shippingMethodUpdate ? adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]) : nil;
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
 }
 
 #if defined(WKPaymentAuthorizationDelegateAdditions_implementation_public)

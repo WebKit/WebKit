@@ -1,3 +1,30 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (+[_WKAttributedStringWebViewCache configuration]):
+        (+[NSAttributedString _loadFromHTMLWithOptions:contentLoader:completionHandler:]):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takePDFSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertToNPNNString):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+
 2021-02-19  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] add an `object data` to `PaymentShippingOption` so that data specific to Apple Pay can be provided

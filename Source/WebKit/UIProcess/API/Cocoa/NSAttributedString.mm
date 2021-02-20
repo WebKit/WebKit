@@ -133,7 +133,7 @@ static WKWebViewConfiguration *configuration;
 {
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.processPool = adoptNS([[WKProcessPool alloc] init]).autorelease();
+        configuration.processPool = adoptNS([[WKProcessPool alloc] init]).get();
         configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
         configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
         configuration._allowsJavaScriptMarkup = NO;
@@ -269,12 +269,18 @@ static WKWebViewConfiguration *configuration;
             webView = nil;
 
             // Make the string be an instance of the receiver class.
-            if (attributedString && self != attributedString.class)
-                attributedString = adoptNS([[self alloc] initWithAttributedString:attributedString]).autorelease();
+            RetainPtr<NSAttributedString> newAttributedString;
+            if (attributedString && self != attributedString.class) {
+                newAttributedString = adoptNS([[self alloc] initWithAttributedString:attributedString]);
+                attributedString = newAttributedString.get();
+            }
 
             // Make the document attributes immutable.
-            if ([attributes isKindOfClass:NSMutableDictionary.class])
-                attributes = adoptNS([[NSDictionary alloc] initWithDictionary:attributes]).autorelease();
+            RetainPtr<NSDictionary<NSAttributedStringDocumentAttributeKey, id>> newAttributes;
+            if ([attributes isKindOfClass:NSMutableDictionary.class]) {
+                newAttributes = adoptNS([[NSDictionary alloc] initWithDictionary:attributes]);
+                attributes = newAttributes.get();
+            }
 
             completionHandler(attributedString, attributes, error);
         };

@@ -664,12 +664,12 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 - (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:context
 {
     ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
-    JSValue *wrapper = (__bridge JSValue *)NSMapGet(m_cachedObjCWrappers.get(), value);
+    auto wrapper = retainPtr((__bridge JSValue *)NSMapGet(m_cachedObjCWrappers.get(), value));
     if (!wrapper) {
-        wrapper = adoptNS([[JSValue alloc] initWithValue:value inContext:context]).autorelease();
-        NSMapInsert(m_cachedObjCWrappers.get(), value, (__bridge void*)wrapper);
+        wrapper = adoptNS([[JSValue alloc] initWithValue:value inContext:context]);
+        NSMapInsert(m_cachedObjCWrappers.get(), value, (__bridge void*)wrapper.get());
     }
-    return wrapper;
+    return wrapper.autorelease();
 }
 
 @end

@@ -2255,7 +2255,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         [pdfConfiguration setRect:snapshotConfiguration.rect];
     }
 
-    [self createPDFWithConfiguration:pdfConfiguration.autorelease() completionHandler:completionHandler];
+    [self createPDFWithConfiguration:pdfConfiguration.get() completionHandler:completionHandler];
 }
 
 - (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler

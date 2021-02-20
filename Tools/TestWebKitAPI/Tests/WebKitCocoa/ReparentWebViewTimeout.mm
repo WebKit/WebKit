@@ -38,7 +38,7 @@ TEST(WebKit, ReparentWebViewTimeout)
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).autorelease()];
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get()];
 
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
     [webView synchronouslyLoadHTMLString:@"hello"];

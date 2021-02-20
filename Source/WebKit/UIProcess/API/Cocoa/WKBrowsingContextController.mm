@@ -494,21 +494,21 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
         auto policyDelegate = browsingContext->_policyDelegate.get();
 
         if ([policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForNavigationAction:decisionHandler:)]) {
-            NSDictionary *actionDictionary = @{
+            auto actionDictionary = retainPtr(@{
                 WKActionIsMainFrameKey: @(WKFrameIsMainFrame(frame)),
                 WKActionNavigationTypeKey: @(navigationType),
                 WKActionModifierFlagsKey: @(modifiers),
                 WKActionMouseButtonKey: @(mouseButton),
                 WKActionOriginalURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(originalRequest)).get(),
                 WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get()
-            };
+            });
 
             if (originatingFrame) {
-                actionDictionary = adoptNS([actionDictionary mutableCopy]).autorelease();
-                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
+                actionDictionary = adoptNS([actionDictionary mutableCopy]);
+                [(NSMutableDictionary *)actionDictionary.get() setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
             }
             
-            [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
+            [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary.get() decisionHandler:makePolicyDecisionBlock(listener)];
         } else
             WKFramePolicyListenerUse(listener);
     };

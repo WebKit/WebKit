@@ -161,7 +161,7 @@ static void checkFrame(NSRect frame, CGFloat x, CGFloat y, CGFloat width, CGFloa
 
 TEST(PDFHUD, MainResourcePDF)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).autorelease()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
     [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
     EXPECT_EQ([webView _pdfHUDs].count, 0u);
     [webView _test_waitForDidFinishNavigation];

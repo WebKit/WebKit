@@ -556,7 +556,7 @@ TEST(WebKit, FastServerTrust)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
-    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).autorelease()];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     auto delegate = adoptNS([ServerTrustDelegate new]);
     [webView setNavigationDelegate:delegate.get()];

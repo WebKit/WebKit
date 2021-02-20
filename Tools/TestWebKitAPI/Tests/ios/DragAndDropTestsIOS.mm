@@ -1113,7 +1113,7 @@ TEST(DragAndDropTests, ExternalSourceMapItemIntoEditableAreas)
     [webView _synchronouslyExecuteEditCommand:@"Delete" argument:nil];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    [simulator setExternalItemProviders:@[ createMapItemForTesting().autorelease() ]];
+    [simulator setExternalItemProviders:@[ createMapItemForTesting().get() ]];
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
     EXPECT_WK_STREQ("Apple Park", [webView stringByEvaluatingJavaScript:@"document.querySelector('div[contenteditable]').textContent"]);
     NSURL *firstURL = [NSURL URLWithString:[webView stringByEvaluatingJavaScript:@"document.querySelector('a').href"]];
@@ -1131,7 +1131,7 @@ TEST(DragAndDropTests, ExternalSourceContactIntoEditableAreas)
     [webView _synchronouslyExecuteEditCommand:@"Delete" argument:nil];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    [simulator setExternalItemProviders:@[ createContactItemForTesting().autorelease() ]];
+    [simulator setExternalItemProviders:@[ createContactItemForTesting().get() ]];
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"document.querySelector('div[contenteditable]').textContent"]);
 
@@ -1145,7 +1145,7 @@ TEST(DragAndDropTests, ExternalSourceMapItemAndContactToUploadArea)
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    [simulator setExternalItemProviders:@[ createMapItemForTesting().autorelease(), createContactItemForTesting().autorelease() ]];
+    [simulator setExternalItemProviders:@[ createMapItemForTesting().get(), createContactItemForTesting().get() ]];
     [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("text/vcard, text/vcard", [webView stringByEvaluatingJavaScript:@"output.value"]);

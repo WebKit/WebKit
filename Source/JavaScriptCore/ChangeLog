@@ -1,3 +1,17 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSContext.mm:
+        (+[JSContext contextWithJSGlobalContextRef:]):
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine virtualMachineWithContextGroupRef:]):
+        * API/JSWrapperMap.mm:
+        (-[JSWrapperMap objcWrapperForJSValueRef:inContext:]):
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Not allocating empty object for Intl options

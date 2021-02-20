@@ -1,3 +1,75 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * TestRunnerShared/mac/NSPasteboardAdditions.mm:
+        (+[NSPasteboard _modernPasteboardType:]):
+        * TestWebKitAPI/Tests/JavaScriptCore/JSRunLoopTimer.mm:
+        (TestWebKitAPI::triggerGC):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (-[ContentRuleListNotificationDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceManagementRestrictions.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (runDragStartDataTestCase):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/JITEnabled.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        (-[ResourceLoadStatisticsSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (-[UITestDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[SyncErrorScheme webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard

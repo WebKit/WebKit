@@ -511,7 +511,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
         if ([task.request.URL.absoluteString isEqualToString:@"framestest://test/index.html"]) {
             NSData *data = [[NSString stringWithFormat:@"%s", framesMainResource] dataUsingEncoding:NSUTF8StringEncoding];
-            [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]).autorelease()];
+            [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]).get()];
             [task didReceiveData:data];
             [task didFinish];
         } else if ([task.request.URL.absoluteString isEqualToString:@"otherprotocol://test/index.html"]) {

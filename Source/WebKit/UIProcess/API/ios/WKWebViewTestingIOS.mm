@@ -58,7 +58,7 @@
             adjustedContext.boundingRect = [strongSelf convertRect:adjustedContext.boundingRect fromView:strongSelf->_contentView.get()];
             [adjustedContexts addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:adjustedContext]).get()];
         }
-        completionHandler(adjustedContexts.autorelease());
+        completionHandler(adjustedContexts.get());
     }];
 }
 

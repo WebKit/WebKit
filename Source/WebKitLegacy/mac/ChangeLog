@@ -1,3 +1,17 @@
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker forwardInvocation:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+
 2021-02-19  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] add support for Apple Pay payment method mode

@@ -238,7 +238,7 @@ static RetainPtr<WKWebView> webViewForScriptMessageHandlerMultipleHandlerRemoval
 
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configurationCopy = adoptNS([configuration copy]);
-    [configurationCopy setUserContentController:adoptNS([[WKUserContentController alloc] init]).autorelease()];
+    [configurationCopy setUserContentController:adoptNS([[WKUserContentController alloc] init]).get()];
     [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToRemove"];
     [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToPost"];
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationCopy.get()]);
@@ -256,7 +256,7 @@ TEST(WKUserContentController, ScriptMessageHandlerMultipleHandlerRemoval)
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).autorelease()];
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get()];
 
     RetainPtr<WKWebView> webView = webViewForScriptMessageHandlerMultipleHandlerRemovalTest(configuration.get());
     RetainPtr<WKWebView> webView2 = webViewForScriptMessageHandlerMultipleHandlerRemovalTest(configuration.get());

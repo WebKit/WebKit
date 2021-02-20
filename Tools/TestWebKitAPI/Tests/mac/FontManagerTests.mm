@@ -123,22 +123,22 @@ TEST(FontManagerTests, ToggleBoldAndItalicWithMenuItems)
 
     [webView selectWord:nil];
     [webView waitForNextPresentationUpdate];
-    [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).autorelease()];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).get()];
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
     EXPECT_WK_STREQ("Times-Bold", [fontManager selectedFont].fontName);
 
-    [fontManager addFontTrait:menuItemCellForFontAction(NSUnboldFontMask).autorelease()];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSUnboldFontMask).get()];
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
     EXPECT_WK_STREQ("Times-Roman", [fontManager selectedFont].fontName);
 
-    [fontManager addFontTrait:menuItemCellForFontAction(NSItalicFontMask).autorelease()];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSItalicFontMask).get()];
     EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionStart:@"font-style"]);
     EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionEnd:@"font-style"]);
     EXPECT_WK_STREQ("Times-Italic", [fontManager selectedFont].fontName);
 
-    [fontManager addFontTrait:menuItemCellForFontAction(NSUnitalicFontMask).autorelease()];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSUnitalicFontMask).get()];
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-style"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionEnd:@"font-style"]);
     EXPECT_WK_STREQ("Times-Roman", [fontManager selectedFont].fontName);

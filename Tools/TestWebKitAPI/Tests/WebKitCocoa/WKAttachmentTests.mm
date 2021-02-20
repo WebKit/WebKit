@@ -2082,7 +2082,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
 
 TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
 {
-    UIPasteboard.generalPasteboard.itemProviders = @[ contactItemForTesting().autorelease() ];
+    UIPasteboard.generalPasteboard.itemProviders = @[ contactItemForTesting().get() ];
     auto webView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(webView.get());
     [webView paste:nil];
@@ -2099,7 +2099,7 @@ TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
 TEST(WKAttachmentTestsIOS, InsertPastedMapItemAsAttachment)
 {
     UIApplicationInitialize();
-    UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().autorelease() ];
+    UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().get() ];
     auto webView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(webView.get());
     [webView paste:nil];

@@ -66,7 +66,7 @@ static bool done;
 
 TEST(WebKit, WKWebViewIsPlayingAudio)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).autorelease()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
     auto observer = adoptNS([[AudioObserver alloc] init]);
     [webView addObserver:observer.get() forKeyPath:@"_isPlayingAudio" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [webView synchronouslyLoadTestPageNamed:@"file-with-video"];
@@ -224,7 +224,7 @@ static RetainPtr<UITestDelegate> delegate;
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
     NSString *data = @"<script>window.open('other.html');</script>";
-    [urlSchemeTask didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:urlSchemeTask.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]).autorelease()];
+    [urlSchemeTask didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:urlSchemeTask.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]).get()];
     [urlSchemeTask didReceiveData:[data dataUsingEncoding:NSUTF8StringEncoding]];
     [urlSchemeTask didFinish];
 }
@@ -513,11 +513,13 @@ TEST(WebKit, NotificationPermission)
 {
     NSString *html = @"<script>Notification.requestPermission(function(p){alert('permission '+p)})</script>";
     auto webView = adoptNS([[WKWebView alloc] init]);
-    [webView setUIDelegate:adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:YES]).autorelease()];
+    auto uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:YES]);
+    [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    [webView setUIDelegate:adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:NO]).autorelease()];
+    uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:NO]);
+    [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
     TestWebKitAPI::Util::run(&done);
 }
@@ -576,7 +578,7 @@ bool firstToolbarDone;
 
 TEST(WebKit, ToolbarVisible)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).autorelease()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
     auto delegate = adoptNS([[ToolbarDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadHTMLString:@"<script>alert('visible:' + window.toolbar.visible);alert('visible:' + window.toolbar.visible)</script>"];
@@ -604,7 +606,8 @@ TEST(WebKit, MouseMoveOverElement)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"FrameHandleSerialization"];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    [webView setUIDelegate:adoptNS([[MouseMoveOverElementDelegate alloc] init]).autorelease()];
+    auto uiDelegate = adoptNS([[MouseMoveOverElementDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
     [webView synchronouslyLoadHTMLString:@"<a href='http://example.com/path' title='link title'>link label</a>"];
     [webView mouseMoveToPoint:NSMakePoint(20, 600 - 20) withFlags:NSEventModifierFlagShift];
     TestWebKitAPI::Util::run(&done);

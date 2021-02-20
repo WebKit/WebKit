@@ -326,7 +326,7 @@ TEST(ResourceLoadStatistics, RemoveSessionID)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).autorelease();
+    configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get();
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -583,7 +583,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).autorelease()]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
     [configuration setWebsiteDataStore:dataStore.get()];
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
@@ -1279,7 +1279,7 @@ TEST(ResourceLoadStatistics, StoreSuspension)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
     auto *dataStore1 = [WKWebsiteDataStore defaultDataStore];
-    auto dataStore2 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).autorelease()]);
+    auto dataStore2 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
 
     [dataStore1 _setResourceLoadStatisticsEnabled:YES];
     [dataStore2 _setResourceLoadStatisticsEnabled:YES];
@@ -1325,7 +1325,7 @@ TEST(ResourceLoadStatistics, StoreSuspension)
     else if ([task.request.URL.path isEqualToString:@"/tp-load"])
         response = @"<body></body>";
 
-    [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil]).autorelease()];
+    [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil]).get()];
     [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
     [task didFinish];
 }

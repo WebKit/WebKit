@@ -579,7 +579,7 @@ TEST(URLSchemeHandler, SyncXHR)
         [task didFinish];
     } else {
         EXPECT_STREQ(task.request.URL.absoluteString.UTF8String, "syncerror:///subresource");
-        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] init]).autorelease()];
+        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] init]).get()];
         [task didFailWithError:[NSError errorWithDomain:@"TestErrorDomain" code:123 userInfo:nil]];
     }
 }
@@ -800,7 +800,7 @@ TEST(URLSchemeHandler, CORS)
                     @"Access-Control-Allow-Origin": @"*",
                     @"Content-Length": @"2",
                     @"Content-Type":@"text/html"
-                }]).autorelease()];
+                }]).get()];
             } else
                 [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]).get()];
             [task didReceiveData:[@"HI" dataUsingEncoding:NSUTF8StringEncoding]];

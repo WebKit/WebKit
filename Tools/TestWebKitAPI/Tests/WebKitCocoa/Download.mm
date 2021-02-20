@@ -358,7 +358,8 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownload)
 TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView setNavigationDelegate:[[DownloadRequestOriginalURLNavigationDelegate alloc] init]];
+    auto navigationDelegate = adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
     [[[webView configuration] processPool] _setDownloadDelegate:[[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:sourceURL]];
 
     expectedUserInitiatedState = false;
@@ -897,7 +898,7 @@ RetainPtr<WKWebView> webViewWithDownloadMonitorSpeedMultiplier(size_t multiplier
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [dataStoreConfiguration setTestSpeedMultiplier:multiplier];
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).autorelease()];
+    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView configuration].processPool._downloadDelegate = monitorDelegate().get();

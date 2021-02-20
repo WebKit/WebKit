@@ -413,7 +413,7 @@ TEST(TLSVersion, DidNegotiateModernTLS)
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
-    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).autorelease()];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:server.request()];
@@ -473,7 +473,7 @@ TEST(TLSVersion, LegacySubresources)
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).autorelease()];
+    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     auto delegate = adoptNS([TestNavigationDelegate new]);

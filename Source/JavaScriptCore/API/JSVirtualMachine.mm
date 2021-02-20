@@ -234,10 +234,10 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 + (JSVirtualMachine *)virtualMachineWithContextGroupRef:(JSContextGroupRef)group
 {
-    JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:group];
+    auto virtualMachine = retainPtr([JSVMWrapperCache wrapperForJSContextGroupRef:group]);
     if (!virtualMachine)
-        virtualMachine = adoptNS([[JSVirtualMachine alloc] initWithContextGroupRef:group]).autorelease();
-    return virtualMachine;
+        virtualMachine = adoptNS([[JSVirtualMachine alloc] initWithContextGroupRef:group]);
+    return virtualMachine.autorelease();
 }
 
 - (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext

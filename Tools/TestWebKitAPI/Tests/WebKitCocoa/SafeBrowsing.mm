@@ -308,7 +308,7 @@ TEST(SafeBrowsing, ShowWarningSPI)
     auto webView = adoptNS([WKWebView new]);
     auto showWarning = ^{
         completionHandlerCalled = false;
-        [webView _showSafeBrowsingWarningWithURL:nil title:@"test title" warning:@"test warning" details:adoptNS([[NSAttributedString alloc] initWithString:@"test details"]).autorelease() completionHandler:^(BOOL shouldContinue) {
+        [webView _showSafeBrowsingWarningWithURL:nil title:@"test title" warning:@"test warning" details:adoptNS([[NSAttributedString alloc] initWithString:@"test details"]).get() completionHandler:^(BOOL shouldContinue) {
             shouldContinueValue = shouldContinue;
             completionHandlerCalled = true;
         }];

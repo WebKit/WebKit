@@ -36,7 +36,7 @@
 
 TEST(WebKit, NetworkProcessEntitlements)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).autorelease()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     WKWebsiteDataStore *store = [webView configuration].websiteDataStore;
     bool hasEntitlement = [store _networkProcessHasEntitlementForTesting:@"com.apple.rootless.storage.WebKitNetworkingSandbox"];

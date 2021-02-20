@@ -406,10 +406,10 @@
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)globalContext
 {
     JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->vm())];
-    JSContext *context = [virtualMachine contextForGlobalContextRef:globalContext];
+    auto context = retainPtr([virtualMachine contextForGlobalContextRef:globalContext]);
     if (!context)
-        context = adoptNS([[JSContext alloc] initWithGlobalContextRef:globalContext]).autorelease();
-    return context;
+        context = adoptNS([[JSContext alloc] initWithGlobalContextRef:globalContext]);
+    return context.autorelease();
 }
 
 @end
