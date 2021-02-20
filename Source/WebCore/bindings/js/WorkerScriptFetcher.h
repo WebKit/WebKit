@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include "LoadableScript.h"
 #include "ModuleFetchParameters.h"
 #include <JavaScriptCore/ScriptFetcher.h>
