@@ -1,3 +1,17 @@
+2021-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, reverting r273115.
+
+        Breaks autocorrect without the accompanying change in
+        rdar://problem/74211293
+
+        Reverted changeset:
+
+        "Unconditionally return information in _autofillContext SPI
+        when a field is focused"
+        https://bugs.webkit.org/show_bug.cgi?id=221828
+        https://commits.webkit.org/r273115
+
 2021-02-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix regression from r273194 that was spotted by Darin Adler after landing.

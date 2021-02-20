@@ -8117,23 +8117,18 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSDictionary *)_autofillContext
 {
-    if (!self._hasFocusedElement)
+    BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password;
+    if (!self._hasFocusedElement || (!_focusedElementInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
         return nil;
 
-    auto context = adoptNS([[NSMutableDictionary alloc] init]);
-    context.get()[@"_WKAutofillContextVersion"] = @(2);
-
-    if (_focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password) {
-        context.get()[@"_automaticPasswordKeyboard"] = @YES;
-        context.get()[@"strongPasswordAdditionalContext"] = _additionalContextForStrongPasswordAssistance.get();
-    } else if (_focusedElementInformation.acceptsAutofilledLoginCredentials)
-        context.get()[@"_acceptsLoginCredentials"] = @YES;
+    if (provideStrongPasswordAssistance)
+        return @{ @"_automaticPasswordKeyboard" : @YES, @"strongPasswordAdditionalContext" : _additionalContextForStrongPasswordAssistance.get() };
 
     NSURL *platformURL = _focusedElementInformation.representingPageURL;
     if (platformURL)
-        context.get()[@"_WebViewURL"] = platformURL;
+        return @{ @"_WebViewURL" : platformURL };
 
-    return context.autorelease();
+    return nil;
 }
 
 - (BOOL)supportsImagePaste
