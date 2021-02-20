@@ -1,3 +1,15 @@
+2021-02-20  Rob Buis  <rbuis@igalia.com>
+
+        "min-content" & "max-content" keywords should behave as initial value in block axis (but WebKit improperly treats them as the content-size)
+        https://bugs.webkit.org/show_bug.cgi?id=191390
+
+        Reviewed by Darin Adler.
+
+        Adapt test to new behavior.
+
+        * fast/css-intrinsic-dimensions/height-expected.html: Removed.
+        * fast/css-intrinsic-dimensions/height.html: Removed.
+
 2021-02-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPU process IPC should use shared memory for asynchronous messages

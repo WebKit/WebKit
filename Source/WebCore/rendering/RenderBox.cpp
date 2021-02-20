@@ -681,6 +681,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, O
     auto logicalMinHeight = styleToUse.logicalMinHeight();
     if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && styleToUse.overflowBlockDirection() == Overflow::Visible)
         logicalMinHeight = Length(*intrinsicContentHeight, LengthType::Fixed);
+    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent())
+        logicalMinHeight = Length();
     if (Optional<LayoutUnit> computedLogicalHeight = computeLogicalHeightUsing(MinSize, logicalMinHeight, intrinsicContentHeight))
         return std::max(logicalHeight, computedLogicalHeight.value());
     return logicalHeight;

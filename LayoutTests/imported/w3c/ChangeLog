@@ -1,3 +1,14 @@
+2021-02-20  Rob Buis  <rbuis@igalia.com>
+
+        "min-content" & "max-content" keywords should behave as initial value in block axis (but WebKit improperly treats them as the content-size)
+        https://bugs.webkit.org/show_bug.cgi?id=191390
+
+        Reviewed by Darin Adler.
+
+        Update improved test expectation.
+
+        * web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/min-inline-size-expected.txt:
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JS Modules in Workers
