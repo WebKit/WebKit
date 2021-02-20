@@ -1338,7 +1338,7 @@ static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, Gr
         return { };
     
     OrderedNamedGridLinesMap combinedGridLineNames;
-    auto appendLineNames = [&](unsigned index, Vector<String> newNames) {
+    auto appendLineNames = [&](unsigned index, const Vector<String>& newNames) {
         if (combinedGridLineNames.contains(index)) {
             auto names = combinedGridLineNames.take(index);
             names.appendVector(newNames);
@@ -1478,24 +1478,19 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         
         context.strokePath(columnPaths);
         
-        Vector<String> lineLabelParts;
-        if (gridOverlay.config.showLineNumbers) {
-            lineLabelParts.append(String::number(i + 1));
-            lineLabelParts.append(String::number(-static_cast<int>(columnPositions.size() - i)));
-        }
-        if (gridOverlay.config.showLineNames && columnLineNames.contains(i))
-            lineLabelParts.appendVector(columnLineNames.get(i));
-        if (lineLabelParts.size()) {
-            auto lineLabel = lineLabelParts[0];
-            for (size_t i = 1; i < lineLabelParts.size(); ++i) {
-                lineLabel.append(thinSpace);
-                lineLabel.append(bullet);
-                lineLabel.append(thinSpace);
-                lineLabel.append(lineLabelParts[i]);
+        StringBuilder lineLabel;
+        if (gridOverlay.config.showLineNumbers)
+            lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(columnPositions.size() - i));
+        if (gridOverlay.config.showLineNames && columnLineNames.contains(i)) {
+            for (auto lineName : columnLineNames.get(i)) {
+                if (!lineLabel.isEmpty())
+                    lineLabel.append(thinSpace, bullet, thinSpace);
+                lineLabel.append(lineName);
             }
-            // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-            drawLayoutLabel(context, lineLabel, FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
         }
+        // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
+        if (!lineLabel.isEmpty())
+            drawLayoutLabel(context, lineLabel.toString(), FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
     }
 
     auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
@@ -1543,24 +1538,19 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
         context.strokePath(rowPaths);
         
-        Vector<String> lineLabelParts;
-        if (gridOverlay.config.showLineNumbers) {
-            lineLabelParts.append(String::number(i + 1));
-            lineLabelParts.append(String::number(-static_cast<int>(rowPositions.size() - i)));
-        }
-        if (gridOverlay.config.showLineNames && rowLineNames.contains(i))
-            lineLabelParts.appendVector(rowLineNames.get(i));
-        if (lineLabelParts.size()) {
-            auto lineLabel = lineLabelParts[0];
-            for (size_t i = 1; i < lineLabelParts.size(); ++i) {
-                lineLabel.append(thinSpace);
-                lineLabel.append(bullet);
-                lineLabel.append(thinSpace);
-                lineLabel.append(lineLabelParts[i]);
+        StringBuilder lineLabel;
+        if (gridOverlay.config.showLineNumbers)
+            lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(rowPositions.size() - i));
+        if (gridOverlay.config.showLineNames && rowLineNames.contains(i)) {
+            for (auto lineName : rowLineNames.get(i)) {
+                if (!lineLabel.isEmpty())
+                    lineLabel.append(thinSpace, bullet, thinSpace);
+                lineLabel.append(lineName);
             }
-            // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-            drawLayoutLabel(context, lineLabel, FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
         }
+        // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
+        if (!lineLabel.isEmpty())
+            drawLayoutLabel(context, lineLabel.toString(), FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
     }
     
     if (gridOverlay.config.showAreaNames) {
