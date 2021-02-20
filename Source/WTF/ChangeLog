@@ -1,3 +1,13 @@
+2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Turn the fraud prevention on by default
+        https://bugs.webkit.org/show_bug.cgi?id=222224
+        <rdar://problem/73588234>
+
+        Reviewed by John Wilander.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-02-20  Said Abou-Hallawa  <said@apple.com>
 
         Make PaintTimingEnabled default to false

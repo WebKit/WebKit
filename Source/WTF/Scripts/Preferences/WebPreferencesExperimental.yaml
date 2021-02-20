@@ -719,6 +719,7 @@ PrivateClickMeasurementFraudPreventionEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKit:
+      "HAVE(RSA_BSSA)": true
       default: false
 
 ProcessSwapOnCrossSiteNavigationEnabled:
