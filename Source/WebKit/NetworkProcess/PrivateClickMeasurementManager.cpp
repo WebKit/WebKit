@@ -230,7 +230,9 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData), [this] (auto optionalSecondsUntilSend) {
+        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto optionalSecondsUntilSend) {
+            if (!weakThis)
+                return;
             if (optionalSecondsUntilSend) {
                 auto secondsUntilSend = *optionalSecondsUntilSend;
                 if (m_firePendingAttributionRequestsTimer.isActive() && m_firePendingAttributionRequestsTimer.nextFireInterval() < secondsUntilSend)
@@ -294,7 +296,9 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
     if (!resourceLoadStatistics)
         return;
 
-    resourceLoadStatistics->allAttributedPrivateClickMeasurement([this] (auto&& attributions) {
+    resourceLoadStatistics->allAttributedPrivateClickMeasurement([this, weakThis = makeWeakPtr(*this)] (auto&& attributions) {
+        if (!weakThis)
+            return;
         auto nextTimeToFire = Seconds::infinity();
         bool hasSentAttribution = false;
 

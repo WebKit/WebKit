@@ -1,3 +1,14 @@
+2021-02-19  Alex Christensen  <achristensen@webkit.org>
+
+        CrashTracer: com.apple.WebKit.Networking at WebKit: WTF::Detail::CallableWrapper<WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests()
+        https://bugs.webkit.org/show_bug.cgi?id=222201
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+
 2021-02-19  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove access to IOSurfaceAcceleratorClient
