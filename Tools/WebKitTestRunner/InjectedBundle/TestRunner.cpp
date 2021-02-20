@@ -2048,6 +2048,16 @@ void TestRunner::markPrivateClickMeasurementsAsExpiredForTesting()
     postSynchronousPageMessage("MarkPrivateClickMeasurementsAsExpiredForTesting");
 }
 
+void TestRunner::setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID)
+{
+    postSynchronousMessage("SetFraudPreventionValuesForTesting", createWKDictionary({
+        { "SecretToken", toWK(secretToken) },
+        { "UnlinkableToken", toWK(unlinkableToken) },
+        { "Signature", toWK(signature) },
+        { "KeyID", toWK(keyID) },
+    }));
+}
+
 bool TestRunner::hasAppBoundSession()
 {
     return postSynchronousPageMessageReturningBoolean("HasAppBoundSession");

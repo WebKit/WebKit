@@ -1,3 +1,18 @@
+2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Store and report source unlinkable tokens
+        https://bugs.webkit.org/show_bug.cgi?id=222208
+        <rdar://problem/73582032>
+
+        Reviewed by John Wilander.
+
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start-expected.txt:
+        * http/tests/privateClickMeasurement/resources/signToken.php:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+        Modifies the test to mock the whole round trip.
+
 2021-02-20  Rob Buis  <rbuis@igalia.com>
 
         "min-content" & "max-content" keywords should behave as initial value in block axis (but WebKit improperly treats them as the content-size)

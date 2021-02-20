@@ -187,6 +187,8 @@ typedef void (*WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFun
 WK_EXPORT void WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction callback, void* callbackContext);
 typedef void (*WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSetFraudPreventionValuesForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext);
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);

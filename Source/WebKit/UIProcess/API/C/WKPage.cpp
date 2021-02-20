@@ -2973,6 +2973,13 @@ void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPag
     });
 }
 
+void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setFraudPreventionValuesForTesting(toWTFString(secretToken), toWTFString(unlinkableToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
 void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation)
 {
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

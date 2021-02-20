@@ -517,6 +517,7 @@ public:
     void setPrivateClickMeasurementAttributionReportURLForTesting(JSStringRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    void setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID);
     void simulateResourceLoadStatisticsSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);

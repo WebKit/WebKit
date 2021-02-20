@@ -350,6 +350,7 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
     void setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
+    void setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID);
 
     void didSetAppBoundDomains() const;
 

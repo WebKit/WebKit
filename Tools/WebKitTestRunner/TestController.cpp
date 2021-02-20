@@ -3658,6 +3658,13 @@ void TestController::markPrivateClickMeasurementsAsExpiredForTesting()
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetFraudPreventionValuesForTesting(m_mainWebView->page(), secretToken, unlinkableToken, signature, keyID, privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 WKURLRef TestController::currentTestURL() const
 {
     return m_currentInvocation ? m_currentInvocation->url() : nullptr;

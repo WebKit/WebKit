@@ -37,6 +37,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <pal/crypto/CryptoDigest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
@@ -76,7 +77,24 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     if (attribution.ephemeralSourceNonce()) {
         auto attributionCopy = attribution;
-        getTokenPublicKey(WTFMove(attributionCopy));
+        getTokenPublicKey(WTFMove(attributionCopy), [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+            if (!weakThis)
+                return;
+
+            if (publicKeyBase64URL.isEmpty())
+                return;
+
+            if (m_fraudPreventionValuesForTesting)
+                attribution.setSourceSecretTokenValue(m_fraudPreventionValuesForTesting->secretToken);
+#if PLATFORM(COCOA)
+            else {
+                if (!attribution.calculateAndUpdateSourceSecretToken(publicKeyBase64URL))
+                    return;
+            }
+#endif
+
+            getSignedSecretToken(WTFMove(attribution));
+        });
     }
 
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an ad click."_s);
@@ -126,7 +144,7 @@ static NetworkResourceLoadParameters generateNetworkResourceLoadParametersForHtt
     return generateNetworkResourceLoadParameters(WTFMove(url), "GET"_s, nullptr, dataTypeCarried);
 }
 
-void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution)
+void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
 {
     if (!featureEnabled())
         return;
@@ -147,7 +165,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token public key request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token public key request."_s);
 
-    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), attribution = WTFMove(attribution), this] (const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
+    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
         if (!weakThis)
             return;
 
@@ -156,13 +174,13 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
             return;
         }
 
-        // FIXME: Receive and extra the server public key, rdar://73582032.
-        getSignedSecretToken(WTFMove(attribution), emptyString());
+        // FIXME(222217): Retrieve the public key from the content instead of the header.
+        callback(WTFMove(attribution), response.httpHeaderFields().get("unlinkable_token_public_key"_s));
     });
 
 }
 
-void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasurement&& attribution, const String& tokenPublicKeyBase64URL)
+void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasurement&& attribution)
 {
     if (!featureEnabled())
         return;
@@ -178,21 +196,40 @@ void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasuremen
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkResourceLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(tokenPublicKeyBase64URL), pcmDataCarried);
+    auto loadParameters = generateNetworkResourceLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried);
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a secret token signing request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a secret token signing request."_s);
 
-    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
+    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution)] (const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            weakThis->m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for secret token signing request."_s));
+            m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for secret token signing request."_s));
             return;
         }
-        
-        // FIXME: Receive and store the signed secret token, rdar://73582032.
+
+        // FIXME(222217): Retrieve the signature from the content instead of the header.
+        auto signatureBase64URL = response.httpHeaderFields().get("secret_token_signature"_s);
+        if (signatureBase64URL.isEmpty())
+            return;
+
+        if (m_fraudPreventionValuesForTesting)
+            attribution.setSourceUnlinkableToken({ m_fraudPreventionValuesForTesting->unlinkableToken, m_fraudPreventionValuesForTesting->signature, m_fraudPreventionValuesForTesting->keyID });
+#if PLATFORM(COCOA)
+        else {
+            if (!attribution.calculateAndUpdateSourceUnlinkableToken(signatureBase64URL))
+                return;
+        }
+#endif
+
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an unlinkable token."_s);
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->insertPrivateClickMeasurement(WTFMove(attribution), PrivateClickMeasurementAttributionType::Unattributed);
+#endif
     });
 
 }
@@ -256,6 +293,34 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     if (!featureEnabled())
         return;
 
+    if (!attribution.sourceUnlinkableToken()) {
+        fireConversionRequestImpl(attribution);
+        return;
+    }
+
+    auto attributionCopy = attribution;
+    getTokenPublicKey(WTFMove(attributionCopy), [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+        if (!weakThis)
+            return;
+
+        Vector<uint8_t> publicKeyData;
+        WTF::base64URLDecode(publicKeyBase64URL, publicKeyData);
+
+        auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+        crypto->addBytes(publicKeyData.data(), publicKeyData.size());
+        auto publicKeyDataHash = crypto->computeHash();
+
+        static const size_t keyIDSize = 4;
+        auto keyID = WTF::base64URLEncode(publicKeyDataHash.data(), keyIDSize);
+        if (keyID != attribution.sourceUnlinkableToken()->keyIDBase64URL)
+            return;
+
+        fireConversionRequestImpl(attribution);
+    });
+}
+
+void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClickMeasurement& attribution)
+{
     auto attributionURL = m_attributionReportBaseURLForTesting ? *m_attributionReportBaseURLForTesting : attribution.attributionReportURL();
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
@@ -423,6 +488,13 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
         resourceLoadStatistics->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 #endif
+}
+
+void PrivateClickMeasurementManager::setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID)
+{
+    if (secretToken.isEmpty() || unlinkableToken.isEmpty() || signature.isEmpty() || keyID.isEmpty())
+        return;
+    m_fraudPreventionValuesForTesting = TestingFraudPreventionValues { WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID) };
 }
 
 bool PrivateClickMeasurementManager::featureEnabled() const

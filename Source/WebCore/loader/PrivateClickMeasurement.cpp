@@ -144,7 +144,13 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     reportDetails->setInteger("source_id"_s, m_sourceID.id);
     reportDetails->setString("attributed_on_site"_s, m_attributeOnSite.registrableDomain.string());
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("version"_s, 1);
+    reportDetails->setInteger("version"_s, 2);
+
+    if (m_sourceUnlinkableToken) {
+        reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken->tokenBase64URL);
+        reportDetails->setString("source_unlinkable_token_signature"_s, m_sourceUnlinkableToken->signatureBase64URL);
+    }
+
     return reportDetails;
 }
 
@@ -200,24 +206,32 @@ URL PrivateClickMeasurement::tokenPublicKeyURL() const
     return URL();
 }
 
-Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON(const String& serverPublicKeyBase64URL)
+Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
 {
     auto reportDetails = JSON::Object::create();
     if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
         return reportDetails;
 
-    String token;
-#if PLATFORM(COCOA)
-    token = sourceSecretToken(serverPublicKeyBase64URL);
-#endif
-    if (token.isEmpty())
+    if (m_sourceSecretToken.valueBase64URL.isEmpty())
         return reportDetails;
 
     reportDetails->setString("source_engagement_type"_s, "click"_s);
     reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
-    reportDetails->setString("source_secret_token"_s, token);
+    reportDetails->setString("source_secret_token"_s, m_sourceSecretToken.valueBase64URL);
     reportDetails->setInteger("version"_s, 2);
     return reportDetails;
+}
+
+void PrivateClickMeasurement::setSourceUnlinkableToken(SourceUnlinkableToken&& token)
+{
+    if (!token.isValid())
+        return;
+    m_sourceUnlinkableToken = WTFMove(token);
+}
+
+bool PrivateClickMeasurement::SourceUnlinkableToken::isValid() const
+{
+    return !(tokenBase64URL.isEmpty() || signatureBase64URL.isEmpty() || keyIDBase64URL.isEmpty());
 }
 
 } // namespace WebCore

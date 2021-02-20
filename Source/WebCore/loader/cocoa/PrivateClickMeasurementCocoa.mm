@@ -30,49 +30,50 @@
 
 namespace WebCore {
 
-String PrivateClickMeasurement::sourceSecretToken(const String& serverPublicKeyBase64URL)
+bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& serverPublicKeyBase64URL)
 {
 #if HAVE(RSA_BSSA)
     {
         Vector<uint8_t> serverPublicKeyData;
         if (!base64URLDecode(serverPublicKeyBase64URL, serverPublicKeyData))
-            return emptyString();
+            return false;
         auto serverPublicKey = adoptNS([[NSData alloc] initWithBytes:serverPublicKeyData.data() length:serverPublicKeyData.size()]);
 
         // FIXME(222018): Check error.
         m_sourceSecretToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:nullptr]);
         if (!m_sourceSecretToken.blinder)
-            return emptyString();
+            return false;
     }
 
     // FIXME(222018): Check error.
     m_sourceSecretToken.waitingToken = [m_sourceSecretToken.blinder tokenWaitingActivationWithContent:nullptr error:nullptr];
     if (!m_sourceSecretToken.waitingToken)
-        return emptyString();
+        return false;
 
-    return WTF::base64URLEncode([m_sourceSecretToken.waitingToken blindedMessage].bytes, [m_sourceSecretToken.waitingToken blindedMessage].length);
+    m_sourceSecretToken.valueBase64URL = WTF::base64URLEncode([m_sourceSecretToken.waitingToken blindedMessage].bytes, [m_sourceSecretToken.waitingToken blindedMessage].length);
+    return true;
 #else
     UNUSED_PARAM(serverPublicKeyBase64URL);
-    return emptyString();
+    return false;
 #endif // HAVE(RSA_BSSA)
 }
 
-auto PrivateClickMeasurement::calculateSourceUnlinkableToken(const String& serverResponseBase64URL) -> Optional<SourceUnlinkableToken>
+bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const String& serverResponseBase64URL)
 {
 #if HAVE(RSA_BSSA)
     if (!m_sourceSecretToken.waitingToken)
-        return WTF::nullopt;
+        return false;
 
     {
         Vector<uint8_t> serverResponseData;
         if (!base64URLDecode(serverResponseBase64URL, serverResponseData))
-            return WTF::nullopt;
+            return false;
         auto serverResponse = adoptNS([[NSData alloc] initWithBytes:serverResponseData.data() length:serverResponseData.size()]);
 
         // FIXME(222018): Check error.
         m_sourceSecretToken.readyToken = [m_sourceSecretToken.waitingToken activateTokenWithServerResponse:serverResponse.get() error:nullptr];
         if (!m_sourceSecretToken.readyToken)
-            return WTF::nullopt;
+            return false;
     }
 
     SourceUnlinkableToken token;
@@ -80,10 +81,11 @@ auto PrivateClickMeasurement::calculateSourceUnlinkableToken(const String& serve
     token.keyIDBase64URL = WTF::base64URLEncode([m_sourceSecretToken.readyToken keyId].bytes, [m_sourceSecretToken.readyToken keyId].length);
     token.signatureBase64URL = WTF::base64URLEncode([m_sourceSecretToken.readyToken signature].bytes, [m_sourceSecretToken.readyToken signature].length);
 
-    return token;
+    m_sourceUnlinkableToken = WTFMove(token);
+    return true;
 #else
     UNUSED_PARAM(serverResponseBase64URL);
-    return WTF::nullopt;
+    return false;
 #endif // HAVE(RSA_BSSA)
 }
 

@@ -2968,10 +2968,7 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
         attribution.setEarliestTimeToSend(WallTime::fromRawSeconds(earliestTimeToSend));
     }
 
-    // FIXME(<rdar://problem/73582032>): Store these in the attribution object once PCM fraud prevention is in place.
-    UNUSED_PARAM(token);
-    UNUSED_PARAM(signature);
-    UNUSED_PARAM(keyID);
+    attribution.setSourceUnlinkableToken({ token, signature, keyID });
 
     return attribution;
 }
@@ -3019,11 +3016,7 @@ void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateC
     if (!sourceData.second || !attributeOnData.second)
         return;
 
-    // FIXME(<rdar://problem/73582032>): Use real values from the attribution object once PCM fraud prevention is in place.
-    String token;
-    String signature;
-    String keyID;
-
+    auto& sourceUnlinkableToken = attribution.sourceUnlinkableToken();
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().data : -1;
         auto priority = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().priority : -1;
@@ -3038,9 +3031,9 @@ void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateC
             || statement.bindInt(5, priority) != SQLITE_OK
             || statement.bindDouble(6, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
             || statement.bindDouble(7, earliestTimeToSend) != SQLITE_OK
-            || statement.bindText(8, token) != SQLITE_OK
-            || statement.bindText(9, signature) != SQLITE_OK
-            || statement.bindText(10, keyID) != SQLITE_OK
+            || statement.bindText(8, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
+            || statement.bindText(9, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
+            || statement.bindText(10, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement.step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement insertAttributedPrivateClickMeasurementQuery, error message: %{private}s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -3054,9 +3047,9 @@ void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateC
         || statement.bindInt(2, *attributeOnData.second) != SQLITE_OK
         || statement.bindInt(3, attribution.sourceID().id) != SQLITE_OK
         || statement.bindDouble(4, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
-        || statement.bindText(5, token) != SQLITE_OK
-        || statement.bindText(6, signature) != SQLITE_OK
-        || statement.bindText(7, keyID) != SQLITE_OK
+        || statement.bindText(5, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
+        || statement.bindText(6, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
+        || statement.bindText(7, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
         || statement.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement insertUnattributedPrivateClickMeasurementQuery, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();

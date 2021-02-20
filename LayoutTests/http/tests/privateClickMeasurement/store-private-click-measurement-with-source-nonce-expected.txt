@@ -18,11 +18,20 @@ Content type: application/json
 REQUEST_URI: /privateClickMeasurement/resources/signToken.php
 No cookies in token signing request.
 Request body:
-{}
+{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","source_secret_token":"secretToken","version":2}
+REQUEST_METHOD: GET
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+No cookies in token signing request.
+Request body:
 
-Unattributed Private Click Measurements:
-WebCore::PrivateClickMeasurement 1
-Source site: 127.0.0.1
-Attribute on site: localhost
-Source ID: 3
-No attribution trigger data.
+REQUEST_METHOD: POST
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+No cookies in token signing request.
+Request body:
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":2,"source_unlinkable_token":"unlinkableToken","source_unlinkable_token_signature":"signature"}
+
+
+No stored Private Click Measurement data.

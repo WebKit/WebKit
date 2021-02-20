@@ -1,3 +1,45 @@
+2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Store and report source unlinkable tokens
+        https://bugs.webkit.org/show_bug.cgi?id=222208
+        <rdar://problem/73582032>
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setFraudPreventionValuesForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setFraudPreventionValuesForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getSignedSecretToken):
+        (WebKit::PrivateClickMeasurementManager::setFraudPreventionValuesForTesting):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetFraudPreventionValuesForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::WebPageProxy::setFraudPreventionValuesForTesting):
+        * UIProcess/WebPageProxy.h:
+        Adds infrastructure to mock the crypto operations such that layout tests can be
+        conducted without the server side crypto support.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedSecretToken):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        Connects the fraud prevention feature in PCM to generate, store, and report the unlinkable token.
+
 2021-02-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPU process IPC should use shared memory for asynchronous messages

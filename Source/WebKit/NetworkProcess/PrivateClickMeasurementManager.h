@@ -66,14 +66,16 @@ public:
     void setAttributionReportURLForTesting(URL&&);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID);
     void startTimer(Seconds);
 
 private:
-    void getTokenPublicKey(PrivateClickMeasurement&&);
-    void getSignedSecretToken(PrivateClickMeasurement&&, const String& tokenPublicKeyBase64URL);
+    void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
+    void getSignedSecretToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
+    void fireConversionRequestImpl(const PrivateClickMeasurement&);
     void firePendingAttributionRequests();
     void clearExpired();
     bool featureEnabled() const;
@@ -88,6 +90,15 @@ private:
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
+
+    struct TestingFraudPreventionValues {
+        String secretToken;
+        String unlinkableToken;
+        String signature;
+        String keyID;
+    };
+
+    Optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;
 };
     
 } // namespace WebKit

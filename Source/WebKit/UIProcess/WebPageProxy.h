@@ -1704,6 +1704,7 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementAttributionReportURLForTesting(const URL&, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void setFraudPreventionValuesForTesting(const String& secretToken, const String& unlinkableToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
