@@ -1180,6 +1180,9 @@
 		A3D3291523CFCB7700375657 /* RewriteRowMajorMatrices.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D3290F23CFCB7600375657 /* RewriteRowMajorMatrices.h */; };
 		A3D3291823CFCB7700375657 /* RemoveInactiveInterfaceVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D3291223CFCB7600375657 /* RemoveInactiveInterfaceVariables.cpp */; };
 		A3D3291923CFCB7700375657 /* RemoveInactiveInterfaceVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D3291323CFCB7600375657 /* RemoveInactiveInterfaceVariables.h */; };
+		FF2D2F5425C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
+		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
+		FF2D2F5625C8B14A002FB699 /* FixTypeConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */; };
 		FF81FED025818D6800894E24 /* mtl_glslang_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8025818D6800894E24 /* mtl_glslang_utils.h */; };
 		FF81FED125818D6800894E24 /* ProgramMtl.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8125818D6800894E24 /* ProgramMtl.h */; };
 		FF81FED225818D6800894E24 /* DisplayMtl_api.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8225818D6800894E24 /* DisplayMtl_api.h */; };
@@ -1315,6 +1318,8 @@
 		FF81FFA22581AD0400894E24 /* clear.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB125818D6800894E24 /* clear.metal */; };
 		FF81FFA32581AD0400894E24 /* gen_mipmap.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB225818D6800894E24 /* gen_mipmap.metal */; };
 		FF81FFA42581AD0400894E24 /* gen_indices.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB325818D6800894E24 /* gen_indices.metal */; };
+		FFA0C2C725CB6A7700105306 /* NameEmbeddedUniformStructsMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA0C2C525CB6A7600105306 /* NameEmbeddedUniformStructsMetal.cpp */; };
+		FFA0C2C825CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = FFA0C2C625CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2165,6 +2170,8 @@
 		A3D3291323CFCB7600375657 /* RemoveInactiveInterfaceVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveInactiveInterfaceVariables.h; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
+		FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixTypeConstructors.h; sourceTree = "<group>"; };
+		FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FixTypeConstructors.cpp; sourceTree = "<group>"; };
 		FF81FE8025818D6800894E24 /* mtl_glslang_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_glslang_utils.h; sourceTree = "<group>"; };
 		FF81FE8125818D6800894E24 /* ProgramMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramMtl.h; sourceTree = "<group>"; };
 		FF81FE8225818D6800894E24 /* DisplayMtl_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayMtl_api.h; sourceTree = "<group>"; };
@@ -2302,6 +2309,8 @@
 		FF81FF982581A3C100894E24 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
 		FF81FF992581A3C100894E24 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
 		FF81FF9A2581A3C200894E24 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
+		FFA0C2C525CB6A7600105306 /* NameEmbeddedUniformStructsMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameEmbeddedUniformStructsMetal.cpp; sourceTree = "<group>"; };
+		FFA0C2C625CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameEmbeddedUniformStructsMetal.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3573,6 +3582,8 @@
 				FF81FF2D2581919700894E24 /* EmitMetal.cpp */,
 				FF81FF522581919700894E24 /* EmitMetal.h */,
 				FF81FF282581919700894E24 /* EnvironmentVariable.h */,
+				FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */,
+				FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */,
 				FF81FF482581919700894E24 /* HoistConstants.cpp */,
 				FF81FF4C2581919700894E24 /* HoistConstants.h */,
 				FF81FF512581919700894E24 /* IdGen.cpp */,
@@ -3587,6 +3598,8 @@
 				FF81FF562581919700894E24 /* ModifyStruct.h */,
 				FF81FF212581919700894E24 /* Name.cpp */,
 				FF81FF242581919700894E24 /* Name.h */,
+				FFA0C2C525CB6A7600105306 /* NameEmbeddedUniformStructsMetal.cpp */,
+				FFA0C2C625CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h */,
 				FF81FF372581919700894E24 /* Pipeline.cpp */,
 				FF81FF492581919700894E24 /* Pipeline.h */,
 				FF81FF502581919700894E24 /* ProgramPrelude.cpp */,
@@ -3737,6 +3750,7 @@
 				31CDFFAF249184A100486F27 /* FindMain.h in Headers */,
 				31CDFFB6249184A100486F27 /* FindSymbolNode.h in Headers */,
 				31CDFF682491848C00486F27 /* FixedVector.h in Headers */,
+				FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */,
 				A3C49C16255DF866005E8DF7 /* FlagSamplersWithTexelFetch.h in Headers */,
 				31CDFFC0249184A700486F27 /* FlagStd140Structs.h in Headers */,
 				31CDFF7F2491849800486F27 /* FoldExpressions.h in Headers */,
@@ -4169,6 +4183,7 @@
 				5C55D6FF22826CB300B5BA2C /* FindMain.h in Headers */,
 				5C55D6FB22826CB300B5BA2C /* FindSymbolNode.h in Headers */,
 				5C55D7282282747700B5BA2C /* FixedVector.h in Headers */,
+				FF2D2F5425C8B14A002FB699 /* FixTypeConstructors.h in Headers */,
 				A3C49C12255DF865005E8DF7 /* FlagSamplersWithTexelFetch.h in Headers */,
 				5C9FFF4F19102A000025B8FA /* FlagStd140Structs.h in Headers */,
 				5C55D6A422826B9F00B5BA2C /* FoldExpressions.h in Headers */,
@@ -4274,6 +4289,7 @@
 				FF81FF0925818D6900894E24 /* mtl_utils.h in Headers */,
 				FF81FF5E2581919700894E24 /* Name.h in Headers */,
 				5C55D66922826B9F00B5BA2C /* NameEmbeddedUniformStructs.h in Headers */,
+				FFA0C2C825CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h in Headers */,
 				A303070B2305F6B5002DA972 /* no_destructor.h in Headers */,
 				5C55D70722826CB300B5BA2C /* NodeSearch.h in Headers */,
 				FF81FF9B2581A3C200894E24 /* NodeType.h in Headers */,
@@ -4746,6 +4762,7 @@
 				A30307032305F636002DA972 /* FindFunction.cpp in Sources */,
 				5C55D6FD22826CB300B5BA2C /* FindMain.cpp in Sources */,
 				5C55D70322826CB300B5BA2C /* FindSymbolNode.cpp in Sources */,
+				FF2D2F5625C8B14A002FB699 /* FixTypeConstructors.cpp in Sources */,
 				A3C49C0B255DF85F005E8DF7 /* FlagSamplersWithTexelFetch.cpp in Sources */,
 				5C9FFF4E19102A000025B8FA /* FlagStd140Structs.cpp in Sources */,
 				5CCD818F1DBFEA10006066B8 /* Float16ToFloat32.cpp in Sources */,
@@ -4828,6 +4845,7 @@
 				FF81FEEC25818D6900894E24 /* mtl_utils.mm in Sources */,
 				FF81FF5B2581919700894E24 /* Name.cpp in Sources */,
 				5C55D6B622826BC800B5BA2C /* NameEmbeddedUniformStructs.cpp in Sources */,
+				FFA0C2C725CB6A7700105306 /* NameEmbeddedUniformStructsMetal.cpp in Sources */,
 				315EBDBF1FCE44BF00AC7A89 /* null_functions.cpp in Sources */,
 				5CCD59692284F7960018F2D8 /* Observer.cpp in Sources */,
 				5C1DBC331B04375F00235552 /* Operator.cpp in Sources */,

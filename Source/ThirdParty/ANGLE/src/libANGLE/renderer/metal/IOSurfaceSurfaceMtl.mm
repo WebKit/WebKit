@@ -260,6 +260,7 @@ IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl(DisplayMtl *display,
     ASSERT(mFormatIndex >= 0);
     mFormat         = display->getPixelFormat(kIOSurfaceFormats[mFormatIndex].pixelFormat);
     mInternalFormat = display->getPixelFormat(kIOSurfaceFormats[mFormatIndex].internalPixelFormat);
+    mGLInternalFormat = kIOSurfaceFormats[mFormatIndex].internalFormat;
 }
 
 IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl()
@@ -430,6 +431,15 @@ angle::Result IOSurfaceSurfaceMtl::createBackingTexture(const gl::Context *conte
     mIOSurfaceTexture =
         mTemporarySurfaceRef->createViewWithDifferentFormat(MTLPixelFormatBGRA8Unorm);
     mRenderTarget.set(mIOSurfaceTexture, mtl::kZeroNativeMipLevel, 0, mInternalFormat);
+
+    if (mGLInternalFormat == GL_RGB)
+    {
+        // Disable subsequent rendering to alpha channel.
+        // TODO: Investigate if this allows the higher level alpha masks can
+        // be disabled once this backend is live.
+        mIOSurfaceTexture->setColorWritableMask(MTLColorWriteMaskAll & (~MTLColorWriteMaskAlpha));
+    }
+
     mIOSurfaceTextureCreated = true;
     return angle::Result::Continue;
 }

@@ -28,7 +28,7 @@ namespace sh
 // Becomes:
 //  struct Foo { int x; }; uniform Foo x;
 //
-ANGLE_NO_DISCARD bool ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root);
+ANGLE_NO_DISCARD bool ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen & idGen);
 
 }  // namespace sh
 
