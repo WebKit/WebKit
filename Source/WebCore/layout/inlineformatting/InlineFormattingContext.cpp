@@ -478,7 +478,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     }
 
     auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
-    auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.top(), lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.bottom() };
+    auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;
     HashSet<const Box*> inlineBoxEndSet;
 

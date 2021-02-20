@@ -50,6 +50,11 @@ struct LineLevelVisualAdjustmentsForRuns {
     bool needsTrailingContentReplacement { false };
 };
 
+inline Layout::InlineLineGeometry::EnclosingTopAndBottom operator+(const Layout::InlineLineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
+{
+    return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
+}
+
 inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineBoxLogicalWidth, InlineLayoutUnit lineContentLogicalWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
@@ -348,7 +353,8 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
         }
 
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
-        auto enclosingTopAndBottom = line.enclosingTopAndBottom();
+        // Final enclosing top and bottom values are in the same coordinate space as the line itself.
+        auto enclosingTopAndBottom = line.enclosingTopAndBottom() + lineBoxLogicalRect.top();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             adjustedLineBoxRect.setY(roundToInt(adjustedLineBoxRect.y()));
             enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
