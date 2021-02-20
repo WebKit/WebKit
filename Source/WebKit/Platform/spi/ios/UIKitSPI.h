@@ -54,6 +54,7 @@
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UIMenuController_Private.h>
+#import <UIKit/UIPasteboard_Private.h>
 #import <UIKit/UIPeripheralHost.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIPickerContentView_Private.h>

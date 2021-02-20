@@ -7468,6 +7468,38 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return WebCore::IOSApplication::isDataActivation();
 }
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
+{
+    switch (platformType) {
+    case _UIDataOwnerUser:
+        return WebCore::DataOwnerType::User;
+    case _UIDataOwnerEnterprise:
+        return WebCore::DataOwnerType::Enterprise;
+    case _UIDataOwnerShared:
+        return WebCore::DataOwnerType::Shared;
+    case _UIDataOwnerUndefined:
+        return WebCore::DataOwnerType::Undefined;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::DataOwnerType::Undefined;
+}
+
+- (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent
+{
+    if (intent == WebKit::PasteboardAccessIntent::Read)
+        return coreDataOwnerType(self._dataOwnerForPaste);
+
+    if (intent == WebKit::PasteboardAccessIntent::Write)
+        return coreDataOwnerType(self._dataOwnerForCopy);
+
+    ASSERT_NOT_REACHED();
+    return WebCore::DataOwnerType::Undefined;
+}
+
+#endif // HAVE(PASTEBOARD_DATA_OWNER)
+
 - (RetainPtr<UIView>)_createPreviewContainerWithLayerName:(NSString *)layerName
 {
     auto container = adoptNS([[UIView alloc] init]);

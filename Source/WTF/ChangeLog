@@ -1,3 +1,15 @@
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        * wtf/PlatformHave.h:
+
+        Turn several compile-time guards previously in `PlatformPasteboardIOS.mm` into `HAVE()`-s.
+
 2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Generate secret token and corresponding unlinkable token

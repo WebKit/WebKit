@@ -1,3 +1,23 @@
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        Add a couple of new API tests to verify that `+[UIPasteboard _performAsDataOwner:block:]` is invoked with the
+        expected data owner type when copying and pasting.
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (+[TestUIPasteboard _performAsDataOwner:block:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView contentsAsString]):
+
+        Additionally add a helper method to grab a `WKWebView`'s contents as an `NSString`, just for convenience.
+
 2021-02-19  Alex Christensen  <achristensen@webkit.org>
 
         NSError returned by WebKit API should actually conform to NSSecureCoding

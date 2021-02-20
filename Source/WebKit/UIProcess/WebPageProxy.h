@@ -45,6 +45,7 @@
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
+#include "PasteboardAccessIntent.h"
 #include "PluginProcessAttributes.h"
 #include "PolicyDecision.h"
 #include "ProcessTerminationReason.h"
@@ -283,6 +284,10 @@ struct WindowFeatures;
 
 #if ENABLE(IMAGE_EXTRACTION)
 struct ImageExtractionResult;
+#endif
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+enum class DataOwnerType : uint8_t;
 #endif
 
 template<typename> class RectEdges;
@@ -1078,6 +1083,10 @@ public:
     void effectiveAppearanceDidChange();
     bool useDarkAppearance() const;
     bool useElevatedUserInterfaceLevel() const;
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const;
+#endif
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.

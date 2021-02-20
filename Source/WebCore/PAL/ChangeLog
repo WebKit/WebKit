@@ -1,3 +1,15 @@
+2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        Import `UIPasteboard_Private.h` so that `PlatformPasteboardIOS.mm` can use the new SPI.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Temporarily disable drawing OT-SVG glyphs in the GPU process until it can be implemented properly

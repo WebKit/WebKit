@@ -86,6 +86,34 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type)
     return nullptr;
 }
 
+void PlatformPasteboard::performAsDataOwner(DataOwnerType type, Function<void()>&& actions)
+{
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    auto dataOwner = _UIDataOwnerUndefined;
+    switch (type) {
+    case DataOwnerType::Undefined:
+        dataOwner = _UIDataOwnerUndefined;
+        break;
+    case DataOwnerType::User:
+        dataOwner = _UIDataOwnerUser;
+        break;
+    case DataOwnerType::Enterprise:
+        dataOwner = _UIDataOwnerEnterprise;
+        break;
+    case DataOwnerType::Shared:
+        dataOwner = _UIDataOwnerShared;
+        break;
+    }
+
+    [PAL::getUIPasteboardClass() _performAsDataOwner:dataOwner block:^{
+        actions();
+    }];
+#else
+    UNUSED_PARAM(type);
+    actions();
+#endif
+}
+
 void PlatformPasteboard::getPathnamesForType(Vector<String>&, const String&) const
 {
 }

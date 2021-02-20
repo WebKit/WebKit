@@ -52,6 +52,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [(__bridge NSString *)cfString.get() lengthOfBytesUsingEncoding:NSString.defaultCStringEncoding];
 }
 
+void PlatformPasteboard::performAsDataOwner(DataOwnerType, Function<void()>&& actions)
+{
+    actions();
+}
+
 PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     : m_pasteboard([NSPasteboard pasteboardWithName:pasteboardName])
 {

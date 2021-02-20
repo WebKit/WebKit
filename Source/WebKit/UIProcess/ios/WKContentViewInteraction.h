@@ -37,6 +37,7 @@
 #import "FrameInfoData.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
+#import "PasteboardAccessIntent.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingController.h"
 #import "TransactionID.h"
@@ -57,6 +58,7 @@
 #import <UIKit/UIView.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
+#import <WebCore/DataOwnerType.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
@@ -698,6 +700,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 - (BOOL)_formControlRefreshEnabled;
+#endif
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+- (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
 #endif
 
 @end

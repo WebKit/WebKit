@@ -999,6 +999,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Cursor.h
     platform/DataListSuggestionPicker.h
     platform/DataListSuggestionsClient.h
+    platform/DataOwnerType.h
     platform/DateComponents.h
     platform/Decimal.h
     platform/DeferrableTask.h

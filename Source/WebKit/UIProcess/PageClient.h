@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "LayerTreeContext.h"
 #include "PDFPluginIdentifier.h"
+#include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
@@ -38,6 +39,7 @@
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/ContactInfo.h>
 #include <WebCore/ContactsRequestData.h>
+#include <WebCore/DataOwnerType.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
@@ -516,6 +518,10 @@ public:
     virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
 
     virtual void setHasBlankOverlay(bool) { }
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
+#endif
 
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }

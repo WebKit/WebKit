@@ -126,6 +126,10 @@ private:
     RefPtr<WebDataListSuggestionsDropdown> createDataListSuggestionsDropdown(WebPageProxy&) final;
 #endif
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const final;
+#endif
+
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) final;
 #endif

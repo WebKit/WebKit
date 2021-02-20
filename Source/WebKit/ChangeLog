@@ -1,3 +1,84 @@
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        Adds WebKit2 support for tagging `PlatformPasteboard` with the content view's pasteboard data owner type. See
+        below for more details.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Import `UIPasteboard_Private.h` so that we know about `+_performAsDataOwner:block:` in the API tests.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardTypes):
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getPasteboardChangeCount):
+        (WebKit::WebPasteboardProxy::getPasteboardColor):
+        (WebKit::WebPasteboardProxy::getPasteboardURL):
+        (WebKit::WebPasteboardProxy::addPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::containsURLStringSuitableForLoading):
+
+        Make all of these methods use `dataOwner()` with either a `Read` or `Write` pasteboard access intent to grab the
+        data owner type from the view corresponding to the page identifier, and then wrap all pasteboard access within
+        `PlatformPasteboard`'s new `performAsDataOwner` static helper.
+
+        (WebKit::WebPasteboardProxy::urlStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getNumberOfFiles):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::containsStringSafeForDOMToReadForType):
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+        (WebKit::WebPasteboardProxy::updateSupportedTypeIdentifiers):
+        (WebKit::WebPasteboardProxy::determineDataOwner const):
+
+        Use the given page identifier in various pasteboard IPC endpoints in `WebPasteboardProxy` to ask `WebPageProxy`
+        for its pasteboard data owner type when reading or writing pasteboard data.
+
+        * UIProcess/PageClient.h:
+
+        Add a client hook to return a `DataOwnerType` enum, given a `PasteboardAccessIntent` -- that is, copy (write) or
+        paste (read).
+
+        (WebKit::PageClient::dataOwnerForPasteboard const):
+        * UIProcess/PasteboardAccessIntent.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dataOwnerForPasteboard const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::dataOwnerForPasteboard const):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (coreDataOwnerType):
+        (-[WKContentView _dataOwnerForPasteboard:]):
+
+        Return `-_dataOwnerForPaste` or `-_dataOwnerForCopy` (depending on the `PasteboardAccessIntent`).
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Make format of release logging more consistent to facilitate grepping

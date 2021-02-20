@@ -41,6 +41,7 @@ class SharedBufferCopy;
 }
 
 namespace WebCore {
+enum class DataOwnerType : uint8_t;
 class Color;
 class PasteboardCustomData;
 class SelectionData;
@@ -52,6 +53,7 @@ struct PasteboardWebContent;
 
 namespace WebKit {
 
+enum class PasteboardAccessIntent : bool;
 class WebFrameProxy;
 class WebProcessProxy;
 
@@ -100,7 +102,7 @@ private:
     void getPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, Optional<WebCore::PageIdentifier>, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&&);
     void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, Optional<WebCore::PageIdentifier>, CompletionHandler<void(SharedMemory::IPCHandle&&)>&&);
-    void getPasteboardChangeCount(const String& pasteboardName, Optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
+    void getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, Optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
     void getPasteboardColor(IPC::Connection&, const String& pasteboardName, Optional<WebCore::PageIdentifier>, CompletionHandler<void(WebCore::Color&&)>&&);
     void getPasteboardURL(IPC::Connection&, const String& pasteboardName, Optional<WebCore::PageIdentifier>, CompletionHandler<void(const String&)>&&);
     void addPasteboardTypes(IPC::Connection&, const String& pasteboardName, const Vector<String>& pasteboardTypes, Optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
@@ -149,6 +151,8 @@ private:
     enum class PasteboardAccessType : uint8_t { Types, TypesAndData };
     Optional<PasteboardAccessType> accessType(IPC::Connection&, const String& pasteboardName) const;
     void grantAccess(WebProcessProxy&, const String& pasteboardName, PasteboardAccessType);
+
+    Optional<WebCore::DataOwnerType> determineDataOwner(IPC::Connection&, const String& pasteboardName, Optional<WebCore::PageIdentifier>, PasteboardAccessIntent) const;
 #endif
 
     WebProcessProxyList m_webProcessProxyList;

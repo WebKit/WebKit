@@ -130,6 +130,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
     return success;
 }
 
+- (NSString *)contentsAsString
+{
+    __block bool done = false;
+    __block RetainPtr<NSString> result;
+    [self _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
+        result = contents;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
 - (NSArray<NSString *> *)tagsInBody
 {
     return [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
