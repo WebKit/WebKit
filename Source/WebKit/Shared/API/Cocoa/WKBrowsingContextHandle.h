@@ -26,5 +26,5 @@
 #import <WebKit/WKFoundation.h>
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
-@interface WKBrowsingContextHandle : NSObject <NSSecureCoding>
+@interface WKBrowsingContextHandle : NSObject <NSSecureCoding, NSCopying>
 @end

@@ -1,3 +1,14 @@
+2021-02-19  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] WKBrowsingContextHandle should conform to NSCopying
+        https://bugs.webkit.org/show_bug.cgi?id=222214
+
+        Reviewed by Devin Rousso.
+
+        * Shared/API/Cocoa/WKBrowsingContextHandle.h:
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm:
+        (-[WKBrowsingContextHandle copyWithZone:]):
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Review remaining usage of autorelease to make sure it is necessary

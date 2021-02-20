@@ -88,4 +88,9 @@
     return YES;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:_pageProxyID andWebPageID:_webPageID];
+}
+
 @end
