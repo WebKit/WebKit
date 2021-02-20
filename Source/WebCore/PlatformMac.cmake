@@ -649,6 +649,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayShippingContactSelectedEvent.idl
     Modules/applepay/ApplePayShippingContactUpdate.idl
     Modules/applepay/ApplePayShippingMethod.idl
+    Modules/applepay/ApplePayShippingMethodData.idl
     Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
     Modules/applepay/ApplePayShippingMethodUpdate.idl
     Modules/applepay/ApplePayValidateMerchantEvent.idl

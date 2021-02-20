@@ -305,6 +305,14 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                     context.addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, "WebKit currently uses the first shipping option even if other shipping options are marked as selected."_s);
                     didLog = true;
                 }
+
+                if (shippingOption.data) {
+                    auto dataResult = checkAndCanonicalizeData(context, shippingOption);
+                    if (dataResult.hasException())
+                        return dataResult.releaseException();
+
+                    shippingOption.serializedData = dataResult.releaseReturnValue();
+                }
             }
         } else if (isUpdate == IsUpdate::No)
             details.shippingOptions = { { } };

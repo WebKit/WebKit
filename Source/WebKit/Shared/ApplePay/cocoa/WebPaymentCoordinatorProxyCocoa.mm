@@ -61,6 +61,10 @@
 
 namespace WebKit {
 
+#if defined(WebPaymentCoordinatorProxyCocoaAdditions_members)
+WebPaymentCoordinatorProxyCocoaAdditions_members
+#endif
+
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
     : m_client(client)
     , m_canMakePaymentsQueue(WorkQueue::create("com.apple.WebKit.CanMakePayments"))
@@ -170,6 +174,9 @@ PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod& ship
     PKShippingMethod *result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
+#if defined(WebPaymentCoordinatorProxyCocoaAdditions_toPKShippingMethod)
+    WebPaymentCoordinatorProxyCocoaAdditions_toPKShippingMethod
+#endif
     return result;
 }
 

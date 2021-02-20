@@ -206,7 +206,11 @@ static ApplePaySessionPaymentRequest::ShippingType convert(PaymentShippingType t
     return ApplePaySessionPaymentRequest::ShippingType::Shipping;
 }
 
-static ExceptionOr<ApplePayShippingMethod> convertAndValidate(const PaymentShippingOption& shippingOption, const String& expectedCurrency)
+#if !ENABLE(APPLE_PAY_SHIPPING_METHOD_DATA)
+static void merge(ApplePayShippingMethod&, ApplePayShippingMethodData&&) { }
+#endif
+
+static ExceptionOr<ApplePayShippingMethod> convertAndValidate(ScriptExecutionContext& context, const PaymentShippingOption& shippingOption, const String& expectedCurrency)
 {
     auto exception = validate(shippingOption.amount, expectedCurrency);
     if (exception.hasException())
@@ -216,6 +220,24 @@ static ExceptionOr<ApplePayShippingMethod> convertAndValidate(const PaymentShipp
     result.amount = shippingOption.amount.value;
     result.label = shippingOption.label;
     result.identifier = shippingOption.id;
+
+    if (!shippingOption.serializedData.isEmpty()) {
+        auto& lexicalGlobalObject = *context.globalObject();
+        auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        JSC::JSValue data;
+        {
+            JSC::JSLockHolder lock(&lexicalGlobalObject);
+            data = JSONParse(&lexicalGlobalObject, shippingOption.serializedData);
+            if (scope.exception())
+                return Exception { ExistingExceptionError };
+        }
+
+        auto applePayShippingMethodData = convertDictionary<ApplePayShippingMethodData>(lexicalGlobalObject, WTFMove(data));
+        if (scope.exception())
+            return Exception { ExistingExceptionError };
+        merge(result, WTFMove(applePayShippingMethodData));
+    }
+
     return { WTFMove(result) };
 }
 
@@ -347,7 +369,7 @@ ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShipp
 
         shippingOptions.reserveInitialCapacity(details.shippingOptions->size());
         for (auto& shippingOption : *details.shippingOptions) {
-            auto shippingMethod = convertAndValidate(shippingOption, currency);
+            auto shippingMethod = convertAndValidate(*scriptExecutionContext(), shippingOption, currency);
             if (shippingMethod.hasException())
                 return shippingMethod.releaseException();
             shippingOptions.uncheckedAppend(shippingMethod.releaseReturnValue());

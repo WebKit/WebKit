@@ -58,6 +58,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeatureType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethod.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayValidateMerchantEvent.idl

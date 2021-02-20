@@ -28,6 +28,7 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
+#import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
@@ -193,6 +194,9 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     result.detail = shippingMethod.detail;
     result.identifier = shippingMethod.identifier;
     result.label = shippingMethod.label;
+#if defined(WKPaymentAuthorizationDelegateAdditions_toShippingMethod)
+    WKPaymentAuthorizationDelegateAdditions_toShippingMethod
+#endif
     return result;
 }
 
