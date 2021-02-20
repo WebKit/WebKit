@@ -225,7 +225,7 @@ MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTr
     return { displayNameForTrack(track), type };
 }
     
-Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList)
+Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
 {
     ASSERT(trackList);
 
@@ -233,8 +233,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
-        auto kind = track->kind();
-        if (kind == TextTrack::Kind::Captions || kind == TextTrack::Kind::Descriptions || kind == TextTrack::Kind::Subtitles)
+        if (kinds.contains(track->kind()))
             tracksForMenu.append(track);
     }
 
@@ -242,8 +241,10 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
         return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
     });
 
-    tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
-    tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+    if (kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions)) {
+        tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
+        tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+    }
 
     return tracksForMenu;
 }

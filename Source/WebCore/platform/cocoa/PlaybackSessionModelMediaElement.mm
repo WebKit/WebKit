@@ -379,7 +379,7 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
     auto* textTracks = m_mediaElement->textTracks();
     if (textTracks && textTracks->length())
-        m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(textTracks);
+        m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
     else
         m_legibleTracksForMenu.clear();
 

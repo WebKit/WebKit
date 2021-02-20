@@ -51,10 +51,14 @@
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
 
-namespace WebCore {
-
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MediaControlsHostAdditions.cpp>
+#endif
+
+namespace WebCore {
+
+#if defined(MediaControlsHostAdditions_members)
+MediaControlsHostAdditions_members
 #endif
 
 const AtomString& MediaControlsHost::automaticKeyword()
@@ -108,7 +112,7 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
     if (!page)
         return { };
 
-    return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
+    return page->group().captionPreferences().sortedTrackListForMenu(&trackList, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
 }
 
 Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
@@ -402,7 +406,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             textTracksItem.children.reserveCapacity(textTracks->length());
 
             auto& captionPreferences = page->group().captionPreferences();
-            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks);
+            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
             bool allTracksDisabled = notFound == sortedTextTracks.findMatching([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });

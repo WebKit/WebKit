@@ -35,6 +35,13 @@ class OverflowSupport extends MediaControllerSupport
         return mediaEvents;
     }
 
+    get tracksToMonitor()
+    {
+        let tracksToMonitor = [];
+        window["WebKitAdditions.OverflowSupport.prototype.get_tracksToMonitor"]?.(this, tracksToMonitor);
+        return tracksToMonitor;
+    }
+
     get control()
     {
         return this.mediaController.controls.overflowButton;
