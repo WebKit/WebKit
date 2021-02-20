@@ -7488,6 +7488,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent
 {
+    if (![self respondsToSelector:@selector(_dataOwnerForPaste)]) {
+        // FIXME: Remove this once the relevant bots have fix for <rdar://problem/73852335>.
+        return WebCore::DataOwnerType::Undefined;
+    }
+
     if (intent == WebKit::PasteboardAccessIntent::Read)
         return coreDataOwnerType(self._dataOwnerForPaste);
 

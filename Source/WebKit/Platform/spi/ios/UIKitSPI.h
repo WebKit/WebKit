@@ -1269,6 +1269,15 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
 #define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+@interface UIResponder (Staging_73852335)
+@property (nonatomic, setter=_setDataOwnerForCopy:) _UIDataOwner _dataOwnerForCopy;
+@property (nonatomic, setter=_setDataOwnerForPaste:) _UIDataOwner _dataOwnerForPaste;
+@end
+
+#endif
+
 @interface UITextInteractionAssistant (IPI)
 @property (nonatomic, readonly) BOOL inGesture;
 @property (nonatomic, readonly) UITextInteraction *interactions;

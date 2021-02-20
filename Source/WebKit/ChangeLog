@@ -1,3 +1,17 @@
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix some internal builds after r273184
+
+        Add a forward declaration for this (recently added) SPI, which we can safely revert once internal automation is
+        using an SDK with the fix for <rdar://problem/73852335>.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataOwnerForPasteboard:]):
+
+        Additionally make this binary compatible with older versions of the system by adding a `-respondsToSelector:`
+        check before attempting to use the declared SPI.
+
 2021-02-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Add back old media playback API but deprecated
