@@ -57,7 +57,7 @@ public:
     {
     }
 
-    ScriptSourceCode(const String& source, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
+    ScriptSourceCode(const String& source, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
         : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {

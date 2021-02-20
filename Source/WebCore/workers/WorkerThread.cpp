@@ -32,6 +32,8 @@
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerScriptFetcher.h"
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -55,6 +57,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         shouldBypassMainWorldContentSecurityPolicy,
         timeOrigin,
         referrerPolicy,
+        workerType,
+        credentials,
         settingsValues.isolatedCopy()
     };
 }
@@ -123,9 +127,29 @@ bool WorkerThread::shouldWaitForWebInspectorOnStartup() const
 
 void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
 {
-    globalScope()->script()->evaluate(ScriptSourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL)), &exceptionMessage);
+    // We are currently holding only the initial script code. If the WorkerType is Module, we should fetch the entire graph before executing the rest of this.
+    // We invoke module loader as if we are executing inline module script tag in Document.
 
-    finishedEvaluatingScript();
+    if (m_startupData->params.workerType == WorkerType::Classic) {
+        globalScope()->script()->evaluate(ScriptSourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL)), &exceptionMessage);
+        finishedEvaluatingScript();
+    } else {
+        auto scriptFetcher = WorkerScriptFetcher::create(globalScope()->credentials(), globalScope()->destination(), globalScope()->referrerPolicy());
+        ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
+        MessageQueueWaitResult result = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
+        if (result != MessageQueueTerminated) {
+            if (Optional<LoadableScript::Error> error = scriptFetcher->error()) {
+                if (Optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
+                    exceptionMessage = message->message;
+                else
+                    exceptionMessage = "Importing a module script failed."_s;
+                globalScope()->reportException(exceptionMessage, { }, { }, { }, { }, { });
+            } else if (!scriptFetcher->wasCanceled()) {
+                globalScope()->script()->linkAndEvaluateModule(scriptFetcher.get(), sourceCode, &exceptionMessage);
+                finishedEvaluatingScript();
+            }
+        }
+    }
 
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
     // all ref/derefs of these objects are happening on the thread at this point). Note that

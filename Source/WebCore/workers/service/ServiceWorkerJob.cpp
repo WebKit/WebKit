@@ -110,7 +110,8 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     options.cache = cachePolicy;
     options.redirect = FetchOptions::Redirect::Error;
     options.destination = FetchOptions::Destination::Serviceworker;
-    m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(options), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this);
+    options.credentials = FetchOptions::Credentials::SameOrigin;
+    m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(options), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
 }
 
 ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorkerJobData& jobData, const ResourceResponse& response)

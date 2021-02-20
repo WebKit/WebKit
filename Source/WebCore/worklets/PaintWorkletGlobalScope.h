@@ -40,7 +40,7 @@ class VM;
 namespace WebCore {
 class JSDOMGlobalObject;
 
-class PaintWorkletGlobalScope : public WorkletGlobalScope {
+class PaintWorkletGlobalScope final : public WorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(PaintWorkletGlobalScope);
 public:
     static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);
@@ -75,6 +75,8 @@ public:
         }
         WorkletGlobalScope::prepareForDestruction();
     }
+
+    FetchOptions::Destination destination() const final { return FetchOptions::Destination::Paintworklet; }
 
 private:
     PaintWorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);

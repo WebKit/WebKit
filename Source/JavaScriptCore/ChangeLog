@@ -1,3 +1,63 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JS Modules in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=164860
+
+        Reviewed by Saam Barati.
+
+        Add error information to extract this in WebCore's module loader.
+        Currently, we are using Promise pipeline, and this makes it a bit difficult to extract error information.
+        This error information attached in this patch allows us to extract SyntaxError in WebCore, and throwing
+        JS SyntaxError instead of AbortError.
+
+        We are planning to update our module pipieline not using Promises in the future. The current design derived
+        from the original module loader pipeline where using Promises is critical. But now, that proposal was abandoned,
+        so we can just simplify the module loader.
+
+        * runtime/AggregateError.cpp:
+        (JSC::AggregateError::AggregateError):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::createGetterTypeError):
+        (JSC::throwSyntaxError):
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::sanitizedMessageString):
+        (JSC::ErrorInstance::sanitizedNameString):
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::errorType const):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::JSWebAssemblyCompileError::JSWebAssemblyCompileError):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::JSWebAssemblyLinkError::JSWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Review remaining usage of autorelease to make sure it is necessary

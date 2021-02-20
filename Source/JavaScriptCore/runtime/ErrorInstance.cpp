@@ -34,18 +34,23 @@ namespace JSC {
 
 const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorInstance) };
 
-ErrorInstance::ErrorInstance(VM& vm, Structure* structure)
+ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     : Base(vm, structure)
+    , m_errorType(errorType)
+    , m_stackOverflowError(false)
+    , m_outOfMemoryError(false)
+    , m_errorInfoMaterialized(false)
+    , m_nativeGetterTypeError(false)
 {
 }
 
-ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, ErrorType errorType, bool useCurrentFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return create(globalObject, vm, structure, messageString, appender, type, useCurrentFrame);
+    return create(globalObject, vm, structure, messageString, appender, type, errorType, useCurrentFrame);
 }
 
 static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
@@ -131,7 +136,25 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
 // have no observable side effects to the user (i.e. does not call proxies,
 // and getters).
-String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
+String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Integrity::auditStructureID(vm, structureID());
+
+    JSValue messageValue;
+    auto messagePropertName = vm.propertyNames->message;
+    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    if (JSObject::getOwnPropertySlot(this, globalObject, messagePropertName, messageSlot) && messageSlot.isValue())
+        messageValue = messageSlot.getValue(globalObject, messagePropertName);
+    scope.assertNoException();
+
+    if (!messageValue)
+        return String();
+    RELEASE_AND_RETURN(scope, messageValue.toWTFString(globalObject));
+}
+
+String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -157,28 +180,22 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
     }
     scope.assertNoException();
 
-    String nameString;
     if (!nameValue)
-        nameString = "Error"_s;
-    else {
-        nameString = nameValue.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, String());
-    }
+        return "Error"_s;
+    RELEASE_AND_RETURN(scope, nameValue.toWTFString(globalObject));
+}
 
-    JSValue messageValue;
-    auto messagePropertName = vm.propertyNames->message;
-    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    if (JSObject::getOwnPropertySlot(this, globalObject, messagePropertName, messageSlot) && messageSlot.isValue())
-        messageValue = messageSlot.getValue(globalObject, messagePropertName);
-    scope.assertNoException();
+String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Integrity::auditStructureID(vm, structureID());
 
-    String messageString;
-    if (!messageValue)
-        messageString = String();
-    else {
-        messageString = messageValue.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, String());
-    }
+    String nameString = sanitizedNameString(globalObject);
+    RETURN_IF_EXCEPTION(scope, String());
+
+    String messageString = sanitizedMessageString(globalObject);
+    RETURN_IF_EXCEPTION(scope, String());
 
     if (!nameString.length())
         return messageString;

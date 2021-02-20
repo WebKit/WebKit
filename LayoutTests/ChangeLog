@@ -1,3 +1,16 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JS Modules in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=164860
+
+        Reviewed by Saam Barati.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt:
+        * http/tests/subresource-integrity/sri-module-expected.txt:
+        * webaudio/audioworklet-addModule-failure-expected.txt:
+        * webaudio/worklet-crash-expected.txt:
+
 2021-02-19  Rob Buis  <rbuis@igalia.com>
 
         Support aspect-ratio on flexbox items

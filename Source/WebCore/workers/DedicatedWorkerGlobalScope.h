@@ -81,6 +81,8 @@ public:
     RefPtr<MessagePort> takePendingRTCTransfomerMessagePort() { return WTFMove(m_pendingRTCTransfomerMessagePort); }
 #endif
 
+    FetchOptions::Destination destination() const final { return FetchOptions::Destination::Worker; }
+
 private:
     using Base = WorkerGlobalScope;
 

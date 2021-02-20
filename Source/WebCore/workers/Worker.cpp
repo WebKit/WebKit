@@ -74,6 +74,8 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
     , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
+    , m_type(options.type)
+    , m_credentials(options.credentials)
 {
     static bool addedListener;
     if (!addedListener) {
@@ -117,10 +119,15 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
 
     FetchOptions fetchOptions;
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
+    if (worker->m_type == WorkerType::Module)
+        fetchOptions.credentials = worker->m_credentials;
+    else
+        fetchOptions.credentials = FetchOptions::Credentials::SameOrigin;
     fetchOptions.cache = FetchOptions::Cache::Default;
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
     fetchOptions.destination = FetchOptions::Destination::Worker;
-    worker->m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, worker);
+    worker->m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, worker.get(), WorkerRunLoop::defaultMode());
+
     return worker;
 }
 
@@ -219,7 +226,13 @@ void Worker::notifyFinished()
     ReferrerPolicy referrerPolicy = ReferrerPolicy::EmptyString;
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;
-    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, context->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, referrerPolicy, m_runtimeFlags);
+
+    URL responseURL = m_scriptLoader->responseURL();
+    if (!m_scriptLoader->isRedirected() && m_scriptLoader->responseSource() != ResourceResponse::Source::ServiceWorker) {
+        if (m_scriptLoader->url().hasFragmentIdentifier())
+            responseURL.setFragmentIdentifier(m_scriptLoader->url().fragmentIdentifier());
+    }
+    m_contextProxy.startWorkerGlobalScope(responseURL, m_name, context->userAgent(responseURL), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, referrerPolicy, m_type, m_credentials, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script());
 }
 

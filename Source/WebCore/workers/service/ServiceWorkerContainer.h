@@ -47,7 +47,7 @@ class NavigatorBase;
 class ServiceWorker;
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
-enum class WorkerType;
+enum class WorkerType : uint8_t;
 
 template<typename IDLType> class DOMPromiseProxy;
 

@@ -31,6 +31,7 @@
 #include "FetchOptions.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <memory>
@@ -43,7 +44,6 @@
 namespace WebCore {
 
 class Exception;
-class ResourceResponse;
 class ScriptExecutionContext;
 class TextResourceDecoder;
 class WorkerScriptLoaderClient;
@@ -58,7 +58,7 @@ public:
     }
 
     Optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&);
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode);
 
     void notifyError();
 
@@ -67,6 +67,8 @@ public:
     const String& referrerPolicy() const { return m_referrerPolicy; }
     const URL& url() const { return m_url; }
     const URL& responseURL() const;
+    ResourceResponse::Source responseSource() const { return m_responseSource; }
+    bool isRedirected() const { return m_isRedirected; }
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
     const String& responseMIMEType() const { return m_responseMIMEType; }
     bool failed() const { return m_failed; }
@@ -107,6 +109,8 @@ private:
     unsigned long m_identifier { 0 };
     bool m_failed { false };
     bool m_finishing { false };
+    bool m_isRedirected { false };
+    ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceError m_error;
 };
 

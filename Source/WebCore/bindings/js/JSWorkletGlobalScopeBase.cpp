@@ -49,11 +49,11 @@ const GlobalObjectMethodTable JSWorkletGlobalScopeBase::s_globalObjectMethodTabl
     &javaScriptRuntimeFlags,
     nullptr, // queueMicrotaskToEventLoop
     &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
+    &moduleLoaderImportModule,
+    &moduleLoaderResolve,
+    &moduleLoaderFetch,
+    &moduleLoaderCreateImportMetaProperties,
+    &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &reportUncaughtExceptionAtEventLoop,
     &currentScriptExecutionOwner,

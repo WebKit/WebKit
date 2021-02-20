@@ -41,7 +41,7 @@ JSWebAssemblyLinkError* JSWebAssemblyLinkError::create(JSGlobalObject* globalObj
 }
 
 JSWebAssemblyLinkError::JSWebAssemblyLinkError(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, ErrorType::Error)
 {
 }
 

@@ -41,7 +41,7 @@ Ref<LoadableModuleScript> LoadableModuleScript::create(const String& nonce, cons
 
 LoadableModuleScript::LoadableModuleScript(const String& nonce, const String& integrity, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
     : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
-    , m_parameters(ModuleFetchParameters::create(integrity))
+    , m_parameters(ModuleFetchParameters::create(integrity, /* isTopLevelModule */ true))
 {
 }
 
@@ -86,18 +86,6 @@ void LoadableModuleScript::notifyLoadWasCanceled()
 void LoadableModuleScript::execute(ScriptElement& scriptElement)
 {
     scriptElement.executeModuleScript(*this);
-}
-
-void LoadableModuleScript::load(Document& document, const URL& rootURL)
-{
-    if (auto* frame = document.frame())
-        frame->script().loadModuleScript(*this, rootURL.string(), m_parameters.copyRef());
-}
-
-void LoadableModuleScript::load(Document& document, const ScriptSourceCode& sourceCode)
-{
-    if (auto* frame = document.frame())
-        frame->script().loadModuleScript(*this, sourceCode);
 }
 
 }

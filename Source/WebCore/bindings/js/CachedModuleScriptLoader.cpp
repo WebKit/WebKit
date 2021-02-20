@@ -40,16 +40,13 @@
 
 namespace WebCore {
 
-Ref<CachedModuleScriptLoader> CachedModuleScriptLoader::create(CachedModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<ModuleFetchParameters>&& parameters)
+Ref<CachedModuleScriptLoader> CachedModuleScriptLoader::create(ModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<ModuleFetchParameters>&& parameters)
 {
     return adoptRef(*new CachedModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters)));
 }
 
-CachedModuleScriptLoader::CachedModuleScriptLoader(CachedModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<ModuleFetchParameters>&& parameters)
-    : m_client(&client)
-    , m_promise(&promise)
-    , m_scriptFetcher(scriptFetcher)
-    , m_parameters(WTFMove(parameters))
+CachedModuleScriptLoader::CachedModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher, RefPtr<ModuleFetchParameters>&& parameters)
+    : ModuleScriptLoader(client, promise, scriptFetcher, WTFMove(parameters))
 {
 }
 
@@ -61,14 +58,15 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
     }
 }
 
-bool CachedModuleScriptLoader::load(Document& document, const URL& sourceURL)
+bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL)
 {
+    ASSERT(m_promise);
     ASSERT(!m_cachedScript);
     String integrity = m_parameters ? m_parameters->integrity() : String { };
-    m_cachedScript = m_scriptFetcher->requestModuleScript(document, sourceURL, WTFMove(integrity));
+    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, WTFMove(integrity));
     if (!m_cachedScript)
         return false;
-    m_sourceURL = sourceURL;
+    m_sourceURL = WTFMove(sourceURL);
 
     // If the content is already cached, this immediately calls notifyFinished.
     m_cachedScript->addClient(*this);
@@ -83,7 +81,7 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
 
     Ref<CachedModuleScriptLoader> protectedThis(*this);
     if (m_client)
-        m_client->notifyFinished(*this, WTFMove(m_promise));
+        m_client->notifyFinished(*this, WTFMove(m_sourceURL), m_promise.releaseNonNull());
 
     // Remove the client after calling notifyFinished to keep the data buffer in
     // CachedResource alive while notifyFinished processes the resource.

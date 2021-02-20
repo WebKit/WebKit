@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyCompileError, (JSGlobalObject* globalO
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->webAssemblyCompileErrorStructure();
-    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false));
+    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, ErrorType::Error, false));
 }
 
 WebAssemblyCompileErrorConstructor* WebAssemblyCompileErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyCompileErrorPrototype* thisPrototype)

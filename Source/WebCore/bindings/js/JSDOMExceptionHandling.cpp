@@ -52,6 +52,25 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSValue exceptionValue
     reportException(lexicalGlobalObject, exception, cachedScript);
 }
 
+String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, CatchScope& catchScope)
+{
+    // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
+    // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
+    String errorMessage;
+    if (auto* error = jsDynamicCast<ErrorInstance*>(vm, exception))
+        errorMessage = error->sanitizedMessageString(&lexicalGlobalObject);
+    else if (auto* error = jsDynamicCast<JSDOMException*>(vm, exception))
+        errorMessage = error->wrapped().message();
+    else
+        errorMessage = exception.toWTFString(&lexicalGlobalObject);
+
+    // We need to clear any new exception that may be thrown in the toString() call above.
+    // reportException() is not supposed to be making new exceptions.
+    catchScope.clearException();
+    vm.clearLastException();
+    return errorMessage;
+}
+
 String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, CatchScope& catchScope)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
@@ -121,36 +140,46 @@ void reportCurrentException(JSGlobalObject* lexicalGlobalObject)
 
 JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message)
 {
-    if (ec == ExistingExceptionError)
+    switch (ec) {
+    case ExistingExceptionError:
         return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.
-    if (ec == TypeError) {
+    case TypeError:
         if (message.isEmpty())
             return createTypeError(lexicalGlobalObject);
         return createTypeError(lexicalGlobalObject, message);
-    }
 
-    if (ec == RangeError) {
+    case RangeError:
         if (message.isEmpty())
             return createRangeError(lexicalGlobalObject, "Bad value"_s);
         return createRangeError(lexicalGlobalObject, message);
-    }
 
-    if (ec == StackOverflowError)
+    case JSSyntaxError:
+        if (message.isEmpty())
+            return createSyntaxError(lexicalGlobalObject);
+        return createSyntaxError(lexicalGlobalObject, message);
+
+    case StackOverflowError:
         return createStackOverflowError(lexicalGlobalObject);
-    if (ec == OutOfMemoryError)
+
+    case OutOfMemoryError:
         return createOutOfMemoryError(lexicalGlobalObject);
 
-    // FIXME: All callers to createDOMException need to pass in the correct global object.
-    // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
-    // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
-    JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
-    JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
-    
-    ASSERT(errorObject);
-    addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
-    return errorObject;
+    default: {
+        // FIXME: All callers to createDOMException need to pass in the correct global object.
+        // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
+        // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
+        // https://bugs.webkit.org/show_bug.cgi?id=222229
+        JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
+        JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
+
+        ASSERT(errorObject);
+        addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
+        return errorObject;
+    }
+    }
+    return { };
 }
 
 JSValue createDOMException(JSGlobalObject& lexicalGlobalObject, Exception&& exception)

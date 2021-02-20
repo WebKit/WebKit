@@ -50,7 +50,7 @@ struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
-enum class WorkerType;
+enum class WorkerType : uint8_t;
 
 class SWServerWorker : public RefCounted<SWServerWorker> {
 public:

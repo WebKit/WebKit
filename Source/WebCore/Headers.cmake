@@ -30,6 +30,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
+    Modules/fetch/FetchRequestCredentials.h
     Modules/fetch/FetchHeaders.h
     Modules/fetch/FetchIdentifier.h
     Modules/fetch/FetchLoader.h
@@ -288,6 +289,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/WebCoreJITOperations.h
     bindings/js/WebCoreTypedArrayController.h
     bindings/js/WindowProxy.h
+    bindings/js/WorkerScriptFetcher.h
 
     bridge/Bridge.h
     bridge/IdentifierRep.h

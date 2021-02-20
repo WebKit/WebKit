@@ -26,12 +26,14 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "FetchOptions.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerThreadType.h"
 
 namespace WebCore {
 
 class EventLoopTaskGroup;
+class ScriptModuleLoader;
 class WorkerEventLoop;
 class WorkerInspectorController;
 class WorkerOrWorkletScriptController;
@@ -54,6 +56,8 @@ public:
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
+    ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
+
     // ScriptExecutionContext.
     EventLoopTaskGroup& eventLoop() final;
     bool isContextThread() const final;
@@ -66,6 +70,8 @@ public:
 
     virtual void suspend() { }
     virtual void resume() { }
+
+    virtual FetchOptions::Destination destination() const = 0;
 
 protected:
     WorkerOrWorkletGlobalScope(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletThread*);
@@ -88,6 +94,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
+    std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
     WorkerOrWorkletThread* m_thread;
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;

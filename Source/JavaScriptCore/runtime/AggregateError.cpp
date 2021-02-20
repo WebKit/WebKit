@@ -36,7 +36,7 @@ namespace JSC {
 const ClassInfo AggregateError::s_info = { "AggregateError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AggregateError) };
 
 AggregateError::AggregateError(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, ErrorType::AggregateError)
 {
 }
 

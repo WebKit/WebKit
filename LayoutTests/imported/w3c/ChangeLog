@@ -1,3 +1,48 @@
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JS Modules in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=164860
+
+        Reviewed by Saam Barati.
+
+        Some of worklet failures in WPT is because,
+
+            1. Previously, worklet does not support module. These tests are passing incorrectly when modules are not supported.
+               Now, modules are supported, and some edge features are missing, so start failing
+            2. WPT is using www1.localhost in some tests (CSP tests), and this is not supported in WebKit's WPT testing. So failing incorrectly.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.tentative.any.worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-workerglobalscope-onerror-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/alpha/base-url-worker-importScripts-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/alpha/base-url-worker.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-nothrow-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-2-import-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-3-dynamic-worker-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/import-in-moduleworker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-worker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-moduleworker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-worker-expected.txt:
+        * web-platform-tests/workers/constructors/Worker/same-origin-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-module-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-csp-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-failure-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta.html:
+        * web-platform-tests/workers/modules/dedicated-worker-import-referrer-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import.any-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-options-type-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-parse-error-failure-expected.txt:
+        * web-platform-tests/workers/name-property-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-credentials.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-csp.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-import.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-referrer.https-expected.txt:
+        * web-platform-tests/xhr/open-url-redirected-worker-origin-expected.txt:
+
 2021-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Fix Selenium key code for ENTER in testdriver-vendor.js

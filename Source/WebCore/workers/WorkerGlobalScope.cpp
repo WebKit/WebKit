@@ -74,6 +74,8 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
     , m_settingsValues(params.settingsValues)
+    , m_workerType(params.workerType)
+    , m_credentials(params.credentials)
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);
@@ -273,6 +275,11 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
 ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
 {
     ASSERT(contentSecurityPolicy());
+
+    // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
+    // 1. If worker global scope's type is "module", throw a TypeError exception.
+    if (m_workerType == WorkerType::Module)
+        return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
     Vector<URL> completedURLs;
     completedURLs.reserveInitialCapacity(urls.size());

@@ -1,18 +1,9 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/static-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/nested-static-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/static-import-and-then-dynamic-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/dynamic-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/nested-dynamic-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/dynamic-import-and-then-static-import-worker.js". import call expects exactly one argument.
-CONSOLE MESSAGE: SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/eval-dynamic-import-worker.js". import call expects exactly one argument.
 
-Harness Error (FAIL), message = SyntaxError: Unexpected string literal "http://localhost:8800/workers/modules/resources/dynamic-import-and-then-static-import-worker.js". import call expects exactly one argument.
-
-FAIL Static import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/static-import-worker.js\". import call expects exactly one argument."
-FAIL Nested static import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/nested-static-import-worker.js\". import call expects exactly one argument."
-FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/static-import-and-then-dynamic-import-worker.js\". import call expects exactly one argument."
-FAIL Dynamic import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/dynamic-import-worker.js\". import call expects exactly one argument."
-FAIL Nested dynamic import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/nested-dynamic-import-worker.js\". import call expects exactly one argument."
-FAIL Dynamic import and then static import. promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/dynamic-import-and-then-static-import-worker.js\". import call expects exactly one argument."
-FAIL eval(import()). promise_test: Unhandled rejection with value: "SyntaxError: Unexpected string literal \"http://localhost:8800/workers/modules/resources/eval-dynamic-import-worker.js\". import call expects exactly one argument."
+PASS Static import.
+PASS Nested static import.
+PASS Static import and then dynamic import.
+PASS Dynamic import.
+PASS Nested dynamic import.
+PASS Dynamic import and then static import.
+PASS eval(import()).
 

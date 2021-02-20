@@ -158,72 +158,7 @@ ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
-    m_scriptFetchJobs.append({ moduleURL, credentials, WTFMove(completionHandler) });
-    processNextScriptFetchJobIfNeeded();
-}
-
-void WorkletGlobalScope::processNextScriptFetchJobIfNeeded()
-{
-    if (m_scriptFetchJobs.isEmpty() || m_scriptLoader)
-        return;
-
-    auto& scriptFetchJob = m_scriptFetchJobs.first();
-
-    ResourceRequest request { scriptFetchJob.moduleURL };
-
-    FetchOptions fetchOptions;
-    fetchOptions.mode = FetchOptions::Mode::Cors;
-    fetchOptions.cache = FetchOptions::Cache::Default;
-    fetchOptions.redirect = FetchOptions::Redirect::Follow;
-    fetchOptions.credentials = scriptFetchJob.credentials;
-#if ENABLE(WEB_AUDIO)
-    if (isAudioWorkletGlobalScope())
-        fetchOptions.destination = FetchOptions::Destination::Audioworklet;
-#endif
-#if ENABLE(CSS_PAINTING_API)
-    if (isPaintWorkletGlobalScope())
-        fetchOptions.destination = FetchOptions::Destination::Paintworklet;
-#endif
-
-    auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
-
-    m_scriptLoader = WorkerScriptLoader::create();
-    m_scriptLoader->loadAsynchronously(*this, WTFMove(request), WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this);
-}
-
-void WorkletGlobalScope::didReceiveResponse(unsigned long, const ResourceResponse&)
-{
-}
-
-void WorkletGlobalScope::notifyFinished()
-{
-    auto completedJob = m_scriptFetchJobs.takeFirst();
-
-    if (m_scriptLoader->failed()) {
-        didCompleteScriptFetchJob(WTFMove(completedJob), Exception { AbortError, makeString("Failed to fetch module, error: ", m_scriptLoader->error().localizedDescription()) });
-        return;
-    }
-
-    // FIXME: This should really be run as a module script but we don't support this in workers yet.
-    URL moduleURL(m_scriptLoader->responseURL());
-    auto addResult = m_evaluatedModules.add(moduleURL);
-    if (addResult.isNewEntry) {
-        NakedPtr<JSC::Exception> exception;
-        script()->evaluate(ScriptSourceCode(m_scriptLoader->script(), WTFMove(moduleURL)), exception);
-        if (exception)
-            script()->setException(exception);
-    }
-
-    didCompleteScriptFetchJob(WTFMove(completedJob), { });
-}
-
-void WorkletGlobalScope::didCompleteScriptFetchJob(ScriptFetchJob&& job, Optional<Exception> result)
-{
-    m_scriptLoader = nullptr;
-
-    job.completionHandler(WTFMove(result));
-
-    processNextScriptFetchJobIfNeeded();
+    script()->loadAndEvaluateModule(moduleURL, credentials, WTFMove(completionHandler));
 }
 
 MessagePortChannelProvider& WorkletGlobalScope::messagePortChannelProvider()

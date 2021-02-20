@@ -29,9 +29,11 @@
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventTarget.h"
+#include "FetchRequestCredentials.h"
 #include "MessagePort.h"
 #include "PostMessageOptions.h"
 #include "WorkerScriptLoaderClient.h"
+#include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
@@ -55,6 +57,8 @@ class Worker final : public AbstractWorker, public ActiveDOMObject, private Work
     WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
     struct Options {
+        WorkerType type;
+        FetchRequestCredentials credentials;
         String name;
     };
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, const Options&);
@@ -78,6 +82,8 @@ public:
     void createRTCRtpScriptTransformer(const String&, TransferredMessagePort, RTCRtpScriptTransform&);
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 #endif
+
+    WorkerType type() const { return m_type; }
 
 private:
     explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, const Options&);
@@ -112,6 +118,8 @@ private:
 #if ENABLE(WEB_RTC)
     HashSet<String> m_transformers;
 #endif
+    WorkerType m_type { WorkerType::Classic };
+    FetchRequestCredentials m_credentials { FetchRequestCredentials::SameOrigin };
 };
 
 } // namespace WebCore

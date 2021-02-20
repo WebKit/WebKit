@@ -615,7 +615,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_documentCreationTime(MonotonicTime::now())
 #endif
     , m_scriptRunner(makeUnique<ScriptRunner>(*this))
-    , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this))
+    , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::Document))
 #if ENABLE(XSLT)
     , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
 #endif

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'r'. import call expects exactly one argument.
 
-FAIL Base URL in module dedicated workers: import assert_unreached: Got error event Reached unreachable code
+PASS Base URL in module dedicated workers: import
 

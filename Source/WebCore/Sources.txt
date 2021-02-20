@@ -640,6 +640,7 @@ bindings/js/StructuredClone.cpp
 bindings/js/WebCoreJITOperations.cpp
 bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
+bindings/js/WorkerModuleScriptLoader.cpp
 bindings/js/WindowProxy.cpp
 bindings/js/WritableStream.cpp
 bridge/IdentifierRep.cpp

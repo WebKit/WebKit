@@ -26,7 +26,10 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "FetchRequestCredentials.h"
 #include "WorkerOrWorkletThread.h"
+#include "WorkerRunLoop.h"
+#include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
 #include <wtf/URL.h>
@@ -63,6 +66,8 @@ public:
     bool shouldBypassMainWorldContentSecurityPolicy;
     MonotonicTime timeOrigin;
     ReferrerPolicy referrerPolicy;
+    WorkerType workerType;
+    FetchRequestCredentials credentials;
     Settings::Values settingsValues;
 
     WorkerParameters isolatedCopy() const;

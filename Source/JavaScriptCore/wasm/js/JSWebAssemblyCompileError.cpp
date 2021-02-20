@@ -41,7 +41,7 @@ JSWebAssemblyCompileError* JSWebAssemblyCompileError::create(JSGlobalObject* glo
 }
 
 JSWebAssemblyCompileError::JSWebAssemblyCompileError(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, ErrorType::Error)
 {
 }
 

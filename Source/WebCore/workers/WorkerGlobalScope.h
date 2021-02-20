@@ -123,6 +123,8 @@ public:
 
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
+    FetchOptions::Credentials credentials() const { return m_credentials; }
+
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
@@ -163,8 +165,6 @@ private:
     mutable RefPtr<WorkerLocation> m_location;
     mutable RefPtr<WorkerNavigator> m_navigator;
 
-    std::unique_ptr<WorkerOrWorkletScriptController> m_script;
-
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
 
@@ -187,6 +187,8 @@ private:
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     ReferrerPolicy m_referrerPolicy;
     Settings::Values m_settingsValues;
+    WorkerType m_workerType;
+    FetchOptions::Credentials m_credentials;
 };
 
 } // namespace WebCore
