@@ -69,7 +69,7 @@
 
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
-    auto update = !paymentMethodUpdate ? adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]) : nil;
+    auto update = paymentMethodUpdate ? retainPtr(paymentMethodUpdate) : adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
     _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
     std::exchange(_didSelectPaymentMethodCompletion, nil)(update.get());
 }
@@ -81,7 +81,7 @@
 }
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
-    auto update = !shippingContactUpdate ? adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]) : nil;
+    auto update = shippingContactUpdate ? retainPtr(shippingContactUpdate) : adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]);
     _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
     _shippingMethods = adoptNS([[update shippingMethods] copy]);
     std::exchange(_didSelectShippingContactCompletion, nil)(update.get());
@@ -89,7 +89,7 @@
 
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate
 {
-    auto update = !shippingMethodUpdate ? adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]) : nil;
+    auto update = shippingMethodUpdate ? retainPtr(shippingMethodUpdate) : adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
     _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
     std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
 }

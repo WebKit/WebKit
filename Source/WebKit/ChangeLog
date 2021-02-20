@@ -1,3 +1,12 @@
+2021-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix regression from r273194 that was spotted by Darin Adler after landing.
+
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Crash under Decoder::Decoder()
