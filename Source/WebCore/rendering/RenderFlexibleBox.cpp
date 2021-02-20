@@ -544,6 +544,11 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
     return std::max(0_lu, computedValues.m_extent - borderPaddingAndScrollbar);
 }
 
+static bool childHasAspectRatio(const RenderBox& child)
+{
+    return child.hasAspectRatio() || child.style().hasAspectRatio();
+}
+
 Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
 {
     // If we have a horizontal flow, that means the main size is the width.
@@ -570,7 +575,7 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const Rend
     // our logical width is auto, we can just use our cached value. So let's do
     // that here. (Compare code in LayoutBlock::computePreferredLogicalWidths)
     LayoutUnit borderAndPadding = child.borderAndPaddingLogicalWidth();
-    if (child.style().logicalWidth().isAuto() && !child.hasAspectRatio()) {
+    if (child.style().logicalWidth().isAuto() && !childHasAspectRatio(child)) {
         if (size.isMinContent())
             return child.minPreferredLogicalWidth() - borderAndPadding;
         if (size.isMaxContent())
@@ -740,9 +745,9 @@ LayoutPoint RenderFlexibleBox::flowAwareLocationForChild(const RenderBox& child)
 
 bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child) const
 {
-    if (!child.hasAspectRatio())
+    if (!childHasAspectRatio(child))
         return false;
-    if (!child.intrinsicSize().height()) {
+    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
         // We can't compute a ratio in this case.
         return false;
     }
@@ -752,8 +757,7 @@ bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child) const
     
 LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const
 {
-    ASSERT(child.hasAspectRatio());
-    ASSERT(child.intrinsicSize().height());
+    ASSERT(childHasAspectRatio(child));
 
     auto adjustForBoxSizing = [this] (const RenderBox& box, Length length) -> LayoutUnit {
         ASSERT(length.isFixed());
@@ -783,7 +787,13 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
     }
 
     const LayoutSize& childIntrinsicSize = child.intrinsicSize();
-    double ratio = childIntrinsicSize.width().toFloat() / childIntrinsicSize.height().toFloat();
+    double ratio;
+    if (child.style().aspectRatioType() == AspectRatioType::Ratio || (child.style().aspectRatioType() == AspectRatioType::AutoAndRatio && childIntrinsicSize.isEmpty()))
+        ratio = child.style().aspectRatioWidth() / child.style().aspectRatioHeight();
+    else {
+        ASSERT(childIntrinsicSize.height());
+        ratio = childIntrinsicSize.width().toFloat() / childIntrinsicSize.height().toFloat();
+    }
     if (isHorizontalFlow())
         return LayoutUnit(crossSize.value() * ratio);
     return LayoutUnit(crossSize.value() / ratio);
@@ -825,7 +835,7 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 
 bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
 {
-    if (!child.hasAspectRatio() || !child.intrinsicSize().height())
+    if (!childHasAspectRatio(child) || !child.intrinsicSize().height())
         return false;
 
     // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
@@ -1591,7 +1601,7 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
         return false;
 
     // Aspect ratio is properly handled by RenderReplaced during layout.
-    if (child.isRenderReplaced() && child.hasAspectRatio())
+    if (child.isRenderReplaced() && childHasAspectRatio(child))
         return false;
 
     return child.style().logicalHeight().isAuto();
