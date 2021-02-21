@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "APIData.h"
 #import "ObjCObjectGraph.h"
+#import "WKBrowsingContextHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKBundleInitialize.h"
 #import "WKWebProcessBundleParameters.h"
@@ -266,7 +267,7 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
 NSSet* InjectedBundle::classesForCoder()
 {
     if (!m_classesForCoder)
-        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
+        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], [WKBrowsingContextHandle class], nil];
 
     return m_classesForCoder.get();
 }

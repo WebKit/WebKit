@@ -1,3 +1,27 @@
+2021-02-20  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: expose the WKBrowsingContextHandle associated with Web Inspector's page
+        https://bugs.webkit.org/show_bug.cgi?id=222226
+
+        Reviewed by Timothy Hatcher.
+
+        In order to implement browser.devtools.inspectedWindow.tabId for Web Extensions,
+        we need a way to do a reverse lookup of the tabId using the current browsing context
+        controller (WKWebProcessPlugInBrowserContextController) in the injected bundle.
+
+        This patch exposes the browsing context handle for the underlying WKWebView that
+        hosts the inspector page. Clients can use this to precompute a tabId for each
+        inspector browsing context that may be encountered by injected bundle code.
+
+        * UIProcess/API/Cocoa/_WKInspectorPrivate.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector handle]): Added.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::classesForCoder):
+        Drive-by, make it possible to use WKBrowsingContextHandle in injected bundle parameters.
+        This is easy because it conforms to NSSecureCoding and is simply a pageId + frameId.
+
 2021-02-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Image should report the embedded accessibility description if available
