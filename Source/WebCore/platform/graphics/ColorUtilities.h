@@ -52,11 +52,11 @@ template<typename T> T convertFloatAlphaTo(float);
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
 
-template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
-template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType&, float overrideAlpha);
+template<typename ColorType> constexpr ColorType colorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
+template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
-template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
-template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType&, float overrideAlpha);
+template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
+template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
@@ -107,21 +107,21 @@ template<typename ColorType, typename Functor> ColorType colorByModifingEachNonA
     return { copy[0], copy[1], copy[2], copy[3] };
 }
 
-template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
+template<typename ColorType> constexpr ColorType colorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     auto copy = color;
     copy.alpha = convertByteAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
-template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
+template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
 {
     auto copy = color;
     copy.alpha = convertFloatAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
-template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
+template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 
@@ -135,7 +135,7 @@ template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha
     return makeFromComponents<ColorType>(copy);
 }
 
-template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
+template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 

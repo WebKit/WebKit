@@ -36,65 +36,65 @@
 
 namespace WebCore {
 
-static String serializationForCSS(const A98RGB<float>&);
-static String serializationForHTML(const A98RGB<float>&);
-static String serializationForRenderTreeAsText(const A98RGB<float>&);
+static String serializationForCSS(const A98RGB<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const A98RGB<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const A98RGB<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const DisplayP3<float>&);
-static String serializationForHTML(const DisplayP3<float>&);
-static String serializationForRenderTreeAsText(const DisplayP3<float>&);
+static String serializationForCSS(const DisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const DisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const DisplayP3<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const LCHA<float>&);
-static String serializationForHTML(const LCHA<float>&);
-static String serializationForRenderTreeAsText(const LCHA<float>&);
+static String serializationForCSS(const LCHA<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const LCHA<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const LCHA<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const Lab<float>&);
-static String serializationForHTML(const Lab<float>&);
-static String serializationForRenderTreeAsText(const Lab<float>&);
+static String serializationForCSS(const Lab<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const Lab<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const Lab<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const LinearSRGBA<float>&);
-static String serializationForHTML(const LinearSRGBA<float>&);
-static String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
+static String serializationForCSS(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const ProPhotoRGB<float>&);
-static String serializationForHTML(const ProPhotoRGB<float>&);
-static String serializationForRenderTreeAsText(const ProPhotoRGB<float>&);
+static String serializationForCSS(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const Rec2020<float>&);
-static String serializationForHTML(const Rec2020<float>&);
-static String serializationForRenderTreeAsText(const Rec2020<float>&);
+static String serializationForCSS(const Rec2020<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const Rec2020<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const Rec2020<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const SRGBA<float>&);
-static String serializationForHTML(const SRGBA<float>&);
-static String serializationForRenderTreeAsText(const SRGBA<float>&);
+static String serializationForCSS(const SRGBA<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const SRGBA<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const SRGBA<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(SRGBA<uint8_t>);
-static String serializationForHTML(SRGBA<uint8_t>);
-static String serializationForRenderTreeAsText(SRGBA<uint8_t>);
+static String serializationForCSS(SRGBA<uint8_t>, bool useColorFunctionSerialization);
+static String serializationForHTML(SRGBA<uint8_t>, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(SRGBA<uint8_t>, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const XYZA<float, WhitePoint::D50>&);
-static String serializationForHTML(const XYZA<float, WhitePoint::D50>&);
-static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&);
+static String serializationForCSS(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
 
 
 String serializationForCSS(const Color& color)
 {
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForCSS(underlyingColor);
+    return color.callOnUnderlyingType([&] (auto underlyingColor) {
+        return serializationForCSS(underlyingColor, color.usesColorFunctionSerialization());
     });
 }
 
 String serializationForHTML(const Color& color)
 {
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForHTML(underlyingColor);
+    return color.callOnUnderlyingType([&] (auto underlyingColor) {
+        return serializationForHTML(underlyingColor, color.usesColorFunctionSerialization());
     });
 }
 
 String serializationForRenderTreeAsText(const Color& color)
 {
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForRenderTreeAsText(underlyingColor);
+    return color.callOnUnderlyingType([&] (auto underlyingColor) {
+        return serializationForRenderTreeAsText(underlyingColor, color.usesColorFunctionSerialization());
     });
 }
 
@@ -125,53 +125,70 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
     return ""_s;
 }
 
-template<typename ColorType> static String serialization(const ColorType& color)
+template<typename ColorType> static String serializationUsingColorFunction(const ColorType& color)
 {
+    static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
+
     auto [c1, c2, c3, alpha] = color;
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, ')');
     return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
 }
 
+static String serializationUsingColorFunction(const Lab<float>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    if (WTF::areEssentiallyEqual(alpha, 1.0f))
+        return makeString("color(", serialization(ColorSpaceFor<Lab<float>>), ' ', c1, "% ", c2, ' ', c3, ')');
+    return makeString("color(", serialization(ColorSpaceFor<Lab<float>>), ' ', c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+}
+
+static String serializationUsingColorFunction(const SRGBA<uint8_t>& color)
+{
+    return serializationUsingColorFunction(convertColor<SRGBA<float>>(color));
+}
+
 // MARK: A98RGB<float> overloads
 
-String serializationForCSS(const A98RGB<float>& color)
+String serializationForCSS(const A98RGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const A98RGB<float>& color)
+String serializationForHTML(const A98RGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const A98RGB<float>& color)
+String serializationForRenderTreeAsText(const A98RGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: DisplayP3<float> overloads
 
-String serializationForCSS(const DisplayP3<float>& color)
+String serializationForCSS(const DisplayP3<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const DisplayP3<float>& color)
+String serializationForHTML(const DisplayP3<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const DisplayP3<float>& color)
+String serializationForRenderTreeAsText(const DisplayP3<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: LCHA<float> overloads
 
-String serializationForCSS(const LCHA<float>& color)
+String serializationForCSS(const LCHA<float>& color, bool useColorFunctionSerialization)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
 
     auto [c1, c2, c3, alpha] = color;
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
@@ -179,21 +196,23 @@ String serializationForCSS(const LCHA<float>& color)
     return makeString("lch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
 }
 
-String serializationForHTML(const LCHA<float>& color)
+String serializationForHTML(const LCHA<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(color);
+    return serializationForCSS(color, useColorFunctionSerialization);
 }
 
-String serializationForRenderTreeAsText(const LCHA<float>& color)
+String serializationForRenderTreeAsText(const LCHA<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(color);
+    return serializationForCSS(color, useColorFunctionSerialization);
 }
 
 // MARK: Lab<float> overloads
 
-String serializationForCSS(const Lab<float>& color)
+String serializationForCSS(const Lab<float>& color, bool useColorFunctionSerialization)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
 
     auto [c1, c2, c3, alpha] = color;
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
@@ -201,82 +220,82 @@ String serializationForCSS(const Lab<float>& color)
     return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
 }
 
-String serializationForHTML(const Lab<float>& color)
+String serializationForHTML(const Lab<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(color);
+    return serializationForCSS(color, useColorFunctionSerialization);
 }
 
-String serializationForRenderTreeAsText(const Lab<float>& color)
+String serializationForRenderTreeAsText(const Lab<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(color);
+    return serializationForCSS(color, useColorFunctionSerialization);
 }
 
 // MARK: LinearSRGBA<float> overloads
 
-String serializationForCSS(const LinearSRGBA<float>& color)
+String serializationForCSS(const LinearSRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const LinearSRGBA<float>& color)
+String serializationForHTML(const LinearSRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
+String serializationForRenderTreeAsText(const LinearSRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: ProPhotoRGB<float> overloads
 
-String serializationForCSS(const ProPhotoRGB<float>& color)
+String serializationForCSS(const ProPhotoRGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const ProPhotoRGB<float>& color)
+String serializationForHTML(const ProPhotoRGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const ProPhotoRGB<float>& color)
+String serializationForRenderTreeAsText(const ProPhotoRGB<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: Rec2020<float> overloads
 
-String serializationForCSS(const Rec2020<float>& color)
+String serializationForCSS(const Rec2020<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const Rec2020<float>& color)
+String serializationForHTML(const Rec2020<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const Rec2020<float>& color)
+String serializationForRenderTreeAsText(const Rec2020<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: SRGBA<float> overloads
 
-String serializationForCSS(const SRGBA<float>& color)
+String serializationForCSS(const SRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const SRGBA<float>& color)
+String serializationForHTML(const SRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const SRGBA<float>& color)
+String serializationForRenderTreeAsText(const SRGBA<float>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: SRGBA<uint8_t> overloads
@@ -298,8 +317,11 @@ static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
     return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
 }
 
-String serializationForCSS(SRGBA<uint8_t> color)
+String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
 {
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
     auto [red, green, blue, alpha] = color;
     switch (alpha) {
     case 0:
@@ -311,16 +333,22 @@ String serializationForCSS(SRGBA<uint8_t> color)
     }
 }
 
-String serializationForHTML(SRGBA<uint8_t> color)
+String serializationForHTML(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
 {
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
     auto [red, green, blue, alpha] = color;
     if (alpha == 0xFF)
         return makeString('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
     return serializationForCSS(color);
 }
 
-String serializationForRenderTreeAsText(SRGBA<uint8_t> color)
+String serializationForRenderTreeAsText(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
 {
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
     auto [red, green, blue, alpha] = color;
     if (alpha < 0xFF)
         return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
@@ -329,19 +357,19 @@ String serializationForRenderTreeAsText(SRGBA<uint8_t> color)
 
 // MARK: XYZA<float, WhitePoint::D50> overloads
 
-String serializationForCSS(const XYZA<float, WhitePoint::D50>& color)
+String serializationForCSS(const XYZA<float, WhitePoint::D50>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForHTML(const XYZA<float, WhitePoint::D50>& color)
+String serializationForHTML(const XYZA<float, WhitePoint::D50>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
-String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color)
+String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color, bool)
 {
-    return serialization(color);
+    return serializationUsingColorFunction(color);
 }
 
 }

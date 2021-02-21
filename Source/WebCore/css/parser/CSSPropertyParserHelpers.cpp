@@ -1371,7 +1371,7 @@ template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParse
     if (!alpha)
         return { };
 
-    return ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), static_cast<float>(*alpha) };
+    return { ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
@@ -1403,7 +1403,7 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
 
     auto normalizedLightness = std::max(0.0, channels[0]);
 
-    return Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) };
+    return { Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
@@ -1433,7 +1433,7 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
     if (!alpha)
         return { };
 
-    return XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) };
+    return { XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
@@ -1476,6 +1476,7 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     if (!args.atEnd())
         return { };
 
+    ASSERT(color.usesColorFunctionSerialization());
     return color;
 }
 

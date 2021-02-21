@@ -89,8 +89,8 @@ Color::Color(CGColorRef color)
 {
 }
 
-Color::Color(CGColorRef color, SemanticTag tag)
-    : Color(roundAndClampToSRGBALossy(color), tag)
+Color::Color(CGColorRef color, OptionSet<Flags> flags)
+    : Color(roundAndClampToSRGBALossy(color), flags)
 {
 }
 

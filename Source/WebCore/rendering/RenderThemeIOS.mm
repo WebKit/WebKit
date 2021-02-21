@@ -1391,7 +1391,7 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
 static inline Optional<Color> systemColorFromCSSValueIDSelector(CSSValueIDAndSelector idAndSelector)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), idAndSelector.selector))
-        return Color { color.CGColor, Color::Semantic };
+        return Color { color.CGColor, Color::Flags::Semantic };
     return WTF::nullopt;
 }
 
@@ -1409,7 +1409,7 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
 
     if (auto selector = cssColorToSelector()) {
         if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
-            return Color(color.CGColor, Color::Semantic);
+            return Color { color.CGColor, Color::Flags::Semantic };
     }
     return WTF::nullopt;
 }

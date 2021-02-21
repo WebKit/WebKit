@@ -108,7 +108,7 @@ Color colorFromNSColor(NSColor *color)
 
 Color semanticColorFromNSColor(NSColor *color)
 {
-    return Color(makeSimpleColorFromNSColor(color), Color::Semantic);
+    return Color(makeSimpleColorFromNSColor(color), Color::Flags::Semantic);
 }
 
 NSColor *nsColor(const Color& color)

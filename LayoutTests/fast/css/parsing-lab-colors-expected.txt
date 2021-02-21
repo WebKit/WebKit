@@ -1,4 +1,4 @@
-Test the parsing of lab, lch and gray colors.
+Test the parsing of lab(...), lch(...) and color(lab ...) colors.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -40,26 +40,26 @@ PASS computedStyle("background-color", "lch(10% 20 20 / 110%)") is "lch(10% 20 2
 PASS computedStyle("background-color", "lch(10% 20 -700)") is "lch(10% 20 20)"
 
 color(lab )
-PASS computedStyle("background-color", "color(lab 0% 0 0)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 0% 0 0 / 1)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 0% 0 0 / 0.5)") is "lab(0% 0 0 / 0.5)"
-PASS computedStyle("background-color", "color(lab 20% 0 10/0.5)") is "lab(20% 0 10 / 0.5)"
-PASS computedStyle("background-color", "color(lab 20% 0 10/50%)") is "lab(20% 0 10 / 0.5)"
-PASS computedStyle("background-color", "color(lab 400% 0 10/50%)") is "lab(400% 0 10 / 0.5)"
-PASS computedStyle("background-color", "color(lab 50% -160 160)") is "lab(50% -160 160)"
-PASS computedStyle("background-color", "color(lab 50% -200 200)") is "lab(50% -200 200)"
-PASS computedStyle("background-color", "color(lab 0% 0 0 / -10%)") is "lab(0% 0 0 / 0)"
-PASS computedStyle("background-color", "color(lab 0% 0 0 / 110%)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 0% 0 0 / 300%)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 50% -200)") is "lab(50% -200 0)"
-PASS computedStyle("background-color", "color(lab 50%)") is "lab(50% 0 0)"
-PASS computedStyle("background-color", "color(lab)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 50% -200 / 0.5)") is "lab(50% -200 0 / 0.5)"
-PASS computedStyle("background-color", "color(lab 50% / 0.5)") is "lab(50% 0 0 / 0.5)"
-PASS computedStyle("background-color", "color(lab / 0.5)") is "lab(0% 0 0 / 0.5)"
-PASS computedStyle("background-color", "color(lab -40% 0 0)") is "lab(0% 0 0)"
-PASS computedStyle("background-color", "color(lab 50% -20 0)") is "lab(50% -20 0)"
-PASS computedStyle("background-color", "color(lab 50% 0 -20)") is "lab(50% 0 -20)"
+PASS computedStyle("background-color", "color(lab 0% 0 0)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 0% 0 0 / 1)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 0% 0 0 / 0.5)") is "color(lab 0% 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab 20% 0 10/0.5)") is "color(lab 20% 0 10 / 0.5)"
+PASS computedStyle("background-color", "color(lab 20% 0 10/50%)") is "color(lab 20% 0 10 / 0.5)"
+PASS computedStyle("background-color", "color(lab 400% 0 10/50%)") is "color(lab 400% 0 10 / 0.5)"
+PASS computedStyle("background-color", "color(lab 50% -160 160)") is "color(lab 50% -160 160)"
+PASS computedStyle("background-color", "color(lab 50% -200 200)") is "color(lab 50% -200 200)"
+PASS computedStyle("background-color", "color(lab 0% 0 0 / -10%)") is "color(lab 0% 0 0 / 0)"
+PASS computedStyle("background-color", "color(lab 0% 0 0 / 110%)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 0% 0 0 / 300%)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -200)") is "color(lab 50% -200 0)"
+PASS computedStyle("background-color", "color(lab 50%)") is "color(lab 50% 0 0)"
+PASS computedStyle("background-color", "color(lab)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -200 / 0.5)") is "color(lab 50% -200 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab 50% / 0.5)") is "color(lab 50% 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab / 0.5)") is "color(lab 0% 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab -40% 0 0)") is "color(lab 0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -20 0)") is "color(lab 50% -20 0)"
+PASS computedStyle("background-color", "color(lab 50% 0 -20)") is "color(lab 50% 0 -20)"
 
 Test invalid values
 PASS computedStyle("background-color", "lab(0 0 0)") is "rgba(0, 0, 0, 0)"
