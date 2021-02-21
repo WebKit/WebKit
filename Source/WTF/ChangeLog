@@ -1,3 +1,15 @@
+2021-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Re-enable Paint Timing
+        https://bugs.webkit.org/show_bug.cgi?id=211736
+
+        Reviewed by Noam Rosenthal.
+
+        Now that bug 222245 is fixed in r273220, re-enable Paint Timing
+        (aka First Contentful Paint.)
+
+        * Scripts/Preferences/WebPreferencesEfxperimental.yaml:
+
 2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Turn the fraud prevention on by default
