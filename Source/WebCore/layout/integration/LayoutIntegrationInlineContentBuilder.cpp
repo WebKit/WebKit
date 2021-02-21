@@ -228,12 +228,11 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
         auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
-        // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
+        // Inline boxes are relative to the line box while final runs need to be relative to the parent box
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
-        // Line runs are margin box based, let's convert them to border box.
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
-        runRect.moveBy({ lineBoxLogicalRect.left() + std::max(geometry.marginStart(), 0_lu), lineBoxLogicalRect.top() + geometry.marginBefore() });
+        runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
@@ -248,8 +247,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         auto lineIndex = lineRun.lineIndex();
         auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
         auto runRect = FloatRect { lineRun.logicalRect() };
-        // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
-        // FIXME: Shouldn't we just leave them be relative to the line box?
         runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
@@ -378,7 +375,7 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
                 continue;
             auto& layoutBox = inlineLevelBox->layoutBox();
             auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-            auto inlineBoxRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
+            auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
             inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox) });
