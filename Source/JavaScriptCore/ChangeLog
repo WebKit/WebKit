@@ -1,3 +1,21 @@
+2021-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove vm.topCallFrame storing in Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=222162
+
+        Reviewed by Mark Lam.
+
+        This patch removes vm.topCallFrame storing in the Baseline JIT for ports that can USE(BUILTIN_FRAME_ADDRESS).
+        Also refactored some CommonSlowPath functions so that they can start using __builtin_frame_address later
+        instead of requiring that CallFrame be passed in.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iteratorOpenTryFastImpl):
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        (JSC::iteratorNextTryFastImpl):
+
 2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JS Modules in Workers
