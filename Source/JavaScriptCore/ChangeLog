@@ -1,5 +1,19 @@
 2021-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSInternalPromise::then can fail if execution is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=222244
+
+        Reviewed by Mark Lam.
+
+        JSInternalPromise::then assumed that call's result is always JSInternalPromise.
+        But this is wrong if termination exception is thrown. In that case, this call fails.
+        This patch makes it robust against this behavior.
+
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+
+2021-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove vm.topCallFrame storing in Baseline JIT
         https://bugs.webkit.org/show_bug.cgi?id=222162
 
