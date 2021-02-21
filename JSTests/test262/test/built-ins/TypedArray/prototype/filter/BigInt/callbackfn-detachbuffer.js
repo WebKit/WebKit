@@ -1,4 +1,5 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
+// Copyright (C) 2021 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.filter
@@ -22,11 +23,14 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var sample = new TA(2);
 
   sample.filter(function() {
+    var flag = true;
     if (loops === 0) {
       $DETACHBUFFER(sample.buffer);
+    } else {
+      flag = false;
     }
     loops++;
-    return true;
+    return flag;
   });
 
   assert.sameValue(loops, 2);
