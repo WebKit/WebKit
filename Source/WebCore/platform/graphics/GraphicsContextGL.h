@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "MediaPlayer.h"
 #include "PlatformLayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -1306,7 +1307,7 @@ public:
     // Returns interface for CV interaction if the functionality is present.
     virtual GraphicsContextGLCV* asCV() = 0;
 #endif
-
+    virtual bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 

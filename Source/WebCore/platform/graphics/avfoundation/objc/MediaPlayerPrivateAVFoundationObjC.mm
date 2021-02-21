@@ -2388,20 +2388,13 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+CVPixelBufferRef MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
 {
-    ASSERT(context);
-
     updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
-        return false;
+        return nullptr;
 
-    auto contextCV = context->asCV();
-    if (!contextCV)
-        return false;
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyPixelBufferToTexture(m_lastPixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+    return m_lastPixelBuffer.get();
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

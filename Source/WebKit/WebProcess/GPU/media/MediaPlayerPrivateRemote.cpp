@@ -848,11 +848,13 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext&, cons
     notImplemented();
 }
 
+#if !USE(AVFOUNDATION)
 bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
     notImplemented();
     return false;
 }
+#endif
 
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {

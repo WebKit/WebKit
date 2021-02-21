@@ -70,6 +70,8 @@ public:
     void synthesizeGLError(GCGLenum error) final;
     GCGLenum getError() final;
 
+    bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
     void setFailNextGPUStatusCheck() final;
     bool moveErrorsToSyntheticErrorList() final;

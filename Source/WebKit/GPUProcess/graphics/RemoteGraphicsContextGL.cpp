@@ -34,7 +34,12 @@
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+
+#if USE(AVFOUNDATION)
+#include <WebCore/GraphicsContextGLCV.h>
+#endif
 
 namespace WebKit {
 
@@ -58,7 +63,8 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 #endif
 
 RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
-    : m_streamConnection(IPC::StreamServerConnection<RemoteGraphicsContextGL>::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
+    : m_gpuConnectionToWebProcess(makeWeakPtr(gpuConnectionToWebProcess))
+    , m_streamConnection(IPC::StreamServerConnection<RemoteGraphicsContextGL>::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(makeRef(renderingBackend))
 {
@@ -199,6 +205,54 @@ void RemoteGraphicsContextGL::paintImageDataToImageBuffer(RefPtr<WebCore::ImageD
         return isFinished;
     });
     completionHandler();
+}
+
+void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifier mediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if USE(AVFOUNDATION)
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
+
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto getPixelBuffer = [&] {
+        if (!m_gpuConnectionToWebProcess)
+            return;
+
+        if (auto mediaPlayer = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier))
+            pixelBuffer = mediaPlayer->pixelBufferForCurrentTime();
+    };
+
+    if (isMainThread())
+        getPixelBuffer();
+    else
+        callOnMainThreadAndWait(WTFMove(getPixelBuffer));
+
+    if (!pixelBuffer) {
+        completionHandler(false);
+        return;
+    }
+
+    auto contextCV = m_context->asCV();
+    if (!contextCV) {
+        completionHandler(false);
+        return;
+    }
+
+    completionHandler(contextCV->copyPixelBufferToTexture(pixelBuffer.get(), texture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY)));
+#else
+    UNUSED_VARIABLE(mediaPlayerIdentifier);
+    UNUSED_VARIABLE(texture);
+    UNUSED_VARIABLE(target);
+    UNUSED_VARIABLE(level);
+    UNUSED_VARIABLE(internalFormat);
+    UNUSED_VARIABLE(format);
+    UNUSED_VARIABLE(type);
+    UNUSED_VARIABLE(premultiplyAlpha);
+    UNUSED_VARIABLE(flipY);
+
+    notImplemented();
+    completionHandler(false);
+#endif
 }
 
 } // namespace WebKit

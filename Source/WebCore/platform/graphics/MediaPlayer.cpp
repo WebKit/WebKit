@@ -1006,10 +1006,21 @@ void MediaPlayer::paint(GraphicsContext& p, const FloatRect& r)
     m_private->paint(p, r);
 }
 
+#if !USE(AVFOUNDATION)
+
 bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
     return m_private->copyVideoTextureToPlatformTexture(context, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
+
+#else
+
+CVPixelBufferRef MediaPlayer::pixelBufferForCurrentTime()
+{
+    return m_private->pixelBufferForCurrentTime();
+}
+
+#endif
 
 RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
 {

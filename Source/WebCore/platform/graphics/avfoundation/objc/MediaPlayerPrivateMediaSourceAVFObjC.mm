@@ -623,7 +623,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+CVPixelBufferRef MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
     // a decompression session, even if that means the native video can't also be displayed
@@ -633,18 +633,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(Gra
         acceleratedRenderingStateChanged();
     }
 
-    ASSERT(context);
-
     if (updateLastPixelBuffer()) {
         if (!m_lastPixelBuffer)
-            return false;
+            return nullptr;
     }
-    auto contextCV = context->asCV();
-    if (!contextCV)
-        return false;
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyPixelBufferToTexture(m_lastPixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGLCV::FlipY(flipY));
+
+    return m_lastPixelBuffer.get();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const

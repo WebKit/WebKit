@@ -164,6 +164,18 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
     }
 }
 
+bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+{
+    bool result = false;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromMedia(mediaPlayer.identifier(), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY), Messages::RemoteGraphicsContextGL::CopyTextureFromMedia::Reply(result));
+    if (!sendResult) {
+        markContextLost();
+        return false;
+    }
+
+    return result;
+}
+
 void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
 {
     if (!isContextLost()) {

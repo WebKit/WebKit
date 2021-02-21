@@ -1,3 +1,27 @@
+2021-02-20  Peng Liu  <peng.liu6@apple.com>
+
+        Video elements do not work as sources for TexImage2D calls in GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=218184
+
+        Reviewed by Jer Noble.
+
+        Add an IPC message `RemoteGraphicsContextGL::CopyTextureFromMedia` to implement
+        `RemoteGraphicsContextGLProxy::copyTextureFromMedia()` in the Web process.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        We should use `m_gpuConnectionToWebProcess` in the main thread only.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
 2021-02-20  Youenn Fablet  <youenn@apple.com>
 
         Add support for adding/removing/clearing mock devices in GPUProcess

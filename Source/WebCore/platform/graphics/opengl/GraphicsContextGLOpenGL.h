@@ -86,6 +86,7 @@ class ExtensionsGLOpenGL;
 class HostWindow;
 class ImageBuffer;
 class ImageData;
+class MediaPlayer;
 #if USE(TEXTURE_MAPPER)
 class TextureMapperGCGLPlatformLayer;
 #endif
@@ -464,6 +465,8 @@ public:
 
     RefPtr<ImageData> readRenderingResultsForPainting();
     RefPtr<ImageData> readCompositedResultsForPainting();
+
+    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);

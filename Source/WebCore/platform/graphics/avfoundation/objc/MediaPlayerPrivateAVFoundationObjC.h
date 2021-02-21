@@ -254,7 +254,7 @@ private:
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     void waitForVideoOutputMediaDataWillChange();
 
-    bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+    CVPixelBufferRef pixelBufferForCurrentTime() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;
