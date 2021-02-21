@@ -184,6 +184,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     jobData.clientCreationURL = context->url();
     jobData.topOrigin = context->topOrigin().data();
+    jobData.workerType = options.type;
     jobData.type = ServiceWorkerJobType::Register;
     jobData.registrationOptions = options;
 
@@ -205,7 +206,7 @@ void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIde
     });
 }
 
-void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, RefPtr<DeferredPromise>&& promise)
+void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType workerType, RefPtr<DeferredPromise>&& promise)
 {
     ASSERT(!m_isStopped);
 
@@ -221,6 +222,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
     jobData.clientCreationURL = context.url();
     jobData.topOrigin = context.topOrigin().data();
+    jobData.workerType = workerType;
     jobData.type = ServiceWorkerJobType::Update;
     jobData.scopeURL = scopeURL;
     jobData.scriptURL = scriptURL;

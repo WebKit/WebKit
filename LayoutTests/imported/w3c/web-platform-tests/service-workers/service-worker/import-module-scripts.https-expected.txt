@@ -1,7 +1,7 @@
 
-FAIL Static import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
-FAIL Nested static import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
-FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
+PASS Static import.
+PASS Nested static import.
+PASS Static import and then dynamic import.
 PASS Dynamic import.
 PASS Nested dynamic import.
 PASS Dynamic import and then static import.
