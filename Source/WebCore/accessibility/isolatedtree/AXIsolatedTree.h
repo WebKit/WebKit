@@ -107,6 +107,7 @@ enum class AXPropertyName : uint16_t {
     DocumentURI,
     EditableAncestor,
     ElementRect,
+    EmbeddedImageDescription,
     EstimatedLoadingProgress,
     ExpandedTextValue,
     ExposesTitleUIElement,

@@ -94,6 +94,7 @@ public:
     RepetitionCount repetitionCount();
     String uti();
     String filenameExtension();
+    String accessibilityDescription();
     Optional<IntPoint> hotSpot();
     Optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
     bool hasDensityCorrectedSize() { return densityCorrectedSize().hasValue(); }
@@ -199,6 +200,7 @@ private:
     Optional<RepetitionCount> m_repetitionCount;
     Optional<String> m_uti;
     Optional<String> m_filenameExtension;
+    Optional<String> m_accessibilityDescription;
     Optional<Optional<IntPoint>> m_hotSpot;
 
     // Image metadata which is calculated from the first ImageFrame.

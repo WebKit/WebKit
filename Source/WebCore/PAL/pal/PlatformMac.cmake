@@ -18,6 +18,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cf/CoreAudioSPI.h
     spi/cf/CoreMediaSPI.h
     spi/cf/CoreTextSPI.h
+    spi/cf/MediaAccessibilitySPI.h
 
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h

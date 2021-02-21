@@ -2257,6 +2257,13 @@ String AccessibilityObject::rolePlatformDescription() const
 }
 #endif
 
+String AccessibilityObject::embeddedImageDescription() const
+{
+    if (!is<RenderImage>(renderer()))
+        return { };
+    return downcast<RenderImage>(renderer())->accessibilityDescription();
+}
+
 String AccessibilityObject::ariaLandmarkRoleDescription() const
 {
     switch (roleValue()) {

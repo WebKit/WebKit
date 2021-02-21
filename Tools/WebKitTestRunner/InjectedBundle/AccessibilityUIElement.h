@@ -195,7 +195,8 @@ public:
     JSRetainPtr<JSStringRef> documentURI();
     JSRetainPtr<JSStringRef> url();
     JSRetainPtr<JSStringRef> classList() const;
-
+    JSRetainPtr<JSStringRef> embeddedImageDescription() const;
+    
     // CSS3-speech properties.
     JSRetainPtr<JSStringRef> speakAs();
     

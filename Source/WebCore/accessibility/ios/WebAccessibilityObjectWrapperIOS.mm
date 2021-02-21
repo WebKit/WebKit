@@ -1820,6 +1820,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return self.axBackingObject->canSetValueAttribute();
 }
 
+- (NSString *)_accessibilityPhotoDescription
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    return self.axBackingObject->embeddedImageDescription();
+}
+
 - (NSString *)accessibilityLinkRelationshipType
 {
     if (![self _prepareAccessibilityCall])

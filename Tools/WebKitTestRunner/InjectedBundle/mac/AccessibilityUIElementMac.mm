@@ -1654,6 +1654,15 @@ bool AccessibilityUIElement::isCollapsed() const
     return false;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSString *value = descriptionOfValue(attributeValue(m_element.get(), @"AXEmbeddedImageDescription"), m_element.get());
+    return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", value);
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
 bool AccessibilityUIElement::isIgnored() const
 {
     BOOL result = NO;

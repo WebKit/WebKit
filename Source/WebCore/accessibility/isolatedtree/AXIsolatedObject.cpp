@@ -296,6 +296,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         object.selectedChildren(selectedChildren);
         setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
     }
+    
+    if (object.isImage())
+        setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
     AccessibilityChildrenVector visibleChildren;
     object.visibleChildren(visibleChildren);

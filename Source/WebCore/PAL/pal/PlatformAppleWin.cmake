@@ -8,6 +8,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cf/CFUtilitiesSPI.h
     spi/cf/CoreAudioSPI.h
     spi/cf/CoreMediaSPI.h
+    spi/cf/MediaAccessibilitySPI.h
 
     spi/win/CFNetworkSPIWin.h
     spi/win/CoreTextSPIWin.h

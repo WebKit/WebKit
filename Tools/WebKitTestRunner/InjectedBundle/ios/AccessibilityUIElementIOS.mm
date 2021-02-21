@@ -99,6 +99,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)_accessibilityTableAncestor;
 - (id)_accessibilityLandmarkAncestor;
 - (id)_accessibilityListAncestor;
+- (id)_accessibilityPhotoDescription;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1079,6 +1080,11 @@ bool AccessibilityUIElement::isVisible() const
 bool AccessibilityUIElement::isOffScreen() const
 {
     return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
+{
+    return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", [m_element _accessibilityPhotoDescription]);
 }
 
 bool AccessibilityUIElement::isCollapsed() const

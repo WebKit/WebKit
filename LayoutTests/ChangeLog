@@ -1,3 +1,17 @@
+2021-02-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Image should report the embedded accessibility description if available
+        https://bugs.webkit.org/show_bug.cgi?id=221875
+        <rdar://problem/74320584>
+
+        Reviewed by Jer Noble.
+
+        * accessibility/embedded-image-description-expected.txt: Added.
+        * accessibility/embedded-image-description.html: Added.
+        * accessibility/resources/embedded-image-description-example.jpg: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-02-20  Youenn Fablet  <youenn@apple.com>
 
         Add support for adding/removing/clearing mock devices in GPUProcess

@@ -399,6 +399,7 @@ public:
     bool accessibleNameDerivesFromContent() const override;
     String brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
     String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
+    String embeddedImageDescription() const override;
 
     // Abbreviations
     String expandedTextValue() const override { return String(); }

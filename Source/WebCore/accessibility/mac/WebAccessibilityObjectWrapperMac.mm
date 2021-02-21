@@ -543,6 +543,10 @@ using namespace WebCore;
 #define NSAccessibilityBrailleRoleDescriptionAttribute @"AXBrailleRoleDescription"
 #endif
 
+#ifndef NSAccessibilityEmbeddedImageDescriptionAttribute
+#define NSAccessibilityEmbeddedImageDescriptionAttribute @"AXEmbeddedImageDescription"
+#endif
+
 extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @implementation WebAccessibilityObjectWrapper
@@ -1318,6 +1322,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NSArray *buttonAttrs;
     static NSArray *scrollViewAttrs;
     static NSArray *incrementorAttrs;
+    static NSArray *imageAttrs;
     static NSArray *attributes = retainPtr(@[
         NSAccessibilityRoleAttribute,
         NSAccessibilitySubroleAttribute,
@@ -1588,6 +1593,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
         scrollViewAttrs = tempArray.leakRef();
     }
+    if (!imageAttrs) {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        [tempArray addObject:NSAccessibilityEmbeddedImageDescriptionAttribute];
+        [tempArray addObject:NSAccessibilityURLAttribute];
+        imageAttrs = tempArray.leakRef();
+    }
 
     NSArray *objectAttributes = attributes;
 
@@ -1597,8 +1608,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = webAreaAttrs;
     else if (backingObject->isTextControl())
         objectAttributes = textAttrs;
-    else if (backingObject->isLink() || backingObject->isImage())
+    else if (backingObject->isLink())
         objectAttributes = anchorAttrs;
+    else if (backingObject->isImage())
+        objectAttributes = imageAttrs;
     else if (backingObject->isTable() && backingObject->isExposable())
         objectAttributes = tableAttrs;
     else if (backingObject->isTableColumn())
@@ -2402,6 +2415,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self position];
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
+    if ([attributeName isEqualToString:NSAccessibilityEmbeddedImageDescriptionAttribute])
+        return backingObject->embeddedImageDescription();
 
     if ([attributeName isEqualToString:NSAccessibilityWindowAttribute]
         || [attributeName isEqualToString:NSAccessibilityTopLevelUIElementAttribute])

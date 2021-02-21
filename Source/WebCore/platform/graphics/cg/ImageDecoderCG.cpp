@@ -34,6 +34,7 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
+#include "MediaAccessibilitySoftLink.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include "UTIRegistry.h"
@@ -282,6 +283,17 @@ String ImageDecoderCG::uti() const
 String ImageDecoderCG::filenameExtension() const
 {
     return WebCore::preferredExtensionForImageType(uti());
+}
+
+String ImageDecoderCG::accessibilityDescription() const
+{
+    if (!MediaAccessibilityLibrary() || !canLoad_MediaAccessibility_MAImageCaptioningCopyCaptionWithSource())
+        return { };
+    
+    auto description = adoptCF(MAImageCaptioningCopyCaptionWithSource(m_nativeDecoder.get(), nullptr));
+    if (!description)
+        return { };
+    return description.get();
 }
 
 EncodedDataStatus ImageDecoderCG::encodedDataStatus() const

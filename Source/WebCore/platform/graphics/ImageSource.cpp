@@ -557,6 +557,11 @@ String ImageSource::filenameExtension()
     return metadata<String, (&ImageDecoder::filenameExtension)>(String(), &m_filenameExtension);
 }
 
+String ImageSource::accessibilityDescription()
+{
+    return metadata<String, (&ImageDecoder::accessibilityDescription)>(String(), &m_accessibilityDescription);
+}
+
 Optional<IntPoint> ImageSource::hotSpot()
 {
     return metadata<Optional<IntPoint>, (&ImageDecoder::hotSpot)>(WTF::nullopt, &m_hotSpot);

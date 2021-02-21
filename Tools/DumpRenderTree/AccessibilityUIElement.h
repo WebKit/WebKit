@@ -317,6 +317,10 @@ public:
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
 #endif // PLATFORM(IOS_FAMILY)
 
+#if PLATFORM(COCOA)
+    JSRetainPtr<JSStringRef> embeddedImageDescription() const;
+#endif
+    
 #if PLATFORM(MAC)
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions();
