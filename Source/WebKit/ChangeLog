@@ -1,3 +1,17 @@
+2021-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Update WebCoreArgumentCodersMac with some new additions
+        https://bugs.webkit.org/show_bug.cgi?id=222242
+        <rdar://problem/74562457>
+
+        Reviewed by Tim Horton.
+
+        Will be tested by new API Tests in a subsequent patch.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+
 2021-02-20  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: expose the WKBrowsingContextHandle associated with Web Inspector's page

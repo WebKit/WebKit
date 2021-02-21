@@ -42,10 +42,22 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebCoreArgumentCodersMacAdditions.h>
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetContext.h>
 #import <objc/runtime.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#endif
+
+#ifndef WEBCORE_ARGUMENTCODERS_MAC_DECODE_ADDITIONS
+#define WEBCORE_ARGUMENTCODERS_MAC_DECODE_ADDITIONS
+#endif
+
+#ifndef WEBCORE_ARGUMENTCODERS_MAC_ENCODE_ADDITIONS
+#define WEBCORE_ARGUMENTCODERS_MAC_ENCODE_ADDITIONS
 #endif
 
 namespace IPC {
@@ -209,6 +221,8 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
     auto dictionary = createSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullptrTypeRef());
     IPC::encode(encoder, dictionary.get());
 
+    WEBCORE_ARGUMENTCODERS_MAC_ENCODE_ADDITIONS
+
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
     encoder << resourceRequest.requester();
@@ -234,6 +248,8 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     auto nsURLRequest = createNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullptrTypeRef());
     if (!nsURLRequest)
         return false;
+
+    WEBCORE_ARGUMENTCODERS_MAC_DECODE_ADDITIONS
 
     resourceRequest = WebCore::ResourceRequest(nsURLRequest.get());
     
