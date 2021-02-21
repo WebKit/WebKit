@@ -3244,6 +3244,9 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!view()->isVisuallyNonEmpty() || view()->needsLayout())
         return;
 
+    if (!view()->hasContenfulDescendants())
+        return;
+
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
         return;
 
