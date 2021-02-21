@@ -1,3 +1,32 @@
+2021-02-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for adding/removing/clearing mock devices in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222174
+
+        Reviewed by Eric Carlson.
+
+        Make sure to forward mock device orders to GPU process so that it is kept in sync with UIProcess.
+        Covered by updated test.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::addMockMediaDevice):
+        (WebKit::GPUProcess::clearMockMediaDevices):
+        (WebKit::GPUProcess::removeMockMediaDevice):
+        (WebKit::GPUProcess::resetMockMediaDevices):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::addMockMediaDevice):
+        (WebKit::GPUProcessProxy::clearMockMediaDevices):
+        (WebKit::GPUProcessProxy::removeMockMediaDevice):
+        (WebKit::GPUProcessProxy::resetMockMediaDevices):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addMockMediaDevice):
+        (WebKit::WebProcessPool::clearMockMediaDevices):
+        (WebKit::WebProcessPool::removeMockMediaDevice):
+        (WebKit::WebProcessPool::resetMockMediaDevices):
+
 2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Store and report source unlinkable tokens

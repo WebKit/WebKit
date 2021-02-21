@@ -188,6 +188,27 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
 {
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
+
+
+void GPUProcessProxy::addMockMediaDevice(const WebCore::MockMediaDevice& device)
+{
+    send(Messages::GPUProcess::AddMockMediaDevice { device }, 0);
+}
+
+void GPUProcessProxy::clearMockMediaDevices()
+{
+    send(Messages::GPUProcess::ClearMockMediaDevices { }, 0);
+}
+
+void GPUProcessProxy::removeMockMediaDevice(const String& persistentId)
+{
+    send(Messages::GPUProcess::RemoveMockMediaDevice { persistentId }, 0);
+}
+
+void GPUProcessProxy::resetMockMediaDevices()
+{
+    send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

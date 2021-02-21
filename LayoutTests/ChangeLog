@@ -1,3 +1,12 @@
+2021-02-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for adding/removing/clearing mock devices in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222174
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/device-change-event-2.html:
+
 2021-02-20  Sam Weinig  <weinig@apple.com>
 
         color(lab ...) should serialize as color(lab ...) not lab() according to latest CSS Color 4 spec

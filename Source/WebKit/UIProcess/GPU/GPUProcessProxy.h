@@ -41,6 +41,10 @@
 #include "LayerHostingContext.h"
 #endif
 
+namespace WebCore {
+struct MockMediaDevice;
+}
+
 namespace WebKit {
 
 class WebProcessProxy;
@@ -65,6 +69,11 @@ public:
     void setUseMockCaptureDevices(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String&);
+    void resetMockMediaDevices();
 #endif
 
     void removeSession(PAL::SessionID);

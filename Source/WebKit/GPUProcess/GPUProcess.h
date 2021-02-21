@@ -37,6 +37,7 @@
 
 namespace WebCore {
 class NowPlayingManager;
+struct MockMediaDevice;
 }
 
 namespace WebKit {
@@ -111,6 +112,10 @@ private:
     void setMockCaptureDevicesEnabled(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String& persistentId);
+    void resetMockMediaDevices();
 #endif
 
     // Connections to WebProcesses.

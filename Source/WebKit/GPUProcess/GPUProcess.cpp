@@ -228,6 +228,26 @@ void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapt
 
     completionHandler();
 }
+
+void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
+{
+    MockRealtimeMediaSourceCenter::addDevice(device);
+}
+
+void GPUProcess::clearMockMediaDevices()
+{
+    MockRealtimeMediaSourceCenter::setDevices({ });
+}
+
+void GPUProcess::removeMockMediaDevice(const String& persistentId)
+{
+    MockRealtimeMediaSourceCenter::removeDevice(persistentId);
+}
+
+void GPUProcess::resetMockMediaDevices()
+{
+    MockRealtimeMediaSourceCenter::resetDevices();
+}
 #endif
 
 void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)

@@ -1904,6 +1904,9 @@ void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::addDevice(device);
     sendToAllProcesses(Messages::WebProcess::AddMockMediaDevice { device });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().addMockMediaDevice(device);
+#endif
 #endif
 }
 
@@ -1912,6 +1915,9 @@ void WebProcessPool::clearMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setDevices({ });
     sendToAllProcesses(Messages::WebProcess::ClearMockMediaDevices { });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().clearMockMediaDevices();
+#endif
 #endif
 }
 
@@ -1920,6 +1926,9 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
     sendToAllProcesses(Messages::WebProcess::RemoveMockMediaDevice { persistentId });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().removeMockMediaDevice(persistentId);
+#endif
 #endif
 }
 
@@ -1928,6 +1937,9 @@ void WebProcessPool::resetMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::resetDevices();
     sendToAllProcesses(Messages::WebProcess::ResetMockMediaDevices { });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().resetMockMediaDevices();
+#endif
 #endif
 }
 
