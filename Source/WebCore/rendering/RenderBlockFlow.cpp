@@ -3701,7 +3701,12 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     if (view().frameView().layoutContext().layoutState()->isPaginated())
         layoutFormattingContextLineLayout.adjustForPagination();
 
-    auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
+    auto contentHeight = [&] {
+        if (!hasLines() && hasLineIfEmpty())
+            return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+        
+        return layoutFormattingContextLineLayout.contentLogicalHeight();
+    }();
     auto contentBoxTop = borderAndPaddingBefore();
     auto contentBoxBottom = contentBoxTop + contentHeight;
     auto borderBoxBottom = contentBoxBottom + borderAndPaddingAfter();
