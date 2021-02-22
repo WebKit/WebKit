@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SpeechRecognitionServer.h"
 
-#include "SpeechRecognitionPermissionRequest.h"
 #include "UserMediaProcessManager.h"
 #include "WebProcessProxy.h"
 #include "WebSpeechRecognitionConnectionMessages.h"
@@ -52,11 +51,11 @@ SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connecti
 {
 }
 
-void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin)
+void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
 {
     MESSAGE_CHECK(clientIdentifier);
     ASSERT(!m_requests.contains(clientIdentifier));
-    auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin) };
+    auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin), frameIdentifier };
     auto& newRequest = m_requests.add(clientIdentifier, makeUnique<WebCore::SpeechRecognitionRequest>(WTFMove(requestInfo))).iterator->value;
 
     requestPermissionForRequest(*newRequest);
@@ -64,7 +63,7 @@ void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
 {
-    m_permissionChecker(request.lang(), request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto error) mutable {
+    m_permissionChecker(request.lang(), request.clientOrigin(), request.frameIdentifier(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto error) mutable {
         if (!weakThis)
             return;
 

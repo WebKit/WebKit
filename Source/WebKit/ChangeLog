@@ -1,5 +1,129 @@
 2021-02-17  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272165. rdar://problem/74032536
+
+    Use user media permission prompt for speech recognition
+    https://bugs.webkit.org/show_bug.cgi?id=221082
+    rdar://problem/73372499
+    
+    Patch by Sihui Liu <sihui_liu@appe.com> on 2021-02-01
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Add frame identifier to SpeechRecognitionRequest as it is needed for checking user media permission.
+    
+    Updated existing tests for changed behavior.
+    
+    * Modules/speech/SpeechRecognition.cpp:
+    (WebCore::SpeechRecognition::startRecognition):
+    * Modules/speech/SpeechRecognitionConnection.h:
+    * Modules/speech/SpeechRecognitionRequest.h:
+    (WebCore::SpeechRecognitionRequest::frameIdentifier const):
+    * Modules/speech/SpeechRecognitionRequestInfo.h:
+    (WebCore::SpeechRecognitionRequestInfo::encode const):
+    (WebCore::SpeechRecognitionRequestInfo::decode):
+    * page/DummySpeechRecognitionProvider.h:
+    
+    Source/WebKit:
+    
+    Make SpeechRecognitionPermissionManager ask UserMediaPermissionRequestManagerProxy for user permission on
+    microphone.
+    
+    * UIProcess/SpeechRecognitionPermissionManager.cpp:
+    (WebKit::SpeechRecognitionPermissionManager::request):
+    (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+    (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+    * UIProcess/SpeechRecognitionPermissionManager.h:
+    * UIProcess/SpeechRecognitionPermissionRequest.h:
+    (WebKit::SpeechRecognitionPermissionRequest::create):
+    (WebKit::SpeechRecognitionPermissionRequest::frameIdentifier const):
+    (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+    * UIProcess/SpeechRecognitionServer.cpp:
+    (WebKit::SpeechRecognitionServer::start):
+    (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+    * UIProcess/SpeechRecognitionServer.h:
+    * UIProcess/SpeechRecognitionServer.messages.in:
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+    (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+    (WebKit::UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+    * UIProcess/UserMediaPermissionRequestProxy.cpp:
+    (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+    * UIProcess/UserMediaPermissionRequestProxy.h:
+    (WebKit::UserMediaPermissionRequestProxy::create):
+    (WebKit::UserMediaPermissionRequestProxy::decisionCompletionHandler):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+    (WebKit::WebPageProxy::requestUserMediaPermissionForSpeechRecognition):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+    * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+    (WebKit::WebSpeechRecognitionConnection::start):
+    * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+    (-[SpeechRecognitionUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+    
+    LayoutTests:
+    
+    * fast/speechrecognition/permission-error.html:
+    * fast/speechrecognition/start-recognition-in-removed-iframe-expected.txt:
+    * fast/speechrecognition/start-recognition-in-removed-iframe.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272165 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-01  Sihui Liu  <sihui_liu@appe.com>
+
+            Use user media permission prompt for speech recognition
+            https://bugs.webkit.org/show_bug.cgi?id=221082
+            rdar://problem/73372499
+
+            Reviewed by Youenn Fablet.
+
+            Make SpeechRecognitionPermissionManager ask UserMediaPermissionRequestManagerProxy for user permission on
+            microphone.
+
+            * UIProcess/SpeechRecognitionPermissionManager.cpp:
+            (WebKit::SpeechRecognitionPermissionManager::request):
+            (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+            (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+            * UIProcess/SpeechRecognitionPermissionManager.h:
+            * UIProcess/SpeechRecognitionPermissionRequest.h:
+            (WebKit::SpeechRecognitionPermissionRequest::create):
+            (WebKit::SpeechRecognitionPermissionRequest::frameIdentifier const):
+            (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+            * UIProcess/SpeechRecognitionServer.cpp:
+            (WebKit::SpeechRecognitionServer::start):
+            (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+            * UIProcess/SpeechRecognitionServer.h:
+            * UIProcess/SpeechRecognitionServer.messages.in:
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+            (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+            (WebKit::UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition):
+            * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+            * UIProcess/UserMediaPermissionRequestProxy.cpp:
+            (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+            * UIProcess/UserMediaPermissionRequestProxy.h:
+            (WebKit::UserMediaPermissionRequestProxy::create):
+            (WebKit::UserMediaPermissionRequestProxy::decisionCompletionHandler):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+            (WebKit::WebPageProxy::requestUserMediaPermissionForSpeechRecognition):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+            * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+            (WebKit::WebSpeechRecognitionConnection::start):
+            * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h:
+
+2021-02-17  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r271636. rdar://problem/74452635
 
     Update media state for active speech recognition as it uses audio capture
