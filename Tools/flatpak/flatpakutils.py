@@ -779,6 +779,7 @@ class WebkitFlatpak:
             "QML2_IMPORT_PATH",
             "RESULTS_SERVER_API_KEY",
             "SSLKEYLOGFILE",
+            "XR_RUNTIME_JSON",
         ]
 
         def envvar_in_suffixes_to_keep(envvar):
