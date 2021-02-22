@@ -100,7 +100,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (23,0) width 12: "(["
         RenderInline {SPAN} at (0,0) size 0x17
-          RenderInline {SPAN} at (0,0) size 0x17
+          RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (35,0) size 27x17
           text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
       RenderBlock {P} at (0,488) size 784x18
@@ -108,6 +108,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (23,0) width 12: "(["
         RenderInline {SPAN} at (0,0) size 27x17
-          RenderInline {SPAN} at (0,0) size 0x17
+          RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (35,0) size 27x17
           text run at (35,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"

@@ -1,3 +1,18 @@
+2021-02-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening and updating baselines
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/webaudio/audioworklet-addModule-failure-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+
 2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.

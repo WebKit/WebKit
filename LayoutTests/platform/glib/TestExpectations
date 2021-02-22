@@ -298,6 +298,10 @@ webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [
 webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
 
+# Not supported
+accessibility/aria-errormessage.html [ Skip ]
+accessibility/embedded-image-description.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -473,6 +477,7 @@ webkit.org/b/221445 fast/text/system-font-width-7.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-8.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-9.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width.html [ Skip ]
+webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Fonts-related bugs
