@@ -179,6 +179,7 @@ Modules/mediastream/RTCRtpTransceiver.cpp
 Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
 Modules/mediastream/SFrameUtils.cpp
+Modules/mediastream/STUNMessageParsing.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp

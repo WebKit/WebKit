@@ -1,3 +1,54 @@
+2021-02-17  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272504. rdar://problem/74409474
+
+    NetworkRTCSocketCocoa extractDataMessages should not read too much data
+    https://bugs.webkit.org/show_bug.cgi?id=221544
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Move STUN/TURN message parsing to its own file routine so that we can add API test.
+    Code is taken from Source/WebKit/NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm.
+    Fix the test verifying we can actually read a message given its expected length.
+    
+    Covered by API test.
+    
+    * Headers.cmake:
+    * Modules/mediastream/STUNMessageParsing.cpp: Added.
+    (WebCore::isStunMessage):
+    (WebCore::getSTUNOrTURNMessageLengths):
+    (WebCore::extractSTUNOrTURNMessages):
+    (WebCore::extractDataMessages):
+    (WebCore::extractMessages):
+    * Modules/mediastream/STUNMessageParsing.h: Added.
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    
+    Source/WebKit:
+    
+    * NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm:
+    Make use of WebCore method.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/STUNMessageParsingTest.cpp: Added.
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272504 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-08  Youenn Fablet  <youenn@apple.com>
+
+            NetworkRTCSocketCocoa extractDataMessages should not read too much data
+            https://bugs.webkit.org/show_bug.cgi?id=221544
+
+            Reviewed by Eric Carlson.
+
+            * NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm:
+            Make use of WebCore method.
+
 2021-02-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r272990. rdar://problem/74500669
