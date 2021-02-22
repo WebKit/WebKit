@@ -112,6 +112,7 @@ public:
     float size() const { return fontDescription().computedSize(); }
 
     bool isCurrent(const FontSelector&) const;
+    void updateFonts(Ref<FontCascadeFonts>&&) const;
     WEBCORE_EXPORT void update(RefPtr<FontSelector>&& = nullptr) const;
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
@@ -328,11 +329,6 @@ private:
     mutable bool m_enableKerning { false }; // Computed from m_fontDescription.
     mutable bool m_requiresShaping { false }; // Computed from m_fontDescription.
 };
-
-void invalidateFontCascadeCache();
-void pruneUnreferencedEntriesFromFontCascadeCache();
-void pruneSystemFallbackFonts();
-void clearWidthCaches();
 
 inline const Font& FontCascade::primaryFont() const
 {

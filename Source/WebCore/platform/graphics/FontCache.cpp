@@ -403,6 +403,103 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     platformPurgeInactiveFontData();
 }
 
+static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
+{
+    if (a.fontDescriptionKey != b.fontDescriptionKey)
+        return false;
+    if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion)
+        return false;
+    unsigned size = a.families.size();
+    if (size != b.families.size())
+        return false;
+    for (unsigned i = 0; i < size; ++i) {
+        if (!FontCascadeDescription::familyNamesAreEqual(a.families[i], b.families[i]))
+            return false;
+    }
+    return true;
+}
+
+void FontCache::invalidateFontCascadeCache()
+{
+    m_fontCascadeCache.clear();
+}
+
+void FontCache::clearWidthCaches()
+{
+    for (auto& value : m_fontCascadeCache.values())
+        value->fonts.get().widthCache().clear();
+}
+
+static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
+{
+    FontCascadeCacheKey key;
+    key.fontDescriptionKey = FontDescriptionKey(description);
+    unsigned familyCount = description.familyCount();
+    key.families.reserveInitialCapacity(familyCount);
+    for (unsigned i = 0; i < familyCount; ++i)
+        key.families.uncheckedAppend(description.familyAt(i));
+    key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
+    key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
+    return key;
+}
+
+static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
+{
+    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
+    IntegerHasher hasher;
+    hasher.add(key.fontDescriptionKey.computeHash());
+    hasher.add(key.fontSelectorId);
+    hasher.add(key.fontSelectorVersion);
+    for (unsigned i = 0; i < key.families.size(); ++i) {
+        auto& family = key.families[i];
+        hasher.add(family.isNull() ? 0 : FontCascadeDescription::familyNameHash(family));
+    }
+    return hasher.hash();
+}
+
+void FontCache::pruneUnreferencedEntriesFromFontCascadeCache()
+{
+    m_fontCascadeCache.removeIf([](auto& entry) {
+        return entry.value->fonts.get().hasOneRef();
+    });
+}
+
+void FontCache::pruneSystemFallbackFonts()
+{
+    for (auto& entry : m_fontCascadeCache.values())
+        entry->fonts->pruneSystemFallbacks();
+}
+
+Ref<FontCascadeFonts> FontCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
+{
+    auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
+
+    unsigned hash = computeFontCascadeCacheHash(key);
+    auto addResult = m_fontCascadeCache.add(hash, nullptr);
+    if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
+        return addResult.iterator->value->fonts.get();
+
+    auto& newEntry = addResult.iterator->value;
+    newEntry = makeUnique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
+    Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
+
+    static const unsigned unreferencedPruneInterval = 50;
+    static const int maximumEntries = 400;
+    static unsigned pruneCounter;
+    // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
+    if (!(++pruneCounter % unreferencedPruneInterval))
+        pruneUnreferencedEntriesFromFontCascadeCache();
+    // Prevent pathological growth.
+    if (m_fontCascadeCache.size() > maximumEntries)
+        m_fontCascadeCache.remove(m_fontCascadeCache.random());
+    return glyphs;
+}
+
+void FontCache::updateFontCascade(const FontCascade& fontCascade, RefPtr<FontSelector>&& fontSelector)
+{
+    fontCascade.updateFonts(retrieveOrAddCachedFonts(fontCascade.fontDescription(), WTFMove(fontSelector)));
+}
+
 size_t FontCache::fontCount()
 {
     return cachedFonts().size();
