@@ -1,3 +1,14 @@
+2021-02-22  Sam Sneddon  <gsnedders@apple.com>
+
+        REGRESSION(r273204): webkitpy tests don't run on Py3
+        https://bugs.webkit.org/show_bug.cgi?id=222274
+
+        Reviewed by Jonathan Bedard.
+
+        This doesn't make them pass, but it does get them back to running to completion.
+
+        * Scripts/webkit/messages.py: avoid using a relative import
+
 2021-02-22  Eric Carlson  <eric.carlson@apple.com>
 
         UserMediaPermissionRequestManagerProxy may be released while computing capture device list
