@@ -56,6 +56,7 @@ private:
     ~WebSpeechRecognitionConnection();
 
     void registerClient(WebCore::SpeechRecognitionConnectionClient&) final;
+    void unregisterClient(WebCore::SpeechRecognitionConnectionClient&) final;
     void didReceiveUpdate(WebCore::SpeechRecognitionUpdate&&) final;
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
 

@@ -38,17 +38,20 @@ static bool shouldGrantPermissionRequest = true;
 static bool permissionRequested = false;
 static bool receivedScriptMessage;
 static bool didFinishNavigation;
+static bool captureStateDidChange;
+static bool isCapturing;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 static RetainPtr<WKWebView> createdWebView;
 
-@interface SpeechRecognitionPermissionUIDelegate : NSObject<WKUIDelegatePrivate>
+@interface SpeechRecognitionUIDelegate : NSObject<WKUIDelegatePrivate>
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler;
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
+- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state;
 @end
 
-@implementation SpeechRecognitionPermissionUIDelegate
+@implementation SpeechRecognitionUIDelegate
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler
 {
     permissionRequested = true;
@@ -69,6 +72,12 @@ static RetainPtr<WKWebView> createdWebView;
 {
     createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     return createdWebView.get();
+}
+
+- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state
+{
+    isCapturing = state == _WKMediaCaptureStateActiveMicrophone;
+    captureStateDidChange = true;
 }
 @end
 
@@ -111,7 +120,7 @@ TEST(WebKit2, SpeechRecognitionUserPermissionPersistence)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto delegate = adoptNS([[SpeechRecognitionPermissionUIDelegate alloc] init]);
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
     shouldGrantPermissionRequest = false;
@@ -154,7 +163,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    auto delegate = adoptNS([[SpeechRecognitionPermissionUIDelegate alloc] init]);
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     auto firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
     [firstWebView setUIDelegate:delegate.get()];
     auto secondWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(100, 0, 100, 100) configuration:configuration.get()]);
@@ -206,7 +215,7 @@ TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto delegate = adoptNS([[SpeechRecognitionPermissionUIDelegate alloc] init]);
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
     // Page is visible.
@@ -241,7 +250,7 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     preferences.javaScriptCanOpenWindowsAutomatically = YES;
-    auto delegate = adoptNS([[SpeechRecognitionPermissionUIDelegate alloc] init]);
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     auto navigationDelegate = adoptNS([[SpeechRecognitionNavigationDelegate alloc] init]);
     shouldGrantPermissionRequest = true;
     createdWebView = nullptr;
@@ -266,6 +275,31 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
     TestWebKitAPI::Util::sleep(0.5);
 
     EXPECT_TRUE(!!createdWebView);
+}
+
+TEST(WebKit2, SpeechRecognitionMediaCaptureStateChange)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[SpeechRecognitionMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto preferences = [configuration preferences];
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._speechRecognitionEnabled = YES;
+    auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:delegate.get()];
+    shouldGrantPermissionRequest = true;
+
+    captureStateDidChange = false;
+    [webView synchronouslyLoadTestPageNamed:@"speechrecognition-basic"];
+    [webView stringByEvaluatingJavaScript:@"start()"];
+    TestWebKitAPI::Util::run(&captureStateDidChange);
+    EXPECT_TRUE(isCapturing);
+
+    captureStateDidChange = false;
+    [webView stringByEvaluatingJavaScript:@"stop()"];
+    TestWebKitAPI::Util::run(&captureStateDidChange);
+    EXPECT_FALSE(isCapturing);
 }
 
 #endif
