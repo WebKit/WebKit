@@ -405,7 +405,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
 #endif
 
-    WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
+    if (!parameters.maximumIOSurfaceSize.isEmpty())
+        WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
