@@ -1,3 +1,23 @@
+2021-02-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash under AuxiliaryProcess::initializeSandbox
+        https://bugs.webkit.org/show_bug.cgi?id=222233
+        <rdar://problem/74261611>
+
+        Reviewed by Brent Fulgham.
+
+        When a WebKit client provides a user directory suffix in the process initialization parameters, confstr with the new
+        user suffix applied will fail to create the full directory path if it does not exist, and return an empty result.
+        This will lead to empty paths in the sandbox parameters, which will cause the sandbox to fail to compile, which will
+        eventually crash the WebKit process. This patch addresses this by making sure the new user directory suffix does not
+        represent a path, since confstr is not able to handle user directory suffixes containing paths that do not exist.
+        Additionally, this patch reverts r271417, which was the first attempt at fixing this crash, but was unsuccessful in
+        doing so.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+
 2021-02-22  Per Arne  <pvollan@apple.com>
 
         [macOS] Disabling relaunch on login for the WebContent process is racy
