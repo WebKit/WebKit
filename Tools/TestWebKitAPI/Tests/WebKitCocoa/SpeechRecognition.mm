@@ -119,7 +119,7 @@ TEST(WebKit2, SpeechRecognitionUserPermissionPersistence)
     receivedScriptMessage = false;
     [webView loadTestPageNamed:@"speechrecognition-user-permission-persistence"];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Error: not-allowed - Permission check failed", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Error: not-allowed - User permission check has failed", [lastScriptMessage body]);
     EXPECT_TRUE(permissionRequested);
 
     // Permission result is remembered.
@@ -127,7 +127,7 @@ TEST(WebKit2, SpeechRecognitionUserPermissionPersistence)
     receivedScriptMessage = false;
     [webView stringByEvaluatingJavaScript:@"start()"];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Error: not-allowed - Permission check failed", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Error: not-allowed - User permission check has failed", [lastScriptMessage body]);
     EXPECT_FALSE(permissionRequested);
 
     // Permission result will be cleared after document changes.
@@ -231,7 +231,7 @@ TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
     receivedScriptMessage = false;
     [webView evaluateJavaScript:@"start()" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Error: not-allowed - Permission check failed", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Error: not-allowed - Page is not visible to user", [lastScriptMessage body]);
 }
 
 TEST(WebKit2, SpeechRecognitionPageIsDestroyed)

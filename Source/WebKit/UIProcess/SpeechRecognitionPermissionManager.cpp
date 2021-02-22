@@ -72,10 +72,10 @@ SpeechRecognitionPermissionManager::SpeechRecognitionPermissionManager(WebPagePr
 SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager()
 {
     for (auto& request : m_requests)
-        request->complete(SpeechRecognitionPermissionDecision::Deny);
+        request->complete(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Permission manager has exited"_s });
 }
     
-void SpeechRecognitionPermissionManager::request(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completiontHandler)
+void SpeechRecognitionPermissionManager::request(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<SpeechRecognitionError>&&)>&& completiontHandler)
 {
     m_requests.append(SpeechRecognitionPermissionRequest::create(lang, origin, WTFMove(completiontHandler)));
     if (m_requests.size() == 1)
@@ -94,34 +94,35 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
 {
 #if PLATFORM(COOCA)
     if (!checkSandboxRequirementForType(MediaPermissionType::Audio)) {
-        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+        completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Sandbox check has failed"_s });
         return;
     }
 #endif
-
-    // TCC status may have changed between requests.
-    m_microphoneCheck = computeMicrophoneAccess();
-    m_speechRecognitionServiceCheck = computeSpeechRecognitionServiceAccess();
 
     m_page.syncIfMockDevicesEnabledChanged();
-    bool mockCaptureDevicesEnabled = m_page.preferences().mockCaptureDevicesEnabled();
-    if (mockCaptureDevicesEnabled) {
+    if (m_page.preferences().mockCaptureDevicesEnabled()) {
         m_microphoneCheck = CheckResult::Granted;
         m_speechRecognitionServiceCheck = CheckResult::Granted;
-    }
+    } else {
+        // TCC status may have changed between requests.
+        m_microphoneCheck = computeMicrophoneAccess();
+        if (m_microphoneCheck == CheckResult::Denied) {
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Microphone permission check has failed"_s });
+            return;
+        }
+
+        m_speechRecognitionServiceCheck = computeSpeechRecognitionServiceAccess();
+        if (m_speechRecognitionServiceCheck == CheckResult::Denied) {
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::ServiceNotAllowed, "Speech recognition service permission check has failed"_s });
+            return;
+        }
 
 #if HAVE(SPEECHRECOGNIZER)
-    if (!mockCaptureDevicesEnabled && m_speechRecognitionServiceCheck != CheckResult::Denied) {
-        // Speech recognition service can be unavailable when user does not enable dictation in system settings.
-        // Let's avoid prompting user in that case.
-        if (!checkSpeechRecognitionServiceAvailability(m_requests.first()->lang()))
-            m_speechRecognitionServiceCheck = CheckResult::Denied;
-    }
+        if (!checkSpeechRecognitionServiceAvailability(m_requests.first()->lang())) {
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::ServiceNotAllowed, "Speech recognition service is not available"_s });
+            return;
+        }
 #endif
-
-    if (m_microphoneCheck == CheckResult::Denied || m_speechRecognitionServiceCheck == CheckResult::Denied) {
-        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
-        return;
     }
 
     // We currently don't allow third-party access.
@@ -134,7 +135,7 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
     }
 
     if (m_userPermissionCheck == CheckResult::Denied) {
-        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+        completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "User permission check has failed"_s });
         return;
     }
 
@@ -162,18 +163,18 @@ void SpeechRecognitionPermissionManager::continueProcessingRequest()
     ASSERT(m_userPermissionCheck == CheckResult::Granted);
 
     if (!m_page.isViewVisible()) {
-        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+        completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page is not visible to user" });
         return;
     }
 
-    completeCurrentRequest(SpeechRecognitionPermissionDecision::Grant);
+    completeCurrentRequest();
 }
 
-void SpeechRecognitionPermissionManager::completeCurrentRequest(SpeechRecognitionPermissionDecision decision)
+void SpeechRecognitionPermissionManager::completeCurrentRequest(Optional<SpeechRecognitionError>&& error)
 {
     ASSERT(!m_requests.isEmpty());
     auto currentRequest = m_requests.takeFirst();
-    currentRequest->complete(decision);
+    currentRequest->complete(WTFMove(error));
 
     startNextRequest();
 }
@@ -189,7 +190,7 @@ void SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess()
 
         m_speechRecognitionServiceCheck = authorized ? CheckResult::Granted : CheckResult::Denied;
         if (m_speechRecognitionServiceCheck == CheckResult::Denied) {
-            completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::ServiceNotAllowed, "Speech recognition service permission check has failed"_s });
             return;
         }
 
@@ -209,7 +210,7 @@ void SpeechRecognitionPermissionManager::requestMicrophoneAccess()
 
         m_microphoneCheck = authorized ? CheckResult::Granted : CheckResult::Denied;
         if (m_microphoneCheck == CheckResult::Denied) {
-            completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Microphone permission check has failed"_s });
             return;
         }
 
@@ -231,7 +232,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission()
 
         m_userPermissionCheck = granted ? CheckResult::Granted : CheckResult::Denied;
         if (m_userPermissionCheck == CheckResult::Denied) {
-            completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+            completeCurrentRequest(SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "User permission check has failed"_s });
             return;
         }
 
@@ -239,8 +240,6 @@ void SpeechRecognitionPermissionManager::requestUserPermission()
     };
     m_page.uiClient().decidePolicyForSpeechRecognitionPermissionRequest(m_page, API::SecurityOrigin::create(topOrigin.get()).get(), WTFMove(decisionHandler));
 }
-
-
 
 void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
