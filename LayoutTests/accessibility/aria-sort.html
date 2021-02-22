@@ -15,10 +15,13 @@
 <span aria-sort="descending" id="col2" role="columnheader">column</span>
 <!-- Other aria-sort direction. -->
 <span aria-sort="other" id="col3" role="columnheader">column</span>
+<!-- The comun header with aria-sort attribute is the parent of a focusable element. -->
+<span aria-sort="ascending" id="col4" role="columnheader"><a id="link1" href="#">column</a></span>
 </div>
 <div role="row">
 <!-- No aria-sort direction. -->
 <span id="row1" role="rowheader">row</span>
+<span role="gridcell"></span>
 <span role="gridcell"></span>
 <span role="gridcell"></span>
 <span role="gridcell"></span>
@@ -43,6 +46,10 @@
         var col3 = accessibilityController.accessibleElementById("col3");
         shouldBe("col3.isAttributeSupported('AXSortDirection')", "true");
         shouldBe("col3.sortDirection", "'AXUnknownSortDirection'");
+
+        var link1 = accessibilityController.accessibleElementById("link1");
+        shouldBe("link1.isAttributeSupported('AXSortDirection')", "true");
+        shouldBe("link1.sortDirection", "'AXAscendingSortDirection'");
 
         var row1 = accessibilityController.accessibleElementById("row1");
         shouldBe("row1.isAttributeSupported('AXSortDirection')", "false");

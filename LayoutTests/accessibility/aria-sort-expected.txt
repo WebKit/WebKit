@@ -1,4 +1,4 @@
-column column column
+column column column column
 row
 This tests that aria-sort is exposed correctly to the Mac accessibility API.
 
@@ -11,6 +11,8 @@ PASS col2.isAttributeSupported('AXSortDirection') is true
 PASS col2.sortDirection is 'AXDescendingSortDirection'
 PASS col3.isAttributeSupported('AXSortDirection') is true
 PASS col3.sortDirection is 'AXUnknownSortDirection'
+PASS link1.isAttributeSupported('AXSortDirection') is true
+PASS link1.sortDirection is 'AXAscendingSortDirection'
 PASS row1.isAttributeSupported('AXSortDirection') is false
 PASS successfullyParsed is true
 
