@@ -1298,32 +1298,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeNames];
 
-    static NSArray *anchorAttrs;
-    static NSArray *webAreaAttrs;
-    static NSArray *textAttrs;
-    static NSArray *listAttrs;
-    static NSArray *listBoxAttrs;
-    static NSArray *rangeAttrs;
-    static NSArray *menuAttrs;
-    static NSArray *menuBarAttrs;
-    static NSArray *menuItemAttrs;
-    static NSArray *controlAttrs;
-    static NSArray *tableAttrs;
-    static NSArray *tableRowAttrs;
-    static NSArray *tableColAttrs;
-    static NSArray *tableCellAttrs;
-    static NSArray *groupAttrs;
-    static NSArray *inputImageAttrs;
-    static NSArray *passwordFieldAttrs;
-    static NSArray *tabListAttrs;
-    static NSArray *comboBoxAttrs;
-    static NSArray *outlineAttrs;
-    static NSArray *outlineRowAttrs;
-    static NSArray *buttonAttrs;
-    static NSArray *scrollViewAttrs;
-    static NSArray *incrementorAttrs;
-    static NSArray *imageAttrs;
-    static NSArray *attributes = retainPtr(@[
+    static NeverDestroyed<RetainPtr<NSArray>> attributes = @[
         NSAccessibilityRoleAttribute,
         NSAccessibilitySubroleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
@@ -1352,8 +1327,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityFocusableAncestorAttribute,
         NSAccessibilityEditableAncestorAttribute,
         NSAccessibilityHighestEditableAncestorAttribute,
-    ]).leakRef();
-    static NSArray *commonMenuAttrs = retainPtr(@[
+    ];
+    static auto incrementorAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
+        [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
+        [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
+        [tempArray addObject:NSAccessibilityMinValueAttribute];
+        [tempArray addObject:NSAccessibilityMaxValueAttribute];
+        return tempArray;
+    }());
+    static auto anchorAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityURLAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
+        [tempArray addObject:NSAccessibilityLinkRelationshipTypeAttribute];
+        return tempArray;
+    }());
+    static NeverDestroyed<RetainPtr<NSArray>> commonMenuAttrs = @[
         NSAccessibilityRoleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
         NSAccessibilityChildrenAttribute,
@@ -1361,17 +1352,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityEnabledAttribute,
         NSAccessibilityPositionAttribute,
         NSAccessibilitySizeAttribute,
-    ]).leakRef();
-
-    if (anchorAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
-        [tempArray addObject:NSAccessibilityURLAttribute];
-        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
-        [tempArray addObject:NSAccessibilityLinkRelationshipTypeAttribute];
-        anchorAttrs = tempArray.leakRef();
-    }
-    if (webAreaAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+    ];
+    static auto webAreaAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         // WebAreas should not expose AXSubrole.
         [tempArray removeObject:NSAccessibilitySubroleAttribute];
         // WebAreas should not expose ancestor attributes
@@ -1386,10 +1369,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityCaretBrowsingEnabledAttribute];
         [tempArray addObject:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute];
         [tempArray addObject:NSAccessibilityWebSessionIDAttribute];
-        webAreaAttrs = tempArray.leakRef();
-    }
-    if (textAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto textAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityNumberOfCharactersAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextRangeAttribute];
@@ -1401,51 +1384,51 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
-        textAttrs = tempArray.leakRef();
-    }
-    if (listAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto listAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        listAttrs = tempArray.leakRef();
-    }
-    if (listBoxAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:listAttrs]);
+        return tempArray;
+    }());
+    static auto listBoxAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:listAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        listBoxAttrs = tempArray.leakRef();
-    }
-    if (rangeAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto rangeAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        rangeAttrs = tempArray.leakRef();
-    }
-    if (menuBarAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
+        return tempArray;
+    }());
+    static auto menuBarAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        menuBarAttrs = tempArray.leakRef();
-    }
-    if (menuAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
+        return tempArray;
+    }());
+    static auto menuAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        menuAttrs = tempArray.leakRef();
-    }
-    if (menuItemAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs]);
+        return tempArray;
+    }());
+    static auto menuItemAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityTitleAttribute];
         [tempArray addObject:NSAccessibilityDescriptionAttribute];
         [tempArray addObject:NSAccessibilityHelpAttribute];
@@ -1459,9 +1442,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:(NSString*)kAXMenuItemPrimaryUIElementAttribute];
         [tempArray addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
         [tempArray addObject:NSAccessibilityFocusedAttribute];
-        menuItemAttrs = tempArray.leakRef();
-    }
-    static NSArray *menuButtonAttrs = retainPtr(@[
+        return tempArray;
+    }());
+    static NeverDestroyed<RetainPtr<NSArray>> menuButtonAttrs = @[
         NSAccessibilityRoleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
         NSAccessibilityParentAttribute,
@@ -1472,40 +1455,31 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityFocusedAttribute,
         NSAccessibilityTitleAttribute,
         NSAccessibilityChildrenAttribute,
-    ]).leakRef();
-    if (controlAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+    ];
+    static auto controlAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
-        controlAttrs = tempArray.leakRef();
-    }
-    if (incrementorAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
-        [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
-        [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
-        [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
-        [tempArray addObject:NSAccessibilityMinValueAttribute];
-        [tempArray addObject:NSAccessibilityMaxValueAttribute];
-        incrementorAttrs = tempArray.leakRef();
-    }
-    if (buttonAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto buttonAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         // Buttons should not expose AXValue.
         [tempArray removeObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
-        buttonAttrs = tempArray.leakRef();
-    }
-    if (comboBoxAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:controlAttrs]);
+        return tempArray;
+    }());
+    static auto comboBoxAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:controlAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityExpandedAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        comboBoxAttrs = tempArray.leakRef();
-    }
-    if (tableAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto tableAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
@@ -1518,152 +1492,152 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRowCountAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
         [tempArray addObject:NSAccessibilityARIARowCountAttribute];
-        tableAttrs = tempArray.leakRef();
-    }
-    if (tableRowAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto tableRowAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
-        tableRowAttrs = tempArray.leakRef();
-    }
-    if (tableColAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto tableColAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
         [tempArray addObject:NSAccessibilityHeaderAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
-        tableColAttrs = tempArray.leakRef();
-    }
-    if (tableCellAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto tableCellAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityRowIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnIndexAttribute];
         [tempArray addObject:NSAccessibilityARIARowIndexAttribute];
-        tableCellAttrs = tempArray.leakRef();
-    }
-    if (groupAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto groupAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        groupAttrs = tempArray.leakRef();
-    }
-    if (inputImageAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:buttonAttrs]);
+        return tempArray;
+    }());
+    static auto inputImageAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:buttonAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityURLAttribute];
-        inputImageAttrs = tempArray.leakRef();
-    }
-    if (passwordFieldAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto passwordFieldAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
-        passwordFieldAttrs = tempArray.leakRef();
-    }
-    if (tabListAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto tabListAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTabsAttribute];
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        tabListAttrs = tempArray.leakRef();
-    }
-    if (outlineAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto outlineAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedRowsAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
-        outlineAttrs = tempArray.leakRef();
-    }
-    if (outlineRowAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:tableRowAttrs]);
+        return tempArray;
+    }());
+    static auto outlineRowAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:tableRowAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityDisclosingAttribute];
         [tempArray addObject:NSAccessibilityDisclosedByRowAttribute];
         [tempArray addObject:NSAccessibilityDisclosureLevelAttribute];
         [tempArray addObject:NSAccessibilityDisclosedRowsAttribute];
         [tempArray removeObject:NSAccessibilityValueAttribute];
-        outlineRowAttrs = tempArray.leakRef();
-    }
-    if (scrollViewAttrs == nil) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto scrollViewAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityHorizontalScrollBarAttribute];
         [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
-        scrollViewAttrs = tempArray.leakRef();
-    }
-    if (!imageAttrs) {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes]);
+        return tempArray;
+    }());
+    static auto imageAttrs =  makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityEmbeddedImageDescriptionAttribute];
         [tempArray addObject:NSAccessibilityURLAttribute];
-        imageAttrs = tempArray.leakRef();
-    }
+        return tempArray;
+    }());
 
-    NSArray *objectAttributes = attributes;
+    NSArray *objectAttributes = attributes.get().get();
 
     if (backingObject->isPasswordField())
-        objectAttributes = passwordFieldAttrs;
+        objectAttributes = passwordFieldAttrs.get().get();
     else if (backingObject->isWebArea())
-        objectAttributes = webAreaAttrs;
+        objectAttributes = webAreaAttrs.get().get();
     else if (backingObject->isTextControl())
-        objectAttributes = textAttrs;
+        objectAttributes = textAttrs.get().get();
     else if (backingObject->isLink())
-        objectAttributes = anchorAttrs;
+        objectAttributes = anchorAttrs.get().get();
     else if (backingObject->isImage())
-        objectAttributes = imageAttrs;
+        objectAttributes = imageAttrs.get().get();
     else if (backingObject->isTable() && backingObject->isExposable())
-        objectAttributes = tableAttrs;
+        objectAttributes = tableAttrs.get().get();
     else if (backingObject->isTableColumn())
-        objectAttributes = tableColAttrs;
+        objectAttributes = tableColAttrs.get().get();
     else if (backingObject->isTableCell())
-        objectAttributes = tableCellAttrs;
+        objectAttributes = tableCellAttrs.get().get();
     else if (backingObject->isTableRow()) {
         // An ARIA table row can be collapsed and expanded, so it needs the extra attributes.
         if (backingObject->isARIATreeGridRow())
-            objectAttributes = outlineRowAttrs;
+            objectAttributes = outlineRowAttrs.get().get();
         else
-            objectAttributes = tableRowAttrs;
+            objectAttributes = tableRowAttrs.get().get();
     } else if (backingObject->isTree())
-        objectAttributes = outlineAttrs;
+        objectAttributes = outlineAttrs.get().get();
     else if (backingObject->isTreeItem()) {
         if (backingObject->supportsCheckedState())
-            objectAttributes = [outlineRowAttrs arrayByAddingObject:NSAccessibilityValueAttribute];
+            objectAttributes = [outlineRowAttrs.get() arrayByAddingObject:NSAccessibilityValueAttribute];
         else
-            objectAttributes = outlineRowAttrs;
+            objectAttributes = outlineRowAttrs.get().get();
     }
     else if (backingObject->isListBox())
-        objectAttributes = listBoxAttrs;
+        objectAttributes = listBoxAttrs.get().get();
     else if (backingObject->isList())
-        objectAttributes = listAttrs;
+        objectAttributes = listAttrs.get().get();
     else if (backingObject->isComboBox())
-        objectAttributes = comboBoxAttrs;
+        objectAttributes = comboBoxAttrs.get().get();
     else if (backingObject->isProgressIndicator() || backingObject->isSlider())
-        objectAttributes = rangeAttrs;
+        objectAttributes = rangeAttrs.get().get();
     // These are processed in order because an input image is a button, and a button is a control.
     else if (backingObject->isInputImage())
-        objectAttributes = inputImageAttrs;
+        objectAttributes = inputImageAttrs.get().get();
     else if (backingObject->isButton())
-        objectAttributes = buttonAttrs;
+        objectAttributes = buttonAttrs.get().get();
     else if (backingObject->isControl())
-        objectAttributes = controlAttrs;
+        objectAttributes = controlAttrs.get().get();
 
     else if (backingObject->isGroup() || backingObject->isListItem())
-        objectAttributes = groupAttrs;
+        objectAttributes = groupAttrs.get().get();
     else if (backingObject->isTabList())
-        objectAttributes = tabListAttrs;
+        objectAttributes = tabListAttrs.get().get();
     else if (backingObject->isScrollView())
-        objectAttributes = scrollViewAttrs;
+        objectAttributes = scrollViewAttrs.get().get();
     else if (backingObject->isSpinButton())
-        objectAttributes = incrementorAttrs;
+        objectAttributes = incrementorAttrs.get().get();
     else if (backingObject->isMenu())
-        objectAttributes = menuAttrs;
+        objectAttributes = menuAttrs.get().get();
     else if (backingObject->isMenuBar())
-        objectAttributes = menuBarAttrs;
+        objectAttributes = menuBarAttrs.get().get();
     else if (backingObject->isMenuButton())
-        objectAttributes = menuButtonAttrs;
+        objectAttributes = menuButtonAttrs.get().get();
     else if (backingObject->isMenuItem())
-        objectAttributes = menuItemAttrs;
+        objectAttributes = menuItemAttrs.get().get();
 
     NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
     if ([additionalAttributes count])

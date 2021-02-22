@@ -98,11 +98,11 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 + (WebGeolocationProviderIOS *)sharedGeolocationProvider
 {
     static dispatch_once_t once;
-    static WebGeolocationProviderIOS *sharedGeolocationProvider;
+    static NeverDestroyed<RetainPtr<WebGeolocationProviderIOS>> sharedGeolocationProvider;
     dispatch_once(&once, ^{
-        sharedGeolocationProvider = [[WebGeolocationProviderIOS alloc] init];
+        sharedGeolocationProvider.get() = adoptNS([[WebGeolocationProviderIOS alloc] init]);
     });
-    return sharedGeolocationProvider;
+    return sharedGeolocationProvider.get().get();
 }
 
 - (void)suspend

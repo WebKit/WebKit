@@ -42,10 +42,8 @@
 
 + (WKMouseDeviceObserver *)sharedInstance
 {
-    static WKMouseDeviceObserver *instance;
-    if (!instance)
-        instance = [[WKMouseDeviceObserver alloc] init];
-    return instance;
+    static NeverDestroyed<RetainPtr<WKMouseDeviceObserver>> instance = adoptNS([[WKMouseDeviceObserver alloc] init]);
+    return instance.get().get();
 }
 
 - (instancetype)init

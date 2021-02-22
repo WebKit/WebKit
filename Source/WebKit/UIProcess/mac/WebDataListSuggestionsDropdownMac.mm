@@ -142,7 +142,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
     self.hasShadow = YES;
 
-    _backdropView = [[NSVisualEffectView alloc] initWithFrame:contentRect];
+    _backdropView = adoptNS([[NSVisualEffectView alloc] initWithFrame:contentRect]);
     [_backdropView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [_backdropView setMaterial:NSVisualEffectMaterialMenu];
     [_backdropView setState:NSVisualEffectStateActive];

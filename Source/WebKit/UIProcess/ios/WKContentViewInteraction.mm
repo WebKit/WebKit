@@ -3171,23 +3171,24 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     if (_page->editorState().selectionIsNone)
         return nil;
-    
-    static NSMutableArray *richTypes = nil;
-    static NSMutableArray *plainTextTypes = nil;
-    if (!plainTextTypes) {
-        plainTextTypes = [[NSMutableArray alloc] init];
+
+    static auto plainTextTypes = makeNeverDestroyed([] {
+        auto plainTextTypes = adoptNS([[NSMutableArray alloc] init]);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [plainTextTypes addObject:(id)kUTTypeURL];
 ALLOW_DEPRECATED_DECLARATIONS_END
         [plainTextTypes addObjectsFromArray:UIPasteboardTypeListString];
-
-        richTypes = [[NSMutableArray alloc] init];
+        return plainTextTypes;
+    }());
+    static auto richTypes = makeNeverDestroyed([] {
+        auto richTypes = adoptNS([[NSMutableArray alloc] init]);
         [richTypes addObject:WebCore::WebArchivePboardType];
         [richTypes addObjectsFromArray:UIPasteboardTypeListImage];
-        [richTypes addObjectsFromArray:plainTextTypes];
-    }
+        [richTypes addObjectsFromArray:plainTextTypes.get().get()];
+        return richTypes;
+    }());
 
-    return (_page->editorState().isContentRichlyEditable) ? richTypes : plainTextTypes;
+    return (_page->editorState().isContentRichlyEditable) ? richTypes.get().get() : plainTextTypes.get().get();
 }
 
 #define FORWARD_ACTION_TO_WKWEBVIEW(_action) \
@@ -9826,7 +9827,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     _page->startInteractionWithPositionInformation(_positionInformation);
 
-    UIViewController *previewViewController = nil;
+    RetainPtr<UIViewController> previewViewController;
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
 
@@ -9867,7 +9868,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
-        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController.get(), defaultActionsFromAssistant, elementInfo);
 
     } else if (_positionInformation.isImage && _positionInformation.image) {
         NSURL *nsURL = (NSURL *)url;
@@ -9890,13 +9891,13 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)])
             previewViewController = [uiDelegate _webView:self.webView previewViewControllerForImage:uiImage.get() alternateURL:nsURL defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
         else
-            previewViewController = [[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
+            previewViewController = adoptNS([[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()]);
         ALLOW_DEPRECATED_DECLARATIONS_END
 
-        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, _positionInformation.title);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController.get(), defaultActionsFromAssistant, elementInfo, _positionInformation.title);
     }
 
-    _contextMenuLegacyPreviewController = previewViewController;
+    _contextMenuLegacyPreviewController = WTFMove(previewViewController);
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location

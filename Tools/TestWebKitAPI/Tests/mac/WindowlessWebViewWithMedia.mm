@@ -63,24 +63,22 @@ static void spinLoop(NSTimeInterval timeout, BOOL (^block)())
 
 TEST(WebKitLegacy, WindowlessWebViewWithMedia)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        auto testController = adoptNS([WindowlessWebViewWithMediaFrameLoadDelegate new]);
+        webView.get().frameLoadDelegate = testController.get();
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WindowlessWebViewWithMedia" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<WindowlessWebViewWithMediaFrameLoadDelegate> testController = adoptNS([WindowlessWebViewWithMediaFrameLoadDelegate new]);
-    webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WindowlessWebViewWithMedia" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        EXPECT_EQ(nil, [webView.get() window]);
 
-    EXPECT_EQ(nil, [webView.get() window]);
+        Util::run(&didFinishLoad);
 
-    Util::run(&didFinishLoad);    
+        spinLoop(0.25, ^{
+            return [[webView.get() stringByEvaluatingJavaScriptFromString:@"window.didTriggerLoad"] isEqualToString:@"true"];
+        });
 
-    spinLoop(0.25, ^{
-        return [[webView.get() stringByEvaluatingJavaScriptFromString:@"window.didTriggerLoad"] isEqualToString:@"true"];
-    });
-
-    EXPECT_JS_EQ(webView.get(), "window.didTriggerLoad", "true");
-
-    [pool drain];
+        EXPECT_JS_EQ(webView.get(), "window.didTriggerLoad", "true");
+    }
 }
 
 } // namespace TestWebKitAPI

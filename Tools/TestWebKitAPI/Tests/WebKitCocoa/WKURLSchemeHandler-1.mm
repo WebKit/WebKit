@@ -528,39 +528,38 @@ static const char* syncXHRBytes = "My XHR text!";
 
 TEST(URLSchemeHandler, SyncXHR)
 {
-    auto *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto handler = adoptNS([[SyncScheme alloc] init]);
+        [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
 
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto handler = adoptNS([[SyncScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
-    
-    handler.get()->resources.set("syncxhr://host/main.html", SchemeResourceInfo { @"text/html", syncMainBytes, true });
-    handler.get()->resources.set("syncxhr://host/test.dat", SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
+        handler.get()->resources.set("syncxhr://host/main.html", SchemeResourceInfo { @"text/html", syncMainBytes, true });
+        handler.get()->resources.set("syncxhr://host/test.dat", SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
 
-    auto messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
-    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
-    
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        auto messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
+        [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"syncxhr://host/main.html"]];
-    [webView loadRequest:request];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
-    receivedMessage = false;
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"syncxhr://host/main.html"]];
+        [webView loadRequest:request];
 
-    EXPECT_EQ((unsigned)receivedMessages.get().count, (unsigned)1);
-    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"My XHR text!"]);
+        TestWebKitAPI::Util::run(&receivedMessage);
+        receivedMessage = false;
 
-    // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
-    // respond to it.
-    handler.get()->resources.find("syncxhr://host/test.dat")->value.shouldRespond = false;
-    [webView loadRequest:request];
+        EXPECT_EQ((unsigned)receivedMessages.get().count, (unsigned)1);
+        EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"My XHR text!"]);
 
-    TestWebKitAPI::Util::run(&startedXHR);
-    receivedMessage = false;
+        // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
+        // respond to it.
+        handler.get()->resources.find("syncxhr://host/test.dat")->value.shouldRespond = false;
+        [webView loadRequest:request];
 
-    webView = nil;
-    [pool drain];
+        TestWebKitAPI::Util::run(&startedXHR);
+        receivedMessage = false;
+
+        webView = nil;
+    }
     
     TestWebKitAPI::Util::run(&receivedStop);
 }
@@ -741,39 +740,37 @@ TEST(URLSchemeHandler, XHRPost)
 
 TEST(URLSchemeHandler, Threads)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"threads"];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-
     static bool done;
-    static id<WKURLSchemeTask> theTask;
+    static NeverDestroyed<RetainPtr<id<WKURLSchemeTask>>> theTask;
     static RefPtr<Thread> theThread;
-    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        theTask = task;
-        [task retain];
-        theThread = Thread::create("A", [task] {
-            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
-            [task didReceiveResponse:response.get()];
-            [task didFinish];
-            done = true;
-        });
-    }];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"threads://main.html"]]];
+    @autoreleasepool {
+        auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setURLSchemeHandler:handler.get() forURLScheme:@"threads"];
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+        [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+            theTask.get() = retainPtr(task);
+            theThread = Thread::create("A", [task] {
+                auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+                [task didReceiveResponse:response.get()];
+                [task didFinish];
+                done = true;
+            });
+        }];
 
-    TestWebKitAPI::Util::run(&done);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"threads://main.html"]]];
 
-    handler = nil;
-    configuration = nil;
-    webView = nil;
-    theThread = nullptr;
-    [pool drain];
+        TestWebKitAPI::Util::run(&done);
+
+        handler = nil;
+        configuration = nil;
+        webView = nil;
+        theThread = nullptr;
+    }
 
     Thread::create("B", [] {
-        auto oldTask = adoptNS(std::exchange(theTask, nil));
+        theTask.get() = nil;
     })->waitForCompletion();
 }
 

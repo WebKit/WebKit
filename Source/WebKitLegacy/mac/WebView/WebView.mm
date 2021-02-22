@@ -917,7 +917,11 @@ enum { WebViewVersion = 4 };
 
 #define timedLayoutSize 4096
 
-static NSMutableSet *schemesWithRepresentationsSet;
+static RetainPtr<NSMutableSet>& schemesWithRepresentationsSet()
+{
+    static NeverDestroyed<RetainPtr<NSMutableSet>> schemesWithRepresentationsSet;
+    return schemesWithRepresentationsSet;
+}
 
 #if !PLATFORM(IOS_FAMILY)
 NSString *_WebCanGoBackKey =            @"canGoBack";
@@ -1345,17 +1349,17 @@ static bool needsOutlookQuirksScript()
     return isOutlookNeedingQuirksScript;
 }
 
-static NSString *leakOutlookQuirksUserScriptContents()
+static RetainPtr<NSString> createOutlookQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"OutlookQuirksUserScript" ofType:@"js"];
     NSStringEncoding encoding;
-    return [[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0];
+    return adoptNS([[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0]);
 }
 
 -(void)_injectOutlookQuirksScript
 {
-    static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
-    _private->group->userContentController().addUserScript(*core([WebScriptWorld world]), makeUnique<WebCore::UserScript>(outlookQuirksScriptContents, URL(), Vector<String>(), Vector<String>(), WebCore::UserScriptInjectionTime::DocumentEnd, WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No));
+    static NeverDestroyed<RetainPtr<NSString>> outlookQuirksScriptContents = createOutlookQuirksUserScriptContents();
+    _private->group->userContentController().addUserScript(*core([WebScriptWorld world]), makeUnique<WebCore::UserScript>(outlookQuirksScriptContents.get().get(), URL(), Vector<String>(), Vector<String>(), WebCore::UserScriptInjectionTime::DocumentEnd, WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No));
 
 }
 #endif
@@ -1367,20 +1371,20 @@ static bool needsLaBanquePostaleQuirks()
     return needsQuirks;
 }
 
-static NSString *leakLaBanquePostaleQuirksScript()
+static RetainPtr<NSString> createLaBanquePostaleQuirksScript()
 {
     NSURL *scriptURL = [[NSBundle bundleForClass:WebView.class] URLForResource:@"LaBanquePostaleQuirks" withExtension:@"js"];
     NSStringEncoding encoding;
-    return [[NSString alloc] initWithContentsOfURL:scriptURL usedEncoding:&encoding error:nullptr];
+    return adoptNS([[NSString alloc] initWithContentsOfURL:scriptURL usedEncoding:&encoding error:nullptr]);
 }
 
 - (void)_injectLaBanquePostaleQuirks
 {
     ASSERT(needsLaBanquePostaleQuirks());
-    static NSString * const quirksScript = leakLaBanquePostaleQuirksScript();
+    static NeverDestroyed<RetainPtr<NSString>> quirksScript = createLaBanquePostaleQuirksScript();
 
     using namespace WebCore;
-    auto userScript = makeUnique<UserScript>(quirksScript, URL(), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInAllFrames, WaitForNotificationBeforeInjecting::No);
+    auto userScript = makeUnique<UserScript>(quirksScript.get().get(), URL(), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInAllFrames, WaitForNotificationBeforeInjecting::No);
     _private->group->userContentController().addUserScript(*core(WebScriptWorld.world), WTFMove(userScript));
 }
 #endif
@@ -3215,10 +3219,10 @@ IGNORE_WARNINGS_END
 
     // This is used to make _representationExistsForURLScheme faster.
     // Without this set, we'd have to create the MIME type each time.
-    if (schemesWithRepresentationsSet == nil) {
-        schemesWithRepresentationsSet = [[NSMutableSet alloc] init];
-    }
-    [schemesWithRepresentationsSet addObject:adoptNS([[URLScheme lowercaseString] copy]).get()];
+    auto& schemes = schemesWithRepresentationsSet();
+    if (!schemes)
+        schemes = adoptNS([[NSMutableSet alloc] init]);
+    [schemes addObject:adoptNS([[URLScheme lowercaseString] copy]).get()];
 }
 
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
@@ -3228,7 +3232,7 @@ IGNORE_WARNINGS_END
 
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
 {
-    return [schemesWithRepresentationsSet containsObject:[URLScheme lowercaseString]];
+    return [schemesWithRepresentationsSet() containsObject:[URLScheme lowercaseString]];
 }
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame
@@ -3295,22 +3299,20 @@ IGNORE_WARNINGS_END
 }
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key {
-    static NSSet *manualNotifyKeys = nil;
-    if (!manualNotifyKeys)
-        manualNotifyKeys = [[NSSet alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
-            _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey,
-            nil];
-    if ([manualNotifyKeys containsObject:key])
+    static NeverDestroyed<RetainPtr<NSSet>> manualNotifyKeys = adoptNS([[NSSet alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
+        _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey, nil]);
+    if ([manualNotifyKeys.get() containsObject:key])
         return NO;
     return YES;
 }
 
 - (NSArray *)_declaredKeys {
-    static NSArray *declaredKeys = nil;
-    if (!declaredKeys)
-        declaredKeys = [[NSArray alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
-            _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey, nil];
-    return declaredKeys;
+    static NeverDestroyed<RetainPtr<NSArray>> declaredKeys = @[
+        _WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
+        _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey,
+        _WebMainFrameIconKey, _WebMainFrameDocumentKey
+    ];
+    return declaredKeys.get().get();
 }
 
 - (void)_willChangeBackForwardKeys
@@ -5212,7 +5214,7 @@ IGNORE_WARNINGS_END
 - (void)addPluginInstanceView:(NSView *)view
 {
     if (!_private->pluginDatabase)
-        _private->pluginDatabase = [[WebPluginDatabase alloc] init];
+        _private->pluginDatabase = adoptNS([[WebPluginDatabase alloc] init]);
     [_private->pluginDatabase addPluginInstanceView:view];
 }
 
@@ -9004,7 +9006,7 @@ bool LayerFlushController::flushLayers()
 - (void)_enterFullScreenForElement:(NakedPtr<WebCore::Element>)element
 {
     if (!_private->newFullscreenController)
-        _private->newFullscreenController = [[WebFullScreenController alloc] init];
+        _private->newFullscreenController = adoptNS([[WebFullScreenController alloc] init]);
 
     [_private->newFullscreenController setElement:element.get()];
     [_private->newFullscreenController setWebView:self];

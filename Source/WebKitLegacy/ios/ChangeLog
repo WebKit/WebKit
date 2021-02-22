@@ -1,3 +1,13 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebGeolocationProviderIOS.mm:
+        (+[WebGeolocationProviderIOS sharedGeolocationProvider]):
+
 2021-02-17  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC autorelease] in WebKit even further

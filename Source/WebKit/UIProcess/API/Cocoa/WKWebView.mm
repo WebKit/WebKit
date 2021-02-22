@@ -2117,9 +2117,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"];
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
-    return [self loadSimulatedRequest:request withResponse:response responseData:data];
+    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL

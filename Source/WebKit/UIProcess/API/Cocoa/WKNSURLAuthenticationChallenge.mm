@@ -42,12 +42,12 @@
     WebKit::AuthenticationChallengeProxy& challenge = *reinterpret_cast<WebKit::AuthenticationChallengeProxy*>(&self._apiObject);
 
     static dispatch_once_t token;
-    static WKNSURLAuthenticationChallengeSender *sender;
+    static NeverDestroyed<RetainPtr<WKNSURLAuthenticationChallengeSender>> sender;
     dispatch_once(&token, ^{
-        sender = [[WKNSURLAuthenticationChallengeSender alloc] init];
+        sender.get() = adoptNS([[WKNSURLAuthenticationChallengeSender alloc] init]);
     });
 
-    return [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:mac(challenge.core()) sender:sender];
+    return [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:mac(challenge.core()) sender:sender.get().get()];
 }
 
 - (WebKit::AuthenticationChallengeProxy&)_web_authenticationChallengeProxy

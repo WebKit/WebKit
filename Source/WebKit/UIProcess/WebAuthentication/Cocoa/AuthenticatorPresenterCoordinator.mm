@@ -60,8 +60,8 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
         ASSERT_NOT_REACHED();
     }
 
-    m_presenterDelegate = [[WKASCAuthorizationPresenterDelegate alloc] initWithCoordinator:*this];
-    m_presenter = [allocASCAuthorizationPresenterInstance() init];
+    m_presenterDelegate = adoptNS([[WKASCAuthorizationPresenterDelegate alloc] initWithCoordinator:*this]);
+    m_presenter = adoptNS([allocASCAuthorizationPresenterInstance() init]);
     [m_presenter setDelegate:m_presenterDelegate.get()];
 
     auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol> credential, NSError *error) mutable {

@@ -61,27 +61,32 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 
 @implementation WebPluginDatabase
 
-static WebPluginDatabase *sharedDatabase = nil;
+static RetainPtr<WebPluginDatabase>& sharedDatabase()
+{
+    static NeverDestroyed<RetainPtr<WebPluginDatabase>> sharedDatabase;
+    return sharedDatabase;
+}
 
 + (WebPluginDatabase *)sharedDatabase 
 {
-    if (!sharedDatabase) {
-        sharedDatabase = [[WebPluginDatabase alloc] init];
-        [sharedDatabase setPlugInPaths:[self _defaultPlugInPaths]];
-        [sharedDatabase refresh];
+    auto& database = sharedDatabase();
+    if (!database) {
+        database = adoptNS([[WebPluginDatabase alloc] init]);
+        [database setPlugInPaths:[self _defaultPlugInPaths]];
+        [database refresh];
     }
     
-    return sharedDatabase;
+    return database.get();
 }
 
 + (WebPluginDatabase *)sharedDatabaseIfExists
 {
-    return sharedDatabase;
+    return sharedDatabase().get();
 }
 
 + (void)closeSharedDatabase 
 {
-    [sharedDatabase close];
+    [sharedDatabase() close];
 }
 
 static void checkCandidate(WebBasePluginPackage * __strong *currentPlugin, WebBasePluginPackage * __strong *candidatePlugin)
@@ -318,7 +323,7 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
                 continue;
             }
 
-            if (self == sharedDatabase)
+            if (self == sharedDatabase())
                 [WebView _registerPluginMIMEType:MIMEType];
         }
     }
@@ -414,7 +419,7 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
 
 - (NSArray *)_plugInPaths
 {
-    if (self == sharedDatabase && additionalWebPlugInPaths()) {
+    if (self == sharedDatabase() && additionalWebPlugInPaths()) {
         // Add additionalWebPlugInPaths to the global WebPluginDatabase.  We do this here for
         // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
         // which simply saved a copy of the additional paths and did not cause the plugin DB to 
@@ -445,7 +450,7 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
         NSString *MIMEType = pluginInfo.mimes[i].type;
 
         if ([registeredMIMETypes containsObject:MIMEType]) {
-            if (self == sharedDatabase)
+            if (self == sharedDatabase())
                 [WebView _unregisterPluginMIMEType:MIMEType];
             [registeredMIMETypes removeObject:MIMEType];
         }

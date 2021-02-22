@@ -239,13 +239,10 @@ enum {
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static NSMutableDictionary *viewTypes = nil;
-    static BOOL addedImageTypes = NO;
-    
-    if (!viewTypes) {
-        viewTypes = [[NSMutableDictionary alloc] init];
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
+    static auto viewTypes = makeNeverDestroyed([] {
+        auto types = adoptNS([[NSMutableDictionary alloc] init]);
+        addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
+        addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
 
         // Since this is a "secret default" we don't bother registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
@@ -253,19 +250,20 @@ enum {
 #if PLATFORM(IOS_FAMILY)
 #define WebPDFView ([WebView _getPDFViewClass])
 #endif
-            addTypesFromClass(viewTypes, [WebPDFView class], [WebPDFView supportedMIMETypes]);
+            addTypesFromClass(types.get(), [WebPDFView class], [WebPDFView supportedMIMETypes]);
 #if PLATFORM(IOS_FAMILY)
 #undef WebPDFView
 #endif
         }
-    }
-    
+        return types;
+    }());
+    static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
+        addTypesFromClass(viewTypes.get().get(), [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
         addedImageTypes = YES;
     }
     
-    return viewTypes;
+    return viewTypes.get().get();
 }
 
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType

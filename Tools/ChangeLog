@@ -1,3 +1,32 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * TestRunnerShared/mac/NSPasteboardAdditions.mm:
+        (+[NSPasteboard _modernPasteboardType:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CancelLoadFromResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CloseNewWindowInNavigationPolicyDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/StopLoadingFromDidReceiveResponse.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WindowlessWebViewWithMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main):
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main):
+
 2021-02-22  Sam Sneddon  <gsnedders@apple.com>
 
         Run Python tests for Source/WebKit/Scripts changes in EWS

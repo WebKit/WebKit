@@ -356,14 +356,12 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     // Parallel arrays that we use to cache regExps.  In practice the number of expressions
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
-    static NSMutableArray* regExpLabels = nil;
+    static NeverDestroyed<RetainPtr<NSMutableArray>> regExpLabels = adoptNS([[NSMutableArray alloc] initWithCapacity:regExpCacheSize]);
     static NeverDestroyed<Vector<RegularExpression*>> regExps;
     static NeverDestroyed<RegularExpression> wordRegExp("\\w");
 
     RegularExpression* result;
-    if (!regExpLabels)
-        regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
-    CFIndex cacheHit = [regExpLabels indexOfObject:labels];
+    CFIndex cacheHit = [regExpLabels.get() indexOfObject:labels];
     if (cacheHit != NSNotFound)
         result = regExps.get().at(cacheHit);
     else {
@@ -400,15 +398,15 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     if (cacheHit != 0) {
         if (cacheHit != NSNotFound) {
             // remove from old spot
-            [regExpLabels removeObjectAtIndex:cacheHit];
+            [regExpLabels.get() removeObjectAtIndex:cacheHit];
             regExps.get().remove(cacheHit);
         }
         // add to start
-        [regExpLabels insertObject:labels atIndex:0];
+        [regExpLabels.get() insertObject:labels atIndex:0];
         regExps.get().insert(0, result);
         // trim if too big
-        if ([regExpLabels count] > regExpCacheSize) {
-            [regExpLabels removeObjectAtIndex:regExpCacheSize];
+        if ([regExpLabels.get() count] > regExpCacheSize) {
+            [regExpLabels.get() removeObjectAtIndex:regExpCacheSize];
             RegularExpression* last = regExps.get().last();
             regExps.get().removeLast();
             delete last;

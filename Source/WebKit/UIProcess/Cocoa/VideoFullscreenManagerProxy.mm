@@ -224,9 +224,9 @@ UIViewController *VideoFullscreenModelContext::presentingViewController()
     return nullptr;
 }
 
-UIViewController *VideoFullscreenModelContext::createVideoFullscreenViewController(AVPlayerViewController *avPlayerViewController)
+RetainPtr<UIViewController> VideoFullscreenModelContext::createVideoFullscreenViewController(AVPlayerViewController *avPlayerViewController)
 {
-    return [[WKVideoFullScreenViewController alloc] initWithAVPlayerViewController:avPlayerViewController];
+    return adoptNS([[WKVideoFullScreenViewController alloc] initWithAVPlayerViewController:avPlayerViewController]);
 }
 #endif
 

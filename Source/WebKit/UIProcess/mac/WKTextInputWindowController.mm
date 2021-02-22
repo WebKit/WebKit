@@ -164,11 +164,8 @@
 
 + (WKTextInputWindowController *)sharedTextInputWindowController
 {
-    static WKTextInputWindowController *textInputWindowController;
-    if (!textInputWindowController)
-        textInputWindowController = [[WKTextInputWindowController alloc] init];
-    
-    return textInputWindowController;
+    static NeverDestroyed<RetainPtr<WKTextInputWindowController>> textInputWindowController = adoptNS([[WKTextInputWindowController alloc] init]);
+    return textInputWindowController.get().get();
 }
 
 - (id)init

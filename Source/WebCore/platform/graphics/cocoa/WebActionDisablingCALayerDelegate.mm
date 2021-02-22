@@ -32,12 +32,12 @@
 
 + (instancetype)shared
 {
-    static WebActionDisablingCALayerDelegate *controller;
+    static NeverDestroyed<RetainPtr<WebActionDisablingCALayerDelegate>> controller;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        controller = [[WebActionDisablingCALayerDelegate alloc] init];
+        controller.get() = adoptNS([[WebActionDisablingCALayerDelegate alloc] init]);
     });
-    return controller;
+    return controller.get().get();
 }
 
 - (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event

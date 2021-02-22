@@ -75,8 +75,17 @@ NSString *WebPreferencesCacheModelChangedInternalNotification = @"WebPreferences
 
 enum { WebPreferencesVersion = 1 };
 
-static WebPreferences *_standardPreferences;
-static NSMutableDictionary *webPreferencesInstances;
+static RetainPtr<WebPreferences>& standardPreferences()
+{
+    static NeverDestroyed<RetainPtr<WebPreferences>> standardPreferences;
+    return standardPreferences;
+}
+
+static RetainPtr<NSMutableDictionary>& webPreferencesInstances()
+{
+    static NeverDestroyed<RetainPtr<NSMutableDictionary>> webPreferencesInstances;
+    return webPreferencesInstances;
+}
 
 static unsigned webPreferencesInstanceCountWithPrivateBrowsingEnabled;
 
@@ -361,24 +370,20 @@ public:
 + (WebPreferences *)standardPreferences
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (_standardPreferences == nil) {
-        _standardPreferences = [[WebPreferences alloc] initWithIdentifier:nil];
-        [_standardPreferences setAutosaves:YES];
+    if (!standardPreferences()) {
+        standardPreferences() = adoptNS([[WebPreferences alloc] initWithIdentifier:nil]);
+        [standardPreferences() setAutosaves:YES];
     }
 #else
-    // FIXME: This check is necessary to avoid recursion (see <rdar://problem/9564337>), but it also makes _standardPreferences construction not thread safe.
-    if (_standardPreferences)
-        return _standardPreferences;
-
     static dispatch_once_t pred;
     dispatch_once(&pred, ^{
-        _standardPreferences = [[WebPreferences alloc] initWithIdentifier:nil sendChangeNotification:NO];
-        [_standardPreferences _postPreferencesChangedNotification];
-        [_standardPreferences setAutosaves:YES];
+        standardPreferences() = adoptNS([[WebPreferences alloc] initWithIdentifier:nil sendChangeNotification:NO]);
+        [standardPreferences() _postPreferencesChangedNotification];
+        [standardPreferences() setAutosaves:YES];
     });
 #endif
 
-    return _standardPreferences;
+    return standardPreferences().get();
 }
 
 // if we ever have more than one WebPreferences object, this would move to init
@@ -1581,30 +1586,32 @@ public:
     LOG(Encoding, "requesting for %@\n", ident);
 
     if (!ident)
-        return _standardPreferences;
+        return standardPreferences().get();
 
-    WebPreferences *instance = [webPreferencesInstances objectForKey:[self _concatenateKeyWithIBCreatorID:ident]];
+    WebPreferences *instance = [webPreferencesInstances() objectForKey:[self _concatenateKeyWithIBCreatorID:ident]];
 
     return instance;
 }
 
 + (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)ident
 {
-    if (!webPreferencesInstances)
-        webPreferencesInstances = [[NSMutableDictionary alloc] init];
-    if (ident) {
-        [webPreferencesInstances setObject:instance forKey:[self _concatenateKeyWithIBCreatorID:ident]];
-        LOG(Encoding, "recording %p for %@\n", instance, [self _concatenateKeyWithIBCreatorID:ident]);
-    }
+    if (!ident)
+        return;
+
+    auto& instances = webPreferencesInstances();
+    if (!instances)
+        instances = adoptNS([[NSMutableDictionary alloc] init]);
+    [instances setObject:instance forKey:[self _concatenateKeyWithIBCreatorID:ident]];
+    LOG(Encoding, "recording %p for %@\n", instance, [self _concatenateKeyWithIBCreatorID:ident]);
 }
 
 + (void)_checkLastReferenceForIdentifier:(id)identifier
 {
     // FIXME: This won't work at all under garbage collection because retainCount returns a constant.
     // We may need to change WebPreferences API so there's an explicit way to end the lifetime of one.
-    WebPreferences *instance = [webPreferencesInstances objectForKey:identifier];
+    WebPreferences *instance = [webPreferencesInstances() objectForKey:identifier];
     if ([instance retainCount] == 1)
-        [webPreferencesInstances removeObjectForKey:identifier];
+        [webPreferencesInstances() removeObjectForKey:identifier];
 }
 
 + (void)_removeReferenceForIdentifier:(NSString *)ident

@@ -269,32 +269,31 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static NSMutableDictionary *repTypes = nil;
-    static BOOL addedImageTypes = NO;
-    
-    if (!repTypes) {
-        repTypes = [[NSMutableDictionary alloc] init];
-        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedNonImageMIMETypes]);
-        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMediaMIMETypes]);
-        
+    static auto repTypes = makeNeverDestroyed([] {
+        auto types = adoptNS([[NSMutableDictionary alloc] init]);
+        addTypesFromClass(types.get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedNonImageMIMETypes]);
+        addTypesFromClass(types.get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMediaMIMETypes]);
+
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
-        if (!omitPDFSupport)
+        if (!omitPDFSupport) {
 #if PLATFORM(IOS_FAMILY)
 #define WebPDFRepresentation ([WebView _getPDFRepresentationClass])
 #endif
-            addTypesFromClass(repTypes, [WebPDFRepresentation class], [WebPDFRepresentation supportedMIMETypes]);
+            addTypesFromClass(types.get(), [WebPDFRepresentation class], [WebPDFRepresentation supportedMIMETypes]);
 #if PLATFORM(IOS_FAMILY)
 #undef WebPDFRepresentation
 #endif
-    }
-    
+        }
+        return types;
+    }());
+    static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
-        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedImageMIMETypes]);
+        addTypesFromClass(repTypes.get().get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedImageMIMETypes]);
         addedImageTypes = YES;
     }
     
-    return repTypes;
+    return repTypes.get().get();
 }
 
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement

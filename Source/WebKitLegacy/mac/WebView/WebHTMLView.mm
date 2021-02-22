@@ -1961,15 +1961,13 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 + (NSArray *)_insertablePasteboardTypes
 {
-    static NSArray *types = nil;
-    if (!types) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, WebCore::legacyHTMLPasteboardType(), WebCore::legacyFilenamesPasteboardType(), WebCore::legacyTIFFPasteboardType(), WebCore::legacyPDFPasteboardType(),
-            WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), kUTTypePNG, nil];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        CFRetain(types);
-    }
-    return types;
+    static NeverDestroyed<RetainPtr<NSArray>> types = @[
+        WebArchivePboardType, WebCore::legacyHTMLPasteboardType(), WebCore::legacyFilenamesPasteboardType(), WebCore::legacyTIFFPasteboardType(),
+        WebCore::legacyPDFPasteboardType(), WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(),
+        WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), (NSString *)kUTTypePNG,
+    ];
+    return types.get().get();
 }
 
 + (NSArray *)_selectionPasteboardTypes

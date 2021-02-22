@@ -473,11 +473,11 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 
 static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame)
 {
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [window setOpaque:YES];
     [window setBackgroundColor:[NSColor blackColor]];
     [window setReleasedWhenClosed:NO];
-    return adoptNS(window);
+    return window;
 }
 
 static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFrame, NSRect finalFrame)

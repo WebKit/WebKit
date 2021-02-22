@@ -29,6 +29,8 @@
 
 #import "WebFeatureInternal.h"
 #import "WebPreferencesDefinitions.h"
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
@@ -36,19 +38,19 @@ using namespace WebKit;
 
 + (NSArray<WebFeature *> *)_internalFeatures
 {
-    static NSArray<WebFeature *> *features = @[
+    static NeverDestroyed<RetainPtr<NSArray<WebFeature *>>> features = @[
 <%- for @pref in @exposedInternalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>],
+        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>]).get(),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
 <%- end -%>
     ];
 
-    return features;
+    return features.get().get();
 }
 
 @end

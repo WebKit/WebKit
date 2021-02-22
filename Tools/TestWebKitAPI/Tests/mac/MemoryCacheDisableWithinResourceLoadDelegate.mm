@@ -72,18 +72,16 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, MemoryCacheDisableWithinResourceLoadDelegate)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        RetainPtr<MemoryCacheDisableTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCacheDisableTestResourceLoadDelegate alloc] init]);
+        webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
 
-    RetainPtr<MemoryCacheDisableTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCacheDisableTestResourceLoadDelegate alloc] init]);
-    webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCacheDisableWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCacheDisableWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-
-    Util::run(&didFinishLoad);
-    
-    [pool drain];
+        Util::run(&didFinishLoad);
+    }
     // If we finished without crashing, the test passed.
 }
 

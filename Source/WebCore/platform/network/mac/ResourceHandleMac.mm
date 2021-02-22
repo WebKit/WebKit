@@ -74,13 +74,13 @@ static void applyBasicAuthorizationHeader(ResourceRequest& request, const Creden
 
 static NSOperationQueue *operationQueueForAsyncClients()
 {
-    static NSOperationQueue *queue;
-    if (!queue) {
-        queue = [[NSOperationQueue alloc] init];
+    static auto queue = makeNeverDestroyed([] {
+        auto queue = adoptNS([[NSOperationQueue alloc] init]);
         // Default concurrent operation count depends on current system workload, but delegate methods are mostly idling in IPC, so we can run as many as needed.
         [queue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-    }
-    return queue;
+        return queue;
+    }());
+    return queue.get().get();
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()

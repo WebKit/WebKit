@@ -127,34 +127,38 @@ constexpr NSUInteger maximumWebViewCacheSize = 3;
     return cache;
 }
 
-static WKWebViewConfiguration *configuration;
+static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
+{
+    static NeverDestroyed<RetainPtr<WKWebViewConfiguration>> configuration;
+    return configuration;
+}
 
 + (WKWebViewConfiguration *)configuration
 {
+    auto& configuration = globalConfiguration();
     if (!configuration) {
-        configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.processPool = adoptNS([[WKProcessPool alloc] init]).get();
-        configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
-        configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
-        configuration._allowsJavaScriptMarkup = NO;
-        configuration._allowsMetaRefresh = NO;
-        configuration._attachmentElementEnabled = YES;
-        configuration._invisibleAutoplayNotPermitted = YES;
-        configuration._mediaDataLoadsAutomatically = NO;
-        configuration._needsStorageAccessFromFileURLsQuirk = NO;
+        configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+        [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+        [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAll];
+        [configuration _setAllowsJavaScriptMarkup:NO];
+        [configuration _setAllowsMetaRefresh:NO];
+        [configuration _setAttachmentElementEnabled:YES];
+        [configuration _setInvisibleAutoplayNotPermitted:YES];
+        [configuration _setMediaDataLoadsAutomatically:NO];
+        [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
 #if PLATFORM(IOS_FAMILY)
-        configuration.allowsInlineMediaPlayback = NO;
-        configuration._clientNavigationsRunAtForegroundPriority = YES;
+        [configuration setAllowsInlineMediaPlayback:NO];
+        [configuration _setClientNavigationsRunAtForegroundPriority:YES];
 #endif
     }
 
-    return configuration;
+    return configuration.get();
 }
 
 + (void)clearConfiguration
 {
-    [configuration release];
-    configuration = nil;
+    globalConfiguration() = nil;
 }
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView

@@ -475,12 +475,12 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 + (instancetype)sharedInstance
 {
-    static WebItemProviderPasteboard *sharedPasteboard = nil;
+    static NeverDestroyed<RetainPtr<WebItemProviderPasteboard>> sharedPasteboard;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^() {
-        sharedPasteboard = [[WebItemProviderPasteboard alloc] init];
+        sharedPasteboard.get() = adoptNS([[WebItemProviderPasteboard alloc] init]);
     });
-    return sharedPasteboard;
+    return sharedPasteboard.get().get();
 }
 
 - (instancetype)init

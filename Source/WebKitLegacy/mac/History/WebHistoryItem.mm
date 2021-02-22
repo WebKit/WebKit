@@ -161,13 +161,13 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 - (id)copyWithZone:(NSZone *)zone
 {
     WebCoreThreadViolationCheckRoundOne();
-    WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+    RetainPtr<WebHistoryItem> copy = adoptNS([[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()]);
 
     copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
 
-    historyItemWrappers().set(core(copy->_private), copy);
+    historyItemWrappers().set(core(copy->_private), copy.get());
 
-    return copy;
+    return copy.leakRef();
 }
 
 // FIXME: Need to decide if this class ever returns URLs and decide on the name of this method

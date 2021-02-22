@@ -330,7 +330,7 @@ private:
 #endif
     
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenController *newFullscreenController;
+    RetainPtr<WebFullScreenController> newFullscreenController;
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

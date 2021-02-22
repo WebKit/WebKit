@@ -105,16 +105,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (WebIconDatabase *)sharedIconDatabase
 {
-    static WebIconDatabase *database;
+    static NeverDestroyed<RetainPtr<WebIconDatabase>> database;
     static dispatch_once_t once;
     dispatch_once(&once, ^ {
         if (linkedOnOrAfter(WebCore::SDKVersion::FirstWithWebIconDatabaseWarning))
             NSLog(@"+[WebIconDatabase sharedIconDatabase] is not API and should not be used. WebIconDatabase no longer handles icon loading and it will be removed in a future release.");
 
-        database = [[WebIconDatabase alloc] init];
+        database.get() = adoptNS([[WebIconDatabase alloc] init]);
     });
 
-    return database;
+    return database.get().get();
 }
 
 - (id)init

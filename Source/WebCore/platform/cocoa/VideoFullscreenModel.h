@@ -69,7 +69,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() { return nullptr; }
-    virtual UIViewController *createVideoFullscreenViewController(AVPlayerViewController *) { return nullptr; }
+    virtual RetainPtr<UIViewController> createVideoFullscreenViewController(AVPlayerViewController *) { return nullptr; }
 #endif
 };
 

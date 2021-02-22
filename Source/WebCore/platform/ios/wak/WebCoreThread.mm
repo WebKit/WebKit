@@ -155,7 +155,11 @@ static void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL _cmd);
 static void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
 
-static NSMutableArray* sAsyncDelegates = nil;
+static RetainPtr<NSMutableArray>& sAsyncDelegates()
+{
+    static NeverDestroyed<RetainPtr<NSMutableArray>> asyncDelegates;
+    return asyncDelegates;
+}
 
 WEBCORE_EXPORT volatile unsigned webThreadDelegateMessageScopeCount = 0;
 
@@ -440,7 +444,7 @@ void WebThreadCallDelegateAsync(NSInvocation* invocation)
 {
     ASSERT(invocation);
     if (WebThreadIsCurrent())
-        [sAsyncDelegates addObject:invocation];
+        [sAsyncDelegates() addObject:invocation];
     else
         WebThreadCallDelegate(invocation);
 }
@@ -498,11 +502,11 @@ static void WebRunLoopLockInternal(AutoreleasePoolOperation poolOperation)
 
 static void WebRunLoopUnlockInternal(AutoreleasePoolOperation poolOperation)
 {
-    ASSERT(sAsyncDelegates);
-    if ([sAsyncDelegates count]) {
-        for (NSInvocation* invocation in sAsyncDelegates)
+    ASSERT(sAsyncDelegates());
+    if ([sAsyncDelegates() count]) {
+        for (NSInvocation* invocation in sAsyncDelegates().get())
             SendDelegateMessage([invocation retain]);
-        [sAsyncDelegates removeAllObjects];
+        [sAsyncDelegates() removeAllObjects];
     }
 
     if (poolOperation == PushOrPopAutoreleasePool && !perCalloutAutoreleasepoolEnabled)
@@ -686,7 +690,7 @@ static void StartWebThread()
     // modes so we don't block the web thread while scrolling.
     CFRunLoopAddSource(runLoop, delegateSource, kCFRunLoopCommonModes);
 
-    sAsyncDelegates = [[NSMutableArray alloc] init];
+    sAsyncDelegates() = adoptNS([[NSMutableArray alloc] init]);
 
     mainRunLoopAutoUnlockObserver = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 3000001, MainRunLoopAutoUnlock, nullptr);
 

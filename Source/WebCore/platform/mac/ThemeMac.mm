@@ -492,9 +492,9 @@ static const int* buttonMargins(NSControlSize controlSize)
 
 enum ButtonCellType { NormalButtonCell, DefaultButtonCell };
 
-static NSButtonCell *leakButtonCell(ButtonCellType type)
+static RetainPtr<NSButtonCell> buttonCell(ButtonCellType type)
 {
-    NSButtonCell *cell = [[NSButtonCell alloc] init];
+    auto cell = adoptNS([[NSButtonCell alloc] init]);
     [cell setTitle:nil];
     [cell setButtonType:NSButtonTypeMomentaryPushIn];
     if (type == DefaultButtonCell)
@@ -537,11 +537,11 @@ static NSButtonCell *button(ControlPart part, const ControlStates& controlStates
     ControlStates::States states = controlStates.states();
     NSButtonCell *cell;
     if (states & ControlStates::DefaultState) {
-        static NSButtonCell *defaultCell = leakButtonCell(DefaultButtonCell);
-        cell = defaultCell;
+        static NeverDestroyed<RetainPtr<NSButtonCell>> defaultCell = buttonCell(DefaultButtonCell);
+        cell = defaultCell.get().get();
     } else {
-        static NSButtonCell *normalCell = leakButtonCell(NormalButtonCell);
-        cell = normalCell;
+        static NeverDestroyed<RetainPtr<NSButtonCell>> normalCell = buttonCell(NormalButtonCell);
+        cell = normalCell.get().get();
     }
     setUpButtonCell(cell, part, controlStates, zoomedSize, zoomFactor);
     return cell;

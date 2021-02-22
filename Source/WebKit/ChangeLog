@@ -1,3 +1,52 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (globalConfiguration):
+        (+[_WKAttributedStringWebViewCache configuration]):
+        (+[_WKAttributedStringWebViewCache clearConfiguration]):
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (-[WKNSURLAuthenticationChallenge _web_createTarget]):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (sharedProcessPool):
+        (-[WKProcessPool encodeWithCoder:]):
+        (+[WKProcessPool _sharedProcessPool]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadSimulatedRequest:withResponseHTMLString:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore allWebsiteDataTypes]):
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (+[WKPreferenceObserver sharedInstance]):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::createVideoFullscreenViewController):
+        * UIProcess/Cocoa/WebInspectorPreferenceObserver.mm:
+        (+[WKWebInspectorPreferenceObserver sharedInstance]):
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView supportedPasteboardTypesForCurrentSelection]):
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        * UIProcess/ios/WKMouseDeviceObserver.mm:
+        (+[WKMouseDeviceObserver sharedInstance]):
+        * UIProcess/ios/WKStylusDeviceObserver.mm:
+        (+[WKStylusDeviceObserver sharedInstance]):
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (+[WKTextInputWindowController sharedTextInputWindowController]):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (+[WKPopoverColorWell _colorPopoverCreateIfNecessary:]):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionWindow initWithContentRect:styleMask:backing:defer:]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::initWithImpl):
+        (WebKit::toWKDOMType):
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize):
+
 2021-02-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Crash under AuxiliaryProcess::initializeSandbox

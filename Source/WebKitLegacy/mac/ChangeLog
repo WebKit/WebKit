@@ -1,3 +1,70 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (+[WebDefaultUIDelegate sharedUIDelegate]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]):
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase sharedIconDatabase]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (_writableTypesForImageWithoutArchive):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView cacheSnapshot]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+        * Plugins/WebPluginController.mm:
+        (pluginViews):
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (+[WebPluginController addPlugInView:]):
+        (+[WebPluginController isPlugInView:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * Plugins/WebPluginDatabase.mm:
+        (sharedDatabase):
+        (+[WebPluginDatabase sharedDatabase]):
+        (+[WebPluginDatabase sharedDatabaseIfExists]):
+        (+[WebPluginDatabase closeSharedDatabase]):
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _plugInPaths]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb:
+        * WebView/WebDataSource.mm:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView/WebFrameView.mm:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView/WebFullScreenController.mm:
+        (createBackgroundFullscreenWindow):
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        * WebView/WebPreferences.mm:
+        (standardPreferences):
+        (webPreferencesInstances):
+        (+[WebPreferences standardPreferences]):
+        (+[WebPreferences _getInstanceForIdentifier:]):
+        (+[WebPreferences _setInstance:forIdentifier:]):
+        (+[WebPreferences _checkLastReferenceForIdentifier:]):
+        * WebView/WebView.mm:
+        (schemesWithRepresentationsSet):
+        (outlookQuirksUserScriptContents):
+        (-[WebView _injectOutlookQuirksScript]):
+        (laBanquePostaleQuirksScript):
+        (-[WebView _injectLaBanquePostaleQuirks]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (+[WebView _representationExistsForURLScheme:]):
+        (+[WebView automaticallyNotifiesObserversForKey:]):
+        (-[WebView _declaredKeys]):
+        (-[WebView addPluginInstanceView:]):
+        (-[WebView _enterFullScreenForElement:]):
+        * WebView/WebViewData.h:
+
 2021-02-19  Chris Dumez  <cdumez@apple.com>
 
         Review remaining usage of autorelease to make sure it is necessary

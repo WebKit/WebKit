@@ -31,6 +31,7 @@
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -51,8 +52,6 @@
 
 @implementation WebDefaultUIDelegate
 
-static WebDefaultUIDelegate *sharedDelegate = nil;
-
 // Return a object with vanilla implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless. This
 // is probably an invalid assumption for the WebUIDelegate.
@@ -60,9 +59,8 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 // won't be able to use a singleton.
 + (WebDefaultUIDelegate *)sharedUIDelegate
 {
-    if (!sharedDelegate)
-        sharedDelegate = [[WebDefaultUIDelegate alloc] init];
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultUIDelegate>> sharedDelegate = adoptNS([[WebDefaultUIDelegate alloc] init]);
+    return sharedDelegate.get().get();
 }
 
 - (WebView *)webView: (WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features

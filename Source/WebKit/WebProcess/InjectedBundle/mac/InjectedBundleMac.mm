@@ -203,14 +203,14 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    id <WKWebProcessPlugIn> instance = (id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init];
+    auto instance = adoptNS((id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init]);
     if (!instance) {
         WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
         return false;
     }
 
     WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
-    [plugInController _setPrincipalClassInstance:instance];
+    [plugInController _setPrincipalClassInstance:instance.get()];
 
     if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
         [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];

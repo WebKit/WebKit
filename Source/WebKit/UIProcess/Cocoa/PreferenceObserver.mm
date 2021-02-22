@@ -118,12 +118,8 @@
 
 + (id)sharedInstance
 {
-    static WKPreferenceObserver *instance = nil;
-
-    if (!instance)
-        instance = [[[self class] alloc] init];
-
-    return instance;
+    static NeverDestroyed<RetainPtr<WKPreferenceObserver>> instance = adoptNS([[[self class] alloc] init]);
+    return instance.get().get();
 }
 
 - (instancetype)init
