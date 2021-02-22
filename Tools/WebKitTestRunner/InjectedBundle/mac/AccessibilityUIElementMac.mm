@@ -83,6 +83,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)isIsolatedObject;
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
 - (BOOL)accessibilityInsertText:(NSString *)text;
+- (id)textMarkerRangeForNSRange:(const NSRange&)nsRange;
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
@@ -1821,6 +1822,15 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForM
     return AccessibilityTextMarkerRange::create(textMarkerRange);
     END_AX_OBJC_EXCEPTIONS
     
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned location, unsigned length)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return AccessibilityTextMarkerRange::create([m_element textMarkerRangeForNSRange:NSMakeRange(location, length)]);
+    END_AX_OBJC_EXCEPTIONS
+
     return nullptr;
 }
 

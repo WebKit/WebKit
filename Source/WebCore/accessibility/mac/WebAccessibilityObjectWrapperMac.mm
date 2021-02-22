@@ -3478,6 +3478,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     });
 }
 
+- (AXTextMarkerRangeRef)textMarkerRangeForNSRange:(const NSRange&)range
+{
+    auto* backingObject = self.updateObjectBackingStore;
+    return backingObject ? backingObject->textMarkerRangeForNSRange(range) : nil;
+}
+
 // FIXME: No reason for this to be a method instead of a function; can get document from range.
 - (NSRange)_convertToNSRange:(const SimpleRange&)range
 {
@@ -4022,15 +4028,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return CGRectZero;
-            auto* cache = backingObject->axObjectCache();
-            if (!cache)
+
+            auto start = backingObject->visiblePositionForIndex(range.location);
+            auto end = backingObject->visiblePositionForIndex(range.location + range.length);
+            auto webRange = makeSimpleRange({ start, end });
+            if (!webRange)
                 return CGRectZero;
-            CharacterOffset start = cache->characterOffsetForIndex(range.location, backingObject);
-            CharacterOffset end = cache->characterOffsetForIndex(range.location+range.length, backingObject);
-            auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
-            if (!range)
-                return CGRectZero;
-            auto bounds = FloatRect(backingObject->boundsForRange(*range));
+
+            auto bounds = FloatRect(backingObject->boundsForRange(*webRange));
             return [protectedSelf convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         });
         return [NSValue valueWithRect:rect];
