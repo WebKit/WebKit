@@ -1,3 +1,16 @@
+2021-02-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        RunLoop::threadWillExit is doing m_nextIteration.clear() without locking m_nextIterationLock
+        https://bugs.webkit.org/show_bug.cgi?id=221115
+
+        Reviewed by Yusuke Suzuki.
+
+        GKT and WPE ports were observing a random assertion failure in
+        Deque::append in RunLoop::dispatch.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::threadWillExit): Lock m_nextIterationLock before doing m_nextIteration.clear().
+
 2021-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Re-enable Paint Timing
