@@ -1,3 +1,13 @@
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bootstrap the run-httpd script in the SDK runtime
+        https://bugs.webkit.org/show_bug.cgi?id=221464
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/run-webkit-httpd: On Linux platforms, run the script within the SDK runtime, if it
+        is available on the host system.
+
 2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
