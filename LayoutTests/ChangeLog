@@ -1,3 +1,14 @@
+2021-02-22  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222266
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Adapt platform test expectations.
+
+        * TestExpectations:
+
 2021-02-22  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 color-mix()

@@ -14,6 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-valid.html

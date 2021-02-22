@@ -1,3 +1,33 @@
+2021-02-22  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222266
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream 9b505f9fc3.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-016.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-017-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-017.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-012-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-012.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-013-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-013.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-014-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-014.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-016.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-02-22  Sam Weinig  <weinig@apple.com>
 
         Update web-platform-tests/css/css-color
