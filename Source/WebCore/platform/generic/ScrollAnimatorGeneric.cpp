@@ -109,9 +109,8 @@ bool ScrollAnimatorGeneric::scroll(ScrollbarOrientation orientation, ScrollGranu
 }
 #endif
 
-void ScrollAnimatorGeneric::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
+bool ScrollAnimatorGeneric::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
-    FloatPoint position = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
     m_kineticAnimation->stop();
     m_kineticAnimation->clearScrollHistory();
 
@@ -120,7 +119,7 @@ void ScrollAnimatorGeneric::scrollToOffsetWithoutAnimation(const FloatPoint& off
         m_smoothAnimation->setCurrentPosition(position);
 #endif
 
-    ScrollAnimator::scrollToOffsetWithoutAnimation(offset, clamping);
+    return ScrollAnimator::scrollToPositionWithoutAnimation(position, clamping);
 }
 
 bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)

@@ -597,7 +597,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             adjustedScrollPosition = adjustScrollPositionWithinRange(adjustedScrollPosition);
 
         if (adjustedScrollPosition != scrollPosition() || scrollOriginChanged()) {
-            ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(adjustedScrollPosition));
+            ScrollableArea::scrollToPositionWithoutAnimation(adjustedScrollPosition);
             resetScrollOriginChanged();
         }
     };

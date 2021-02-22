@@ -675,7 +675,7 @@ public:
 
     void renderLayerDidScroll(const RenderLayer&);
 
-    WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
+    WEBCORE_EXPORT void scrollToPositionWithAnimation(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
     bool inUpdateEmbeddedObjects() const { return m_inUpdateEmbeddedObjects; }
 

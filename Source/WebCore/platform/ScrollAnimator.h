@@ -78,10 +78,12 @@ public:
     // destination and returns true.  Scrolling may be immediate or animated.
     // The base class implementation always scrolls immediately, never animates.
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior = ScrollBehavior::Default);
-    bool scrollWithoutAnimation(ScrollbarOrientation, float step, float multiplier);
 
-    void scrollToOffset(const FloatPoint&);
-    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
+    bool scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
+    virtual bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped);
+
+    bool scrollToOffsetWithAnimation(const FloatPoint&);
+    virtual bool scrollToPositionWithAnimation(const FloatPoint&);
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 

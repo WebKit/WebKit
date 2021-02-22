@@ -83,57 +83,60 @@ ScrollAnimator::~ScrollAnimator()
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, ScrollBehavior behavior)
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (behavior != ScrollBehavior::DoDirectionalSnapping)
-        return scrollWithoutAnimation(orientation, step, multiplier);
-
-    FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
-    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
-    auto newOffset = ScrollableArea::scrollOffsetFromPosition(newPosition, scrollOrigin);
-    auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
-    if (orientation == HorizontalScrollbar) {
-        newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
-        newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
-        return scroll(HorizontalScrollbar, granularity, newPosition.x() - this->currentPosition().x(), 1.0);
+    if (behavior == ScrollBehavior::DoDirectionalSnapping) {
+        auto newOffset = ScrollableArea::scrollOffsetFromPosition(positionFromStep(orientation, step, multiplier), toFloatSize(m_scrollableArea.scrollOrigin()));
+        auto currentOffset = m_scrollableArea.scrollOffset();
+        if (orientation == HorizontalScrollbar) {
+            newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
+            return scroll(HorizontalScrollbar, granularity, newOffset.x() - currentOffset.x(), 1.0);
+        }
+        newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset.y(), multiplier, currentOffset.y()));
+        return scroll(VerticalScrollbar, granularity, newOffset.y() - currentOffset.y(), 1.0);
     }
-
-    newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newPosition.y(), multiplier, currentOffset.y()));
-    newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
-    return scroll(VerticalScrollbar, granularity, newPosition.y() - this->currentPosition().y(), 1.0);
 #else
     UNUSED_PARAM(granularity);
     UNUSED_PARAM(behavior);
-    return scrollWithoutAnimation(orientation, step, multiplier);
 #endif
+
+    return scrollToPositionWithoutAnimation(positionFromStep(orientation, step, multiplier));
 }
 
-bool ScrollAnimator::scrollWithoutAnimation(ScrollbarOrientation orientation, float step, float multiplier)
+bool ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
+{
+    return scrollToPositionWithoutAnimation(ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(scrollableArea().scrollOrigin())), clamping);
+}
+
+bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     FloatPoint currentPosition = this->currentPosition();
-    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
-    newPosition = newPosition.constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
-    if (currentPosition == newPosition)
+    auto adjustedPosition = clamping == ScrollClamping::Clamped ? position.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition()) : position;
+
+    // FIXME: In some cases on iOS the ScrollableArea position is out of sync with the ScrollAnimator position.
+    // When these cases are fixed, this extra check against the ScrollableArea position can be removed.
+    if (adjustedPosition == currentPosition && adjustedPosition == scrollableArea().scrollPosition() && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_currentPosition = newPosition;
-    notifyPositionChanged(newPosition - currentPosition);
+    m_currentPosition = adjustedPosition;
+    notifyPositionChanged(adjustedPosition - currentPosition);
+    updateActiveScrollSnapIndexForOffset();
     return true;
 }
 
-void ScrollAnimator::scrollToOffset(const FloatPoint& offset)
+bool ScrollAnimator::scrollToOffsetWithAnimation(const FloatPoint& offset)
 {
-    m_animationProgrammaticScroll->setCurrentPosition(m_currentPosition);
-    auto newPosition = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
-    m_animationProgrammaticScroll->scroll(newPosition);
-    m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
+    return scrollToPositionWithAnimation(ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(scrollableArea().scrollOrigin())));
 }
 
-void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping)
+bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition)
 {
-    FloatPoint newPosition = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
-    FloatSize delta = newPosition - currentPosition();
-    m_currentPosition = newPosition;
-    notifyPositionChanged(delta);
-    updateActiveScrollSnapIndexForOffset();
+    bool positionChanged = newPosition != currentPosition();
+    if (!positionChanged && !scrollableArea().scrollOriginChanged())
+        return false;
+
+    m_animationProgrammaticScroll->setCurrentPosition(m_currentPosition);
+    m_animationProgrammaticScroll->scroll(newPosition);
+    scrollableArea().setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
+    return true;
 }
 
 FloatPoint ScrollAnimator::positionFromStep(ScrollbarOrientation orientation, float step, float multiplier)
@@ -208,7 +211,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                     deltaY = -deltaY;
             }
             if (e.hasPreciseScrollingDeltas())
-                scrollWithoutAnimation(VerticalScrollbar, verticalScrollbar->pixelStep(), -deltaY);
+                scrollToPositionWithoutAnimation(positionFromStep(VerticalScrollbar, verticalScrollbar->pixelStep(), -deltaY));
             else
                 scroll(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
         }
@@ -221,7 +224,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                     deltaX = -deltaX;
             }
             if (e.hasPreciseScrollingDeltas())
-                scrollWithoutAnimation(HorizontalScrollbar, horizontalScrollbar->pixelStep(), -deltaX);
+                scrollToPositionWithoutAnimation(positionFromStep(HorizontalScrollbar, horizontalScrollbar->pixelStep(), -deltaX));
             else
                 scroll(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
         }
@@ -257,8 +260,7 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 {
     UNUSED_PARAM(delta);
-    // FIXME: need to not map back and forth all the time.
-    m_scrollableArea.setScrollOffsetFromAnimation(m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition())));
+    m_scrollableArea.setScrollPositionFromAnimation(roundedIntPoint(currentPosition()));
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     m_scrollController.scrollPositionChanged();

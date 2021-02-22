@@ -80,7 +80,8 @@ private:
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior) override;
-    void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
+    bool scrollToPositionWithAnimation(const FloatPoint&) override;
+    bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped) override;
 
 #if ENABLE(RUBBER_BANDING)
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
@@ -131,8 +132,6 @@ private:
     void sendContentAreaScrolledSoon(const FloatSize& scrollDelta);
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
-
-    void immediateScrollToPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     bool isUserScrollInProgress() const override;
     bool isRubberBandInProgress() const override;

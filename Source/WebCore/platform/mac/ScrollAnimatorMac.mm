@@ -787,22 +787,19 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
 {
     m_haveScrolledSincePageLoad = true;
 
-    if (!scrollAnimationEnabledForSystem() || !m_scrollableArea.scrollAnimatorEnabled())
-        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
-
-    if (granularity == ScrollByPixel)
-        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
-
     // This method doesn't do directional snapping, but our base class does. It will call into
     // ScrollAnimatorMac::scroll again with the snapped positions and ScrollBehavior::Default.
     if (behavior == ScrollBehavior::DoDirectionalSnapping)
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
-    FloatPoint currentPosition = this->currentPosition();
+    bool shouldAnimate = scrollAnimationEnabledForSystem() && m_scrollableArea.scrollAnimatorEnabled() && granularity != ScrollByPixel;
     FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
-    newPosition = newPosition.constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
-    if (currentPosition == newPosition)
-        return false;
+    newPosition = newPosition.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition());
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll from " << currentPosition() << " to " << newPosition);
+
+    if (!shouldAnimate)
+        return scrollToPositionWithoutAnimation(newPosition);
 
     if ([m_scrollAnimationHelper _isAnimating]) {
         NSPoint targetOrigin = [m_scrollAnimationHelper targetOrigin];
@@ -812,16 +809,27 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
             newPosition.setX(targetOrigin.x);
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll " << " from " << currentPosition << " to " << newPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll " << " from " << currentPosition() << " to " << newPosition);
     [m_scrollAnimationHelper scrollToPoint:newPosition];
     return true;
 }
 
-// FIXME: Maybe this should take a position.
-void ScrollAnimatorMac::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
+bool ScrollAnimatorMac::scrollToPositionWithAnimation(const FloatPoint& newPosition)
+{
+    bool positionChanged = newPosition != currentPosition();
+    if (!positionChanged && !scrollableArea().scrollOriginChanged())
+        return false;
+
+    // FIXME: This is used primarily by smooth scrolling. This should ideally use native scroll animations.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=218857
+    [m_scrollAnimationHelper _stopRun];
+    return ScrollAnimator::scrollToPositionWithAnimation(newPosition);
+}
+
+bool ScrollAnimatorMac::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     [m_scrollAnimationHelper _stopRun];
-    immediateScrollToPosition(ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin())), clamping);
+    return ScrollAnimator::scrollToPositionWithoutAnimation(position, clamping);
 }
 
 FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& position) const
@@ -842,21 +850,6 @@ void ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary()
     immediateScrollBy(constrainedPosition - currentScrollPosition);
 
     m_scrollableArea.setConstrainsScrollingToContentEdge(currentlyConstrainsToContentEdge);
-}
-
-void ScrollAnimatorMac::immediateScrollToPosition(const FloatPoint& newPosition, ScrollClamping clamping)
-{
-    FloatPoint currentPosition = this->currentPosition();
-    FloatPoint adjustedPosition = clamping == ScrollClamping::Clamped ? adjustScrollPositionIfNecessary(newPosition) : newPosition;
- 
-    bool positionChanged = adjustedPosition != currentPosition;
-    if (!positionChanged && !scrollableArea().scrollOriginChanged())
-        return;
-
-    FloatSize delta = adjustedPosition - currentPosition;
-    m_currentPosition = adjustedPosition;
-    notifyPositionChanged(delta);
-    updateActiveScrollSnapIndexForOffset();
 }
 
 bool ScrollAnimatorMac::isUserScrollInProgress() const
@@ -922,7 +915,7 @@ String ScrollAnimatorMac::verticalScrollbarStateForTesting() const
 void ScrollAnimatorMac::immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
-    immediateScrollToPosition(newPosition);
+    ScrollAnimator::scrollToPositionWithoutAnimation(newPosition);
 }
 
 void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)

@@ -47,7 +47,7 @@ private:
 #if ENABLE(SMOOTH_SCROLLING)
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior) override;
 #endif
-    void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
+    bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping) override;
     void willEndLiveResize() override;
 
     bool handleWheelEvent(const PlatformWheelEvent&) override;

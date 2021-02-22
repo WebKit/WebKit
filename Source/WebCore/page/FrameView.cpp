@@ -2327,11 +2327,12 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const Sc
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
 
     ScrollOffset snappedOffset = ceiledIntPoint(scrollAnimator().adjustScrollOffsetForSnappingIfNeeded(scrollOffsetFromPosition(scrollPosition), options.snapPointSelectionMethod));
+    auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
     if (options.animated == AnimatedScroll::Yes)
-        scrollToOffsetWithAnimation(snappedOffset, currentScrollType(), options.clamping);
+        scrollToPositionWithAnimation(snappedPosition, currentScrollType(), options.clamping);
     else
-        ScrollView::setScrollPosition(scrollPositionFromOffset(snappedOffset), options);
+        ScrollView::setScrollPosition(snappedPosition, options);
 
     setCurrentScrollType(oldScrollType);
 }
@@ -3763,15 +3764,15 @@ void FrameView::scrollTo(const ScrollPosition& newPosition)
     didChangeScrollOffset();
 }
 
-void FrameView::scrollToOffsetWithAnimation(const ScrollOffset& offset, ScrollType scrollType, ScrollClamping)
+void FrameView::scrollToPositionWithAnimation(const ScrollPosition& position, ScrollType scrollType, ScrollClamping)
 {
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(scrollType);
 
     if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
         scrollAnimator().cancelAnimations();
-    if (offset != this->scrollOffset())
-        ScrollableArea::scrollToOffsetWithAnimation(offset);
+    if (position != this->scrollPosition())
+        ScrollableArea::scrollToPositionWithAnimation(position);
 
     setCurrentScrollType(previousScrollType);
 }

@@ -265,12 +265,12 @@ void RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset,
     setCurrentScrollType(options.type);
 
     ScrollOffset snappedOffset = ceiledIntPoint(scrollAnimator().adjustScrollOffsetForSnappingIfNeeded(clampedScrollOffset, options.snapPointSelectionMethod));
+    auto snappedPosition = scrollPositionFromOffset(snappedOffset);
     if (options.animated == AnimatedScroll::Yes)
-        ScrollableArea::scrollToOffsetWithAnimation(snappedOffset);
+        ScrollableArea::scrollToPositionWithAnimation(snappedPosition);
     else {
-        auto snappedPosition = scrollPositionFromOffset(snappedOffset);
         if (!requestScrollPositionUpdate(snappedPosition, options.type, options.clamping))
-            scrollToOffsetWithoutAnimation(snappedOffset, options.clamping);
+            scrollToPositionWithoutAnimation(snappedPosition, options.clamping);
         setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
     }
 
@@ -1157,7 +1157,7 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
         return;
 
     m_scrollDimensionsDirty = true;
-    ScrollOffset originalScrollOffset = scrollOffset();
+    ScrollPosition originalScrollPosition = scrollPosition();
 
     computeScrollDimensions();
     m_layer.updateSelfPaintingLayer();
@@ -1188,8 +1188,8 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
 
     updateScrollbarsAfterLayout();
 
-    if (originalScrollOffset != scrollOffset())
-        scrollToOffsetWithoutAnimation(IntPoint(scrollOffset()));
+    if (originalScrollPosition != scrollPosition())
+        scrollToPositionWithoutAnimation(IntPoint(scrollPosition()));
 
     if (m_layer.isComposited()) {
         m_layer.setNeedsCompositingGeometryUpdate();
