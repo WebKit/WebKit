@@ -62,7 +62,7 @@
 OBJC_CLASS AVPlayer;
 OBJC_CLASS NSArray;
 
-#if ENABLE(WEBGL) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
