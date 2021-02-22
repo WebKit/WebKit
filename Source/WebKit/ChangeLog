@@ -1,3 +1,20 @@
+2021-02-22  Per Arne  <pvollan@apple.com>
+
+        [macOS] Disabling relaunch on login for the WebContent process is racy
+        https://bugs.webkit.org/show_bug.cgi?id=222074
+        <rdar://problem/74230216>
+
+        Reviewed by Geoffrey Garen.
+
+        When NSApplication is being intialized, the method -[NSApplication disableRelaunchOnLogin] is dispatched on a non-main thread, which is in a race
+        with the revocation of the Launch Services sandbox extension. This patch addresses this by setting this information synchronously with Launch
+        Services while the sandbox extension is being held. Additionally, accessibility related code under WebPage::platformInitialize may reach out to
+        the Launch Services daemon once during the lifetime of the WebContent process. Make sure that call succeeds by making a synchronous call while
+        a sandbox extension to the Launch Services daemon is being held.
+        
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-02-22  Sam Sneddon  <gsnedders@apple.com>
 
         REGRESSION(r273204): webkitpy tests don't run on Py3
