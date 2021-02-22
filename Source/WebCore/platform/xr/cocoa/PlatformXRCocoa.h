@@ -26,6 +26,20 @@
 #pragma once
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include "PlatformXR.h"
+
+namespace PlatformXR {
+
+class PlatformXRDeviceCocoa : public Device {
+public:
+    void initializeTrackingAndRendering(SessionMode) override { }
+    void shutDownTrackingAndRendering() override { }
+    void initializeReferenceSpace(ReferenceSpaceType) override { }
+    Vector<ViewData> views(SessionMode) const override { return { }; }
+    void requestFrame(RequestFrameCallback&&) override { }
+};
+
+}
 
 #include <WebKitAdditions/PlatformXRAdditions.h>
 
