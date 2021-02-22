@@ -5344,7 +5344,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     bool hasPrefixUpdateOp = false;
     unsigned lastOperator = 0;
 
-    if (UNLIKELY(match(AWAIT) && (currentFunctionScope()->isAsyncFunctionBoundary() || (isModuleParseMode(sourceParseMode())) && Options::useTopLevelAwait())))
+    if (UNLIKELY(match(AWAIT) && (currentFunctionScope()->isAsyncFunctionBoundary() || (isModuleParseMode(sourceParseMode()) && Options::useTopLevelAwait()))))
         return parseAwaitExpression(context);
 
     JSTokenLocation location(tokenLocation());

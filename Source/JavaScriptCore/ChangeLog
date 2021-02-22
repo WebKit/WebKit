@@ -1,3 +1,16 @@
+2021-02-21  Lauro Moura  <lmoura@igalia.com>
+
+        Fix warning after r273225
+        https://bugs.webkit.org/show_bug.cgi?id=222257
+
+        Reviewed by Keith Miller.
+
+        The UNLIKELY condition raises a warn with "suggest parentheses around
+        ‘&&’ within ‘||’" for the last pair.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+
 2021-02-21  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix CMake build.
