@@ -1,3 +1,15 @@
+2021-02-22  Eric Carlson  <eric.carlson@apple.com>
+
+        UserMediaPermissionRequestManagerProxy may be released while computing capture device list
+        https://bugs.webkit.org/show_bug.cgi?id=222236
+        <rdar://74480265>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList): Return early
+        if `weakThis` is NULL.
+
 2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for libsoup3
