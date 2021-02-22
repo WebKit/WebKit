@@ -1,5 +1,16 @@
 2021-02-22  Sam Weinig  <weinig@apple.com>
 
+        Add experimental support for CSS Color 5 color-mix()
+        https://bugs.webkit.org/show_bug.cgi?id=222258
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/parsing-color-mix-expected.txt: Added.
+        * fast/css/parsing-color-mix.html: Added.
+        Add parsing and computed style computation tests for color-mix().
+
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
         Update web-platform-tests/css/css-color
         https://bugs.webkit.org/show_bug.cgi?id=222235
 

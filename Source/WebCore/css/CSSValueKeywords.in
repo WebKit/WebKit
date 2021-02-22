@@ -1434,6 +1434,18 @@ prophoto-rgb
 // sRGB
 xyz
 
+// color-mix()
+color-mix
+shorter
+longer
+increasing
+decreasing
+specified
+lightness
+chroma
+whiteness
+blackness
+
 // prefers-default-appearance
 prefers
 // no-preference

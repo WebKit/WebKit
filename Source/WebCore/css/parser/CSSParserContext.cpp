@@ -69,6 +69,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , aspectRatioEnabled { document.settings().aspectRatioEnabled() }
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
+    , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
     , enforcesCSSMIMETypeInNoQuirksMode { document.settings().enforceCSSMIMETypeInNoQuirksMode() }
@@ -106,6 +107,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.useSystemAppearance == b.useSystemAppearance
         && a.aspectRatioEnabled == b.aspectRatioEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
+        && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode

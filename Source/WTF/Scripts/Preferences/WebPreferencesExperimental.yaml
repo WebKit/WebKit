@@ -113,6 +113,18 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSSColorMixEnabled:
+  type: bool
+  humanReadableName: "CSS color-mix()"
+  humanReadableDescription: "Enable support for CSS color-mix() defined in CSS Color 5"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"

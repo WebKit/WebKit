@@ -73,8 +73,12 @@ public:
     Color(Optional<SRGBA<uint8_t>>, OptionSet<Flags> = { });
 
     Color(ColorComponents<float>, ColorSpace, OptionSet<Flags> = { });
+    
     template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
     Color(const ColorType&, OptionSet<Flags> = { });
+    
+    template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
+    Color(const Optional<ColorType>&, OptionSet<Flags> = { });
 
     explicit Color(WTF::HashTableEmptyValueType);
     explicit Color(WTF::HashTableDeletedValueType);
@@ -298,6 +302,13 @@ template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentT
 inline Color::Color(const ColorType& color, OptionSet<Flags> flags)
 {
     setExtendedColor(ExtendedColor::create(color), toFlagsIncludingPrivate(flags));
+}
+
+template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
+inline Color::Color(const Optional<ColorType>& color, OptionSet<Flags> flags)
+{
+    if (color)
+        setExtendedColor(ExtendedColor::create(*color), toFlagsIncludingPrivate(flags));
 }
 
 inline Color::Color(Ref<ExtendedColor>&& extendedColor, OptionSet<Flags> flags)
