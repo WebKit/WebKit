@@ -890,6 +890,10 @@ class WebkitFlatpak:
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
 
+        display = os.environ.get("DISPLAY")
+        if display:
+            flatpak_env["WEBKIT_FLATPAK_DISPLAY"] = display
+
         try:
             return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
         except KeyboardInterrupt:

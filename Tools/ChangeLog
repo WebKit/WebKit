@@ -1,3 +1,14 @@
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] X11 SSH forwarding fails
+        https://bugs.webkit.org/show_bug.cgi?id=222246
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Forward the DISPLAY env var to the sandbox.
+        * flatpak/webkit-bwrap: Set the DISPLAY env var if it was set in the parent process.
+
 2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for libsoup3

@@ -100,6 +100,10 @@ def main(args: list) -> int:
     for dst, src in try_bind_mounts.items():
         bwrap_args.extend(("--bind-try", src, dst))
 
+    display = environ.get("WEBKIT_FLATPAK_DISPLAY")
+    if display:
+        bwrap_args.extend(("--setenv", "DISPLAY", display))
+
     for env in environ.keys():
         if env.startswith("LC_") or env == "LANGUAGE":
             bwrap_args.extend(("--unsetenv", env))
