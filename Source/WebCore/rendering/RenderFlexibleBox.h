@@ -112,6 +112,8 @@ private:
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
     Length flexBasisForChild(const RenderBox& child) const;
+    Length mainSizeLengthForChild(SizeType, const RenderBox&) const;
+    Length crossSizeLengthForChild(SizeType, const RenderBox&) const;
     bool shouldApplyMinSizeAutoForChild(const RenderBox&) const;
     LayoutUnit crossAxisExtentForChild(const RenderBox& child) const;
     LayoutUnit crossAxisIntrinsicExtentForChild(const RenderBox& child) const;
