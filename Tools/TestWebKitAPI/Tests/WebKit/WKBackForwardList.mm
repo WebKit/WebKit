@@ -166,3 +166,146 @@ TEST(WKBackForwardList, WindowLocationAsyncPolicyDecision)
     TestWebKitAPI::Util::run(&done);
     EXPECT_STREQ(webView.get().backForwardList.currentItem.URL.absoluteString.UTF8String, simple.absoluteString.UTF8String);
 }
+
+TEST(WKBackForwardList, InteractionStateRestoration)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url3 = [[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url3]];
+    [webView _test_waitForDidFinishNavigation];
+
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)2, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+
+    id interactionState = [webView interactionState];
+    RetainPtr<NSURL> temporaryFile = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
+    NSError *error = nil;
+    RetainPtr<NSData> archivedInteractionState = [NSKeyedArchiver archivedDataWithRootObject:interactionState requiringSecureCoding:YES error:&error];
+    EXPECT_TRUE(!error);
+    interactionState = nil;
+    [archivedInteractionState writeToURL:temporaryFile.get() options:NSDataWritingAtomic error:&error];
+    archivedInteractionState = nil;
+    EXPECT_TRUE(!error);
+
+    webView = adoptNS([[WKWebView alloc] init]);
+
+    archivedInteractionState = [NSData dataWithContentsOfURL:temporaryFile.get()];
+    interactionState = [NSKeyedUnarchiver unarchivedObjectOfClass:[(id)[webView interactionState] class] fromData:archivedInteractionState.get() error:&error];
+    EXPECT_TRUE(!error);
+
+    [webView setInteractionState:interactionState];
+    [webView _test_waitForDidFinishNavigation];
+
+    WKBackForwardList *newList = [webView backForwardList];
+
+    EXPECT_EQ((NSUInteger)2, newList.backList.count);
+    EXPECT_EQ((NSUInteger)0, newList.forwardList.count);
+    EXPECT_STREQ([[newList.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+
+    done = false;
+    [webView evaluateJavaScript:@"document.body.innerText" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        NSString* bodyText = result;
+        EXPECT_WK_STREQ(@"Third simple HTML file.", bodyText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView goBack];
+    [webView _test_waitForDidFinishNavigation];
+
+    done = false;
+    [webView evaluateJavaScript:@"document.body.innerText" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        NSString* bodyText = result;
+        EXPECT_WK_STREQ(@"Second simple HTML file.", bodyText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView goBack];
+    [webView _test_waitForDidFinishNavigation];
+
+    done = false;
+    [webView evaluateJavaScript:@"document.body.innerText" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        NSString* bodyText = result;
+        EXPECT_WK_STREQ(@"Simple HTML file.", bodyText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKBackForwardList, InteractionStateRestorationNil)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url3 = [[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url3]];
+    [webView _test_waitForDidFinishNavigation];
+
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)2, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+
+    [webView setInteractionState:nil];
+
+    list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)2, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+}
+
+TEST(WKBackForwardList, InteractionStateRestorationInvalid)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url3 = [[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url3]];
+    [webView _test_waitForDidFinishNavigation];
+
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)2, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+
+    NSString *invalidState = @"foo";
+    [webView setInteractionState:invalidState];
+
+    list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)2, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, url3.absoluteString.UTF8String);
+}
+

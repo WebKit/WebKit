@@ -1,5 +1,22 @@
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
+        [Cocoa] Add WKWebView session restoration API
+        https://bugs.webkit.org/show_bug.cgi?id=220958
+        <rdar://70956146>
+
+        Reviewed by Geoffrey Garen.
+
+        Add WKWebView session restoration API so that applications can easily retrieve
+        view state (such as back-forward list, scroll position, form data...) and
+        restore it on a WKWebView later on.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView interactionState]):
+        (-[WKWebView setInteractionState:]):
+
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
         Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
         https://bugs.webkit.org/show_bug.cgi?id=222237
 

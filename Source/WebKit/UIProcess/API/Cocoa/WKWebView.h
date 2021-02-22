@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -472,6 +472,12 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  The default value is nil.
 */
 @property (nonatomic, nullable, copy) NSString *mediaType WK_API_AVAILABLE(macos(11.0), ios(14.0));
+
+/* @abstract The interaction state for the WKWebView
+ @discussion The interaction state (back-forward list, currently loaded page, scroll position, form data...) for the WKWebView, which
+ can be retrieved and set on another WKWebView to restore state.
+*/
+@property (nonatomic, nullable, copy) id interactionState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView

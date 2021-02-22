@@ -52,6 +52,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
+#import "SessionStateCoding.h"
 #import "SharedBufferCopy.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
@@ -1233,6 +1234,22 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (NSString *)mediaType
 {
     return _page->overriddenMediaType().isNull() ? nil : (NSString *)_page->overriddenMediaType();
+}
+
+- (id)interactionState
+{
+    return WebKit::encodeSessionState(_page->sessionState()).autorelease();
+}
+
+- (void)setInteractionState:(id)interactionState
+{
+    if (![(id)interactionState isKindOfClass:[NSData class]])
+        return;
+
+    WebKit::SessionState sessionState;
+    if (!WebKit::decodeSessionState((NSData *)(interactionState), sessionState))
+        return;
+    _page->restoreFromSessionState(sessionState, true);
 }
 
 #pragma mark - iOS API
