@@ -998,6 +998,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
+{
+    id value = attributeValue(m_element.get(), NSAccessibilitySortDirectionAttribute);
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
+}
+
 int AccessibilityUIElement::hierarchicalLevel() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

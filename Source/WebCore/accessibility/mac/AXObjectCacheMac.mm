@@ -368,6 +368,9 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     case AXExpandedChanged:
         macNotification = @"AXExpandedChanged";
         break;
+    case AXSortDirectionChanged:
+        macNotification = @"AXSortDirectionChanged";
+        break;
     case AXMenuClosed:
         macNotification = (id)kAXMenuClosedNotification;
         break;
