@@ -602,7 +602,7 @@ class WebkitFlatpak:
         if not gst_dir:
             if building:
                 _log.debug("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
-            return []
+            return {}
 
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
             raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
@@ -627,7 +627,7 @@ class WebkitFlatpak:
         gst_env = run_sanitized(command, gather_output=True)
         allowlist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
         nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV")
-        env = []
+        env = {}
         for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
             tokens = line.split("=")
             var_name, contents = tokens[0], "=".join(tokens[1:])
@@ -637,7 +637,7 @@ class WebkitFlatpak:
                 new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
             else:
                 new_contents = contents.replace("'", "")
-            env.append("--env=%s=%s" % (var_name, new_contents))
+            env[var_name] = new_contents
         return env
 
     def is_branch_build(self):
@@ -849,11 +849,27 @@ class WebkitFlatpak:
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
 
-        for envvar, value in sandbox_environment.items():
-            flatpak_command.append("--env=%s=%s" % (envvar, value))
+        # Set PKG_CONFIG_PATH in sandbox so uninstalled WebKit.pc files can be used.
+        pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
+        if pkg_config_path:
+            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
+        else:
+            pkg_config_path = self.build_path
+        sandbox_environment["PKG_CONFIG_PATH"] = pkg_config_path
 
         if not building_gst and args[0] != "sccache":
-            extra_flatpak_args.extend(self.setup_gstbuild(building))
+            # Merge gst-build env vars in sandbox environment, without overriding previously set PATH values.
+            gst_env = self.setup_gstbuild(building)
+            for var_name in list(gst_env.keys()):
+                if var_name not in sandbox_environment:
+                    sandbox_environment[var_name] = gst_env[var_name]
+                else:
+                    contents = gst_env[var_name]
+                    if var_name.endswith('PATH'):
+                        sandbox_environment[var_name] = "%s:%s" % (sandbox_environment[var_name], contents)
+
+        for envvar, value in sandbox_environment.items():
+            flatpak_command.append("--env=%s=%s" % (envvar, value))
 
         flatpak_env = os.environ.copy()
         for envvar in list(flatpak_env.keys()):
@@ -868,19 +884,11 @@ class WebkitFlatpak:
 
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
-
         flatpak_env.update({
             "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
             "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path),
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
-
-        pkg_config_path = flatpak_env.get("PKG_CONFIG_PATH")
-        if pkg_config_path:
-            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
-        else:
-            pkg_config_path = self.build_path
-        flatpak_env["PKG_CONFIG_PATH"] = pkg_config_path
 
         try:
             return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
