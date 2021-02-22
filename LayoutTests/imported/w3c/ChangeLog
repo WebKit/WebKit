@@ -1,3 +1,44 @@
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
+        Update web-platform-tests/css/css-color
+        https://bugs.webkit.org/show_bug.cgi?id=222235
+
+        Reviewed by Antti Koivisto.
+
+        Update to latest version.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-color/background-color-hsl-001-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-001.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-002-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-002.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-003-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-003.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-004-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-004.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-001.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-002.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-003.html: Added.
+        * web-platform-tests/css/css-color/lab-008-expected.html:
+        * web-platform-tests/css/css-color/lab-008.html:
+        * web-platform-tests/css/css-color/lch-008-expected.html:
+        * web-platform-tests/css/css-color/lch-008.html:
+        * web-platform-tests/css/css-color/predefined-003-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-003.html: Removed.
+        * web-platform-tests/css/css-color/predefined-004-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-004.html: Removed.
+        * web-platform-tests/css/css-color/predefined-017-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-017.html: Removed.
+        * web-platform-tests/css/css-color/prophoto-rgb-005-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-005.html: Added.
+        * web-platform-tests/css/css-color/rec2020-001.html:
+        * web-platform-tests/css/css-color/rec2020-005-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-005.html: Added.
+        * web-platform-tests/css/css-color/w3c-import.log:
+
 2021-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support modules in service workers

@@ -4713,12 +4713,9 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Skip ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
 
-# Unsupported css color() variants
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
+# Unsupported css color() fallback feature
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support (unclear if this makes sense)
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ ImageOnlyFailure ] # Invalid test, percentages are not allowed for color(xyz).
 
 # @counter-style ref tests that currently fail
 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html [ ImageOnlyFailure ]

@@ -1,3 +1,13 @@
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
+        Update web-platform-tests/css/css-color
+        https://bugs.webkit.org/show_bug.cgi?id=222235
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        Remove some tests that were removed on updating.
+
 2021-02-21  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening and updating baselines
