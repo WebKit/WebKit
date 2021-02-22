@@ -50,6 +50,13 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
+try:
+    from contextlib import nullcontext
+except ImportError:
+    @contextmanager
+    def nullcontext(enter_result=None):
+        yield enter_result
+
 FLATPAK_REQUIRED_VERSION = "1.4.4"
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
@@ -389,11 +396,13 @@ class FlatpakPackage(FlatpakObject):
 
 
 @contextmanager
-def disable_signals(signals=[signal.SIGINT]):
+def disable_signals(signals=[signal.SIGINT, signal.SIGTERM, signal.SIGHUP]):
     old_signal_handlers = []
 
     for disabled_signal in signals:
-        old_signal_handlers.append((disabled_signal, signal.getsignal(disabled_signal)))
+        handler = signal.getsignal(disabled_signal)
+        if handler:
+            old_signal_handlers.append((disabled_signal, handler))
         signal.signal(disabled_signal, signal.SIG_IGN)
 
     yield
@@ -517,20 +526,25 @@ class WebkitFlatpak:
         self.sccache_token = ""
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
-    def execute_command(self, args, stdout=None, stderr=None, env=None):
+    def execute_command(self, args, stdout=None, stderr=None, env=None, keep_signals=True):
+        if keep_signals:
+            ctx_manager = nullcontext()
+        else:
+            ctx_manager = disable_signals()
         _log.debug('Running: %s\n' % ' '.join(string_utils.decode(arg) for arg in args))
         result = 0
-        try:
-            result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
-        except subprocess.CalledProcessError as err:
-            if self.verbose:
-                cmd = ' '.join(string_utils.decode(arg) for arg in err.cmd)
-                message = "'%s' returned a non-zero exit code." % cmd
-                if stderr:
-                    with open(stderr.name, 'r') as stderrf:
-                        message += " Stderr: %s" % stderrf.read()
-                Console.error_message(message)
-            return err.returncode
+        with ctx_manager:
+            try:
+                result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
+            except subprocess.CalledProcessError as err:
+                if self.verbose:
+                    cmd = ' '.join(string_utils.decode(arg) for arg in err.cmd)
+                    message = "'%s' returned a non-zero exit code." % cmd
+                    if stderr:
+                        with open(stderr.name, 'r') as stderrf:
+                            message += " Stderr: %s" % stderrf.read()
+                    Console.error_message(message)
+                return err.returncode
         return result
 
     def clean_args(self):
@@ -883,6 +897,14 @@ class WebkitFlatpak:
         # all `LANG` vars.
         flatpak_env["LANG"] = "en_US.UTF-8"
 
+        keep_signals = args[0] != "gdb"
+        if not keep_signals:
+            module_path = os.path.join(self.build_path, "lib", "libsigaction-disabler.so")
+            # Enable module in bwrap child processes.
+            extra_flatpak_args.append("--env=WEBKIT_FLATPAK_LD_PRELOAD=%s" % module_path)
+            # Enable module in `flatpak run`.
+            flatpak_env["LD_PRELOAD"] = module_path
+
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
         flatpak_env.update({
@@ -896,7 +918,7 @@ class WebkitFlatpak:
             flatpak_env["WEBKIT_FLATPAK_DISPLAY"] = display
 
         try:
-            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
+            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
         except KeyboardInterrupt:
             return 0
 

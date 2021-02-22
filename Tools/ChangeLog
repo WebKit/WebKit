@@ -1,5 +1,30 @@
 2021-02-22  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] gdb unusable in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=222247
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds support for unix signals disabling in developer builds, for the Flatpak SDK
+        runtime. Currently SIGINT, SIGHUP and SIGTERM will be ignored by the flatpak and bwrap
+        processes when they're running gdb in the sandbox runtime. This allows for nicer interactive
+        debugging sessions where Ctrl-C is actually handled by gdb.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * flatpak/CMakeLists.txt: Added.
+        * flatpak/flatpakutils.py:
+        (nullcontext):
+        (disable_signals):
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/sigaction-disabler.c: Added.
+        (real_sigaction):
+        (sigaction):
+        * flatpak/webkit-bwrap:
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Add Monado for XR runtime support
         https://bugs.webkit.org/show_bug.cgi?id=220738
 

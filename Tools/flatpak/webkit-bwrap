@@ -110,6 +110,9 @@ def main(args: list) -> int:
 
     bwrap_args.extend(("--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"))
 
+    if environ.get("WEBKIT_FLATPAK_LD_PRELOAD"):
+        os.environ["LD_PRELOAD"] = environ["WEBKIT_FLATPAK_LD_PRELOAD"]
+
     command_line = ' '.join(map(shlex.quote, itertools.chain(bwrap_args, args)))
 
     # os.system return code behaves like os.wait. A 16 bit number with the
