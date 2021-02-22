@@ -374,6 +374,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools/Scripts/webkitpy',
         'Tools/Scripts/libraries',
         'Tools/Scripts/commit-log-editor',
+        'Source/WebKit/Scripts',
     ]
 
     group_to_paths_mapping = {
