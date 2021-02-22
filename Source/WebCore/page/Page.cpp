@@ -3336,10 +3336,14 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 {
-    auto protectedElement = makeRef(element);
-    if (auto frame = makeRefPtr(element.document().frame()))
-        frame->editor().revealSelectionIfNeededAfterLoadingImageForElement(element);
-    chrome().client().didFinishLoadingImageForElement(element);
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), element = makeRef(element)]() {
+        if (!weakThis)
+            return;
+
+        if (auto frame = makeRefPtr(element->document().frame()))
+            frame->editor().revealSelectionIfNeededAfterLoadingImageForElement(element);
+        chrome().client().didFinishLoadingImageForElement(element);
+    });
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
