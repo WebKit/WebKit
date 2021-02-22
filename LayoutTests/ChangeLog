@@ -1,3 +1,51 @@
+2021-02-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273003. rdar://problem/74608107
+
+    Animated keyframe style needs to go through full style adjuster
+    https://bugs.webkit.org/show_bug.cgi?id=222036
+    rdar://72421747
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    We can create unadjusted styles via keyframe animations and those may cause problems in rendering.
+    
+    Test: fast/animation/animation-position-crash.html
+    
+    * style/StyleAdjuster.cpp:
+    (WebCore::Style::Adjuster::adjustAnimatedStyle):
+    
+    Make this a member function and invoke Adjuster::adjust.
+    Simplify the z-index adjustment since it is mostly handled by adjust.
+    
+    * style/StyleAdjuster.h:
+    * style/StyleTreeResolver.cpp:
+    
+    Always use style adjuster for keyframe animation.
+    
+    (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+    
+    LayoutTests:
+    
+    * fast/animation/animation-position-crash-expected.html: Added.
+    * fast/animation/animation-position-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273003 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-17  Antti Koivisto  <antti@apple.com>
+
+            Animated keyframe style needs to go through full style adjuster
+            https://bugs.webkit.org/show_bug.cgi?id=222036
+            rdar://72421747
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/animation/animation-position-crash-expected.html: Added.
+            * fast/animation/animation-position-crash.html: Added.
+
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272829. rdar://problem/74409245
