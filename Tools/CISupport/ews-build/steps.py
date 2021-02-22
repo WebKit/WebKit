@@ -52,6 +52,8 @@ EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
+GITHUB_COM_USERNAME = 'GITHUB_COM_USERNAME'
+GITHUB_COM_ACCESS_TOKEN = 'GITHUB_COM_ACCESS_TOKEN'
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -178,6 +180,9 @@ class ShowIdentifier(shell.ShellCommand):
         shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
 
     def start(self):
+        self.workerEnvironment[GITHUB_COM_USERNAME] = os.getenv(GITHUB_COM_USERNAME)
+        self.workerEnvironment[GITHUB_COM_ACCESS_TOKEN] = os.getenv(GITHUB_COM_ACCESS_TOKEN)
+
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
