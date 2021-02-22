@@ -1,3 +1,14 @@
+2021-02-22  Alex Christensen  <achristensen@webkit.org>
+
+        Disable RangeResponseGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+        <rdar://problem/74551753>
+
+        It might be causing issues.  Disabling to speculatively fix the radar.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] gdb unusable in sandbox
