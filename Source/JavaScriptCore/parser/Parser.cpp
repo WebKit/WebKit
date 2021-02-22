@@ -209,6 +209,11 @@ Parser<LexerType>::~Parser()
 {
 }
 
+void JSToken::dump(PrintStream& out) const
+{
+    out.print(*m_data.cooked);
+}
+
 template <typename LexerType>
 Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* classFieldLocations)
 {
@@ -1352,7 +1357,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     m_statementDepth++;
 
     if (match(AWAIT)) {
-        semanticFailIfFalse(currentScope()->isAsyncFunction(), "for-await-of can only be used in an async function or async generator");
+        semanticFailIfFalse(currentScope()->isAsyncFunction() || (isModuleParseMode(sourceParseMode()) && Options::useTopLevelAwait()), "for-await-of can only be used in an async function or async generator");
         isAwaitFor = true;
         next();
     }
@@ -4144,7 +4149,8 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAwaitExpression(TreeBuilder& context)
 {
     ASSERT(match(AWAIT));
-    ASSERT(currentScope()->isAsyncFunction());
+    ASSERT(currentScope()->isAsyncFunction() || isModuleParseMode(sourceParseMode()));
+    ASSERT(isAsyncFunctionParseMode(sourceParseMode()) || isModuleParseMode(sourceParseMode()));
     ASSERT(m_parserState.functionParsePhase != FunctionParsePhase::Parameters);
     JSTokenLocation location(tokenLocation());
     JSTextPosition divotStart = tokenStartPosition();
@@ -4814,7 +4820,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case AWAIT:
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
             semanticFailIfFalse(m_parserState.allowAwait, "Cannot use 'await' within a parameter default expression");
-        else if (currentFunctionScope()->isAsyncFunctionBoundary())
+        else if (currentFunctionScope()->isAsyncFunctionBoundary() || (isModuleParseMode(sourceParseMode()) && Options::useTopLevelAwait()))
             return parseAwaitExpression(context);
 
         goto identifierExpression;
@@ -5338,7 +5344,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     bool hasPrefixUpdateOp = false;
     unsigned lastOperator = 0;
 
-    if (UNLIKELY(match(AWAIT) && currentFunctionScope()->isAsyncFunctionBoundary()))
+    if (UNLIKELY(match(AWAIT) && (currentFunctionScope()->isAsyncFunctionBoundary() || (isModuleParseMode(sourceParseMode())) && Options::useTopLevelAwait())))
         return parseAwaitExpression(context);
 
     JSTokenLocation location(tokenLocation());

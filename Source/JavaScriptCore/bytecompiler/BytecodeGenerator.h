@@ -1058,10 +1058,10 @@ namespace JSC {
         void emitGeneratorStateChange(int32_t state);
         RegisterID* emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason = JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
         RegisterID* emitDelegateYield(RegisterID* argument, ThrowableExpressionData*);
-        RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::State)]; }
-        RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::Value)]; }
-        RegisterID* generatorResumeModeRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::ResumeMode)]; }
-        RegisterID* generatorFrameRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::Frame)]; }
+        RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::State)]; }
+        RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::Value)]; }
+        RegisterID* generatorResumeModeRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::ResumeMode)]; }
+        RegisterID* generatorFrameRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::Frame)]; }
 
         CodeType codeType() const { return m_codeType; }
 
@@ -1327,6 +1327,7 @@ namespace JSC {
         Vector<Ref<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         unsigned m_yieldPoints { 0 };
+        bool m_isAsync { false };
 
         Strong<SymbolTable> m_generatorFrameSymbolTable;
         int m_generatorFrameSymbolTableIndex { 0 };

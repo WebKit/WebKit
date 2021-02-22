@@ -291,7 +291,7 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     USES(OpGetInternalField, base)
     USES(OpPutInternalField, base, value)
 
-    USES(OpYield, generator, argument)
+    USES(OpYield, argument)
 
     case op_iterator_open: {
         auto bytecode = instruction->as<OpIteratorOpen>();

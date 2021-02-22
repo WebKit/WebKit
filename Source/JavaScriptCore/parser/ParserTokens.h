@@ -283,6 +283,8 @@ struct JSToken {
     JSTokenLocation m_location;
     JSTextPosition m_startPosition;
     JSTextPosition m_endPosition;
+
+    void dump(PrintStream&) const;
 };
 
 ALWAYS_INLINE bool isUpdateOp(JSTokenType token)

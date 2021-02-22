@@ -28,6 +28,7 @@
 #include "Nodes.h"
 #include "NodeConstructors.h"
 
+#include "AbstractModuleRecord.h"
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeGeneratorBaseInlines.h"
@@ -1389,6 +1390,15 @@ static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsi
     return JSAsyncGenerator::Field::State;
 }
 
+static AbstractModuleRecord::Field abstractModuleRecordInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_abstractModuleRecordFieldState)
+        return AbstractModuleRecord::Field::State;
+    RELEASE_ASSERT_NOT_REACHED();
+    return AbstractModuleRecord::Field::State;
+}
+
 static JSArrayIterator::Field arrayIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
@@ -1469,6 +1479,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAsyncGeneratorInternalField
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(asyncGeneratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSAsyncGenerator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAbstractModuleRecordInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(abstractModuleRecordInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < AbstractModuleRecord::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -4940,7 +4963,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.move(args.argumentRegister(argumentCount++), generator.generatorRegister());
         generator.move(args.argumentRegister(argumentCount++), generator.promiseRegister());
         generator.emitLoad(args.argumentRegister(argumentCount++), jsUndefined());
-        generator.emitLoad(args.argumentRegister(argumentCount++), jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::NormalMode)));
+        generator.emitLoad(args.argumentRegister(argumentCount++), jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode)));
         // JSTextPosition(int _line, int _offset, int _lineStartOffset)
         JSTextPosition divot(firstLine(), startOffset(), lineStartOffset());
 
@@ -4957,11 +4980,11 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         Ref<Label> generatorBodyLabel = generator.newLabel();
         {
             RefPtr<RegisterID> condition = generator.newTemporary();
-            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::NormalMode))));
+            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
             generator.emitJumpIfTrue(condition.get(), generatorBodyLabel.get());
 
             Ref<Label> throwLabel = generator.newLabel();
-            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::ThrowMode))));
+            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode))));
             generator.emitJumpIfTrue(condition.get(), throwLabel.get());
 
             generator.emitReturn(generator.generatorValueRegister());

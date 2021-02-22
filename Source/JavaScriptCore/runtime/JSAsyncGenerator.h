@@ -54,8 +54,8 @@ public:
         SuspendedYield = -4,
         AwaitingReturn = -5,
     };
-    static_assert(static_cast<int32_t>(AsyncGeneratorState::Completed) == static_cast<int32_t>(JSGenerator::GeneratorState::Completed));
-    static_assert(static_cast<int32_t>(AsyncGeneratorState::Executing) == static_cast<int32_t>(JSGenerator::GeneratorState::Executing));
+    static_assert(static_cast<int32_t>(AsyncGeneratorState::Completed) == static_cast<int32_t>(JSGenerator::State::Completed));
+    static_assert(static_cast<int32_t>(AsyncGeneratorState::Executing) == static_cast<int32_t>(JSGenerator::State::Executing));
 
     enum class AsyncGeneratorSuspendReason : int32_t {
         None = 0,

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "BytecodeGenerator.h"
 
+#include "AbstractModuleRecord.h"
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
 #include "BytecodeGeneratorBaseInlines.h"
@@ -279,7 +280,7 @@ ParserError BytecodeGenerator::generate()
     }
     
 
-    if (isGeneratorOrAsyncFunctionBodyParseMode(m_codeBlock->parseMode()))
+    if (m_isAsync)
         performGeneratorification(*this, m_codeBlock.get(), m_writer, m_generatorFrameSymbolTable.get(), m_generatorFrameSymbolTableIndex);
 
     RELEASE_ASSERT(static_cast<unsigned>(m_codeBlock->numCalleeLocals()) < static_cast<unsigned>(FirstConstantRegisterIndex));
@@ -385,6 +386,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction())) && parseMode != SourceParseMode::ClassFieldInitializerMode;
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
+        m_isAsync = true;
         // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
         needsArguments = false;
     }
@@ -434,7 +436,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     emitEnter();
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
-        m_generatorRegister = &m_parameters[1];
+        m_generatorRegister = &m_parameters[static_cast<unsigned>(JSGenerator::Argument::Generator)];
 
     allocateAndEmitScope();
 
@@ -951,6 +953,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
 
+    if (moduleProgramNode->usesAwait()) {
+        m_isAsync = true;
+        initializeNextParameter(); // |this|
+        for (unsigned i = 0; i < JSGenerator::Argument::NumberOfArguments; ++i)
+            initializeNextParameter();
+        m_generatorRegister = &m_parameters[static_cast<unsigned>(AbstractModuleRecord::Argument::Generator)];
+    }
+
     emitEnter();
 
     allocateAndEmitScope();
@@ -959,7 +969,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     
     m_calleeRegister.setIndex(CallFrameSlot::callee);
 
-    m_codeBlock->setNumParameters(1); // Allocate space for "this"
+    m_codeBlock->setNumParameters(static_cast<unsigned>(AbstractModuleRecord::Argument::NumberOfArguments) + 1); // Allocate space for "this" + async module arguments.
 
     // Now declare all variables.
 
@@ -983,10 +993,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     // We keep the symbol table in the constant pool.
     RegisterID* constantSymbolTable = nullptr;
-    if (shouldEmitTypeProfilerHooks())
+    if (shouldEmitTypeProfilerHooks() || moduleProgramNode->usesAwait())
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable);
     else
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable->cloneScopePart(m_vm));
+
+    if (moduleProgramNode->usesAwait()) {
+        m_generatorFrameSymbolTable.set(m_vm, moduleEnvironmentSymbolTable);
+        m_generatorFrameSymbolTableIndex = constantSymbolTable->index();
+        emitPutInternalField(generatorRegister(), static_cast<unsigned>(AbstractModuleRecord::Field::Frame), generatorFrameRegister());
+    }
 
     pushTDZVariables(lexicalVariables, TDZCheckOptimization::Optimize, TDZRequirement::UnderTDZ);
     bool isWithScope = false;
@@ -3729,7 +3745,6 @@ void BytecodeGenerator::emitDebugHook(ExpressionNode* expr)
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
 {
-    RELEASE_ASSERT(m_scopeNode->isFunctionNode());
     emitDebugHook(WillLeaveCallFrame, m_scopeNode->lastLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
 }
 
@@ -4180,7 +4195,7 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
 {
     bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
     auto shouldEmitAwait = isForAwait ? EmitAwait::Yes : EmitAwait::No;
-    ASSERT(!isForAwait || isAsyncFunctionParseMode(parseMode()));
+    ASSERT(!isForAwait || (isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode())));
 
     RefPtr<RegisterID> subject = newTemporary();
     emitNode(subject.get(), subjectNode);
@@ -4740,7 +4755,7 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
     while (m_writer.position() % OpcodeSize::Wide32)
         OpNop::emit<OpcodeSize::Narrow>(this);
 #endif
-    OpYield::emit(this, generatorFrameRegister(), yieldPointIndex, argument);
+    OpYield::emit(this, yieldPointIndex, argument);
 
     // Restore the try contexts, which start offset is updated to the merge point.
     m_tryContextStack.swap(savedTryContextStack);
@@ -4753,11 +4768,11 @@ RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGenerator:
 
     Ref<Label> normalLabel = newLabel();
     RefPtr<RegisterID> condition = newTemporary();
-    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::NormalMode))));
+    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
     emitJumpIfTrue(condition.get(), normalLabel.get());
 
     Ref<Label> throwLabel = newLabel();
-    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::ThrowMode))));
+    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode))));
     emitJumpIfTrue(condition.get(), throwLabel.get());
     // Return.
     {
@@ -4941,10 +4956,10 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                 Ref<Label> returnLabel = newLabel();
                 {
                     RefPtr<RegisterID> condition = newTemporary();
-                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::NormalMode))));
+                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
                     emitJumpIfTrue(condition.get(), normalLabel.get());
 
-                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::ReturnMode))));
+                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode))));
                     emitJumpIfTrue(condition.get(), returnLabel.get());
 
                     // Fallthrough to ThrowMode.
@@ -5048,9 +5063,10 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
 void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
 {
+    // FIXME: It seems like this will create a lot of constants if there are many yield points. Maybe we should op_inc the old state. https://bugs.webkit.org/show_bug.cgi?id=222254
     RegisterID* completedState = emitLoad(nullptr, jsNumber(state));
     static_assert(static_cast<unsigned>(JSGenerator::Field::State) == static_cast<unsigned>(JSAsyncGenerator::Field::State));
-    emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::State), completedState);
+    emitPutInternalField(generatorRegister(), isModuleParseMode(parseMode()) ? static_cast<unsigned>(AbstractModuleRecord::Field::State) : static_cast<unsigned>(JSGenerator::Field::State), completedState);
 }
 
 bool BytecodeGenerator::emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label& jumpTarget)

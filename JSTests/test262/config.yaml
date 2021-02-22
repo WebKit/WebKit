@@ -14,6 +14,7 @@ flags:
   Array.prototype.at: useAtMethod
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
+  top-level-await: useTopLevelAwait
 skip:
   features:
     - Atomics.waitAsync
@@ -26,8 +27,6 @@ skip:
 
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=222142
     - regexp-match-indices
-
-    - top-level-await
   paths:
   files:
     # Slightly different formatting. We should update test262 side.

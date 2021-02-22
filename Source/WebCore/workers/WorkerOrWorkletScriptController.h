@@ -96,7 +96,7 @@ public:
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 
-    JSC::JSValue evaluateModule(JSC::JSModuleRecord&);
+    JSC::JSValue evaluateModule(JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     MessageQueueWaitResult loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);

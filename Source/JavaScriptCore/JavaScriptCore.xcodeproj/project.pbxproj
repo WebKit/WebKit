@@ -1846,7 +1846,7 @@
 		E349A7812491F161001BA336 /* DFGCodeOriginPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E349A7802491F15A001BA336 /* DFGCodeOriginPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34E657520668EAA00FB81AC /* ParseHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E34E657320668E8D00FB81AC /* ParseHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E34F930E2322D882002B8DB4 /* JSGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F930C2322D881002B8DB4 /* JSGenerator.h */; };
+		E34F930E2322D882002B8DB4 /* JSGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F930C2322D881002B8DB4 /* JSGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = E35070891DC49BB60089BCD6 /* DOMJITSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E353C11D24AA4CB7003FBDF3 /* IntlDisplayNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E353C11724AA4CB6003FBDF3 /* IntlDisplayNames.h */; };
 		E353C11E24AA4CB7003FBDF3 /* IntlDisplayNamesConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E353C11824AA4CB6003FBDF3 /* IntlDisplayNamesConstructor.h */; };
@@ -9097,6 +9097,8 @@
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
 				AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
+				FE912B4F2531193300FABDDF /* AbstractSlotVisitor.h in Headers */,
+				FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
@@ -9321,7 +9323,6 @@
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				E35E89FD25C50F870071EE1E /* BigInt64Array.h in Headers */,
 				86976E5F1FA3E8BC00E7C4E1 /* BigIntConstructor.h in Headers */,
-				FE041553252EC0730091EB5D /* SlotVisitorMacros.h in Headers */,
 				866739D213BFDE710023D87C /* BigInteger.h in Headers */,
 				861816771FB7924200ECC4EC /* BigIntObject.h in Headers */,
 				86976E5E1FA3E8B600E7C4E1 /* BigIntPrototype.h in Headers */,
@@ -9603,7 +9604,6 @@
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
-				FE912B4F2531193300FABDDF /* AbstractSlotVisitor.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
@@ -9890,7 +9890,6 @@
 				A513E5BE185BFACC007E95AD /* InjectedScriptHost.h in Headers */,
 				A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */,
 				A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */,
-				FE287D02252FB2E800D723F9 /* VerifierSlotVisitor.h in Headers */,
 				A513E5C7185F9446007E95AD /* InjectedScriptSource.h in Headers */,
 				9959E9321BD18279001AA413 /* inline-and-minify-stylesheets-and-scripts.py in Headers */,
 				7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */,
@@ -10030,7 +10029,6 @@
 				53C4F66B21B1A409002FD009 /* JSAPIGlobalObject.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
 				C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */,
-				FE336B5325DB497D0098F034 /* MarkingConstraintExecutorPair.h in Headers */,
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
 				0F2B66E317B6B5AB00A7AE3F /* JSArrayBuffer.h in Headers */,
 				0F2B66E517B6B5AB00A7AE3F /* JSArrayBufferConstructor.h in Headers */,
@@ -10067,7 +10065,6 @@
 				A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */,
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				A5EA70EE19F5B5C40098F5EC /* JSContextRefInspectorSupport.h in Headers */,
-				6BCCEC0425D1FA27000F391D /* VerifierSlotVisitorInlines.h in Headers */,
 				A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				FE7497E6209001B10003565B /* JSCPtrTag.h in Headers */,
@@ -10199,7 +10196,6 @@
 				795AC61820A2355E0052C76C /* JSVirtualMachinePrivate.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
-				FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */,
 				0F0B286B1EB8E6CF000EB5D2 /* JSWeakPrivate.h in Headers */,
@@ -10277,6 +10273,7 @@
 				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
 				0F7DF1351E2970DC0095951B /* MarkedSpaceInlines.h in Headers */,
 				0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */,
+				FE336B5325DB497D0098F034 /* MarkingConstraintExecutorPair.h in Headers */,
 				0F660E3A1E0517C10031462C /* MarkingConstraintSet.h in Headers */,
 				0F9DAA091FD1C3CF0079C5B2 /* MarkingConstraintSolver.h in Headers */,
 				142D6F1213539A4100B02E86 /* MarkStack.h in Headers */,
@@ -10473,6 +10470,7 @@
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */,
+				FE041553252EC0730091EB5D /* SlotVisitorMacros.h in Headers */,
 				A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */,
 				0F5B4A331C84F0D600F1B17E /* SlowPathReturnType.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
@@ -10591,6 +10589,8 @@
 				79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */,
 				0F6C73511AC9F99F00BE1682 /* VariableWriteFireDetail.h in Headers */,
 				0FE0502D1AA9095600D33B33 /* VarOffset.h in Headers */,
+				FE287D02252FB2E800D723F9 /* VerifierSlotVisitor.h in Headers */,
+				6BCCEC0425D1FA27000F391D /* VerifierSlotVisitorInlines.h in Headers */,
 				0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */,
 				0F4D8C741FC7A97A001D32AC /* VisitCounter.h in Headers */,
 				0F952AA11DF7860900E06FBD /* VisitRaceKey.h in Headers */,

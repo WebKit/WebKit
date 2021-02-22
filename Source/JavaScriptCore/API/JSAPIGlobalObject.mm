@@ -239,7 +239,7 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     return metaProperties;
 }
 
-JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
+JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher, JSValue sentValue, JSValue resumeMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -258,7 +258,8 @@ JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JS
         [moduleLoaderDelegate willEvaluateModule:url];
 
     scope.release();
-    JSValue result = moduleLoader->evaluateNonVirtual(globalObject, key, moduleRecordValue, scriptFetcher);
+    // FIXME: We should update the delegate callbacks for async modules. https://bugs.webkit.org/show_bug.cgi?id=222253
+    JSValue result = moduleLoader->evaluateNonVirtual(globalObject, key, moduleRecordValue, scriptFetcher, sentValue, resumeMode);
 
     if ([moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)])
         [moduleLoaderDelegate didEvaluateModule:url];

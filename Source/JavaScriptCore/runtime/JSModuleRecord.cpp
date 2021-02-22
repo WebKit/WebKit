@@ -81,7 +81,7 @@ void JSModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSModuleRecord);
 
-void JSModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
+Synchronousness JSModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -90,11 +90,13 @@ void JSModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
     EXCEPTION_ASSERT(!!scope.exception() == !executable);
     if (!executable) {
         throwSyntaxError(globalObject, scope);
-        return;
+        return Synchronousness::Sync;
     }
     instantiateDeclarations(globalObject, executable, scriptFetcher);
-    RETURN_IF_EXCEPTION(scope, void());
+    RETURN_IF_EXCEPTION(scope, Synchronousness::Sync);
     m_moduleProgramExecutable.set(vm, this, executable);
+
+    return executable->unlinkedModuleProgramCodeBlock()->isAsync() ? Synchronousness::Async : Synchronousness::Sync;
 }
 
 void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, ModuleProgramExecutable* moduleProgramExecutable, JSValue scriptFetcher)
@@ -238,14 +240,16 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
     setModuleEnvironment(globalObject, moduleEnvironment);
 }
 
-JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject)
+JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue, JSValue resumeMode)
 {
     if (!m_moduleProgramExecutable)
         return jsUndefined();
     VM& vm = globalObject->vm();
     ModuleProgramExecutable* executable = m_moduleProgramExecutable.get();
-    m_moduleProgramExecutable.clear();
-    return vm.interpreter->executeModuleProgram(executable, globalObject, moduleEnvironment());
+    JSValue resultOrAwaitedValue = vm.interpreter->executeModuleProgram(this, executable, globalObject, moduleEnvironment(), sentValue, resumeMode);
+    if (JSValue state = internalField(Field::State).get(); !state.isNumber() || state.asNumber() == static_cast<unsigned>(State::Executing))
+        m_moduleProgramExecutable.clear();
+    return resultOrAwaitedValue;
 }
 
 } // namespace JSC

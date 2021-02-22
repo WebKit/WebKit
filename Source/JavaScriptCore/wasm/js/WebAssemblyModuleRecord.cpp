@@ -97,7 +97,13 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
     m_instance.set(vm, this, instance);
 }
 
-void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObject* importObject, Wasm::CreationMode creationMode)
+Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObject* importObject, Wasm::CreationMode creationMode)
+{
+    linkImpl(globalObject, importObject, creationMode);
+    return Synchronousness::Sync;
+}
+
+void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -217,7 +217,7 @@ void BytecodeGeneratorification::run()
     {
         auto nextToEnterPoint = enterPoint().next();
         unsigned switchTableIndex = m_codeBlock->numberOfSwitchJumpTables();
-        VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::GeneratorArgument::State));
+        VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::Argument::State));
         auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
         jumpTable.branchOffsets = RefCountedArray<int32_t>(m_yields.size() + 1);
@@ -232,7 +232,7 @@ void BytecodeGeneratorification::run()
     }
 
     for (const YieldData& data : m_yields) {
-        VirtualRegister scope = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::GeneratorArgument::Frame));
+        VirtualRegister scope = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::Argument::Frame));
 
         auto instruction = m_instructions.at(data.point);
         // Emit save sequence.
@@ -293,11 +293,18 @@ void BytecodeGeneratorification::run()
 
 void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
-    if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification()))
+    if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification())) {
+        dataLogLn("Bytecodes before generatorification");
         CodeBlockBytecodeDumper<UnlinkedCodeBlockGenerator>::dumpBlock(codeBlock, instructions, WTF::dataFile());
+    }
 
     BytecodeGeneratorification pass(bytecodeGenerator, codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
     pass.run();
+
+    if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification())) {
+        dataLogLn("Bytecodes after generatorification");
+        CodeBlockBytecodeDumper<UnlinkedCodeBlockGenerator>::dumpBlock(codeBlock, instructions, WTF::dataFile());
+    }
 }
 
 } // namespace JSC

@@ -220,7 +220,7 @@ URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalO
     return result;
 }
 
-JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
+JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
     JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -238,11 +238,11 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
 
     if (m_ownerType == OwnerType::Document) {
         if (auto* frame = downcast<Document>(m_context).frame())
-            return frame->script().evaluateModule(sourceURL, *moduleRecord);
+            return frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode);
     } else {
         ASSERT(is<WorkerOrWorkletGlobalScope>(m_context));
         if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script())
-            return script->evaluateModule(*moduleRecord);
+            return script->evaluateModule(*moduleRecord, awaitedValue, resumeMode);
     }
     return JSC::jsUndefined();
 }

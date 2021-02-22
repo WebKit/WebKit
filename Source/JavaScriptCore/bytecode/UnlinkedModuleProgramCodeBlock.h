@@ -82,6 +82,8 @@ public:
         m_moduleEnvironmentSymbolTableConstantRegisterOffset = offset;
     }
 
+    bool isAsync() const { return codeFeatures() & AwaitFeature; }
+
 private:
     friend CachedModuleCodeBlock;
 

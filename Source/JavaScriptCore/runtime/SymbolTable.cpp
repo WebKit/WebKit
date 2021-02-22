@@ -33,6 +33,8 @@
 #include "JSCJSValueInlines.h"
 #include "TypeProfiler.h"
 
+#include <wtf/CommaPrinter.h>
+
 namespace JSC {
 
 const ClassInfo SymbolTable::s_info = { "SymbolTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(SymbolTable) };
@@ -281,6 +283,18 @@ RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJSLocker& 
         return nullptr;
 
     return iter->value;
+}
+
+void SymbolTable::dump(PrintStream& out) const
+{
+    ConcurrentJSLocker locker(m_lock);
+    Base::dump(out);
+
+    CommaPrinter comma;
+    out.print(" <");
+    for (auto& iter : m_map)
+        out.print(comma, *iter.key, ": ", iter.value.varOffset());
+    out.println(">");
 }
 
 } // namespace JSC

@@ -28,6 +28,7 @@
 
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSInternalFieldObjectImplInlines.h"
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -52,6 +53,11 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    auto values = initialValues();
+    ASSERT(values.size() == numberOfInternalFields);
+    for (unsigned index = 0; index < values.size(); ++index)
+        Base::internalField(index).set(vm, this, values[index]);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
@@ -808,7 +814,7 @@ void AbstractModuleRecord::setModuleEnvironment(JSGlobalObject* globalObject, JS
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
-void AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
+Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
@@ -818,13 +824,14 @@ void AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetc
         return wasmModuleRecord->link(globalObject, scriptFetcher, nullptr, Wasm::CreationMode::FromModuleLoader);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
+    return Synchronousness::Sync;
 }
 
-JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalObject)
+JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue, JSValue resumeMode)
 {
     VM& vm = globalObject->vm();
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
-        return jsModuleRecord->evaluate(globalObject);
+        return jsModuleRecord->evaluate(globalObject, sentValue, resumeMode);
 #if ENABLE(WEBASSEMBLY)
     if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
         return wasmModuleRecord->evaluate(globalObject);

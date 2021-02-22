@@ -1297,7 +1297,6 @@ op :iterator_next,
 
 op :yield,
     args: {
-        generator: VirtualRegister,
         yieldPoint: unsigned,
         argument: VirtualRegister,
     }

@@ -738,6 +738,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     void finalizeUnconditionally(VM&);
+    void dump(PrintStream&) const;
 
 private:
     JS_EXPORT_PRIVATE SymbolTable(VM&);

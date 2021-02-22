@@ -1,3 +1,105 @@
+2021-02-21  Keith Miller  <keith_miller@apple.com>
+
+        Implement the Top-level await proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202484
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds support for the TLA proposal. The bulk of this patch is adding a couple of main parts.
+
+         1) converting the AbstractModuleRecord to contain many of same internal fields as JSGenerator so much of the async codegen can be shared.
+        2) having the link phase of the module loader record whether a module subgraph is async.
+        3) teaching the module loader that evaluating a module may require more than one vm entry and forwarding the awaited value as well as the resume mode to the VM.
+
+         One thing particularly interesting about this patch is that moduleEvaluation now *sometimes* (when a strongly connected subgraph is async) will return a promise. This happened to already be awaited when called from loadAndEvaluateModule (unnecessarily before) but now also needs to be handled by requestImportModule.
+
+         No new tests because every test I came up with was subsumed by tests already in test262.
+
+        * API/JSAPIGlobalObject.h:
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderEvaluate):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoader.js:
+        (globalPrivate.newRegistryEntry):
+        (link):
+        (async requestImportModule):
+        (moduleEvaluation): Deleted.
+        (requestImportModule): Deleted.
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitWillLeaveCallFrameDebugHook):
+        (JSC::BytecodeGenerator::emitGenericEnumeration):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitGeneratorStateChange):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generatorStateRegister):
+        (JSC::BytecodeGenerator::generatorValueRegister):
+        (JSC::BytecodeGenerator::generatorResumeModeRegister):
+        (JSC::BytecodeGenerator::generatorFrameRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::abstractModuleRecordInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getAbstractModuleRecordInternalField):
+        (JSC::FunctionNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/Interpreter.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAwait):
+        (JSC::ASTBuilder::usesAwait):
+        * parser/Nodes.cpp:
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::JSToken::dump const):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseAwaitExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/ParserModes.h:
+        * parser/ParserTokens.h:
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        (JSC::AbstractModuleRecord::link):
+        (JSC::AbstractModuleRecord::evaluate):
+        * runtime/AbstractModuleRecord.h:
+        (JSC::AbstractModuleRecord::initialValues):
+        (JSC::AbstractModuleRecord::internalField):
+        (JSC::AbstractModuleRecord::internalField const):
+        * runtime/JSAsyncGenerator.h:
+        * runtime/JSGenerator.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::evaluate):
+        (JSC::JSModuleLoader::evaluateNonVirtual):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::evaluate):
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/OptionsList.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::dump const):
+        * runtime/SymbolTable.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2021-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSInternalPromise::then can fail if execution is terminated

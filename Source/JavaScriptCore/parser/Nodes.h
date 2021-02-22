@@ -1990,6 +1990,7 @@ namespace JSC {
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
+        bool usesAwait() const { return m_usesAwait; }
 
         static constexpr bool scopeIsFunction = false;
 
@@ -2002,6 +2003,7 @@ namespace JSC {
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
         unsigned m_startColumn;
         unsigned m_endColumn;
+        bool m_usesAwait;
         Ref<ModuleScopeData> m_moduleScopeData;
     };
 

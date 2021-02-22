@@ -483,16 +483,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(OptionRange, wasmFunctionIndexRangeToCompile, 0, Normal, "wasm function index range to allow compilation on, e.g. 1:100") \
     v(Bool, wasmLLIntTiersUpToBBQ, true, Normal, nullptr) \
     v(Size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
-    v(Bool, useWebAssemblyStreaming, true, Normal, "Allow to run WebAssembly's Streaming API") \
     v(Bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
-    v(Bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
-    v(Bool, useWebAssemblyMultiValues, true, Normal, "Allow types from the wasm mulit-values spec.") \
-    v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
-    v(Bool, useWeakRefs, true, Normal, "Expose the WeakRef constructor.") \
-    v(Bool, useIntlDateTimeFormatDayPeriod, true, Normal, "Expose the Intl.DateTimeFormat dayPeriod feature.") \
-    v(Bool, useIntlDateTimeFormatRangeToParts, true, Normal, "Expose the Intl.DateTimeFormat#formatRangeToParts feature.") \
-    v(Bool, useAtMethod, false, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
-    v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
     v(Bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
     v(Bool, forceMiniVMMode, false, Normal, "If true, it will force mini VM mode on.") \
@@ -513,8 +504,6 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useRandomizingExecutableIslandAllocation, false, Normal, "For the arm64 ExecutableAllocator, if true, select which region to use randomly. This is useful for testing that jump islands work.") \
     v(Bool, exposeProfilersOnGlobalObject, false, Normal, "If true, we will expose functions to enable/disable both the sampling profiler and the super sampler") \
     v(Bool, allowUnsupportedTiers, false, Normal, "If true, we will not disable DFG or FTL when an experimental feature is enabled.") \
-    v(Bool, usePrivateClassFields, true, Normal, "If true, the parser will understand private data fields inside classes.") \
-    v(Bool, usePrivateMethods, true, Normal, "If true, the parser will understand private methods inside classes.") \
     v(Bool, returnEarlyFromInfiniteLoopsForFuzzing, false, Normal, nullptr) \
     v(Size, earlyReturnFromInfiniteLoopsLimit, 1300000000, Normal, "When returnEarlyFromInfiniteLoopsForFuzzing is true, this determines the number of executions a loop can run for before just returning. This is helpful for the fuzzer so it doesn't get stuck in infinite loops.") \
     v(Bool, useLICMFuzzing, false, Normal, nullptr) \
@@ -522,8 +511,24 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
     v(Bool, exposeCustomSettersOnGlobalObjectForTesting, false, Normal, nullptr) \
     v(Bool, useJITCage, canUseJITCage(), Normal, nullptr) \
+    \
+    /* Feature Flags */\
+    \
     v(Bool, usePublicStaticClassFields, true, Normal, "If true, the parser will understand public static data fields inside classes.") \
     v(Bool, usePrivateStaticClassFields, true, Normal, "If true, the parser will understand private static data fields inside classes.") \
+    v(Bool, usePrivateClassFields, true, Normal, "If true, the parser will understand private data fields inside classes.") \
+    v(Bool, usePrivateMethods, true, Normal, "If true, the parser will understand private methods inside classes.") \
+    v(Bool, useWebAssemblyStreaming, true, Normal, "Allow to run WebAssembly's Streaming API") \
+    v(Bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
+    v(Bool, useWebAssemblyMultiValues, true, Normal, "Allow types from the wasm mulit-values spec.") \
+    v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
+    v(Bool, useWeakRefs, true, Normal, "Expose the WeakRef constructor.") \
+    v(Bool, useIntlDateTimeFormatDayPeriod, true, Normal, "Expose the Intl.DateTimeFormat dayPeriod feature.") \
+    v(Bool, useIntlDateTimeFormatRangeToParts, true, Normal, "Expose the Intl.DateTimeFormat#formatRangeToParts feature.") \
+    v(Bool, useAtMethod, false, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
+    v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
+    v(Bool, useTopLevelAwait, true, Normal, "allow the await keyword at the top level of a module.") \
+
 
 enum OptionEquivalence {
     SameOption,
