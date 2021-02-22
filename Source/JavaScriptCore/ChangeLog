@@ -1,3 +1,13 @@
+2021-02-22  Keith Miller  <keith_miller@apple.com>
+
+        Remove unused internal fields from AbstractModuleLoader
+        https://bugs.webkit.org/show_bug.cgi?id=222256
+
+        Reviewed by Saam Barati.
+
+        * runtime/AbstractModuleRecord.h:
+        (JSC::AbstractModuleRecord::initialValues):
+
 2021-02-21  Lauro Moura  <lmoura@igalia.com>
 
         Fix warning after r273225

@@ -38,10 +38,10 @@ class JSMap;
 
 // Based on the Source Text Module Record
 // http://www.ecma-international.org/ecma-262/6.0/#sec-source-text-module-records
-class AbstractModuleRecord : public JSInternalFieldObjectImpl<4> {
+class AbstractModuleRecord : public JSInternalFieldObjectImpl<2> {
     friend class LLIntOffsetsExtractor;
 public:
-    using Base = JSInternalFieldObjectImpl<4>;
+    using Base = JSInternalFieldObjectImpl<2>;
 
     static constexpr bool needsDestruction = true;
 
@@ -57,18 +57,14 @@ public:
 
     enum class Field : uint32_t {
         State,
-        Next,
-        This,
         Frame,
     };
 
-    static_assert(numberOfInternalFields == 4);
+    static_assert(numberOfInternalFields == 2);
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
             jsNumber(static_cast<int32_t>(State::Init)),
-            jsUndefined(),
-            jsUndefined(),
             jsUndefined(),
         } };
     }
