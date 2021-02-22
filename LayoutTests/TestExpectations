@@ -3915,7 +3915,7 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-015.html [ ImageOnlyFailure ]
-webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ ImageOnlyFailure ]
+webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ Failure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-007.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-010.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ ImageOnlyFailure ]

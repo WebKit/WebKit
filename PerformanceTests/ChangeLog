@@ -1,3 +1,15 @@
+2021-02-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION (r266695): twitch.tv: when in fullscreen, WebKit continually does 350ms layouts. Firefox and Chrome do not
+        https://bugs.webkit.org/show_bug.cgi?id=222202
+        <rdar://problem/74537782>
+
+        Reviewed by Simon Fraser.
+
+        New performance test for nested column flexboxes with percentage heights.
+
+        * Layout/nested-column-flexboxes-relative-height.html: Added.
+
 2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         MotionMark scores are super sensitive to a single long frame
