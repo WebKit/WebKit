@@ -56,6 +56,8 @@ public:
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     RenderObject& rendererForLayoutBox(const Layout::Box&);
 
+    size_t boxCount() const { return m_boxes.size(); }
+
 private:
     void buildTree();
     void appendChild(std::unique_ptr<Layout::Box>, RenderObject&);

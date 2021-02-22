@@ -3633,14 +3633,17 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     case LineBoxesPath:
         setLineLayoutPath(UndeterminedPath);
         return;
-    case ModernPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
+    case ModernPath: {
+        // FIXME: Implement partial invalidation.
+        auto path = modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation() ? ForceLineBoxesPath : UndeterminedPath;
         m_lineLayout = WTF::Monostate();
-        setLineLayoutPath(UndeterminedPath);
+        setLineLayoutPath(path);
         if (needsLayout())
             return;
         // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
         setNeedsLayout();
         return;
+    }
     }
     ASSERT_NOT_REACHED();
 }
