@@ -29,6 +29,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(GLIB) && HAVE(GURI)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 #if USE(CF)
 typedef const struct __CFURL* CFURLRef;
 #endif
@@ -179,6 +183,11 @@ public:
 #if USE(FOUNDATION)
     WTF_EXPORT_PRIVATE URL(NSURL *);
     WTF_EXPORT_PRIVATE operator NSURL *() const;
+#endif
+
+#if USE(GLIB) && HAVE(GURI)
+    URL(GUri*);
+    GRefPtr<GUri> createGUri() const;
 #endif
 
 #ifndef NDEBUG

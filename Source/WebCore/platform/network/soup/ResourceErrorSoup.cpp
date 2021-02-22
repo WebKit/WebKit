@@ -36,30 +36,37 @@
 
 namespace WebCore {
 
-static URL failingURI(SoupURI* soupURI)
-{
-    ASSERT(soupURI);
-    return soupURIToURL(soupURI);
-}
+#if USE(SOUP2)
+#define SOUP_HTTP_ERROR_DOMAIN SOUP_HTTP_ERROR
+#else
+#define SOUP_HTTP_ERROR_DOMAIN SOUP_SESSION_ERROR
+#endif
 
 ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), statusCode, failingURL, reasonPhrase);
+    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN), statusCode, failingURL, reasonPhrase);
 }
 
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
 {
     ASSERT(message);
+#if USE(SOUP2)
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
-        return transportError(failingURI(soup_message_get_uri(message)), message->status_code, String::fromUTF8(message->reason_phrase));
-    return genericGError(failingURI(soup_message_get_uri(message)), error);
+        return transportError(soupURIToURL(soup_message_get_uri(message)), message->status_code, String::fromUTF8(message->reason_phrase));
+#endif
+    return genericGError(soupURIToURL(soup_message_get_uri(message)), error);
 }
 
 ResourceError ResourceError::authenticationError(SoupMessage* message)
 {
     ASSERT(message);
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), message->status_code,
-        failingURI(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
+#if USE(SOUP2)
+    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN), message->status_code,
+        soupURIToURL(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
+#else
+    return ResourceError(g_quark_to_string(SOUP_SESSION_ERROR), soup_message_get_status(message),
+        soup_message_get_uri(message), String::fromUTF8(soup_message_get_reason_phrase(message)));
+#endif
 }
 
 ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
@@ -69,7 +76,7 @@ ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
 
 ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED, failingURL, unacceptableTLSCertificate());
+    ResourceError resourceError(g_quark_to_string(G_TLS_ERROR), G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
     resourceError.setTLSErrors(tlsErrors);
     resourceError.setCertificate(certificate);
     return resourceError;

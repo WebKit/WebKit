@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <string.h>
@@ -381,13 +382,21 @@ static WebKitTestServer* kServer;
 static const char* kServerSuggestedFilename = "webkit-downloaded-file";
 static HashMap<CString, CString> s_userAgentMap;
 
+#if USE(SOUP2)
 static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
+#else
+static void addContentDispositionHTTPHeaderToResponse(SoupServerMessage* message)
+#endif
 {
     GUniquePtr<char> contentDisposition(g_strdup_printf("attachment; filename=%s", kServerSuggestedFilename));
-    soup_message_headers_append(message->response_headers, "Content-Disposition", contentDisposition.get());
+    soup_message_headers_append(soup_server_message_get_response_headers(message), "Content-Disposition", contentDisposition.get());
 }
 
+#if USE(SOUP2)
 static void writeNextChunk(SoupMessage* message)
+#else
+static void writeNextChunk(SoupServerMessage* message)
+#endif
 {
     /* We need a big enough chunk for the sniffer to not block the load */
     static const char* chunk = "Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -397,24 +406,30 @@ static void writeNextChunk(SoupMessage* message)
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!";
-    soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, chunk, strlen(chunk));
+    soup_message_body_append(soup_server_message_get_response_body(message), SOUP_MEMORY_STATIC, chunk, strlen(chunk));
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
+    auto* responseHeaders = soup_server_message_get_response_headers(message);
+    auto* responseBody = soup_server_message_get_response_body(message);
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
 
     if (g_str_has_prefix(path, "/ua-"))
-        s_userAgentMap.add(path, soup_message_headers_get_one(message->request_headers, "User-Agent"));
+        s_userAgentMap.add(path, soup_message_headers_get_one(soup_server_message_get_request_headers(message), "User-Agent"));
 
     if (g_str_equal(path, "/cancel-after-destination")) {
         // Use an infinite message to make sure it's cancelled before it finishes.
-        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
+        soup_message_headers_set_encoding(responseHeaders, SOUP_ENCODING_CHUNKED);
         addContentDispositionHTTPHeaderToResponse(message);
         g_signal_connect(message, "wrote_headers", G_CALLBACK(writeNextChunk), nullptr);
         g_signal_connect(message, "wrote_chunk", G_CALLBACK(writeNextChunk), nullptr);
@@ -422,8 +437,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     }
 
     if (g_str_equal(path, "/ua-test-redirect")) {
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "/ua-test");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
+        soup_message_headers_append(responseHeaders, "Location", "/ua-test");
         return;
     }
 
@@ -434,15 +449,14 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     char* contents;
     gsize contentsLength;
     if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, 0)) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-        soup_message_body_complete(message->response_body);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        soup_message_body_complete(responseBody);
         return;
     }
 
     addContentDispositionHTTPHeaderToResponse(message);
-    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
-
-    soup_message_body_complete(message->response_body);
+    soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, contentsLength);
+    soup_message_body_complete(responseBody);
 }
 
 static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)

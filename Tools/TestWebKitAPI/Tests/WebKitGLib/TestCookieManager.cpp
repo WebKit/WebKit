@@ -23,6 +23,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <WebCore/GUniquePtrSoup.h>
+#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
@@ -306,7 +307,7 @@ static void testCookieManagerAddCookie(CookieManagerTest* test, gconstpointer)
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
 
     // Check the cookies that have been added for the domain.
-    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GUniquePtr<char> uri(g_strdup_printf("http://%s", kFirstPartyDomain));
     GList* foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -337,7 +338,7 @@ static void testCookieManagerAddCookie(CookieManagerTest* test, gconstpointer)
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
 
     // Retrieve the list of cookies for the same domain and path again now and check.
-    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain, kCookiePathNew));
+    uri.reset(g_strdup_printf("http://%s%s", kFirstPartyDomain, kCookiePathNew));
     foundCookies = test->getCookies(uri.get());
 
     // We have now two cookies that would apply to the passed URL, one is the cookie initially
@@ -349,7 +350,7 @@ static void testCookieManagerAddCookie(CookieManagerTest* test, gconstpointer)
     test->addCookie(thirdCookie.get());
 
     // Only one cookie now, since the domain is different.
-    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kThirdPartyDomain, kCookiePathNew));
+    uri.reset(g_strdup_printf("http://%s%s", kThirdPartyDomain, kCookiePathNew));
     foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
@@ -374,7 +375,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
     // Retrieve the first cookie using a HTTP scheme.
-    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GUniquePtr<char> uri(g_strdup_printf("http://%s", kFirstPartyDomain));
     GList* foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -385,7 +386,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
     g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValue);
 
     // Retrieve the second cookie using a HTTPS scheme.
-    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTPS, kThirdPartyDomain));
+    uri.reset(g_strdup_printf("https://%s", kThirdPartyDomain));
     foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -401,7 +402,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
 
     // We should get two cookies that would apply to the same URL passed, since
     // http://127.0.0.1/new is a subset of the http://127.0.0.1/ URL.
-    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain, kCookiePathNew));
+    uri.reset(g_strdup_printf("http://%s%s", kFirstPartyDomain, kCookiePathNew));
     foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 2);
 
@@ -445,7 +446,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
     }
 
     // We should get 1 cookie only if we specify http://127.0.0.1/, though.
-    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    uri.reset(g_strdup_printf("http://%s", kFirstPartyDomain));
     foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -459,7 +460,7 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
     test->deleteAllCookies();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 
-    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    uri.reset(g_strdup_printf("http://%s", kFirstPartyDomain));
     foundCookies = test->getCookies(uri.get());
     g_assert_null(foundCookies);
 }
@@ -474,7 +475,7 @@ static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
 
     // Delete the cookie for the first party domain.
-    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GUniquePtr<char> uri(g_strdup_printf("http://%s", kFirstPartyDomain));
     GList* foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -498,7 +499,7 @@ static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
 
     // Delete the cookie for the third party domain.
-    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kThirdPartyDomain));
+    uri.reset(g_strdup_printf("http://%s", kThirdPartyDomain));
     foundCookies = test->getCookies(uri.get());
     g_assert_cmpint(g_list_length(foundCookies), ==, 1);
 
@@ -705,28 +706,32 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     g_main_loop_run(test->m_mainLoop);
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     gchar* header_str = g_strdup_printf("%s=%s; Max-Age=60", kCookieName, kCookieValue);
 
     if (g_str_equal(path, "/index.html")) {
         char* indexHtml = g_strdup_printf(kIndexHtmlFormat, kServer->port());
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", header_str);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
+        soup_message_headers_replace(soup_server_message_get_response_headers(message), "Set-Cookie", header_str);
+        soup_message_body_append(soup_server_message_get_response_body(message), SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
     } else if (g_str_equal(path, "/image.png"))
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", header_str);
+        soup_message_headers_replace(soup_server_message_get_response_headers(message), "Set-Cookie", header_str);
     else if (g_str_equal(path, "/no-cookies.html")) {
         static const char* indexHtml = "<html><body><p>No cookies</p></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHtml, strlen(indexHtml));
+        soup_message_body_append(soup_server_message_get_response_body(message), SOUP_MEMORY_STATIC, indexHtml, strlen(indexHtml));
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-    soup_message_body_complete(message->response_body);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+    soup_message_body_complete(soup_server_message_get_response_body(message));
 }
 
 void beforeAll()

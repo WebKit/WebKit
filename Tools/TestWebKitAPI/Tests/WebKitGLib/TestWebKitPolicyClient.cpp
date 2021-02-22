@@ -22,6 +22,7 @@
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
 #include "WebKitWebsitePolicies.h"
+#include <WebCore/SoupVersioning.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -290,23 +291,28 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_false(data.triedToOpenWindow);
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
     if (g_str_equal(path, "/")) {
         static const char* responseString = "<html><body>Testing!</body></html>";
-        soup_message_set_status(message, SOUP_STATUS_OK);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
-        soup_message_body_complete(message->response_body);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_body_complete(responseBody);
     } else if (g_str_equal(path, "/redirect")) {
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "/");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
+        soup_message_headers_append(soup_server_message_get_response_headers(message), "Location", "/");
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
 
 static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)

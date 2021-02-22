@@ -26,7 +26,6 @@ find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
 find_package(LibEpoxy 1.4.0 REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
-find_package(LibSoup 2.54.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
@@ -88,6 +87,7 @@ WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
 WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC ON)
 
 # Private options specific to the WPE port.
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_HOLEPUNCH "Whether to enable GStreamer holepunch" PRIVATE OFF)
@@ -126,6 +126,13 @@ WEBKIT_OPTION_DEPEND(USE_EXTERNAL_HOLEPUNCH ENABLE_VIDEO)
 include(GStreamerDependencies)
 
 WEBKIT_OPTION_END()
+
+if (USE_SOUP2)
+    set(SOUP_MINIMUM_VERSION 2.54.0)
+else ()
+    set(SOUP_MINIMUM_VERSION 2.91.0)
+endif ()
+find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
 
 if (ENABLE_ACCESSIBILITY)
     find_package(ATK 2.16.0)
@@ -237,6 +244,11 @@ SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_TILED_BACKING_STORE TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
+
+# GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
+if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")
+    SET_AND_EXPOSE_TO_BUILD(HAVE_GURI 1)
+endif ()
 
 # Override the cached variable, gtk-doc does not really work when cross-building or building on Mac.
 if (CMAKE_CROSSCOMPILING OR APPLE)

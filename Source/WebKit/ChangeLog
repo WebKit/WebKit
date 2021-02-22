@@ -1,3 +1,36 @@
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::clearRequest):
+        (WebKit::NetworkDataTaskSoup::resume):
+        (WebKit::NetworkDataTaskSoup::cancel):
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificateCallback):
+        (WebKit::NetworkDataTaskSoup::acceptCertificateCallback):
+        (WebKit::NetworkDataTaskSoup::acceptCertificate):
+        (WebKit::NetworkDataTaskSoup::authenticateCallback):
+        (WebKit::NetworkDataTaskSoup::authenticate):
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate):
+        (WebKit::shouldRedirectAsGET):
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+        (WebKit::NetworkDataTaskSoup::wroteBodyDataCallback):
+        (WebKit::NetworkDataTaskSoup::didWriteBodyData):
+        (WebKit::NetworkDataTaskSoup::networkEvent):
+        (WebKit::NetworkDataTaskSoup::hstsEnforced):
+        (WebKit::NetworkDataTaskSoup::didRestart):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::isConnectionError):
+        (WebKit::WebSocketTask::WebSocketTask):
+
 2021-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Update WebCoreArgumentCodersMac with some new additions

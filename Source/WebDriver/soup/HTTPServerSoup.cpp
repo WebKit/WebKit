@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2017, 2021 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,13 +52,14 @@ static bool soupServerListen(SoupServer* server, const Optional<String>& host, u
 
 bool HTTPServer::listen(const Optional<String>& host, unsigned port)
 {
-    m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_SERVER_HEADER, "WebKitWebDriver", nullptr));
+    m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitWebDriver", nullptr));
     GUniqueOutPtr<GError> error;
     if (!soupServerListen(m_soupServer.get(), host, port, &error.outPtr())) {
         WTFLogAlways("Failed to start HTTP server at port %u: %s", port, error->message);
         return false;
     }
 
+#if USE(SOUP2)
     soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer userData) {
         auto* httpServer = static_cast<HTTPServer*>(userData);
         GRefPtr<SoupMessage> protectedMessage = message;
@@ -76,6 +77,28 @@ bool HTTPServer::listen(const Optional<String>& host, unsigned port)
                 soup_server_unpause_message(server, message.get());
         });
     }, this, nullptr);
+#else
+    soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
+        auto& httpServer = *static_cast<HTTPServer*>(userData);
+        GRefPtr<SoupServerMessage> protectedMessage = message;
+        soup_server_pause_message(server, message);
+        auto* requestBody = soup_server_message_get_request_body(message);
+        httpServer.m_requestHandler.handleRequest({ String::fromUTF8(soup_server_message_get_method(message)), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
+            [server, message = WTFMove(protectedMessage)](HTTPRequestHandler::Response&& response) {
+                soup_server_message_set_status(message.get(), response.statusCode, nullptr);
+                if (!response.data.isNull()) {
+                    // §6.3 Processing Model.
+                    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
+                    auto* responseHeaders = soup_server_message_get_response_headers(message.get());
+                    soup_message_headers_append(responseHeaders, "Content-Type", response.contentType.utf8().data());
+                    soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
+                    auto* responseBody = soup_server_message_get_response_body(message.get());
+                    soup_message_body_append(responseBody, SOUP_MEMORY_COPY, response.data.data(), response.data.length());
+                }
+                soup_server_unpause_message(server, message.get());
+        });
+    }, this, nullptr);
+#endif
 
     return true;
 }

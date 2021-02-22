@@ -53,24 +53,29 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
     if (m_queue) {
         BinarySemaphore semaphore;
         m_queue->dispatch([&] {
-            g_assert_true(soup_server_listen_local(m_soupServer.get(), SOUP_ADDRESS_ANY_PORT, static_cast<SoupServerListenOptions>(options), nullptr));
+            g_assert_true(soup_server_listen_local(m_soupServer.get(), 0, static_cast<SoupServerListenOptions>(options), nullptr));
             semaphore.signal();
         });
         semaphore.wait();
     } else
-        g_assert_true(soup_server_listen_local(m_soupServer.get(), SOUP_ADDRESS_ANY_PORT, static_cast<SoupServerListenOptions>(options), nullptr));
+        g_assert_true(soup_server_listen_local(m_soupServer.get(), 0, static_cast<SoupServerListenOptions>(options), nullptr));
 
     GSList* uris = soup_server_get_uris(m_soupServer.get());
     g_assert_nonnull(uris);
+#if USE(SOUP2)
     GUniquePtr<gchar> urlString(soup_uri_to_string(static_cast<SoupURI*>(uris->data), FALSE));
     m_baseURL = URL({ }, String::fromUTF8(urlString.get()));
     g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(soup_uri_free));
+#else
+    m_baseURL = static_cast<GUri*>(uris->data);
+    g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(g_uri_unref));
+#endif
 }
 
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
 {
     m_baseWebSocketURL = URL(m_baseURL, "/websocket/");
-    m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http") ? SOUP_URI_SCHEME_WS : SOUP_URI_SCHEME_WSS);
+    m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http") ? "ws" : "wss");
 
     if (m_queue) {
         m_queue->dispatch([this, callback, userData] {

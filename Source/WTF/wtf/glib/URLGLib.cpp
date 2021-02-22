@@ -29,9 +29,35 @@
 #if USE(GLIB)
 
 #include <glib.h>
+#include <wtf/URLParser.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WTF {
+
+#if HAVE(GURI)
+URL::URL(GUri* uri)
+{
+    if (!uri) {
+        invalidate();
+        return;
+    }
+
+    GUniquePtr<char> uriString(g_uri_to_string(uri));
+    URLParser parser(String::fromUTF8(uriString.get()));
+    *this = parser.result();
+}
+
+GRefPtr<GUri> URL::createGUri() const
+{
+    if (isNull())
+        return nullptr;
+
+    return adoptGRef(g_uri_parse(m_string.utf8().data(),
+        static_cast<GUriFlags>(G_URI_FLAGS_HAS_PASSWORD | G_URI_FLAGS_ENCODED_PATH | G_URI_FLAGS_ENCODED_QUERY | G_URI_FLAGS_ENCODED_FRAGMENT | G_URI_FLAGS_SCHEME_NORMALIZE | G_URI_FLAGS_PARSE_RELAXED),
+        nullptr));
+}
+#endif
 
 bool URL::hostIsIPAddress(StringView host)
 {

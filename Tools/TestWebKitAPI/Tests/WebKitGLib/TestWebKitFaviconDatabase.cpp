@@ -23,6 +23,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -144,17 +145,22 @@ public:
     bool m_waitingForFaviconURI { false };
 };
 
-static void
-serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable* query, SoupClientContext* context, void* data)
+#if USE(SOUP2)
+static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable* query, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
+    auto* responseBody = soup_server_message_get_response_body(message);
+
     if (g_str_equal(path, "/favicon.ico")) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-        soup_message_body_complete(message->response_body);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        soup_message_body_complete(responseBody);
         return;
     }
 
@@ -163,17 +169,17 @@ serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHash
     if (g_str_equal(path, "/icon/favicon.ico")) {
         GUniquePtr<char> pathToFavicon(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
         g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
+        soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/nofavicon")) {
         static const char* noFaviconHTML = "<html><head><body>test</body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, noFaviconHTML, strlen(noFaviconHTML));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, noFaviconHTML, strlen(noFaviconHTML));
     } else {
         static const char* contentsHTML = "<html><head><link rel='icon' href='/icon/favicon.ico' type='image/x-ico; charset=binary'></head><body>test</body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, contentsHTML, strlen(contentsHTML));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, contentsHTML, strlen(contentsHTML));
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
-    soup_message_body_complete(message->response_body);
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    soup_message_body_complete(responseBody);
 }
 
 static void testFaviconDatabaseInitialization(FaviconDatabaseTest* test, gconstpointer)

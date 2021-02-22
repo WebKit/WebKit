@@ -1,3 +1,13 @@
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * soup/HTTPServerSoup.cpp:
+        (WebDriver::HTTPServer::listen):
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine correct visibility for linked frameworks

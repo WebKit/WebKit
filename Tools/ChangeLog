@@ -1,3 +1,62 @@
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (tlsErrorsDialogResponse):
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (Tunnel::Tunnel):
+        (Tunnel::connect):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerAddCookie):
+        (testCookieManagerGetCookies):
+        (testCookieManagerDeleteCookie):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (addContentDispositionHTTPHeaderToResponse):
+        (writeNextChunk):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (testLoadingError):
+        (testWebViewIsLoading):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (addCacheHTTPHeadersToResponse):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (WebSocketTest::serverWebSocketCallback):
+        (httpsServerCallback):
+        (httpServerCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (serverCallback):
+        (ProxyTest::webSocketProxyServerCallback):
+        (webSocketServerCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (writeNextChunk):
+        (serverCallback):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::run):
+        (WebKitTestServer::addWebSocketHandler):
+
 2021-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Cog build fails when gst-build is enabled

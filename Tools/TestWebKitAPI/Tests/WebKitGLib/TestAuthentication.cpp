@@ -20,6 +20,7 @@
 #include "config.h"
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
+#include <WebCore/SoupVersioning.h>
 #include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* kServer;
@@ -336,7 +337,11 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
 class Tunnel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+#if USE(SOUP2)
     Tunnel(SoupServer* server, SoupMessage* message)
+#else
+    Tunnel(SoupServer* server, SoupServerMessage* message)
+#endif
         : m_server(server)
         , m_message(message)
     {
@@ -352,8 +357,15 @@ public:
     {
         m_completionHandler = WTFMove(completionHandler);
         GRefPtr<GSocketClient> client = adoptGRef(g_socket_client_new());
-        auto* uri = soup_message_get_uri(m_message.get());
-        g_socket_client_connect_to_host_async(client.get(), uri->host, uri->port, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
+        auto* uri = soup_server_message_get_uri(m_message.get());
+#if USE(SOUP2)
+        const char* host = uri->host;
+        int port = uri->port;
+#else
+        const char* host = g_uri_get_host(uri);
+        int port = std::max<int>(g_uri_get_port(uri), 0);
+#endif
+        g_socket_client_connect_to_host_async(client.get(), host, port, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
             auto* tunnel = static_cast<Tunnel*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(source), result, &error.outPtr()));
@@ -368,66 +380,81 @@ public:
     }
 
     GRefPtr<SoupServer> m_server;
+#if USE(SOUP2)
     GRefPtr<SoupMessage> m_message;
+#else
+    GRefPtr<SoupServerMessage> m_message;
+#endif
     Function<void (const char*)> m_completionHandler;
 };
 
 unsigned gProxyServerPort;
 
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, void*)
+#if USE(SOUP2)
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    unsigned port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS((soup_client_context_get_local_address(context))));
-    if (message->method == SOUP_METHOD_CONNECT) {
+#if USE(SOUP2)
+    unsigned port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_client_context_get_local_address(context)));
+#else
+    unsigned port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_server_message_get_local_address(message)));
+#endif
+
+    if (soup_server_message_get_method(message) == SOUP_METHOD_CONNECT) {
         g_assert_cmpuint(port, ==, gProxyServerPort);
         auto tunnel = makeUnique<Tunnel>(server, message);
         auto* tunnelPtr = tunnel.get();
         tunnelPtr->connect([tunnel = WTFMove(tunnel)](const char* errorMessage) {
             if (errorMessage) {
-                soup_message_set_status(tunnel->m_message.get(), SOUP_STATUS_BAD_GATEWAY);
-                soup_message_set_response(tunnel->m_message.get(), "text/plain", SOUP_MEMORY_COPY, errorMessage, strlen(errorMessage));
+                soup_server_message_set_status(tunnel->m_message.get(), SOUP_STATUS_BAD_GATEWAY, nullptr);
+                soup_server_message_set_response(tunnel->m_message.get(), "text/plain", SOUP_MEMORY_COPY, errorMessage, strlen(errorMessage));
             } else {
-                soup_message_headers_append(tunnel->m_message->response_headers, "Proxy-Authenticate", "Basic realm=\"Proxy realm\"");
-                soup_message_set_status(tunnel->m_message.get(), SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED);
+                soup_message_headers_append(soup_server_message_get_response_headers(tunnel->m_message.get()), "Proxy-Authenticate", "Basic realm=\"Proxy realm\"");
+                soup_server_message_set_status(tunnel->m_message.get(), SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED, nullptr);
             }
         });
         return;
     }
 
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
+
+    auto* responseBody = soup_server_message_get_response_body(message);
 
     if (g_str_has_suffix(path, "/auth-test.html") || g_str_has_suffix(path, "/empty-realm.html")) {
         bool isProxy = g_str_has_prefix(path, "/proxy");
         if (isProxy)
             g_assert_cmpuint(port, ==, gProxyServerPort);
 
-        const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
+        const char* authorization = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Authorization");
         // Require authentication.
         if (!g_strcmp0(authorization, authExpectedAuthorization)) {
             // Successful authentication.
-            soup_message_set_status(message, SOUP_STATUS_OK);
-            soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authSuccessHTMLString, strlen(authSuccessHTMLString));
+            soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+            soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, authSuccessHTMLString, strlen(authSuccessHTMLString));
             AuthenticationTest::authenticationRetries = 0;
         } else if (++AuthenticationTest::authenticationRetries < 3) {
             // No or invalid authorization header provided by the client, request authentication twice then fail.
-            soup_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED);
+            soup_server_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED, nullptr);
             if (!strcmp(path, "/empty-realm.html"))
-                soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic");
+                soup_message_headers_append(soup_server_message_get_response_headers(message), "WWW-Authenticate", "Basic");
             else
-                soup_message_headers_append(message->response_headers, isProxy ? "Proxy-Authenticate" : "WWW-Authenticate", isProxy ? "Basic realm=\"Proxy realm\"" : "Basic realm=\"my realm\"");
+                soup_message_headers_append(soup_server_message_get_response_headers(message), isProxy ? "Proxy-Authenticate" : "WWW-Authenticate", isProxy ? "Basic realm=\"Proxy realm\"" : "Basic realm=\"my realm\"");
             // Include a failure message in case the user attempts to proceed without authentication.
-            soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
+            soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         } else {
             // Authentication not successful, display a "401 Authorization Required" page.
-            soup_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED);
-            soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
+            soup_server_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED, nullptr);
+            soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         }
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 
-    soup_message_body_complete(message->response_body);
+    soup_message_body_complete(responseBody);
 }
 
 class ProxyAuthenticationTest : public AuthenticationTest {

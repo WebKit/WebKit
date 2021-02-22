@@ -1,3 +1,20 @@
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/Platform.h:
+        * wtf/URL.h:
+        * wtf/glib/GRefPtr.cpp:
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GRefPtr.h:
+        * wtf/glib/URLGLib.cpp:
+        (WTF::URL::URL):
+        (WTF::URL::createGUri const):
+
 2021-02-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         RunLoop::threadWillExit is doing m_nextIteration.clear() without locking m_nextIterationLock

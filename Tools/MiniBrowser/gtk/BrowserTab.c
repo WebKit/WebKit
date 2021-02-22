@@ -219,9 +219,15 @@ static void tlsErrorsDialogResponse(GtkWidget *dialog, gint response, BrowserTab
     if (response == GTK_RESPONSE_YES) {
         const char *failingURI = (const char *)g_object_get_data(G_OBJECT(dialog), "failingURI");
         GTlsCertificate *certificate = (GTlsCertificate *)g_object_get_data(G_OBJECT(dialog), "certificate");
+#if SOUP_CHECK_VERSION(2, 91, 0)
+        GUri *uri = g_uri_parse(failingURI, SOUP_HTTP_URI_FLAGS, NULL);
+        webkit_web_context_allow_tls_certificate_for_host(webkit_web_view_get_context(tab->webView), certificate, g_uri_get_host(uri));
+        g_uri_unref(uri);
+#else
         SoupURI *uri = soup_uri_new(failingURI);
         webkit_web_context_allow_tls_certificate_for_host(webkit_web_view_get_context(tab->webView), certificate, uri->host);
         soup_uri_free(uri);
+#endif
         webkit_web_view_load_uri(tab->webView, failingURI);
     }
 #if GTK_CHECK_VERSION(3, 98, 5)

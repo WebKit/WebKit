@@ -1,3 +1,14 @@
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/FindLibSoup.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-02-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][WPE] Implement support for CSS Scroll Snap
