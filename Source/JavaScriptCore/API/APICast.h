@@ -88,6 +88,13 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
     return result;
 }
 
+#if CPU(ADDRESS64)
+inline JSC::JSValue toJS(JSValueRef value)
+{
+    return bitwise_cast<JSC::JSValue>(value);
+}
+#endif
+
 inline JSC::JSValue toJSForGC(JSC::JSGlobalObject* globalObject, JSValueRef v)
 {
     ASSERT_UNUSED(globalObject, globalObject);
@@ -147,6 +154,13 @@ inline JSValueRef toRef(JSC::JSGlobalObject* globalObject, JSC::JSValue v)
 {
     return toRef(getVM(globalObject), v);
 }
+
+#if CPU(ADDRESS64)
+inline JSValueRef toRef(JSC::JSValue v)
+{
+    return bitwise_cast<JSValueRef>(v);
+}
+#endif
 
 inline JSObjectRef toRef(JSC::JSObject* o)
 {
