@@ -59,8 +59,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #define CHECK_HASHTABLE_USE_AFTER_DESTRUCTION 1
 #endif
 
-#define HASH_TABLE_RELEASE_ASSERT(condition) if (UNLIKELY(!(condition))) CRASH();
-
 #if DUMP_HASHTABLE_STATS
 
     struct HashTableStats {
@@ -677,7 +675,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned sizeMask = tableSizeMask();
         unsigned h = HashTranslator::hash(key);
         unsigned i = h & sizeMask;
-        unsigned initialIndex = i;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -717,7 +714,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -733,7 +729,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned sizeMask = tableSizeMask();
         unsigned h = HashTranslator::hash(key);
         unsigned i = h & sizeMask;
-        unsigned initialIndex = i;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -780,7 +775,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -796,7 +790,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned sizeMask = tableSizeMask();
         unsigned h = HashTranslator::hash(key);
         unsigned i = h & sizeMask;
-        unsigned initialIndex = i;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -843,7 +836,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -864,7 +856,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned sizeMask = tableSizeMask();
         unsigned h = HashTranslator::hash(key);
         unsigned i = h & sizeMask;
-        unsigned initialIndex = i;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -894,7 +885,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
 
         HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
@@ -947,7 +937,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned sizeMask = tableSizeMask();
         unsigned h = HashTranslator::hash(key);
         unsigned i = h & sizeMask;
-        unsigned initialIndex = i;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -994,7 +983,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
 
         if (deletedEntry) {
@@ -1652,8 +1640,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     {
         return a.m_impl != b.m_impl;
     }
-
-#undef HASH_TABLE_RELEASE_ASSERT
 
 } // namespace WTF
 

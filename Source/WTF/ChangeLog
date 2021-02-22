@@ -1,3 +1,47 @@
+2021-02-17  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272621. rdar://problem/74410131
+
+    REGRESSION(r269017): Speedometer2 1% regression
+    https://bugs.webkit.org/show_bug.cgi?id=221640
+    
+    Reviewed by Mark Lam.
+    
+    Reverting r269017, r269478, and r272095 because of Speedometer2 ~1% regression.
+    
+    * wtf/HashTable.h:
+    (WTF::KeyTraits>::inlineLookup):
+    (WTF::KeyTraits>::lookupForWriting):
+    (WTF::KeyTraits>::fullLookupForWriting):
+    (WTF::KeyTraits>::addUniqueForInitialization):
+    (WTF::KeyTraits>::add):
+    * wtf/HashTraits.h:
+    * wtf/MetaAllocator.cpp:
+    (WTF::MetaAllocator::addFreeSpace):
+    * wtf/MetaAllocator.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            REGRESSION(r269017): Speedometer2 1% regression
+            https://bugs.webkit.org/show_bug.cgi?id=221640
+
+            Reviewed by Mark Lam.
+
+            Reverting r269017, r269478, and r272095 because of Speedometer2 ~1% regression.
+
+            * wtf/HashTable.h:
+            (WTF::KeyTraits>::inlineLookup):
+            (WTF::KeyTraits>::lookupForWriting):
+            (WTF::KeyTraits>::fullLookupForWriting):
+            (WTF::KeyTraits>::addUniqueForInitialization):
+            (WTF::KeyTraits>::add):
+            * wtf/HashTraits.h:
+            * wtf/MetaAllocator.cpp:
+            (WTF::MetaAllocator::addFreeSpace):
+            * wtf/MetaAllocator.h:
+
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272703. rdar://problem/74409698
