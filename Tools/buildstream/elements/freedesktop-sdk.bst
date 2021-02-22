@@ -5,7 +5,7 @@ sources:
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   # Changed to track git commit from upstream bst
   track: 'release/20.08'
-  ref: freedesktop-sdk-20.08.3-55-g96e34a68c3ca460d798e9cf396e0ac1509d5a7b0
+  ref: freedesktop-sdk-20.08.4-26-g4421da17dc0a37cc6bb159eceb64b839841c7392
 - kind: patch
   path: patches/nettle-no-debug.diff
 - kind: patch
