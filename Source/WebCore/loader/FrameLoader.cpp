@@ -1987,7 +1987,7 @@ void FrameLoader::commitProvisionalLoad()
         // be connected to its frame yet, so the following call with be a no-op. We will
         // attempt to confirm any active composition once again in this scenario after we
         // finish restoring from the cached page.
-        document->editor().confirmCompositionAndNotifyClient();
+        document->editor().confirmOrCancelCompositionAndNotifyClient();
     }
 
     if (!m_frame.tree().parent() && history().currentItem() && history().currentItem() != history().provisionalItem()) {
@@ -2068,7 +2068,7 @@ void FrameLoader::commitProvisionalLoad()
         didOpenURL();
 
     if (auto document = makeRefPtr(m_frame.document()))
-        document->editor().confirmCompositionAndNotifyClient();
+        document->editor().confirmOrCancelCompositionAndNotifyClient();
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "");
