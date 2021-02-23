@@ -40,7 +40,7 @@ public:
         }
         void registerClient(SpeechRecognitionConnectionClient&) final { }
         void unregisterClient(SpeechRecognitionConnectionClient&) final { }
-        void start(SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t, ClientOrigin&&) final { }
+        void start(SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t, ClientOrigin&&, FrameIdentifier) final { }
         void stop(SpeechRecognitionConnectionClientIdentifier) final { }
         void abort(SpeechRecognitionConnectionClientIdentifier) final { }
         void didReceiveUpdate(SpeechRecognitionUpdate&&) final { }

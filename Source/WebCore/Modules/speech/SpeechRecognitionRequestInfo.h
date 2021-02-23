@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ClientOrigin.h"
+#include "FrameIdentifier.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 
 namespace WebCore {
@@ -37,6 +38,7 @@ struct SpeechRecognitionRequestInfo {
     bool interimResults { false };
     uint64_t maxAlternatives { 1 };
     ClientOrigin clientOrigin;
+    FrameIdentifier frameIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<SpeechRecognitionRequestInfo> decode(Decoder&);
@@ -45,7 +47,7 @@ struct SpeechRecognitionRequestInfo {
 template<class Encoder>
 void SpeechRecognitionRequestInfo::encode(Encoder& encoder) const
 {
-    encoder << clientIdentifier << lang << continuous << interimResults << maxAlternatives << clientOrigin;
+    encoder << clientIdentifier << lang << continuous << interimResults << maxAlternatives << clientOrigin << frameIdentifier;
 }
 
 template<class Decoder>
@@ -81,13 +83,19 @@ Optional<SpeechRecognitionRequestInfo> SpeechRecognitionRequestInfo::decode(Deco
     if (!clientOrigin)
         return WTF::nullopt;
 
+    Optional<FrameIdentifier> frameIdentifier;
+    decoder >> frameIdentifier;
+    if (!frameIdentifier)
+        return WTF::nullopt;
+
     return {{
         WTFMove(*clientIdentifier),
         WTFMove(*lang),
         WTFMove(*continuous),
         WTFMove(*interimResults),
         WTFMove(*maxAlternatives),
-        WTFMove(*clientOrigin)
+        WTFMove(*clientOrigin),
+        WTFMove(*frameIdentifier)
     }};
 }
 
