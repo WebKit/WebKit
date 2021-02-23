@@ -1,3 +1,14 @@
+2021-02-23  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver incorrectly announces groups in ARIA tree instances as empty
+        https://bugs.webkit.org/show_bug.cgi?id=221716
+        <rdar://problem/74205567>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/treeitem-row-delegation-expected.txt: Added.
+        * accessibility/mac/treeitem-row-delegation.html: Added.
+
 2021-02-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         [BigSur] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html is consistently failing
