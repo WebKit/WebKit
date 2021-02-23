@@ -1,3 +1,16 @@
+2021-02-23  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Use std::bitset to specify WebKitTestServer's options
+        https://bugs.webkit.org/show_bug.cgi?id=222273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+
 2021-02-22  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable RangeResponseGenerator.

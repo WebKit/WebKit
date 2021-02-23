@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <libsoup/soup.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
@@ -30,12 +31,14 @@ class WebKitTestServer {
 public:
 
     enum ServerOptions {
-        ServerHTTP = 0,
-        ServerHTTPS = 1 << 1,
-        ServerRunInThread = 1 << 2,
+        ServerHTTPS = 0,
+        ServerRunInThread = 1,
     };
+    using ServerOptionsBitSet = std::bitset<2>;
 
-    WebKitTestServer(ServerOptions = ServerHTTP);
+    WebKitTestServer(ServerOptionsBitSet = 0);
+    WebKitTestServer(ServerOptions option)
+        : WebKitTestServer(ServerOptionsBitSet().set(option)) { }
 
     const URL& baseURL() const { return m_baseURL; }
     unsigned port() const;

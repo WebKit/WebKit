@@ -565,7 +565,7 @@ void beforeAll()
     kHttpsServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
     kHttpsServer->run(httpsServerCallback);
 
-    kHttpServer = new WebKitTestServer(WebKitTestServer::ServerHTTP);
+    kHttpServer = new WebKitTestServer();
     kHttpServer->run(httpServerCallback);
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);

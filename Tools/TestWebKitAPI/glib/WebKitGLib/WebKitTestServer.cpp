@@ -25,16 +25,16 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-WebKitTestServer::WebKitTestServer(ServerOptions options)
+WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
 {
-    if (options & ServerRunInThread) {
+    if (options[ServerRunInThread]) {
         WTF::initialize();
         m_queue = WorkQueue::create("WebKitTestServer");
     }
 
     m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitTestServer ", nullptr));
 
-    if (options & ServerHTTPS) {
+    if (options[ServerHTTPS]) {
         CString resourcesDir = Test::getResourcesDir();
         GUniquePtr<char> sslCertificateFile(g_build_filename(resourcesDir.data(), "test-cert.pem", nullptr));
         GUniquePtr<char> sslKeyFile(g_build_filename(resourcesDir.data(), "test-key.pem", nullptr));
