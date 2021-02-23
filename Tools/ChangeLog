@@ -1,3 +1,20 @@
+2021-02-23  Don Olmstead  <don.olmstead@sony.com>
+
+        Pass full environment when auto installing a Python module on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=221109
+        <rdar://problem/74002781>
+
+        Reviewed by Jonathan Bedard.
+
+        On Python 3 when the AutoInstall routine attempted to setup markupsafe-2.0.0 it would fail
+        when compiling native code. When compiling outside of Visual Studio there is a batch file
+        that sets up the environment. This adds a large number of environment variables which could
+        potentially change over time so to be safe the complete environment is passed to the
+        setup.py installation routine for Windows only.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install):
+
 2021-02-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273307.
