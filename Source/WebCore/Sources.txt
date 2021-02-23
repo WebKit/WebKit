@@ -2101,10 +2101,15 @@ platform/mock/MediaEngineConfigurationFactoryMock.cpp
 platform/mock/MockRealtimeAudioSource.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/MockRealtimeVideoSource.cpp
+platform/mock/PlatformSpeechSynthesizerMock.cpp
 platform/mock/RTCDataChannelHandlerMock.cpp
 platform/mock/RTCNotifiersMock.cpp
 platform/mock/ScrollAnimatorMock.cpp
 platform/mock/ScrollbarThemeMock.cpp
+platform/mock/mediasource/MockBox.cpp
+platform/mock/mediasource/MockMediaPlayerMediaSource.cpp
+platform/mock/mediasource/MockMediaSourcePrivate.cpp
+platform/mock/mediasource/MockSourceBufferPrivate.cpp
 platform/network/AuthenticationChallengeBase.cpp
 platform/network/BlobData.cpp
 platform/network/BlobDataFileReference.cpp

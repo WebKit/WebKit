@@ -1792,21 +1792,6 @@ set(WebCoreTestSupport_IDL_FILES
 )
 
 list(APPEND WebCoreTestSupport_SOURCES
-    dom/AbstractRange.cpp
-
-    inspector/InspectorFrontendClientLocal.cpp
-
-    platform/graphics/HEVCUtilities.cpp
-    platform/graphics/VP9Utilities.cpp
-
-    platform/mediarecorder/MediaRecorderPrivateMock.cpp
-
-    platform/mock/PlatformSpeechSynthesizerMock.cpp
-    platform/mock/mediasource/MockBox.cpp
-    platform/mock/mediasource/MockMediaPlayerMediaSource.cpp
-    platform/mock/mediasource/MockMediaSourcePrivate.cpp
-    platform/mock/mediasource/MockSourceBufferPrivate.cpp
-
     testing/GCObservation.cpp
     testing/InternalSettings.cpp
     testing/Internals.cpp
@@ -1821,7 +1806,6 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/ServiceWorkerInternals.cpp
     testing/js/WebCoreTestSupport.cpp
 )
-
 
 if (ENABLE_WEBXR)
     list(APPEND WebCoreTestSupport_IDL_FILES
