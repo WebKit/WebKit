@@ -1,3 +1,14 @@
+2021-02-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Fix JSCOnly build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=222316
+
+        Reviewed by Michael Catanzaro.
+
+        Update sources for the JSCOnly Windows build.
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         Prepare for memory ownership transfer in the GPUProcess

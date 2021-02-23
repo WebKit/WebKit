@@ -1,3 +1,15 @@
+2021-02-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Fix JSCOnly build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=222316
+
+        Reviewed by Michael Catanzaro.
+
+        Turn off ENABLE_WEBASSEMBLY for Windows on JSCOnly now that its possible to build it
+        without FTL.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for libsoup3
