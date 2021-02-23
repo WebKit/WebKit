@@ -3635,7 +3635,11 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         return;
     case ModernPath: {
         // FIXME: Implement partial invalidation.
-        auto path = modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation() ? ForceLineBoxesPath : UndeterminedPath;
+        auto path = UndeterminedPath;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
+            path = ForceLineBoxesPath;
+#endif
         m_lineLayout = WTF::Monostate();
         setLineLayoutPath(path);
         if (needsLayout())
