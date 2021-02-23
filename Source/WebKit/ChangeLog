@@ -1,3 +1,17 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to help identify to source of <rdar://68340471>
+        https://bugs.webkit.org/show_bug.cgi?id=222290
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::hasPagesUsingWebsiteDataStore const):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addExistingWebPage):
+
 2021-02-22  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Implement the ClipToDrawingCommands item by using begin and end markers

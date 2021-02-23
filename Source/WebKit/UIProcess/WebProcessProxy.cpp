@@ -524,8 +524,10 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     RELEASE_ASSERT(!m_isInProcessCache);
     ASSERT(!m_websiteDataStore || m_websiteDataStore == &webPage.websiteDataStore());
 
-    if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
+    if (beginsUsingDataStore == BeginsUsingDataStore::Yes) {
+        RELEASE_ASSERT(m_processPool);
         m_processPool->pageBeginUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
+    }
 
     m_pageMap.set(webPage.identifier(), &webPage);
     globalPageMap().set(webPage.identifier(), &webPage);
