@@ -68,7 +68,8 @@ public:
 
 #if PLATFORM(COCOA)
     id platformUIElement() { return m_element.get(); }
-#else
+#endif
+#if !PLATFORM(COCOA)
     PlatformUIElement platformUIElement() { return m_element; }
 #endif
 
@@ -77,8 +78,7 @@ public:
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 
     bool isEqual(AccessibilityUIElement* otherElement);
-    JSRetainPtr<JSStringRef> domIdentifier() const;
-
+    
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> childAtIndex(unsigned);
     unsigned indexOfChild(AccessibilityUIElement*);
@@ -173,8 +173,6 @@ public:
     bool isValid() const;
     bool isExpanded() const;
     bool isChecked() const;
-    JSRetainPtr<JSStringRef> currentStateValue() const;
-    JSRetainPtr<JSStringRef> sortDirection() const;
     bool isIndeterminate() const;
     bool isVisible() const;
     bool isOnScreen() const;

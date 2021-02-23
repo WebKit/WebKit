@@ -41,7 +41,6 @@ public:
     bool interimResults() const { return m_info.interimResults; }
     uint64_t maxAlternatives() const { return m_info.maxAlternatives; }
     const ClientOrigin clientOrigin() const { return m_info.clientOrigin; }
-    FrameIdentifier frameIdentifier() const { return m_info.frameIdentifier; }
 
 private:
     SpeechRecognitionRequestInfo m_info;

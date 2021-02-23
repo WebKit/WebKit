@@ -12,7 +12,7 @@ if (window.testRunner) {
 function test()
 {
     iframe = document.getElementsByTagName('iframe')[0];
-    shouldThrow("iframe.contentWindow.startRecognition()");
+    shouldNotThrow("iframe.contentWindow.startRecognition()");
 }
 
 function removeFrame()

@@ -1773,7 +1773,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == aria_modalAttr)
         deferModalChange(element);
     else if (attrName == aria_currentAttr)
-        postNotification(element, AXObjectCache::AXCurrentStateChanged);
+        postNotification(element, AXObjectCache::AXCurrentChanged);
     else if (attrName == aria_disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == aria_pressedAttr)
@@ -1782,8 +1782,6 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXObjectCache::AXReadOnlyStatusChanged);
     else if (attrName == aria_requiredAttr)
         postNotification(element, AXObjectCache::AXRequiredStatusChanged);
-    else if (attrName == aria_sortAttr)
-        postNotification(element, AXObjectCache::AXSortDirectionChanged);
     else
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }
@@ -3199,9 +3197,6 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     case AXCheckedStateChanged:
         tree->updateNodeProperty(object, AXPropertyName::IsChecked);
         break;
-    case AXSortDirectionChanged:
-        tree->updateNodeProperty(object, AXPropertyName::SortDirection);
-        break;
     case AXIdAttributeChanged:
         tree->updateNodeProperty(object, AXPropertyName::IdentifierAttribute);
         break;
@@ -3270,9 +3265,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
-            break;
-        case AXSortDirectionChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
         case AXIdAttributeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);

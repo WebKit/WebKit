@@ -335,14 +335,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axTextAreaTrait { return (1 << 24); }
 - (uint64_t)_axUpdatesFrequentlyTrait { return (1 << 25); }
 
-- (NSString *)accessibilityDOMIdentifier
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-
-    return self.axBackingObject->identifierAttribute();
-}
-
 - (BOOL)accessibilityCanFuzzyHitTest
 {
     if (![self _prepareAccessibilityCall])
@@ -2012,16 +2004,6 @@ static RenderObject* rendererForView(WAKView* view)
     // The UIKit accessibility wrapper will override and post appropriate notification.
 }
 
-- (void)postCurrentStateChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
-- (void)postNotification:(NSString *)notificationName
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
 // These will be used by the UIKit wrapper to calculate an appropriate description of scroll status.
 - (CGPoint)_accessibilityScrollPosition
 {
@@ -3049,26 +3031,44 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return self.axBackingObject->invalidStatus();
 }
 
-- (NSString *)accessibilityCurrentState
+- (NSString *)accessibilityARIACurrentStatus
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-
-    return self.axBackingObject->currentValue();
+    
+    switch (self.axBackingObject->currentState()) {
+    case AccessibilityCurrentState::False:
+        return @"false";
+    case AccessibilityCurrentState::Page:
+        return @"page";
+    case AccessibilityCurrentState::Step:
+        return @"step";
+    case AccessibilityCurrentState::Location:
+        return @"location";
+    case AccessibilityCurrentState::Time:
+        return @"time";
+    case AccessibilityCurrentState::Date:
+        return @"date";
+    case AccessibilityCurrentState::True:
+        return @"true";
+    }
 }
 
 - (NSString *)accessibilitySortDirection
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-
+    
     switch (self.axBackingObject->sortDirection()) {
     case AccessibilitySortDirection::Ascending:
-        return @"AXAscendingSortDirection";
+        return @"ascending";
     case AccessibilitySortDirection::Descending:
-        return @"AXDescendingSortDirection";
-    default:
-        return @"AXUnknownSortDirection";
+        return @"descending";
+    case AccessibilitySortDirection::Other:
+        return @"other";
+    case AccessibilitySortDirection::Invalid:
+    case AccessibilitySortDirection::None:
+        return nil;
     }
 }
 

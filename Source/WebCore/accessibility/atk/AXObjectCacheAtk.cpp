@@ -262,7 +262,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         atk_object_notify_state_change(axObject, ATK_STATE_BUSY, coreObject->isBusy());
         break;
 
-    case AXCurrentStateChanged:
+    case AXCurrentChanged:
         atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->currentState() != AccessibilityCurrentState::False);
         break;
 

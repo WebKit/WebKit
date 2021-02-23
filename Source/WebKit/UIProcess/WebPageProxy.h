@@ -52,7 +52,6 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "ShareableResource.h"
-#include "SpeechRecognitionPermissionRequest.h"
 #include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "SystemPreviewController.h"
@@ -265,7 +264,6 @@ struct MockWebAuthenticationConfiguration;
 struct PrewarmInformation;
 struct SecurityOriginData;
 struct ShareData;
-struct SpeechRecognitionError;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct ViewportAttributes;
@@ -369,6 +367,7 @@ struct UserMessage;
 enum class CreateNewGroupForHighlight : bool;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
+enum class SpeechRecognitionPermissionDecision : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
@@ -1813,9 +1812,8 @@ public:
     void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
     size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
-    void requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin&, WebCore::FrameIdentifier, SpeechRecognitionPermissionRequestCallback&&);
+    void requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
     void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
-    void requestUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 
     void syncIfMockDevicesEnabledChanged();
 

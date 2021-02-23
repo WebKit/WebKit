@@ -7,14 +7,14 @@ description("Verify that error event is fired when permission is denied.");
 
 if (window.testRunner) {
     jsTestIsAsync = true;
-    testRunner.setUserMediaPermission(false);
+    testRunner.setIsSpeechRecognitionPermissionGranted(false);
 }
 
 shouldNotThrow("recognition = new webkitSpeechRecognition()");
 shouldNotThrow("recognition.start()");
 recognition.onerror = (event) => {
     shouldBeEqualToString("event.error", "not-allowed");
-    shouldBeEqualToString("event.message", "User permission check has failed");
+    shouldBeEqualToString("event.message", "Permission check failed");
 
     finishJSTest();
 }

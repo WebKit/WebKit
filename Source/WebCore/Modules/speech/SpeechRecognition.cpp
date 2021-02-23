@@ -71,13 +71,7 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
         return Exception { UnknownError, "Recognition does not have a valid connection"_s };
 
     auto& document = downcast<Document>(*scriptExecutionContext());
-    auto* frame = document.frame();
-    if (!frame)
-        return Exception { UnknownError, "Recognition is not in a valid frame"_s };
-
-    auto optionalFrameIdentifier = document.frameID();
-    auto frameIdentifier = optionalFrameIdentifier ? *optionalFrameIdentifier : FrameIdentifier { };
-    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document.topOrigin().data(), document.securityOrigin().data() }, frameIdentifier);
+    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document.topOrigin().data(), document.securityOrigin().data() });
     m_state = State::Starting;
     return { };
 }
@@ -105,15 +99,6 @@ const char* SpeechRecognition::activeDOMObjectName() const
     return "SpeechRecognition";
 }
 
-void SpeechRecognition::stop()
-{
-    abortRecognition();
-    m_connection->unregisterClient(*this);
-
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    document.setActiveSpeechRecognition(nullptr);
-}
-
 void SpeechRecognition::didStart()
 {
     if (m_state == State::Starting)
@@ -124,9 +109,6 @@ void SpeechRecognition::didStart()
 
 void SpeechRecognition::didStartCapturingAudio()
 {
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    document.setActiveSpeechRecognition(this);
-
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audiostartEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -152,9 +134,6 @@ void SpeechRecognition::didStopCapturingSound()
 
 void SpeechRecognition::didStopCapturingAudio()
 {
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    document.setActiveSpeechRecognition(nullptr);
-
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audioendEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

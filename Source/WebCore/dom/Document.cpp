@@ -209,7 +209,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SocketProvider.h"
-#include "SpeechRecognition.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
 #include "StyleAdjuster.h"
@@ -4252,15 +4251,6 @@ void Document::removeAudioProducer(MediaProducer& audioProducer)
     updateIsPlayingMedia();
 }
 
-void Document::setActiveSpeechRecognition(SpeechRecognition* speechRecognition)
-{
-    if (m_activeSpeechRecognition == speechRecognition)
-        return;
-
-    m_activeSpeechRecognition = makeWeakPtr(speechRecognition);
-    updateIsPlayingMedia();
-}
-
 void Document::noteUserInteractionWithMediaElement()
 {
     if (m_userHasInteractedWithMediaElement)
@@ -4282,8 +4272,6 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 
 #if ENABLE(MEDIA_STREAM)
     state |= MediaStreamTrack::captureState(*this);
-    if (m_activeSpeechRecognition)
-        state |= MediaProducer::HasActiveAudioCaptureDevice;
 #endif
 
     if (m_userHasInteractedWithMediaElement)

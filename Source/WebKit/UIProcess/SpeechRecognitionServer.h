@@ -27,7 +27,6 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "SpeechRecognitionPermissionRequest.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SpeechRecognitionError.h>
 #include <WebCore/SpeechRecognitionRequest.h>
@@ -44,9 +43,10 @@ struct ClientOrigin;
 namespace WebKit {
 
 class WebProcessProxy;
+enum class SpeechRecognitionPermissionDecision : bool;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
-using SpeechRecognitionPermissionChecker = Function<void(const String&, const WebCore::ClientOrigin&, WebCore::FrameIdentifier, SpeechRecognitionPermissionRequestCallback&&)>;
+using SpeechRecognitionPermissionChecker = Function<void(const String&, const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
@@ -59,7 +59,7 @@ public:
     SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&);
 #endif
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier);
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
