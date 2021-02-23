@@ -279,6 +279,7 @@ class TestGitHub(unittest.TestCase):
         self.assertEqual(remote.GitHub.is_webserver('https://github.example.com/WebKit/webkit'), True)
         self.assertEqual(remote.GitHub.is_webserver('http://github.example.com/WebKit/webkit'), True)
         self.assertEqual(remote.GitHub.is_webserver('https://svn.example.org/repository/webkit'), False)
+        self.assertEqual(remote.GitHub.is_webserver('https://bitbucket.example.com/projects/WebKit/repos/webkit'), False)
 
     def test_branches(self):
         with mocks.remote.GitHub():
@@ -378,3 +379,112 @@ class TestGitHub(unittest.TestCase):
         with mocks.remote.GitHub():
             self.assertEqual(str(remote.GitHub(self.remote).find('4@trunk')), '4@main')
             self.assertEqual(str(remote.GitHub(self.remote).find('4@master')), '4@main')
+
+
+class TestBitBucket(unittest.TestCase):
+    remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
+
+    def test_detection(self):
+        self.assertEqual(remote.BitBucket.is_webserver('https://bitbucket.example.com/projects/WebKit/repos/webkit'), True)
+        self.assertEqual(remote.BitBucket.is_webserver('http://bitbucket.example.com/projects/WebKit/repos/webkit'), True)
+        self.assertEqual(remote.BitBucket.is_webserver('https://svn.example.org/repository/webkit'), False)
+        self.assertEqual(remote.BitBucket.is_webserver('https://github.example.com/WebKit/webkit'), False)
+
+    def test_branches(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual(
+                remote.BitBucket(self.remote).branches,
+                ['branch-a', 'branch-b', 'main'],
+            )
+
+    def test_tags(self):
+        with mocks.remote.BitBucket() as mock:
+            mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+            mock.tags['tag-2'] = mock.commits['branch-b'][-1]
+
+            self.assertEqual(
+                remote.BitBucket(self.remote).tags,
+                ['tag-1', 'tag-2'],
+            )
+
+    def test_scm_type(self):
+        self.assertFalse(remote.BitBucket(self.remote).is_svn)
+        self.assertTrue(remote.BitBucket(self.remote).is_git)
+
+    def test_commit_revision(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual('1@main', str(remote.BitBucket(self.remote).commit(hash='9b8311f2')))
+            self.assertEqual('2@main', str(remote.BitBucket(self.remote).commit(hash='fff83bb2')))
+            self.assertEqual('2.1@branch-a', str(remote.BitBucket(self.remote).commit(hash='a30ce849')))
+            self.assertEqual('3@main', str(remote.BitBucket(self.remote).commit(hash='1abe25b4')))
+            self.assertEqual('2.2@branch-b', str(remote.BitBucket(self.remote).commit(hash='3cd32e35')))
+            self.assertEqual('4@main', str(remote.BitBucket(self.remote).commit(hash='bae5d1e9')))
+            self.assertEqual('2.2@branch-a', str(remote.BitBucket(self.remote).commit(hash='621652ad')))
+            self.assertEqual('2.3@branch-b', str(remote.BitBucket(self.remote).commit(hash='790725a6')))
+
+    def test_commit_from_branch(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual('4@main', str(remote.BitBucket(self.remote).commit(branch='main')))
+            self.assertEqual('2.2@branch-a', str(remote.BitBucket(self.remote).commit(branch='branch-a')))
+            self.assertEqual('2.3@branch-b', str(remote.BitBucket(self.remote).commit(branch='branch-b')))
+
+    def test_identifier(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual(
+                '9b8311f25a77ba14923d9d5a6532103f54abefcb',
+                remote.BitBucket(self.remote).commit(identifier='1@main').hash,
+            )
+            self.assertEqual(
+                'fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
+                remote.BitBucket(self.remote).commit(identifier='2@main').hash,
+            )
+            self.assertEqual(
+                'a30ce8494bf1ac2807a69844f726be4a9843ca55',
+                remote.BitBucket(self.remote).commit(identifier='2.1@branch-a').hash,
+            )
+            self.assertEqual(
+                '1abe25b443e985f93b90d830e4a7e3731336af4d',
+                remote.BitBucket(self.remote).commit(identifier='3@main').hash,
+            )
+            self.assertEqual(
+                '3cd32e352410565bb543821fbf856a6d3caad1c4',
+                remote.BitBucket(self.remote).commit(identifier='2.2@branch-b').hash,
+            )
+            self.assertEqual(
+                'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+                remote.BitBucket(self.remote).commit(identifier='4@main').hash,
+            )
+            self.assertEqual(
+                '621652add7fc416099bd2063366cc38ff61afe36',
+                remote.BitBucket(self.remote).commit(identifier='2.2@branch-a').hash,
+            )
+            self.assertEqual(
+                '790725a6d79e28db2ecdde29548d2262c0bd059d',
+                remote.BitBucket(self.remote).commit(identifier='2.3@branch-b').hash,
+            )
+
+    def test_non_cannonical_identifiers(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual('2@main', str(remote.BitBucket(self.remote).commit(identifier='0@branch-a')))
+            self.assertEqual('1@main', str(remote.BitBucket(self.remote).commit(identifier='-1@branch-a')))
+
+            self.assertEqual('2@main', str(remote.BitBucket(self.remote).commit(identifier='0@branch-b')))
+            self.assertEqual('1@main', str(remote.BitBucket(self.remote).commit(identifier='-1@branch-b')))
+
+    def test_tag(self):
+        with mocks.remote.BitBucket() as mock:
+            mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+
+            self.assertEqual(
+                '621652add7fc416099bd2063366cc38ff61afe36',
+                remote.BitBucket(self.remote).commit(tag='tag-1').hash,
+            )
+
+    def test_no_log(self):
+        with mocks.remote.BitBucket():
+            self.assertIsNone(remote.BitBucket(self.remote).commit(identifier='4@main', include_log=False).message)
+
+    def test_alternative_default_branch(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual(str(remote.BitBucket(self.remote).find('4@trunk')), '4@main')
+            self.assertEqual(str(remote.BitBucket(self.remote).find('4@master')), '4@main')

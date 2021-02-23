@@ -235,6 +235,7 @@ class TestRemoteSvn(unittest.TestCase):
         self.assertEqual(remote.Svn.is_webserver('https://svn.example.org/repository/webkit'), True)
         self.assertEqual(remote.Svn.is_webserver('http://svn.example.org/repository/webkit'), True)
         self.assertEqual(remote.Svn.is_webserver('https://github.example.org/WebKit/webkit'), False)
+        self.assertEqual(remote.GitHub.is_webserver('https://bitbucket.example.com/projects/WebKit/repos/webkit'), False)
 
     def test_branches(self):
         with mocks.remote.Svn():
