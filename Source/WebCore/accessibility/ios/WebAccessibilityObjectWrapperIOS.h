@@ -67,7 +67,7 @@
 - (void)postValueChangedNotification;
 - (void)postExpandedChangedNotification;
 - (void)postCurrentStateChangedNotification;
-
+- (void)postNotification:(NSString *)notificationName;
 @end
 
 #endif // ENABLE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

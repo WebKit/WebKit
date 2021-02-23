@@ -1,5 +1,94 @@
 2021-02-17  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r272490. rdar://problem/74409784
+
+    Add support for aria-sort change notifications.
+    https://bugs.webkit.org/show_bug.cgi?id=221495
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/aria-sort-changed-notification.html
+    
+    This patch adds support for aria-sort changes. Some code cleanup by
+    using the notificationPlatformName helper function.
+    
+    * accessibility/AXLogger.cpp:
+    (WebCore::operator<<):
+    Logging of the new notification.
+    * accessibility/AXObjectCache.cpp:
+    Handles the aria-sort change notification. Updates the isolated tree.
+    (WebCore::AXObjectCache::handleAttributeChange):
+    (WebCore::AXObjectCache::updateIsolatedTree):
+    * accessibility/AXObjectCache.h:
+    * accessibility/ios/AXObjectCacheIOS.mm:
+    (WebCore::AXObjectCache::notificationPlatformName):
+    Helper to map AXCore notifications to platform notifications.
+    (WebCore::AXObjectCache::postPlatformNotification):
+    Handles the AXSortDirectionChanged notification. Some code cleanup using
+    the notificationPlatformName helper.
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper postNotification:]):
+    To be overridden by system AX bundles.
+    (-[WebAccessibilityObjectWrapper accessibilitySortDirection]):
+    Only ascending and descending sort directions are relevant for clients.
+    * accessibility/isolatedtree/AXIsolatedTree.cpp:
+    (WebCore::AXIsolatedTree::updateNodeProperty):
+    Updates the SortDirection property.
+    * accessibility/mac/AXObjectCacheMac.mm:
+    (WebCore::AXObjectCache::postPlatformNotification):
+    Handles the AXSortDirectionChanged notification.
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+    (WTR::AccessibilityUIElement::sortDirection const):
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+    (WTR::AccessibilityUIElement::sortDirection const):
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::currentStateValue const):
+    (WTR::AccessibilityUIElement::sortDirection const):
+    
+    LayoutTests:
+    
+    * accessibility/aria-sort-changed-notification-expected.txt: Added.
+    * accessibility/aria-sort-changed-notification.html: Added.
+    * accessibility/aria-sort-expected.txt:
+    * accessibility/aria-sort.html:
+    Calls sortDirection property on the JS accessible element instead of
+    retrieving the aria-sort attribute. This matches more accurately what an
+    actual client would do. Changed the expected file accordingly.
+    * accessibility/ios-simulator/aria-sort-ios-expected.txt:
+    * accessibility/ios-simulator/aria-sort-ios.html:
+    Same as in the Mac test above.
+    * platform/ios/TestExpectations:
+    Added the new test to be run on the ios-simulator.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272490 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-08  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add support for aria-sort change notifications.
+            https://bugs.webkit.org/show_bug.cgi?id=221495
+
+            Reviewed by Chris Fleizach.
+
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+            (WTR::AccessibilityUIElement::sortDirection const):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+            (WTR::AccessibilityUIElement::sortDirection const):
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::currentStateValue const):
+            (WTR::AccessibilityUIElement::sortDirection const):
+
+2021-02-17  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r271381. rdar://problem/74451875
 
     Make SpeechRecognition permission error more informative

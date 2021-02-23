@@ -444,6 +444,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXRequiredStatusChanged:
         stream << "AXRequiredStatusChanged";
         break;
+    case AXObjectCache::AXNotification::AXSortDirectionChanged:
+        stream << "AXSortDirectionChanged";
+        break;
     case AXObjectCache::AXNotification::AXTextChanged:
         stream << "AXTextChanged";
         break;

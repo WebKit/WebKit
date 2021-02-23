@@ -260,6 +260,9 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
     case AXPropertyName::IsChecked:
         propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
         break;
+    case AXPropertyName::SortDirection:
+        propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
+        break;
     case AXPropertyName::IdentifierAttribute:
         propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
         break;
