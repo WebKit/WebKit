@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AspectRatioEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that aspect-ratio is not exposed when the feature is disabled");
+
+shouldBeFalse("'aspectRatio' in document.documentElement.style");
+shouldBeFalse("'aspect-ratio' in getComputedStyle(document.documentElement)");
+shouldBeFalse("CSS.supports('aspect-ratio: 1 / 1')");
+shouldBeFalse("CSS.supports('aspect-ratio: inherit')");
+
+</script>
+</body>
+</html>

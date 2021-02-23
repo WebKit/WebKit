@@ -1,3 +1,15 @@
+2021-02-23  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio shows in computed style when disabled
+        https://bugs.webkit.org/show_bug.cgi?id=222286
+
+        Reviewed by Simon Fraser.
+
+        Add support for disabling aspect-ratio in wk1.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2021-02-23  Chris Dumez  <cdumez@apple.com>
 
         Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks in Tools/

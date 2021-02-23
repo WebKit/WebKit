@@ -3461,6 +3461,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
+            if (renderer && !renderer->settings().aspectRatioEnabled())
+                return nullptr;
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
                 return cssValuePool.createIdentifierValue(CSSValueAuto);

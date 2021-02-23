@@ -1,3 +1,15 @@
+2021-02-23  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio shows in computed style when disabled
+        https://bugs.webkit.org/show_bug.cgi?id=222286
+
+        Reviewed by Simon Fraser.
+
+        Add test.
+
+        * fast/css/aspect-ratio-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/aspect-ratio-invalidate-if-disabled.html: Added.
+
 2021-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/captureStream/canvas2d.html is flaky timing out since GStreamer 1.18 update
