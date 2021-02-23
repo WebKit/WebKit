@@ -64,7 +64,7 @@ void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
 {
-    m_permissionChecker(request.lang(), request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto decision) mutable {
+    m_permissionChecker(request.lang(), request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto error) mutable {
         if (!weakThis)
             return;
 
@@ -72,10 +72,9 @@ void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecogni
             return;
 
         auto identifier = weakRequest->clientIdentifier();
-        if (decision == SpeechRecognitionPermissionDecision::Deny) {
+        if (error) {
             m_requests.remove(identifier);
-            auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Permission check failed"_s };
-            sendUpdate(identifier, WebCore::SpeechRecognitionUpdateType::Error, error);
+            sendUpdate(identifier, WebCore::SpeechRecognitionUpdateType::Error, WTFMove(error));
             return;
         }
 

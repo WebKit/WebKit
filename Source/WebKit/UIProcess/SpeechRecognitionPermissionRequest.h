@@ -27,30 +27,29 @@
 
 #include "APIObject.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/SpeechRecognitionError.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
-enum class SpeechRecognitionPermissionDecision : bool { Deny, Grant };
-
 class SpeechRecognitionPermissionRequest : public RefCounted<SpeechRecognitionPermissionRequest> {
 public:
-    static Ref<SpeechRecognitionPermissionRequest> create(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+    static Ref<SpeechRecognitionPermissionRequest> create(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&& completionHandler)
     {
         return adoptRef(*new SpeechRecognitionPermissionRequest(lang, origin, WTFMove(completionHandler)));
     }
 
-    void complete(SpeechRecognitionPermissionDecision decision)
+    void complete(Optional<WebCore::SpeechRecognitionError>&& error)
     {
         auto completionHandler = std::exchange(m_completionHandler, { });
-        completionHandler(decision);
+        completionHandler(WTFMove(error));
     }
 
     const WebCore::ClientOrigin& origin() const { return m_origin; }
     const String& lang() const { return m_lang; }
 
 private:
-    SpeechRecognitionPermissionRequest(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+    SpeechRecognitionPermissionRequest(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&& completionHandler)
         : m_lang(lang)
         , m_origin(origin)
         , m_completionHandler(WTFMove(completionHandler))
@@ -58,7 +57,7 @@ private:
 
     String m_lang;
     WebCore::ClientOrigin m_origin;
-    CompletionHandler<void(SpeechRecognitionPermissionDecision)> m_completionHandler;
+    CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)> m_completionHandler;
 };
 
 class SpeechRecognitionPermissionCallback : public API::ObjectImpl<API::Object::Type::SpeechRecognitionPermissionCallback> {
