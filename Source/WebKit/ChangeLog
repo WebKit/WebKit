@@ -1,3 +1,15 @@
+2021-02-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash under AuxiliaryProcess::initializeSandbox
+        https://bugs.webkit.org/show_bug.cgi?id=222233
+
+        Unreviewed, address additional review feedback.
+
+        Add comment and logging when the WebKit client is setting the user directory suffix.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+
 2021-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         HTMLCanvasElement::copiedImage() contains old image with GPU Process on
