@@ -1,3 +1,17 @@
+2021-02-22  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement the ClipToDrawingCommands item by using begin and end markers
+        https://bugs.webkit.org/show_bug.cgi?id=222230
+
+        Reviewed by Simon Fraser.
+
+        Replace the DisplayList item ClipToDrawingCommands by the pair items
+        BeginClipToDrawingCommands and EndClipToDrawingCommands.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-02-22  Eric Carlson  <eric.carlson@apple.com>
 
         UserMediaPermissionRequestManagerProxy may be released while computing capture device list

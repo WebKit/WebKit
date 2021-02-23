@@ -201,6 +201,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
         auto result = submit(*displayList, *destination);
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItem, nullptr, "Detected invalid display list item");
+        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::OutOfMemory, nullptr, "Cound not allocate memory");
 
         auto advanceResult = handle.advance(result.numberOfBytesRead);
         MESSAGE_CHECK_WITH_RETURN_VALUE(advanceResult, nullptr, "Failed to advance display list reader handle");
@@ -406,8 +407,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
     case DisplayList::ItemType::ClipPath:
         return decodeAndCreate<DisplayList::ClipPath>(data, length, handleLocation);
-    case DisplayList::ItemType::ClipToDrawingCommands:
-        return decodeAndCreate<DisplayList::ClipToDrawingCommands>(data, length, handleLocation);
     case DisplayList::ItemType::DrawFocusRingPath:
         return decodeAndCreate<DisplayList::DrawFocusRingPath>(data, length, handleLocation);
     case DisplayList::ItemType::DrawFocusRingRects:
@@ -449,6 +448,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::Clip:
     case DisplayList::ItemType::ClipOut:
     case DisplayList::ItemType::ClipToImageBuffer:
+    case DisplayList::ItemType::BeginClipToDrawingCommands:
+    case DisplayList::ItemType::EndClipToDrawingCommands:
     case DisplayList::ItemType::ConcatenateCTM:
     case DisplayList::ItemType::DrawDotsForDocumentMarker:
     case DisplayList::ItemType::DrawEllipse:

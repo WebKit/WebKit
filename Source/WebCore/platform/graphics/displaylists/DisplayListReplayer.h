@@ -42,7 +42,8 @@ enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
     ChangeDestinationImageBuffer,
-    InvalidItem
+    InvalidItem,
+    OutOfMemory
 };
 
 struct ReplayResult {
@@ -69,9 +70,11 @@ public:
     };
     
 private:
+    GraphicsContext& context() const;
     std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
+    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
     const DisplayList& m_displayList;
     const ImageBufferHashMap& m_imageBuffers;
     const NativeImageHashMap& m_nativeImages;

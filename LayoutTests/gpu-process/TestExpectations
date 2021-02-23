@@ -6,7 +6,6 @@ css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
 displaylists/canvas-display-list.html [ Failure ]
 
 # webkit.org/b/220389
-fast/canvas/2d.fillText.gradient.html [ Failure ]
 fast/canvas/canvas-arc-360-winding.html [ Failure ]
 fast/canvas/canvas-arc-connecting-line.html [ Failure ]
 fast/canvas/canvas-arc-zero-lineto.html [ Failure ]
@@ -54,19 +53,6 @@ fast/mediastream/media-stream-track-interrupted.html [ Failure ]
 
 fast/repaint/canvas-object-fit.html [ Failure ]
 fast/repaint/canvas-putImageData.html [ Failure ]
-
-# webkit.org/b/220377
-fast/text/canvas-color-fonts/fill-gradient-COLR-2.html [ ImageOnlyFailure ]
-fast/text/canvas-color-fonts/stroke-gradient-COLR-2.html [ ImageOnlyFailure ]
-fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
-fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
-fast/text/canvas-color-fonts/stroke-gradient-COLR-5.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/fill-gradient-sbix-2.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/fill-gradient-sbix-3.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/fill-gradient-sbix-4.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html [ ImageOnlyFailure ]
-http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html [ ImageOnlyFailure ]
 
 # webkit.org/b/221694
 http/tests/media/clearkey/clear-key-hls-aes128.html [ Failure ]
