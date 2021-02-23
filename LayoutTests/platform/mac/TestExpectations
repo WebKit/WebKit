@@ -1915,9 +1915,6 @@ webkit.org/b/215450 imported/w3c/web-platform-tests/media-source/mediasource-cha
 # <rdar://problem/59461792> REGRESSION: [ Mac iOS ] ( r254389 - r254411 ) fast/text/international/system-language/declarative-language.html is failing internally
 fast/text/international/system-language/declarative-language.html [ Pass Failure ]
 
-# <rdar://problem/59628620> REGRESSION: compositing/video/video-border-radius-clipping.html is failing and flaky crashing
-compositing/video/video-border-radius-clipping.html [ Pass Failure Timeout ]
-
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
