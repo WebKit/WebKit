@@ -85,8 +85,9 @@ private:
     void didEnd() final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const;
-    void suspend(ReasonForSuspension);
+    const char* activeDOMObjectName() const final;
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

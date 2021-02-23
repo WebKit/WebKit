@@ -63,6 +63,11 @@ void WebSpeechRecognitionConnection::registerClient(WebCore::SpeechRecognitionCo
     m_clientMap.add(client.identifier(), makeWeakPtr(client));
 }
 
+void WebSpeechRecognitionConnection::unregisterClient(WebCore::SpeechRecognitionConnectionClient& client)
+{
+    m_clientMap.remove(client.identifier());
+}
+
 void WebSpeechRecognitionConnection::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& clientOrigin)
 {
     send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTFMove(clientOrigin)));
