@@ -1,3 +1,14 @@
+2021-02-22  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable RangeResponseGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+        <rdar://problem/74551753>
+
+        r273263 was a false alarm.  Reverting that revision.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Add WKWebView session restoration API

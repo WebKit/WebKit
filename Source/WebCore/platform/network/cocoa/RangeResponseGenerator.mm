@@ -280,10 +280,6 @@ private:
 
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    bool rangeResponseGeneratorDisabled = true;
-    if (rangeResponseGeneratorDisabled)
-        return false;
-
     ASSERT(isMainThread());
     NSURLRequest *originalRequest = task.originalRequest;
     if (!originalRequest.URL)
