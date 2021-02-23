@@ -773,12 +773,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
     Optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
         crossSize = adjustForBoxSizing(child, crossSizeLength);
-    else if (crossSizeLength.isAuto()) {
-        auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
-        // Keep this sync'ed with childCrossSizeIsDefinite().
-        ASSERT(containerCrossSizeLength.isFixed());
-        crossSize = adjustForBoxSizing(*this, containerCrossSizeLength);
-    } else {
+    else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
         crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());
         if (!crossSize)
@@ -828,19 +823,8 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 
 bool RenderFlexibleBox::childCrossSizeIsDefinite(const RenderBox& child, const Length& length) const
 {
-    if (length.isAuto()) {
-        // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
-        // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
-        // stretched flex items is the flex container's inner cross size (clamped to the flex item’s min and max cross size)
-        // and is considered definite.
-        if (!isMultiline() && alignmentForChild(child) == ItemPosition::Stretch) {
-            // This must be kept in sync with computeMainSizeFromAspectRatioUsing().
-            // FIXME: so far we're only considered fixed sizes but we should extend it to other definite sizes.
-            if (auto& crossSize = isHorizontalFlow() ? style().height() : style().width(); crossSize.isFixed())
-                return true;
-        }
+    if (length.isAuto())
         return false;
-    }
     if (length.isPercentOrCalculated()) {
         if (!mainAxisIsChildInlineAxis(child) || m_hasDefiniteHeight == SizeDefiniteness::Definite)
             return true;

@@ -1,3 +1,45 @@
+2021-02-17  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272755. rdar://problem/74409916
+
+    Unreviewed, reverting r270578.
+    https://bugs.webkit.org/show_bug.cgi?id=221110
+    
+    Caused incorrect image layout inside a flexbox container.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt:
+    * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003-expected.txt:
+    * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v-expected.txt:
+    * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004-expected.txt:
+    * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v-expected.txt:
+    
+    Source/WebCore:
+    
+    * rendering/RenderFlexibleBox.cpp:
+    (WebCore::RenderFlexibleBox::computeMainSizeFromAspectRatioUsing const):
+    (WebCore::RenderFlexibleBox::childCrossSizeIsDefinite const):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272755 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-11  Said Abou-Hallawa  <said@apple.com>
+
+            Unreviewed, reverting r270578.
+            https://bugs.webkit.org/show_bug.cgi?id=221110
+
+            Caused incorrect image layout inside a flexbox container.
+
+            * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt:
+            * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003-expected.txt:
+            * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v-expected.txt:
+            * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004-expected.txt:
+            * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v-expected.txt:
+
 2021-02-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271797. rdar://problem/73847580
