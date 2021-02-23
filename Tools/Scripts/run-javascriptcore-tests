@@ -484,22 +484,8 @@ $runTestAPI = enableTestOrNot($runTestAPI);
 $runJSCStress = enableTestOrNot($runJSCStress);
 $runMozillaTests = enableTestOrNot($runMozillaTests);
 
-my @buildArgs;
-
-if ($buildJSC) {
-    # Assume any arguments left over from GetOptions are to be passed as build arguments.
-    @buildArgs = @ARGV;
-} elsif (scalar(@ARGV) > 0) {
-    foreach (@ARGV) {
-        my $arg = $_;
-        if ($arg =~ /^-.*/) {
-            print STDERR "Unrecognized option `$arg'\n";
-        } else {
-            print STDERR "Stray anonymous argument `$arg'\n";
-        }
-    }
-    exit 2;
-}
+# Assume any arguments left over from GetOptions are assumed to be build arguments
+my @buildArgs = @ARGV;
 
 if ($showHelp) {
    print STDERR $usage;
