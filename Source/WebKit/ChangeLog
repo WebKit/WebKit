@@ -1,3 +1,28 @@
+2021-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r273204): webkitpy tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=222275
+        <rdar://problem/74614397>
+
+        Reviewed by Jonathan Bedard.
+
+        Regenerate the IPC generation test expectations that were
+        not part of r273204.
+
+        Tested by
+          ./Tools/Scripts/test-webkitpy-python2 -j1 -p Source/WebKit/Scripts/webkit/messages_unittest.py
+
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithSemaphoreMessages.h:
+        * Scripts/webkit/tests/TestWithStreamMessages.h:
+
 2021-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a watchdog timer to forcibly reset deferring gesture recognizers

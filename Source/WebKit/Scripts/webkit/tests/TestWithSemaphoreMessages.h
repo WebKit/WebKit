@@ -26,14 +26,12 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#include "IPCSemaphore.h"
 #include "MessageNames.h"
 #include "TestWithSemaphoreMessagesReplies.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace IPC {
-class Semaphore;
-}
 
 namespace Messages {
 namespace TestWithSemaphore {

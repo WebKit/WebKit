@@ -33,11 +33,13 @@ enum class ReceiverName : uint8_t {
     , TestWithImageData = 2
     , TestWithLegacyReceiver = 3
     , TestWithSemaphore = 4
-    , TestWithSuperclass = 5
-    , TestWithoutAttributes = 6
-    , IPC = 7
-    , AsyncReply = 8
-    , Invalid = 9
+    , TestWithStream = 5
+    , TestWithStreamBuffer = 6
+    , TestWithSuperclass = 7
+    , TestWithoutAttributes = 8
+    , IPC = 9
+    , AsyncReply = 10
+    , Invalid = 11
 };
 
 enum class MessageName : uint16_t {
@@ -66,6 +68,9 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_TouchEvent
     , TestWithSemaphore_ReceiveSemaphore
     , TestWithSemaphore_SendSemaphore
+    , TestWithStreamBuffer_SendStreamBuffer
+    , TestWithStream_SendString
+    , TestWithStream_SendStringSynchronized
     , TestWithSuperclass_LoadURL
     , TestWithSuperclass_TestAsyncMessage
     , TestWithSuperclass_TestAsyncMessageWithConnection

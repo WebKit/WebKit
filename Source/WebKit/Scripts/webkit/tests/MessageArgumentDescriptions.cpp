@@ -41,6 +41,7 @@
 #include "MachPort.h"
 #endif
 #include "Plugin.h"
+#include "StreamConnectionBuffer.h"
 #include "TestClassName.h"
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
@@ -49,6 +50,8 @@
 #include "TestWithImageDataMessages.h"
 #include "TestWithLegacyReceiverMessages.h"
 #include "TestWithSemaphoreMessages.h"
+#include "TestWithStreamBufferMessages.h"
+#include "TestWithStreamMessages.h"
 #include "TestWithSuperclassMessages.h"
 #include "TestWithoutAttributesMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -229,6 +232,12 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
         return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, decoder);
     case MessageName::TestWithImageData_ReceiveImageData:
         return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, decoder);
+    case MessageName::TestWithStream_SendString:
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, decoder);
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSynchronized::Arguments>(globalObject, decoder);
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
     default:
         break;
     }
@@ -542,6 +551,18 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
         };
     case MessageName::TestWithImageData_ReceiveImageData:
         return Vector<ArgumentDescription> { };
+    case MessageName::TestWithStream_SendString:
+        return Vector<ArgumentDescription> {
+            {"url", "String", nullptr, false},
+        };
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return Vector<ArgumentDescription> {
+            {"url", "String", nullptr, false},
+        };
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return Vector<ArgumentDescription> {
+            {"stream", "IPC::StreamConnectionBuffer", nullptr, false},
+        };
     default:
         break;
     }

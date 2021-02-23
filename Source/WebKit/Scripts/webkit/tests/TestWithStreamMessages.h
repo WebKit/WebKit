@@ -69,6 +69,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSynchronized; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<int64_t&>;
     using ReplyArguments = std::tuple<int64_t>;
     explicit SendStringSynchronized(const String& url)

@@ -80,6 +80,12 @@ const char* description(MessageName name)
         return "TestWithSemaphore_ReceiveSemaphore";
     case MessageName::TestWithSemaphore_SendSemaphore:
         return "TestWithSemaphore_SendSemaphore";
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return "TestWithStreamBuffer_SendStreamBuffer";
+    case MessageName::TestWithStream_SendString:
+        return "TestWithStream_SendString";
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return "TestWithStream_SendStringSynchronized";
     case MessageName::TestWithSuperclass_LoadURL:
         return "TestWithSuperclass_LoadURL";
     case MessageName::TestWithSuperclass_TestAsyncMessage:
@@ -199,6 +205,11 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
     case MessageName::TestWithSemaphore_SendSemaphore:
         return ReceiverName::TestWithSemaphore;
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return ReceiverName::TestWithStreamBuffer;
+    case MessageName::TestWithStream_SendString:
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return ReceiverName::TestWithStream;
     case MessageName::TestWithSuperclass_LoadURL:
     case MessageName::TestWithSuperclass_TestAsyncMessage:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
@@ -326,6 +337,12 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithSemaphore_ReceiveSemaphore)
         return true;
     if (messageName == IPC::MessageName::TestWithSemaphore_SendSemaphore)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStream_SendString)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronized)
         return true;
     if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
         return true;
