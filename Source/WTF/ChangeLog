@@ -1,3 +1,20 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Prepare for memory ownership transfer in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222122
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h:
+        Add feature flag for TASK_IDENTITY_TOKEN as this API was only
+        introduced very recently.
+
+        * wtf/MachSendRight.h:
+        * wtf/cocoa/MachSendRight.cpp:
+        (WTF::MachSendRight::MachSendRight):
+        (WTF::MachSendRight::operator=):
+        Add a copy constructor to MachSendRight for convenience.
+
 2021-02-22  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 color-mix()

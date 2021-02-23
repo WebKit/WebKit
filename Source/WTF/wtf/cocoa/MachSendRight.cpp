@@ -100,6 +100,12 @@ MachSendRight::MachSendRight(MachSendRight&& other)
 {
 }
 
+MachSendRight::MachSendRight(const MachSendRight& other)
+    : m_port(other.m_port)
+{
+    retainSendRight(m_port);
+}
+
 MachSendRight::~MachSendRight()
 {
     releaseSendRight(m_port);
@@ -110,6 +116,16 @@ MachSendRight& MachSendRight::operator=(MachSendRight&& other)
     if (this != &other) {
         releaseSendRight(m_port);
         m_port = other.leakSendRight();
+    }
+
+    return *this;
+}
+
+MachSendRight& MachSendRight::operator=(const MachSendRight& other)
+{
+    if (this != &other) {
+        m_port = other.sendRight();
+        retainSendRight(m_port);
     }
 
     return *this;

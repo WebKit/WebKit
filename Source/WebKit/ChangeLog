@@ -1,3 +1,51 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Prepare for memory ownership transfer in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222122
+
+        Reviewed by Simon Fraser.
+
+        Prepare for memory ownership transfer in the GPUProcess:
+        1. Have the WebProcess create a task identity token and pass it to the GPUProcess
+           when connecting to it. The WebProcess' task identity token is then stored on
+           the GPUConnectionToWebProcess object.
+        2. Add the entitlement to the GPUProcess that is needed to transfer memory ownership
+           to another process.
+
+        This is a first step towards having the GPUProcess transfer memory ownership of its
+        IOSurfaces and Metal textures to the WebProcesses it is serving.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::create):
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::webProcessIdentityToken const):
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * Scripts/process-entitlements.sh:
+        * Shared/GPUProcessConnectionParameters.h: Copied from Source/WTF/wtf/MachSendRight.h.
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getGPUProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::platformInitializeGPUProcessConnectionParameters):
+        (WebKit::WebProcess::getGPUProcessConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeGPUProcessConnectionParameters):
+
 2021-02-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Send sandbox extensions for Network Extension services in load parameters

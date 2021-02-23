@@ -33,6 +33,7 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
+#include "GPUProcessConnectionParameters.h"
 #include "InjectedBundle.h"
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
@@ -1142,13 +1143,22 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
-static GPUProcessConnectionInfo getGPUProcessConnection(IPC::Connection& connection)
+#if !PLATFORM(COCOA)
+void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters&)
 {
+}
+#endif
+
+GPUProcessConnectionInfo WebProcess::getGPUProcessConnection(IPC::Connection& connection)
+{
+    GPUProcessConnectionParameters parameters;
+    platformInitializeGPUProcessConnectionParameters(parameters);
+
     GPUProcessConnectionInfo connectionInfo;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
+    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
         // If we failed the first time, retry once. The attachment may have become invalid
         // before it was received by the web process if the network process crashed.
-        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
+        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
             CRASH();
     }
 

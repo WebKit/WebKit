@@ -39,7 +39,7 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
 
 #if ENABLE(GPU_PROCESS)
-    GetGPUProcessConnection() -> (struct WebKit::GPUProcessConnectionInfo connectionInfo) Synchronous
+    GetGPUProcessConnection(struct WebKit::GPUProcessConnectionParameters parameters) -> (struct WebKit::GPUProcessConnectionInfo connectionInfo) Synchronous
 #endif
 
 #if ENABLE(WEB_AUTHN)

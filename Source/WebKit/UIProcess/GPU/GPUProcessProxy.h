@@ -49,6 +49,7 @@ namespace WebKit {
 
 class WebProcessProxy;
 class WebsiteDataStore;
+struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy>, public RefCounted<GPUProcessProxy> {
@@ -60,7 +61,7 @@ public:
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();
 
-    void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+    void getGPUProcessConnection(WebProcessProxy&, const GPUProcessConnectionParameters&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

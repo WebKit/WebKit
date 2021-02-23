@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,45 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS)
 
-#include <mach/mach_port.h>
+#include <wtf/MachSendRight.h>
 
-namespace WTF {
+namespace WebKit {
 
-class MachSendRight {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WTF_EXPORT_PRIVATE static MachSendRight adopt(mach_port_t);
-    WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);
+struct GPUProcessConnectionParameters {
+#if HAVE(TASK_IDENTITY_TOKEN)
+    MachSendRight webProcessIdentityToken;
+#endif
 
-    MachSendRight() = default;
-    WTF_EXPORT_PRIVATE MachSendRight(const MachSendRight&);
-    WTF_EXPORT_PRIVATE MachSendRight(MachSendRight&&);
-    WTF_EXPORT_PRIVATE ~MachSendRight();
+    void encode(IPC::Encoder& encoder) const
+    {
+#if HAVE(TASK_IDENTITY_TOKEN)
+        encoder << webProcessIdentityToken;
+#else
+        UNUSED_PARAM(encoder);
+#endif
+    }
 
-    WTF_EXPORT_PRIVATE MachSendRight& operator=(const MachSendRight&);
-    WTF_EXPORT_PRIVATE MachSendRight& operator=(MachSendRight&&);
+    static Optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
+    {
+#if HAVE(TASK_IDENTITY_TOKEN)
+        Optional<MachSendRight> webProcessIdentityToken;
+        decoder >> webProcessIdentityToken;
+        if (!webProcessIdentityToken)
+            return WTF::nullopt;
+#else
+        UNUSED_PARAM(decoder);
+#endif
 
-    explicit operator bool() const { return m_port != MACH_PORT_NULL; }
-
-    mach_port_t sendRight() const { return m_port; }
-
-    WTF_EXPORT_PRIVATE MachSendRight copySendRight() const;
-    WTF_EXPORT_PRIVATE mach_port_t leakSendRight() WARN_UNUSED_RETURN;
-
-private:
-    explicit MachSendRight(mach_port_t);
-
-    mach_port_t m_port { MACH_PORT_NULL };
+        return GPUProcessConnectionParameters {
+#if HAVE(TASK_IDENTITY_TOKEN)
+            WTFMove(*webProcessIdentityToken),
+#endif
+        };
+    }
 };
 
-WTF_EXPORT_PRIVATE void deallocateSendRightSafely(mach_port_t);
+} // namespace WebKit
 
-}
-
-using WTF::MachSendRight;
-using WTF::deallocateSendRightSafely;
-
-#endif
+#endif // ENABLE(GPU_PROCESS)

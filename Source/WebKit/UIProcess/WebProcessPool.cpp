@@ -40,6 +40,7 @@
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GPUProcessConnectionInfo.h"
+#include "GPUProcessConnectionParameters.h"
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
 #include "LegacyGlobalSettings.h"
@@ -511,12 +512,12 @@ void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
         m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
 }
 
-void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
+void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = makeWeakPtr(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
-            ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, WTFMove(reply));
+            ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
             return;
         }
         reply(connectionInfo);

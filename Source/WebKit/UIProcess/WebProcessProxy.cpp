@@ -774,9 +774,9 @@ void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::Get
 }
 
 #if ENABLE(GPU_PROCESS)
-void WebProcessProxy::getGPUProcessConnection(Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
+void WebProcessProxy::getGPUProcessConnection(GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    m_processPool->getGPUProcessConnection(*this, WTFMove(reply));
+    m_processPool->getGPUProcessConnection(*this, WTFMove(parameters), WTFMove(reply));
 }
 
 void WebProcessProxy::gpuProcessCrashed()
