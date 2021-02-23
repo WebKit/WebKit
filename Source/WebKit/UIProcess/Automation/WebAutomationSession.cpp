@@ -45,7 +45,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/PointerEvent.h>
+#include <WebCore/PointerEventTypeNames.h>
 #include <algorithm>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -1793,7 +1793,7 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, mouseInteraction, mouseButton, locationInViewport, keyModifiers, WebCore::PointerEvent::mousePointerType());
+        platformSimulateMouseInteraction(page, mouseInteraction, mouseButton, locationInViewport, keyModifiers, WebCore::mousePointerEventType());
 
         // If the event location was previously clipped and does not hit test anything in the window, then it will not be processed.
         // For compatibility with pre-W3C driver implementations, don't make this a hard error; just do nothing silently.

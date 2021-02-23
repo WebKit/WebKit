@@ -491,6 +491,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeTraversal.h
     dom/OverflowEvent.h
     dom/PointerEvent.h
+    dom/PointerEventTypeNames.h
     dom/Position.h
     dom/ProcessingInstruction.h
     dom/ProgressEvent.h

@@ -978,6 +978,7 @@ dom/OverflowEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
 dom/PointerEvent.cpp
+dom/PointerEventTypeNames.cpp
 dom/PopStateEvent.cpp
 dom/Position.cpp
 dom/PositionIterator.cpp

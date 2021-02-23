@@ -1,3 +1,23 @@
+2021-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebMouseEvent.h should avoid pulling in WebCore headers that know about DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=222291
+
+        Reviewed by Darin Adler.
+
+        Import `PointerEventTypeNames.h` instead of `PointerEvent.h` in several UI process and shared headers.
+
+        * Shared/WebMouseEvent.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (primaryPointerForType):
+        (webkitWebViewBaseSynthesizeMouseEvent):
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        * UIProcess/gtk/PointerLockManager.cpp:
+        (WebKit::PointerLockManager::handleMotion):
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to help identify to source of <rdar://68340471>

@@ -78,7 +78,7 @@ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& eve
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))
     , m_pressure(event.forceAtIndex(index))
-    , m_pointerType(event.touchTypeAtIndex(index) == PlatformTouchPoint::TouchType::Stylus ? PointerEvent::penPointerType() : PointerEvent::touchPointerType())
+    , m_pointerType(event.touchTypeAtIndex(index) == PlatformTouchPoint::TouchType::Stylus ? penPointerEventType() : touchPointerEventType())
     , m_isPrimary(isPrimary)
 {
     // See https://github.com/w3c/pointerevents/issues/274. We might expose the azimuth and altitude
