@@ -1,3 +1,42 @@
+2021-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        HTMLCanvasElement::copiedImage() contains old image with GPU Process on
+        https://bugs.webkit.org/show_bug.cgi?id=222101
+
+        Reviewed by Simon Fraser.
+
+        Implement RemoteImageBufferProxy::copyImage and
+        RemoteImageBufferProxy::copyNativeImage.
+        Implement by asking the data from the GPU process.
+
+        Previously, with AcceleratedImageBufferShareableMappedBackend
+        the HTMLCanvasElement::copiedImage() would construct the copy
+        by copying the CGContext backed by the IOSurface that is accessible
+        by both processes. This would succeed. After a draw to the image,
+        the second copy would not reflect the draw but contain the same
+        image as the first copy.
+
+        Fix by not using the fact that the IOSurface is accessible by both
+        processes. In the end, IOSurfaces will not be available in
+        Web process.
+
+        Converts NativeImage to ShareableBitmap with WebCore::CompositeOperator::Copy
+        since the ImageBuffers might have unpremultiplied contents. Also, ShareableBitmap
+        does not have contents, so blending is overhead.
+
+        No new tests, enables ~150 tests.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2021-02-22  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late February 2021 edition

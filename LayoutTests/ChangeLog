@@ -1,3 +1,12 @@
+2021-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        HTMLCanvasElement::copiedImage() contains old image with GPU Process on
+        https://bugs.webkit.org/show_bug.cgi?id=222101
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2021-02-22  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Implement the ClipToDrawingCommands item by using begin and end markers

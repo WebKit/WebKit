@@ -179,6 +179,18 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(Rendering
     return data;
 }
 
+RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
+{
+    sendDeferredWakeupMessageIfNeeded();
+
+    ShareableBitmap::Handle handle;
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle), m_renderingBackendIdentifier, 1_s);
+    if (handle.isNull())
+        return { };
+    ASSERT_UNUSED(sendResult, sendResult);
+    return ShareableBitmap::create(handle);
+}
+
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), m_renderingBackendIdentifier);

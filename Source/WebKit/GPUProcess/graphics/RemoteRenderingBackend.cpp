@@ -349,6 +349,32 @@ void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourc
     completionHandler(WTFMove(data));
 }
 
+void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    ShareableBitmap::Handle handle;
+    [&]() {
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
+        if (!imageBuffer)
+            return;
+        auto image = imageBuffer->copyNativeImage(WebCore::BackingStoreCopy::DontCopyBackingStore);
+        if (!image)
+            return;
+        auto backendSize = imageBuffer->backendSize();
+        auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->logicalSize();
+        auto bitmap = ShareableBitmap::createShareable(resultSize, { });
+        if (!bitmap)
+            return;
+        auto context = bitmap->createGraphicsContext();
+        if (!context)
+            return;
+        context->drawNativeImage(*image, resultSize, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
+        bitmap->createHandle(handle);
+    }();
+    completionHandler(WTFMove(handle));
+}
+
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());

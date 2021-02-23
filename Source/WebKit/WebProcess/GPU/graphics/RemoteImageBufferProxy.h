@@ -172,6 +172,27 @@ protected:
 
         return m_remoteRenderingBackendProxy->getBGRADataForImageBuffer(m_renderingResourceIdentifier);
     }
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, WebCore::PreserveResolution::Yes);
+        if (!bitmap)
+            return { };
+        return WebCore::NativeImage::create(bitmap->createPlatformImage());
+    }
+
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore, WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, preserveResolution);
+        if (!bitmap)
+            return { };
+        return bitmap->createImage();
+    }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
     {
