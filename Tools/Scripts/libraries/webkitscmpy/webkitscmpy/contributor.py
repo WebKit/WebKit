@@ -145,10 +145,7 @@ class Contributor(object):
         return self.emails[0]
 
     def __repr__(self):
-        return '{} <{}>'.format(
-            string_utils.encode(self.name, target_type=str),
-            string_utils.encode(self.email, target_type=str),
-        )
+        return u'{} <{}>'.format(self.name, self.email)
 
     def __hash__(self):
         return hash(self.name)
