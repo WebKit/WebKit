@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content" role="list" tabindex="-1">
+  <div id="item1" role="listitem">1</div>
+  <div id="item2" role="listitem" aria-current="page">2</div>
+  <div id="item3" role="listitem">3</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that changing the aria-current value results in a CurrentStateChanged notification.");
+    window.jsTestIsAsync = true;
+
+    if (window.testRunner && window.accessibilityController) {
+        var notificationCount = 0;
+
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (notification != "AXCurrentStateChanged")
+                return;
+
+            ++notificationCount;
+            debug(notification + " notification for " + element.domIdentifier);
+        });
+
+        var item2 = accessibilityController.accessibleElementById("item2");
+        shouldBe("item2.currentStateValue", "'page'");
+        var item3 = accessibilityController.accessibleElementById("item3");
+        shouldBe("item3.currentStateValue", "'false'");
+
+        debug("Setting aria-current to false on item2.");
+        document.getElementById("item2").setAttribute("aria-current", "false");
+        setTimeout(async function() {
+            await waitFor(() => {
+                return notificationCount == 1;
+            });
+            shouldBe("item2.currentStateValue", "'false'");
+            shouldBe("item3.currentStateValue", "'false'");
+
+            debug("Setting aria-current to page on item3.");
+            document.getElementById("item3").setAttribute("aria-current", "page");
+            await waitFor(() => {
+                return notificationCount == 2;
+            });
+            shouldBe("item2.currentStateValue", "'false'");
+            shouldBe("item3.currentStateValue", "'page'");
+
+            document.getElementById("content").style.visibility = "hidden";
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

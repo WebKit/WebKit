@@ -674,6 +674,7 @@ webkit.org/b/142731 fast/images/animated-png.html [ Skip ]
 
 # TODO aria-current is not supported
 webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
+accessibility/aria-current-state-changed-notification.html [ Skip ]
 
 # TODO ARIA 1.1 table related attributes are not supported
 webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]

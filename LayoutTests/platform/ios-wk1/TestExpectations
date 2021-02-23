@@ -126,6 +126,7 @@ editing/unsupported-content/table-type-before.html
 fast/zooming/uiscript-zooming.html [ Failure ]
 
 # Not supported on WK1
+accessibility/aria-current-state-changed-notification.html [ Skip ]
 accessibility/ios-simulator/speak-selection-content.html [ Skip ]
 accessibility/ios-simulator/accessibility-events-setting.html [ Skip ]
 accessibility/ios-simulator/unobscured-content-rect.html [ Skip ]
