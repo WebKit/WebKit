@@ -143,6 +143,7 @@ private:
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate { false };
+    bool m_scheduledWhileWaitingForDidUpdate { false };
 
     bool m_alwaysUseCompositing { false };
     bool m_supportsAsyncScrolling { true };
