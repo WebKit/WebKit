@@ -311,10 +311,6 @@ void registerWebKitGStreamerElements()
 
 #if ENABLE(ENCRYPTED_MEDIA)
         gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 200, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
-#if ENABLE(THUNDER)
-        unsigned thunderRank = isThunderRanked() ? 300 : 100;
-        gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
-#endif
 #endif
 
 #if ENABLE(MEDIA_STREAM)
