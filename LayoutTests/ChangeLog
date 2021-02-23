@@ -1,3 +1,13 @@
+2021-02-23  Frederic Wang  <fwang@igalia.com>
+
+        Nullptr crash in ModifySelectionListLevelCommand::appendSiblingNodeRange
+        https://bugs.webkit.org/show_bug.cgi?id=221650
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/editing/modify-selection-list-level-crash-expected.txt: Added.
+        * fast/editing/modify-selection-list-level-crash.html: Added.
+
 2021-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         HTMLCanvasElement::copiedImage() contains old image with GPU Process on
