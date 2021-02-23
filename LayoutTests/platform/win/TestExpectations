@@ -4636,3 +4636,13 @@ fast/text/system-font-width-6.html [ ImageOnlyFailure ]
 fast/text/system-font-width-7.html [ ImageOnlyFailure ]
 fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 fast/text/system-font-width-9.html [ ImageOnlyFailure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=222333
+http/tests/xmlhttprequest/access-control-and-redirects.html [ Skip ]
+http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Skip ]
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]
+http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Skip ]
+editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
+fast/css/parsing-color-mix.html [ Failure ]
+fast/css/parsing-relative-color-syntax.html [ Failure ]
+fast/text/letter-spacing-produces-nan-width.html [ Timeout ]

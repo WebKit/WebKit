@@ -1,3 +1,9 @@
+2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed Windows test gardening to speed up EWS.
+
+        * platform/win/TestExpectations:
+
 2021-02-23  Frederic Wang  <fwang@igalia.com>
 
         Nullptr crash in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
