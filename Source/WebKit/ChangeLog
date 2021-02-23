@@ -1,3 +1,16 @@
+2021-02-22  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] REGRESSION(r273143): crash shortly after showing the Apple Pay sheet
+        https://bugs.webkit.org/show_bug.cgi?id=222298
+        <rdar://problem/74557943>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toNSErrors):
+        Don't use `adoptNS` with `+[NSMutableArray array]` since that returns an autoreleased object.
+        Use the helper `createNSArray` instead (as was previously done before r273143).
+
 2021-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebMouseEvent.h should avoid pulling in WebCore headers that know about DOM nodes

@@ -180,12 +180,9 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
 
 static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>>& errors)
 {
-    auto array = adoptNS(NSMutableArray.array);
-    for (auto& error : errors) {
-        if (error)
-            [array addObject:toNSError(*error)];
-    }
-    return array;
+    return createNSArray(errors, [] (auto& error) -> NSError * {
+        return error ? toNSError(*error) : nil;
+    });
 }
 
 static RetainPtr<NSArray> toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>& shippingMethods)
