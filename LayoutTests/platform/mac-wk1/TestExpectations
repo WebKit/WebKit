@@ -1247,3 +1247,5 @@ webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
 webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
+
+webkit.org/b/221717 [ BigSur ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
