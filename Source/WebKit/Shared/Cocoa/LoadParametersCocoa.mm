@@ -37,6 +37,7 @@ void LoadParameters::platformEncode(IPC::Encoder& encoder) const
 {
     IPC::encode(encoder, dataDetectionContext.get());
 
+    encoder << networkExtensionSandboxExtensionHandles;
 #if PLATFORM(IOS)
     encoder << contentFilterExtensionHandle;
     encoder << frontboardServiceExtensionHandle;
@@ -48,6 +49,12 @@ bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& param
     if (!IPC::decode(decoder, parameters.dataDetectionContext))
         return false;
 
+    Optional<SandboxExtension::HandleArray> networkExtensionSandboxExtensionHandles;
+    decoder >> networkExtensionSandboxExtensionHandles;
+    if (!networkExtensionSandboxExtensionHandles)
+        return false;
+    parameters.networkExtensionSandboxExtensionHandles = WTFMove(*networkExtensionSandboxExtensionHandles);
+    
 #if PLATFORM(IOS)
     Optional<Optional<SandboxExtension::Handle>> contentFilterExtensionHandle;
     decoder >> contentFilterExtensionHandle;
