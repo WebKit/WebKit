@@ -398,37 +398,65 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (BOOL)isUndefined
 {
+#if !CPU(ADDRESS64)
     return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isUndefined();
+#endif
 }
 
 - (BOOL)isNull
 {
-    return JSValueIsNull([_context JSGlobalContextRef], m_value);
+#if !CPU(ADDRESS64)
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isNull();
+#endif
 }
 
 - (BOOL)isBoolean
 {
-    return JSValueIsBoolean([_context JSGlobalContextRef], m_value);
+#if !CPU(ADDRESS64)
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isBoolean();
+#endif
 }
 
 - (BOOL)isNumber
 {
-    return JSValueIsNumber([_context JSGlobalContextRef], m_value);
+#if !CPU(ADDRESS64)
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isNumber();
+#endif
 }
 
 - (BOOL)isString
 {
-    return JSValueIsString([_context JSGlobalContextRef], m_value);
+#if !CPU(ADDRESS64)
+    return JSValueIsUndefined([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isString();
+#endif
 }
 
 - (BOOL)isObject
 {
+#if !CPU(ADDRESS64)
     return JSValueIsObject([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isObject();
+#endif
 }
 
 - (BOOL)isSymbol
 {
+#if !CPU(ADDRESS64)
     return JSValueIsSymbol([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isSymbol();
+#endif
 }
 
 - (BOOL)isArray
