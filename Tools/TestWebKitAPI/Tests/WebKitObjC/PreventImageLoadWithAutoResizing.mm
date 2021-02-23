@@ -33,6 +33,7 @@
 #import "PlatformWebView.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import <WebKit/WKViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
 
@@ -44,9 +45,10 @@ TEST(WebKit, PreventImageLoadWithAutoResizingTest)
     PlatformWebView webView(context.get());
 
     webView.platformView().minimumSizeForAutoLayout = NSMakeSize(400, 300);
-    webView.platformView().browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         testFinished = true;
-    }];
+    }]);
+    webView.platformView().browsingContextController.loadDelegate = loadDelegate.get();
     [webView.platformView().browsingContextController loadHTMLString:@"<html><body style='background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeF59z4EJADEIQ1F36k7u5E7ZKXeUQPACJ3wK7UNokVxVk9kHnQH7bY9hbDyDhNXgjpRLqFlo4M2GgfyJHhjq8V4agfrgPQX3JtJQGbofmCHgA/nAKks+JAjFAAAAAElFTkSuQmCC);'></body></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&testFinished);

@@ -79,7 +79,8 @@ TEST(WebKitLegacy, ClosingWebViewThenSendingItAKeyDownEvent)
     Util::run(&didFinishLoad);
 
     // First, add a native event listener that closes the WebView.
-    [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:[[KeyboardEventListener alloc] init] useCapture:NO];
+    auto listener = adoptNS([[KeyboardEventListener alloc] init]);
+    [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:listener.get() useCapture:NO];
 
     // Second, add a JavaScript event handler that consumes the event.
     [[[webView mainFrame] javaScriptContext] evaluateScript:@"addKeyPressHandler()"];

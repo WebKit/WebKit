@@ -91,7 +91,7 @@ struct KeyMappingEntry {
 NSPoint lastMousePosition;
 NSPoint lastClickPosition;
 int lastClickButton = NoMouseButton;
-NSArray *webkitDomEventNames;
+static RetainPtr<NSArray> webkitDomEventNames;
 BOOL replayingSavedEvents;
 unsigned mouseButtonsCurrentlyDown = 0;
 
@@ -169,8 +169,8 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
     for (NSDraggingItem *item in items)
         [pasteboard writeObjects:@[ item.item ]];
 
-    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source];
-    [webView draggingUpdated:draggingInfo];
+    draggingInfo = adoptNS([[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source]);
+    [webView draggingUpdated:draggingInfo.get()];
     [EventSendingController replaySavedEvents];
 
     return nullptr;
@@ -179,7 +179,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 
 + (void)initialize
 {
-    webkitDomEventNames = [[NSArray alloc] initWithObjects:
+    webkitDomEventNames = @[
         @"abort",
         @"beforecopy",
         @"beforecut",
@@ -226,7 +226,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         @"textzoomout",
         @"unload",
         @"zoom",
-        nil];
+    ];
 
 #if PLATFORM(MAC)
     // Add an implementation of -[WebHTMLView beginDraggingSessionWithItems:event:source:].
@@ -463,8 +463,8 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 
     // Provide a source, otherwise [DumpRenderTreeDraggingInfo draggingSourceOperationMask] defaults to NSDragOperationNone
     auto source = adoptNS([[DumpRenderTreeFileDraggingSource alloc] init]);
-    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pboard source:source.get()];
-    [[mainFrame webView] draggingEntered:draggingInfo];
+    draggingInfo = adoptNS([[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pboard source:source.get()]);
+    [[mainFrame webView] draggingEntered:draggingInfo.get()];
 
     dragMode = NO; // dragMode saves events and then replays them later.  We don't need/want that.
     leftMouseButtonDown = YES; // Make the rest of eventSender think a drag is in progress
@@ -503,8 +503,8 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     assert([pasteboard propertyListForType:NSFilenamesPboardType]);
 
     auto source = adoptNS([[DumpRenderTreeFileDraggingSource alloc] initWithPromisedFileURLs:fileURLs]);
-    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source.get()];
-    [mainFrame.webView draggingEntered:draggingInfo];
+    draggingInfo = adoptNS([[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source.get()]);
+    [mainFrame.webView draggingEntered:draggingInfo.get()];
 
     dragMode = NO;
     leftMouseButtonDown = YES;
@@ -719,16 +719,14 @@ static NSUInteger swizzledEventPressedMouseButtons()
     if (draggingInfo) {
         WebView *webView = [mainFrame webView];
         
-        NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
-        
+        NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo.get()];
         if (dragOperation != NSDragOperationNone)
-            [webView performDragOperation:draggingInfo];
+            [webView performDragOperation:draggingInfo.get()];
         else
-            [webView draggingExited:draggingInfo];
+            [webView draggingExited:draggingInfo.get()];
         // Per NSDragging.h: draggingSources may not implement draggedImage:endedAt:operation:
         if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:endedAt:operation:)])
             [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
-        [draggingInfo release];
         draggingInfo = nil;
     }
 #endif
@@ -787,7 +785,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
                 // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
                 if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:movedTo:)])
                     [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
-                [[mainFrame webView] draggingUpdated:draggingInfo];
+                [[mainFrame webView] draggingUpdated:draggingInfo.get()];
             } else {
 #if !PLATFORM(IOS_FAMILY)
                 auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event.get());

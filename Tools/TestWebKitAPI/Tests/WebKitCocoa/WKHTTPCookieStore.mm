@@ -257,17 +257,17 @@ TEST(WKHTTPCookieStore, HttpOnly)
     gotFlag = false;
     ASSERT_EQ([cookies count], 0u);
 
-    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    auto cookieProperties = adoptNS([[NSMutableDictionary alloc] init]);
     [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
     [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
     [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
     [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
     [cookieProperties setObject:@YES forKey:@"HttpOnly"];
-    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
     [cookieProperties setObject:@"cookieValue2" forKey:NSHTTPCookieValue];
-    RetainPtr<NSHTTPCookie> httpOnlyCookie2 = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie2 = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
     [cookieProperties removeObjectForKey:@"HttpOnly"];
-    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
 
     EXPECT_TRUE(httpOnlyCookie.get().HTTPOnly);
     EXPECT_FALSE(notHttpOnlyCookie.get().HTTPOnly);
@@ -362,14 +362,14 @@ TEST(WKHTTPCookieStore, CreationTime)
 
     globalCookieStore = dataStore.httpCookieStore;
 
-    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    auto cookieProperties = adoptNS([[NSMutableDictionary alloc] init]);
     [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
     [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
     [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
     [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
     RetainPtr<NSNumber> creationTime = @(100000);
     [cookieProperties setObject:creationTime.get() forKey:@"Created"];
-    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
 
     [globalCookieStore setCookie:cookie.get() completionHandler:[]() {
         gotFlag = true;

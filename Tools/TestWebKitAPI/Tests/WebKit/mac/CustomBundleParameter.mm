@@ -60,8 +60,8 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRe
     // Attempt to set a parameter using the Objective C API:
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    CustomBundleObject *customObject = [[CustomBundleObject alloc] initWithValue:1234];
-    [[configuration processPool] _setObject:customObject forBundleParameter:@"TestParameter1"];
+    auto customObject = adoptNS([[CustomBundleObject alloc] initWithValue:1234]);
+    [[configuration processPool] _setObject:customObject.get() forBundleParameter:@"TestParameter1"];
 
     if (loadDone)
         done = true;

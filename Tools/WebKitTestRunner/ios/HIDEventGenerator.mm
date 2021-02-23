@@ -160,11 +160,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 + (HIDEventGenerator *)sharedHIDEventGenerator
 {
-    static HIDEventGenerator *eventGenerator = nil;
-    if (!eventGenerator)
-        eventGenerator = [[HIDEventGenerator alloc] init];
-
-    return eventGenerator;
+    static NeverDestroyed<RetainPtr<HIDEventGenerator>> eventGenerator = adoptNS([[HIDEventGenerator alloc] init]);
+    return eventGenerator.get().get();
 }
 
 + (CFIndex)nextEventCallbackID

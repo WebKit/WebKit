@@ -75,9 +75,9 @@ TEST(WebKit, NavigateDuringGetUserMediaPrompt)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     shouldReleaseInEnumerate = false;
     [webView loadTestPageNamed:@"getUserMedia"];
@@ -92,9 +92,9 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     shouldReleaseInEnumerate = true;
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
@@ -121,9 +121,9 @@ TEST(WebKit, DefaultDeviceIdHashSaltsDirectory)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
 
@@ -151,9 +151,9 @@ TEST(WebKit, DeviceIdHashSaltsDirectory)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
     
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
     

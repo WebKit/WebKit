@@ -34,7 +34,7 @@
 
 TEST(WebKit, ReparentWebViewTimeout)
 {
-    RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = [[_WKProcessPoolConfiguration alloc] init];
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

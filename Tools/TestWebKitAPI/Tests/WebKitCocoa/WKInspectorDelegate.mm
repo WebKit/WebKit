@@ -124,7 +124,7 @@ static void resetGlobalState()
     sharedInspectorDelegate = [InspectorDelegate new];
     [inspector setDelegate:sharedInspectorDelegate.get()];
 
-    sharedURLSchemeHandler = [[SimpleURLSchemeHandler alloc] init];
+    sharedURLSchemeHandler = adoptNS([[SimpleURLSchemeHandler alloc] init]);
     auto inspectorConfiguration = adoptNS([[_WKInspectorConfiguration alloc] init]);
     [inspectorConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"testing"];
     return inspectorConfiguration.autorelease();

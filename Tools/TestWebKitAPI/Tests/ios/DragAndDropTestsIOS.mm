@@ -879,8 +879,8 @@ TEST(DragAndDropTests, ExternalSourceBoldSystemAttributedStringToContentEditable
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
-    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes];
-    auto itemProvider = adoptNS([[NSItemProvider alloc] initWithObject:richText]);
+    auto richText = adoptNS([[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes]);
+    auto itemProvider = adoptNS([[NSItemProvider alloc] initWithObject:richText.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
@@ -895,8 +895,8 @@ TEST(DragAndDropTests, ExternalSourceColoredAttributedStringToContentEditable)
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     NSDictionary *textAttributes = @{ NSForegroundColorAttributeName: [UIColor redColor] };
-    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes];
-    auto itemProvider = adoptNS([[NSItemProvider alloc] initWithObject:richText]);
+    auto richText = adoptNS([[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes]);
+    auto itemProvider = adoptNS([[NSItemProvider alloc] initWithObject:richText.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
@@ -1872,8 +1872,8 @@ TEST(DragAndDropTests, DataTransferGetDataReadPlainAndRichText)
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
-    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"WebKit" attributes:textAttributes];
-    [itemProvider registerObject:richText visibility:NSItemProviderRepresentationVisibilityAll];
+    auto richText = adoptNS([[NSAttributedString alloc] initWithString:@"WebKit" attributes:textAttributes]);
+    [itemProvider registerObject:richText.get() visibility:NSItemProviderRepresentationVisibilityAll];
     [itemProvider registerObject:[NSURL URLWithString:@"https://www.webkit.org/"] visibility:NSItemProviderRepresentationVisibilityAll];
     [itemProvider registerObject:@"WebKit" visibility:NSItemProviderRepresentationVisibilityAll];
 

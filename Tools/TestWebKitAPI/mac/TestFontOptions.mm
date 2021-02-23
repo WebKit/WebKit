@@ -65,13 +65,13 @@ static TestFontOptions *sharedFontOptionsForTesting()
 
 + (instancetype)sharedInstance
 {
-    static TestFontOptions *sharedInstance;
+    static RetainPtr<TestFontOptions> sharedInstance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSFontOptions *sharedFontOptions = [NSClassFromString(@"NSFontOptions") sharedFontOptions];
-        sharedInstance = [[TestFontOptions alloc] initWithFontOptions:sharedFontOptions];
+        sharedInstance = adoptNS([[TestFontOptions alloc] initWithFontOptions:sharedFontOptions]);
     });
-    return sharedInstance;
+    return sharedInstance.get();
 }
 
 - (instancetype)initWithFontOptions:(NSFontOptions *)fontOptions

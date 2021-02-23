@@ -473,7 +473,8 @@ TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)
 
 }
 
-static NSMutableSet<WKFrameInfo *> *allFrames;
+static RetainPtr<NSMutableSet<WKFrameInfo *>> allFrames;
+
 @interface FramesMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 
@@ -499,7 +500,7 @@ static NSString *userScriptSource = @"window.webkit.messageHandlers.framesTester
 // and callAsyncJavaScript to confirm that it can execute JS directly in each of those frames.
 TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
     auto messageHandler = adoptNS([[FramesMessageHandler alloc] init]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO inContentWorld:WKContentWorld.defaultClientWorld]);
 
@@ -527,12 +528,12 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"framestest://test/index.html"]]];
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             EXPECT_NULL(error);
@@ -543,7 +544,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
             else
                 EXPECT_TRUE([result isEqualToString:@"otherprotocol://test/index.html"]);
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
 
@@ -557,7 +558,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
             else
                 EXPECT_TRUE([result isEqualToString:@"otherprotocol://test/index.html"]);
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
     }
@@ -572,7 +573,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromPostMessage)
 // and callAsyncJavaScript to confirm that it can execute JS directly in each of those frames.
 TEST(EvaluateJavaScript, JavaScriptInFramesFromNavigationDelegate)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
@@ -615,12 +616,12 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromNavigationDelegate)
 
     TestWebKitAPI::Util::run(&didFinishNavigation);
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             EXPECT_NULL(error);
@@ -631,7 +632,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromNavigationDelegate)
             else
                 EXPECT_TRUE([result isEqualToString:@"otherprotocol://test/index.html"]);
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
 
@@ -645,7 +646,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromNavigationDelegate)
             else
                 EXPECT_TRUE([result isEqualToString:@"otherprotocol://test/index.html"]);
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
     }
@@ -657,7 +658,7 @@ TEST(EvaluateJavaScript, JavaScriptInFramesFromNavigationDelegate)
 // due to removal from the DOM results in an appropriate error
 TEST(EvaluateJavaScript, JavaScriptInMissingFrameError)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
@@ -700,7 +701,7 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameError)
 
     TestWebKitAPI::Util::run(&didFinishNavigation);
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static bool isDone = false;
     [webView evaluateJavaScript:@"var frame = document.getElementById('theFrame'); frame.parentNode.removeChild(frame);" inFrame:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[] (id result, NSError *error) {
@@ -710,7 +711,7 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameError)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         if (frame.isMainFrame)
             continue;
 
@@ -728,7 +729,7 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameError)
 // This test verifies that evaluating JavaScript in a frame from the previous main navigation results in an error
 TEST(EvaluateJavaScript, JavaScriptInMissingFrameAfterNavigationError)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
@@ -777,10 +778,10 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameAfterNavigationError)
     TestWebKitAPI::Util::run(&didFinishNavigation);
     didFinishNavigation = false;
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     RetainPtr<WKFrameInfo> iframe;
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         if (frame.isMainFrame)
             continue;
         iframe = frame;

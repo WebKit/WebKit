@@ -35,7 +35,7 @@
 
 using TextCheckingCompletionHandler = void(^)(NSInteger, NSArray<NSTextCheckingResult *> *, NSOrthography *, NSInteger);
 
-static LayoutTestSpellChecker *globalSpellChecker = nil;
+static RetainPtr<LayoutTestSpellChecker> globalSpellChecker;
 static BOOL hasSwizzledLayoutTestSpellChecker = NO;
 static IMP globallySwizzledSharedSpellCheckerImplementation;
 static Method originalSharedSpellCheckerMethod;
@@ -44,9 +44,9 @@ static LayoutTestSpellChecker *ensureGlobalLayoutTestSpellChecker()
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        globalSpellChecker = [[LayoutTestSpellChecker alloc] init];
+        globalSpellChecker = adoptNS([[LayoutTestSpellChecker alloc] init]);
     });
-    return globalSpellChecker;
+    return globalSpellChecker.get();
 }
 
 static const char *stringForCorrectionResponse(NSCorrectionResponse correctionResponse)

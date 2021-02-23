@@ -1123,11 +1123,11 @@ TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFail
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
-static NSMutableSet<WKFrameInfo *> *allFrames;
+static RetainPtr<NSMutableSet<WKFrameInfo *>> allFrames;
 
 TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
@@ -1164,12 +1164,12 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 
     TestWebKitAPI::Util::run(&didFinishNavigation);
 
-    EXPECT_EQ(allFrames.count, 3u);
+    EXPECT_EQ([allFrames count], 3u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             if (isMainFrame) {
@@ -1181,7 +1181,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
                 EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
             }
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
 
@@ -1196,7 +1196,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
                 EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
             }
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
     }
@@ -1351,7 +1351,7 @@ static void loadRequest(RetainPtr<TestWKWebView> webView, NSString *url)
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
     initializeInAppBrowserPrivacyTestSettings();
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1363,12 +1363,12 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
     NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
     loadRequest(webView, url);
     
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             EXPECT_TRUE([result isKindOfClass:[NSString class]]);
@@ -1380,7 +1380,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
             else
                 EXPECT_TRUE([result isEqualToString:@"about:blank"]);
 
-            if (++finishedFrames == allFrames.count)
+            if (++finishedFrames == [allFrames count])
                 isDone = true;
         }];
     }
@@ -1389,7 +1389,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
     initializeInAppBrowserPrivacyTestSettings();
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1400,15 +1400,15 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
     NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
     loadRequest(webView, url);
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[] (id result, NSError *error) {
             EXPECT_TRUE(!!error);
-            if (++finishedFrames == allFrames.count)
+            if (++finishedFrames == [allFrames count])
                 isDone = true;
         }];
     }

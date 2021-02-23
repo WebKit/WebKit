@@ -1657,7 +1657,7 @@ static bool done;
     NSURL *url = task.request.URL;
     if ([url.path isEqualToString:@"/checkStorage"]) {
         NSString *html = @"<script>var oldValue = window.sessionStorage['storageKey']; window.sessionStorage['storageKey'] = 'value'; alert('old value: <' + (oldValue ? 'fail' : '') + '>');</script>";
-        [task didReceiveResponse:[[NSURLResponse alloc] initWithURL:url MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]];
+        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:url MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]).get()];
         [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
         [task didFinish];
     }

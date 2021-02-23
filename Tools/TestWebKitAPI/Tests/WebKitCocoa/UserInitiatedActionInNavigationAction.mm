@@ -81,9 +81,9 @@ public:
 
     NSURL *URLWithFragment(NSString *fragment)
     {
-        NSURLComponents *URLComponents = [[NSURLComponents alloc] initWithURL:URL.get() resolvingAgainstBaseURL:NO];
-        URLComponents.fragment = fragment;
-        return URLComponents.URL;
+        auto urlComponents = adoptNS([[NSURLComponents alloc] initWithURL:URL.get() resolvingAgainstBaseURL:NO]);
+        [urlComponents setFragment:fragment];
+        return [urlComponents URL];
     }
 
     void loadTest(NSString *test)

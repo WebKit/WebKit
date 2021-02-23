@@ -27,6 +27,7 @@
 #import "TestsController.h"
 
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 int main(int argc, char** argv)
 {
@@ -35,11 +36,11 @@ int main(int argc, char** argv)
         [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
 
         // Set up user defaults.
-        NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
+        auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
         if (!argumentDomain)
-            argumentDomain = [[NSMutableDictionary alloc] init];
+            argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
 
-        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 
 #ifndef BUILDING_TEST_WTF
         [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];

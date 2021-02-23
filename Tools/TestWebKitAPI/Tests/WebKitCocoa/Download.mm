@@ -360,7 +360,8 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto navigationDelegate = adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [[[webView configuration] processPool] _setDownloadDelegate:[[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:sourceURL]];
+    auto downloadDelegate = adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:sourceURL]);
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
 
     expectedUserInitiatedState = false;
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];

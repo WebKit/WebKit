@@ -90,8 +90,8 @@ namespace TestWebKitAPI {
 TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
 {
     auto webView = adoptNS([[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
-    DoNotLeakFrameLoadDelegate *delegate = [[DoNotLeakFrameLoadDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
+    auto delegate = adoptNS([[DoNotLeakFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
     
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"autofocused-text-input" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
@@ -107,8 +107,8 @@ TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
 {
     auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView forceRequestCandidatesForTesting];
-    CandidateRequestFrameLoadDelegate *delegate = [[CandidateRequestFrameLoadDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
+    auto delegate = adoptNS([[CandidateRequestFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
     
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"focus-inputs" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];

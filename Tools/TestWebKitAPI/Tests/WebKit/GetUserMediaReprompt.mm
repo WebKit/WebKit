@@ -68,9 +68,9 @@ TEST(WebKit2, GetUserMediaReprompt)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
     [delegate waitUntilPrompted];
@@ -104,11 +104,11 @@ TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [delegate setAudioDecision:_WKPermissionDecisionGrant];
     [delegate setVideoDecision:_WKPermissionDecisionDeny];
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMediaAudioVideoCapture"];
     [delegate waitUntilPrompted];
@@ -127,9 +127,9 @@ TEST(WebKit2, MultipleGetUserMediaSynchronously)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
     [delegate waitUntilPrompted];

@@ -1,3 +1,147 @@
+2021-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks in Tools/
+        https://bugs.webkit.org/show_bug.cgi?id=222288
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::zoomScale const):
+        (WTR::UIScriptControllerIOS::scrollToOffset):
+        (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+        (WTR::UIScriptControllerIOS::minimumZoomScale const):
+        (WTR::UIScriptControllerIOS::maximumZoomScale const):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (fontAllowList):
+        (adjustWebDocumentForFlexibleViewport):
+        (createWebViewAndOffscreenWindow):
+        (allocateGlobalControllers):
+        (releaseGlobalControllers):
+        (resetWebViewToConsistentState):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (drt_WebHTMLView_beginDraggingSessionWithItemsEventSource):
+        (+[EventSendingController initialize]):
+        (-[EventSendingController beginDragWithFiles:]):
+        (-[EventSendingController beginDragWithFilePromises:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setCustomPolicyDelegate):
+        (TestRunner::waitForPolicyDelegate):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+        (-[UIDelegate dealloc]):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (ensureGlobalLayoutTestSpellChecker):
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter.mm:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SchemeRegistry.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemPreview.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (-[TestSOAuthorizationDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm:
+        (UserInitiatedActionTest::URLWithFragment):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[UIDelegate _webView:configurationForLocalInspector:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCandidateTests.mm:
+        (+[CandidateTestWebView setUpWithFrame:testPage:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/ClosingWebView.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsInvalidScheme.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/PreventImageLoadWithAutoResizing.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (+[InputAssistantItemTestingWebView leadingItemsForWebView:]):
+        (+[InputAssistantItemTestingWebView trailingItemsForWebView:]):
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main):
+        * TestWebKitAPI/mac/TestFontOptions.mm:
+        (+[TestFontOptions sharedInstance]):
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::addNotificationListener):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::globalWebViewConfiguration):
+        (WTR::globalWebsiteDataStoreDelegateClient):
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformContext):
+        (WTR::TestController::platformPreferences):
+        (WTR::TestController::platformInitializeDataStore):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        (WTR::TestController::platformAdjustContext):
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::removeAllSessionCredentials):
+        (WTR::TestController::getAllStorageAccessEntries):
+        (WTR::TestController::loadedSubresourceDomains):
+        (WTR::TestController::clearLoadedSubresourceDomains):
+        (WTR::TestController::injectUserScript):
+        (WTR::TestController::setAllowStorageQuotaIncrease):
+        (WTR::TestController::setAllowsAnySSLCertificate):
+        * WebKitTestRunner/ios/GeneratedTouchesDebugWindow.mm:
+        (+[GeneratedTouchesDebugWindow sharedGeneratedTouchesDebugWindow]):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (+[HIDEventGenerator sharedHIDEventGenerator]):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::configureContentExtensionForTest):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard _pasteboardWithName:]):
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]):
+
 2021-02-23  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Detect unrecognized options in run-javascriptcore-tests

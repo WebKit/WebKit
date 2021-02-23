@@ -134,7 +134,7 @@ TEST_F(MediaCaptureDisabledTest, UnsecureContext)
     preferences._mediaCaptureRequiresSecureConnection = YES;
 
     receivedScriptMessage = false;
-    [m_webView loadHTMLString:@"<html><body><script>window.webkit.messageHandlers.testHandler.postMessage(Navigator.prototype.hasOwnProperty('mediaDevices') ? 'has' : 'none');</script></body></html>" baseURL: [[NSURL alloc] initWithString:@"http://test.org"]];
+    [m_webView loadHTMLString:@"<html><body><script>window.webkit.messageHandlers.testHandler.postMessage(Navigator.prototype.hasOwnProperty('mediaDevices') ? 'has' : 'none');</script></body></html>" baseURL:adoptNS([[NSURL alloc] initWithString:@"http://test.org"]).get()];
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "none");

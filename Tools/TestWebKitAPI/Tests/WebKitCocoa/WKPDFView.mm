@@ -414,14 +414,14 @@ TEST(PDFHUD, LoadPDFTypeWithPluginsBlocked)
 
 TEST(PDF, PrintSize)
 {
-    auto configuration = [[WKWebViewConfiguration new] autorelease];
-    auto schemeHandler = [[TestURLSchemeHandler new] autorelease];
-    [configuration setURLSchemeHandler:schemeHandler forURLScheme:@"test"];
-    auto webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
-    auto delegate = [[PrintUIDelegate new] autorelease];
-    webView.UIDelegate = delegate;
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto schemeHandler = adoptNS([TestURLSchemeHandler new]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([PrintUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
 
-    schemeHandler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+    schemeHandler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
         auto url = task.request.URL;
         NSData *data;
         NSString *mimeType;
@@ -437,8 +437,8 @@ TEST(PDF, PrintSize)
             mimeType = @"application/pdf";
             data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test_print" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
         }
-        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil] autorelease];
-        [task didReceiveResponse:response];
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
         [task didReceiveData:data];
         [task didFinish];
     };
@@ -449,7 +449,7 @@ TEST(PDF, PrintSize)
     EXPECT_EQ(size.width, 612.0);
 
     __block bool receivedSize = false;
-    [webView _getPDFFirstPageSizeInFrame:webView._mainFrame completionHandler:^(CGSize requestedSize) {
+    [webView _getPDFFirstPageSizeInFrame:[webView _mainFrame] completionHandler:^(CGSize requestedSize) {
         EXPECT_EQ(requestedSize.height, 792.0);
         EXPECT_EQ(requestedSize.width, 612.0);
         receivedSize = true;
@@ -464,7 +464,7 @@ TEST(PDF, PrintSize)
     EXPECT_EQ(mainFrameSize.width, 0.0);
     
     receivedSize = false;
-    [webView _getPDFFirstPageSizeInFrame:webView._mainFrame completionHandler:^(CGSize requestedSize) {
+    [webView _getPDFFirstPageSizeInFrame:[webView _mainFrame] completionHandler:^(CGSize requestedSize) {
         EXPECT_EQ(requestedSize.height, 0.0);
         EXPECT_EQ(requestedSize.width, 0.0);
         receivedSize = true;
@@ -477,7 +477,7 @@ TEST(PDF, PrintSize)
     EXPECT_NEAR(pdfFrameSize.width, 129.600006, .00001);
 
     receivedSize = false;
-    [webView _getPDFFirstPageSizeInFrame:delegate.lastPrintedFrame completionHandler:^(CGSize requestedSize) {
+    [webView _getPDFFirstPageSizeInFrame:[delegate lastPrintedFrame] completionHandler:^(CGSize requestedSize) {
         EXPECT_NEAR(requestedSize.height, 28.799999, .00001);
         EXPECT_NEAR(requestedSize.width, 129.600006, .00001);
         receivedSize = true;

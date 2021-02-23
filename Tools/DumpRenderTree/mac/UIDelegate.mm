@@ -48,7 +48,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if !PLATFORM(IOS_FAMILY)
-DumpRenderTreeDraggingInfo *draggingInfo = nil;
+RetainPtr<DumpRenderTreeDraggingInfo> draggingInfo;
 #endif
 
 @implementation UIDelegate
@@ -153,10 +153,10 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 #if !PLATFORM(IOS_FAMILY)
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
-     assert(!draggingInfo);
-     draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
-     [sender draggingUpdated:draggingInfo];
-     [EventSendingController replaySavedEvents];
+    assert(!draggingInfo);
+    draggingInfo = adoptNS([[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj]);
+    [sender draggingUpdated:draggingInfo.get()];
+    [EventSendingController replaySavedEvents];
 }
 #endif
 
@@ -433,7 +433,6 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 - (void)dealloc
 {
 #if !PLATFORM(IOS_FAMILY)
-    [draggingInfo release];
     draggingInfo = nil;
 #endif
 

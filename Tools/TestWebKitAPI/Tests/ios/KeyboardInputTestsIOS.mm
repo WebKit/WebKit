@@ -71,23 +71,23 @@
 + (UIBarButtonItemGroup *)leadingItemsForWebView:(WKWebView *)webView
 {
     static dispatch_once_t onceToken;
-    static UIBarButtonItemGroup *sharedItems;
+    static RetainPtr<UIBarButtonItemGroup> sharedItems;
     dispatch_once(&onceToken, ^{
         auto leadingItem = adoptNS([[UIBarButtonItem alloc] initWithImage:self.barButtonIcon style:UIBarButtonItemStylePlain target:webView action:@selector(fakeLeadingBarButtonItemAction)]);
-        sharedItems = [[UIBarButtonItemGroup alloc] initWithBarButtonItems:@[ leadingItem.get() ] representativeItem:nil];
+        sharedItems = adoptNS([[UIBarButtonItemGroup alloc] initWithBarButtonItems:@[ leadingItem.get() ] representativeItem:nil]);
     });
-    return sharedItems;
+    return sharedItems.get();
 }
 
 + (UIBarButtonItemGroup *)trailingItemsForWebView:(WKWebView *)webView
 {
     static dispatch_once_t onceToken;
-    static UIBarButtonItemGroup *sharedItems;
+    static RetainPtr<UIBarButtonItemGroup> sharedItems;
     dispatch_once(&onceToken, ^{
         auto trailingItem = adoptNS([[UIBarButtonItem alloc] initWithImage:self.barButtonIcon style:UIBarButtonItemStylePlain target:webView action:@selector(fakeTrailingBarButtonItemAction)]);
-        sharedItems = [[UIBarButtonItemGroup alloc] initWithBarButtonItems:@[ trailingItem.get() ] representativeItem:nil];
+        sharedItems = adoptNS([[UIBarButtonItemGroup alloc] initWithBarButtonItems:@[ trailingItem.get() ] representativeItem:nil]);
     });
-    return sharedItems;
+    return sharedItems.get();
 }
 
 - (UITextInputAssistantItem *)inputAssistantItem

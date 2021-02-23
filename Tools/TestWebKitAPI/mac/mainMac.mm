@@ -27,6 +27,7 @@
 #import "TestsController.h"
 
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 extern "C" void _BeginEventReceiptOnThread(void);
 
@@ -37,9 +38,9 @@ int main(int argc, char** argv)
         [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
 
         // Set a user default for TestWebKitAPI to bypass all linked-on-or-after checks in WebKit
-        NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
+        auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
         if (!argumentDomain)
-            argumentDomain = [[NSMutableDictionary alloc] init];
+            argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
 
         // CAUTION: Defaults set here are not automatically propagated to the
         // Web Content process. Those listed below are propagated manually.
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
         };
 
         [argumentDomain addEntriesFromDictionary:dict];
-        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 
 #ifndef BUILDING_TEST_WTF
         [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];

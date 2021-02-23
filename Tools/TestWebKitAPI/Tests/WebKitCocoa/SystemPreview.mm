@@ -68,7 +68,7 @@ TEST(WebKit, SystemPreviewTriggered)
     auto messageHandler = adoptNS([[TestSystemPreviewTriggeredHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];
     Util::run(&hasTriggerInfo);
 

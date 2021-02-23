@@ -45,7 +45,7 @@
 -(id)initWithName:(NSString *)name;
 @end
 
-static NSMutableDictionary *localPasteboards;
+static RetainPtr<NSMutableDictionary> localPasteboards;
 
 @implementation WebKitTestRunnerPasteboard
 
@@ -56,12 +56,12 @@ static NSMutableDictionary *localPasteboards;
     if (!name)
         name = [NSString stringWithFormat:@"LocalPasteboard%d", ++number];
     if (!localPasteboards)
-        localPasteboards = [[NSMutableDictionary alloc] init];
+        localPasteboards = adoptNS([[NSMutableDictionary alloc] init]);
     if (LocalPasteboard *pasteboard = [localPasteboards objectForKey:name])
         return pasteboard;
     auto pasteboard = adoptNS([[LocalPasteboard alloc] initWithName:name]);
     [localPasteboards setObject:pasteboard.get() forKey:name];
-    return pasteboard.get();
+    return pasteboard.autorelease();
 }
 
 // This method crashes when called on LocalPasteboard.
@@ -72,7 +72,7 @@ static NSMutableDictionary *localPasteboards;
 
 + (void)releaseLocalPasteboards
 {
-    auto oldLocalPasteBoards = adoptNS(std::exchange(localPasteboards, nil));
+    localPasteboards = nil;
 }
 
 // Convenience method for JS so that it doesn't have to try and create a NSArray on the objc side instead

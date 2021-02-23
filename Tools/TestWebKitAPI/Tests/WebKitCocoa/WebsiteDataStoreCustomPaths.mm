@@ -197,7 +197,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     RetainPtr<NSURL> fileIDBPath = [[idbPath URLByAppendingPathComponent:@"v1"] URLByAppendingPathComponent:@"file__0"];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
 
-    RetainPtr<WKWebsiteDataStore> dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
 
     // Subframe of different origins may also create IndexedDB files.

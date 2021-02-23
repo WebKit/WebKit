@@ -193,7 +193,7 @@ static void runTest(const std::string& testURL);
 
 volatile bool done;
 
-NavigationController* gNavigationController = nullptr;
+RetainPtr<NavigationController> gNavigationController;
 RefPtr<TestRunner> gTestRunner;
 
 Optional<WTR::TestOptions> mainFrameTestOptions;
@@ -205,7 +205,7 @@ WebFrame *mainFrame = nil;
 WebFrame *topLoadingFrame = nil; // !nil iff a load is in progress
 
 #if PLATFORM(MAC)
-NSWindow *mainWindow = nil;
+RetainPtr<NSWindow> mainWindow;
 #endif
 
 CFMutableSetRef disallowedURLs= nullptr;
@@ -218,15 +218,15 @@ static RetainPtr<WebView>& globalWebView()
 }
 
 // Delegates
-static FrameLoadDelegate *frameLoadDelegate;
-static UIDelegate *uiDelegate;
-static EditingDelegate *editingDelegate;
-static ResourceLoadDelegate *resourceLoadDelegate;
-static HistoryDelegate *historyDelegate;
-PolicyDelegate *policyDelegate = nullptr;
-DefaultPolicyDelegate *defaultPolicyDelegate = nullptr;
+static RetainPtr<FrameLoadDelegate> frameLoadDelegate;
+static RetainPtr<UIDelegate> uiDelegate;
+static RetainPtr<EditingDelegate> editingDelegate;
+static RetainPtr<ResourceLoadDelegate> resourceLoadDelegate;
+static RetainPtr<HistoryDelegate> historyDelegate;
+RetainPtr<PolicyDelegate> policyDelegate;
+RetainPtr<DefaultPolicyDelegate> defaultPolicyDelegate;
 #if PLATFORM(IOS_FAMILY)
-static ScrollViewResizerDelegate *scrollViewResizerDelegate;
+static RetainPtr<ScrollViewResizerDelegate> scrollViewResizerDelegate;
 #endif
 
 static int dumpPixelsForAllTests;
@@ -253,9 +253,9 @@ static RetainPtr<WebHistoryItem>& prevTestBFItem()
 
 #if PLATFORM(IOS_FAMILY)
 const CGRect layoutTestViewportRect = { {0, 0}, {static_cast<CGFloat>(TestRunner::viewWidth), static_cast<CGFloat>(TestRunner::viewHeight)} };
-DumpRenderTreeBrowserView *gWebBrowserView = nil;
-DumpRenderTreeWebScrollView *gWebScrollView = nil;
-DumpRenderTreeWindow *gDrtWindow = nil;
+RetainPtr<DumpRenderTreeBrowserView> gWebBrowserView;
+RetainPtr<DumpRenderTreeWebScrollView> gWebScrollView;
+RetainPtr<DumpRenderTreeWindow> gDrtWindow;
 #endif
 
 void setPersistentUserStyleSheetLocation(CFStringRef url)
@@ -417,22 +417,19 @@ static NSSet *allowedFontFamilySet()
 
 static NSArray *fontAllowList()
 {
-    static NSArray *availableFonts;
-    if (availableFonts)
-        return availableFonts;
-
-    NSMutableArray *availableFontList = [[NSMutableArray alloc] init];
-    for (NSString *fontFamily in allowedFontFamilySet()) {
-        NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
-        [availableFontList addObject:fontFamily];
-        for (NSArray* fontInfo in fontsForFamily) {
-            // Font name is the first entry in the array.
-            [availableFontList addObject:[fontInfo objectAtIndex:0]];
+    static RetainPtr<NSArray> availableFonts = [] {
+        auto availableFonts = adoptNS([[NSMutableArray alloc] init]);
+        for (NSString *fontFamily in allowedFontFamilySet()) {
+            NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
+            [availableFonts addObject:fontFamily];
+            for (NSArray* fontInfo in fontsForFamily) {
+                // Font name is the first entry in the array.
+                [availableFonts addObject:[fontInfo objectAtIndex:0]];
+            }
         }
-    }
-
-    availableFonts = availableFontList;
-    return availableFonts;
+        return availableFonts;
+    }();
+    return availableFonts.get();
 }
 
 // Activating system copies of these fonts overrides any others that could be preferred, such as ones
@@ -576,7 +573,7 @@ static void adjustWebDocumentForFlexibleViewport(UIWebBrowserView *webBrowserVie
     // Adjust the viewport view and viewport to have similar behavior
     // as the browser.
     [(DumpRenderTreeBrowserView *)webBrowserView setScrollingUsesUIWebScrollView:YES];
-    [webBrowserView setDelegate:scrollViewResizerDelegate];
+    [webBrowserView setDelegate:scrollViewResizerDelegate.get()];
 
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGRect viewportRect = CGRectMake(0, 0, screenBounds.size.width, screenBounds.size.height);
@@ -687,10 +684,10 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
     [webView setGroupName:@"org.webkit.DumpRenderTree"];
 #endif
 
-    [webView setUIDelegate:uiDelegate];
-    [webView setFrameLoadDelegate:frameLoadDelegate];
-    [webView setEditingDelegate:editingDelegate];
-    [webView setResourceLoadDelegate:resourceLoadDelegate];
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setFrameLoadDelegate:frameLoadDelegate.get()];
+    [webView setEditingDelegate:editingDelegate.get()];
+    [webView setResourceLoadDelegate:resourceLoadDelegate.get()];
     [webView _setGeolocationProvider:[MockGeolocationProvider shared]];
     [webView _setDeviceOrientationProvider:[WebDeviceOrientationProviderMock shared]];
     [webView _setNotificationProvider:[MockWebNotificationProvider shared]];
@@ -722,23 +719,22 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
     NSScreen *firstScreen = [[NSScreen screens] firstObject];
     NSRect windowRect = (showWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
-    DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-    mainWindow = window;
-
-    [window setColorSpace:[firstScreen colorSpace]];
-    [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
-    [[window contentView] addSubview:webView.get()];
+    mainWindow = adoptNS([[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    [mainWindow setReleasedWhenClosed:NO];
+    [mainWindow setColorSpace:[firstScreen colorSpace]];
+    [mainWindow setCollectionBehavior:NSWindowCollectionBehaviorStationary];
+    [[mainWindow contentView] addSubview:webView.get()];
     if (showWebView)
-        [window orderFront:nil];
+        [mainWindow orderFront:nil];
     else
-        [window orderBack:nil];
-    [window setAutodisplay:NO];
+        [mainWindow orderBack:nil];
+    [mainWindow setAutodisplay:NO];
 
-    [window startListeningForAcceleratedCompositingChanges];
+    [(DumpRenderTreeWindow *)mainWindow.get() startListeningForAcceleratedCompositingChanges];
 #else
-    DumpRenderTreeWindow *drtWindow = [[DumpRenderTreeWindow alloc] initWithLayer:[webBrowserView layer]];
+    auto drtWindow = adoptNS([[DumpRenderTreeWindow alloc] initWithLayer:[webBrowserView layer]]);
     [drtWindow setContentView:webView.get()];
-    [webBrowserView setWAKWindow:drtWindow];
+    [webBrowserView setWAKWindow:drtWindow.get()];
 
     [[webView window] makeFirstResponder:[[[webView mainFrame] frameView] documentView]];
 
@@ -750,8 +746,8 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
     [uiWindow setRootViewController:viewController.get()];
 
     // The UIWindow and UIWebBrowserView are released when the DumpRenderTreeWindow is closed.
-    drtWindow.uiWindow = uiWindow.get();
-    drtWindow.browserView = webBrowserView.get();
+    drtWindow.get().uiWindow = uiWindow.get();
+    drtWindow.get().browserView = webBrowserView.get();
 
     auto scrollView = adoptNS([[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect]);
     [scrollView addSubview:webBrowserView.get()];
@@ -769,9 +765,9 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
 #else
     // Initialize the global UIViews, and set the key UIWindow to be painted.
     if (!gWebBrowserView) {
-        gWebBrowserView = [webBrowserView retain];
-        gWebScrollView = [scrollView retain];
-        gDrtWindow = [drtWindow retain];
+        gWebBrowserView = WTFMove(webBrowserView);
+        gWebScrollView = WTFMove(scrollView);
+        gDrtWindow = WTFMove(drtWindow);
         [uiWindow makeKeyAndVisible];
         [uiWindow retain];
     }
@@ -802,7 +798,8 @@ static void destroyGlobalWebViewAndOffscreenWindow()
     // it probably won't cause any trouble (and this is just a test tool, after all).
     [NSObject cancelPreviousPerformRequestsWithTarget:window];
 
-    [window close]; // releases when closed
+    [window close];
+    mainWindow = nil;
 #else
     auto uiWindow = adoptNS([gWebBrowserView window]);
     [uiWindow removeFromSuperview];
@@ -992,36 +989,31 @@ static void setDefaultsToConsistentValuesForTesting()
 static void allocateGlobalControllers()
 {
     // FIXME: We should remove these and move to the ObjC standard [Foo sharedInstance] model
-    gNavigationController = [[NavigationController alloc] init];
-    frameLoadDelegate = [[FrameLoadDelegate alloc] init];
-    uiDelegate = [[UIDelegate alloc] init];
-    editingDelegate = [[EditingDelegate alloc] init];
-    resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
-    policyDelegate = [[PolicyDelegate alloc] init];
-    historyDelegate = [[HistoryDelegate alloc] init];
-    defaultPolicyDelegate = [[DefaultPolicyDelegate alloc] init];
+    gNavigationController = adoptNS([[NavigationController alloc] init]);
+    frameLoadDelegate = adoptNS([[FrameLoadDelegate alloc] init]);
+    uiDelegate = adoptNS([[UIDelegate alloc] init]);
+    editingDelegate = adoptNS([[EditingDelegate alloc] init]);
+    resourceLoadDelegate = adoptNS([[ResourceLoadDelegate alloc] init]);
+    policyDelegate = adoptNS([[PolicyDelegate alloc] init]);
+    historyDelegate = adoptNS([[HistoryDelegate alloc] init]);
+    defaultPolicyDelegate = adoptNS([[DefaultPolicyDelegate alloc] init]);
 #if PLATFORM(IOS_FAMILY)
-    scrollViewResizerDelegate = [[ScrollViewResizerDelegate alloc] init];
+    scrollViewResizerDelegate = adoptNS([[ScrollViewResizerDelegate alloc] init]);
 #endif
-}
-
-// ObjC++ doesn't seem to let me pass NSObject*& sadly.
-static inline void releaseAndZero(NSObject** object)
-{
-    auto oldObject = adoptNS(*object);
-    *object = nil;
 }
 
 static void releaseGlobalControllers()
 {
-    releaseAndZero(&gNavigationController);
-    releaseAndZero(&frameLoadDelegate);
-    releaseAndZero(&editingDelegate);
-    releaseAndZero(&resourceLoadDelegate);
-    releaseAndZero(&uiDelegate);
-    releaseAndZero(&policyDelegate);
+    gNavigationController = nil;
+    frameLoadDelegate = nil;
+    editingDelegate = nil;
+    resourceLoadDelegate = nil;
+    uiDelegate = nil;
+    historyDelegate = nil;
+    policyDelegate = nil;
+    defaultPolicyDelegate = nil;
 #if PLATFORM(IOS_FAMILY)
-    releaseAndZero(&scrollViewResizerDelegate);
+    scrollViewResizerDelegate = nil;
 #endif
 }
 
@@ -1758,7 +1750,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     WebView *webView = [mainFrame webView];
 
 #if PLATFORM(IOS_FAMILY)
-    adjustWebDocumentForStandardViewport(gWebBrowserView, gWebScrollView);
+    adjustWebDocumentForStandardViewport(gWebBrowserView.get(), gWebScrollView.get());
     [webView _setAllowsMessaging:YES];
 #endif
     [webView setEditable:NO];
@@ -1770,7 +1762,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [webView _setCustomBackingScaleFactor:0];
 #endif
     [webView setTabKeyCyclesThroughElements:YES];
-    [webView setPolicyDelegate:defaultPolicyDelegate];
+    [webView setPolicyDelegate:defaultPolicyDelegate.get()];
     [policyDelegate setPermissive:NO];
     [policyDelegate setControllerToNotifyDone:0];
     [uiDelegate resetToConsistentStateBeforeTesting:options];
@@ -1943,7 +1935,7 @@ static void runTest(const std::string& inputLine)
     topLoadingFrame = nil;
 #if !PLATFORM(IOS_FAMILY)
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
-    releaseAndZero(&draggingInfo);
+    draggingInfo = nil;
 #endif
     done = NO;
 
@@ -1959,7 +1951,7 @@ static void runTest(const std::string& inputLine)
         gTestRunner->setDumpFrameLoadCallbacks(true);
 
     if (shouldLogHistoryDelegates(pathOrURL.c_str()))
-        [[mainFrame webView] setHistoryDelegate:historyDelegate];
+        [[mainFrame webView] setHistoryDelegate:historyDelegate.get()];
     else
         [[mainFrame webView] setHistoryDelegate:nil];
 
@@ -1970,7 +1962,7 @@ static void runTest(const std::string& inputLine)
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldMakeViewportFlexible(pathOrURL.c_str()))
-        adjustWebDocumentForFlexibleViewport(gWebBrowserView, gWebScrollView);
+        adjustWebDocumentForFlexibleViewport(gWebBrowserView.get(), gWebScrollView.get());
 #endif
 
     if (shouldUseEphemeralSession(pathOrURL.c_str()))

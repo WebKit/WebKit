@@ -56,7 +56,7 @@
 -(id)initWithName:(NSString *)name;
 @end
 
-static NSMutableDictionary *localPasteboards;
+static RetainPtr<NSMutableDictionary> localPasteboards;
 
 @implementation DumpRenderTreePasteboard
 
@@ -67,7 +67,7 @@ static NSMutableDictionary *localPasteboards;
     if (!name)
         name = [NSString stringWithFormat:@"LocalPasteboard%d", ++number];
     if (!localPasteboards)
-        localPasteboards = [[NSMutableDictionary alloc] init];
+        localPasteboards = adoptNS([[NSMutableDictionary alloc] init]);
     if (LocalPasteboard *pasteboard = [localPasteboards objectForKey:name])
         return pasteboard;
     auto pasteboard = adoptNS([[LocalPasteboard alloc] initWithName:name]);
@@ -77,7 +77,7 @@ static NSMutableDictionary *localPasteboards;
 
 + (void)releaseLocalPasteboards
 {
-    auto oldPasteboads = adoptNS(std::exchange(localPasteboards, nil));
+    localPasteboards = nil;
 }
 
 // Convenience method for JS so that it doesn't have to try and create a NSArray on the objc side instead

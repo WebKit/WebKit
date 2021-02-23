@@ -187,7 +187,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
     NSURL *filterURL = [(__bridge NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
-    __block NSString *contentExtensionString;
+    __block RetainPtr<NSString> contentExtensionString;
     __block bool doneFetchingContentExtension = false;
     auto delegate = adoptNS([WKTRSessionDelegate new]);
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
@@ -195,7 +195,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
         ASSERT(data);
         ASSERT(response);
         ASSERT(!error);
-        contentExtensionString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        contentExtensionString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         doneFetchingContentExtension = true;
     }];
     [task resume];
@@ -210,7 +210,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     } else
         tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES];
 
-    [[_WKUserContentExtensionStore storeWithURL:tempDir] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)
+    [[_WKUserContentExtensionStore storeWithURL:tempDir] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString.get() completionHandler:^(_WKUserContentFilter *filter, NSError *error)
     {
         if (!error)
             [mainWebView()->platformView().configuration.userContentController _addUserContentFilter:filter];

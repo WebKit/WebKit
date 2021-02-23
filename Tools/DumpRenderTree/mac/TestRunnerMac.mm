@@ -400,12 +400,12 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (!setDelegate) {
-        [[mainFrame webView] setPolicyDelegate:defaultPolicyDelegate];
+        [[mainFrame webView] setPolicyDelegate:defaultPolicyDelegate.get()];
         return;
     }
 
     [policyDelegate setPermissive:permissive];
-    [[mainFrame webView] setPolicyDelegate:policyDelegate];
+    [[mainFrame webView] setPolicyDelegate:policyDelegate.get()];
 }
 
 void TestRunner::setDatabaseQuota(unsigned long long quota)
@@ -664,7 +664,7 @@ void TestRunner::waitForPolicyDelegate()
 {
     setWaitToDump(true);
     [policyDelegate setControllerToNotifyDone:this];
-    [[mainFrame webView] setPolicyDelegate:policyDelegate];
+    [[mainFrame webView] setPolicyDelegate:policyDelegate.get()];
 }
 
 void TestRunner::addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
@@ -914,8 +914,8 @@ void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringR
     // and closes a WebView, it should be run on the main thread. Make the switch
     // from the web thread to the main thread and make the test asynchronous.
     if (WebThreadIsCurrent()) {
-        APITestDelegateIPhone *dispatcher = [[APITestDelegateIPhone alloc] initWithTestRunner:this utf8Data:utf8Data baseURL:baseURL];
-        NSInvocation *invocation = WebThreadMakeNSInvocation(dispatcher, @selector(run));
+        auto dispatcher = adoptNS([[APITestDelegateIPhone alloc] initWithTestRunner:this utf8Data:utf8Data baseURL:baseURL]);
+        NSInvocation *invocation = WebThreadMakeNSInvocation(dispatcher.get(), @selector(run));
         WebThreadCallDelegate(invocation);
         return;
     }

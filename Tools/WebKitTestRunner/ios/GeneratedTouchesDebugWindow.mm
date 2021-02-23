@@ -43,11 +43,11 @@ static const CGFloat debugTouchDotSize = debugTouchDotRadius * 2;
 + (GeneratedTouchesDebugWindow *)sharedGeneratedTouchesDebugWindow
 {
     static dispatch_once_t onceToken;
-    static GeneratedTouchesDebugWindow *touchWindow = nil;
+    static RetainPtr<GeneratedTouchesDebugWindow> touchWindow;
     dispatch_once(&onceToken, ^{
-        touchWindow = [[GeneratedTouchesDebugWindow alloc] init];
+        touchWindow = adoptNS([[GeneratedTouchesDebugWindow alloc] init]);
     });
-    return touchWindow;
+    return touchWindow.get();
 }
 
 - (void)dealloc
