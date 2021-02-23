@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<body>
+<model id="model">
+    <source id="model-source" src="resources/heart.usdz">
+</model>
+<p>This test passes if you see the word "Passed" below:</p>
+<p id="result">Failed</p>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    let result = document.getElementById("result");
+    let model = document.getElementById("model");
+    let source = document.getElementById("model-source");
+
+    model.ready.then(value => {
+        result.textContent = "Failed. Model should not have loaded, but did.";
+    }, reason => {
+        if (reason.name == "AbortError")
+            result.textContent = `Passed`;
+        else
+            result.textContent = `Failed. Wrong error type: ${reason}.`;
+    }).finally(() => { 
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+
+    model.removeChild(source);
+</script>
+</body>
+</html>

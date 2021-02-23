@@ -374,6 +374,13 @@ ResourceErrorOr<CachedResourceHandle<CachedApplicationManifest>> CachedResourceL
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 
+#if ENABLE(MODEL_ELEMENT)
+ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestModelResource(CachedResourceRequest&& request)
+{
+    return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::Type::ModelResource, WTFMove(request)));
+}
+#endif
+
 static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResource::Type type)
 {
     switch (type) {

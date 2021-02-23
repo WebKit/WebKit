@@ -1513,6 +1513,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderLayerScrollableArea.h
     rendering/RenderLineBoxList.h
     rendering/RenderMedia.h
+    rendering/RenderModel.h
     rendering/RenderObject.h
     rendering/RenderObjectEnums.h
     rendering/RenderOverflow.h

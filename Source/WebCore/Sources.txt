@@ -2255,6 +2255,7 @@ rendering/RenderMarquee.cpp
 rendering/RenderMedia.cpp
 rendering/RenderMenuList.cpp
 rendering/RenderMeter.cpp
+rendering/RenderModel.cpp
 rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
 rendering/RenderMultiColumnSpannerPlaceholder.cpp

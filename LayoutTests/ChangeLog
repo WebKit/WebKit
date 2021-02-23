@@ -1,3 +1,26 @@
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
+        HTMLModelElement needs a renderer
+        https://bugs.webkit.org/show_bug.cgi?id=222114
+
+        Reviewed by Simon Fraser.
+
+        Add basic tests for loading HTMLModelElement elements and rendering
+        RenderModel elements.
+
+        * model-element/model-element-ready-expected.txt: Added.
+        * model-element/model-element-ready-load-aborted-expected.txt: Added.
+        * model-element/model-element-ready-load-aborted.html: Added.
+        * model-element/model-element-ready-load-failed-expected.txt: Added.
+        * model-element/model-element-ready-load-failed.html: Added.
+        * model-element/model-element-ready.html: Added.
+        * model-element/model-element-renderer-expected.txt: Added.
+        * model-element/model-element-renderer-no-source-expected.txt: Added.
+        * model-element/model-element-renderer-no-source.html: Added.
+        * model-element/model-element-renderer.html: Added.
+        * model-element/resources: Added.
+        * model-element/resources/heart.usdz: Added.
+
 2021-02-22  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
