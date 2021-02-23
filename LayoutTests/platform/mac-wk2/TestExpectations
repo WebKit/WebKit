@@ -1380,3 +1380,5 @@ webkit.org/b/222140 inspector/indexeddb/clearObjectStore.html [ Pass Timeout ]
 webkit.org/b/221930 media/media-fragments/TC0034.html [ Skip ]
 
 webkit.org/b/222209 inspector/debugger/async-stack-trace-basic.html [ Pass Timeout ]
+
+webkit.org/b/222183 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Failure ]
