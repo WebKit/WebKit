@@ -41,6 +41,8 @@
 #include "SubresourceIntegrity.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerModuleScriptLoader.h"
+#include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoader.h"
 #include <JavaScriptCore/Completion.h>

@@ -34,6 +34,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SharedMemory.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 
 namespace WebKit {

@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "FetchRequestCredentials.h"
 #include "MessageWithMessagePorts.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/Function.h>
@@ -42,6 +43,7 @@ class ContentSecurityPolicyResponseHeaders;
 class ScriptExecutionContext;
 class Worker;
 enum class ReferrerPolicy : uint8_t;
+enum class WorkerType : uint8_t;
 
 // A proxy to talk to the worker context.
 class WorkerGlobalScopeProxy {

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
@@ -35,15 +36,14 @@
 #include <wtf/NakedPtr.h>
 
 namespace JSC {
-class VM;
-}
-
-namespace JSC {
+class Exception;
 class JSGlobalObject;
+class VM;
 }
 
 namespace WebCore {
 
+class Exception;
 class JSDOMGlobalObject;
 class ScriptSourceCode;
 class WorkerConsoleClient;

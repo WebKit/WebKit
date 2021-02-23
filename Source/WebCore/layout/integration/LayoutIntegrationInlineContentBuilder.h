@@ -35,10 +35,13 @@ class RenderBlockFlow;
 
 namespace Layout {
 class InlineFormattingContext;
+class InlineFormattingState;
 class LayoutState;
 }
 
 namespace LayoutIntegration {
+
+class BoxTree;
 
 struct InlineContent;
 struct LineLevelVisualAdjustmentsForRuns;

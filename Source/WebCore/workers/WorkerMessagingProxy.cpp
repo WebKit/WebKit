@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
+#include "FetchRequestCredentials.h"
 #include "MessageEvent.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"

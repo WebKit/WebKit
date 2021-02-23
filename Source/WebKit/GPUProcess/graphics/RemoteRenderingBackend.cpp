@@ -36,6 +36,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>

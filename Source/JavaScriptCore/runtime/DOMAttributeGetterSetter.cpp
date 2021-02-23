@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DOMAttributeGetterSetter.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMAttributeGetterSetter);

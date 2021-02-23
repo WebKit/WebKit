@@ -32,6 +32,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LayoutIntegrationRun.h"
 #include "LayoutReplacedBox.h"

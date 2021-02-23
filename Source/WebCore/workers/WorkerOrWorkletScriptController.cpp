@@ -28,6 +28,7 @@
 #include "WorkerOrWorkletScriptController.h"
 
 #include "DedicatedWorkerGlobalScope.h"
+#include "EventLoop.h"
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerGlobalScope.h"
@@ -53,6 +54,7 @@
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSScriptFetchParameters.h>
 #include <JavaScriptCore/JSScriptFetcher.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {

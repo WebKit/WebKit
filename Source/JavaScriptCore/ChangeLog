@@ -1,3 +1,19 @@
+2021-02-22  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes late February 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=222303
+
+        Unreviewed non-unified build fixes.
+
+        * API/JSAPIValueWrapper.cpp:
+        * bytecode/SetPrivateBrandVariant.h:
+        * heap/HeapAnalyzer.h:
+        * heap/HeapProfiler.cpp:
+        * parser/ParserTokens.h:
+        * runtime/DOMAttributeGetterSetter.cpp:
+        * runtime/GlobalExecutable.cpp:
+        * runtime/JSScriptFetchParameters.cpp:
+
 2021-02-22  Keith Miller  <keith_miller@apple.com>
 
         Move asyncModuleEvaluation into its own function and use intrinsic constants

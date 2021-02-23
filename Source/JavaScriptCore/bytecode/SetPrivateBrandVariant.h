@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CacheableIdentifier.h"
+#include "SlotVisitorMacros.h"
 #include <wtf/Box.h>
 
 namespace JSC {

@@ -28,6 +28,10 @@
 #include <limits.h>
 #include <stdint.h>
 
+namespace WTF {
+class PrintStream;
+}
+
 namespace JSC {
 
 class Identifier;
@@ -284,7 +288,7 @@ struct JSToken {
     JSTextPosition m_startPosition;
     JSTextPosition m_endPosition;
 
-    void dump(PrintStream&) const;
+    void dump(WTF::PrintStream&) const;
 };
 
 ALWAYS_INLINE bool isUpdateOp(JSTokenType token)

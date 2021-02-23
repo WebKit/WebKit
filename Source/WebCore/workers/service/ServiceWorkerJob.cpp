@@ -37,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
+#include "WorkerRunLoop.h"
 
 namespace WebCore {
 
