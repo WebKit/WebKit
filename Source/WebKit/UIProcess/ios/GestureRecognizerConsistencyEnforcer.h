@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if PLATFORM(IOS_FAMILY)
 
-#import <UIKit/UIKit.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/Noncopyable.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/WeakObjCPtr.h>
+
+@class WKContentView;
+@class WKDeferringGestureRecognizer;
 
 namespace WebKit {
 
-enum class ShouldDeferGestures : bool { No, Yes };
+class GestureRecognizerConsistencyEnforcer {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(GestureRecognizerConsistencyEnforcer);
+public:
+    GestureRecognizerConsistencyEnforcer(WKContentView *);
+    ~GestureRecognizerConsistencyEnforcer();
+
+    void beginTracking(WKDeferringGestureRecognizer *);
+    void endTracking(WKDeferringGestureRecognizer *);
+
+    void reset();
+
+private:
+    void timerFired();
+
+    WeakObjCPtr<WKContentView> m_view;
+    RunLoop::Timer<GestureRecognizerConsistencyEnforcer> m_timer;
+    HashSet<RetainPtr<WKDeferringGestureRecognizer>> m_deferringGestureRecognizersWithTouches;
+};
 
 } // namespace WebKit
-
-@class WKDeferringGestureRecognizer;
-
-@protocol WKDeferringGestureRecognizerDelegate
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
-- (WebKit::ShouldDeferGestures)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer willBeginTouchesWithEvent:(UIEvent *)event;
-- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndTouchesWithEvent:(UIEvent *)event;
-- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didTransitionToState:(UIGestureRecognizerState)state;
-@end
-
-@interface WKDeferringGestureRecognizer : UIGestureRecognizer
-
-- (instancetype)initWithDeferringGestureDelegate:(id <WKDeferringGestureRecognizerDelegate>)deferringGestureDelegate;
-- (void)setDefaultPrevented:(BOOL)defaultPrevented;
-- (BOOL)shouldDeferGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
-
-@end
 
 #endif // PLATFORM(IOS_FAMILY)

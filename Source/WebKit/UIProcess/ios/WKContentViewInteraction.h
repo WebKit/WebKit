@@ -35,6 +35,7 @@
 #import "EditorState.h"
 #import "FocusedElementInformation.h"
 #import "FrameInfoData.h"
+#import "GestureRecognizerConsistencyEnforcer.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
 #import "PasteboardAccessIntent.h"
@@ -255,14 +256,13 @@ private:
 @end
 
 @interface WKContentView () {
-#if ENABLE(IOS_TOUCH_EVENTS)
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
-#endif
+    std::unique_ptr<WebKit::GestureRecognizerConsistencyEnforcer> _gestureRecognizerConsistencyEnforcer;
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _touchEventsCanPreventNativeGestures;
@@ -525,6 +525,9 @@ private:
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;
+@property (nonatomic, readonly) UIWebTouchEventsGestureRecognizer *touchEventGestureRecognizer;
+@property (nonatomic, readonly) NSArray<WKDeferringGestureRecognizer *> *deferringGestures;
+@property (nonatomic, readonly) WebKit::GestureRecognizerConsistencyEnforcer& gestureRecognizerConsistencyEnforcer;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

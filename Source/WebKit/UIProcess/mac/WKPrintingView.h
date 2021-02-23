@@ -32,6 +32,7 @@
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WKPrintingViewData;
 @class PDFDestination;

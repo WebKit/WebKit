@@ -1,3 +1,90 @@
+2021-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a watchdog timer to forcibly reset deferring gesture recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=222216
+
+        Reviewed by Simon Fraser.
+
+        Add a mechanism to detect and resolve situations where at least one deferring gesture recognizer
+        (`WKDeferringGestureRecognizer`) is stuck in Possible state after ending touches, but the touch event gesture
+        recognizer is unable to be reset (i.e. neither possible or recognizing). This state is indicative of a general
+        class of bugs regarding native gesture deferral, wherein our "gesture gates" never end up being lifted after
+        ending all touches in the view. One such example of this type of bug was fixed in r272584, where all interaction
+        (touch events, scrolling, tapping) due to the touch end deferrers never exiting Possible state after long
+        pressing to present a context menu.
+
+        To make these kinds of bugs both easier to diagnose and less fatal in the future, we introduce a watchdog timer
+        that dispatches after ending all touches on the content view, and checks the consistency of deferring gesture
+        recognizers in the view; if we detect stuck deferring gestures, we handle this by forcibly resetting the stuck
+        deferring gestures and logging a fault message.
+
+        I manually verified this change by reverting my fix for the aforementioned bug (r272584), and observing both (1)
+        a system log fault message, and (2) that interactions continued to work even without the fix in r272584, after
+        the watchdog timer fired. See below for more details.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/GestureRecognizerConsistencyEnforcer.h: Copied from Source/WebKit/UIProcess/ios/WKDeferringGestureRecognizer.h.
+        * UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm: Added.
+        (WebKit::GestureRecognizerConsistencyEnforcer::GestureRecognizerConsistencyEnforcer):
+        (WebKit::GestureRecognizerConsistencyEnforcer::beginTracking):
+        (WebKit::GestureRecognizerConsistencyEnforcer::endTracking):
+        (WebKit::GestureRecognizerConsistencyEnforcer::reset):
+        (WebKit::GestureRecognizerConsistencyEnforcer::timerFired):
+
+        Add a helper class that wraps a `RunLoop::Timer` for the main runloop, and schedules a 1 second timer after all
+        deferring gestures have ended; assuming no new touches begin after this timer is scheduled, we'll perform a
+        consistency check over the content view's gestures and perform a log fault and force deferring gestures to end
+        if needed.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+
+        Make sure that we reset any extant `GestureRecognizerConsistencyEnforcer` if the web process crashes.
+
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Adjust a few compile-time guards so that deferring gesture recognizers exist on the view, even if
+        `ENABLE_IOS_TOUCH_EVENTS` is off. This makes some of the gesture deferral code throughout this file easier to
+        reason about in non-internal iOS builds, since we don't need to sprinkle as many `ENABLE(IOS_TOUCH_EVENTS)`
+        checks throughout this class.
+
+        (-[WKContentView touchEventGestureRecognizer]):
+        (-[WKContentView gestureRecognizerConsistencyEnforcer]):
+        (-[WKContentView deferringGestures]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView deferringGestureRecognizer:willBeginTouchesWithEvent:]):
+
+        Refactor `-deferringGestureRecognizer:shouldDeferGesturesAfterBeginningTouchesWithEvent:` so that it returns an
+        enum flag indicating whether the given gesture should be allowed to begin deferring native gestures; by making
+        this `-deferringGestureRecognizer:willBeginTouchesWithEvent:`, we can now put state management logic here that's
+        responsible for updating the `GestureRecognizerConsistencyEnforcer`.
+
+        (-[WKContentView deferringGestureRecognizer:didTransitionToState:]):
+        (-[WKContentView deferringGestureRecognizer:didEndTouchesWithEvent:]):
+        (-[WKContentView _deferringGestures]): Deleted.
+
+        Rename this to `-deferringGestures` and expose it as a readonly property, for use by the
+        `GestureRecognizerConsistencyEnforcer`.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesAfterBeginningTouchesWithEvent:]): Deleted.
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKDeferringGestureRecognizer setState:]):
+
+        Add a delegate hook to inform `WKContentView` when the gesture recognizer state changes.
+
+        (-[WKDeferringGestureRecognizer deferringGestureDelegate]): Deleted.
+        * UIProcess/mac/WKPrintingView.h:
+
+        Fix a missing include that results in a build failure due to changed unified sources.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Crash under AuxiliaryProcess::initializeSandbox
