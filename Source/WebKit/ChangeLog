@@ -1,3 +1,25 @@
+2021-02-18  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r272355. rdar://problem/74032694
+
+    ASSERTION FAILED: !size.isEmpty() under platformInitializeWebProcess
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeWebProcess):
+    Follow-up to r272335; don't call IOSurface::setMaximumSize if the UI process
+    did not send us a size. Caused all Web Content processes to assert in debug on launch.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272355 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-03  Timothy Horton  <timothy_horton@apple.com>
+
+            ASSERTION FAILED: !size.isEmpty() under platformInitializeWebProcess
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+            Follow-up to r272335; don't call IOSurface::setMaximumSize if the UI process
+            did not send us a size. Caused all Web Content processes to assert in debug on launch.
+
 2021-02-17  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272165. rdar://problem/74032536
