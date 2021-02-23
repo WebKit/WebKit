@@ -1,3 +1,15 @@
+2021-02-22  Eric Carlson  <eric.carlson@apple.com>
+
+        UserMediaPermissionRequestManagerProxy may be released while computing capture device list
+        https://bugs.webkit.org/show_bug.cgi?id=222236
+        <rdar://74480265>
+
+        Unreviewed, address post-review comment.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList): Use
+        captured `this`.
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         Prepare for memory ownership transfer in the GPUProcess
