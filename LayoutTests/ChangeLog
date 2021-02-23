@@ -1,3 +1,14 @@
+2021-02-23  Frederic Wang  <fwang@igalia.com>
+
+        Nullptr crash in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=221651
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/editing/mutation-with-display-contents-container-crash-expected.txt: Added.
+        * fast/editing/mutation-with-display-contents-container-crash.html: Added.
+        * platform/ios/fast/editing/mutation-with-display-contents-container-crash-expected.txt: Added.
+
 2021-02-23  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver incorrectly announces groups in ARIA tree instances as empty

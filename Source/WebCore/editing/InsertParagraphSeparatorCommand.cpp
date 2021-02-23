@@ -224,7 +224,8 @@ void InsertParagraphSeparatorCommand::doApply()
                 // represent the paragraph that we're leaving.
                 auto extraBlock = createDefaultParagraphElement(document());
                 appendNode(extraBlock.copyRef(), *startBlock);
-                appendBlockPlaceholder(WTFMove(extraBlock));
+                if (!appendBlockPlaceholder(WTFMove(extraBlock)))
+                    return;
             }
             appendNode(*blockToInsert, *startBlock);
         } else {
@@ -250,7 +251,8 @@ void InsertParagraphSeparatorCommand::doApply()
         auto parent = cloneHierarchyUnderNewBlock(ancestors, *blockToInsert);
         auto* parentPtr = parent.ptr();
         
-        appendBlockPlaceholder(WTFMove(parent));
+        if (!appendBlockPlaceholder(WTFMove(parent)))
+            return;
 
         setEndingSelection(VisibleSelection(firstPositionInNode(parentPtr), Affinity::Downstream, endingSelection().isDirectional()));
         return;
@@ -286,8 +288,10 @@ void InsertParagraphSeparatorCommand::doApply()
 
         Vector<RefPtr<Element>> ancestors;
         getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(positionOutsideTabSpan(insertionPosition)).deprecatedNode(), startBlock.get(), ancestors);
-        
-        appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, *blockToInsert));
+
+        auto parent = cloneHierarchyUnderNewBlock(ancestors, *blockToInsert);
+        if (!appendBlockPlaceholder(WTFMove(parent)))
+            return;
         
         // In this case, we need to set the new ending selection.
         setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));

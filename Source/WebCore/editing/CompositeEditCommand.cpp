@@ -1065,12 +1065,13 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos
     deleteInsignificantText(position, VisiblePosition(position).next().deepEquivalent().downstream());
 }
 
-Ref<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
+RefPtr<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
 {
     document().updateLayoutIgnorePendingStylesheets();
     
-    // Should assert isBlockFlow || isInlineFlow when deletion improves. See 4244964.
-    ASSERT(container->renderer());
+    // Should check isBlockFlow || isInlineFlow when deletion improves. See 4244964.
+    if (!container->renderer())
+        return nullptr;
 
     auto placeholder = createBlockPlaceholderElement(document());
     appendNode(placeholder.copyRef(), WTFMove(container));
