@@ -1,3 +1,12 @@
+2021-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/captureStream/canvas2d.html is flaky timing out since GStreamer 1.18 update
+        https://bugs.webkit.org/show_bug.cgi?id=218580
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag no-longer-flaky and now-passing media tests.
+
 2021-02-23  Frederic Wang  <fwang@igalia.com>
 
         Nullptr crash in ModifySelectionListLevelCommand::appendSiblingNodeRange

@@ -512,15 +512,11 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
-webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
-
 webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Failure ]
 webkit.org/b/218321 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Timeout Failure ]
 # Needs to process results in order.
 webkit.org/b/218652 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Failure Pass ]
 webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html [ Failure Pass ]
-
-webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
 webkit.org/b/220540 media/media-fullscreen-inline.html [ Timeout ]
 
@@ -1577,8 +1573,7 @@ webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 # Fails because MutationObservers are not notified at end-of-task.
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
-# The MediaStream implementation is still not completed,
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
+# The MediaStream implementation is almost completed
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
