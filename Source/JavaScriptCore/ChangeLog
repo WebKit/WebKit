@@ -1,5 +1,20 @@
 2021-02-22  Keith Miller  <keith_miller@apple.com>
 
+        Move asyncModuleEvaluation into its own function and use intrinsic constants
+        https://bugs.webkit.org/show_bug.cgi?id=222281
+
+        Reviewed by Yusuke Suzuki.
+
+        Also delete an unused field on the module entry.
+
+        * builtins/ModuleLoader.js:
+        (globalPrivate.newRegistryEntry):
+        (moduleEvaluation):
+        (async asyncModuleEvaluation):
+        * runtime/JSModuleLoader.cpp:
+
+2021-02-22  Keith Miller  <keith_miller@apple.com>
+
         Remove unused internal fields from AbstractModuleLoader
         https://bugs.webkit.org/show_bug.cgi?id=222256
 

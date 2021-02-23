@@ -101,7 +101,6 @@ function newRegistryEntry(key)
         evaluated: false,
         then: @undefined,
         isAsync: false,
-        completionPromise: @undefined,
     };
 }
 
@@ -327,26 +326,30 @@ function moduleEvaluation(entry, fetcher)
         }
 
         this.evaluate(entry.key, entry.module, fetcher);
-    } else {
-        return (async function asyncModuleEvaluation(entry, dependencies) {
-            for (var i = 0, length = dependencies.length; i < length; ++i)
-                await this.moduleEvaluation(dependencies[i], fetcher);
+    } else
+        return this.asyncModuleEvaluation(entry, fetcher, dependencies);
+}
 
-            var resumeMode = 0;
-            while (true) {
-                var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
-                if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
-                    return;
+async function asyncModuleEvaluation(entry, fetcher, dependencies)
+{
+    "use strict";
 
-                try {
-                    awaitedValue = await awaitedValue;
-                    resumeMode = 0;
-                } catch (e) {
-                    awaitedValue = e;
-                    resumeMode = 2;
-                }
-            }
-        }).@call(this, entry, dependencies);
+    for (var i = 0, length = dependencies.length; i < length; ++i)
+        await this.moduleEvaluation(dependencies[i], fetcher);
+
+    var resumeMode = @GeneratorResumeModeNormal;
+    while (true) {
+        var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
+        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
+            return;
+
+        try {
+            awaitedValue = await awaitedValue;
+            resumeMode = @GeneratorResumeModeNormal;
+        } catch (e) {
+            awaitedValue = e;
+            resumeMode = @GeneratorResumeModeThrow;
+        }
     }
 }
 

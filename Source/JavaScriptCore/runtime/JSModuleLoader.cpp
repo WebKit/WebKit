@@ -74,6 +74,7 @@ const ClassInfo JSModuleLoader::s_info = { "ModuleLoader", &Base::s_info, &modul
     link                           JSBuiltin                                  DontEnum|Function 2
     moduleDeclarationInstantiation moduleLoaderModuleDeclarationInstantiation DontEnum|Function 2
     moduleEvaluation               JSBuiltin                                  DontEnum|Function 2
+    asyncModuleEvaluation          JSBuiltin                                  DontEnum|Function 3
     evaluate                       moduleLoaderEvaluate                       DontEnum|Function 3
     provideFetch                   JSBuiltin                                  DontEnum|Function 2
     loadAndEvaluateModule          JSBuiltin                                  DontEnum|Function 3
