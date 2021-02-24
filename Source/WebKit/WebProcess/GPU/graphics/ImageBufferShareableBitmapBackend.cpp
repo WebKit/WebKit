@@ -103,6 +103,11 @@ IntSize ImageBufferShareableBitmapBackend::backendSize() const
     return m_bitmap->size();
 }
 
+unsigned ImageBufferShareableBitmapBackend::bytesPerRow() const
+{
+    return m_bitmap->bytesPerRow();
+}
+
 RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
 {
     return NativeImage::create(m_bitmap->createPlatformImage());

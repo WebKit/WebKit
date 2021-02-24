@@ -1,3 +1,20 @@
+2021-02-24  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement ImageBufferShareableBitmapBackend::bytesPerRow()
+        https://bugs.webkit.org/show_bug.cgi?id=222348
+
+        Reviewed by Simon Fraser.
+
+        The default implementation ImageBufferBackend::bytesPerRow() is not correct
+        for ImageBufferShareableBitmapBackend because ShareableBitmap aligns the
+        rows using IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, ...).
+
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::bytesPerRow const):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::bytesPerRow const):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+
 2021-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r267763): [GTK][WPE] user preferred languages are sent to the wrong network process
