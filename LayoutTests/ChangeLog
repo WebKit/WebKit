@@ -1,3 +1,12 @@
+2021-02-24  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=222371
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-02-24  Sam Weinig  <weinig@apple.com>
 
         Fix model test differences between platforms
