@@ -1,3 +1,15 @@
+2021-02-24  Rob Buis  <rbuis@igalia.com>
+
+        Null check ArrayBufferView RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+
+        Reviewed by Yusuke Suzuki.
+
+        Add test to verify oom situation does not result in a crash.
+
+        * crypto/crypto-random-values-oom-expected.txt: Added.
+        * crypto/crypto-random-values-oom.html: Added.
+
 2021-02-23  Sam Weinig  <weinig@apple.com>
 
         Fix model test differences between platforms

@@ -1,0 +1,11 @@
+Test crypto.getRandomValues behavior in oom situation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS exceptionString == undefined || exceptionString === "TypeError: Argument 1 ('array') to Crypto.getRandomValues must be an instance of ArrayBufferView" is true
+PASS crypto.getRandomValues didn't crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

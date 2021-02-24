@@ -1,3 +1,15 @@
+2021-02-24  Rob Buis  <rbuis@igalia.com>
+
+        Null check ArrayBufferView RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+
+        Reviewed by Yusuke Suzuki.
+
+        Null check ArrayBufferView RefPtr before using it.
+
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::unsharedImpl):
+
 2021-02-23  Michael Saboff  <msaboff@apple.com>
 
         [YARR JIT] Crash on overflow when compiling /(a{1000000000}b{1000000000}|c{1000000000}|)d{1000000000}e{1000000000}/.test();
