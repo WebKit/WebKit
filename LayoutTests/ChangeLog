@@ -1,3 +1,9 @@
+2021-02-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed Windows test gardening to speed up EWS.
+
+        * platform/win/TestExpectations:
+
 2021-02-24  Robert Jenner  <jenner@apple.com>
 
         [ macOS Wk2 ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey text failure
