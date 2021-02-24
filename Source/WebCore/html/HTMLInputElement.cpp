@@ -821,6 +821,8 @@ void HTMLInputElement::readOnlyStateChanged()
 
 void HTMLInputElement::parserDidSetAttributes()
 {
+    DelayedUpdateValidityScope delayedUpdateValidityScope(*this);
+
     ASSERT(m_parsingInProgress);
     initializeInputType();
 }
