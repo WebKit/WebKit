@@ -1,3 +1,16 @@
+2021-02-24  Youenn Fablet  <youenn@apple.com>
+
+        Fix null pointer deref in X509_issuer_and_serial_hash
+        https://bugs.webkit.org/show_bug.cgi?id=222353
+        <rdar://problem/74446806>
+
+        Reviewed by Eric Carlson.
+
+        Cherry-picking of https://github.com/openssl/openssl/commit/8130d654d1de922ea224fa18ee3bc7262edc39c0.
+
+        * Source/third_party/boringssl/src/crypto/x509/x509_cmp.c:
+        (X509_issuer_and_serial_hash):
+
 2021-02-18  Youenn Fablet  <youenn@apple.com>
 
         libwebrtc installs some files into incorrect locations in /usr/local/include
