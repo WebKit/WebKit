@@ -125,7 +125,35 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             let {type, value} = resultOrError;
             return wasThrown ? {"error": resultOrError.description} : {"result": value};
         }).catch((error) => error.description);
-     }
+    }
+    
+    reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript} = {})
+    {
+        let extension = this._extensionForExtensionIDMap.get(extensionID);
+        if (!extension) {
+            WI.reportInternalError("Unable to evaluate script for extension with unknown ID: " + extensionID);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        }
+
+        // FIXME: <webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
+        if (userAgent) {
+            WI.reportInternalError("reloadForExtension: the 'userAgent' option is not yet implemented.");
+            return WI.WebInspectorExtension.ErrorCode.NotImplemented;
+        }
+
+        if (injectedScript) {
+            WI.reportInternalError("reloadForExtension: the 'injectedScript' option is not yet implemented.");
+            return WI.WebInspectorExtension.ErrorCode.NotImplemented;
+        }
+        
+        let target = WI.assumingMainTarget();
+        if (!target.hasCommand("Page.reload"))
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        
+        return target.PageAgent.reload.invoke({ignoreCache});
+        
+        
+    }
 };
 
 WI.WebInspectorExtensionController.Event = {

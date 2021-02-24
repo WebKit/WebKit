@@ -61,6 +61,15 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
  */
 - (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError * _Nullable, NSDictionary * _Nullable result))completionHandler;
 
+/**
+ * @abstract Reloads the inspected page on behalf of the _WKInspectorExtension.
+ * @param ignoreCache If YES, reloads the page while ignoring the cache.
+ * @param userAgent If specified, overrides the user agent to be sent in the `User-Agent` header and returned by calls to `navigator.userAgent` made by scripts running in the page. This only affects the next navigation.
+ * @param injectedScript If specified, injects the given JavaScript expression into all frames on the page before any other scripts.
+ * @param completionHandler A block to invoke when the operation completes or fails.
+ */
+- (void)reloadIgnoringCache:(BOOL)ignoreCache userAgent:(NSString *)userAgent injectedScript:(NSString *)injectedScript completionHandler:(void(^)(NSError * _Nullable))completionHandler;
+
 @property (readonly, nonatomic) NSString *extensionID;
 
 @end

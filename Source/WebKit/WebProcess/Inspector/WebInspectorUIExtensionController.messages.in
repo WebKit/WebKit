@@ -28,6 +28,7 @@ messages -> WebInspectorUIExtensionController NotRefCounted {
 
     CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, WebKit::InspectorExtensionError> result) Async
     EvaluateScriptForExtension(String extensionID, String scriptSource, Optional<URL> frameURL, Optional<URL> contextSecurityOrigin, Optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details, Optional<WebKit::InspectorExtensionError> error) Async
+    ReloadForExtension(String extensionID, Optional<bool> ignoreCache, Optional<String> userAgent, Optional<String> injectedScript) -> (Optional<WebKit::InspectorExtensionError> error) Async
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

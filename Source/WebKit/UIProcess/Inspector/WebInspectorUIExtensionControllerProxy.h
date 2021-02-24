@@ -52,6 +52,7 @@ public:
     void unregisterExtension(const InspectorExtensionID&, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
     void evaluateScriptForExtension(const InspectorExtensionID&, const String& scriptSource, const Optional<URL>& frameURL, const Optional<URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&&);
+    void reloadForExtension(const InspectorExtensionID&, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&&);
 
     // Notifications.
     void inspectorFrontendLoaded();

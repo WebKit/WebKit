@@ -281,6 +281,48 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
     });
 }
 
+void WebInspectorUIExtensionController::reloadForExtension(const InspectorExtensionID& extensionID, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, CompletionHandler<void(const Optional<InspectorExtensionError>&)>&& completionHandler)
+{
+    if (!m_frontendClient) {
+        completionHandler(InspectorExtensionError::InvalidRequest);
+        return;
+    }
+
+    Ref<JSON::Object> optionalArguments = JSON::Object::create();
+    if (ignoreCache)
+        optionalArguments->setBoolean("ignoreCache"_s, *ignoreCache);
+    if (userAgent)
+        optionalArguments->setString("userAgent"_s, *userAgent);
+    if (injectedScript)
+        optionalArguments->setString("injectedScript"_s, *injectedScript);
+
+    Vector<Ref<JSON::Value>> arguments {
+        JSON::Value::create(extensionID),
+        WTFMove(optionalArguments)
+    };
+
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("reloadForExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+        if (!weakThis) {
+            completionHandler(InspectorExtensionError::ContextDestroyed);
+            return;
+        }
+
+        auto* frontendGlobalObject = weakThis->m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
+        if (!frontendGlobalObject) {
+            completionHandler(InspectorExtensionError::ContextDestroyed);
+            return;
+        }
+
+        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromEvaluationResult(result)) {
+            LOG(Inspector, "Internal error encountered while evaluating upon the frontend: %s", inspectorExtensionErrorToString(*parsedError).utf8().data());
+            completionHandler(parsedError);
+            return;
+        }
+
+        completionHandler(WTF::nullopt);
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

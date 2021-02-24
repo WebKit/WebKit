@@ -223,5 +223,11 @@ InspectorFrontendAPI = {
     evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext} = {})
     {
         return WI.sharedApp.extensionController.evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext});
-    }
+    },
+    
+    // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred that prevented reloading.
+    reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript} = {})
+    {
+        return WI.sharedApp.extensionController.reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript});
+    },
 };

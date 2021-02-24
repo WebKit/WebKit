@@ -67,6 +67,7 @@ public:
     void unregisterExtension(const InspectorExtensionID&, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
     void evaluateScriptForExtension(const InspectorExtensionID&, const String& scriptSource, const Optional<URL>& frameURL, const Optional<URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&, const Optional<InspectorExtensionError>&)>&&);
+    void reloadForExtension(const InspectorExtensionID&, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, CompletionHandler<void(const Optional<InspectorExtensionError>&)>&&);
 
 private:
     JSC::JSObject* unwrapEvaluationResultAsObject(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);

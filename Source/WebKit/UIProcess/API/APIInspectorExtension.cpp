@@ -65,6 +65,16 @@ void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const O
     m_extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
 }
 
+void InspectorExtension::reloadIgnoringCache(const Optional<bool>& ignoreCache, const Optional<WTF::String>& userAgent, const Optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&& completionHandler)
+{
+    if (!m_extensionControllerProxy) {
+        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        return;
+    }
+
+    m_extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTFMove(completionHandler));
+}
+
 } // namespace API
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

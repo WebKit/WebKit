@@ -48,6 +48,7 @@ public:
 
     void createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError>)>&&);
     void evaluateScript(const WTF::String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&&);
+    void reloadIgnoringCache(const Optional<bool>& ignoreCache, const Optional<WTF::String>& userAgent, const Optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&&);
 
 private:
     InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy&);

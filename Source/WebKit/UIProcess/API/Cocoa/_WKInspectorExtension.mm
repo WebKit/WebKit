@@ -84,6 +84,26 @@
     });
 }
 
+- (void)reloadIgnoringCache:(BOOL)ignoreCache userAgent:(NSString *)userAgent injectedScript:(NSString *)injectedScript completionHandler:(void(^)(NSError *))completionHandler
+{
+    Optional<String> optionalUserAgent = userAgent ? makeOptional(String(userAgent)) : WTF::nullopt;
+    Optional<String> optionalInjectedScript = injectedScript ? makeOptional(String(injectedScript)) : WTF::nullopt;
+    _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (WebKit::InspectorExtensionEvaluationResult&& result) mutable {
+        if (!result) {
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error()) }]);
+            return;
+        }
+        
+        auto valueOrException = result.value();
+        if (!valueOrException) {
+            capturedBlock(nsErrorFromExceptionDetails(valueOrException.error()).get());
+            return;
+        }
+
+        capturedBlock(nil);
+    });
+}
+
 // MARK: Properties.
 
 - (NSString *)extensionID

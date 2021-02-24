@@ -1,3 +1,27 @@
+2021-02-23  Patrick Angle  <pangle@apple.com>
+
+        [Cocoa] Web Inspector: Add support for reloading the inspected page via _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=222296
+
+        Reviewed by BJ Burg.
+
+        Added a new method to _WKInspectorExtension which is used to implement `browser.devtools.inspectedWindow.reload`
+        in the Web Extensions API.
+
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::reloadIgnoringCache):
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension reloadIgnoringCache:userAgent:injectedScript:completionHandler:]):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::reloadForExtension):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::reloadForExtension):
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+
 2021-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow additional syscall support in the sandbox 

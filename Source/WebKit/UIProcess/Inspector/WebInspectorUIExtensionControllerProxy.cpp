@@ -137,6 +137,25 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
     });
 }
 
+void WebInspectorUIExtensionControllerProxy::reloadForExtension(const InspectorExtensionID& extensionID, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&& completionHandler)
+{
+    whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, ignoreCache, userAgent, injectedScript, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis || !weakThis->m_inspectorPage) {
+            completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
+            return;
+        }
+
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::ReloadForExtension {extensionID, ignoreCache, userAgent, injectedScript}, [completionHandler = WTFMove(completionHandler)](const Optional<InspectorExtensionError> error) mutable {
+            if (error) {
+                completionHandler(makeUnexpected(error.value()));
+                return;
+            }
+
+            completionHandler({ });
+        });
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
