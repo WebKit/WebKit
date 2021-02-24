@@ -1,5 +1,20 @@
 2021-02-24  Youenn Fablet  <youenn@apple.com>
 
+        Update fipsmodule cipher.c to handle EVP_CipherUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=222354
+        <rdar://problem/74436356>
+
+        Reviewed by Eric Carlson.
+
+        Cherry-picking of https://boringssl.googlesource.com/boringssl/+/e7c0c9734f5491e62665ea156603209a80fbb235%5E%21/.
+
+        * Source/third_party/boringssl/src/crypto/fipsmodule/cipher/cipher.c:
+        (EVP_EncryptUpdate):
+        (EVP_DecryptUpdate):
+        * Source/third_party/boringssl/src/include/openssl/cipher.h:
+
+2021-02-24  Youenn Fablet  <youenn@apple.com>
+
         Fix null pointer deref in X509_issuer_and_serial_hash
         https://bugs.webkit.org/show_bug.cgi?id=222353
         <rdar://problem/74446806>
