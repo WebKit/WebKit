@@ -535,3 +535,382 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
         return self.runStep()
+
+
+class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunPerlTests())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['perl', './Tools/Scripts/test-webkitperl'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='webkitperl-test')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunPerlTests())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['perl', './Tools/Scripts/test-webkitperl'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
+Files=40, Tests=630,  4 wallclock secs ( 0.16 usr  0.09 sys +  2.78 cusr  0.64 csys =  3.67 CPU)
+Result: FAIL
+Failed 1/40 test programs. 10/630 subtests failed.'''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitperl-test (failure)')
+        return self.runStep()
+
+
+class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        del os.environ['RESULTS_SERVER_API_KEY']
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(RunWebKitPyTests())
+        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'ews100')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--builder-name', 'WebKitPy-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--report', RESULTS_WEBKIT_URL],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='webkitpy-test')
+        return self.runStep()
+
+    def test_unexpected_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--builder-name', 'WebKitPy-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--report', RESULTS_WEBKIT_URL],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--builder-name', 'WebKitPy-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--report', RESULTS_WEBKIT_URL],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        return self.runStep()
+
+    def test_errors(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--builder-name', 'WebKitPy-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--report', RESULTS_WEBKIT_URL],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        return self.runStep()
+
+    def test_lot_of_failures(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--builder-name', 'WebKitPy-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--report', RESULTS_WEBKIT_URL],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        return self.runStep()
+
+
+class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunLLDBWebKitTests())
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='lldb-webkit-test')
+        return self.runStep()
+
+    def test_unexpected_failure(self):
+        self.setupStep(RunLLDBWebKitTests())
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+            ) + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunLLDBWebKitTests())
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        return self.runStep()
+
+    def test_errors(self):
+        self.setupStep(RunLLDBWebKitTests())
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        return self.runStep()
+
+    def test_lot_of_failures(self):
+        self.setupStep(RunLLDBWebKitTests())
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=True,
+                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        return self.runStep()
+
+
+class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        del os.environ['RESULTS_SERVER_API_KEY']
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('buildername', 'iOS-14-Simulator-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'ews100')
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--master-name', 'webkit.org',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_warnings(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--master-name', 'webkit.org',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0
+            + ExpectShell.log('stdio', stdout='''Unexpected flakiness: timeouts (2)
+                              imported/blink/storage/indexeddb/blob-valid-before-commit.html [ Timeout Pass ]
+                              storage/indexeddb/modern/deleteindex-2.html [ Timeout Pass ]'''),
+        )
+        self.expectOutcome(result=WARNINGS, state_string='2 flakes')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--master-name', 'webkit.org',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2
+            + ExpectShell.log('stdio', stdout='9 failures found.'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.runStep()
+
+    def test_unexpected_error(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--master-name', 'webkit.org',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 2
+            + ExpectShell.log('stdio', stdout='Unexpected error.'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.runStep()
+
+    def test_exception(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
+                         '--build-number', '101', '--buildbot-worker', 'ews100',
+                         '--master-name', 'webkit.org',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 254
+            + ExpectShell.log('stdio', stdout='Unexpected error.'),
+        )
+        self.expectOutcome(result=EXCEPTION, state_string='layout-tests (exception)')
+        return self.runStep()
