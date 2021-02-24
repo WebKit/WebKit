@@ -882,6 +882,8 @@ template<CSSValueID C> static Optional<RelativeRGBComponent> consumeRelativeRGBC
         return WTF::nullopt;
     }
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
@@ -1526,6 +1528,8 @@ struct HueColorAdjuster {
         case Type::Specified:
             return { theta1, theta2 };
         }
+
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     HueColorAdjuster(double value = 0.0, Type type = Type::Shorter)
