@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener('message', event => {
+    if (event.data instanceof Object)
+        top.testPassed("event.data instanceof Object");
+    else
+        top.testFailed("event.data instanceof Object");
+    if (event.data.array instanceof Array)
+        top.testPassed("event.data.array instanceof Array");
+    else
+        top.testFailed("event.data.array instanceof Array");
+    top.finishJSTest();
+})
+
+const testObject = {
+    array: [ 1, 2, 3, 4 ]
+};
+window.postMessage(testObject);
+</script>
+</body>
+</html>

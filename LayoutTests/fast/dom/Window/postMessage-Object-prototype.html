@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that the prototype of objects serialized via postMessage is correct.");
+jsTestIsAsync = true;
+
+onload = () => {
+    let testFrame = document.createElement("iframe");
+    testFrame.src = "resources/postMessage-Object-prototype-frame.html";
+    document.body.append(testFrame);
+};
+</script>
+</body>
+</html>

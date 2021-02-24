@@ -1,3 +1,17 @@
+2021-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r268700) postMessage changes prototype of basic types
+        https://bugs.webkit.org/show_bug.cgi?id=222228
+        <rdar://problem/74612853>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/Window/postMessage-Object-prototype-expected.txt: Added.
+        * fast/dom/Window/postMessage-Object-prototype.html: Added.
+        * fast/dom/Window/resources/postMessage-Object-prototype-frame.html: Added.
+
 2021-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed Windows test gardening to speed up EWS.
