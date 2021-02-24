@@ -1,3 +1,14 @@
+2021-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to sccache 0.2.15
+        https://bugs.webkit.org/show_bug.cgi?id=222271
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/sccache.bst: Bump to latest stable release. The previous version broke in the
+        SDK update, timing out when starting the local server.
+        * patches/sccache-no-selenium.patch: Removed.
+
 2021-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add Monado for XR runtime support
