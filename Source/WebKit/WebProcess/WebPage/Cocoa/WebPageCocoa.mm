@@ -81,6 +81,8 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     m_dataDetectionContext = parameters.dataDetectionContext;
 
+    consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
+
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
