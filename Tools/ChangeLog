@@ -1,5 +1,36 @@
 2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r272041. rdar://problem/74668621
+
+    [webkitcrepy] Handle case where pypi serves invalid html
+    https://bugs.webkit.org/show_bug.cgi?id=221111
+    <rdar://problem/73728580>
+    
+    Reviewed by David Kilzer.
+    
+    * Scripts/libraries/webkitcorepy/setup.py: Bump version number.
+    * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+    * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+    (Package.archives): Remove possibly invalid <meta> tag from html.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272041 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-28  Jonathan Bedard  <jbedard@apple.com>
+
+            [webkitcrepy] Handle case where pypi serves invalid html
+            https://bugs.webkit.org/show_bug.cgi?id=221111
+            <rdar://problem/73728580>
+
+            Reviewed by David Kilzer.
+
+            * Scripts/libraries/webkitcorepy/setup.py: Bump version number.
+            * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+            * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+            (Package.archives): Remove possibly invalid <meta> tag from html.
+
+2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r271683. rdar://problem/74668621
 
     [webkitcorepy] Add TaskPool

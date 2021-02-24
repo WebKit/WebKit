@@ -126,7 +126,11 @@ class Package(object):
             if response.code != 200:
                 raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
 
-            page = minidom.parseString(response.read())
+            # In some cases, pypi serves invalid html
+            content = response.read()
+            content = re.sub(b'\s+<meta [^\n]+>\n', b'', content)
+
+            page = minidom.parseString(content)
             cached_tags = None
 
             for element in reversed(page.getElementsByTagName("a")):
