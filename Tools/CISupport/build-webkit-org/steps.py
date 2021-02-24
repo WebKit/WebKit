@@ -747,7 +747,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
     jsonFileName = "jsc_cloop.json"
     command = [
         "perl", "./Tools/Scripts/run-javascriptcore-tests",
-        "--cloop", "--no-build",
+        "--no-build",
         "--no-jsc-stress", "--no-fail-fast",
         "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),

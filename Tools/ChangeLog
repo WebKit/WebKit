@@ -1,3 +1,13 @@
+2021-02-24  Keith Miller  <keith_miller@apple.com>
+
+        Cloop JSC test driver command shouldn't pass build flags
+        https://bugs.webkit.org/show_bug.cgi?id=222325
+
+        Reviewed by Darin Adler.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunLLINTCLoopTests):
+
 2021-02-24  Aakash Jain  <aakash_jain@apple.com>
 
         Disable Buildbot old-style step deprecation warning
