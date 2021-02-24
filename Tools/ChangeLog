@@ -1,5 +1,64 @@
 2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r272167. rdar://problem/74668621
+
+    autoinstall.py: Don't use an XML parser to parse HTML
+    https://bugs.webkit.org/show_bug.cgi?id=221162
+    
+    Reviewed by Jonathan Bedard.
+    
+    Very recently autoinstall.py started failing becagse the page returned
+    by https://pypi.org/simple/fasteners/ now contains a <meta> tag, which
+    is not parseable as XML without the trailing slash.
+    
+    Despite what an initial fix in r272041 stated, this is not caused by
+    invalid HTML: <meta> tags are not required to have an ending slash to
+    be standards compliant in any version of HTML.
+    
+    This patch replaces that code to use an HTML parser instead of an XML
+    parser, making it more robust.
+    
+    * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+    (SimplyPypiIndexPageParser):
+    (SimplyPypiIndexPageParser.__init__):
+    (SimplyPypiIndexPageParser.handle_starttag):
+    (SimplyPypiIndexPageParser.handle_data):
+    (SimplyPypiIndexPageParser.handle_endtag):
+    (SimplyPypiIndexPageParser.parse):
+    (Package.archives):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272167 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-01  Alicia Boya García  <aboya@igalia.com>
+
+            autoinstall.py: Don't use an XML parser to parse HTML
+            https://bugs.webkit.org/show_bug.cgi?id=221162
+
+            Reviewed by Jonathan Bedard.
+
+            Very recently autoinstall.py started failing becagse the page returned
+            by https://pypi.org/simple/fasteners/ now contains a <meta> tag, which
+            is not parseable as XML without the trailing slash.
+
+            Despite what an initial fix in r272041 stated, this is not caused by
+            invalid HTML: <meta> tags are not required to have an ending slash to
+            be standards compliant in any version of HTML.
+
+            This patch replaces that code to use an HTML parser instead of an XML
+            parser, making it more robust.
+
+            * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+            (SimplyPypiIndexPageParser):
+            (SimplyPypiIndexPageParser.__init__):
+            (SimplyPypiIndexPageParser.handle_starttag):
+            (SimplyPypiIndexPageParser.handle_data):
+            (SimplyPypiIndexPageParser.handle_endtag):
+            (SimplyPypiIndexPageParser.parse):
+            (Package.archives):
+
+2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r272041. rdar://problem/74668621
 
     [webkitcrepy] Handle case where pypi serves invalid html
