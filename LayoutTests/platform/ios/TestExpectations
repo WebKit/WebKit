@@ -3507,6 +3507,3 @@ webkit.org/b/221486 imported/w3c/web-platform-tests/shadow-dom/nested-slot-remov
 
 webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html [ Skip ]
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
-
-webkit.org/b/222323 model-element/model-element-renderer-no-source.html [ Failure ]
-webkit.org/b/222323 model-element/model-element-renderer.html [ Failure ]
