@@ -1,5 +1,53 @@
 2021-02-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273158. rdar://problem/74623451
+
+    Allow to use BigInt as key identifier
+    https://bugs.webkit.org/show_bug.cgi?id=222165
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Allow to pass a BigInt as key id so as to use all of SFrame key ID 8 bytes.
+    A RangeError is thrown if BigInt is more than 64 bits.
+    
+    Update the implementation to use a Vector instead of a map to keep the keys.
+    This allows to also use 0 and 2^64-1 values that HashMap reserves for its personal use.
+    
+    Covered by updated test.
+    
+    * Modules/mediastream/RTCRtpSFrameTransform.idl:
+    * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+    (WebCore::RTCRtpSFrameTransformer::setEncryptionKey):
+    (WebCore::RTCRtpSFrameTransformer::updateEncryptionKey):
+    (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+    * Modules/mediastream/RTCRtpSFrameTransformer.h:
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * bindings/js/JSRTCRtpSFrameTransformCustom.cpp: Added.
+    (WebCore::JSRTCRtpSFrameTransform::setEncryptionKey):
+    
+    LayoutTests:
+    
+    * webrtc/sframe-keys-expected.txt:
+    * webrtc/sframe-keys.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273158 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-19  Youenn Fablet  <youenn@apple.com>
+
+            Allow to use BigInt as key identifier
+            https://bugs.webkit.org/show_bug.cgi?id=222165
+
+            Reviewed by Darin Adler.
+
+            * webrtc/sframe-keys-expected.txt:
+            * webrtc/sframe-keys.html:
+
+2021-02-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273129. rdar://problem/74623422
 
     Scrolling on https://www.apple.com/ipad-air/ can jitter on certain sections
