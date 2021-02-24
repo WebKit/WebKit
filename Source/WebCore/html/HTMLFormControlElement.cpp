@@ -421,7 +421,7 @@ bool HTMLFormControlElement::computeWillValidate() const
 {
     if (m_dataListAncestorState == Unknown) {
 #if ENABLE(DATALIST_ELEMENT)
-        m_dataListAncestorState = ancestorsOfType<HTMLDataListElement>(*this).first() ? InsideDataList : NotInsideDataList;
+        m_dataListAncestorState = (document().hasDataListElements() && ancestorsOfType<HTMLDataListElement>(*this).first()) ? InsideDataList : NotInsideDataList;
 #else
         m_dataListAncestorState = NotInsideDataList;
 #endif
