@@ -260,7 +260,7 @@ class Svn(Scm):
             return partial[1:].rstrip('/')
         return candidate
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -340,14 +340,14 @@ class Svn(Scm):
                 minutes=int(tz_diff[3:5]),
             ) * (1 if tz_diff[0] == '-' else -1)
 
-        if not identifier:
+        if include_identifier and not identifier:
             if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:
                 self._cache_revisions(branch=self.default_branch)
             if revision not in self._metadata_cache.get(branch, []):
                 self._cache_revisions(branch=branch)
             identifier = self._commit_count(revision=revision, branch=branch)
 
-        branch_point = None if branch == self.default_branch else self._commit_count(branch=branch)
+        branch_point = None if not include_identifier or branch == self.default_branch else self._commit_count(branch=branch)
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
@@ -380,7 +380,7 @@ class Svn(Scm):
         return Commit(
             revision=int(revision),
             branch=branch,
-            identifier=identifier,
+            identifier=identifier if include_identifier else None,
             branch_point=branch_point,
             timestamp=int(calendar.timegm(date.timetuple())) if date else None,
             author=author,

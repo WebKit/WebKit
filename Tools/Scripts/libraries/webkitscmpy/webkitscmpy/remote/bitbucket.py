@@ -136,7 +136,7 @@ class BitBucket(Scm):
             return []
         return sorted([details.get('displayId') for details in response if details.get('displayId')])
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         if revision:
             raise self.Exception('Cannot map revisions to commits on BitBucket')
 
@@ -214,11 +214,11 @@ class BitBucket(Scm):
             branch = None
 
         branch_point = None
-        if branch and branch == self.default_branch:
+        if include_identifier and branch and branch == self.default_branch:
             if not identifier:
                 identifier = self._distance(commit_data['id'])
 
-        elif branch:
+        elif include_identifier and branch:
             if not identifier:
                 identifier = self._distance(commit_data['id'], magnitude=256, condition=lambda val: self.default_branch not in val)
             branch_point = self._distance(commit_data['id']) - identifier
@@ -230,7 +230,7 @@ class BitBucket(Scm):
             hash=commit_data['id'],
             revision=revision,
             branch_point=branch_point,
-            identifier=identifier,
+            identifier=identifier if include_identifier else None,
             branch=branch,
             timestamp=int(commit_data['committerTimestamp'] / 100),
             author=self.contributors.create(
@@ -239,7 +239,7 @@ class BitBucket(Scm):
             ), message=commit_data['message'] if include_log else None,
         )
 
-    def find(self, argument, include_log=True):
+    def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -257,9 +257,10 @@ class BitBucket(Scm):
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
                 include_log=include_log,
+                include_identifier=include_identifier,
             )
 
         commit_data = self.request('commits/{}'.format(argument))
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
-        return self.commit(hash=commit_data['id'], include_log=include_log)
+        return self.commit(hash=commit_data['id'], include_log=include_log, include_identifier=include_identifier)

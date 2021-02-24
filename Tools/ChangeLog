@@ -1,3 +1,37 @@
+2021-02-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add flag for caller to opt out of identifier computation
+        https://bugs.webkit.org/show_bug.cgi?id=222337
+        <rdar://problem/74667858>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Allow caller to opt-out of retrieving the identifier.
+        (Git.find): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.commit): Allow caller to opt-out of retrieving the identifier.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.commit): Allow caller to opt-out of retrieving the identifier.
+        (BitBucket.find): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.commit): Allow caller to opt-out of retrieving the identifier.
+        (GitHub.find): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn.commit): Allow caller to opt-out of retrieving the identifier.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.commit): Allow caller to opt-out of retrieving the identifier.
+        (ScmBase.find): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_no_identifier):
+        (TestGitHub.test_no_identifier):
+        (TestBitBucket.test_no_identifier):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_no_identifier):
+        (TestRemoteSvn.test_no_identifier):
+
 2021-02-24  Russell Epstein  <repstein@apple.com>
 
         Revert r272735. rdar://problem/74674837

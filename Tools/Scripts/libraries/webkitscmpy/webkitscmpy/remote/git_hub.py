@@ -235,7 +235,7 @@ class GitHub(Scm):
             return []
         return sorted([details.get('name') for details in response if details.get('name')])
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         if revision:
             raise self.Exception('Cannot map revisions to commits on GitHub')
 
@@ -309,14 +309,14 @@ class GitHub(Scm):
             branch = None
 
         branch_point = None
-        if branch and branch == self.default_branch:
+        if include_identifier and branch and branch == self.default_branch:
             if not identifier:
                 result = self._count_for_ref(ref=commit_data['sha'])
                 if not result:
                     raise Exception('{} {}'.format(result, commit_data['sha']))
                 identifier, _ = result
 
-        elif branch:
+        elif include_identifier and branch:
             if not identifier:
                 identifier = self._difference(self.default_branch, commit_data['sha'])
             branch_point = self._count_for_ref(ref=commit_data['sha'])[0] - identifier
@@ -331,7 +331,7 @@ class GitHub(Scm):
             hash=commit_data['sha'],
             revision=revision,
             branch_point=branch_point,
-            identifier=identifier,
+            identifier=identifier if include_identifier else None,
             branch=branch,
             timestamp=int(calendar.timegm(date.timetuple())),
             author=self.contributors.create(
@@ -340,7 +340,7 @@ class GitHub(Scm):
             ), message=commit_data['commit']['message'] if include_log else None,
         )
 
-    def find(self, argument, include_log=True):
+    def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -358,9 +358,10 @@ class GitHub(Scm):
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
                 include_log=include_log,
+                include_identifier=include_identifier,
             )
 
         commit_data = self.request('commits/{}'.format(argument))
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
-        return self.commit(hash=commit_data['sha'], include_log=include_log)
+        return self.commit(hash=commit_data['sha'], include_log=include_log, include_identifier=include_identifier)

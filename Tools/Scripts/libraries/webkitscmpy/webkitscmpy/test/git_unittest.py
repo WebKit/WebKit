@@ -272,6 +272,12 @@ class TestGit(unittest.TestCase):
                 self.assertEqual(str(local.Git(self.path).find('4@trunk')), '4@main')
                 self.assertEqual(str(local.Git(self.path).find('4@master')), '4@main')
 
+    def test_no_identifier(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                self.assertIsNone(local.Git(self.path).find('main', include_identifier=False).identifier)
+
+
 class TestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/webkit'
 
@@ -379,6 +385,10 @@ class TestGitHub(unittest.TestCase):
         with mocks.remote.GitHub():
             self.assertEqual(str(remote.GitHub(self.remote).find('4@trunk')), '4@main')
             self.assertEqual(str(remote.GitHub(self.remote).find('4@master')), '4@main')
+
+    def test_no_identifier(self):
+        with mocks.remote.GitHub():
+            self.assertIsNone(remote.GitHub(self.remote).find('main', include_identifier=False).identifier)
 
 
 class TestBitBucket(unittest.TestCase):
@@ -488,3 +498,7 @@ class TestBitBucket(unittest.TestCase):
         with mocks.remote.BitBucket():
             self.assertEqual(str(remote.BitBucket(self.remote).find('4@trunk')), '4@main')
             self.assertEqual(str(remote.BitBucket(self.remote).find('4@master')), '4@main')
+
+    def test_no_identifier(self):
+        with mocks.remote.BitBucket():
+            self.assertIsNone(remote.BitBucket(self.remote).find('main', include_identifier=False).identifier)
