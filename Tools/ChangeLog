@@ -1,3 +1,16 @@
+2021-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP3] Use soup_auth_get_authority() to set the ProtectionSpace host and port
+        https://bugs.webkit.org/show_bug.cgi?id=222309
+
+        Reviewed by Adrian Perez de Castro.
+
+        It fixes two tests when using libsoup3.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (testWebViewAuthenticationProxy):
+        (testWebViewAuthenticationProxyHTTPS):
+
 2021-02-24  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] PATH for rustc no longer set correctly
