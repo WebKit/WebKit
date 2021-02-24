@@ -378,7 +378,8 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     Vector<Ref<HTMLElement>> unstyledSpans;
     
     Node* lastStyledNode = nullptr;
-    for (Node* node = startNode; node != beyondEnd; node = NodeTraversal::next(*node)) {
+    bool reachedEnd = false;
+    for (auto node = makeRefPtr(startNode); node != beyondEnd && !reachedEnd; node = NodeTraversal::next(*node)) {
         ASSERT(node);
         RefPtr<HTMLElement> element;
         if (is<HTMLElement>(*node)) {
@@ -391,20 +392,21 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             // text node. To make this possible, add a style span to surround this text node.
             auto span = createStyleSpanElement(document());
             surroundNodeRangeWithElement(*node, *node, span.copyRef());
+            reachedEnd = node->isDescendantOf(beyondEnd);
             element = WTFMove(span);
         }  else {
             // Only handle HTML elements and text nodes.
             continue;
         }
-        lastStyledNode = node;
+        lastStyledNode = node.get();
 
         RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
-        float currentFontSize = computedFontSize(node);
-        float desiredFontSize = std::max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
+        float currentFontSize = computedFontSize(node.get());
+        float desiredFontSize = std::max(MinimumFontSize, startingFontSizes.get(node.get()) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyle->getPropertyCSSValue(CSSPropertyFontSize);
         if (value) {
             element->removeInlineStyleProperty(CSSPropertyFontSize);
-            currentFontSize = computedFontSize(node);
+            currentFontSize = computedFontSize(node.get());
         }
         if (currentFontSize != desiredFontSize) {
             inlineStyle->setProperty(CSSPropertyFontSize, CSSValuePool::singleton().createValue(desiredFontSize, CSSUnitType::CSS_PX), false);

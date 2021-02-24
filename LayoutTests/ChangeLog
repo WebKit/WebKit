@@ -1,3 +1,13 @@
+2021-02-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullptr crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=221393
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/font-size-delta-crash-expected.txt: Added.
+        * editing/execCommand/font-size-delta-crash.html: Added.
+
 2021-02-24  Frederic Wang  <fwang@igalia.com>
 
         Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
