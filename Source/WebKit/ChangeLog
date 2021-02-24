@@ -1,5 +1,18 @@
 2021-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r267763): [GTK][WPE] user preferred languages are sent to the wrong network process
+        https://bugs.webkit.org/show_bug.cgi?id=222347
+
+        Reviewed by Adrian Perez de Castro.
+
+        WebProcessPool::languageChanged() is creating the default website data store, so languages are sent to the newly
+        created network process. We should send them to the existing network processes instead.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::languageChanged):
+
+2021-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK build with neewer wpe and wpe-fdo
 
         We need to explicitly include wpe.h now.
