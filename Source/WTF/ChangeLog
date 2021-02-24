@@ -1,3 +1,7 @@
+2021-02-23  Russell Epstein  <repstein@apple.com>
+
+        Revert r273165. rdar://problem/74610383
+
 2021-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Re-enable Paint Timing
