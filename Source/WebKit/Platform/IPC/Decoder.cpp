@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
+#include "Logging.h"
 #include "MessageFlags.h"
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
@@ -40,20 +41,39 @@ namespace IPC {
 
 static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
 {
-    auto bufferCopy = static_cast<uint8_t*>(fastMalloc(bufferSize));
-    memcpy(bufferCopy, buffer, bufferSize);
+    uint8_t* bufferCopy;
+    if (!tryFastMalloc(bufferSize).getValue(bufferCopy)) {
+        RELEASE_LOG_FAULT(IPC, "Decoder::copyBuffer: tryFastMalloc(%lu) failed", bufferSize);
+        return nullptr;
+    }
 
+    memcpy(bufferCopy, buffer, bufferSize);
     return bufferCopy;
 }
 
 std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
 {
-    auto decoder = makeUnique<Decoder>(buffer, bufferSize, bufferDeallocator, WTFMove(attachments));
+    ASSERT(buffer);
+    if (UNLIKELY(!buffer)) {
+        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
+        return nullptr;
+    }
+
+    const uint8_t* bufferCopy;
+    if (!bufferDeallocator) {
+        bufferCopy = copyBuffer(buffer, bufferSize);
+        ASSERT(bufferCopy);
+        if (UNLIKELY(!bufferCopy))
+            return nullptr;
+    } else
+        bufferCopy = buffer;
+
+    auto decoder = std::unique_ptr<Decoder>(new Decoder(bufferCopy, bufferSize, bufferDeallocator, WTFMove(attachments)));
     return decoder->isValid() ? WTFMove(decoder) : nullptr;
 }
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
-    : m_buffer { bufferDeallocator ? buffer : copyBuffer(buffer, bufferSize) }
+    : m_buffer { buffer }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + bufferSize }
     , m_bufferDeallocator { bufferDeallocator }

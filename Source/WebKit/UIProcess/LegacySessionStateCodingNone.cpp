@@ -48,22 +48,24 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
-    IPC::Decoder decoder(data, dataSize, nullptr, Vector<IPC::Attachment>());
+    auto decoder = IPC::Decoder::create(data, dataSize, nullptr, Vector<IPC::Attachment>());
+    if (!decoder)
+        return false;
 
     Optional<BackForwardListState> backForwardListState;
-    decoder >> backForwardListState;
+    *decoder >> backForwardListState;
     if (!backForwardListState)
         return false;
     sessionState.backForwardListState = WTFMove(*backForwardListState);
 
     Optional<uint64_t> renderTreeSize;
-    decoder >> renderTreeSize;
+    *decoder >> renderTreeSize;
     if (!renderTreeSize)
         return false;
     sessionState.renderTreeSize = *renderTreeSize;
 
     Optional<URL> provisionalURL;
-    decoder >> provisionalURL;
+    *decoder >> provisionalURL;
     if (!provisionalURL)
         return false;
     sessionState.provisionalURL = WTFMove(*provisionalURL);

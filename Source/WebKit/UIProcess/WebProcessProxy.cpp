@@ -396,7 +396,11 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
     if (message.encoder->messageName() == IPC::MessageName::WebPage_LoadRequestWaitingForProcessLaunch) {
         auto buffer = message.encoder->buffer();
         auto bufferSize = message.encoder->bufferSize();
-        std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
+        auto decoder = IPC::Decoder::create(buffer, bufferSize, nullptr, { });
+        ASSERT(decoder);
+        if (!decoder)
+            return false;
+
         LoadParameters loadParameters;
         URL resourceDirectoryURL;
         WebPageProxyIdentifier pageID;

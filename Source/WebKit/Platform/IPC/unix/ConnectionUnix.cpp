@@ -223,7 +223,10 @@ bool Connection::processMessage()
     if (messageInfo.isBodyOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    auto decoder = makeUnique<Decoder>(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
+    auto decoder = Decoder::create(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
+    ASSERT(decoder);
+    if (!decoder)
+        return false;
 
     processIncomingMessage(WTFMove(decoder));
 
