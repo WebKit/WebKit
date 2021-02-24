@@ -1199,6 +1199,8 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     bool useClonesOfEnclosingBlock = block
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
+        // Avoid using table as paragraphs due to its special treatment in Position::upstream/downstream.
+        && !block->hasTagName(tableTag)
         && block != editableRootForPosition(start);
     bool useLineBreak = enclosingTextFormControl(start);
 
