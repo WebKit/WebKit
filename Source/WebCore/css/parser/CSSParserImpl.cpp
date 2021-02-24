@@ -773,6 +773,40 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
     }
 }
 
+bool CSSParserImpl::isPropertyRuntimeDisabled(CSSPropertyID property) const
+{
+    switch (property) {
+    case CSSPropertyAspectRatio:
+        return !m_context.aspectRatioEnabled;
+    case CSSPropertyAppleColorFilter:
+        return !m_context.colorFilterEnabled;
+    case CSSPropertyTranslate:
+    case CSSPropertyRotate:
+    case CSSPropertyScale:
+        return !m_context.individualTransformPropertiesEnabled;
+    case CSSPropertyOverscrollBehavior:
+    case CSSPropertyOverscrollBehaviorX:
+    case CSSPropertyOverscrollBehaviorY:
+        return !m_context.overscrollBehaviorEnabled;
+    case CSSPropertyScrollBehavior:
+        return !m_context.scrollBehaviorEnabled;
+#if ENABLE(TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+#if !PLATFORM(IOS_FAMILY)
+        return !m_context.textAutosizingEnabled;
+#endif
+        return false;
+#endif // ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    case CSSPropertyWebkitOverflowScrolling:
+        return !m_context.legacyOverflowScrollingTouchEnabled;
+#endif
+    default:
+        return false;
+    }
+    return false;
+}
+
 void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType)
 {
     CSSParserTokenRange rangeCopy = range; // For inspector callbacks
@@ -782,6 +816,9 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
     CSSPropertyID propertyID = token.parseAsCSSPropertyID();
     if (range.consume().type() != ColonToken)
         return; // Parse error
+
+    if (isPropertyRuntimeDisabled(propertyID))
+        propertyID = CSSPropertyInvalid;
 
     bool important = false;
     const CSSParserToken* declarationValueEnd = range.end();

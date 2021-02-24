@@ -1,3 +1,18 @@
+2021-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Runtime-disabled CSS features still appear enabled via CSS.supports()
+        https://bugs.webkit.org/show_bug.cgi?id=222280
+        rdar://74595641
+
+        Reviewed by Sam Weinig.
+
+        * css3/color-filters/color-filter-exposed-if-disabled-expected.txt: Added. Fails tracked in webkit.org/b/217626
+        * css3/color-filters/color-filter-exposed-if-disabled.html: Added.
+        * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+        * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+        * fast/css/scroll-behavior-exposed-if-disabled-expected.txt: Added.
+        * fast/css/scroll-behavior-exposed-if-disabled.html: Added.
+
 2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement WebXR getViewport
