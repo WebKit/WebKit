@@ -572,7 +572,7 @@ Files=40, Tests=630,  4 wallclock secs ( 0.16 usr  0.09 sys +  2.78 cusr  0.64 c
 Result: FAIL
 Failed 1/40 test programs. 10/630 subtests failed.'''),
         )
-        self.expectOutcome(result=FAILURE, state_string='webkitperl-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='10 perl tests failed')
         return self.runStep()
 
 
@@ -644,7 +644,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='2 python tests failed')
         return self.runStep()
 
     def test_errors(self):
@@ -663,7 +663,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='2 python tests failed')
         return self.runStep()
 
     def test_lot_of_failures(self):
@@ -682,7 +682,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='webkitpy-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='32 python tests failed')
         return self.runStep()
 
 
@@ -734,7 +734,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='2 lldb tests failed')
         return self.runStep()
 
     def test_errors(self):
@@ -749,7 +749,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='2 lldb tests failed')
         return self.runStep()
 
     def test_lot_of_failures(self):
@@ -764,7 +764,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
         )
-        self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
+        self.expectOutcome(result=FAILURE, state_string='32 lldb tests failed')
         return self.runStep()
 
 

@@ -1,3 +1,19 @@
+2021-02-24  Aakash Jain  <aakash_jain@apple.com>
+
+        Add unit-tests for various step in build.webkit.org (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=222075
+        <rdar://problem/74691345>
+
+        Unreviewed follow-up fix for unit-tests.
+
+        * CISupport/build-webkit-org/steps_unittest.py:
+        (TestRunWebKitPyTests.test_failure):
+        (TestRunWebKitPyTests.test_errors):
+        (TestRunWebKitPyTests.test_lot_of_failures):
+        (TestRunLLDBWebKitTests.test_failure):
+        (TestRunLLDBWebKitTests.test_errors):
+        (TestRunLLDBWebKitTests.test_lot_of_failures):
+
 2021-02-24  Keith Miller  <keith_miller@apple.com>
 
         Cloop JSC test driver command shouldn't pass build flags
