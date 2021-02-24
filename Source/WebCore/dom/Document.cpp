@@ -760,8 +760,7 @@ Document::~Document()
     extensionStyleSheets().detachFromDocument();
 
     styleScope().clearResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
-    m_fontSelector->clearDocument();
-    m_fontSelector->unregisterForInvalidationCallbacks(*this);
+    m_fontSelector->stopLoadingAndClearFonts();
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
@@ -809,8 +808,7 @@ void Document::removedLastRef()
 #endif
         m_associatedFormControls.clear();
 
-        m_fontSelector->clearDocument();
-        m_fontSelector->unregisterForInvalidationCallbacks(*this);
+        m_fontSelector->stopLoadingAndClearFonts();
 
         detachParser();
 

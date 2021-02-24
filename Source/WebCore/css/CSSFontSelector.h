@@ -63,7 +63,7 @@ public:
     size_t fallbackFontCount() final;
     RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) final;
 
-    void clearDocument();
+    void stopLoadingAndClearFonts();
     void emptyCaches();
     void buildStarted();
     void buildCompleted();
@@ -139,6 +139,7 @@ private:
     unsigned m_computingRootStyleFontCount { 0 };
     bool m_creatingFont { false };
     bool m_buildIsUnderway { false };
+    bool m_isStopped { false };
 };
 
 } // namespace WebCore

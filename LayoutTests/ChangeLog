@@ -1,3 +1,13 @@
+2021-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Nullptr crash in Document::contextDocument() inside FontFaceSet::FontFaceSet
+        https://bugs.webkit.org/show_bug.cgi?id=221385
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/fontloader-on-detached-document-crash-expected.txt: Added.
+        * fast/css/fontloader-on-detached-document-crash.html: Added.
+
 2021-02-24  Rob Buis  <rbuis@igalia.com>
 
         Null check ArrayBufferView RefPtr

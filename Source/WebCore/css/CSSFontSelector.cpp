@@ -82,7 +82,7 @@ CSSFontSelector::~CSSFontSelector()
 {
     LOG(Fonts, "CSSFontSelector %p dtor", this);
 
-    clearDocument();
+    stopLoadingAndClearFonts();
     FontCache::singleton().removeClient(*this);
 }
 
@@ -337,14 +337,15 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     return FontRanges { WTFMove(font) };
 }
 
-void CSSFontSelector::clearDocument()
+void CSSFontSelector::stopLoadingAndClearFonts()
 {
-    if (!m_document) {
+    if (m_isStopped) {
         ASSERT(!m_fontLoadingTimer.isActive());
         ASSERT(m_fontsToBeginLoading.isEmpty());
         return;
     }
 
+    m_isStopped = true;
     m_fontLoadingTimer.stop();
 
     CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
@@ -354,21 +355,19 @@ void CSSFontSelector::clearDocument()
     }
     m_fontsToBeginLoading.clear();
 
-    m_document = nullptr;
-
     m_cssFontFaceSet->clear();
     m_clients.clear();
 }
 
 void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
 {
-    if (!m_document)
+    if (m_isStopped)
         return;
 
     m_fontsToBeginLoading.append(&font);
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
-    // decrementRequestCount() in fontLoadingTimerFired() and in clearDocument().
+    // decrementRequestCount() in fontLoadingTimerFired() and in stopLoadingAndClearFonts().
     m_document->cachedResourceLoader().incrementRequestCount(font);
 
     if (!m_isFontLoadingSuspended && !m_fontLoadingTimer.isActive())
@@ -417,7 +416,7 @@ void CSSFontSelector::fontLoadingTimerFired()
 
 size_t CSSFontSelector::fallbackFontCount()
 {
-    if (!m_document)
+    if (m_isStopped)
         return 0;
 
     return m_document->settings().fontFallbackPrefersPictographs() ? 1 : 0;
@@ -427,7 +426,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
 {
     ASSERT_UNUSED(index, !index);
 
-    if (!m_document)
+    if (m_isStopped)
         return nullptr;
 
     if (!m_document->settings().fontFallbackPrefersPictographs())
