@@ -1,3 +1,13 @@
+2021-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LegacyLineLayout] Inline level box should not stick out at the bottom of its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=222334
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+
 2021-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Runtime-disabled CSS features still appear enabled via CSS.supports()
