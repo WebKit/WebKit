@@ -1,3 +1,12 @@
+2021-02-24  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ] inspector/dom/attributeModified.html is flakey timing out
+        https://bugs.webkit.org/show_bug.cgi?id=222365
+
+        Unreviewed test gardenign.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-02-24  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] In process DisplayList display should have a higher precedence than GPUP display
