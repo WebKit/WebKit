@@ -4605,6 +4605,11 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         frame().loader().didReachVisuallyNonEmptyState();
 }
 
+bool FrameView::hasContenfulDescendants() const
+{
+    return m_visuallyNonEmptyCharacterCount || m_visuallyNonEmptyPixelCount;
+}
+
 bool FrameView::isViewForDocumentInFrame() const
 {
     RenderView* renderView = this->renderView();
