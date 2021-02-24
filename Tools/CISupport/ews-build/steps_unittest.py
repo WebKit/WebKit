@@ -38,6 +38,12 @@ from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
+if sys.version_info > (3, 0):
+    from buildbot.test.util.misc import TestReactorMixin
+else:
+    TestReactorMixin = type('TestReactorMixin', (object,), {})
+    TestReactorMixin.setUpTestReactor = lambda self: None
+
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
@@ -95,10 +101,11 @@ class ExpectMasterShellCommand(object):
         return 'ExpectMasterShellCommand({0})'.format(repr(self.args))
 
 
-class BuildStepMixinAdditions(BuildStepMixin):
+class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
     def setUpBuildStep(self):
         self.patch(reactor, 'spawnProcess', lambda *args, **kwargs: self._checkSpawnProcess(*args, **kwargs))
         self._expected_local_commands = []
+        self.setUpTestReactor()
 
         self._temp_directory = tempfile.mkdtemp()
         os.chdir(self._temp_directory)

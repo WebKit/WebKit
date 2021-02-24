@@ -1,3 +1,14 @@
+2021-02-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Make unit-test compatible with latest buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=222359
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps_unittest.py:
+        (BuildStepMixinAdditions):
+        (BuildStepMixinAdditions.setUpBuildStep): Invoke setUpTestReactor.
+
 2021-02-24  Don Olmstead  <don.olmstead@sony.com>
 
         Only import Python flatpak module on Linux
