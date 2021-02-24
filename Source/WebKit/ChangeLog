@@ -1,3 +1,15 @@
+2021-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow additional syscall support in the sandbox 
+        https://bugs.webkit.org/show_bug.cgi?id=222335
+        <rdar://74473824>
+
+        Reviewed by Per Arne Vollan.
+
+        Expand the WebContent process sandbox to allow SYS_open_dprotected_np
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] The whole content is unnecessarily repainted by animations in non-AC mode pages

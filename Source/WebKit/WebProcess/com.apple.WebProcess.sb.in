@@ -1691,6 +1691,7 @@
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
         (syscall-number SYS_gethostuuid)
         (syscall-number SYS_setattrlist) ;; rdar://problem/74162777
+        (syscall-number SYS_open_dprotected_np) ;; <rdar://problem/74473824>
     )
 
     (if (equal? (param "CPU") "arm64")
