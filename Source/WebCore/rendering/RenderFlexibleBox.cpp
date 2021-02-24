@@ -863,10 +863,8 @@ void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
 }
 
     
-LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren)
+LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding)
 {
-    child.clearOverridingContentSize();
-    
     Length flexBasis = flexBasisForChild(child);
     if (childMainSizeIsDefinite(child, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis).value());
@@ -876,18 +874,11 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
         return adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
     }
 
-    // The flex basis is indefinite (=auto), so we need to compute the actual
-    // width of the child. For the logical width axis we just use the preferred
-    // width; for the height we need to lay out the child.
+    // The flex basis is indefinite (=auto), so we need to compute the actual width of the child.
     LayoutUnit mainAxisExtent;
     if (!mainAxisIsChildInlineAxis(child)) {
-        updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
-        if (child.needsLayout() || relayoutChildren || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
-            if (!child.needsLayout())
-                child.setChildNeedsLayout(MarkOnlyThis);
-            child.layoutIfNeeded();
-            cacheChildMainSize(child);
-        }
+        ASSERT(!child.needsLayout());
+        ASSERT(m_intrinsicSizeAlongMainAxis.contains(&child));
         mainAxisExtent = m_intrinsicSizeAlongMainAxis.get(&child);
     } else {
         // We don't need to add scrollbarLogicalWidth here because the preferred
@@ -1236,6 +1227,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(co
 
 FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChildren)
 {
+    child.clearOverridingContentSize();
     if (childHasIntrinsicMainAxisSize(child)) {
         // If this condition is true, then computeMainAxisExtentForChild will call
         // child.intrinsicContentLogicalHeight() and child.scrollbarLogicalHeight(),
@@ -1254,13 +1246,12 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
             child.setChildNeedsLayout(MarkOnlyThis);
             child.layoutIfNeeded();
             cacheChildMainSize(child);
-            relayoutChildren = false;
             child.clearOverridingContainingBlockContentSize();
         }
     }
     
     LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
-    LayoutUnit childInnerFlexBaseSize = computeInnerFlexBaseSizeForChild(child, borderAndPadding, relayoutChildren);
+    LayoutUnit childInnerFlexBaseSize = computeInnerFlexBaseSizeForChild(child, borderAndPadding);
     LayoutUnit childMinMaxAppliedMainAxisExtent = adjustChildSizeForMinAndMax(child, childInnerFlexBaseSize);
     LayoutUnit margin = isHorizontalFlow() ? child.horizontalMarginExtent() : child.verticalMarginExtent();
     return FlexItem(child, childInnerFlexBaseSize, childMinMaxAppliedMainAxisExtent, borderAndPadding, margin);

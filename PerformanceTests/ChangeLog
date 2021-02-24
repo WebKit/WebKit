@@ -1,5 +1,57 @@
 2021-02-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273264. rdar://problem/74622873
+
+    REGRESSION (r266695): twitch.tv: when in fullscreen, WebKit continually does 350ms layouts. Firefox and Chrome do not
+    https://bugs.webkit.org/show_bug.cgi?id=222202
+    <rdar://problem/74537782>
+    
+    Reviewed by Simon Fraser.
+    
+    PerformanceTests:
+    
+    New performance test for nested column flexboxes with percentage heights.
+    
+    * Layout/nested-column-flexboxes-relative-height.html: Added.
+    
+    Source/WebCore:
+    
+    The problem was that we were doing the initial layout for the children of the flex container twice in those cases where
+    the child inline axis was not the main axis (for example with column flex containers in horizontal writing modes).
+    Refactored the code (specially the way we clear overriding sizes) so that we only do it once. This saves tons of layouts
+    in pages with nested column flexboxes with relative heights.
+    
+    No new tests as there is no change in functionality, we're removing duplicate extra layouts. We're however adding a new
+    performance test for column flexboxes with percentage heights. With this patch we go from 3.5 layout/s to 145 layout/s
+    which is ~4000% better.
+    
+    Inspired by Blink's crrev.com/c/1614058 by <cbiesinger@chromium.org>.
+    
+    * rendering/RenderFlexibleBox.cpp:
+    (WebCore::RenderFlexibleBox::computeInnerFlexBaseSizeForChild): Do not unconditionally clear overriding sizes. Also removed
+    relayoutChildren which is now unused. Do not layout the item, that should have been done in
+    computeInnerFlexBaseSizeForChild() before. Added ASSERTs to verify that child's intrinsic main size was cached as
+    a consequence of the previous layout.
+    (WebCore::RenderFlexibleBox::constructFlexItem): Do not pass relayoutChildren to computeInnerFlexBaseSizeForChild. Also no
+    need to update it after laying out the child.
+    * rendering/RenderFlexibleBox.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273264 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-22  Sergio Villar Senin  <svillar@igalia.com>
+
+            REGRESSION (r266695): twitch.tv: when in fullscreen, WebKit continually does 350ms layouts. Firefox and Chrome do not
+            https://bugs.webkit.org/show_bug.cgi?id=222202
+            <rdar://problem/74537782>
+
+            Reviewed by Simon Fraser.
+
+            New performance test for nested column flexboxes with percentage heights.
+
+            * Layout/nested-column-flexboxes-relative-height.html: Added.
+
+2021-02-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273122. rdar://problem/74623473
 
     MotionMark scores are super sensitive to a single long frame
