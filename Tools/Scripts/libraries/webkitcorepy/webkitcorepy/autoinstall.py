@@ -312,11 +312,23 @@ class Package(object):
             raise
 
 
+def _default_pypi_index():
+    pypi_url = re.compile(r'\Aindex\S* = https?://(?P<host>\S+)/?.*')
+    pip_config = '/Library/Application Support/pip/pip.conf'
+    if os.path.isfile(pip_config):
+        with open(pip_config, 'r') as config:
+            for line in config.readlines():
+                match = pypi_url.match(line.lstrip())
+                if match:
+                    return match.group('host')
+    return 'pypi.org'
+
+
 class AutoInstall(object):
     DISABLE_ENV_VAR = 'DISABLE_WEBKITCOREPY_AUTOINSTALLER'
 
     directory = None
-    index = 'pypi.org'
+    index = _default_pypi_index()
     timeout = 30
     version = Version(sys.version_info[0], sys.version_info[1], sys.version_info[2])
     packages = defaultdict(list)
