@@ -1,3 +1,14 @@
+2021-02-23  Sam Weinig  <weinig@apple.com>
+
+        Fix model test differences between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=222323
+
+        Reviewed by Ryosuke Niwa.
+
+        * model-element/model-element-renderer-no-source.html:
+        * model-element/model-element-renderer.html:
+        Try to fix these on iOS by removing the doctype.
+
 2021-02-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix model test differences between platforms
