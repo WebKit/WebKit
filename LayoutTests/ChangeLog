@@ -1,5 +1,43 @@
 2021-02-24  Chris Dumez  <cdumez@apple.com>
 
+        Device motion / orientation events not working in third-party iframes despite Feature-Policy allowing it
+        https://bugs.webkit.org/show_bug.cgi?id=221399
+        <rdar://problem/74229227>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/device-orientation/device-motion-request-permission-denied-expected.txt:
+        * fast/device-orientation/device-motion-request-permission-granted-expected.txt:
+        * fast/device-orientation/device-motion-request-permission-user-gesture-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-denied-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-granted-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-user-gesture-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-user-gesture.html:
+        * http/tests/device-orientation/device-motion-allowed-in-first-party-only-expected.txt: Added.
+        * http/tests/device-orientation/device-motion-allowed-in-first-party-only.html: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-allowed-by-feature-policy-expected.txt: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-allowed-by-feature-policy.html: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-denied-by-insufficient-feature-policy-expected.txt: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-denied-by-insufficient-feature-policy.html: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-denied-expected.txt: Added.
+        * http/tests/device-orientation/device-motion-third-party-iframe-denied.html: Added.
+        * http/tests/device-orientation/device-orientation-allowed-in-first-party-only-expected.txt: Added.
+        * http/tests/device-orientation/device-orientation-allowed-in-first-party-only.html: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-allowed-by-feature-policy-expected.txt: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-allowed-by-feature-policy.html: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-denied-by-insufficient-feature-policy-expected.txt: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-denied-by-insufficient-feature-policy.html: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-denied-expected.txt: Added.
+        * http/tests/device-orientation/device-orientation-third-party-iframe-denied.html: Added.
+        * http/tests/device-orientation/resources/request-motion-events.html: Added.
+        * http/tests/device-orientation/resources/request-orientation-events.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
+2021-02-24  Chris Dumez  <cdumez@apple.com>
+
         Regression(r268700) postMessage changes prototype of basic types
         https://bugs.webkit.org/show_bug.cgi?id=222228
         <rdar://problem/74612853>

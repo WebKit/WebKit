@@ -912,7 +912,6 @@ dom/DeviceOrientationAndMotionAccessController.cpp
 dom/DeviceOrientationController.cpp
 dom/DeviceOrientationData.cpp
 dom/DeviceOrientationEvent.cpp
-dom/DeviceOrientationOrMotionEvent.cpp
 dom/Document.cpp
 dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp

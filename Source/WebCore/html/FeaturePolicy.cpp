@@ -52,6 +52,14 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "SyncXHR";
     case FeaturePolicy::Type::Fullscreen:
         return "Fullscreen";
+#if ENABLE(DEVICE_ORIENTATION)
+    case FeaturePolicy::Type::Gyroscope:
+        return "Gyroscope";
+    case FeaturePolicy::Type::Accelerometer:
+        return "Accelerometer";
+    case FeaturePolicy::Type::Magnetometer:
+        return "Magnetometer";
+#endif
 #if ENABLE(WEBXR)
     case FeaturePolicy::Type::XRSpatialTracking:
         return "XRSpatialTracking";
@@ -161,6 +169,11 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isDisplayCaptureInitialized = false;
     bool isSyncXHRInitialized = false;
     bool isFullscreenInitialized = false;
+#if ENABLE(DEVICE_ORIENTATION)
+    bool isGyroscopeInitialized = false;
+    bool isAccelerometerInitialized = false;
+    bool isMagnetometerInitialized = false;
+#endif
 #if ENABLE(WEBXR)
     bool isXRSpatialTrackingInitialized = false;
 #endif
@@ -196,6 +209,23 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
             updateList(document, policy.m_fullscreenRule, item.substring(11));
             continue;
         }
+#if ENABLE(DEVICE_ORIENTATION)
+        if (item.startsWith("gyroscope")) {
+            isGyroscopeInitialized = true;
+            updateList(document, policy.m_gyroscopeRule, item.substring(10));
+            continue;
+        }
+        if (item.startsWith("accelerometer")) {
+            isAccelerometerInitialized = true;
+            updateList(document, policy.m_accelerometerRule, item.substring(14));
+            continue;
+        }
+        if (item.startsWith("magnetometer")) {
+            isMagnetometerInitialized = true;
+            updateList(document, policy.m_magnetometerRule, item.substring(13));
+            continue;
+        }
+#endif
 #if ENABLE(WEBXR)
         if (item.startsWith("xr-spatial-tracking")) {
             isXRSpatialTrackingInitialized = true;
@@ -214,6 +244,14 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_speakerSelectionRule.allowedList.add(document.securityOrigin().data());
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
+#if ENABLE(DEVICE_ORIENTATION)
+    if (!isGyroscopeInitialized)
+        policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());
+    if (!isAccelerometerInitialized)
+        policy.m_accelerometerRule.allowedList.add(document.securityOrigin().data());
+    if (!isMagnetometerInitialized)
+        policy.m_magnetometerRule.allowedList.add(document.securityOrigin().data());
+#endif
 #if ENABLE(WEBXR)
     if (!isXRSpatialTrackingInitialized)
         policy.m_xrSpatialTrackingRule.allowedList.add(document.securityOrigin().data());
@@ -255,6 +293,14 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:
         return isAllowedByFeaturePolicy(m_fullscreenRule, origin);
+#if ENABLE(DEVICE_ORIENTATION)
+    case Type::Gyroscope:
+        return isAllowedByFeaturePolicy(m_gyroscopeRule, origin);
+    case Type::Accelerometer:
+        return isAllowedByFeaturePolicy(m_accelerometerRule, origin);
+    case Type::Magnetometer:
+        return isAllowedByFeaturePolicy(m_magnetometerRule, origin);
+#endif
 #if ENABLE(WEBXR)
     case Type::XRSpatialTracking:
         return isAllowedByFeaturePolicy(m_xrSpatialTrackingRule, origin);

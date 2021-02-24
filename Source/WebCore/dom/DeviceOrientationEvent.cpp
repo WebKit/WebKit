@@ -26,7 +26,9 @@
 #include "config.h"
 #include "DeviceOrientationEvent.h"
 
+#include "DeviceOrientationAndMotionAccessController.h"
 #include "DeviceOrientationData.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -111,5 +113,27 @@ EventInterface DeviceOrientationEvent::eventInterface() const
     return EventInterfaceType;
 #endif
 }
+
+#if ENABLE(DEVICE_ORIENTATION)
+void DeviceOrientationEvent::requestPermission(Document& document, PermissionPromise&& promise)
+{
+    auto* window = document.domWindow();
+    auto* page = document.page();
+    if (!window || !page)
+        return promise.reject(Exception { InvalidStateError, "No browsing context"_s });
+
+    String errorMessage;
+    if (!window->isAllowedToUseDeviceOrientation(errorMessage)) {
+        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: ", errorMessage, "."));
+        return promise.resolve(PermissionState::Denied);
+    }
+
+    document.deviceOrientationAndMotionAccessController().shouldAllowAccess(document, [promise = WTFMove(promise)](PermissionState permissionState) mutable {
+        if (permissionState == PermissionState::Prompt)
+            return promise.reject(Exception { NotAllowedError, "Requesting device orientation access requires a user gesture to prompt"_s });
+        promise.resolve(permissionState);
+    });
+}
+#endif
 
 } // namespace WebCore

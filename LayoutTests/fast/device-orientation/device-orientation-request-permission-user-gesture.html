@@ -9,6 +9,7 @@ jsTestIsAsync = true;
 
 DeviceOrientationEvent.requestPermission().then((result) => {
     testFailed("requestPermission promise was not rejected");
+    finishJSTest();
 }, (_e) => {
     e = _e;
     console.log(e);

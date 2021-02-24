@@ -25,14 +25,16 @@
 
 #pragma once
 
-#include "DeviceOrientationOrMotionEvent.h"
+#include "DeviceOrientationOrMotionPermissionState.h"
 #include "Event.h"
+#include "IDLTypes.h"
 
 namespace WebCore {
 
 class DeviceMotionData;
+template<typename IDLType> class DOMPromiseDeferred;
 
-class DeviceMotionEvent final : public Event, public DeviceOrientationOrMotionEvent {
+class DeviceMotionEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(DeviceMotionEvent);
 public:
     virtual ~DeviceMotionEvent();
@@ -67,6 +69,12 @@ public:
     Optional<double> interval() const;
 
     void initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<Acceleration>&&, Optional<Acceleration>&&, Optional<RotationRate>&&, Optional<double>);
+
+#if ENABLE(DEVICE_ORIENTATION)
+    using PermissionState = DeviceOrientationOrMotionPermissionState;
+    using PermissionPromise = DOMPromiseDeferred<IDLEnumeration<PermissionState>>;
+    static void requestPermission(Document&, PermissionPromise&&);
+#endif
 
 private:
     DeviceMotionEvent();

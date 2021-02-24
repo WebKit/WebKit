@@ -39,39 +39,50 @@
 
 namespace WebCore {
 
-DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController(Document& document)
-    : m_document(document)
+DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController(Document& topDocument)
+    : m_topDocument(topDocument)
 {
-    ASSERT(&m_document.topDocument() == &m_document);
-
-    // Initial value is based on the per-site setting.
-    auto* frame = m_document.frame();
-    if (auto* documentLoader = frame ? frame->loader().documentLoader() : nullptr)
-        m_accessState = documentLoader->deviceOrientationAndMotionAccessState();
 }
 
-void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void(DeviceOrientationOrMotionPermissionState)>&& callback)
+DeviceOrientationOrMotionPermissionState DeviceOrientationAndMotionAccessController::accessState(const Document& document) const
 {
-    auto* page = m_document.page();
-    auto* frame = m_document.frame();
+    auto iterator = m_accessStatePerOrigin.find(document.securityOrigin().data());
+    if (iterator != m_accessStatePerOrigin.end())
+        return iterator->value;
+
+    // Check per-site setting.
+    if (&document == &m_topDocument || document.securityOrigin().isSameOriginAs(m_topDocument.securityOrigin())) {
+        auto* frame = m_topDocument.frame();
+        if (auto* documentLoader = frame ? frame->loader().documentLoader() : nullptr)
+            return documentLoader->deviceOrientationAndMotionAccessState();
+    }
+
+    return DeviceOrientationOrMotionPermissionState::Prompt;
+}
+
+void DeviceOrientationAndMotionAccessController::shouldAllowAccess(const Document& document, Function<void(DeviceOrientationOrMotionPermissionState)>&& callback)
+{
+    auto* page = document.page();
+    auto* frame = document.frame();
     if (!page || !frame)
         return callback(DeviceOrientationOrMotionPermissionState::Denied);
 
-    bool mayPrompt = UserGestureIndicator::processingUserGesture();
-    if (m_accessState != DeviceOrientationOrMotionPermissionState::Prompt)
-        return callback(m_accessState);
+    auto accessState = this->accessState(document);
+    if (accessState != DeviceOrientationOrMotionPermissionState::Prompt)
+        return callback(accessState);
 
-    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(*m_document.frame(), mayPrompt, [this, weakThis = makeWeakPtr(this), callback = WTFMove(callback)](DeviceOrientationOrMotionPermissionState permissionState) mutable {
+    bool mayPrompt = UserGestureIndicator::processingUserGesture(&document);
+    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(*document.frame(), mayPrompt, [this, weakThis = makeWeakPtr(this), securityOrigin = makeRef(document.securityOrigin()), callback = WTFMove(callback)](DeviceOrientationOrMotionPermissionState permissionState) mutable {
         if (!weakThis)
             return;
 
-        m_accessState = permissionState;
+        m_accessStatePerOrigin.set(securityOrigin->data(), permissionState);
         callback(permissionState);
 
         if (permissionState != DeviceOrientationOrMotionPermissionState::Granted)
             return;
 
-        for (auto* frame = m_document.frame(); frame && frame->window(); frame = frame->tree().traverseNext(m_document.frame())) {
+        for (auto* frame = m_topDocument.frame(); frame && frame->window(); frame = frame->tree().traverseNext()) {
             frame->window()->startListeningForDeviceOrientationIfNecessary();
             frame->window()->startListeningForDeviceMotionIfNecessary();
         }

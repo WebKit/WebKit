@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: No device orientation events will be fired, reason: Third-party iframes are not allowed access to device orientation unless explicitly allowed via Feature-Policy (gyroscope & accelerometer & magnetometer).
+CONSOLE MESSAGE: Call to requestPermission() failed, reason: Third-party iframes are not allowed access to device orientation unless explicitly allowed via Feature-Policy (gyroscope & accelerometer & magnetometer).
+Tests that third-party iframes cannot request access to device orientation events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.data is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
