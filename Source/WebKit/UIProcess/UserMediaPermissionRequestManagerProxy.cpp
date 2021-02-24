@@ -698,6 +698,10 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
     static const unsigned defaultMaximumMicrophoneCount = 1;
 
     RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([this, weakThis = makeWeakPtr(this), revealIdsAndLabels, completion = WTFMove(completion)] (auto&& devices) mutable {
+
+        if (!weakThis)
+            completion({ });
+
         unsigned cameraCount = 0;
         unsigned microphoneCount = 0;
 
@@ -722,10 +726,9 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
             filteredDevices.append(revealIdsAndLabels ? device : CaptureDevice({ }, device.type(), { }, { }));
         }
 
-        if (weakThis)
-            m_hasFilteredDeviceList = !revealIdsAndLabels;
-
+        weakThis->m_hasFilteredDeviceList = !revealIdsAndLabels;
         ALWAYS_LOG(LOGIDENTIFIER, filteredDevices.size(), " devices revealed");
+
         completion(WTFMove(filteredDevices));
     });
 }
