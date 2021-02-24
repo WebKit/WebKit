@@ -80,6 +80,7 @@ public:
     void simulateShutdownCompleted();
     void scheduleOnNextFrame(Function<void()>&&);
 private:
+    WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }

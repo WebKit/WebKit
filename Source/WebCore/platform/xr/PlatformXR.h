@@ -75,6 +75,7 @@ public:
     virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
+    bool supportsViewportScaling() const { return m_supportsViewportScaling; }
 
     virtual void initializeTrackingAndRendering(SessionMode) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
@@ -141,6 +142,7 @@ protected:
     EnabledFeaturesPerModeMap m_enabledFeaturesMap;
 
     bool m_supportsOrientationTracking { false };
+    bool m_supportsViewportScaling { false };
     WeakPtr<TrackingAndRenderingClient> m_trackingAndRenderingClient;
 };
 

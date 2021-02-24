@@ -34,4 +34,6 @@
     readonly attribute XREye eye;
     readonly attribute Float32Array projectionMatrix;
     [SameObject] readonly attribute WebXRRigidTransform transform;
+    readonly attribute double? recommendedViewportScale;
+    undefined requestViewportScale(double? scale);
 };

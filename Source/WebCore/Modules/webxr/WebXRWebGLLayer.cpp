@@ -37,7 +37,9 @@
 #include "WebGL2RenderingContext.h"
 #endif
 #include "WebGLRenderingContextBase.h"
+#include "WebXRFrame.h"
 #include "WebXRSession.h"
+#include "WebXRView.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
 #include <wtf/IsoMallocInlines.h>
@@ -97,6 +99,8 @@ WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingCont
     : WebXRLayer(session->scriptExecutionContext())
     , m_session(WTFMove(session))
     , m_context(WTFMove(context))
+    , m_leftViewportData({ WebXRViewport::create({ }) })
+    , m_rightViewportData({ WebXRViewport::create({ }) })
 {
     // 7. Initialize layer’s ignoreDepthValues as follows:
     //   7.1 If layerInit’s ignoreDepthValues value is false and the XR Compositor will make use of depth values,
@@ -144,9 +148,18 @@ WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingCont
         // 2. Initialize layer’s framebuffer to null.
         m_framebuffer.object = nullptr;
     }
+
+    auto canvasElement = canvas();
+    if (canvasElement)
+        canvasElement->addObserver(*this);
 }
 
-WebXRWebGLLayer::~WebXRWebGLLayer() = default;
+WebXRWebGLLayer::~WebXRWebGLLayer()
+{
+    auto canvasElement = canvas();
+    if (canvasElement)
+        canvasElement->removeObserver(*this);
+}
 
 bool WebXRWebGLLayer::antialias() const
 {
@@ -183,9 +196,39 @@ unsigned WebXRWebGLLayer::framebufferHeight() const
         });
 }
 
-RefPtr<WebXRViewport> WebXRWebGLLayer::getViewport(const WebXRView&)
+// https://immersive-web.github.io/webxr/#dom-xrwebgllayer-getviewport
+ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
 {
-    return { };
+    // 1. Let session be view’s session.
+    // 2. Let frame be session’s animation frame.
+    // 3. If session is not equal to layer’s session, throw an InvalidStateError and abort these steps.
+    if (&view.frame().session() != m_session.ptr())
+        return Exception { InvalidStateError };
+
+    // 4. If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
+    // 5. If view’s frame is not equal to frame, throw an InvalidStateError and abort these steps.
+    if (!view.frame().isActive() || !view.frame().isAnimationFrame())
+        return Exception { InvalidStateError }; 
+
+    auto& viewportData = view.eye() == XREye::Right ? m_rightViewportData : m_leftViewportData;
+
+    // 6. If the viewport modifiable flag is true and view’s requested viewport scale is not equal to current viewport scale:
+    //   6.1 Set current viewport scale to requested viewport scale.
+    //   6.2 Compute the scaled viewport.
+    if (view.isViewportModifiable() && view.requestedViewportScale() != viewportData.currentScale) {
+        viewportData.currentScale = view.requestedViewportScale();
+        m_viewportsDirty = true;
+    }
+
+    // 7. Set the view’s viewport modifiable flag to false.
+    view.setViewportModifiable(false);
+
+    if (m_viewportsDirty)
+        computeViewports();
+
+    // 8. Let viewport be the XRViewport from the list of viewport objects associated with view.
+    // 9. Return viewport.
+    return RefPtr<WebXRViewport>(viewportData.viewport.copyRef());
 }
 
 double WebXRWebGLLayer::getNativeFramebufferScaleFactor(const WebXRSession& session)
@@ -211,6 +254,38 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
             return nullptr;
         });
     });
+}
+
+// https://immersive-web.github.io/webxr/#xrview-obtain-a-scaled-viewport
+void WebXRWebGLLayer::computeViewports()
+{
+    auto roundDown = [](double value) -> int {
+        // Round down to integer value and ensure that the value is not zero.
+        return std::max(1, static_cast<int>(std::floor(value)));
+    };
+
+    auto width = framebufferWidth();
+    auto height = framebufferHeight();
+
+    if (m_session->mode() == XRSessionMode::ImmersiveVr) {
+        // Update left viewport
+        auto scale = m_leftViewportData.currentScale;
+        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, roundDown(width * 0.5 * scale), roundDown(height * scale)));
+
+        // Update right viewport
+        scale = m_rightViewportData.currentScale;
+        m_rightViewportData.viewport->updateViewport(IntRect(width * 0.5, 0, roundDown(width * 0.5 * scale), roundDown(height * scale)));
+    } else {
+        // We reuse m_leftViewport for XREye::None.
+        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, width, height));
+    }
+
+    m_viewportsDirty = false;
+}
+
+void WebXRWebGLLayer::canvasResized(CanvasBase&)
+{
+    m_viewportsDirty = true;
 }
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR getViewport
+        https://bugs.webkit.org/show_bug.cgi?id=222270
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR Viewport test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-02-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullptr crash in ApplyStyleCommand::applyRelativeFontStyleChange

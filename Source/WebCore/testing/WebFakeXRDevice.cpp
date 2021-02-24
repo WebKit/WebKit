@@ -65,6 +65,12 @@ void SimulatedXRDevice::simulateShutdownCompleted()
         m_trackingAndRenderingClient->sessionDidEnd();
 }
 
+WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMode)
+{
+    // Return at least a 2 pixel size so we can have different viewports for left and right eyes
+    return IntSize(2, 2);
+}
+
 void SimulatedXRDevice::shutDownTrackingAndRendering()
 {
     if (m_supportsShutdownNotification)

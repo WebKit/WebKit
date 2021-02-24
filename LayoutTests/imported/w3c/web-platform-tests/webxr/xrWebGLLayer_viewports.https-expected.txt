@@ -1,0 +1,4 @@
+
+PASS XRWebGLLayer reports a valid viewports for immersive sessions
+PASS XRWebGLLayer reports a valid viewports for inline sessions
+

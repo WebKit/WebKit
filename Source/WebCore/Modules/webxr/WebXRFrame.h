@@ -61,6 +61,7 @@ public:
 
     void setActive(bool active) { m_active = active; }
     bool isActive() const { return m_active; }
+    bool isAnimationFrame() const { return m_isAnimationFrame; }
 
     static TransformationMatrix matrixFromPose(const PlatformXR::Device::FrameData::Pose&);
 

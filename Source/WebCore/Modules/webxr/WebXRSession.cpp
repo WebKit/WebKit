@@ -306,6 +306,14 @@ IntSize WebXRSession::recommendedWebGLFramebufferResolution() const
     return m_device->recommendedResolution(m_mode);
 }
 
+// https://immersive-web.github.io/webxr/#view-viewport-modifiable
+bool WebXRSession::supportsViewportScaling() const
+{
+    ASSERT(m_device);
+    // Only immersive sessions support viewport scaling.
+    return m_mode == XRSessionMode::ImmersiveVr && m_device->supportsViewportScaling();
+}
+
 // https://immersive-web.github.io/webxr/#shut-down-the-session
 void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 {
