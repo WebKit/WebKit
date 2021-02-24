@@ -1,5 +1,14 @@
 2021-02-24  Said Abou-Hallawa  <said@apple.com>
 
+        [GPU Process] In process DisplayList display should have a higher precedence than GPUP display
+        https://bugs.webkit.org/show_bug.cgi?id=222345
+
+        Reviewed by Wenson Hsieh.
+
+        * gpu-process/TestExpectations:
+
+2021-02-24  Said Abou-Hallawa  <said@apple.com>
+
         [GPU Process] Implement ImageBufferShareableBitmapBackend::bytesPerRow()
         https://bugs.webkit.org/show_bug.cgi?id=222348
 

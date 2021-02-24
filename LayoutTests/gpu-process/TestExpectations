@@ -3,7 +3,6 @@ compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 
 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
-displaylists/canvas-display-list.html [ Failure ]
 
 # webkit.org/b/220389
 fast/canvas/canvas-arc-360-winding.html [ Failure ]

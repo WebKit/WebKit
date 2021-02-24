@@ -41,16 +41,18 @@ static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
 {
     RefPtr<ImageBuffer> imageBuffer;
-    if (hostWindow)
-        imageBuffer = hostWindow->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
-
-    if (!imageBuffer && shouldUseDisplayList == ShouldUseDisplayList::Yes) {
+    
+    // Give ShouldUseDisplayList a higher precedence since it is a debug option.
+    if (shouldUseDisplayList == ShouldUseDisplayList::Yes) {
         if (renderingMode == RenderingMode::Accelerated)
             imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
         
         if (!imageBuffer)
             imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
     }
+    
+    if (hostWindow && !imageBuffer)
+        imageBuffer = hostWindow->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
 
     if (!imageBuffer)
         imageBuffer = ImageBuffer::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, hostWindow);
