@@ -1,5 +1,35 @@
 2021-02-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273289. rdar://problem/74623623
+
+    UserMediaPermissionRequestManagerProxy may be released while computing capture device list
+    https://bugs.webkit.org/show_bug.cgi?id=222236
+    <rdar://74480265>
+    
+    Unreviewed, address post-review comment.
+    
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList): Use
+    captured `this`.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273289 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-22  Eric Carlson  <eric.carlson@apple.com>
+
+            UserMediaPermissionRequestManagerProxy may be released while computing capture device list
+            https://bugs.webkit.org/show_bug.cgi?id=222236
+            <rdar://74480265>
+
+            Unreviewed, address post-review comment.
+
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList): Use
+            captured `this`.
+
+2021-02-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273286. rdar://problem/74622950
 
     [Cocoa] Send sandbox extensions for Network Extension services in load parameters
