@@ -1,3 +1,7 @@
+2021-02-24  Russell Epstein  <repstein@apple.com>
+
+        Revert r272735. rdar://problem/74674837
+
 2021-02-24  Aakash Jain  <aakash_jain@apple.com>
 
         Add unit-tests for various step in build.webkit.org (follow-up fix)
