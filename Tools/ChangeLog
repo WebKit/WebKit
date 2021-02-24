@@ -1,3 +1,16 @@
+2021-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] PATH for rustc no longer set correctly
+        https://bugs.webkit.org/show_bug.cgi?id=222311
+
+        Reviewed by Žan Doberšek.
+
+        Pass PATH as flatpak --env option, setting is through bwrap no longer works.
+        
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap:
+
 2021-02-23  Jonathan Bedard  <jbedard@apple.com>
 
         [check-webkit-style] Fix Contributor sorting in Python 3

@@ -108,8 +108,6 @@ def main(args: list) -> int:
         if env.startswith("LC_") or env == "LANGUAGE":
             bwrap_args.extend(("--unsetenv", env))
 
-    bwrap_args.extend(("--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"))
-
     if environ.get("WEBKIT_FLATPAK_LD_PRELOAD"):
         os.environ["LD_PRELOAD"] = environ["WEBKIT_FLATPAK_LD_PRELOAD"]
 
