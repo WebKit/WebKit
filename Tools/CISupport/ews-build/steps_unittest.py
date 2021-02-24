@@ -2660,7 +2660,7 @@ class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestC
 
         yield self.runStep()
 
-        buf = ''.join(buf)
+        buf = b''.join(buf)
         self.assertEqual(len(buf), self.READ_LIMIT)
         with open(__file__, 'rb') as masterFile:
             data = masterFile.read(self.READ_LIMIT)

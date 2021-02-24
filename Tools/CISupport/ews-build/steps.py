@@ -803,7 +803,8 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         tools_dir_path = os.path.dirname(os.path.dirname(cwd))
         contributors_path = os.path.join(tools_dir_path, 'Scripts/webkitpy/common/config/contributors.json')
         try:
-            return json.load(open(contributors_path))
+            with open(contributors_path, 'rb') as contributors_json:
+                return json.load(contributors_json)
         except Exception as e:
             self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
             return {}
