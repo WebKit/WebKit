@@ -313,7 +313,7 @@ class Package(object):
 
 
 def _default_pypi_index():
-    pypi_url = re.compile(r'\Aindex\S* = https?://(?P<host>\S+)/?.*')
+    pypi_url = re.compile(r'\Aindex\S* = https?://(?P<host>\S+)/.*')
     pip_config = '/Library/Application Support/pip/pip.conf'
     if os.path.isfile(pip_config):
         with open(pip_config, 'r') as config:
