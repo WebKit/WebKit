@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_constants.h 363440 2020-07-23 01:35:24Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_constants.h 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #ifndef _NETINET_SCTP_CONSTANTS_H_
@@ -42,8 +42,8 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_constants.h 363440 2020-07-23 01:35:24
 
 #if defined(_WIN32) && defined(__Userspace__)
 extern void getwintimeofday(struct timeval *tv);
-#endif
 
+#endif
 /* IANA assigned port number for SCTP over UDP encapsulation */
 #define SCTP_OVER_UDP_TUNNELING_PORT 9899
 
@@ -92,12 +92,10 @@ extern void getwintimeofday(struct timeval *tv);
 /* #define SCTP_AUDITING_ENABLED 1 used for debug/auditing */
 #define SCTP_AUDIT_SIZE 256
 
-
 #define SCTP_KTRHEAD_NAME "sctp_iterator"
 #define SCTP_KTHREAD_PAGES 0
 
 #define SCTP_MCORE_NAME "sctp_core_worker"
-
 
 /* If you support Multi-VRF how big to
  * make the initial array of VRF's to.
@@ -268,7 +266,6 @@ extern void getwintimeofday(struct timeval *tv);
 
 #define SCTP_LOCK_UNKNOWN 2
 
-
 /* number of associations by default for zone allocation */
 #define SCTP_MAX_NUM_OF_ASOC	40000
 /* how many addresses per assoc remote and local */
@@ -393,7 +390,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define IS_SCTP_CONTROL(a) (((a)->chunk_type != SCTP_DATA) && ((a)->chunk_type != SCTP_IDATA))
 #define IS_SCTP_DATA(a) (((a)->chunk_type == SCTP_DATA) || ((a)->chunk_type == SCTP_IDATA))
 
-
 /* SCTP parameter types */
 /*************0x0000 series*************/
 #define SCTP_HEARTBEAT_INFO		0x0001
@@ -457,7 +453,6 @@ extern void getwintimeofday(struct timeval *tv);
 
 /* mask to get sticky */
 #define SCTP_STICKY_OPTIONS_MASK	0x0c
-
 
 /*
  * SCTP states for internal state machine
@@ -562,12 +557,11 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_IS_TIMER_TYPE_VALID(t)	(((t) > SCTP_TIMER_TYPE_NONE) && \
 					 ((t) < SCTP_TIMER_TYPE_LAST))
 
-
 #if defined(__APPLE__) && !defined(__Userspace__)
 /* Number of ticks to run the main timer at in msec */
 #define SCTP_MAIN_TIMER_DEFAULT		10
-#endif
 
+#endif
 /* max number of TSN's dup'd that I will hold */
 #define SCTP_MAX_DUP_TSNS	20
 
@@ -618,7 +612,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_RTO_LOWER_BOUND	(1000)	/* 1 sec is ms */
 #define SCTP_RTO_INITIAL	(3000)	/* 3 sec in ms */
 
-
 #define SCTP_INP_KILL_TIMEOUT 20	/* number of ms to retry kill of inpcb */
 #define SCTP_ASOC_KILL_TIMEOUT 10	/* number of ms to retry kill of inpcb */
 
@@ -628,7 +621,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_DEF_PATH_PF_THRESHOLD	SCTP_DEF_MAX_PATH_RTX
 
 #define SCTP_DEF_PMTU_RAISE_SEC	600	/* 10 min between raise attempts */
-
 
 /* How many streams I request initially by default */
 #define SCTP_OSTREAM_INITIAL 10
@@ -711,7 +703,6 @@ extern void getwintimeofday(struct timeval *tv);
 
 #define SCTP_NUMBER_OF_SECRETS	8	/* or 8 * 4 = 32 octets */
 #define SCTP_SECRET_SIZE	32	/* number of octets in a 256 bits */
-
 
 /*
  * SCTP upper layer notifications
@@ -835,7 +826,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_DONOT_SETSCOPE 0
 #define SCTP_DO_SETSCOPE 1
 
-
 /* This value determines the default for when
  * we try to add more on the send queue., if
  * there is room. This prevents us from cycling
@@ -918,7 +908,6 @@ extern void getwintimeofday(struct timeval *tv);
 					} \
                   } while (0)
 
-
 #define SCTP_RETRAN_DONE -1
 #define SCTP_RETRAN_EXIT -2
 
@@ -974,7 +963,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_SO_LOCKED		1
 #define SCTP_SO_NOT_LOCKED	0
 
-
 /*-
  * For address locks, do we hold the lock?
  */
@@ -1008,7 +996,6 @@ extern void getwintimeofday(struct timeval *tv);
 #define SCTP_GETPTIME_TIMEVAL(x) gettimeofday(x, NULL)
 #endif
 #endif
-
 #if defined(_KERNEL)
 #define SCTP_GETTIME_TIMEVAL(x) (getmicrouptime(x))
 #define SCTP_GETPTIME_TIMEVAL(x) (microuptime(x))

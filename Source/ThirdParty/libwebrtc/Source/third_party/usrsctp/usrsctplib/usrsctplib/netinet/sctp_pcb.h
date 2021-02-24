@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_pcb.h 362106 2020-06-12 16:31:13Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_pcb.h 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #ifndef _NETINET_SCTP_PCB_H_
@@ -146,7 +146,6 @@ struct sctp_tagblock {
 	LIST_ENTRY(sctp_tagblock) sctp_nxt_tagblock;
 	struct sctp_timewait vtag_block[SCTP_NUMBER_IN_VTAG_BLOCK];
 };
-
 
 struct sctp_epinfo {
 #if defined(__FreeBSD__) && !defined(__Userspace__)
@@ -276,7 +275,6 @@ struct sctp_epinfo {
 	struct calloutlist callqueue;
 #endif
 };
-
 
 struct sctp_base_info {
 	/* All static structures that
@@ -440,7 +438,6 @@ struct sctp_pcbtsn_rlog {
 };
 #define SCTP_READ_LOG_SIZE 135	/* we choose the number to make a pcb a page */
 
-
 struct sctp_inpcb {
 	/*-
 	 * put an inpcb in front of it all, kind of a waste but we need to
@@ -451,7 +448,6 @@ struct sctp_inpcb {
 		char align[(sizeof(struct inpcb) + SCTP_ALIGNM1) &
 		        ~SCTP_ALIGNM1];
 	}     ip_inp;
-
 #if defined(__APPLE__) && !defined(__Userspace__)
 	/* leave some space in case i386 inpcb is bigger than ppc */
 	uint8_t		padding[128];
@@ -461,7 +457,7 @@ struct sctp_inpcb {
 	struct sctp_readhead read_queue;
 
 	LIST_ENTRY(sctp_inpcb) sctp_list;	/* lists all endpoints */
-        /* hash of all endpoints for model */
+	/* hash of all endpoints for model */
 	LIST_ENTRY(sctp_inpcb) sctp_hash;
 	/* count of local addresses bound, 0 if bound all */
 	int laddr_count;
@@ -640,11 +636,8 @@ struct sctp_tcb {
 #endif
 };
 
-
 #if defined(__FreeBSD__) && !defined(__Userspace__)
-
 #include <netinet/sctp_lock_bsd.h>
-
 #elif defined(__APPLE__) && !defined(__Userspace__)
 /*
  * Apple MacOS X 10.4 "Tiger"
@@ -678,7 +671,7 @@ struct sctp_tcb {
  * the real definition.
  */
 #if defined(__FreeBSD__) && !defined(__Userspace__)
-VNET_DECLARE(struct sctp_base_info, system_base_info) ;
+VNET_DECLARE(struct sctp_base_info, system_base_info);
 #else
 extern struct sctp_base_info system_base_info;
 #endif
@@ -720,11 +713,8 @@ void sctp_update_ifn_mtu(uint32_t ifn_index, uint32_t mtu);
 void sctp_free_ifn(struct sctp_ifn *sctp_ifnp);
 void sctp_free_ifa(struct sctp_ifa *sctp_ifap);
 
-
 void sctp_del_addr_from_vrf(uint32_t vrfid, struct sockaddr *addr,
 			    uint32_t ifn_index, const char *if_name);
-
-
 
 struct sctp_nets *sctp_findnet(struct sctp_tcb *, struct sockaddr *);
 
@@ -805,7 +795,6 @@ sctp_aloc_assoc(struct sctp_inpcb *, struct sockaddr *,
 #endif
 
 int sctp_free_assoc(struct sctp_inpcb *, struct sctp_tcb *, int, int);
-
 
 void sctp_delete_from_timewait(uint32_t, uint16_t, uint16_t);
 

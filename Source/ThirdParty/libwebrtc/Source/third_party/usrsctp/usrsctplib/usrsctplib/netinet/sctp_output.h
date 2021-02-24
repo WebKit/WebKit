@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_output.h 362054 2020-06-11 13:34:09Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_output.h 366114 2020-09-24 12:26:06Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_OUTPUT_H_
@@ -44,38 +44,34 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_output.h 362054 2020-06-11 13:34:09Z t
 
 #if defined(_KERNEL) || defined(__Userspace__)
 
-
 struct mbuf *
 sctp_add_addresses_to_i_ia(struct sctp_inpcb *inp,
                            struct sctp_tcb *stcb,
-			   struct sctp_scoping *scope,
-			   struct mbuf *m_at,
-			   int cnt_inits_to,
-			   uint16_t *padding_len, uint16_t *chunk_len);
-
+                           struct sctp_scoping *scope,
+                           struct mbuf *m_at,
+                           int cnt_inits_to,
+                           uint16_t *padding_len, uint16_t *chunk_len);
 
 int sctp_is_addr_restricted(struct sctp_tcb *, struct sctp_ifa *);
-
 
 int
 sctp_is_address_in_scope(struct sctp_ifa *ifa,
                          struct sctp_scoping *scope,
-			 int do_update);
+                         int do_update);
 
 int
 sctp_is_addr_in_ep(struct sctp_inpcb *inp, struct sctp_ifa *ifa);
 
 struct sctp_ifa *
 sctp_source_address_selection(struct sctp_inpcb *inp,
-			      struct sctp_tcb *stcb,
-			      sctp_route_t *ro, struct sctp_nets *net,
-			      int non_asoc_addr_ok, uint32_t vrf_id);
+                              struct sctp_tcb *stcb,
+                              sctp_route_t *ro, struct sctp_nets *net,
+                              int non_asoc_addr_ok, uint32_t vrf_id);
 
 #if defined(__FreeBSD__) || defined(__APPLE__) || defined(__Userspace__)
-int
-sctp_v6src_match_nexthop(struct sockaddr_in6 *src6, sctp_route_t *ro);
-int
-sctp_v4src_match_nexthop(struct sctp_ifa *sifa, sctp_route_t *ro);
+int sctp_v6src_match_nexthop(struct sockaddr_in6 *src6, sctp_route_t *ro);
+
+int sctp_v4src_match_nexthop(struct sctp_ifa *sifa, sctp_route_t *ro);
 #endif
 
 void sctp_send_initiate(struct sctp_inpcb *, struct sctp_tcb *, int);
@@ -93,24 +89,23 @@ sctp_send_initiate_ack(struct sctp_inpcb *, struct sctp_tcb *,
 
 struct mbuf *
 sctp_arethere_unrecognized_parameters(struct mbuf *, int, int *,
-				      struct sctp_chunkhdr *, int *, int *);
+                                      struct sctp_chunkhdr *, int *, int *);
 void sctp_queue_op_err(struct sctp_tcb *, struct mbuf *);
 
 int
 sctp_send_cookie_echo(struct mbuf *, int, int, struct sctp_tcb *,
-    struct sctp_nets *);
+                      struct sctp_nets *);
 
 void sctp_send_cookie_ack(struct sctp_tcb *);
 
 void
 sctp_send_heartbeat_ack(struct sctp_tcb *, struct mbuf *, int, int,
-    struct sctp_nets *);
+                        struct sctp_nets *);
 
 void
 sctp_remove_from_wheel(struct sctp_tcb *stcb,
-					   struct sctp_association *asoc,
-					   struct sctp_stream_out *strq, int holds_lock);
-
+                       struct sctp_association *asoc,
+                       struct sctp_stream_out *strq, int holds_lock);
 
 void sctp_send_shutdown(struct sctp_tcb *, struct sctp_nets *);
 
@@ -139,10 +134,9 @@ void sctp_fix_ecn_echo(struct sctp_association *);
 
 void sctp_move_chunks_from_net(struct sctp_tcb *stcb, struct sctp_nets *net);
 
-
 #define SCTP_DATA_CHUNK_OVERHEAD(stcb) ((stcb)->asoc.idata_supported ? \
-					sizeof(struct sctp_idata_chunk) : \
-					sizeof(struct sctp_data_chunk))
+                                        sizeof(struct sctp_idata_chunk) : \
+                                        sizeof(struct sctp_data_chunk))
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 int
@@ -179,18 +173,15 @@ void
 sctp_send_packet_dropped(struct sctp_tcb *, struct sctp_nets *, struct mbuf *,
     int, int, int);
 
-
-
 void sctp_send_cwr(struct sctp_tcb *, struct sctp_nets *, uint32_t, uint8_t);
-
 
 void
 sctp_add_stream_reset_result(struct sctp_tmit_chunk *, uint32_t, uint32_t);
 
 void
 sctp_send_deferred_reset_response(struct sctp_tcb *,
-				  struct sctp_stream_reset_list *,
-				  int);
+                                  struct sctp_stream_reset_list *,
+                                  int);
 
 void
 sctp_add_stream_reset_result_tsn(struct sctp_tmit_chunk *,
@@ -210,12 +201,13 @@ sctp_send_abort(struct mbuf *, int, struct sockaddr *, struct sockaddr *,
 #endif
                 uint32_t, uint16_t);
 
-void sctp_send_operr_to(struct sockaddr *, struct sockaddr *,
-                        struct sctphdr *, uint32_t, struct mbuf *,
+void
+sctp_send_operr_to(struct sockaddr *, struct sockaddr *,
+                   struct sctphdr *, uint32_t, struct mbuf *,
 #if defined(__FreeBSD__) && !defined(__Userspace__)
-                        uint8_t, uint32_t, uint16_t,
+                   uint8_t, uint32_t, uint16_t,
 #endif
-                        uint32_t, uint16_t);
+                   uint32_t, uint16_t);
 
 #endif /* _KERNEL || __Userspace__ */
 

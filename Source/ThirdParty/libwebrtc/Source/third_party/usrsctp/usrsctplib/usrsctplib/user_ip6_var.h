@@ -39,7 +39,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 4. Neither the name of the University nor the names of its contributors
+ * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -87,12 +87,10 @@ struct ip6_hdr {
 #if defined(_WIN32)
 #define s6_addr16 u.Word
 #endif
-#if !defined(_WIN32)
-#if !defined(__linux__)
+#if !defined(_WIN32) && !defined(__linux__) && !defined(__EMSCRIPTEN__)
 #define s6_addr8  __u6_addr.__u6_addr8
 #define s6_addr16 __u6_addr.__u6_addr16
 #define s6_addr32 __u6_addr.__u6_addr32
-#endif
 #endif
 
 #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)

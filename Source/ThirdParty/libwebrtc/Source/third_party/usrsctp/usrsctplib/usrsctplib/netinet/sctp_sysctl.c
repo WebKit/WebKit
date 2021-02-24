@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_sysctl.c 361934 2020-06-08 20:23:20Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_sysctl.c 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -175,8 +175,8 @@ sctp_init_sysctls()
 	SCTP_BASE_SYSCTL(sctp_output_unlocked) = SCTPCTL_OUTPUT_UNLOCKED_DEFAULT;
 #endif
 }
-
 #if defined(_WIN32) && !defined(__Userspace__)
+
 void
 sctp_finish_sysctls()
 {
@@ -727,8 +727,8 @@ sctp_sysctl_handle_udp_tunneling(SYSCTL_HANDLER_ARGS)
 	}
 	return (error);
 }
-
 #if defined(__APPLE__) && !defined(__Userspace__)
+
 int sctp_is_vmware_interface(struct ifnet *);
 
 static int

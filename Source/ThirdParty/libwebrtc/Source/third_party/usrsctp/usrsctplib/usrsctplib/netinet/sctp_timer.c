@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_timer.c 362054 2020-06-11 13:34:09Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_timer.c 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #define _IP_VHL
@@ -499,7 +499,6 @@ sctp_mark_all_for_resend(struct sctp_tcb *stcb,
 	uint32_t tsnlast, tsnfirst;
 	int recovery_cnt = 0;
 
-
 	/* none in flight now */
 	audit_tf = 0;
 	fir = 0;
@@ -809,7 +808,6 @@ sctp_mark_all_for_resend(struct sctp_tcb *stcb,
 	/* We return 1 if we only have a window probe outstanding */
 	return (0);
 }
-
 
 int
 sctp_t3rxt_timer(struct sctp_inpcb *inp,
