@@ -2287,8 +2287,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-1
 
 webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ ImageOnlyFailure ]
 
-webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
-
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
 webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]

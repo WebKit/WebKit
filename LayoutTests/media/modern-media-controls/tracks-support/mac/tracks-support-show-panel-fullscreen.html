@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <script src="../../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <video src="../../../content/CC+Subtitles.mov" style="width: 320px; height: 240px;" controls autoplay></video>
@@ -20,7 +21,8 @@ media.addEventListener("webkitfullscreenchange", () => {
     shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
         shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks")`, "null", () => {
             shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width`, "0", () => {
-                shouldBecomeEqual(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right`, "582", () => {
+                shouldBecomeEqual(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right`, "582", async () => {
+                    await UIHelper.renderingUpdate();
                     pressOnElement(internals.shadowRoot(media).querySelector("button.tracks"));
                     shouldBecomeDifferent(`internals.shadowRoot(media).querySelector('.tracks-panel')`, "null", () => {
                         shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.right", "218px");
