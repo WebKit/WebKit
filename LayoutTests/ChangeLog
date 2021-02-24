@@ -1,3 +1,52 @@
+2021-02-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273129. rdar://problem/74623422
+
+    Scrolling on https://www.apple.com/ipad-air/ can jitter on certain sections
+    https://bugs.webkit.org/show_bug.cgi?id=222136
+    rdar://71881767
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    On macOS computers with 16MB of memory, https://www.apple.com/ipad-air/ can trigger the
+    "conservative" compositing mode where RenderLayerCompositor tries to reduce the number of
+    composited layers.
+    
+    On this particular page, a "will-change: transform" element with an overflow:hidden ancestor
+    triggers some bad compositing bounds geometry computation (webkit.org/b/222092,
+    webkit.org/b/222124) which has the end result of changing the composited bounds of the
+    "position:sticky" layer on every scroll. This results in layer contents temporarily
+    appearing stretched or in the wrong place (webkit.org/b/222132).
+    
+    For now, do a conservative fix to avoid this problem, which is to continue to allow
+    "will-change: transform" to trigger compositing on macOS in conservative mode. This
+    actually reduces memory use on this page, because webkit.org/b/222092 was triggering
+    excessively large backing store.
+    
+    Tested by compositing/layer-creation/compositing-policy.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::requiresCompositingForWillChange const):
+    
+    LayoutTests:
+    
+    * platform/mac/compositing/layer-creation/compositing-policy-expected.txt: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273129 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+            Scrolling on https://www.apple.com/ipad-air/ can jitter on certain sections
+            https://bugs.webkit.org/show_bug.cgi?id=222136
+            rdar://71881767
+
+            Reviewed by Zalan Bujtas.
+
+            * platform/mac/compositing/layer-creation/compositing-policy-expected.txt: Added.
+
 2021-02-17  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272626. rdar://problem/74410222
