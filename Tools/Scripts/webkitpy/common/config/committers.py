@@ -87,15 +87,43 @@ class Contributor(object):
             ^ hash(self.can_commit) \
             ^ hash(self.can_review)
 
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+
+        for member in ('full_name', 'emails', '_case_preserved_emails', 'irc_nicknames', 'can_commit', 'can_review', 'expertise'):
+            if member in ('emails', '_case_preserved_emails', 'irc_nicknames'):
+                self_list = sorted(getattr(self, member) or [])
+                other_list = sorted(getattr(other, member) or [])
+                for i in range(min(len(self_list), len(other_list))):
+                    if self_list[i] != other_list[i]:
+                        return 1 if self_list[i] > other_list[i] else -1
+                if len(self_list) != len(other_list):
+                    return len(self_list) - len(other_list)
+
+            else:
+                if getattr(self, member) != getattr(other, member):
+                    return 1 if getattr(self, member) > getattr(other, member) else -1
+
+        return 0
+
     def __eq__(self, other):
-        return (other is not None
-            and self.full_name == other.full_name
-            and self.emails == other.emails
-            and self._case_preserved_emails == other._case_preserved_emails
-            and self.irc_nicknames == other.irc_nicknames
-            and self.expertise == other.expertise
-            and self.can_commit == other.can_commit
-            and self.can_review == other.can_review)
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
 
     def contains_string(self, search_string):
         string = search_string.lower()

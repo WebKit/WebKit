@@ -4481,7 +4481,7 @@
          "pgriffis",
          "TingPing"
       ],
-      "status": "committer"
+      "status" : "committer"
    },
    "Paulo Matos" : {
       "emails" : [
@@ -4885,6 +4885,11 @@
       ],
       "status" : "reviewer"
    },
+   "Ruben Turcios" : {
+      "emails" : [
+         "rubent_22@apple.com"
+      ]
+   },
    "Russell Epstein" : {
       "emails" : [
          "repstein@apple.com"
@@ -5272,11 +5277,6 @@
       ],
       "nicks" : [
          "szledan"
-      ]
-   },
-   "Ruben Turcios" : {
-      "emails" : [
-	 "rubent_22@apple.com"
       ]
    },
    "Tab Atkins" : {

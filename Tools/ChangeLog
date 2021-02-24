@@ -1,5 +1,23 @@
 2021-02-23  Jonathan Bedard  <jbedard@apple.com>
 
+        [check-webkit-style] Fix Contributor sorting in Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=222329
+        <rdar://problem/74656667>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__cmp__): Return an integer to indicate ordering.
+        (Contributor.__eq__): Add rich comparison operators for sorting.
+        (Contributor.__ne__): Ditto.
+        (Contributor.__lt__): Ditto.
+        (Contributor.__le__): Ditto.
+        (Contributor.__gt__): Ditto.
+        (Contributor.__ge__): Ditto.
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-02-23  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Add remote BitBucket
         https://bugs.webkit.org/show_bug.cgi?id=222213
         <rdar://problem/74542626>
