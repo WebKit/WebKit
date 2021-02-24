@@ -2172,6 +2172,8 @@ platform/text/TextCodecUserDefined.cpp
 platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
+platform/xr/openxr/OpenXRInstance.cpp @no-unify
+platform/xr/openxr/OpenXRExtensions.cpp @no-unify
 platform/xr/openxr/PlatformXROpenXR.cpp @no-unify
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp
