@@ -1,3 +1,15 @@
+2021-02-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273424. rdar://problem/74708164
+
+    Revert r272735. rdar://problem/74674837
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273424 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-24  Russell Epstein  <repstein@apple.com>
+
+            Revert r272735. rdar://problem/74674837
+
 2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
