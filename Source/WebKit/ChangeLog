@@ -1,3 +1,25 @@
+2021-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add null checks for Node before accessing treeScope() in rangeForPointInRootViewCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=222338
+        <rdar://problem/72292289>
+
+        Reviewed by Tim Horton.
+
+        Add a null check for the hit test result's `targetNode` inside `rangeForPointInRootViewCoordinates()` to avoid
+        crashing in the case where the target node is null and either `result <= selectionStart` is `false` or
+        `selectionEnd <= result` is `false`.
+
+        Additionally, avoid a potential null deref on `selectionStart.deepEquivalent().anchorNode()` and
+        `selectionEnd.deepEquivalent().anchorNode()` by using `Position::treeScope()` (which null checks the anchor
+        node) instead of directly asking the anchor node.
+
+        Note that the call sites of `rangeForPointInRootViewCoordinates()` already handle a `WTF::nullopt` return value
+        gracefully, by skipping the selection update.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2021-02-23  Patrick Angle  <pangle@apple.com>
 
         [Cocoa] Web Inspector: Add support for reloading the inspected page via _WKInspectorExtension
