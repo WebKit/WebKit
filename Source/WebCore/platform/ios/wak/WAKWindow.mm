@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,27 +37,19 @@
 #import "WKViewPrivate.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Lock.h>
-#import <wtf/NeverDestroyed.h>
-#import <wtf/RetainPtr.h>
 
 WEBCORE_EXPORT NSString * const WAKWindowScreenScaleDidChangeNotification = @"WAKWindowScreenScaleDidChangeNotification";
 WEBCORE_EXPORT NSString * const WAKWindowVisibilityDidChangeNotification = @"WAKWindowVisibilityDidChangeNotification";
+
+using namespace WebCore;
 
 @protocol OrientationProvider
 - (BOOL)hasLandscapeOrientation;
 @end
 
-static RetainPtr<id<OrientationProvider>>& orientationProvider()
-{
-    static NeverDestroyed<RetainPtr<id<OrientationProvider>>> provider;
-    return provider;
-}
-
-static RetainPtr<WebEvent>& currentEvent()
-{
-    static NeverDestroyed<RetainPtr<WebEvent>> event;
-    return event;
-}
+static WAKWindow *_WAKKeyWindow = nil;        // weak
+static WebEvent *currentEvent = nil;
+static id<OrientationProvider> gOrientationProvider;
 
 @implementation WAKWindow {
     Lock _exposedScrollViewRectLock;
@@ -75,8 +67,8 @@ static RetainPtr<WebEvent>& currentEvent()
     _hostLayer = [layer retain];
 
     _frame = [_hostLayer frame];
-    _screenScale = WebCore::screenScaleFactor();
-
+    _screenScale = screenScaleFactor();
+    
     _tileCache = new LegacyTileCache(self);
 
     _frozenVisibleRect = CGRectNull;
@@ -86,7 +78,7 @@ static RetainPtr<WebEvent>& currentEvent()
     return self;
 }
 
-// This is used for WebViews that are not backed by a tile cache. Their content must be painted manually.
+// This is used for WebViews that are not backed by the tile cache. Their content must be painted manually.
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super init];
@@ -94,7 +86,7 @@ static RetainPtr<WebEvent>& currentEvent()
         return nil;
 
     _frame = frame;
-    _screenScale = WebCore::screenScaleFactor();
+    _screenScale = screenScaleFactor();
 
     _exposedScrollViewRect = CGRectNull;
 
@@ -109,14 +101,14 @@ static RetainPtr<WebEvent>& currentEvent()
     [super dealloc];
 }
 
-- (void)setContentView:(WAKView *)view
+- (void)setContentView:(WAKView *)aView
 {
-    [view retain];
+    [aView retain];
     [_contentView release];
 
-    if (view)
-        _WKViewSetWindow([view _viewRef], self);
-    _contentView = view;
+    if (aView)
+        _WKViewSetWindow([aView _viewRef], self);
+    _contentView = aView;
 }
 
 - (WAKView *)contentView
@@ -184,11 +176,15 @@ static RetainPtr<WebEvent>& currentEvent()
 
 - (BOOL)isKeyWindow
 {
-    return YES;
+    return YES || self == _WAKKeyWindow; 
 }
 
 - (void)makeKeyWindow
 {
+    if ([self isKeyWindow])
+        return;
+    
+    _WAKKeyWindow = self;
 }
 
 - (BOOL)isVisible
@@ -225,12 +221,12 @@ static RetainPtr<WebEvent>& currentEvent()
     return NO;
 }
 
-- (BOOL)makeFirstResponder:(NSResponder *)responder
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
-    if (![responder isKindOfClass:[WAKView class]])
+    if (![aResponder isKindOfClass:[WAKView class]])
         return NO;
 
-    WAKView *view = static_cast<WAKView*>(responder);
+    WAKView *view = static_cast<WAKView*>(aResponder);
     BOOL result = YES;
     if (view != _responderView) {
         // We need to handle the case of the view not accepting to be a first responder,
@@ -328,52 +324,54 @@ static RetainPtr<WebEvent>& currentEvent()
     return _rootLayer;
 }
 
-- (void)sendEvent:(WebEvent *)event
+- (void)sendEvent:(WebEvent *)anEvent
 {
-    ASSERT(event);
+    ASSERT(anEvent);
     WebThreadRun(^{
-        [self sendEventSynchronously:event];
+        [self sendEventSynchronously:anEvent];
     });
 }
 
-- (void)sendEventSynchronously:(WebEvent *)event
+- (void)sendEventSynchronously:(WebEvent *)anEvent
 {
-    ASSERT(event);
+    ASSERT(anEvent);
     ASSERT(WebThreadIsLockedOrDisabled());
-    auto lastEvent = std::exchange(currentEvent(), event);
+    WebEvent *lastEvent = currentEvent;
+    auto currentEventProtector = retainPtr(anEvent);
+    currentEvent = anEvent;
 
-    switch (event.type) {
+    switch (anEvent.type) {
     case WebEventMouseMoved:
     case WebEventScrollWheel:
-        if (WAKView *hitView = [_contentView hitTest:event.locationInWindow])
-            [hitView handleEvent:event];
+        if (WAKView *hitView = [_contentView hitTest:(anEvent.locationInWindow)])
+            [hitView handleEvent:anEvent];
         break;
 
     case WebEventMouseUp:
     case WebEventKeyDown:
     case WebEventKeyUp:
     case WebEventTouchChange:
-        [_responderView handleEvent:event];
+        [_responderView handleEvent:anEvent];
         break;
 
     case WebEventMouseDown:
     case WebEventTouchBegin:
     case WebEventTouchEnd:
     case WebEventTouchCancel:
-        if (WAKView *hitView = [_contentView hitTest:event.locationInWindow]) {
+        if (WAKView *hitView = [_contentView hitTest:(anEvent.locationInWindow)]) {
             [self makeFirstResponder:hitView];
-            [hitView handleEvent:event];
+            [hitView handleEvent:anEvent];
         }
         break;
     }
 
-    currentEvent() = WTFMove(lastEvent);
+    currentEvent = lastEvent;
 }
 
-- (void)sendMouseMoveEvent:(WebEvent *)event contentChange:(WKContentChange *)aContentChange
+- (void)sendMouseMoveEvent:(WebEvent *)anEvent contentChange:(WKContentChange *)aContentChange
 {
     WebThreadRun(^{
-        [self sendEvent:event];
+        [self sendEvent:anEvent];
 
         if (aContentChange) {
             // We always make the decision asynchronously. See EventHandler::mouseMoved.
@@ -418,7 +416,7 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->layoutTilesNowForRect(WebCore::enclosingIntRect(rect));
+    _tileCache->layoutTilesNowForRect(enclosingIntRect(rect));
 }
 
 - (void)setNeedsDisplay
@@ -432,7 +430,7 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
+    _tileCache->setNeedsDisplayInRect(enclosingIntRect(rect));
 }
 
 - (BOOL)tilesOpaque
@@ -602,6 +600,13 @@ static RetainPtr<WebEvent>& currentEvent()
     return _tileCache;
 }
 
+- (BOOL)hasPendingDraw
+{
+    if (!_tileCache)
+        return NO;
+     return _tileCache->hasPendingDraw();
+}
+
 - (void)setContentReplacementImage:(CGImageRef)contentReplacementImage
 {
     if (!_tileCache)
@@ -623,10 +628,20 @@ static RetainPtr<WebEvent>& currentEvent()
 
 - (void)willRotate
 {
-    _frozenVisibleRect = [self visibleRect];
+    [self freezeVisibleRect];
 }
 
 - (void)didRotate
+{
+    [self unfreezeVisibleRect];
+}
+
+- (void)freezeVisibleRect
+{
+    _frozenVisibleRect = [self visibleRect];
+}
+
+- (void)unfreezeVisibleRect
 {
     _frozenVisibleRect = CGRectNull;
 }
@@ -634,18 +649,42 @@ static RetainPtr<WebEvent>& currentEvent()
 + (void)setOrientationProvider:(id)provider
 {
     // This is really the UIWebDocumentView class that calls into UIApplication to get the orientation.
-    orientationProvider() = provider;
+    gOrientationProvider = provider;
 }
 
 + (BOOL)hasLandscapeOrientation
 {
     // this should be perfectly thread safe
-    return [orientationProvider() hasLandscapeOrientation];
+    return [gOrientationProvider hasLandscapeOrientation];
 }
 
 - (CALayer*)hostLayer
 {
     return _hostLayer;
+}
+
+- (void)setTileBordersVisible:(BOOL)visible
+{
+    if (!_tileCache)
+        return;
+
+    _tileCache->setTileBordersVisible(visible);
+}
+
+- (void)setTilePaintCountsVisible:(BOOL)visible
+{
+    if (!_tileCache)
+        return;
+
+    _tileCache->setTilePaintCountersVisible(visible);
+}
+
+- (void)setAcceleratedDrawingEnabled:(BOOL)enabled
+{
+    if (!_tileCache)
+        return;
+
+    _tileCache->setAcceleratedDrawingEnabled(enabled);
 }
 
 - (void)dumpTiles
@@ -661,6 +700,14 @@ static RetainPtr<WebEvent>& currentEvent()
     _frozenVisibleRect = savedFrozenVisibleRect;
     _tileCache->dumpTiles();
 }
+
+- (void)setTileControllerShouldUseLowScaleTiles:(BOOL)lowScaleTiles 
+{ 
+    if (!_tileCache) 
+        return; 
+
+    _tileCache->setTileControllerShouldUseLowScaleTiles(lowScaleTiles); 
+} 
 
 - (NSString *)description
 {
@@ -679,7 +726,7 @@ static RetainPtr<WebEvent>& currentEvent()
 
 + (WebEvent *)currentEvent
 {
-    return currentEvent().get();
+    return currentEvent;
 }
 
 - (NSString *)recursiveDescription

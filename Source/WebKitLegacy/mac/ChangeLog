@@ -1,3 +1,16 @@
+2021-02-25  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r273462.
+
+        Caused API build failures
+
+        Reverted changeset:
+
+        "[iOS] Reduce use of retain/release in WAKWindow and remove
+        unneeded methods from that class"
+        https://bugs.webkit.org/show_bug.cgi?id=222330
+        https://commits.webkit.org/r273462
+
 2021-02-23  Darin Adler  <darin@apple.com>
 
         [iOS] Reduce use of retain/release in WAKWindow and remove unneeded methods from that class
