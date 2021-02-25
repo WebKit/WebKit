@@ -1,3 +1,14 @@
+2021-02-25  Antoine Quint  <graouts@webkit.org>
+
+        border-image-outset doesn't handle float values
+        https://bugs.webkit.org/show_bug.cgi?id=222389
+
+        Reviewed by Antti Koivisto.
+
+        Pass an extra 28 WPT tests for border-image-outset.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation-expected.txt:
+
 2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
 
         Set xrCompatible in WebGLRenderingContextBase::getContextAttributes
