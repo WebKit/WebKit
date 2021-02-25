@@ -660,6 +660,8 @@ void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
     stopMakingViewBlankDueToLackOfRenderingUpdate();
 }
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+
 void WebPageProxy::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     pageClient().createPDFHUD(identifier, rect);
