@@ -1400,6 +1400,25 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+- (BOOL)_hasBlankOverlay
+{
+    return !!_blankOverlayView;
+}
+
+- (void)_setHasBlankOverlay:(BOOL)hasBlankOverlay
+{
+    if (!!_blankOverlayView == hasBlankOverlay)
+        return;
+
+    if (hasBlankOverlay) {
+        _blankOverlayView = adoptNS([[WKBlankOverlayView alloc] initWithFrame:[self bounds]]);
+        [self addSubview:_blankOverlayView.get()];
+    } else {
+        [_blankOverlayView removeFromSuperview];
+        _blankOverlayView = nullptr;
+    }
+}
+
 - (WKPageRef)_pageForTesting
 {
     return toAPI(_page.get());

@@ -623,6 +623,8 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
+
+    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -2089,6 +2091,9 @@ private:
 
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
     Optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
+#endif
+#if PLATFORM(MAC)
+    bool m_didUpdateRenderingAfterCommittingLoad { false };
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;

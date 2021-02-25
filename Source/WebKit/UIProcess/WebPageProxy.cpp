@@ -2395,6 +2395,25 @@ void WebPageProxy::layerTreeCommitComplete()
 }
 #endif
 
+void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
+{
+#if PLATFORM(COCOA)
+    ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
+    pageClient().setHasBlankOverlay(false);
+#endif
+}
+
+void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
+{
+#if PLATFORM(COCOA)
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
+        // Add a blank overlay view to make the view blank. This overlay will be taken down once
+        // when we've painted for the first time after committing a load.
+        pageClient().setHasBlankOverlay(true);
+    }
+#endif
+}
+
 void WebPageProxy::discardQueuedMouseEvents()
 {
     while (m_mouseEventQueue.size() > 1)
@@ -4630,10 +4649,12 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     if (frame->isMainFrame()) {
-        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
+        m_hasUpdatedRenderingAfterDidCommitLoad = false;
+#if PLATFORM(IOS_FAMILY)
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+#endif
     }
 #endif
 
@@ -5623,6 +5644,12 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
+
+    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
+    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
+    // on top of the view in this case.
+    makeViewBlankIfUnpaintedSinceLastLoadCommit();
+
     m_uiClient->runJavaScriptAlert(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5641,6 +5668,11 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
             automationSession->willShowJavaScriptDialog(*this);
     }
 
+    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
+    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
+    // on top of the view in this case.
+    makeViewBlankIfUnpaintedSinceLastLoadCommit();
+
     m_uiClient->runJavaScriptConfirm(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5658,6 +5690,11 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
+
+    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
+    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
+    // on top of the view in this case.
+    makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     m_uiClient->runJavaScriptPrompt(*this, message, defaultValue, frame, WTFMove(frameInfo), WTFMove(reply));
 }

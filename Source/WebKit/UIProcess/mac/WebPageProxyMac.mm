@@ -651,7 +651,14 @@ PlatformView* WebPageProxy::platformView() const
     return [pageClient().platformWindow() contentView];
 }
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
+{
+    if (m_hasUpdatedRenderingAfterDidCommitLoad)
+        return;
+
+    m_hasUpdatedRenderingAfterDidCommitLoad = true;
+    stopMakingViewBlankDueToLackOfRenderingUpdate();
+}
 
 void WebPageProxy::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
