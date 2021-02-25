@@ -1,3 +1,14 @@
+2021-02-25  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Stroke and fill StateChangeFlags should be set exclusively 
+        https://bugs.webkit.org/show_bug.cgi?id=222379
+        <rdar://problem/73610005>
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/stroke-text-after-gradient-fill-change-expected.txt: Added.
+        * fast/canvas/stroke-text-after-gradient-fill-change.html: Added.
+
 2021-02-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r273470.

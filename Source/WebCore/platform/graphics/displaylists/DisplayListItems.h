@@ -292,31 +292,25 @@ void SetState::encode(Encoder& encoder) const
     auto& state = m_stateChange.m_state;
 
     if (changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
-        encoder << !!state.strokeGradient;
-        if (state.strokeGradient)
-            encoder << *state.strokeGradient;
+        ASSERT(state.strokeGradient);
+        encoder << *state.strokeGradient;
     }
 
     if (changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
-        encoder << !!state.strokePattern;
-        if (auto& pattern = state.strokePattern) {
-            encoder << pattern->tileImage().renderingResourceIdentifier();
-            encoder << pattern->parameters();
-        }
+        ASSERT(state.strokePattern);
+        encoder << state.strokePattern->tileImage().renderingResourceIdentifier();
+        encoder << state.strokePattern->parameters();
     }
 
     if (changeFlags.contains(GraphicsContextState::FillGradientChange)) {
-        encoder << !!state.fillGradient;
-        if (state.fillGradient)
-            encoder << *state.fillGradient;
+        ASSERT(state.fillGradient);
+        encoder << *state.fillGradient;
     }
 
     if (changeFlags.contains(GraphicsContextState::FillPatternChange)) {
-        encoder << !!state.fillPattern;
-        if (auto& pattern = state.fillPattern) {
-            encoder << pattern->tileImage().renderingResourceIdentifier();
-            encoder << pattern->parameters();
-        }
+        ASSERT(state.fillPattern);
+        encoder << state.fillPattern->tileImage().renderingResourceIdentifier();
+        encoder << state.fillPattern->parameters();
     }
 
     if (changeFlags.contains(GraphicsContextState::ShadowChange)) {
@@ -386,75 +380,47 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     PatternData fillPattern;
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
-        Optional<bool> hasStrokeGradient;
-        decoder >> hasStrokeGradient;
-        if (!hasStrokeGradient.hasValue())
+        auto strokeGradient = Gradient::decode(decoder);
+        if (!strokeGradient)
             return WTF::nullopt;
 
-        if (hasStrokeGradient.value()) {
-            auto strokeGradient = Gradient::decode(decoder);
-            if (!strokeGradient)
-                return WTF::nullopt;
-
-            stateChange.m_state.strokeGradient = WTFMove(*strokeGradient);
-        }
+        stateChange.m_state.strokeGradient = WTFMove(*strokeGradient);
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
-        Optional<bool> hasStrokePattern;
-        decoder >> hasStrokePattern;
-        if (!hasStrokePattern.hasValue())
+        Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+        decoder >> renderingResourceIdentifier;
+        if (!renderingResourceIdentifier)
             return WTF::nullopt;
 
-        if (hasStrokePattern.value()) {
-            Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-            decoder >> renderingResourceIdentifier;
-            if (!renderingResourceIdentifier)
-                return WTF::nullopt;
-            
-            Optional<Pattern::Parameters> parameters;
-            decoder >> parameters;
-            if (!parameters)
-                return WTF::nullopt;
+        Optional<Pattern::Parameters> parameters;
+        decoder >> parameters;
+        if (!parameters)
+            return WTF::nullopt;
 
-            strokePattern = { *renderingResourceIdentifier, *parameters };
-        }
+        strokePattern = { *renderingResourceIdentifier, *parameters };
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::FillGradientChange)) {
-        Optional<bool> hasFillGradient;
-        decoder >> hasFillGradient;
-        if (!hasFillGradient.hasValue())
+        auto fillGradient = Gradient::decode(decoder);
+        if (!fillGradient)
             return WTF::nullopt;
 
-        if (hasFillGradient.value()) {
-            auto fillGradient = Gradient::decode(decoder);
-            if (!fillGradient)
-                return WTF::nullopt;
-
-            stateChange.m_state.fillGradient = WTFMove(*fillGradient);
-        }
+        stateChange.m_state.fillGradient = WTFMove(*fillGradient);
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange)) {
-        Optional<bool> hasFillPattern;
-        decoder >> hasFillPattern;
-        if (!hasFillPattern.hasValue())
+        Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+        decoder >> renderingResourceIdentifier;
+        if (!renderingResourceIdentifier)
             return WTF::nullopt;
 
-        if (hasFillPattern.value()) {
-            Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-            decoder >> renderingResourceIdentifier;
-            if (!renderingResourceIdentifier)
-                return WTF::nullopt;
+        Optional<Pattern::Parameters> parameters;
+        decoder >> parameters;
+        if (!parameters)
+            return WTF::nullopt;
 
-            Optional<Pattern::Parameters> parameters;
-            decoder >> parameters;
-            if (!parameters)
-                return WTF::nullopt;
-
-            fillPattern = { *renderingResourceIdentifier, *parameters };
-        }
+        fillPattern = { *renderingResourceIdentifier, *parameters };
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::ShadowChange)) {

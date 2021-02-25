@@ -143,16 +143,20 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
 void GraphicsContextStateChange::accumulate(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     // FIXME: This code should move to GraphicsContextState.
-    if (flags.containsAny({ GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeGradientChange, GraphicsContextState::StrokePatternChange })) {
+    auto strokeFlags = { GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeGradientChange, GraphicsContextState::StrokePatternChange };
+    if (flags.containsAny(strokeFlags)) {
         m_state.strokeColor = state.strokeColor;
         m_state.strokeGradient = state.strokeGradient;
         m_state.strokePattern = state.strokePattern;
+        m_changeFlags.remove(strokeFlags);
     }
 
-    if (flags.containsAny({ GraphicsContextState::FillColorChange, GraphicsContextState::FillGradientChange, GraphicsContextState::FillPatternChange })) {
+    auto fillFlags = { GraphicsContextState::FillColorChange, GraphicsContextState::FillGradientChange, GraphicsContextState::FillPatternChange };
+    if (flags.containsAny(fillFlags)) {
         m_state.fillColor = state.fillColor;
         m_state.fillGradient = state.fillGradient;
         m_state.fillPattern = state.fillPattern;
+        m_changeFlags.remove(fillFlags);
     }
 
     if (flags.contains(GraphicsContextState::ShadowChange)) {
