@@ -1259,7 +1259,7 @@
     (global-name "com.apple.system.notification_center")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
     (apply-message-filter
-        (deny mach-message-send (with telemetry-backtrace))
+        (allow mach-message-send (with telemetry-backtrace))
         (deny mach-message-send (with no-report) (message-number 1023))
         (allow mach-message-send (with telemetry-backtrace) (message-number
             1002
