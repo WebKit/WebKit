@@ -159,6 +159,11 @@ private:
 
 // MARK: _WKInspectorExtensionHost methods
 
+- (WKWebView *)extensionHostWebView
+{
+    return self.webView;
+}
+
 - (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)

@@ -33,6 +33,7 @@
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorPrivateForTesting.h"
+#import "_WKRemoteObjectRegistry.h"
 #import <WebCore/FrameIdentifier.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -169,11 +170,6 @@
     _inspector->setDiagnosticLoggingAvailable(!!delegate);
 }
 
-- (WKBrowsingContextHandle *)handle
-{
-    return self.inspectorWebView._handle;
-}
-
 // MARK: _WKInspectorInternal methods
 
 - (API::Object&)_apiObject
@@ -182,6 +178,11 @@
 }
 
 // MARK: _WKInspectorExtensionHost methods
+
+- (WKWebView *)extensionHostWebView
+{
+    return self.inspectorWebView;
+}
 
 - (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
 {

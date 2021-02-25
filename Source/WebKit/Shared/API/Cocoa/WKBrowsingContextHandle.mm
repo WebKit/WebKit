@@ -93,4 +93,9 @@
     return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:_pageProxyID andWebPageID:_webPageID];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; pageProxyID = %llu; webPageID = %llu>", NSStringFromClass(self.class), self, _pageProxyID.toUInt64(), _webPageID.toUInt64()];
+}
+
 @end
