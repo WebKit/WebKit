@@ -47,6 +47,7 @@
 #include "PlatformMouseEvent.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -58,6 +59,10 @@
 #include "UserContentTypes.h"
 #include "UserScript.h"
 #include "UserScriptTypes.h"
+
+#if PLATFORM(COCOA)
+#include "VersionChecks.h"
+#endif
 
 namespace WebCore {
 
@@ -640,6 +645,16 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
     }
 
     return *m_needsFullscreenDisplayNoneQuirk;
+#else
+    return false;
+#endif
+}
+
+// FIXME: Remove after the site is fixed, <rdar://problem/74377902>
+bool Quirks::needsWeChatScrollingQuirk() const
+{
+#if PLATFORM(IOS)
+    return needsQuirks() && !linkedOnOrAfter(SDKVersion::FirstWithoutWeChatScrollingQuirk) && IOSApplication::isWechat();
 #else
     return false;
 #endif

@@ -119,6 +119,7 @@ WEBCORE_EXPORT bool isOKCupid();
 WEBCORE_EXPORT bool isJWLibrary();
 WEBCORE_EXPORT bool isPaperIO();
 WEBCORE_EXPORT bool isCrunchyroll();
+bool isWechat();
 
 } // IOSApplication
 

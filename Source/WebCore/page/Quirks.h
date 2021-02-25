@@ -93,6 +93,7 @@ public:
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
     bool needsFullscreenDisplayNoneQuirk() const;
+    bool needsWeChatScrollingQuirk() const;
 
     bool shouldOpenAsAboutBlank(const String&) const;
 

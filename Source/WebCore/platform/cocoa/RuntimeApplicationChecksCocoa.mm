@@ -446,6 +446,12 @@ bool IOSApplication::isCrunchyroll()
     return isCrunchyroll;
 }
 
+bool IOSApplication::isWechat()
+{
+    static bool isWechat = applicationBundleIsEqualTo("com.tencent.xin"_s);
+    return isWechat;
+}
+
 #endif
 
 } // namespace WebCore
