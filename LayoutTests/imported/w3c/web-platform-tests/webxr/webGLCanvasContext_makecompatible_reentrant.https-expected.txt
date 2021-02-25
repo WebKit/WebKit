@@ -1,0 +1,4 @@
+
+PASS Verify promise from a non-reentrant to makeXRCompatible() is resolved
+PASS Verify promises from reentrant calls to makeXRCompatible() are resolved
+

@@ -2922,6 +2922,9 @@ Optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes
         attributes.depth = false;
     if (!m_attributes.stencil)
         attributes.stencil = false;
+#if ENABLE(WEBXR)
+    attributes.xrCompatible = m_isXRCompatible;
+#endif
     return attributes;
 }
 

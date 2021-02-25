@@ -1,3 +1,14 @@
+2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Set xrCompatible in WebGLRenderingContextBase::getContextAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=222360
+
+        Reviewed by Sam Weinig.
+
+        Update WebXR xrCompatible attribute test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-02-24  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] Media segment is incorrectly dropped when using negative timestampOffset or when source buffer appendWindow is set.
