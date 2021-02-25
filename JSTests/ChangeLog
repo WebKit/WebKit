@@ -1,3 +1,66 @@
+2021-02-25  Michael Saboff  <msaboff@apple.com>
+
+        [test262] test/built-ins/RegExp/match-indices needs updating for 'd' flag
+        https://bugs.webkit.org/show_bug.cgi?id=222142
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated WebKit's copy of Test262 to the latest.  All of the changes are related to
+        the RegExp match indices stage 3 proposal (https://github.com/tc39/proposal-regexp-match-indices).
+        Removed the local copies of the built-ins/RegExp/match-indices/ tests now that they 
+        have been merged.
+
+        Enabled the testing of the "regexp-match-indices" feature in config.yaml as we pass
+        all of the associated tests.
+
+        * stress/test262-indices-array-element.js: Removed.
+        * stress/test262-indices-array-matched.js: Removed.
+        * stress/test262-indices-array-non-unicode-match.js: Removed.
+        * stress/test262-indices-array-properties.js: Removed.
+        * stress/test262-indices-array-unicode-match.js: Removed.
+        * stress/test262-indices-array-unicode-property-names.js: Removed.
+        * stress/test262-indices-array-unmatched.js: Removed.
+        * stress/test262-indices-array.js: Removed.
+        * stress/test262-indices-groups-object-undefined.js: Removed.
+        * stress/test262-indices-groups-object-unmatched.js: Removed.
+        * stress/test262-indices-groups-object.js: Removed.
+        * stress/test262-indices-groups-properties.js: Removed.
+        * stress/test262-indices-property.js: Removed.
+        * test262/config.yaml:
+        * test262/test/built-ins/RegExp/duplicate-flags.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-element.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-matched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-non-unicode-match.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-properties.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unicode-match.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unicode-property-names.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unmatched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-object-undefined.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-object-unmatched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-object.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-properties.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-property.js:
+        * test262/test/built-ins/RegExp/match-indices/no-indices-array.js: Added.
+        * test262/test/built-ins/RegExp/prototype/flags/coercion-hasIndices.js: Added.
+        (get Object):
+        (assert.sameValue.get call):
+        * test262/test/built-ins/RegExp/prototype/flags/get-order.js:
+        (re.get hasIndices):
+        * test262/test/built-ins/RegExp/prototype/flags/rethrow.js:
+        (get Object):
+        * test262/test/built-ins/RegExp/prototype/flags/return-order.js:
+        * test262/test/built-ins/RegExp/prototype/flags/this-val-regexp.js:
+        * test262/test/built-ins/RegExp/prototype/hasIndices: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/cross-realm.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/length.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/name.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/prop-desc.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/this-val-invalid-obj.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/this-val-non-obj.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/this-val-regexp-prototype.js: Added.
+        * test262/test/built-ins/RegExp/prototype/hasIndices/this-val-regexp.js: Added.
+
 2021-02-23  Michael Saboff  <msaboff@apple.com>
 
         [YARR JIT] Crash on overflow when compiling /(a{1000000000}b{1000000000}|c{1000000000}|)d{1000000000}e{1000000000}/.test();

@@ -8,17 +8,21 @@ info: |
   get RegExp.prototype.flags
 
   [...]
-  4. Let global be ToBoolean(? Get(R, "global")).
-  6. Let ignoreCase be ToBoolean(? Get(R, "ignoreCase")).
-  8. Let multiline be ToBoolean(? Get(R, "multiline")).
-  10. Let dotAll be ToBoolean(? Get(R, "dotAll")).
-  12. Let unicode be ToBoolean(? Get(R, "unicode")).
-  14. Let sticky be ToBoolean(? Get(R, "sticky")).
-features: [regexp-dotall]
+  4. let hasIndices be ToBoolean(? Get(R, "hasIndices"))
+  6. Let global be ToBoolean(? Get(R, "global")).
+  8. Let ignoreCase be ToBoolean(? Get(R, "ignoreCase")).
+  10. Let multiline be ToBoolean(? Get(R, "multiline")).
+  12. Let dotAll be ToBoolean(? Get(R, "dotAll")).
+  14. Let unicode be ToBoolean(? Get(R, "unicode")).
+  18. Let sticky be ToBoolean(? Get(R, "sticky")).
+features: [regexp-dotall, regexp-match-indices]
 ---*/
 
 var calls = '';
 var re = {
+  get hasIndices() {
+    calls += 'd';
+  },
   get global() {
     calls += 'g';
   },
@@ -42,4 +46,4 @@ var re = {
 var get = Object.getOwnPropertyDescriptor(RegExp.prototype, 'flags').get;
 
 get.call(re);
-assert.sameValue(calls, 'gimsuy');
+assert.sameValue(calls, 'dgimsuy');

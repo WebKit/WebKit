@@ -8,8 +8,11 @@ esid: sec-regexpbuiltinexec
 features: [regexp-match-indices]
 info: |
   Runtime Semantics: RegExpBuiltinExec ( R, S )
-    34. Let _indicesArray_ be MakeIndicesArray(_S_, _indices_, _groupNames_).
-    35. Perform ! DefinePropertyOrThrow(_A_, `"indices"`, PropertyDescriptor { [[Value]]: _indicesArray_, [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *true* }).
+    8. If _flags_ contains `"d"`, let _hasIndices_ be *true*, else let _hasIndices_ be *false*.
+    ...
+    36. If _hasIndices_ is *true*, then
+      a. Let _indicesArray_ be MakeIndicesArray(_S_, _indices_, _groupNames_, _hasGroups_).
+      b. Perform ! CreateDataProperty(_A_, `"indices"`, _indicesArray_).
 ---*/
 
 // `indices` is created with Define, not Set.
@@ -18,7 +21,7 @@ Object.defineProperty(Array.prototype, "indices", {
   set() { counter++; }
 });
 
-let match = /a/.exec("a");
+let match = /a/d.exec("a");
 assert.sameValue(counter, 0);
 
 // `indices` is a non-writable, non-enumerable, and configurable data-property.

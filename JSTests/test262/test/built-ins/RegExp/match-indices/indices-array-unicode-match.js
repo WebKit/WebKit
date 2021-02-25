@@ -13,11 +13,12 @@ info: |
     ...
     16. If _fullUnicode_ is *true*, set _e_ to ! GetStringIndex(_S_, _Input_, _e_).
     ...
-    25. Let _indices_ be a new empty List.
     26. Let _match_ be the Match { [[StartIndex]]: _lastIndex_, [[EndIndex]]: _e_ }.
-    27. Add _match_ as the last element of _indices_.
+    27. Let _indices_ be a new empty List.
     ...
-    33. For each integer _i_ such that _i_ > 0 and _i_ <= _n_, in ascending order, do
+    29. Add _match_ as the last element of _indices_.
+    ...
+    35. For each integer _i_ such that _i_ > 0 and _i_ <= _n_, in ascending order, do
       ...
       f. Else,
         i. Let _captureStart_ be _captureI_'s _startIndex_.
@@ -28,7 +29,9 @@ info: |
         iv. Let _capture_ be the Match  { [[StartIndex]]: _captureStart_, [[EndIndex]]: _captureEnd_ }.
         v. Append _capture_ to _indices_.
         ...
-    34. Let _indicesArray_ be MakeIndicesArray( _S_, _indices_, _groupNames_).
+    36. If _hasIndices_ is *true*, then
+      a. Let _indicesArray_ be MakeIndicesArray(_S_, _indices_, _groupNames_, _hasGroups_).
+      b. Perform ! CreateDataProperty(_A_, `"indices"`, _indicesArray_).
 
   GetStringIndex ( S, Input, e )
     ...
@@ -36,15 +39,15 @@ info: |
     5. Return _eUTF_.
 ---*/
 
-assert.deepEqual([[1, 2], [1, 2]], "bab".match(/(a)/u).indices);
-assert.deepEqual([[0, 3], [1, 2]], "bab".match(/.(a)./u).indices);
-assert.deepEqual([[0, 3], [1, 2], [2, 3]], "bab".match(/.(a)(.)/u).indices);
-assert.deepEqual([[0, 3], [1, 3]], "bab".match(/.(\w\w)/u).indices);
-assert.deepEqual([[0, 3], [0, 3]], "bab".match(/(\w\w\w)/u).indices);
-assert.deepEqual([[0, 3], [0, 2], [2, 3]], "bab".match(/(\w\w)(\w)/u).indices);
-assert.deepEqual([[0, 2], [0, 2], undefined], "bab".match(/(\w\w)(\W)?/u).indices);
+assert.deepEqual([[1, 2], [1, 2]], "bab".match(/(a)/du).indices);
+assert.deepEqual([[0, 3], [1, 2]], "bab".match(/.(a)./du).indices);
+assert.deepEqual([[0, 3], [1, 2], [2, 3]], "bab".match(/.(a)(.)/du).indices);
+assert.deepEqual([[0, 3], [1, 3]], "bab".match(/.(\w\w)/du).indices);
+assert.deepEqual([[0, 3], [0, 3]], "bab".match(/(\w\w\w)/du).indices);
+assert.deepEqual([[0, 3], [0, 2], [2, 3]], "bab".match(/(\w\w)(\w)/du).indices);
+assert.deepEqual([[0, 2], [0, 2], undefined], "bab".match(/(\w\w)(\W)?/du).indices);
 
-let groups = /(?<a>.)(?<b>.)(?<c>.)\k<c>\k<b>\k<a>/u.exec("abccba").indices.groups;
+let groups = /(?<a>.)(?<b>.)(?<c>.)\k<c>\k<b>\k<a>/du.exec("abccba").indices.groups;
 assert.compareArray([0, 1], groups.a);
 assert.compareArray([1, 2], groups.b);
 assert.compareArray([2, 3], groups.c);
@@ -72,13 +75,13 @@ verifyProperty(groups, "c", {
 assert.sameValue("𝐁".length, 2, 'The length of "𝐁" is 2');
 assert.sameValue("\u{1d401}".length, 2, 'The length of "\\u{1d401}" is 2');
 assert.sameValue("\uD835\uDC01".length, 2, 'The length of "\\uD835\\uDC01" is 2');
-assert.sameValue(2, "𝐁".match(/./u)[0].length, 'The length of a single code point match against "𝐁" is 2 (with /u flag)');
-assert.sameValue(2, "\u{1d401}".match(/./u)[0].length, 'The length of a single code point match against "\\u{1d401}" is 2 (with /u flag)');
-assert.sameValue(2, "\uD835\uDC01".match(/./u)[0].length, 'The length of a single code point match against "\\ud835\\udc01" is 2 (with /u flag)');
+assert.sameValue(2, "𝐁".match(/./u)[0].length, 'The length of a single code point match against "𝐁" is 2 (with /du flag)');
+assert.sameValue(2, "\u{1d401}".match(/./u)[0].length, 'The length of a single code point match against "\\u{1d401}" is 2 (with /du flag)');
+assert.sameValue(2, "\uD835\uDC01".match(/./u)[0].length, 'The length of a single code point match against "\\ud835\\udc01" is 2 (with /du flag)');
 
-assert.compareArray([0, 2], "𝐁".match(/./u).indices[0], 'Indices for unicode match against "𝐁" (with /u flag)');
-assert.compareArray([0, 2], "\u{1d401}".match(/./u).indices[0], 'Indices for unicode match against \\u{1d401} (with /u flag)');
-assert.compareArray([0, 2], "\uD835\uDC01".match(/./u).indices[0], 'Indices for unicode match against \\ud835\\udc01 (with /u flag)');
-assert.compareArray([0, 2], "𝐁".match(/(?<a>.)/u).indices.groups.a, 'Indices for unicode match against 𝐁 in groups.a (with /u flag)');
-assert.compareArray([0, 2], "\u{1d401}".match(/(?<a>.)/u).indices.groups.a, 'Indices for unicode match against \\u{1d401} in groups.a (with /u flag)');
-assert.compareArray([0, 2], "\uD835\uDC01".match(/(?<a>.)/u).indices.groups.a, 'Indices for unicode match against \\ud835\\udc01 in groups.a (with /u flag)');
+assert.compareArray([0, 2], "𝐁".match(/./du).indices[0], 'Indices for unicode match against "𝐁" (with /du flag)');
+assert.compareArray([0, 2], "\u{1d401}".match(/./du).indices[0], 'Indices for unicode match against \\u{1d401} (with /du flag)');
+assert.compareArray([0, 2], "\uD835\uDC01".match(/./du).indices[0], 'Indices for unicode match against \\ud835\\udc01 (with /du flag)');
+assert.compareArray([0, 2], "𝐁".match(/(?<a>.)/du).indices.groups.a, 'Indices for unicode match against 𝐁 in groups.a (with /du flag)');
+assert.compareArray([0, 2], "\u{1d401}".match(/(?<a>.)/du).indices.groups.a, 'Indices for unicode match against \\u{1d401} in groups.a (with /du flag)');
+assert.compareArray([0, 2], "\uD835\uDC01".match(/(?<a>.)/du).indices.groups.a, 'Indices for unicode match against \\ud835\\udc01 in groups.a (with /du flag)');

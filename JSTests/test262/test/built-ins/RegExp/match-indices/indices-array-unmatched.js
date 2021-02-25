@@ -22,7 +22,7 @@ info: |
 ---*/
 
 let input = "abd";
-let match = /b(c)?/.exec(input);
+let match = /b(c)?/d.exec(input);
 let indices = match.indices;
 
 // `indices` has the same length as match

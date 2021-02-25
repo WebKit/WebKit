@@ -7,16 +7,16 @@ includes: [propertyHelper.js]
 esid: sec-makeindicesarray
 features: [regexp-named-groups, regexp-match-indices]
 info: |
-  MakeIndicesArray ( S, indices, groupNames )
-    8. If _groupNames_ is not *undefined*, then
+  MakeIndicesArray ( S, indices, groupNames, hasGroups )
+    10. If _hasGroups_ is *true*, then
       a. Let _groups_ be ! ObjectCreate(*null*).
-    9. Else,
+    11. Else,
       a. Let _groups_ be *undefined*.
-    10. Perform ! CreateDataProperty(_A_, `"groups"`, _groups_).
+    12. Perform ! CreateDataProperty(_A_, `"groups"`, _groups_).
 ---*/
 
 
-const re = /./;
+const re = /./d;
 const indices = re.exec("a").indices;
 verifyProperty(indices, 'groups', {
   writable: true,
