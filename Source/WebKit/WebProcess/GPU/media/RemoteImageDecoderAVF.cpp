@@ -40,7 +40,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UTIUtilities.h>
 #include <wtf/MachSendRight.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 
@@ -171,32 +170,22 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
     if (isMainThread())
         return nullptr;
 
-    BinarySemaphore decodeSemaphore;
-    callOnMainThread([this, protectedThis = makeRef(*this), index, &decodeSemaphore] {
-        gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), [&](auto&& sendRight) {
-            if (!sendRight) {
-                decodeSemaphore.signal();
-                return;
-            }
+    callOnMainThreadAndWait([this, protectedThis = makeRef(*this), index] {
+        Optional<MachSendRight> sendRight;
+        if (!gpuProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight), 0))
+            return;
 
-            auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
-            if (!surface) {
-                decodeSemaphore.signal();
-                return;
-            }
+        if (!sendRight)
+            return;
 
-            auto image = IOSurface::sinkIntoImage(WTFMove(surface));
-            if (!image) {
-                decodeSemaphore.signal();
-                return;
-            }
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
+        if (!surface)
+            return;
 
+        if (auto image = IOSurface::sinkIntoImage(WTFMove(surface)))
             m_frameImages.add(index, image);
-            decodeSemaphore.signal();
-        });
     });
 
-    decodeSemaphore.wait();
     if (m_frameImages.contains(index))
         return m_frameImages.get(index);
 
