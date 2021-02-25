@@ -1,3 +1,54 @@
+2021-02-25  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/contentdispositionattachmentsandbox convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221966
+        <rdar://problem/74393682>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/contentdispositionattachmentsandbox/at-import-stylesheets-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/at-import-stylesheets-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/cross-origin-frames-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/cross-origin-frames-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/external-stylesheets-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/external-stylesheets-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/form-submission-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/http-equiv-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/plugins-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html:
+        * http/tests/contentdispositionattachmentsandbox/resources/at-import-stylesheets-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/at-import-stylesheets-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/cross-origin-frames-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/cross-origin-frames-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/echo-http-referer.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/echo-http-referer.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/external-stylesheets-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/external-stylesheets-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/form-submission-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/form-submission-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/http-equiv-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/http-equiv-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/plugins-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/plugins-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/scripts-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/scripts-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/xml-stylesheet-processing-instructions-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/resources/xml-stylesheet-processing-instructions-frame.py: Added.
+        * http/tests/contentdispositionattachmentsandbox/scripts-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/scripts-disabled.html:
+        * http/tests/contentdispositionattachmentsandbox/xml-stylesheet-processing-instructions-disabled-expected.txt:
+        * http/tests/contentdispositionattachmentsandbox/xml-stylesheet-processing-instructions-disabled.html:
+
 2021-02-25  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Stroke and fill StateChangeFlags should be set exclusively 
