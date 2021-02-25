@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,6 @@
 #import <CoreText/CTFontDescriptor.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
-#import <wtf/cf/CFURLExtras.h>
-#import <wtf/cocoa/NSURLExtras.h>
 
 #if USE(APPKIT)
 #import <WebCore/ColorMac.h>
@@ -51,111 +49,28 @@
 #import <UIKit/UIFontDescriptor.h>
 #endif
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface WKSecureCodingArchivingDelegate : NSObject <NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>
-@end
-
-@interface WKSecureCodingURLWrapper : NSObject <NSSecureCoding>
-- (instancetype _Nullable)initWithURL:(NSURL *)wrappedURL;
-@property (nonatomic, readonly) NSURL * wrappedURL;
-@end
-
-@implementation WKSecureCodingArchivingDelegate
-
-- (nullable id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
-{
 #if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
-    if (auto font = dynamic_objc_cast<NSFont>(object)) {
+
+@interface WKSecureCodingFontAttributeNormalizer : NSObject <NSKeyedArchiverDelegate>
+@end
+
+@implementation WKSecureCodingFontAttributeNormalizer
+
+- (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
+{
+    if ([object isKindOfClass:[NSFont class]]) {
+        NSFont *font = static_cast<NSFont *>(object);
         // Recreate any serialized fonts after normalizing the
         // font attributes to work around <rdar://problem/51657880>.
         return WebKit::fontWithAttributes(font.fontDescriptor.fontAttributes, 0);
     }
-#endif
-
-    if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
-        return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
     return object;
 }
 
-- (id _Nullable)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id _Nullable) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED
-{
-    auto adoptedObject = adoptNS(object);
-    if (auto wrapper = dynamic_objc_cast<WKSecureCodingURLWrapper>(adoptedObject.get()))
-        return retainPtr(wrapper.wrappedURL).leakRef();
-
-    return adoptedObject.leakRef();
-}
-
 @end
 
-@implementation WKSecureCodingURLWrapper {
-    RetainPtr<NSURL> m_wrappedURL;
-}
-
-- (NSURL *)wrappedURL
-{
-    return m_wrappedURL.get();
-}
-
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-static constexpr NSString *baseURLKey = @"WK.baseURL";
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    RELEASE_ASSERT(m_wrappedURL);
-    auto baseURL = m_wrappedURL.get().baseURL;
-    BOOL hasBaseURL = !!baseURL;
-
-    [coder encodeValueOfObjCType:"c" at:&hasBaseURL];
-    if (hasBaseURL)
-        [coder encodeObject:baseURL forKey:baseURLKey];
-
-    WTF::URLCharBuffer urlBytes;
-    WTF::getURLBytes((__bridge CFURLRef)m_wrappedURL.get(), urlBytes);
-    [coder encodeBytes:urlBytes.data() length:urlBytes.size()];
-}
-
-- (_Nullable instancetype)initWithCoder:(NSCoder *)coder
-{
-    auto selfPtr = adoptNS([super init]);
-    if (!selfPtr)
-        return nil;
-
-    BOOL hasBaseURL;
-    [coder decodeValueOfObjCType:"c" at:&hasBaseURL size:sizeof(hasBaseURL)];
-
-    RetainPtr<NSURL> baseURL;
-    if (hasBaseURL)
-        baseURL = (NSURL *)[coder decodeObjectOfClass:NSURL.class forKey:baseURLKey];
-
-    NSUInteger length;
-    if (auto bytes = (uint8_t *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = WTF::URLWithData([NSData dataWithBytesNoCopy:bytes length:length freeWhenDone:NO], baseURL.get());
-        if (!m_wrappedURL)
-            LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
-    }
-
-    if (!m_wrappedURL)
-        m_wrappedURL = [NSURL URLWithString:@""];
-
-    return selfPtr.leakRef();
-}
-
-- (_Nullable instancetype)initWithURL:(NSURL *)url
-{
-    if (self = [super init])
-        m_wrappedURL = url;
-
-    return self;
-}
-
-@end
+#endif
 
 namespace IPC {
 using namespace WebCore;
@@ -431,12 +346,17 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
 
-    auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+    auto delegate = adoptNS([[WKSecureCodingFontAttributeNormalizer alloc] init]);
     [archiver setDelegate:delegate.get()];
+#endif
 
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
     [archiver setDelegate:nil];
+#endif
 
     encode(encoder, (__bridge CFDataRef)[archiver encodedData]);
 }
@@ -453,15 +373,8 @@ static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSAr
 
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-
-    auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
-    unarchiver.get().delegate = delegate.get();
-
-    auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
-    [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
-    
     @try {
-        id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
+        id result = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:allowedClasses] forKey:NSKeyedArchiveRootObjectKey];
         ASSERT(!result || [result conformsToProtocol:@protocol(NSSecureCoding)]);
         return { result };
     } @catch (NSException *exception) {
@@ -469,7 +382,6 @@ static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSAr
         return WTF::nullopt;
     } @finally {
         [unarchiver finishDecoding];
-        unarchiver.get().delegate = nil;
     }
 }
 
@@ -613,7 +525,5 @@ template<> struct EnumTraits<IPC::NSType> {
     >;
 };
 } // namespace WTF
-
-NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(COCOA)
