@@ -409,7 +409,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
                 auto& mediaSample = trackIdMediaSamplePair.second;
                 if (trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId)) {
                     DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-                    didReceiveSample(mediaSample);
+                    didReceiveSample(WTFMove(mediaSample));
                 }
             }
 
@@ -450,7 +450,7 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSample>&
     }
 
     DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-    didReceiveSample(mediaSample);
+    didReceiveSample(WTFMove(mediaSample));
 }
 
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)

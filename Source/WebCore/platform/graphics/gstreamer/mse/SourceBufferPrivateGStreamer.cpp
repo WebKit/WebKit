@@ -186,9 +186,9 @@ void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferP
     SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(completionHandler));
 }
 
-void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
+void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)
 {
-    SourceBufferPrivate::didReceiveSample(sample);
+    SourceBufferPrivate::didReceiveSample(WTFMove(sample));
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()

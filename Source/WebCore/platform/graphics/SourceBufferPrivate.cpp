@@ -816,7 +816,7 @@ bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivat
     return true;
 }
 
-void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
+void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
 {
     if (!m_isAttached)
         return;
@@ -842,6 +842,9 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
     // are run:
     // 1. For each coded frame in the media segment run the following steps:
     // 1.1. Loop Top
+
+    Ref<MediaSample> sample = WTFMove(originalSample);
+
     do {
         MediaTime presentationTimestamp;
         MediaTime decodeTimestamp;
@@ -850,7 +853,7 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
         // sample's duration for timestamp generation.
         // 1.2 Let frame duration be a double precision floating point representation of the coded frame's
         // duration in seconds.
-        MediaTime frameDuration = sample.duration();
+        MediaTime frameDuration = sample->duration();
 
         if (m_shouldGenerateTimestamps) {
             // ↳ If generate timestamps flag equals true:
@@ -865,11 +868,11 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
             // ↳ Otherwise:
             // 1. Let presentation timestamp be a double precision floating point representation of
             // the coded frame's presentation timestamp in seconds.
-            presentationTimestamp = sample.presentationTime();
+            presentationTimestamp = sample->presentationTime();
 
             // 2. Let decode timestamp be a double precision floating point representation of the coded frame's
             // decode timestamp in seconds.
-            decodeTimestamp = sample.decodeTime();
+            decodeTimestamp = sample->decodeTime();
         }
 
         // 1.3 If mode equals "sequence" and group start timestamp is set, then run the following steps:
@@ -895,7 +898,7 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
 
         // NOTE: this is out-of-order, but we need TrackBuffer to be able to cache the results of timestamp offset rounding
         // 1.5 Let track buffer equal the track buffer that the coded frame will be added to.
-        AtomString trackID = sample.trackID();
+        AtomString trackID = sample->trackID();
         auto it = m_trackBufferMap.find(trackID);
         if (it == m_trackBufferMap.end()) {
             // The client managed to append a sample with a trackID not present in the initialization
@@ -975,13 +978,13 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
 
         if (m_appendMode == SourceBufferAppendMode::Sequence) {
             // Use the generated timestamps instead of the sample's timestamps.
-            sample.setTimestamps(presentationTimestamp, decodeTimestamp);
+            sample->setTimestamps(presentationTimestamp, decodeTimestamp);
         } else if (trackBuffer.roundedTimestampOffset) {
             // Reflect the timestamp offset into the sample.
-            sample.offsetTimestampsBy(trackBuffer.roundedTimestampOffset);
+            sample->offsetTimestampsBy(trackBuffer.roundedTimestampOffset);
         }
 
-        DEBUG_LOG(LOGIDENTIFIER, sample);
+        DEBUG_LOG(LOGIDENTIFIER, sample.get());
 
         // 1.7 Let frame end timestamp equal the sum of presentation timestamp and frame duration.
         MediaTime frameEndTimestamp = presentationTimestamp + frameDuration;
@@ -993,6 +996,35 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
         // point flag to true, drop the coded frame, and jump to the top of the loop to start processing
         // the next coded frame.
         if (presentationTimestamp < m_appendWindowStart || frameEndTimestamp > m_appendWindowEnd) {
+            // 1.8 Note.
+            // Some implementations MAY choose to collect some of these coded frames with presentation
+            // timestamp less than appendWindowStart and use them to generate a splice at the first coded
+            // frame that has a presentation timestamp greater than or equal to appendWindowStart even if
+            // that frame is not a random access point. Supporting this requires multiple decoders or
+            // faster than real-time decoding so for now this behavior will not be a normative
+            // requirement.
+            // 1.9 Note.
+            // Some implementations MAY choose to collect coded frames with presentation timestamp less
+            // than appendWindowEnd and frame end timestamp greater than appendWindowEnd and use them to
+            // generate a splice across the portion of the collected coded frames within the append
+            // window at time of collection, and the beginning portion of later processed frames which
+            // only partially overlap the end of the collected coded frames. Supporting this requires
+            // multiple decoders or faster than real-time decoding so for now this behavior will not be a
+            // normative requirement. In conjunction with collecting coded frames that span
+            // appendWindowStart, implementations MAY thus support gapless audio splicing.
+            // Audio MediaSamples are typically made of packed audio samples. Trim sample to make it fit within the appendWindow.
+            if (sample->isDivisable()) {
+                std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(m_appendWindowStart);
+                if (replacementSamples.second) {
+                    replacementSamples = replacementSamples.second->divide(m_appendWindowEnd);
+                    if (replacementSamples.first) {
+                        sample = replacementSamples.first.releaseNonNull();
+                        if (m_appendMode != SourceBufferAppendMode::Sequence && trackBuffer.roundedTimestampOffset)
+                            sample->offsetTimestampsBy(-trackBuffer.roundedTimestampOffset);
+                        continue;
+                    }
+                }
+            }
             trackBuffer.needRandomAccessFlag = true;
             m_client->sourceBufferPrivateDidDropSample();
             return;
@@ -1013,7 +1045,7 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
         if (trackBuffer.needRandomAccessFlag) {
             // 1.11.1 If the coded frame is not a random access point, then drop the coded frame and jump
             // to the top of the loop to start processing the next coded frame.
-            if (!sample.isSync()) {
+            if (!sample->isSync()) {
                 m_client->sourceBufferPrivateDidDropSample();
                 return;
             }
@@ -1081,10 +1113,10 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
         // next I-frame. See <https://github.com/w3c/media-source/issues/187> for a discussion of what
         // the how the MSE specification should handlie this secnario.
         do {
-            if (!sample.isSync())
+            if (!sample->isSync())
                 break;
 
-            DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
+            DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
             auto nextSampleInDecodeOrder = trackBuffer.samples.decodeOrder().findSampleAfterDecodeKey(decodeKey);
             if (nextSampleInDecodeOrder == trackBuffer.samples.decodeOrder().end())
                 break;
@@ -1151,7 +1183,7 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
             // NOTE: in the case of b-frames, the previous step may leave in place samples whose presentation
             // timestamp < presentationTime, but whose decode timestamp >= decodeTime. These will eventually cause
             // a decode error if left in place, so remove these samples as well.
-            DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
+            DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
             auto samplesWithHigherDecodeTimes = trackBuffer.samples.decodeOrder().findSamplesBetweenDecodeKeys(decodeKey, erasedSamples.decodeOrder().begin()->first);
             if (samplesWithHigherDecodeTimes.first != samplesWithHigherDecodeTimes.second)
                 dependentSamples.insert(samplesWithHigherDecodeTimes.first, samplesWithHigherDecodeTimes.second);
@@ -1197,11 +1229,11 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
         // Note that adding a frame to the decode queue is no guarantee that it will be actually enqueued at that point.
         // If the frame is after the discontinuity boundary, the enqueueing algorithm will hold it there until samples
         // with earlier timestamps are enqueued. The decode queue is not FIFO, but rather an ordered map.
-        DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
+        DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
         if (trackBuffer.lastEnqueuedDecodeKey.first.isInvalid() || decodeKey > trackBuffer.lastEnqueuedDecodeKey) {
-            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));
+            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample.get()));
 
-            if (trackBuffer.minimumEnqueuedPresentationTime.isValid() && sample.presentationTime() < trackBuffer.minimumEnqueuedPresentationTime)
+            if (trackBuffer.minimumEnqueuedPresentationTime.isValid() && sample->presentationTime() < trackBuffer.minimumEnqueuedPresentationTime)
                 trackBuffer.needsMinimumUpcomingPresentationTimeUpdating = true;
         }
 

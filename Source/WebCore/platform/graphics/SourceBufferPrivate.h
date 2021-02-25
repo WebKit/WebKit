@@ -161,7 +161,7 @@ protected:
     void appendCompleted(bool parsingSucceeded, bool isEnded);
     void reenqueSamples(const AtomString& trackID);
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
-    WEBCORE_EXPORT void didReceiveSample(MediaSample&);
+    WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     void provideMediaData(const AtomString& trackID);
     uint64_t totalTrackBufferSizeInBytes() const;
 
