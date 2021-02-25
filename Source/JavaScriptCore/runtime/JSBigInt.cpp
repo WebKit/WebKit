@@ -2527,7 +2527,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, Cha
 
         if (!heapResult) {
             if (p == length) {
-                ASSERT(digit.unsafeGet() <= std::numeric_limits<int64_t>::max());
+                ASSERT(digit.unsafeGet() <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
                 int64_t maybeResult = digit.unsafeGet();
                 ASSERT(maybeResult >= 0);
                 if (sign == ParseIntSign::Signed)
