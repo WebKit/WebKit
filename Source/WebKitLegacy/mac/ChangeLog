@@ -1,3 +1,15 @@
+2021-02-23  Darin Adler  <darin@apple.com>
+
+        [iOS] Reduce use of retain/release in WAKWindow and remove unneeded methods from that class
+        https://bugs.webkit.org/show_bug.cgi?id=222330
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Call LegacyTileCache functions directly rather
+        than indirecting through WAKWindow methods.
+        (-[WebView viewDidMoveToWindow]): Ditto. Also tweaked conditionals a little for clarity.
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks

@@ -2966,9 +2966,11 @@ static bool needsSelfRetainWhileLoadingQuirk()
         [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
 
 #if PLATFORM(IOS_FAMILY)
-    [[self window] setTileBordersVisible:[preferences showDebugBorders]];
-    [[self window] setTilePaintCountsVisible:[preferences showRepaintCounter]];
-    [[self window] setAcceleratedDrawingEnabled:[preferences acceleratedDrawingEnabled]];
+    if (auto tileCache = self.window.tileCache) {
+        tileCache->setTileBordersVisible(preferences.showDebugBorders);
+        tileCache->setTilePaintCountersVisible(preferences.showRepaintCounter);
+        tileCache->setAcceleratedDrawingEnabled(preferences.acceleratedDrawingEnabled);
+    }
     [WAKView _setInterpolationQuality:[preferences _interpolationQuality]];
 #endif
 }
@@ -5642,11 +5644,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _private->page->setIsInWindow(true);
 
 #if PLATFORM(IOS_FAMILY)
-        WebPreferences *preferences = [self preferences];
-        NSWindow *window = [self window];
-        [window setTileBordersVisible:[preferences showDebugBorders]];
-        [window setTilePaintCountsVisible:[preferences showRepaintCounter]];
-        [window setAcceleratedDrawingEnabled:[preferences acceleratedDrawingEnabled]];
+        auto preferences = self.preferences;
+        if (auto tileCache = self.window.tileCache) {
+            tileCache->setTileBordersVisible(preferences.showDebugBorders);
+            tileCache->setTilePaintCountersVisible(preferences.showRepaintCounter);
+            tileCache->setAcceleratedDrawingEnabled(preferences.acceleratedDrawingEnabled);
+        }
 #endif
     }
 #if PLATFORM(IOS_FAMILY)
@@ -5654,11 +5657,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [_private->fullscreenController requestHideAndExitFullscreen];
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
-    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-#endif
-
 #if PLATFORM(MAC)
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+
     if (_private->immediateActionController) {
         NSImmediateActionGestureRecognizer *recognizer = [_private->immediateActionController immediateActionRecognizer];
         if ([self window]) {
