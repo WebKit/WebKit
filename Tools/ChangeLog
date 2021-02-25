@@ -1,3 +1,13 @@
+2021-02-25  Chris Gambrell  <cgambrell@apple.com>
+
+        [contributors.json] Adding Chris Gambrell as a contributor
+        https://bugs.webkit.org/show_bug.cgi?id=222415
+        <rdar://problem/74741371>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r273465.

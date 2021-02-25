@@ -1223,6 +1223,16 @@
       ],
       "status" : "reviewer"
    },
+   "Chris Gambrell" : {
+      "emails" : [
+         "cgambrell@apple.com"
+      ],
+      "expertise" : "CGI, PHP, and Python",
+      "nicks" : [
+         "ChrisGambrell"
+      ],
+      "status" : "committer"
+   },
    "Chris Guillory" : {
       "emails" : [
          "ctguil@chromium.org",
