@@ -1,3 +1,16 @@
+2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r269957): Empty font names passed to canvas2d cause all text routines to crash
+        https://bugs.webkit.org/show_bug.cgi?id=222402
+        <rdar://problem/72621268>
+
+        Reviewed by Darin Adler and Chris Lord.
+
+        * fast/text/canvas-font-resolution-2-expected.html: Added.
+        * fast/text/canvas-font-resolution-2.html: Added.
+        * fast/text/canvas-font-resolution-expected.txt: Added.
+        * fast/text/canvas-font-resolution.html: Added.
+
 2021-02-25  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur wk1] svg/clip-path/resource-clipper-multiple-repaints.html is flakey failing.

@@ -112,11 +112,6 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (!fontRaw)
         return;
 
-    // The parse succeeded.
-    String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
-    realizeSaves();
-    modifiableState().unparsedFont = newFontSafeCopy;
-
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
     Document& document = canvas().document();
@@ -131,8 +126,17 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
         fontDescription.setComputedSize(DefaultFontSize);
     }
 
-    if (auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document))
-        modifiableState().font.initialize(document.fontSelector(), *fontStyle);
+    auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
+    if (!fontStyle)
+        return;
+
+    String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
+    realizeSaves();
+    modifiableState().unparsedFont = newFontSafeCopy;
+
+    modifiableState().font.initialize(document.fontSelector(), *fontStyle);
+    ASSERT(state().font.realized());
+    ASSERT(state().font.isPopulated());
 }
 
 inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const
