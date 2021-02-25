@@ -1602,7 +1602,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     auto* brPtr = br.ptr();
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
-    insertNodeBefore(WTFMove(br), *highestBlockquote);
+    insertNodeBefore(br.copyRef(), *highestBlockquote);
     VisiblePosition atBR(positionBeforeNode(brPtr));
     // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert
     // a second one.
