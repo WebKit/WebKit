@@ -215,6 +215,7 @@ public:
         Vector<uint8_t> m_packetData;
         size_t m_packetBytesRead { 0 };
         size_t m_byteOffset { 0 };
+        size_t m_partialBytesRead { 0 };
         Vector<AudioStreamPacketDescription> m_packetDescriptions;
 
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
