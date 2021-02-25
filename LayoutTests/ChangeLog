@@ -1,3 +1,12 @@
+2021-02-25  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r273461): [ macOS ] imported/w3c/web-platform-tests/media-source/mediasource-duration.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=222422
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to include slow to determine if changes caused a regression or actually made the test better.
+
 2021-02-25  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Appending a partial segment of a WebM audio file results in no additional samples
