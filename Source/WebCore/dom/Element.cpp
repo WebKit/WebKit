@@ -636,7 +636,10 @@ bool Element::isFocusable() const
     if (!isConnected() || !supportsFocus())
         return false;
 
-    if (!renderer()) {
+    bool hasCanvasAsInclusiveAncestor = inclusiveAncestorStates().contains(AncestorState::Canvas);
+    ASSERT(hasCanvasAsInclusiveAncestor == !!ancestorsOfType<HTMLCanvasElement>(*this).first()
+        || (hasCanvasAsInclusiveAncestor && is<HTMLCanvasElement>(*this)));
+    if (!renderer() && hasCanvasAsInclusiveAncestor) {
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
         if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
@@ -2151,6 +2154,8 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 {
     ContainerNode::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
+    setInclusiveAncestorStates(insertionType.ancestorStates);
+
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
@@ -2208,6 +2213,8 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
 void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    setInclusiveAncestorStates(removalType.ancestorStates);
+
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);

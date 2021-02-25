@@ -148,7 +148,8 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!document().frame()->eventHandler().tabsToLinks(event))
         return false;
 
-    if (!renderer() && ancestorsOfType<HTMLCanvasElement>(*this).first())
+    ASSERT(inclusiveAncestorStates().contains(AncestorState::Canvas) == !!ancestorsOfType<HTMLCanvasElement>(*this).first());
+    if (!renderer() && inclusiveAncestorStates().contains(AncestorState::Canvas))
         return true;
 
     return hasNonEmptyBox(renderBoxModelObject());

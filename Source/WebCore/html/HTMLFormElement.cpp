@@ -66,6 +66,7 @@ using namespace HTMLNames;
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
+    addInclusiveAncestorState(AncestorState::Form);
     ASSERT(hasTagName(formTag));
 }
 
@@ -135,6 +136,7 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
 Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    addInclusiveAncestorState(AncestorState::Form);
     if (insertionType.connectedToDocument)
         document().didAssociateFormControl(*this);
     return InsertedIntoAncestorResult::Done;
@@ -147,6 +149,7 @@ void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode
     for (auto& associatedElement : associatedElements)
         associatedElement->formOwnerRemovedFromTree(root);
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    addInclusiveAncestorState(AncestorState::Form);
 }
 
 unsigned HTMLFormElement::length() const
@@ -892,8 +895,15 @@ void HTMLFormElement::copyNonAttributePropertiesFromElement(const Element& sourc
     HTMLElement::copyNonAttributePropertiesFromElement(source);
 }
 
-HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startElement)
+HTMLFormElement* HTMLFormElement::findClosestFormAncestorSlowCase(const Element& startElement)
 {
+    if (UNLIKELY(is<HTMLFormElement>(startElement))) {
+        auto* parentElement = startElement.parentElement();
+        if (!parentElement || !parentElement->inclusiveAncestorStates().contains(AncestorState::Form)) {
+            ASSERT(!ancestorsOfType<HTMLFormElement>(startElement).first());
+            return nullptr;
+        }
+    }
     return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 

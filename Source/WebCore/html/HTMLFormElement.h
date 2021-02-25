@@ -26,6 +26,7 @@
 #include "FormState.h"
 #include "FormSubmission.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "RadioButtonGroups.h"
 #include <memory>
 #include <wtf/IsoMalloc.h>
@@ -121,7 +122,16 @@ public:
 
     StringPairVector textFieldValues() const;
 
-    static HTMLFormElement* findClosestFormAncestor(const Element&);
+    static HTMLFormElement* findClosestFormAncestor(const Element& element)
+    {
+        if (!element.inclusiveAncestorStates().contains(AncestorState::Form)) {
+            ASSERT(!findClosestFormAncestorSlowCase(element));
+            return nullptr;
+        }
+        auto* result = findClosestFormAncestorSlowCase(element);
+        ASSERT(result || element.tagQName() == HTMLNames::formTag);
+        return result;
+    }
 
 private:
     HTMLFormElement(const QualifiedName&, Document&);
@@ -163,6 +173,8 @@ private:
     bool matchesInvalidPseudoClass() const final;
 
     void resetAssociatedFormControlElements();
+
+    static HTMLFormElement* findClosestFormAncestorSlowCase(const Element&);
 
     FormSubmission::Attributes m_attributes;
     HashMap<AtomString, WeakPtr<HTMLElement>> m_pastNamesMap;

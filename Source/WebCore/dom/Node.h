@@ -406,9 +406,14 @@ public:
         Done,
         NeedsPostInsertionCallback,
     };
+    enum class AncestorState : uint8_t {
+        Form = 1 << 0,
+        Canvas = 1 << 1,
+    };
     struct InsertionType {
         bool connectedToDocument { false };
         bool treeScopeChanged { false };
+        OptionSet<AncestorState> ancestorStates;
     };
     // Called *after* this node or its ancestor is inserted into a new parent (may or may not be a part of document) by scripts or parser.
     // insertedInto **MUST NOT** invoke scripts. Return NeedsPostInsertionCallback and implement didFinishInsertingNode instead to run scripts.
@@ -418,6 +423,7 @@ public:
     struct RemovalType {
         bool disconnectedFromDocument { false };
         bool treeScopeChanged { false };
+        OptionSet<AncestorState> ancestorStates;
     };
     virtual void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree);
 
@@ -495,6 +501,8 @@ public:
     void updateAncestorConnectedSubframeCountForRemoval() const;
     void updateAncestorConnectedSubframeCountForInsertion() const;
 
+    OptionSet<AncestorState> inclusiveAncestorStates() const;
+
 #if ENABLE(JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
     static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareDataWithBitfields); }
@@ -551,7 +559,9 @@ protected:
         IsComputedStyleInvalidFlag = 1 << 26,
         DelegatesFocusToShadowRoot = 1 << 27,
 
-        // Bits 28-31 are free.
+        InclusiveAncestorStateForForm = 1 << 28,
+        InclusiveAncestorStateForCanvas = 1 << 29,
+        // Bits 30-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
@@ -592,6 +602,9 @@ protected:
     void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
 
     void setDelegatesFocusToShadowRoot() { setNodeFlag(NodeFlag::DelegatesFocusToShadowRoot); }
+
+    void setInclusiveAncestorStates(OptionSet<AncestorState>);
+    void addInclusiveAncestorState(AncestorState);
 
     constexpr static auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
     constexpr static auto CreateOther = DefaultNodeFlags;
@@ -888,6 +901,44 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
     ASSERT(!m_deletionHasBegun);
     if (m_treeScope != &newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
+}
+
+ALWAYS_INLINE OptionSet<Node::AncestorState> Node::inclusiveAncestorStates() const
+{
+    ASSERT(isElementNode() || isTreeScope() || isDocumentFragment()); // Only Element supports ancestor states for expediency.
+    OptionSet<Node::AncestorState> states;
+    if (hasNodeFlag(NodeFlag::InclusiveAncestorStateForForm))
+        states.add(AncestorState::Form);
+    if (hasNodeFlag(NodeFlag::InclusiveAncestorStateForCanvas))
+        states.add(AncestorState::Canvas);
+    return states;
+}
+
+ALWAYS_INLINE void Node::setInclusiveAncestorStates(OptionSet<AncestorState> states)
+{
+    ASSERT(isElementNode());
+    if (states.contains(AncestorState::Form))
+        setNodeFlag(NodeFlag::InclusiveAncestorStateForForm);
+    else
+        clearNodeFlag(NodeFlag::InclusiveAncestorStateForForm);
+
+    if (states.contains(AncestorState::Canvas))
+        setNodeFlag(NodeFlag::InclusiveAncestorStateForCanvas);
+    else
+        clearNodeFlag(NodeFlag::InclusiveAncestorStateForCanvas);
+}
+
+inline void Node::addInclusiveAncestorState(AncestorState state)
+{
+    ASSERT(isHTMLElement());
+    switch (state) {
+    case AncestorState::Form:
+        setNodeFlag(NodeFlag::InclusiveAncestorStateForForm);
+        break;
+    case AncestorState::Canvas:
+        setNodeFlag(NodeFlag::InclusiveAncestorStateForCanvas);
+        break;
+    }
 }
 
 inline constexpr PartialOrdering PartialOrdering::less(Type::Less);
