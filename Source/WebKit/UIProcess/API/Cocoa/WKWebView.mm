@@ -1715,6 +1715,19 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->inspectorController().browserExtensionsDisabled(WTFMove(transformed));
 }
 
+- (id <_WKInspectorDelegate>)_inspectorDelegate
+{
+    // This is needed to launch SafariForWebKitDevelopment on Big Sur with an open source WebKit build.
+    // FIXME: Remove this after we no longer support Big Sur.
+    return nil;
+}
+
+- (void)_setInspectorDelegate:(id<_WKInspectorDelegate>)delegate
+{
+    // This is needed to launch SafariForWebKitDevelopment on Big Sur with an open source WebKit build.
+    // FIXME: Remove this after we no longer support Big Sur.
+}
+
 - (_WKFrameHandle *)_mainFrame
 {
     if (auto* frame = _page->mainFrame())
