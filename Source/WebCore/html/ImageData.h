@@ -51,8 +51,8 @@ public:
     Ref<ImageData> deepClone() const;
 
 private:
-    explicit ImageData(const IntSize&);
     ImageData(const IntSize&, Ref<Uint8ClampedArray>&&);
+    static Checked<unsigned, RecordOverflow> dataSize(const IntSize&);
 
     IntSize m_size;
     Ref<Uint8ClampedArray> m_data;
