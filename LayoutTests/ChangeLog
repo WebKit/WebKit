@@ -1,3 +1,15 @@
+2021-02-24  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Remove duplicated items in LayoutTests/gpu-process/TestExpectations related to media
+        https://bugs.webkit.org/show_bug.cgi?id=222390
+
+        Unreviewed test gardening.
+
+        We have enabled "Media in GPU Process" by default in WKTR, so platform-specific TestExpectations
+        such as platform/wk2/TestExpectations will be used as the baseline for media related tests.
+
+        * gpu-process/TestExpectations:
+
 2021-02-24  Rob Buis  <rbuis@igalia.com>
 
         [css-grid] Do not allow negative heights
