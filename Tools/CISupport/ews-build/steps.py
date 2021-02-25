@@ -52,8 +52,6 @@ EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
-GITHUB_COM_USERNAME = 'GITHUB_COM_USERNAME'
-GITHUB_COM_ACCESS_TOKEN = 'GITHUB_COM_ACCESS_TOKEN'
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -170,6 +168,20 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
+class FetchBranches(shell.ShellCommand):
+    name = 'fetch-branch-references'
+    descriptionDone = ['Updated branch information']
+    command = ['git', 'fetch']
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(FetchBranches, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
+
+
 class ShowIdentifier(shell.ShellCommand):
     name = 'show-identifier'
     identifier_re = '^Identifier: (.*)$'
@@ -180,15 +192,12 @@ class ShowIdentifier(shell.ShellCommand):
         shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
 
     def start(self):
-        self.workerEnvironment[GITHUB_COM_USERNAME] = os.getenv(GITHUB_COM_USERNAME)
-        self.workerEnvironment[GITHUB_COM_ACCESS_TOKEN] = os.getenv(GITHUB_COM_ACCESS_TOKEN)
-
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
         if not revision:
             revision = 'HEAD'
-        self.setCommand(['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
+        self.setCommand(['python', 'Tools/Scripts/git-webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):

@@ -50,7 +50,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
+                   FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
@@ -3840,8 +3840,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
             ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
@@ -3856,12 +3855,46 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', 'HEAD']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
+        return self.runStep()
+
+
+class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(FetchBranches())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'fetch']) +
+            ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS)
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(FetchBranches())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'fetch']) +
+            ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
+            2,
+        )
+        self.expectOutcome(result=FAILURE)
         return self.runStep()
 
 

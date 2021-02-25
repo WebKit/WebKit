@@ -1,3 +1,23 @@
+2021-02-25  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews-build.webkit.org] Compute identifiers locally
+        https://bugs.webkit.org/show_bug.cgi?id=222370
+        <rdar://problem/74704298>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (Factory.__init__): Add FetchBranches.
+        (StyleFactory.__init__): Ditto.
+        (WatchListFactory.__init__): Ditto.
+        * CISupport/ews-build/factories_unittest.py: Add FetchBranches.
+        * CISupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Remove GitHub credentials.
+        * CISupport/ews-build/steps.py:
+        (FetchBranches): Added.
+        (ShowIdentifier.start): Construct identifier locally.
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-02-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273488.
