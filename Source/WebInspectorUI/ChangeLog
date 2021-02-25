@@ -1,3 +1,25 @@
+2021-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r269359): Sources: the Images folder does not load most images in the main content area
+        https://bugs.webkit.org/show_bug.cgi?id=222431
+        <rdar://problem/74498289>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set scopeBarItems):
+        (WI.MultipleScopeBarItem.prototype._itemSelectionDidChange):
+        (WI.MultipleScopeBarItem.prototype.get _visibleScopeBarItems): Deleted.
+        r269359 made it so that `removeEventListener` actually throws an error if `this` doesn't
+        have any event listeners (it also `console.assert` if the event/listener is missing).
+        `WI.MultipleScopeBarItem.prototype.set scopeBarItems` iterates over all `_scopeBarItems`
+        when calling `removeEventListener`, but only iterates over `_visibleScopeBarItems` when
+        adding them, meaning that `removeEventListener` will be called on objects that did not
+        have a corresponding `addEventListener`. Instead, iterate over all `_scopeBarItems` in
+        both cases and progressively build up `_visibleScopeBarItems` (which also avoids the
+        extra work of `filter` at the other callsites), ensuring that all items have both an
+        `addEventListener` and `removeEventListener`.
+
 2021-02-23  Patrick Angle  <pangle@apple.com>
 
         [Cocoa] Web Inspector: Add support for reloading the inspected page via _WKInspectorExtension
