@@ -124,9 +124,8 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         MediaTrackReader::storageQueue().dispatch(WTFMove(function));
     });
 
-    parser->setDidParseInitializationDataCallback([this, protectedThis = makeRef(*this)](SourceBufferParser::InitializationSegment&& initializationSegment, CompletionHandler<void()>&& completionHandler) {
+    parser->setDidParseInitializationDataCallback([this, protectedThis = makeRef(*this)](SourceBufferParser::InitializationSegment&& initializationSegment) {
         didParseTracks(WTFMove(initializationSegment), noErr);
-        completionHandler();
     });
 
     parser->setDidEncounterErrorDuringParsingCallback([this, protectedThis = makeRef(*this)](uint64_t errorCode) {

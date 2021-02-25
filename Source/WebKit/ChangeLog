@@ -1,3 +1,93 @@
+2021-02-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r272039. rdar://problem/74451201
+
+    [GPUP][MSE] A video element does not fire “canplaythrough” event if SourceBuffer.abort() is called
+    https://bugs.webkit.org/show_bug.cgi?id=220964
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    This patch removes `initializationSegmentIsHandledSemaphore` from both `SourceBufferParserAVFObjC`
+    and `SourceBufferParserWebM`, and implements a media sample cache mechanism in `SourceBufferPrivateAVFObjC`
+    to ensure that "Coded Frame Processing" steps execute after `SourceBufferPrivate` has handled the
+    initialization segment and enabled video/audio tracks. Without the cache mechanism, some media
+    samples following the initialization segment may be dropped when we run `SourceBufferPrivateAVFObjC`
+    in the GPU process, and the media element won't fire "canplaythrough" event because it cannot change
+    its ready state to a value greater than HAVE_METADATA.
+    
+    This patch also implements the mechanism to make sure `SourceBufferPrivateAVFObjC::appendCompleted()`
+    runs after all media samples have gone through the "Coded Frame Processing" steps, so that the source
+    buffer object will fire "update" and "updateend" event after the parser has completedly parsed the
+    appended buffer.
+    
+    * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.h:
+    * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+    (WebCore::SourceBufferParserAVFObjC::SourceBufferParserAVFObjC):
+    (WebCore::SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC):
+    (WebCore::SourceBufferParserAVFObjC::appendData):
+    Add a parameter "CompletionHandler" to notify the caller that the parser has parsed the whole buffer.
+    (WebCore::SourceBufferParserAVFObjC::flushPendingMediaData):
+    (WebCore::SourceBufferParserAVFObjC::resetParserState):
+    (WebCore::SourceBufferParserAVFObjC::invalidate):
+    (WebCore::SourceBufferParserAVFObjC::didParseStreamDataAsAsset):
+    
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+    (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+    (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+    (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+    After `SourceBufferPrivateClient` has done the configuration with the initialization segment, we need to
+    push the cached media samples (if any) to `SourceBufferPrivate` to run the "Coded Frame Processing" steps.
+    And we need to call "appendCompleted()" if there is a pending callback.
+    (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId):
+    `SourceBufferPrivateAVFObjC` needs to cache the media sample if the initialization segment has not been
+    processed by `SourceBufferPrivateClient` yet.
+    (WebCore::SourceBufferPrivateAVFObjC::append):
+    We need to postpone the "appendCompleted()" callback if there are cached media samples.
+    (WebCore::SourceBufferPrivateAVFObjC::appendCompleted):
+    (WebCore::SourceBufferPrivateAVFObjC::abort):
+    (WebCore::SourceBufferPrivateAVFObjC::setVideoLayer):
+    (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID): Deleted.
+    
+    * platform/graphics/cocoa/SourceBufferParser.h:
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::SourceBufferParserWebM):
+    (WebCore::SourceBufferParserWebM::~SourceBufferParserWebM):
+    (WebCore::SourceBufferParserWebM::appendData):
+    (WebCore::SourceBufferParserWebM::flushPendingMediaData):
+    (WebCore::SourceBufferParserWebM::resetParserState):
+    (WebCore::SourceBufferParserWebM::invalidate):
+    (WebCore::SourceBufferParserWebM::OnClusterBegin):
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.h:
+    
+    Source/WebKit:
+    
+    * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+    (WebKit::MediaFormatReader::parseByteSource):
+    
+    LayoutTests:
+    
+    * gpu-process/TestExpectations:
+    * media/media-source/media-source-webm-append-buffer-after-abort-expected.txt: Added.
+    * media/media-source/media-source-webm-append-buffer-after-abort.html: Added.
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-28  Peng Liu  <peng.liu6@apple.com>
+
+            [GPUP][MSE] A video element does not fire “canplaythrough” event if SourceBuffer.abort() is called
+            https://bugs.webkit.org/show_bug.cgi?id=220964
+
+            Reviewed by Jer Noble.
+
+            * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+            (WebKit::MediaFormatReader::parseByteSource):
+
 2021-02-24  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r272935. rdar://problem/74500849
