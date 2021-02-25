@@ -1,3 +1,13 @@
+2021-02-24  Sam Weinig  <weinig@apple.com>
+
+        Add platform enable for separated model investigation
+        https://bugs.webkit.org/show_bug.cgi?id=222383
+
+        Reviewed by Dean Jackson.
+
+        * wtf/PlatformEnableCocoa.h:
+        Add define.
+
 2021-02-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Fix JSCOnly build on Windows
