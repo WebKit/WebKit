@@ -89,7 +89,7 @@ private:
     void seekCompleted();
     void setTimeFudgeFactor(const MediaTime&);
 
-    GPUConnectionToWebProcess& m_connectionToWebProcess;
+    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;
     bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;

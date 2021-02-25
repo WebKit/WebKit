@@ -1,3 +1,130 @@
+2021-02-24  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Use a WeakPtr of GPUConnectionToWebProcess instead of a reference in some media related objects
+        https://bugs.webkit.org/show_bug.cgi?id=222293
+
+        Reviewed by Eric Carlson.
+
+        A GPUConnectionToWebProcess object may be destroyed when we close a page, then crash will happen
+        in callbacks accessing the GPUConnectionToWebProcess object. For example, in
+        `RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged()`. This patch
+        replaces the references to a GPUConnectionToWebProcess with WeakPtr(s) in places where the
+        issue may happen.
+
+        No new tests. Fix some test crashes.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::isAlwaysOnLoggingAllowed const):
+        (WebKit::GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp:
+        (WebKit::RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeActive):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeInactive):
+        (WebKit::RemoteAudioHardwareListenerProxy::audioOutputDeviceChanged):
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.h:
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::configurationChanged):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::RemoteCDMFactoryProxy::RemoteCDMFactoryProxy):
+        * GPUProcess/media/RemoteCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        (WebKit::RemoteCDMInstanceProxy::unrequestedInitializationDataReceived):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::updateKeyStatuses):
+        (WebKit::RemoteCDMInstanceSessionProxy::sendMessage):
+        (WebKit::RemoteCDMInstanceSessionProxy::sessionIdChanged):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy):
+        (WebKit::RemoteImageDecoderAVFProxy::encodedDataStatusChanged):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::addProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::addSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeSession):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        (WebKit::RemoteLegacyCDMProxy::cdmMediaPlayer const):
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        (WebKit::RemoteLegacyCDMSessionProxy::sendMessage):
+        (WebKit::RemoteLegacyCDMSessionProxy::sendError):
+        (WebKit::RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory const):
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.cpp:
+        (WebKit::RemoteMediaEngineConfigurationFactoryProxy::RemoteMediaEngineConfigurationFactoryProxy):
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::logger):
+        (WebKit::RemoteMediaPlayerManagerProxy::logger const): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::logChannel const): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        (WebKit::RemoteMediaPlayerManagerProxy::gpuConnectionToWebProcess):
+        (WebKit::RemoteMediaPlayerManagerProxy::gpuConnectionToWebProcess const): Deleted.
+        (): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        (WebKit::RemoteMediaPlayerProxy::requestResource):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteAudioTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteVideoTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteTextTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId const):
+        (WebKit::RemoteMediaPlayerProxy::setLegacyCDMSession):
+        (WebKit::RemoteMediaPlayerProxy::cdmInstanceAttached):
+        (WebKit::RemoteMediaPlayerProxy::cdmInstanceDetached):
+        (WebKit::RemoteMediaPlayerProxy::attemptToDecryptWithInstance):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::~RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::seekToTime):
+        (WebKit::RemoteMediaSourceProxy::addSourceBuffer):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp:
+        (WebKit::RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy):
+        (WebKit::RemoteRemoteCommandListenerProxy::didReceiveRemoteControlCommand):
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::~RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::configurationChanged):
+        (WebKit::RemoteTextTrackProxy::addDataCue):
+        (WebKit::RemoteTextTrackProxy::updateDataCue):
+        (WebKit::RemoteTextTrackProxy::removeDataCue):
+        (WebKit::RemoteTextTrackProxy::addGenericCue):
+        (WebKit::RemoteTextTrackProxy::updateGenericCue):
+        (WebKit::RemoteTextTrackProxy::removeGenericCue):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTFileHeader):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTCueData):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+
 2021-02-24  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: expose the extension host that is used to load _WKInspectorExtension tabs

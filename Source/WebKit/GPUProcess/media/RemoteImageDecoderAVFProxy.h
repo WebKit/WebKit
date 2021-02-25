@@ -34,6 +34,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
@@ -57,7 +58,7 @@ private:
 
     void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&);
 
-    GPUConnectionToWebProcess& m_connectionToWebProcess;
+    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     HashMap<WebCore::ImageDecoderIdentifier, RefPtr<WebCore::ImageDecoderAVFObjC>> m_imageDecoders;
 };
 

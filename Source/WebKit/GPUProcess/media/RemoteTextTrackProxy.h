@@ -34,6 +34,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -88,7 +89,7 @@ private:
     TextTrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();
 
-    GPUConnectionToWebProcess& m_connectionToWebProcess;
+    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;

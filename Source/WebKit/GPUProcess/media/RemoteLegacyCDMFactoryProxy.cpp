@@ -41,17 +41,20 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess& connection)
-    : m_gpuConnectionToWebProcess(connection)
+    : m_gpuConnectionToWebProcess(makeWeakPtr(connection))
 {
 }
 
 RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy()
 {
+    if (!m_gpuConnectionToWebProcess)
+        return;
+
     for (auto const& session : m_sessions)
-        gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), session.key.toUInt64());
+        m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), session.key.toUInt64());
 
     for (auto const& proxy : m_proxies)
-        gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
+        m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
 }
 
 void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
@@ -106,7 +109,10 @@ void RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage(IPC::Connectio
 
 void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier, std::unique_ptr<RemoteLegacyCDMProxy>&& proxy)
 {
-    gpuConnectionToWebProcess().messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64(), *proxy);
+    if (!m_gpuConnectionToWebProcess)
+        return;
+
+    m_gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64(), *proxy);
 
     ASSERT(!m_proxies.contains(identifier));
     m_proxies.set(identifier, WTFMove(proxy));
@@ -114,7 +120,10 @@ void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier,
 
 void RemoteLegacyCDMFactoryProxy::removeProxy(RemoteLegacyCDMIdentifier identifier)
 {
-    gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64());
+    if (!m_gpuConnectionToWebProcess)
+        return;
+
+    m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64());
 
     ASSERT(m_proxies.contains(identifier));
     m_proxies.remove(identifier);
@@ -122,7 +131,10 @@ void RemoteLegacyCDMFactoryProxy::removeProxy(RemoteLegacyCDMIdentifier identifi
 
 void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier identifier, std::unique_ptr<RemoteLegacyCDMSessionProxy>&& session)
 {
-    gpuConnectionToWebProcess().messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64(), *session);
+    if (!m_gpuConnectionToWebProcess)
+        return;
+
+    m_gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64(), *session);
 
     ASSERT(!m_sessions.contains(identifier));
     m_sessions.set(identifier, WTFMove(session));
@@ -130,7 +142,10 @@ void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier id
 
 void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
-    gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64());
+    if (!m_gpuConnectionToWebProcess)
+        return;
+
+    m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64());
 
     ASSERT(m_sessions.contains(identifier));
     m_sessions.remove(identifier);

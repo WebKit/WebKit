@@ -31,6 +31,7 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include <WebCore/RemoteCommandListener.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -58,7 +59,7 @@ private:
     // Messages
     void updateSupportedCommands(bool supportsSeeking);
 
-    GPUConnectionToWebProcess& m_gpuConnection;
+    WeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteRemoteCommandListenerIdentifier m_identifier;
     std::unique_ptr<WebCore::RemoteCommandListener> m_listener;
 };

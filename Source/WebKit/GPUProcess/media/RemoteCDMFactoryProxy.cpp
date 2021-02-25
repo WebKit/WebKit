@@ -40,7 +40,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteCDMFactoryProxy::RemoteCDMFactoryProxy(GPUConnectionToWebProcess& connection)
-    : m_gpuConnectionToWebProcess(connection)
+    : m_gpuConnectionToWebProcess(makeWeakPtr(connection))
 {
 }
 

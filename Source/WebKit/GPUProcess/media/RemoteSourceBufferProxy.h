@@ -111,7 +111,7 @@ private:
     void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
     void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
 
-    GPUConnectionToWebProcess& m_connectionToWebProcess;
+    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;

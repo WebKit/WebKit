@@ -40,7 +40,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess& connectionToWebProcess)
-    : m_connectionToWebProcess(connectionToWebProcess)
+    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
 {
 }
 
@@ -74,11 +74,11 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(const ImageDecoderIdentifier& ide
 
 void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(const ImageDecoderIdentifier& identifier)
 {
-    if (!m_imageDecoders.contains(identifier))
+    if (!m_connectionToWebProcess || !m_imageDecoders.contains(identifier))
         return;
 
     auto imageDecoder = m_imageDecoders.get(identifier);
-    m_connectionToWebProcess.connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
+    m_connectionToWebProcess->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
 }
 
 void RemoteImageDecoderAVFProxy::setExpectedContentSize(const ImageDecoderIdentifier& identifier, long long expectedContentSize)

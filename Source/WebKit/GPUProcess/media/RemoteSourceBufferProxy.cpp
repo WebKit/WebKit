@@ -47,12 +47,12 @@ Ref<RemoteSourceBufferProxy> RemoteSourceBufferProxy::create(GPUConnectionToWebP
 }
 
 RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteSourceBufferIdentifier identifier, Ref<SourceBufferPrivate>&& sourceBufferPrivate, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
-    : m_connectionToWebProcess(connectionToWebProcess)
+    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
     , m_identifier(identifier)
     , m_sourceBufferPrivate(WTFMove(sourceBufferPrivate))
     , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
 {
-    m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
+    m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_sourceBufferPrivate->setClient(this);
     m_sourceBufferPrivate->setIsAttached(true);
 }
@@ -60,7 +60,7 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
     m_sourceBufferPrivate->setIsAttached(false);
-    m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
+    m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
@@ -102,62 +102,100 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
         m_mediaDescriptions.add(identifier, *textTrackInfo.description);
     }
 
-    m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
+    if (!m_connectionToWebProcess) {
+        completionHandler();
+        return;
+    }
+
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateStreamEndedWithDecodeError(), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateStreamEndedWithDecodeError(), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool decodeError)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendError(decodeError), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendError(decodeError), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidParseSample(sampleDuration), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidParseSample(sampleDuration), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges& timeRanges)
 {
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedRangesChanged(timeRanges), m_identifier);
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedRangesChanged(timeRanges), m_identifier);
 }
 
 void RemoteSourceBufferProxy::append(const IPC::DataReference& data)

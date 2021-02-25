@@ -37,6 +37,7 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
+#include <wtf/Logger.h>
 #include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
@@ -48,10 +49,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess& connection)
-    : m_gpuConnectionToWebProcess(connection)
-#if !RELEASE_LOG_DISABLED
-    , m_logIdentifier(WTF::LoggerHelper::uniqueLogIdentifier())
-#endif
+    : m_gpuConnectionToWebProcess(makeWeakPtr(connection))
 {
 }
 
@@ -62,13 +60,14 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(m_gpuConnectionToWebProcess);
 
     auto locker = holdLock(m_proxiesLock);
     ASSERT(!m_proxies.contains(identifier));
 
     RemoteMediaPlayerConfiguration playerConfiguration;
 
-    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess.connection(), engineIdentifier, WTFMove(proxyConfiguration));
+    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration));
     proxy->getConfiguration(playerConfiguration);
     m_proxies.add(identifier, WTFMove(proxy));
 
@@ -196,14 +195,14 @@ RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayer
 }
 
 #if !RELEASE_LOG_DISABLED
-const Logger& RemoteMediaPlayerManagerProxy::logger() const
+Logger& RemoteMediaPlayerManagerProxy::logger()
 {
-    return m_gpuConnectionToWebProcess.logger();
-}
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, m_gpuConnectionToWebProcess ? m_gpuConnectionToWebProcess->isAlwaysOnLoggingAllowed() : false);
+    }
 
-WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const
-{
-    return WebKit2LogMedia;
+    return *m_logger;
 }
 #endif
 

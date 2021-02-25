@@ -128,22 +128,36 @@ void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destin
     if (!m_factory)
         return;
 
-    m_factory->gpuConnectionToWebProcess().connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalDataReference(message), destinationURL), m_identifier);
+    auto* gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return;
+
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalDataReference(message), destinationURL), m_identifier);
 }
 
 void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
 {
-    if (m_factory)
-        m_factory->gpuConnectionToWebProcess().connection().send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
+    if (!m_factory)
+        return;
+
+    auto* gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return;
+
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
 }
 
 String RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
 {
-    if (m_factory)
-        return m_factory->gpuConnectionToWebProcess().mediaKeysStorageDirectory();
-    return emptyString();
-}
+    if (!m_factory)
+        return emptyString();
 
+    auto* gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return emptyString();
+
+    return gpuConnectionToWebProcess->mediaKeysStorageDirectory();
+}
 
 }
 

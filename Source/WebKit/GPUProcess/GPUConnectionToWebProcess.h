@@ -35,7 +35,6 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
-
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -90,6 +89,7 @@ public:
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
     Logger& logger();
+    bool isAlwaysOnLoggingAllowed() const;
 
     const String& mediaCacheDirectory() const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

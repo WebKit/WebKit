@@ -36,7 +36,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteRemoteCommandListenerIdentifier&& identifier)
-    : m_gpuConnection(gpuConnection)
+    : m_gpuConnection(makeWeakPtr(gpuConnection))
     , m_identifier(WTFMove(identifier))
     , m_listener(WebCore::RemoteCommandListener::create(*this))
 {
@@ -46,7 +46,10 @@ RemoteRemoteCommandListenerProxy::~RemoteRemoteCommandListenerProxy() = default;
 
 void RemoteRemoteCommandListenerProxy::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    m_gpuConnection.connection().send(Messages::RemoteRemoteCommandListener::DidReceiveRemoteControlCommand(command, argument), m_identifier);
+    if (!m_gpuConnection)
+        return;
+
+    m_gpuConnection->connection().send(Messages::RemoteRemoteCommandListener::DidReceiveRemoteControlCommand(command, argument), m_identifier);
 }
 
 void RemoteRemoteCommandListenerProxy::updateSupportedCommands(bool supportsSeeking)
