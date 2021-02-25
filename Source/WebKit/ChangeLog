@@ -1,5 +1,27 @@
 2021-02-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r272203. rdar://problem/74451201
+
+    WKASCAuthorizationPresenterDelegate needs to import RunLoop.h and BlockPtr.h
+    https://bugs.webkit.org/show_bug.cgi?id=221250
+    
+    Reviewed by Antti Koivisto.
+    
+    * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272203 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-02  Antoine Quint  <graouts@webkit.org>
+
+            WKASCAuthorizationPresenterDelegate needs to import RunLoop.h and BlockPtr.h
+            https://bugs.webkit.org/show_bug.cgi?id=221250
+
+            Reviewed by Antti Koivisto.
+
+            * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+
+2021-02-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r272039. rdar://problem/74451201
 
     [GPUP][MSE] A video element does not fire “canplaythrough” event if SourceBuffer.abort() is called
