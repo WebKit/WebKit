@@ -1,3 +1,39 @@
+2021-02-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r272911. rdar://problem/74501076
+
+    MediaRecorder.stop() does not work correctly when recording has been paused.
+    https://bugs.webkit.org/show_bug.cgi?id=221916
+    <rdar://problem/74366154>
+    
+    Reviewed by Eric Carlson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt:
+    * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html:
+    
+    Source/WebCore:
+    
+    Proceed with stop steps in case of paused state, and not only in case of recording state.
+    Covered by added WPT test.
+    
+    * Modules/mediarecorder/MediaRecorder.cpp:
+    (WebCore::MediaRecorder::stopRecordingInternal):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272911 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+            MediaRecorder.stop() does not work correctly when recording has been paused.
+            https://bugs.webkit.org/show_bug.cgi?id=221916
+            <rdar://problem/74366154>
+
+            Reviewed by Eric Carlson.
+
+            * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt:
+            * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html:
+
 2021-02-17  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272755. rdar://problem/74409916
