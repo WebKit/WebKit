@@ -1,3 +1,18 @@
+2021-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/SymbolStubsForSafariCompatibility.mm: Added.
+        (WTF::String::String):
+        (WTF::JSONImpl::ObjectBase::getArray const):
+        (WTF::JSONImpl::ObjectBase::getValue const):
+        (WTF::JSONImpl::ObjectBase::getObject const):
+        (Inspector::BackendDispatcher::sendResponse):
+
 2021-02-25  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: List of grid nodes is incomplete in Layout sidebar panel

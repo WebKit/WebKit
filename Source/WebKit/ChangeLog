@@ -1,3 +1,17 @@
+2021-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield.
+
+        I manually verified that before this change, DYLD won't let it launch or it calls a missing selector,
+        but after this change it launches and loads web pages.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _inspectorDelegate]):
+        (-[WKWebView _setInspectorDelegate:]):
+
 2021-02-25  Chris Dumez  <cdumez@apple.com>
 
         Update WebContent sandbox to allow it to call task_create_identity_token()

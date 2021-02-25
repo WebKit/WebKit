@@ -1,3 +1,15 @@
+2021-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield
+
+        * wtf/PlatformHave.h:
+        * wtf/text/WTFString.h:
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String):
+
 2021-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         Serialize NSURLRequest (rather than CFURLRequest) in IPC
