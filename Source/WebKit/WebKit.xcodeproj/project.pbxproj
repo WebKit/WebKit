@@ -2376,6 +2376,7 @@
 		07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceIdHashSaltStorage.h; sourceTree = "<group>"; };
 		07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
 		07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserMediaPermissionCheck.h; sourceTree = "<group>"; };
+		0744720525E5BD020054B231 /* MediaOverridesForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaOverridesForTesting.h; sourceTree = "<group>"; };
 		074879B72373A90900F5678E /* AppKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitSoftLink.h; path = ios/AppKitSoftLink.h; sourceTree = "<group>"; };
 		074879B82373A90900F5678E /* AppKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AppKitSoftLink.mm; path = ios/AppKitSoftLink.mm; sourceTree = "<group>"; };
 		074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaProcessManager.h; sourceTree = "<group>"; };
@@ -6022,6 +6023,7 @@
 				CDA959392412B17500910EEF /* ios */,
 				071BC57923C93BB900680D7C /* AudioTrackPrivateRemote.cpp */,
 				071BC57723C93BB700680D7C /* AudioTrackPrivateRemote.h */,
+				0744720525E5BD020054B231 /* MediaOverridesForTesting.h */,
 				07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */,
 				07923132239B3B0C009598E2 /* MediaPlayerPrivateRemote.h */,
 				07B1D04B23D38FCE00399A6E /* MediaPlayerPrivateRemote.messages.in */,

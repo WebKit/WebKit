@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "Logging.h"
+#include "MediaOverridesForTesting.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "MediaSourcePrivateRemoteMessages.h"
 #include "RemoteAudioHardwareListenerMessages.h"
@@ -74,6 +75,14 @@
 
 #if ENABLE(WEBGL)
 #include "RemoteGraphicsContextGLProxyMessages.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include <WebCore/SystemBattery.h>
+#endif
+
+#if ENABLE(VP9) && PLATFORM(COCOA)
+#include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
 namespace WebKit {
@@ -239,6 +248,36 @@ void GPUProcessConnection::updateParameters(const WebPageCreationParameters& par
     m_enableVP9Decoder = parameters.shouldEnableVP9Decoder;
     m_enableVP9SWDecoder = parameters.shouldEnableVP9SWDecoder;
     connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(parameters.shouldEnableVP8Decoder, parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder), { });
+#endif
+}
+
+void GPUProcessConnection::updateMediaConfiguration()
+{
+#if PLATFORM(COCOA)
+    bool settingsChanged = false;
+
+    if (m_mediaOverridesForTesting.systemHasAC != SystemBatteryStatusTestingOverrides::singleton().hasAC() || m_mediaOverridesForTesting.systemHasBattery != SystemBatteryStatusTestingOverrides::singleton().hasBattery())
+        settingsChanged = true;
+
+#if ENABLE(VP9)
+    if (m_mediaOverridesForTesting.vp9HardwareDecoderDisabled != VP9TestingOverrides::singleton().hardwareDecoderDisabled() || m_mediaOverridesForTesting.vp9ScreenSizeAndScale != VP9TestingOverrides::singleton().vp9ScreenSizeAndScale())
+        settingsChanged = true;
+#endif
+
+    if (!settingsChanged)
+        return;
+
+    m_mediaOverridesForTesting = {
+        .systemHasAC = SystemBatteryStatusTestingOverrides::singleton().hasAC(),
+        .systemHasBattery = SystemBatteryStatusTestingOverrides::singleton().hasBattery(),
+
+#if ENABLE(VP9)
+        .vp9HardwareDecoderDisabled = VP9TestingOverrides::singleton().hardwareDecoderDisabled(),
+        .vp9ScreenSizeAndScale = VP9TestingOverrides::singleton().vp9ScreenSizeAndScale(),
+#endif
+    };
+
+    connection().send(Messages::GPUConnectionToWebProcess::SetMediaOverridesForTesting(m_mediaOverridesForTesting), { });
 #endif
 }
 

@@ -208,6 +208,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <WebCore/SystemBattery.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
@@ -1975,6 +1976,24 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         WebCore::RemoteCommandListener::setCreationFunction([this] (WebCore::RemoteCommandListenerClient& client) { return RemoteRemoteCommandListener::create(client, *this); });
     else
         WebCore::RemoteCommandListener::resetCreationFunction();
+
+#if PLATFORM(COCOA)
+    if (useGPUProcessForMedia) {
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] () {
+            ensureGPUProcessConnection().updateMediaConfiguration();
+        });
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] () {
+            ensureGPUProcessConnection().updateMediaConfiguration();
+        });
+#endif
+    } else {
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback(nullptr);
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback(nullptr);
+#endif
+    }
+#endif
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

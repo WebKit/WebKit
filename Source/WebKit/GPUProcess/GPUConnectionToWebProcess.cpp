@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
+#include "MediaOverridesForTesting.h"
 #include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -117,6 +118,14 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteMediaEngineConfigurationFactoryProxy.h"
 #include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include <WebCore/SystemBattery.h>
+#endif
+
+#if ENABLE(VP9) && PLATFORM(COCOA)
+#include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
 namespace WebKit {
@@ -436,6 +445,19 @@ void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommand
 {
     bool found = m_remoteRemoteCommandListenerMap.remove(identifier);
     ASSERT_UNUSED(found, found);
+}
+
+void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTesting overrides)
+{
+#if ENABLE(VP9) && PLATFORM(COCOA)
+    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTFMove(overrides.vp9HardwareDecoderDisabled));
+    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(WTFMove(overrides.vp9ScreenSizeAndScale));
+#endif
+
+#if PLATFORM(COCOA)
+    SystemBatteryStatusTestingOverrides::singleton().setHasAC(WTFMove(overrides.systemHasAC));
+    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(WTFMove(overrides.systemHasBattery));
+#endif
 }
 
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)

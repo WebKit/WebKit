@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,28 +50,29 @@ namespace WebCore {
 using namespace PAL;
 using namespace webm;
 
-static bool hardwareVP9DecoderDisabledForTesting { false };
-
-struct OverrideScreenData {
-    float width { 0 };
-    float height { 0 };
-    float scale { 1 };
-};
-static Optional<OverrideScreenData> screenSizeAndScaleForTesting;
-
-void setOverrideVP9HardwareDecoderDisabledForTesting(bool disabled)
+VP9TestingOverrides& VP9TestingOverrides::singleton()
 {
-    hardwareVP9DecoderDisabledForTesting = disabled;
+    static NeverDestroyed<VP9TestingOverrides> instance;
+    return instance;
 }
 
-void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale)
+void VP9TestingOverrides::setHardwareDecoderDisabled(Optional<bool>&& disabled)
 {
-    screenSizeAndScaleForTesting = makeOptional<OverrideScreenData>({ width, height, scale });
+    m_hardwareDecoderDisabled = WTFMove(disabled);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback();
 }
 
-void resetOverrideVP9ScreenSizeAndScaleForTesting()
+void VP9TestingOverrides::setVP9ScreenSizeAndScale(Optional<ScreenDataOverrides>&& overrides)
 {
-    screenSizeAndScaleForTesting = WTF::nullopt;
+    m_screenSizeAndScale = WTFMove(overrides);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback();
+}
+
+void VP9TestingOverrides::setConfigurationChangedCallback(std::function<void()>&& callback)
+{
+    m_configurationChangedCallback = WTFMove(callback);
 }
 
 enum class ResolutionCategory : uint8_t {
@@ -139,6 +140,14 @@ bool isVP8DecoderAvailable()
     return noErr == VTSelectAndCreateVideoDecoderInstance('vp08', kCFAllocatorDefault, nullptr, nullptr);
 }
 
+static bool vp9HardwareDecoderAvailable()
+{
+    if (auto disabledForTesting = VP9TestingOverrides::singleton().hardwareDecoderDisabled())
+        return !*disabledForTesting;
+
+    return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+}
+
 static bool isVP9CodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConfiguration)
 {
     if (!isVP9DecoderAvailable())
@@ -161,7 +170,7 @@ static bool isVP9CodecConfigurationRecordSupported(VPCodecConfigurationRecord& c
         return false;
 
     // Hardware decoders are always available.
-    if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9) && !hardwareVP9DecoderDisabledForTesting)
+    if (vp9HardwareDecoderAvailable())
         return true;
 
     // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.
@@ -175,9 +184,8 @@ static bool isVP9CodecConfigurationRecordSupported(VPCodecConfigurationRecord& c
         return true;
 
     bool has4kScreen = false;
-
-    if (screenSizeAndScaleForTesting) {
-        auto screenSize = FloatSize(screenSizeAndScaleForTesting->width, screenSizeAndScaleForTesting->height).scaled(screenSizeAndScaleForTesting->scale);
+    if (auto overrideForTesting = VP9TestingOverrides::singleton().vp9ScreenSizeAndScale()) {
+        auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
         for (auto& screenData : getScreenProperties().screenDataMap.values()) {
@@ -243,7 +251,7 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
             return false;
     }
 
-    if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9) && !hardwareVP9DecoderDisabledForTesting) {
+    if (vp9HardwareDecoderAvailable()) {
         // HW VP9 Decoder does not support alpha channel:
         if (videoConfiguration.alphaChannel && *videoConfiguration.alphaChannel)
             return false;
@@ -292,8 +300,8 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
 
     bool has4kScreen = false;
 
-    if (screenSizeAndScaleForTesting) {
-        auto screenSize = FloatSize(screenSizeAndScaleForTesting->width, screenSizeAndScaleForTesting->height).scaled(screenSizeAndScaleForTesting->scale);
+    if (auto overrideForTesting = VP9TestingOverrides::singleton().vp9ScreenSizeAndScale()) {
+        auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
         for (auto& screenData : getScreenProperties().screenDataMap.values()) {

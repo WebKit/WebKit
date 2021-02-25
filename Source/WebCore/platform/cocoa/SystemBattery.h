@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Function.h>
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 WEBCORE_EXPORT void setSystemHasBattery(bool);
@@ -35,7 +38,22 @@ WEBCORE_EXPORT void setSystemHasAC(bool);
 WEBCORE_EXPORT bool systemHasAC();
 WEBCORE_EXPORT Optional<bool> cachedSystemHasAC();
 
-WEBCORE_EXPORT void setOverrideSystemHasBatteryForTesting(Optional<bool>&&);
-WEBCORE_EXPORT void setOverrideSystemHasACForTesting(Optional<bool>&&);
+class WEBCORE_EXPORT SystemBatteryStatusTestingOverrides {
+public:
+    static SystemBatteryStatusTestingOverrides& singleton();
+
+    void setHasAC(Optional<bool>&&);
+    Optional<bool> hasAC() { return m_hasAC; }
+
+    void setHasBattery(Optional<bool>&&);
+    Optional<bool> hasBattery() { return  m_hasBattery; }
+
+    void setConfigurationChangedCallback(std::function<void()>&&);
+
+private:
+    Optional<bool> m_hasBattery;
+    Optional<bool> m_hasAC;
+    WTF::Function<void()> m_configurationChangedCallback;
+};
 
 }

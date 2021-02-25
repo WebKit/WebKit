@@ -1291,6 +1291,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TextTrackRepresentation.h
     platform/graphics/TiledBacking.h
     platform/graphics/TrackPrivateBase.h
+    platform/graphics/VP9Utilities.h
     platform/graphics/VelocityData.h
     platform/graphics/VideoLayerManager.h
     platform/graphics/VideoPlaybackQualityMetrics.h

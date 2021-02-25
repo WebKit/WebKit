@@ -279,9 +279,6 @@ media/video-controller-currentTime-rate.html [ Failure ]
 media/video-orientation-canvas.html [ Failure ]
 media/video-set-rate-from-pause.html [ Timeout Pass ]
 
-# webkit.org/b/221691
-media/mediacapabilities/mediacapabilities-types.html [ Failure ]
-
 # webkit.org/b/220805
 webaudio/Panner/hrtf-database.html [ Timeout ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]

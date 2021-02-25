@@ -1,3 +1,13 @@
+2021-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Some media-capabilities tests fail when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=221691
+        <rdar://problem/74439420>
+
+        Reviewed by Jer Noble.
+
+        * platform/wk2/TestExpectations: Un-skip tests that no longer fail.
+
 2021-02-25  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Files from webmfiles.org do not play through MSE

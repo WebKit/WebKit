@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@ namespace WebCore {
 
 static Optional<bool> hasBattery;
 static Optional<bool> hasAC;
-static Optional<bool> hasBatteryOverrideForTesting;
-static Optional<bool> hasACOverrideForTesting;
 
 void setSystemHasBattery(bool battery)
 {
@@ -43,8 +41,8 @@ void setSystemHasBattery(bool battery)
 
 bool systemHasBattery()
 {
-    if (hasBatteryOverrideForTesting)
-        return *hasBatteryOverrideForTesting;
+    if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasBattery())
+        return *overrideForTesting;
 
     if (!hasBattery.hasValue()) {
         hasBattery = [] {
@@ -86,8 +84,8 @@ void setSystemHasAC(bool ac)
 
 bool systemHasAC()
 {
-    if (hasACOverrideForTesting)
-        return *hasACOverrideForTesting;
+    if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasAC())
+        return *overrideForTesting;
 
     if (!hasAC.hasValue()) {
         hasAC = [] {
@@ -121,14 +119,29 @@ Optional<bool> cachedSystemHasAC()
     return hasAC;
 }
 
-void setOverrideSystemHasBatteryForTesting(Optional<bool>&& hasBattery)
+SystemBatteryStatusTestingOverrides& SystemBatteryStatusTestingOverrides::singleton()
 {
-    hasBatteryOverrideForTesting = WTFMove(hasBattery);
+    static NeverDestroyed<SystemBatteryStatusTestingOverrides> instance;
+    return instance;
 }
 
-void setOverrideSystemHasACForTesting(Optional<bool>&& hasAC)
+void SystemBatteryStatusTestingOverrides::setHasBattery(Optional<bool>&& hasBattery)
 {
-    hasACOverrideForTesting = WTFMove(hasAC);
+    m_hasBattery = WTFMove(hasBattery);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback();
+}
+
+void SystemBatteryStatusTestingOverrides::setHasAC(Optional<bool>&& hasAC)
+{
+    m_hasAC = WTFMove(hasAC);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback();
+}
+
+void SystemBatteryStatusTestingOverrides::setConfigurationChangedCallback(std::function<void()>&& callback)
+{
+    m_configurationChangedCallback = WTFMove(callback);
 }
 
 }
