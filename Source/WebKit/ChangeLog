@@ -1,3 +1,16 @@
+2021-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Update WebContent sandbox to allow it to call task_create_identity_token()
+        https://bugs.webkit.org/show_bug.cgi?id=222423
+
+        Reviewed by Simon Fraser.
+
+        Update WebContent sandbox to allow it to call task_create_identity_token(). We started using
+        task_create_identity_token() in r273288 and need it for Bug 222391.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Some media-capabilities tests fail when media in GPU Process is enabled
