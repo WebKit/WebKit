@@ -184,6 +184,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     
     encoder << textInteractionEnabled;
     encoder << httpsUpgradeEnabled;
+#if PLATFORM(IOS)
+    encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
+#endif
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -590,6 +593,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 
     if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return WTF::nullopt;
+
+#if PLATFORM(IOS)
+    if (!decoder.decode(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload))
+        return WTF::nullopt;
+#endif
 
     return parameters;
 }

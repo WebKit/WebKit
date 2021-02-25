@@ -7985,6 +7985,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.textInteractionEnabled = preferences().textInteractionEnabled();
     parameters.httpsUpgradeEnabled = m_configuration->httpsUpgradeEnabled();
 
+#if PLATFORM(IOS)
+    parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
+#endif
+
     return parameters;
 }
 

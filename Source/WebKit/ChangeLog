@@ -1,3 +1,28 @@
+2021-02-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Get default value in the UI process for whether synchronous XMLHttpRequest are allowed during unload
+        https://bugs.webkit.org/show_bug.cgi?id=222377
+
+        Reviewed by Brent Fulgham.
+
+        Getting this default value in the UI process instead of in every WebContent process should be a small speedup,
+        since getting this default value is a bit costly on iOS.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.h: Added.
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::cachedAllowsRequest):
+        (WebKit::allowsDeprecatedSynchronousXMLHttpRequestDuringUnload):
+        (WebKit::setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+
 2021-02-24  Russell Epstein  <repstein@apple.com>
 
         Revert r272735. rdar://problem/74674837

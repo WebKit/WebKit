@@ -5487,6 +5487,7 @@
 		C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorPreferenceObserver.mm; sourceTree = "<group>"; };
 		C18FB51D242F9F76007E9875 /* WebSleepDisablerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSleepDisablerClient.cpp; sourceTree = "<group>"; };
 		C18FB51E242F9F77007E9875 /* WebSleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSleepDisablerClient.h; sourceTree = "<group>"; };
+		C19D23DE25E6F02400FA03F3 /* WebPreferencesDefaultValuesIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebPreferencesDefaultValuesIOS.h; path = ios/WebPreferencesDefaultValuesIOS.h; sourceTree = "<group>"; };
 		C1A152D524E5A1D200978C8B /* HandleXPCEndpointMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandleXPCEndpointMessages.h; sourceTree = "<group>"; };
 		C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HandleXPCEndpointMessages.mm; sourceTree = "<group>"; };
 		C1C1B30E2540F45600D9100B /* NetworkConnectionToWebProcessMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnectionToWebProcessMac.mm; sourceTree = "<group>"; };
@@ -7558,6 +7559,7 @@
 				2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */,
 				2DA9449A1884E4F000ED86DB /* WebIOSEventFactory.mm */,
 				2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */,
+				C19D23DE25E6F02400FA03F3 /* WebPreferencesDefaultValuesIOS.h */,
 				F4AC655E22A3140E00A05607 /* WebPreferencesDefaultValuesIOS.mm */,
 				2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */,
 			);

@@ -357,6 +357,10 @@
 #include <WebCore/ImageExtractionResult.h>
 #endif
 
+#if PLATFORM(IOS)
+#include "WebPreferencesDefaultValuesIOS.h"
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -632,6 +636,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
+
+#if PLATFORM(IOS)
+    setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload);
+#endif
 
     updatePreferences(parameters.store);
 
