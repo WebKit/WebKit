@@ -57,10 +57,10 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
             size_t length = touchList->length();
             for (size_t i = 0; i < length; ++i)
                 ASSERT(!isUnreachableNode(downcast<Node>(touchList->item(i)->target())));
-        }
-        checkReachability(m_touches);
-        checkReachability(m_targetTouches);
-        checkReachability(m_changedTouches);
+        };
+        checkReachability(*m_touches);
+        checkReachability(*m_targetTouches);
+        checkReachability(*m_changedTouches);
 #endif
 
         auto& touchEvent = downcast<TouchEvent>(event);
