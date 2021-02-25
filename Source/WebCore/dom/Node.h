@@ -222,6 +222,7 @@ public:
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
     bool isClosedShadowHidden(const Node&) const;
+    bool delegatesFocusToShadowRoot() const { return hasNodeFlag(NodeFlag::DelegatesFocusToShadowRoot); }
 
     HTMLSlotElement* assignedSlot() const;
     HTMLSlotElement* assignedSlotForBindings() const;
@@ -550,8 +551,9 @@ protected:
         ContainsFullScreenElement = 1 << 25,
 #endif
         IsComputedStyleInvalidFlag = 1 << 26,
+        DelegatesFocusToShadowRoot = 1 << 27,
 
-        // Bits 27-31 are free.
+        // Bits 28-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
@@ -590,6 +592,8 @@ protected:
     bool isParsingChildrenFinished() const { return hasNodeFlag(NodeFlag::IsParsingChildrenFinished); }
     void setIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildrenFinished); }
     void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
+
+    void setDelegatesFocusToShadowRoot() { setNodeFlag(NodeFlag::DelegatesFocusToShadowRoot); }
 
     constexpr static auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
     constexpr static auto CreateOther = DefaultNodeFlags;

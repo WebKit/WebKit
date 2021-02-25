@@ -315,11 +315,8 @@ bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
     if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0))
         return false;
-    if (auto* root = shadowRoot()) {
-        if (root->delegatesFocus())
-            return false;
-    }
-    return true;
+    ASSERT(delegatesFocusToShadowRoot() == (shadowRoot() && shadowRoot()->delegatesFocus()));
+    return !delegatesFocusToShadowRoot();
 }
 
 bool Element::isMouseFocusable() const
@@ -2393,6 +2390,8 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
     auto shadow = ShadowRoot::create(document(), init.mode, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No);
+    if (init.delegatesFocus)
+        setDelegatesFocusToShadowRoot();
     auto& result = shadow.get();
     addShadowRoot(WTFMove(shadow));
     return result;
@@ -2976,7 +2975,8 @@ static bool isProgramaticallyFocusable(Element& element)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (shadowRootWithDelegatesFocus(element))
+    ASSERT(element.delegatesFocusToShadowRoot() == !!shadowRootWithDelegatesFocus(element));
+    if (element.delegatesFocusToShadowRoot())
         return false;
 
     // If the stylesheets have already been loaded we can reliably check isFocusable.
@@ -3023,7 +3023,9 @@ void Element::focus(SelectionRestorationMode restorationMode, FocusDirection dir
     if (&newTarget->document() != document.ptr())
         return;
 
-    if (auto root = shadowRootWithDelegatesFocus(*this)) {
+    ASSERT(delegatesFocusToShadowRoot() == !!shadowRootWithDelegatesFocus(*this));
+    if (delegatesFocusToShadowRoot()) {
+        auto root = shadowRootWithDelegatesFocus(*this);
         auto currentlyFocusedElement = makeRefPtr(document->focusedElement());
         if (root->containsIncludingShadowDOM(currentlyFocusedElement.get())) {
             if (document->page())
