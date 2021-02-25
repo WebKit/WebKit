@@ -344,25 +344,6 @@ def parse_args(args):
         optparse.make_option("--wptserver-doc-root", type="string", help=("Set web platform server document root, relative to LayoutTests directory")),
     ]))
 
-    # FIXME: Remove this group once the old results dashboards are deprecated.
-    option_group_definitions.append(("Legacy Result Options", [
-        optparse.make_option("--master-name", help="The name of the buildbot master."),
-        optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
-            help=("The name of the builder used in its path, e.g. webkit-rel.")),
-        optparse.make_option("--build-slave", default="DUMMY_BUILD_SLAVE",
-            help=("The name of the worker used. e.g. apple-macpro-6.")),
-        optparse.make_option("--test-results-server", action="append", default=[],
-            help=("If specified, upload results json files to this appengine server.")),
-        optparse.make_option("--results-server-host", action="append", default=[],
-            help=("If specified, upload results JSON file to this results server.")),
-        optparse.make_option("--additional-repository-name",
-            help=("The name of an additional subversion or git checkout")),
-        optparse.make_option("--additional-repository-path",
-            help=("The path to an additional subversion or git checkout (requires --additional-repository-name)")),
-        optparse.make_option("--allowed-host", type="string", action="append", default=[],
-            help=("If specified, tests are allowed to make requests to the specified hostname."))
-    ]))
-
     option_group_definitions.append(('Upload Options', upload_options()))
 
     option_parser = optparse.OptionParser(usage="%prog [options] [<path>...]")

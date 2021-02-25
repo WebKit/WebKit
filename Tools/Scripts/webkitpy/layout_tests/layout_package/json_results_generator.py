@@ -241,11 +241,8 @@ class JSONResultsGenerator(object):
                         TestResult.FAILS: FAIL_RESULT,
                         TestResult.FLAKY: FLAKY_RESULT}
 
-    VERSION = 4
-    VERSION_KEY = "version"
     RESULTS = "results"
     TIMES = "times"
-    BUILD_NUMBERS = "buildNumbers"
     TIME = "secondsSinceEpoch"
     TESTS = "tests"
 
@@ -259,36 +256,26 @@ class JSONResultsGenerator(object):
 
     URL_FOR_TEST_LIST_JSON = "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s&master=%s"
 
-    def __init__(self, port, builder_name, build_name, build_number,
+    def __init__(self, port,
         results_file_base_path,
         test_results_map, svn_repositories=None,
-        test_results_server=[],
-        test_type="",
-        master_name=""):
+        test_type=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
         Args
           port: port-specific wrapper
-          builder_name: the builder name (e.g. Webkit).
-          build_name: the build name (e.g. webkit-rel).
-          build_number: the build number.
           results_file_base_path: Absolute path to the directory containing the
               results json file.
           test_results_map: A dictionary that maps test_name to TestResult.
           svn_repositories: A (json_field_name, svn_path) pair for SVN
               repositories that tests rely on.  The SVN revision will be
               included in the JSON with the given json_field_name.
-          test_results_server: server that hosts test results json.
           test_type: test type string (e.g. 'layout-tests').
-          master_name: the name of the buildbot master.
         """
         self._port = port
         self._filesystem = port._filesystem
         self._executive = port._executive
-        self._builder_name = builder_name
-        self._build_name = build_name
-        self._build_number = build_number
         self._results_directory = results_file_base_path
 
         self._test_results_map = test_results_map
@@ -298,9 +285,7 @@ class JSONResultsGenerator(object):
         if not self._svn_repositories:
             self._svn_repositories = {}
 
-        self._test_results_servers = test_results_server
         self._test_type = test_type
-        self._master_name = master_name
 
         self._archived_results = None
 
@@ -319,37 +304,9 @@ class JSONResultsGenerator(object):
         file_path = self._filesystem.join(self._results_directory, self.TIMES_MS_FILENAME)
         write_json(self._filesystem, times, file_path)
 
-    def get_json(self, server_index=0):
+    def get_json(self):
         """Gets the results for the results.json file."""
-        results_json = {}
-
-        if not results_json:
-            results_json, error = self._get_archived_json_results(server_index=server_index)
-            if error:
-                # If there was an error don't write a results.json
-                # file at all as it would lose all the information on the
-                # bot.
-                _log.error("Archive directory is inaccessible. Not "
-                           "modifying or clobbering the results.json "
-                           "file: " + str(error))
-                return None
-
-        builder_name = self._builder_name
-        if results_json and builder_name not in results_json:
-            _log.debug("Builder name (%s) is not in the results.json file."
-                       % builder_name)
-
-        self._convert_json_to_current_version(results_json)
-
-        if builder_name not in results_json:
-            results_json[builder_name] = (
-                self._create_results_for_builder_json())
-
-        results_for_builder = results_json[builder_name]
-
-        if builder_name:
-            self._insert_generic_metadata(results_for_builder)
-
+        results_for_builder = self._create_results_for_builder_json()
         self._insert_failure_summaries(results_for_builder)
 
         # Update the all failing tests with result type and time.
@@ -360,46 +317,12 @@ class JSONResultsGenerator(object):
         for test in all_failing_tests:
             self._insert_test_time_and_result(test, tests)
 
-        return results_json
+        return dict(
+            results=results_for_builder,
+        )
 
     def set_archived_results(self, archived_results):
         self._archived_results = archived_results
-
-    def upload_json_files(self, json_files):
-        """Uploads the given json_files to the test_results_server (if the
-        test_results_server is given)."""
-        if not self._test_results_servers:
-            return
-
-        if not self._master_name:
-            _log.error("--test-results-server was set, but --master-name was not.  Not uploading JSON files.")
-            return
-
-        _log.info("Uploading JSON files for builder: %s", self._builder_name)
-        attrs = [("builder", self._builder_name),
-                 ("testtype", self._test_type),
-                 ("master", self._master_name)]
-
-        files = [(file, self._filesystem.join(self._results_directory, file))
-            for file in json_files]
-
-        for test_results_server in self._test_results_servers:
-            url = "http://%s/testfile/upload" % test_results_server
-            # Set uploading timeout in case appengine server is having problems.
-            # 120 seconds are more than enough to upload test results.
-            uploader = FileUploader(url, 120)
-            try:
-                response = uploader.upload_as_multipart_form_data(self._filesystem, files, attrs)
-                if response:
-                    if response.code == 200:
-                        _log.info("JSON uploaded.")
-                    else:
-                        _log.debug("JSON upload failed, %d: '%s'" % (response.code, response.read()))
-                else:
-                    _log.error("JSON upload failed; no response returned")
-            except Exception as err:
-                _log.error("Upload failed: %s" % err)
-                continue
 
     def _get_test_timing(self, test_name):
         """Returns test timing data (elapsed time) in second
@@ -443,69 +366,6 @@ class JSONResultsGenerator(object):
             return self.__class__.FAIL_RESULT
 
         return self.__class__.PASS_RESULT
-
-    def _get_svn_revision(self, in_directory):
-        """Returns the svn revision for the given directory.
-
-        Args:
-          in_directory: The directory where svn is to be run.
-        """
-        scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(in_directory)
-        if scm:
-            return scm.svn_revision(in_directory)
-        return ""
-
-    def _get_archived_json_results(self, server_index=0):
-        """Download JSON file that only contains test
-        name list from test-results server. This is for generating incremental
-        JSON so the file generated has info for tests that failed before but
-        pass or are skipped from current run.
-
-        Returns (archived_results, error) tuple where error is None if results
-        were successfully read.
-        """
-        results_json = {}
-        old_results = None
-        error = None
-
-        if len(self._test_results_servers) <= server_index:
-            return {}, None
-
-        results_file_url = (self.URL_FOR_TEST_LIST_JSON %
-            (quote(self._test_results_servers[server_index]),
-             quote(self._builder_name),
-             self.RESULTS_FILENAME,
-             quote(self._test_type),
-             quote(self._master_name)))
-
-        try:
-            # FIXME: We should talk to the network via a Host object.
-            results_file = urlopen(results_file_url)
-            info = results_file.info()
-            old_results = results_file.read()
-        except HTTPError as http_error:
-            # A non-4xx status code means the bot is hosed for some reason
-            # and we can't grab the results.json file off of it.
-            if (http_error.code < 400 and http_error.code >= 500):
-                error = http_error
-        except URLError as url_error:
-            error = url_error
-
-        if old_results:
-            # Strip the prefix and suffix so we can get the actual JSON object.
-            old_results = strip_json_wrapper(old_results)
-
-            try:
-                results_json = json.loads(old_results)
-            except:
-                _log.debug("results.json was not valid JSON. Clobbering.")
-                # The JSON file is not valid JSON. Just clobber the results.
-                results_json = {}
-        else:
-            _log.debug('Old JSON results do not exist. Starting fresh.')
-            results_json = {}
-
-        return results_json, error
 
     def _insert_failure_summaries(self, results_for_builder):
         """Inserts aggregate pass/failure statistics into the JSON.
@@ -572,23 +432,6 @@ class JSONResultsGenerator(object):
             # we want the serialized form to be concise.
             encoded_results.insert(0, [1, item])
 
-    def _insert_generic_metadata(self, results_for_builder):
-        """ Inserts generic metadata (such as version number, current time etc)
-        into the JSON.
-
-        Args:
-          results_for_builder: Dictionary containing the test results for
-              a single builder.
-        """
-        self._insert_item_into_raw_list(results_for_builder,
-            self._build_number, self.BUILD_NUMBERS)
-
-        # Include SVN revisions for the given repositories.
-        for (name, path) in self._svn_repositories:
-            self._insert_item_into_raw_list(results_for_builder, self._get_svn_revision(path), name.lower() + 'Revision')
-
-        self._insert_item_into_raw_list(results_for_builder, int(time.time()), self.TIME)
-
     def _insert_test_time_and_result(self, test_name, tests):
         """ Insert a test item with its results to the given tests dictionary.
 
@@ -618,37 +461,6 @@ class JSONResultsGenerator(object):
         else:
             this_test[self.TIMES] = [[1, time]]
 
-    def _convert_json_to_current_version(self, results_json):
-        """If the JSON does not match the current version, converts it to the
-        current version and adds in the new version number.
-        """
-        if self.VERSION_KEY in results_json:
-            archive_version = results_json[self.VERSION_KEY]
-            if archive_version == self.VERSION:
-                return
-        else:
-            archive_version = 3
-
-        # version 3->4
-        if archive_version == 3:
-            num_results = len(results_json.values())
-            for builder, results in iteritems(results_json):
-                self._convert_tests_to_trie(results)
-
-        results_json[self.VERSION_KEY] = self.VERSION
-
-    def _convert_tests_to_trie(self, results):
-        if not self.TESTS in results:
-            return
-
-        test_results = results[self.TESTS]
-        test_results_trie = {}
-        for test in iterkeys(test_results):
-            single_test_result = test_results[test]
-            add_path_to_trie(test, single_test_result, test_results_trie)
-
-        results[self.TESTS] = test_results_trie
-
     def _populate_results_and_times_json(self, results_and_times):
         results_and_times[self.RESULTS] = []
         results_and_times[self.TIMES] = []
@@ -658,51 +470,3 @@ class JSONResultsGenerator(object):
         results_for_builder = {}
         results_for_builder[self.TESTS] = {}
         return results_for_builder
-
-    def _remove_items_over_max_number_of_builds(self, encoded_list):
-        """Removes items from the run-length encoded list after the final
-        item that exceeds the max number of builds to track.
-
-        Args:
-          encoded_results: run-length encoded results. An array of arrays, e.g.
-              [[3,'A'],[1,'Q']] encodes AAAQ.
-        """
-        num_builds = 0
-        index = 0
-        for result in encoded_list:
-            num_builds = num_builds + result[0]
-            index = index + 1
-            if num_builds > self.MAX_NUMBER_OF_BUILD_RESULTS_TO_LOG:
-                return encoded_list[:index]
-        return encoded_list
-
-    def _normalize_results_json(self, test, test_name, tests):
-        """ Prune tests where all runs pass or tests that no longer exist and
-        truncate all results to maxNumberOfBuilds.
-
-        Args:
-          test: ResultsAndTimes object for this test.
-          test_name: Name of the test.
-          tests: The JSON object with all the test results for this builder.
-        """
-        test[self.RESULTS] = self._remove_items_over_max_number_of_builds(
-            test[self.RESULTS])
-        test[self.TIMES] = self._remove_items_over_max_number_of_builds(
-            test[self.TIMES])
-
-        is_all_pass = self._is_results_all_of_type(test[self.RESULTS],
-                                                   self.PASS_RESULT)
-        is_all_no_data = self._is_results_all_of_type(test[self.RESULTS],
-            self.NO_DATA_RESULT)
-        max_time = max([time[1] for time in test[self.TIMES]])
-
-        # Remove all passes/no-data from the results to reduce noise and
-        # filesize. If a test passes every run, but takes > MIN_TIME to run,
-        # don't throw away the data.
-        if is_all_no_data or (is_all_pass and max_time <= self.MIN_TIME):
-            del tests[test_name]
-
-    def _is_results_all_of_type(self, results, type):
-        """Returns whether all the results are of the given type
-        (e.g. all passes)."""
-        return len(results) == 1 and results[0][1] == type
