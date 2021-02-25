@@ -1,3 +1,9 @@
+2021-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r273465.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2021-02-24  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound request parameter should be passed to main resource requests not the main frame

@@ -1537,6 +1537,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setOverrideContentSecurityPolicy:@"script-src 'nonce-b'"];
 
+    __block bool isDone = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     APP_BOUND_REQUEST_ADDITIONS
@@ -1546,7 +1547,6 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
     [webView waitForMessage:@"MainFrame: B"];
     [webView waitForMessage:@"Subframe: B"];
 
-    __block bool isDone = false;
     [webView _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
         EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
         EXPECT_TRUE(data.hasLoadedNonAppBoundRequestTesting);
