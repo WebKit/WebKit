@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -164,8 +164,12 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
         const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
         
         // CFURLCreateAbsoluteURLWithBytes would complain to console if we passed a path to it.
-        if (bytes[0] == '/' && !baseURL)
-            return nil;
+        if (bytes[0] == '/' && !baseURL) {
+            // A URL starting with '//' is valid (an authority without a scheme), and is not a file path.
+            // So only return early if the character after the slash is something else.
+            if (length == 1 || bytes[1] != '/')
+                return nil;
+        }
         
         // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which

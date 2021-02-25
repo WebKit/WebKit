@@ -1,3 +1,18 @@
+2021-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Serialize NSURLRequest (rather than CFURLRequest) in IPC
+        https://bugs.webkit.org/show_bug.cgi?id=222145
+        <rdar://problem/74500963>
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        Add a new test to ensure we can successfully load URLs with accented characters,
+        and to test the updated IPC serialization for NSURLRequest.
+
+        * TestWebKitAPI/Tests/WebKit/A/303/247/303/243o.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm:
+        (TEST):
+
 2021-02-25  Jonathan Bedard  <jbedard@apple.com>
 
        [build.webkit.org] Stop passing --master-name to run-webkit-tests

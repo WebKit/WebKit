@@ -1,3 +1,43 @@
+2021-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Serialize NSURLRequest (rather than CFURLRequest) in IPC
+        https://bugs.webkit.org/show_bug.cgi?id=222145
+        <rdar://problem/74500963>
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        Tested by existing layout and WebKitAPI tests.
+
+        Revise IPC serialization so that NSURLConnection (modern) Cocoa builds serialize the
+        NSURLRequest object, rather than bridging to CFURLRequest and serializing that. This
+        ensures that the full set of NSURLRequest features are accurately reconstituted on the
+        receiving side of the connection.
+
+        Because NSURL serialization doesn't handle some encoded parameters properly, we implement
+        an archiving delegate to archive the URL like we do for CFURL.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (-[WKSecureCodingArchivingDelegate archiver:willEncodeObject:]): Added.
+        (-[WKSecureCodingArchivingDelegate unarchiver:didDecodeObject:]): Added.
+        (+[WKEncodedURL supportsSecureCoding]): Added.
+        (-[WKEncodedURL encodeWithCoder:]): Added.
+        (-[WKEncodedURL initWithCoder:]): Added.
+        (-[WKEncodedURL initWithURL:]): Added.
+        (IPC::encodeSecureCodingInternal): Update to use new delegate.
+        (IPC::decodeSecureCodingInternal): Ditto.
+        (-[WKSecureCodingFontAttributeNormalizer archiver:willEncodeObject:]): Deleted.
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData): Add NSURLRequest encoding.
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData): Add NSURLRequest decoding.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createSerializableRepresentation): Deleted.
+        (IPC::extractDictionaryValue): Deleted.
+        (IPC::createArchiveList): Deleted.
+        (IPC::createCFURLRequestFromSerializableRepresentation): Deleted.
+        (IPC::createNSURLRequestFromSerializableRepresentation): Deleted.
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData): Deleted.
+
 2021-02-25  Per Arne  <pvollan@apple.com>
 
         Temporarily stop enforcing notification filtering

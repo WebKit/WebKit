@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCustomPlatformData.h>
+#import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -541,6 +542,61 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
 
     return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value());
+}
+
+void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encoder, const WebCore::ResourceRequest& resourceRequest)
+{
+    auto requestToSerialize = retainPtr(resourceRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
+
+    bool requestIsPresent = requestToSerialize;
+    encoder << requestIsPresent;
+
+    if (!requestIsPresent)
+        return;
+
+    // We don't send HTTP body over IPC for better performance.
+    // Also, it's not always possible to do, as streams can only be created in process that does networking.
+    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
+        auto mutableRequest = adoptNS([requestToSerialize mutableCopy]);
+        [mutableRequest setHTTPBody:nil];
+        [mutableRequest setHTTPBodyStream:nil];
+        requestToSerialize = WTFMove(mutableRequest);
+    }
+
+    IPC::encode(encoder, requestToSerialize.get());
+
+    encoder << resourceRequest.requester();
+    encoder << resourceRequest.isAppBound();
+}
+
+bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decoder, WebCore::ResourceRequest& resourceRequest)
+{
+    bool requestIsPresent;
+    if (!decoder.decode(requestIsPresent))
+        return false;
+
+    if (!requestIsPresent) {
+        resourceRequest = WebCore::ResourceRequest();
+        return true;
+    }
+
+    auto request = IPC::decode<NSURLRequest>(decoder, NSURLRequest.class);
+    if (!request)
+        return false;
+    
+    WebCore::ResourceRequest::Requester requester;
+    if (!decoder.decode(requester))
+        return false;
+
+    bool isAppBound;
+    if (!decoder.decode(isAppBound))
+        return false;
+
+    resourceRequest = WebCore::ResourceRequest(request->get());
+    resourceRequest.setRequester(requester);
+    resourceRequest.setIsAppBound(isAppBound);
+
+    return true;
 }
 
 } // namespace IPC

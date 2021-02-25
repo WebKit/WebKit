@@ -1,3 +1,19 @@
+2021-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Serialize NSURLRequest (rather than CFURLRequest) in IPC
+        https://bugs.webkit.org/show_bug.cgi?id=222145
+        <rdar://problem/74500963>
+
+        Reviewed by Darin Adler.
+
+        URLWithData does an early return when the leading character in the URL is '/',
+        signifying a file path. However, URLs of the form "//cdn.domain.com" are often
+        encountered, and RFC 3986 does not prohibit them. We should only do an early
+        return if the character after the initial '/' is not also '/'.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::URLWithData):
+
 2021-02-24  Sam Weinig  <weinig@apple.com>
 
         Add platform enable for separated model investigation
