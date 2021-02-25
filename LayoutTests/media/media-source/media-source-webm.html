@@ -23,8 +23,6 @@
         return new Promise(resolve => {
             video.addEventListener('resize', event => {
                 // First resize can be 0x0
-                if (video.videoWidth == 0 && video.videoHeight == 0)
-                    return;
                 resizeEventFired = true;
                 videoWidth = video.videoWidth;
                 videoHeight = video.videoHeight;
@@ -44,20 +42,22 @@
             await waitFor(source, 'sourceopen');
             waitForEventAndFail('error');
 
+            const resized = resizePromise(video);
+
             run('source.duration = loader.duration()');
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
-            const resized = resizePromise(video);
             run('sourceBuffer.appendBuffer(loader.initSegment())');
-
             await waitFor(sourceBuffer, 'update');
-
-            consoleWrite('Append a media segment.')
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
 
             await resized;
             testExpected('resizeEventFired', true);
-            testExpected('videoWidth', 320);
-            testExpected('videoHeight', 240);
+            testExpected('(videoWidth == 320 || videoWidth == 0)', true);
+            testExpected('(videoHeight == 240 || videoHeight == 0)', true);
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
             endTest();
         } catch (e) {
             failTest(`Caught exception: "${e}"`);
@@ -67,8 +67,8 @@
 </head>
 <body>
     <div>
-        This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept
-        a new initialization segment or a new media segment.
+        This tests that a SourceBuffer can accept an initialization segment and a media segment and fire "update" events,
+        and the video element fires a "resize" event after the SourceBuffer appends the initialization segment.
     </div>
     <video controls></video>
 </body>

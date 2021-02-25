@@ -1,3 +1,45 @@
+2021-02-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r272359. rdar://problem/74451201
+
+    [MSE] Move the call to didParseInitializationDataCallback() from the beginning of a cluster to the end of "tracks" element
+    https://bugs.webkit.org/show_bug.cgi?id=221120
+    
+    Reviewed by Daniel Bates.
+    
+    Source/WebCore:
+    
+    This patch updates the WebM parser regarding the timing to call didParseInitializationDataCallback()
+    based on a discussion with Jer.
+    
+    Based on the spec, https://w3c.github.io/mse-byte-stream-format-webm/#webm-init-segments, "The user
+    agent MUST accept and ignore any elements other than an EBML Header or a Cluster that occur before,
+    in between, or after the Segment Information and Tracks elements." So the parser should have collected
+    all required information of the initialization segment when it finishes parsing the "Tracks" element.
+    
+    Tests: media/media-source/media-source-webm.html
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::OnElementEnd):
+    (WebCore::SourceBufferParserWebM::OnClusterBegin):
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-webm-expected.txt:
+    * media/media-source/media-source-webm.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272359 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-03  Peng Liu  <peng.liu6@apple.com>
+
+            [MSE] Move the call to didParseInitializationDataCallback() from the beginning of a cluster to the end of "tracks" element
+            https://bugs.webkit.org/show_bug.cgi?id=221120
+
+            Reviewed by Daniel Bates.
+
+            * media/media-source/media-source-webm-expected.txt:
+            * media/media-source/media-source-webm.html:
+
 2021-02-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r273158. rdar://problem/74623451

@@ -774,6 +774,16 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
 
+    if (metadata.id == Id::kTracks) {
+        if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
+            m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
+                m_didParseInitializationDataCallback(WTFMove(initializationSegment));
+            });
+        }
+        m_initializationSegmentEncountered = false;
+        m_initializationSegment = nullptr;
+    }
+
     return Status(Status::kOkCompleted);
 }
 
@@ -834,19 +844,6 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
-
-    if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
-        m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
-            m_didParseInitializationDataCallback(WTFMove(initializationSegment), [this, protectedThis = makeRef(*this)] {
-                m_initializationSegmentIsHandledSemaphore->signal();
-            });
-        });
-
-        // Wait until the initialization segment is handled
-        m_initializationSegmentIsHandledSemaphore->wait();
-    }
-    m_initializationSegmentEncountered = false;
-    m_initializationSegment = nullptr;
 
     if (cluster.timecode.is_present())
         m_currentTimecode = cluster.timecode.value();
