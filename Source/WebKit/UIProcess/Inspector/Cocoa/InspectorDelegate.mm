@@ -33,28 +33,22 @@
 
 namespace WebKit {
 
-InspectorDelegate::InspectorDelegate(_WKInspector *inspector)
+InspectorDelegate::InspectorDelegate(_WKInspector *inspector, id <_WKInspectorDelegate> delegate)
     : m_inspector(inspector)
+    , m_delegate(delegate)
 {
+    m_delegateMethods.inspectorDidEnableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidEnableBrowserDomain:)];
+    m_delegateMethods.inspectorDidDisableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidDisableBrowserDomain:)];
+    m_delegateMethods.inspectorOpenURLExternally = [delegate respondsToSelector:@selector(inspector:openURLExternally:)];
+
+    inspector->_inspector->setInspectorClient(delegate ? makeUnique<InspectorClient>(*this) : nullptr);
 }
 
-std::unique_ptr<API::InspectorClient> InspectorDelegate::createInspectorClient()
-{
-    return makeUnique<InspectorClient>(*this);
-}
+InspectorDelegate::~InspectorDelegate() = default;
 
 RetainPtr<id <_WKInspectorDelegate>> InspectorDelegate::delegate()
 {
     return m_delegate.get();
-}
-
-void InspectorDelegate::setDelegate(id <_WKInspectorDelegate> delegate)
-{
-    m_delegate = delegate;
-
-    m_delegateMethods.inspectorDidEnableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidEnableBrowserDomain:)];
-    m_delegateMethods.inspectorDidDisableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidDisableBrowserDomain:)];
-    m_delegateMethods.inspectorOpenURLExternally = [delegate respondsToSelector:@selector(inspector:openURLExternally:)];
 }
 
 InspectorDelegate::InspectorClient::InspectorClient(InspectorDelegate& delegate)

@@ -57,11 +57,10 @@
 
 - (void)setDelegate:(id<_WKInspectorDelegate>)delegate
 {
-    if (!_delegate)
-        _delegate = makeUnique<WebKit::InspectorDelegate>(self);
+    if (!delegate && !_delegate)
+        return;
 
-    _inspector->setInspectorClient(_delegate->createInspectorClient());
-    _delegate->setDelegate(delegate);
+    _delegate = makeUnique<WebKit::InspectorDelegate>(self, delegate);
 }
 
 - (WKWebView *)webView
