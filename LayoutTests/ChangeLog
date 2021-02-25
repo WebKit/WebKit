@@ -1,3 +1,16 @@
+2021-02-25  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Files from webmfiles.org do not play through MSE
+        https://bugs.webkit.org/show_bug.cgi?id=222403
+        <rdar://74640660>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header-manifest.json: Added.
+        * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header.webm: Added.
+        * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header-expected.txt: Added.
+        * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html: Added.
+
 2021-02-25  Robert Jenner  <jenner@apple.com>
 
         [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing

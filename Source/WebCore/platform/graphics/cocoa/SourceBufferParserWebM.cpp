@@ -1158,10 +1158,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
         }
     } else if (codec() == CodecType::VP8) {
         auto header = parseVP8FrameHeader(blockBufferData, segmentSizeAtPosition);
-        if (!header)
-            return;
-
-        if (header->keyframe) {
+        if (header && header->keyframe) {
             isKey = true;
             auto formatDescription = createFormatDescriptionFromVP8Header(*header, track().video.value().colour);
             if (!formatDescription) {
