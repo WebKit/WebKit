@@ -1,3 +1,16 @@
+2021-02-25  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: List of grid nodes is incomplete in Layout sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=222364
+        <rdar://problem/74700960>
+
+        Reviewed by Devin Rousso.
+
+        Update inspector protocol description for CSS domain to mention default value for
+        `layoutContextTypeChangedMode` ("observed") and clarify behavior of "all" value.
+
+        * inspector/protocol/CSS.json:
+
 2021-02-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273469.
