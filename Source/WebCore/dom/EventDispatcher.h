@@ -33,7 +33,6 @@ namespace EventDispatcher {
 
 void dispatchEvent(Node&, Event&);
 void dispatchEvent(const Vector<EventTarget*>&, Event&);
-void dispatchEvent(const Vector<Element*>&, Event&);
 
 void dispatchScopedEvent(Node&, Event&);
 
