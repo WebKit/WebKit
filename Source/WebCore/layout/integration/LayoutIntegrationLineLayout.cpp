@@ -206,8 +206,9 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
-    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
+    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow(), m_boxTree };
     inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
+
     ASSERT(m_inlineContent);
 
     for (auto& run : m_inlineContent->runs) {
