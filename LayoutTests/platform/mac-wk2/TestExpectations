@@ -1254,10 +1254,6 @@ webkit.org/b/217001 [ Mojave+ ] fast/scrolling/latching/latched-scroll-into-nonf
 
 webkit.org/b/217193 [ Mojave+ Release ] inspector/console/queryHolders.html [ Pass Failure ]
 
-webkit.org/b/217262 [ Catalina ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
-
-webkit.org/b/217525 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Pass Crash ]
-
 webkit.org/b/217686 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
 
 webkit.org/b/217857 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Skip ]
@@ -1388,3 +1384,9 @@ webkit.org/b/222332 [ Release ] compositing/video/video-border-radius-clipping.h
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
 webkit.org/b/222371 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Failure ]
+
+# webkit.org/b/222277
+imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Pass Failure ]
