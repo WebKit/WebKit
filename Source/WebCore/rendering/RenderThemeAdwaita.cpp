@@ -192,6 +192,7 @@ bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const 
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-borderSize);
+    corner.expand(-borderSize, -borderSize);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
@@ -330,6 +331,7 @@ bool RenderThemeAdwaita::paintProgressBar(const RenderObject& renderObject, cons
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-1);
+    corner.expand(-1, -1);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     graphicsContext.setFillColor(progressBarBorderColor);
@@ -395,6 +397,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-sliderTrackBorderSize);
+    corner.expand(-sliderTrackBorderSize, -sliderTrackBorderSize);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     graphicsContext.setFillColor(sliderTrackBorderColor);

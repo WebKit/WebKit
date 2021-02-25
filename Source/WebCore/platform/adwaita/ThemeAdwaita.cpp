@@ -248,6 +248,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-buttonBorderSize);
+    corner.expand(-buttonBorderSize, -buttonBorderSize);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     graphicsContext.setFillColor(buttonBorderColor);
@@ -349,6 +350,7 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-buttonBorderSize);
+    corner.expand(-buttonBorderSize, -buttonBorderSize);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     graphicsContext.setFillColor(buttonBorderColor);
@@ -380,6 +382,7 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
     Path path;
     path.addRoundedRect(fieldRect, corner);
     fieldRect.inflate(-buttonBorderSize);
+    corner.expand(-buttonBorderSize, -buttonBorderSize);
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     graphicsContext.setFillColor(spinButtonBorderColor);
