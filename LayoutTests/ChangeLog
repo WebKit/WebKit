@@ -1,5 +1,14 @@
 2021-02-25  Robert Jenner  <jenner@apple.com>
 
+        [ macOS BigSur Wk2 ] http/tests/media/hls/hls-hdr-switch.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=222425
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations as Timeout until changes made in r272842 are fully resolved.
+
+2021-02-25  Robert Jenner  <jenner@apple.com>
+
         REGRESSION (r273461): [ macOS ] imported/w3c/web-platform-tests/media-source/mediasource-duration.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=222422
 
