@@ -250,7 +250,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (!hasDefiniteLogicalHeight)
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
         else
-            computeTrackSizesForDefiniteSize(ForRows, std::max<LayoutUnit>(0_lu, availableLogicalHeight(ExcludeMarginBorderPadding)));
+            computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
         LayoutUnit trackBasedLogicalHeight = m_trackSizingAlgorithm.computeTrackBasedSize() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         setLogicalHeight(trackBasedLogicalHeight);
 
@@ -310,7 +310,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, Optional<LayoutUnit> availableSize) const
 {
-    ASSERT(!availableSize || *availableSize >= 0);
     const GapLength& gapLength = direction == ForColumns? style().columnGap() : style().rowGap();
     if (gapLength.isNormal())
         return 0_lu;
@@ -614,7 +613,7 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, Optional<
         if (!child->hasOverridingContainingBlockContentLogicalWidth())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
         if (!child->hasOverridingContainingBlockContentLogicalHeight())
-            child->setOverridingContainingBlockContentLogicalHeight(WTF::nullopt);
+            child->setOverridingContainingBlockContentLogicalHeight(LayoutUnit(-1));
 
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
@@ -1137,7 +1136,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
-        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, WTF::nullopt);
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
 
         // Checking the logical-height of a child isn't enough. Setting an override logical-height

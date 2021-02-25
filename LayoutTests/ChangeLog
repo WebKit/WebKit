@@ -1,3 +1,15 @@
+2021-02-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r273470.
+
+        New test is asserting on WK1 and iOS bots
+
+        Reverted changeset:
+
+        "[css-grid] Do not allow negative heights"
+        https://bugs.webkit.org/show_bug.cgi?id=221439
+        https://commits.webkit.org/r273470
+
 2021-02-24  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Remove duplicated items in LayoutTests/gpu-process/TestExpectations related to media

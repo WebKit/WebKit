@@ -1052,13 +1052,10 @@ LayoutUnit IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
 LayoutUnit DefiniteSizeStrategy::minLogicalSizeForChild(RenderBox& child, const Length& childMinSize, LayoutUnit availableSize) const
 {
     GridTrackSizingDirection childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, ForColumns);
+    LayoutUnit indefiniteSize = direction() == childInlineDirection ? LayoutUnit() : LayoutUnit(-1);
     GridTrackSizingDirection flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, direction());
-    if (hasRelativeMarginOrPaddingForChild(child, flowAwareDirection) || (direction() != childInlineDirection && hasRelativeOrIntrinsicSizeForChild(child, flowAwareDirection))) {
-        Optional<LayoutUnit> overridingSize;
-        if (direction() == childInlineDirection)
-            overridingSize = 0_lu;
-        setOverridingContainingBlockContentSizeForChild(child, direction(), overridingSize);
-    }
+    if (hasRelativeMarginOrPaddingForChild(child, flowAwareDirection) || (direction() != childInlineDirection && hasRelativeOrIntrinsicSizeForChild(child, flowAwareDirection)))
+        setOverridingContainingBlockContentSizeForChild(child, direction(), indefiniteSize);
     return GridTrackSizingAlgorithmStrategy::minLogicalSizeForChild(child, childMinSize, availableSize);
 }
 
