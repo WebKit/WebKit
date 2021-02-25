@@ -1,3 +1,46 @@
+2021-02-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound request parameter should be passed to main resource requests not the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=222241
+        <rdar://problem/74560966> 
+
+        Reviewed by Chris Dumez.
+
+        Bug fix to set the isAppBound parameter on the resource request if it
+        is not on the main frame. Previously this only checked if the
+        resource was not a main resource before setting the parameter.
+
+        Otherwise mostly changes to add better testing.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::appBoundNavigationData):
+        (WebKit::NetworkProcess::clearAppBoundNavigationData):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::appBoundNavigationTestingData):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * Scripts/webkit/messages.py:
+        * Shared/NavigatingToAppBoundDomain.h:
+        (WebKit::AppBoundNavigationTestingData::clearAppBoundNavigationDataTesting):
+        (WebKit::AppBoundNavigationTestingData::updateAppBoundNavigationTestingData):
+        (WebKit::AppBoundNavigationTestingData::encode const):
+        (WebKit::AppBoundNavigationTestingData::decode):
+        Struct to return data for tests.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _appBoundNavigationData:]):
+        (-[WKWebView _clearAppBoundNavigationData:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::appBoundNavigationData):
+        (WebKit::WebPageProxy::clearAppBoundNavigationData):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        The fix.
+
 2021-02-24  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Refactor RemoteImageDecoderAVF::createFrameImageAtIndex()

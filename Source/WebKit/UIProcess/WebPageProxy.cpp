@@ -10399,6 +10399,18 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 }
 #endif
 
+#if PLATFORM(COCOA)
+void WebPageProxy::appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&& completionHandler)
+{
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+}
+
+void WebPageProxy::clearAppBoundNavigationData(CompletionHandler<void()>&& completionHandler)
+{
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearAppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+}
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

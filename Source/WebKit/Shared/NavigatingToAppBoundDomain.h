@@ -25,10 +25,54 @@
 
 #pragma once
 
+#include "ArgumentCoder.h"
+#include "Decoder.h"
+#include "Encoder.h"
+
 namespace WebKit {
 
 enum class NavigatingToAppBoundDomain : bool { No, Yes };
 enum class LastNavigationWasAppBound : bool { No, Yes };
+
+#if PLATFORM(COCOA)
+struct AppBoundNavigationTestingData {
+
+    void clearAppBoundNavigationDataTesting()
+    {
+        hasLoadedAppBoundRequestTesting = false;
+        hasLoadedNonAppBoundRequestTesting = false;
+    }
+    
+    void updateAppBoundNavigationTestingData(bool requestIsAppBound)
+    {
+        requestIsAppBound ? hasLoadedAppBoundRequestTesting = true : hasLoadedNonAppBoundRequestTesting = true;
+    }
+
+    void encode(IPC::Encoder& encoder) const
+    {
+        encoder << hasLoadedAppBoundRequestTesting;
+        encoder << hasLoadedNonAppBoundRequestTesting;
+    }
+
+    static Optional<AppBoundNavigationTestingData> decode(IPC::Decoder& decoder)
+    {
+        Optional<bool> hasLoadedAppBoundRequestTesting;
+        decoder >> hasLoadedAppBoundRequestTesting;
+        if (!hasLoadedAppBoundRequestTesting)
+            return WTF::nullopt;
+
+        Optional<bool> hasLoadedNonAppBoundRequestTesting;
+        decoder >> hasLoadedNonAppBoundRequestTesting;
+        if (!hasLoadedNonAppBoundRequestTesting)
+            return WTF::nullopt;
+
+        return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting }};
+    }
+
+    bool hasLoadedAppBoundRequestTesting { false };
+    bool hasLoadedNonAppBoundRequestTesting { false };
+};
+#endif
 
 }
 

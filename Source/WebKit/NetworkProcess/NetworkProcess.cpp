@@ -2778,4 +2778,23 @@ void NetworkProcess::setCORSDisablingPatterns(PageIdentifier pageIdentifier, Vec
     m_extensionCORSDisablingPatterns.set(pageIdentifier, WTFMove(parsedPatterns));
 }
 
+#if PLATFORM(COCOA)
+void NetworkProcess::appBoundNavigationData(PAL::SessionID sessionID, CompletionHandler<void(const AppBoundNavigationTestingData&)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        completionHandler(networkSession->appBoundNavigationTestingData());
+        return;
+    }
+    completionHandler({ });
+}
+
+void NetworkProcess::clearAppBoundNavigationData(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->appBoundNavigationTestingData().clearAppBoundNavigationDataTesting();
+
+    completionHandler();
+}
+#endif
+
 } // namespace WebKit

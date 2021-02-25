@@ -311,6 +311,7 @@ typedef HWND PlatformViewWidget;
 #endif
 
 namespace WebKit {
+struct AppBoundNavigationTestingData;
 class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
 class GamepadData;
@@ -1868,6 +1869,8 @@ public:
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+    void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
+    void clearAppBoundNavigationData(CompletionHandler<void()>&&);
 #endif
 
 private:

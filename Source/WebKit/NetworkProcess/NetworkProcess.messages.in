@@ -190,4 +190,9 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     UpdateBundleIdentifier(String bundleIdentifier) -> () Async
     ClearBundleIdentifier() -> () Async
+
+#if PLATFORM(COCOA)
+    AppBoundNavigationData(PAL::SessionID sessionID) -> (struct WebKit::AppBoundNavigationTestingData data) Async
+    ClearAppBoundNavigationData(PAL::SessionID sessionID) -> () Async
+#endif
 }

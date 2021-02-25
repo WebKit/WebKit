@@ -378,6 +378,11 @@ public:
     bool shouldDisableCORSForRequestTo(WebCore::PageIdentifier, const URL&) const;
     void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
 
+#if PLATFORM(COCOA)
+    void appBoundNavigationData(PAL::SessionID, CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
+    void clearAppBoundNavigationData(PAL::SessionID, CompletionHandler<void()>&&);
+#endif
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

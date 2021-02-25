@@ -107,7 +107,7 @@ WebLoaderStrategy::~WebLoaderStrategy()
 
 void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
-    if (resource.type() != CachedResource::Type::MainResource) {
+    if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
         if (auto* document = frame.mainFrame().document()) {
             if (document && document->loader())
                 request.setIsAppBound(document->loader()->lastNavigationWasAppBound());

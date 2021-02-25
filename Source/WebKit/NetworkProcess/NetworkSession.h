@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NavigatingToAppBoundDomain.h"
 #include "PrefetchCache.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
@@ -157,6 +158,10 @@ public:
     NetworkLoadScheduler& networkLoadScheduler();
     PrivateClickMeasurementManager& privateClickMeasurement() { return *m_privateClickMeasurement; }
 
+#if PLATFORM(COCOA)
+    AppBoundNavigationTestingData& appBoundNavigationTestingData() { return m_appBoundNavigationTestingData; }
+#endif
+    
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -200,6 +205,10 @@ protected:
 
 #if ENABLE(SERVICE_WORKER)
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
+#endif
+    
+#if PLATFORM(COCOA)
+    AppBoundNavigationTestingData m_appBoundNavigationTestingData;
 #endif
 };
 

@@ -1,3 +1,25 @@
+2021-02-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound request parameter should be passed to main resource requests not the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=222241
+        <rdar://problem/74560966> 
+
+        Reviewed by Chris Dumez.
+
+        Adds more robust testing to report when appBound/nonAppBound requests
+        load in the network process. This tests not only that the main frame’s
+        document loader is properly set, but also that all loads initiated from
+        app-bound requests are also app-bound to avoid regressions like this in the future.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        Utilize some CSP test resources that have the exact setup needed to
+        test this fix.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView appBoundNavigationData:]):
+        (-[WKWebView clearAppBoundNavigationReports:]):
+
 2021-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add flag for caller to opt out of identifier computation

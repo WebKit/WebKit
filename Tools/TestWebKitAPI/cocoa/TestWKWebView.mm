@@ -251,10 +251,6 @@ static NSString *overrideBundleIdentifier(id, SEL)
     return clientWidth;
 }
 
-- (void)lastNavigationWasAppBound:(void(^)(BOOL))completionHandler
-{
-    [self _lastNavigationWasAppBound:completionHandler];
-}
 @end
 
 @implementation TestMessageHandler {
