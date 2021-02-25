@@ -1,3 +1,16 @@
+2021-02-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273488.
+        https://bugs.webkit.org/show_bug.cgi?id=222426
+
+        Landed before necessary buildbot change.
+
+        Reverted changeset:
+
+        "[run-webkit-tests] Delete old results server code"
+        https://bugs.webkit.org/show_bug.cgi?id=222393
+        https://trac.webkit.org/changeset/273488
+
 2021-02-25  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Delete old results server code
