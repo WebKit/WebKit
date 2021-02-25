@@ -1,3 +1,12 @@
+2021-02-24  Cameron McCormack  <heycam@apple.com>
+
+        Fix typo in Introduction.md.
+        https://bugs.webkit.org/show_bug.cgi?id=222387
+
+        Reviewed by Ryosuke Niwa.
+
+        * Introduction.md:
+
 2021-02-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Fix JSCOnly build on Windows
