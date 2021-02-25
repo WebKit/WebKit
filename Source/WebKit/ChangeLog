@@ -1,3 +1,9 @@
+2021-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build with the latest iOS SDK.
+
+        * Shared/FocusedElementInformation.h:
+
 2021-02-24  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Get default value in the UI process for whether synchronous XMLHttpRequest are allowed during unload
