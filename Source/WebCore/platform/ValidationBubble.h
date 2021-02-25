@@ -31,6 +31,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -89,7 +90,7 @@ private:
     RetainPtr<WebValidationBubbleViewController> m_popoverController;
     RetainPtr<WebValidationBubbleTapRecognizer> m_tapRecognizer;
     RetainPtr<WebValidationBubbleDelegate> m_popoverDelegate;
-    UIViewController *m_presentingViewController;
+    WeakObjCPtr<UIViewController> m_presentingViewController;
 #endif
 };
 
