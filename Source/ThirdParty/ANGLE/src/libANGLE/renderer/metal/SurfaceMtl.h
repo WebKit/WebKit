@@ -24,27 +24,16 @@ namespace rx
 
 class DisplayMtl;
 
-class SurfaceMtlProtocol : public SurfaceImpl
-{
-  public:
-    SurfaceMtlProtocol(const egl::SurfaceState &state) : SurfaceImpl(state) {}
-    virtual int getSamples() const      = 0;
-    virtual bool preserveBuffer() const = 0;
+#define ANGLE_TO_EGL_TRY(EXPR)                                 \
+    do                                                         \
+    {                                                          \
+        if (ANGLE_UNLIKELY((EXPR) != angle::Result::Continue)) \
+        {                                                      \
+            return egl::EglBadSurface();                       \
+        }                                                      \
+    } while (0)
 
-    virtual angle::Result getAttachmentRenderTarget(const gl::Context *context,
-                                                    GLenum binding,
-                                                    const gl::ImageIndex &imageIndex,
-                                                    GLsizei samples,
-                                                    FramebufferAttachmentRenderTarget **rtOut) override = 0;
-
-    virtual bool hasRobustResourceInit() const = 0;
-    virtual angle::Result ensureCurrentDrawableObtained(const gl::Context *context) = 0;
-    virtual angle::Result ensureCurrentDrawableObtained(const gl::Context *context, bool *newDrawableOut) = 0;
-    virtual angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context) = 0;
-    virtual const mtl::TextureRef & getColorTexture() = 0;
-};
-
-class SurfaceMtl : public SurfaceMtlProtocol
+class SurfaceMtl : public SurfaceImpl
 {
   public:
     SurfaceMtl(DisplayMtl *display,
@@ -87,11 +76,11 @@ class SurfaceMtl : public SurfaceMtlProtocol
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
 
-    const mtl::TextureRef &getColorTexture() override { return mColorTexture; }
+    const mtl::TextureRef &getColorTexture()  { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
-    int getSamples() const override { return mSamples; }
+    int getSamples() const  { return mSamples; }
 
-    bool hasRobustResourceInit() const override { return mRobustResourceInit; }
+    bool hasRobustResourceInit() const  { return mRobustResourceInit; }
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
@@ -164,14 +153,14 @@ class WindowSurfaceMtl : public SurfaceMtl
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
-    angle::Result ensureCurrentDrawableObtained(const gl::Context *context) override;
+    angle::Result ensureCurrentDrawableObtained(const gl::Context *context);
     angle::Result ensureCurrentDrawableObtained(const gl::Context *context,
-                                                bool *newDrawableOut /** nullable */) override;
+                                                bool *newDrawableOut /** nullable */);
 
     // Ensure the the texture returned from getColorTexture() is ready for glReadPixels(). This
     // implicitly calls ensureCurrentDrawableObtained().
-    angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context) override;
-    bool preserveBuffer() const override { return mRetainBuffer; }
+    angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context);
+    bool preserveBuffer() const { return mRetainBuffer; }
   private:
     angle::Result swapImpl(const gl::Context *context);
     angle::Result obtainNextDrawable(const gl::Context *context);
@@ -193,7 +182,7 @@ class WindowSurfaceMtl : public SurfaceMtl
     bool mRetainBuffer = false;
 };
 
-// Offscreen surface, base class of PBuffer, IOSurface.
+// Offscreen surface, base class of PBuffer.
 class OffscreenSurfaceMtl : public SurfaceMtl
 {
   public:

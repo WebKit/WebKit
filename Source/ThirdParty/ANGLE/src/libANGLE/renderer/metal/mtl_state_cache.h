@@ -113,6 +113,7 @@ struct alignas(4) SamplerDesc
     uint8_t minFilter : 1;
     uint8_t magFilter : 1;
     uint8_t mipFilter : 2;
+    uint8_t normalizedCoordinates: 1;
 
     uint8_t maxAnisotropy : 5;
 

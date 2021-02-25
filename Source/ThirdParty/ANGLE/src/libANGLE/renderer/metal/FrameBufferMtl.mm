@@ -56,7 +56,7 @@ const gl::InternalFormat &GetReadAttachmentInfo(const gl::Context *context,
 // FramebufferMtl implementation
 FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state,
                                bool flipY,
-                               SurfaceMtlProtocol *backbuffer)
+                               WindowSurfaceMtl *backbuffer)
     : FramebufferImpl(state), mBackbuffer(backbuffer), mFlipY(flipY)
 {
     reset();

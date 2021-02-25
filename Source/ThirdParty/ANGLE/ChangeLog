@@ -1,3 +1,49 @@
+2021-02-25  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix crashes in fast/canvas/webgl/texImage video tests
+        Refactor IOSurfaceSurfaceMtl to match open source implementation.
+        Additional cleanup
+
+        https://bugs.webkit.org/show_bug.cgi?id=222331
+
+        Reviewed by Dean Jackson.
+
+
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::onBackbufferResized):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::createPbufferSurface):
+        (rx::DisplayMtl::createPbufferFromClientBuffer):
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        (rx::FramebufferMtl::getAttachedBackbuffer const):
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::FramebufferMtl):
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h:
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        (rx::IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::bindTexImage):
+        (rx::IOSurfaceSurfaceMtl::releaseTexImage):
+        (rx::IOSurfaceSurfaceMtl::getAttachmentRenderTarget):
+        (rx::IOSurfaceSurfaceMtl::ensureColorTextureCreated):
+        (rx::IOSurfaceSurfaceMtl::ValidateAttributes):
+        * src/libANGLE/renderer/metal/SurfaceMtl.h:
+        (rx::SurfaceMtl::getColorTexture):
+        (rx::SurfaceMtl::getSamples const):
+        (rx::SurfaceMtl::hasRobustResourceInit const):
+        (rx::WindowSurfaceMtl::preserveBuffer const):
+        * src/libANGLE/renderer/metal/SurfaceMtl.mm:
+        (rx::SurfaceMtl::SurfaceMtl):
+        * src/libANGLE/renderer/metal/TextureMtl.h:
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::ensureTextureCreated):
+        (rx::TextureMtl::ensureSamplerStateCreated):
+        (rx::TextureMtl::bindTexImage):
+        (rx::TextureMtl::releaseTexImage):
+        (rx::TextureMtl::getAttachmentRenderTarget):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+
 2021-02-19  Kyle Piddington  <kpiddington@apple.com>
 
         Fix a number of functional regressions caused by enabling the Metal ANGLE backend by default.

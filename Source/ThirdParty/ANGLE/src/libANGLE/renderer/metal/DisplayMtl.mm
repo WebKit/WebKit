@@ -270,8 +270,7 @@ SurfaceImpl *DisplayMtl::createWindowSurface(const egl::SurfaceState &state,
 SurfaceImpl *DisplayMtl::createPbufferSurface(const egl::SurfaceState &state,
                                               const egl::AttributeMap &attribs)
 {
-    UNIMPLEMENTED();
-    return static_cast<SurfaceImpl *>(0);
+    return new PBufferSurfaceMtl(this, state, attribs);
 }
 
 SurfaceImpl *DisplayMtl::createPbufferFromClientBuffer(const egl::SurfaceState &state,
@@ -279,7 +278,15 @@ SurfaceImpl *DisplayMtl::createPbufferFromClientBuffer(const egl::SurfaceState &
                                                        EGLClientBuffer clientBuffer,
                                                        const egl::AttributeMap &attribs)
 {
-    return new IOSurfaceSurfaceMtl(this, state, clientBuffer, attribs);
+    switch (buftype)
+    {
+        case EGL_IOSURFACE_ANGLE:
+            return new IOSurfaceSurfaceMtl(this, state, clientBuffer, attribs);
+            break;
+        default:
+            UNREACHABLE();
+            return nullptr;
+    }
 }
 
 SurfaceImpl *DisplayMtl::createPixmapSurface(const egl::SurfaceState &state,

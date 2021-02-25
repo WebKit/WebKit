@@ -113,7 +113,6 @@ class TextureMtl;
 class ProgramMtl;
 class SamplerMtl;
 class TransformFeedbackMtl;
-class SurfaceMtlProtocol;
 
 ANGLE_GL_OBJECTS_X(ANGLE_PRE_DECLARE_MTL_OBJECT)
 
@@ -169,11 +168,6 @@ template <>
 struct ImplTypeHelper<egl::Display>
 {
     using ImplType = DisplayMtl;
-};
-template <>
-struct ImplTypeHelper<egl::Surface>
-{
-    using ImplType = SurfaceMtlProtocol;
 };
 template <typename T>
 using GetImplType = typename ImplTypeHelper<T>::ImplType;
