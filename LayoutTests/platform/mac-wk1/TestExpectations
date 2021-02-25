@@ -1249,3 +1249,5 @@ webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-aut
 webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
 
 webkit.org/b/221717 [ BigSur ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
+
+webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
