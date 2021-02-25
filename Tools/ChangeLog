@@ -1,5 +1,22 @@
 2021-02-25  Jonathan Bedard  <jbedard@apple.com>
 
+       [build.webkit.org] Stop passing --master-name to run-webkit-tests
+       https://bugs.webkit.org/show_bug.cgi?id=222427
+       <rdar://problem/74750838>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunWebKitTests):
+        * CISupport/build-webkit-org/steps_unittest.py:
+        (TestRunWebKitTests.test_success):
+        (TestRunWebKitTests.test_warnings):
+        (TestRunWebKitTests.test_failure):
+        (TestRunWebKitTests.test_unexpected_error):
+        (TestRunWebKitTests.test_exception):
+
+2021-02-25  Jonathan Bedard  <jbedard@apple.com>
+
         [ews-build.webkit.org] Compute identifiers locally
         https://bugs.webkit.org/show_bug.cgi?id=222370
         <rdar://problem/74704298>

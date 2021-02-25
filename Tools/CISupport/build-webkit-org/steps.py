@@ -501,7 +501,6 @@ class RunWebKitTests(shell.Test):
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--buildbot-worker", WithProperties("%(workername)s"),
-               "--master-name", "webkit.org",
                "--buildbot-master", CURRENT_HOSTNAME,
                "--report", RESULTS_WEBKIT_URL,
                "--exit-after-n-crashes-or-timeouts", "50",
