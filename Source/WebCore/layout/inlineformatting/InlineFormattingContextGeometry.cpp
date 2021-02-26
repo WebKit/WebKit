@@ -227,11 +227,11 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // We need to make sure that there's an LineBox::InlineLevelBox for every inline box that's present on the current line.
         // In nesting case we need to create LineBox::InlineLevelBoxes for the inline box ancestors.
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
-        // nested with a [container start] run.
+        // nested with a [inline box start] run.
         auto& firstRun = runs[0];
         auto& firstRunParentLayoutBox = firstRun.layoutBox().parent();
         // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
-        // unless the inline box closing (container end run) is forced over to the current line.
+        // unless the inline box closing is forced over to the current line.
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
@@ -350,7 +350,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             continue;
         }
         if (run.isInlineBoxEnd()) {
-            // Adjust the logical width when the inline level container closes on this line.
+            // Adjust the logical width when the inline box closes on this line.
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.

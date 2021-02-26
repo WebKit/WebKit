@@ -70,12 +70,12 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
 static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inlineFormattingContext, const InlineItem& current, const InlineItem& next)
 {
     // "is at" simple means that there's a soft wrap opportunity right after the [current].
-    // [text][ ][text][container start]... (<div>text content<span>..</div>)
-    // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [container start].
+    // [text][ ][text][inline box start]... (<div>text content<span>..</div>)
+    // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [inline box start].
 
     // https://drafts.csswg.org/css-text-3/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
-    // e.g. [container start][prior_continuous_content][container end] (<span>prior_continuous_content</span>)
+    // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
     ASSERT(current.isText() || current.isBox() || current.isFloat());
@@ -113,7 +113,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
         auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
         if (isImageContent)
             return inlineFormattingContext.quirks().hasSoftWrapOpportunityAtImage();
-        // [text][container start][container end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
+        // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
     }
@@ -551,9 +551,9 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
     // 3. Check if there's a soft wrap opportunity between the 2 candidate inline items and repeat.
     // 4. Any force line break/explicit wrap content inbetween is considered as wrap opportunity.
 
-    // [ex-][container start][container end][float][ample] (ex-<span></span><div style="float:left"></div>ample). Wrap index is at [ex-].
-    // [ex][container start][amp-][container start][le] (ex<span>amp-<span>ample). Wrap index is at [amp-].
-    // [ex-][container start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
+    // [ex-][inline box start][inline box end][float][ample] (ex-<span></span><div style="float:left"></div>ample). Wrap index is at [ex-].
+    // [ex][inline box start][amp-][inline box start][le] (ex<span>amp-<span>ample). Wrap index is at [amp-].
+    // [ex-][inline box start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
     auto previousInlineItemIndex = Optional<size_t> { };
     for (auto index = startIndex; index < layoutRange.end; ++index) {
         auto& inlineItem = m_inlineItems[index];
@@ -583,11 +583,11 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             }
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
-            // [ex-][ample] vs. [ex-][container start][container end][ample]
+            // [ex-][ample] vs. [ex-][inline box start][inline box end][ample]
             // where [ex-] is startContent and [ample] is the nextContent.
             for (auto candidateIndex = *previousInlineItemIndex + 1; candidateIndex < index; ++candidateIndex) {
                 if (m_inlineItems[candidateIndex].isInlineBoxStart()) {
-                    // inline content and [container start] and [container end] form unbreakable content.
+                    // inline content and [inline box start] and [inline box end] form unbreakable content.
                     // ex-<span></span>ample  : wrap opportunity is after "ex-".
                     // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".
                     // ex-</span><span>ample</span> : wrap opportunity is after "ex-</span>".

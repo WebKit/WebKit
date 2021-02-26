@@ -65,7 +65,7 @@ static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousC
 
 static inline bool hasTextRun(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
-    // <span>text</span> is considered a text run even with the [container start][container end] inline items.
+    // <span>text</span> is considered a text run even with the [inline box start][inline box end] inline items.
     // Based on standards commit boundary rules it would be enough to check the first inline item, but due to the table quirk, we can have
     // image and text next to each other inside a continuous set of runs (see InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage).
     for (auto& run : continuousContent.runs()) {
@@ -269,8 +269,8 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
     auto isBreakableRun = [] (auto& run) {
         ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.layoutBox().isImage());
         if (!run.inlineItem.isText()) {
-            // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
-            // we need to check if there's another inline item beyond the [container end] to split.
+            // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
+            // we need to check if there's another inline item beyond the [inline box end] to split.
             return false;
         }
         // Check if this text run needs to stay on the current line.  

@@ -199,7 +199,7 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUni
 
 void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    // This is really just a placeholder to mark the start of the inline level container <span>.
+    // This is really just a placeholder to mark the start of the inline box <span>.
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
     appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
@@ -207,13 +207,13 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit l
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    // This is really just a placeholder to mark the end of the inline level container </span>.
+    // This is really just a placeholder to mark the end of the inline box </span>.
     auto removeTrailingLetterSpacing = [&] {
         if (!m_trimmableTrailingContent.isTrailingRunPartiallyTrimmable())
             return;
         m_contentLogicalWidth -= m_trimmableTrailingContent.removePartiallyTrimmableContent();
     };
-    // Prevent trailing letter-spacing from spilling out of the inline container.
+    // Prevent trailing letter-spacing from spilling out of the inline box.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
     removeTrailingLetterSpacing();
     appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
@@ -237,7 +237,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             // Any collapsible space immediately following another collapsible space—even one outside the boundary of the inline containing that space,
             // provided both spaces are within the same inline formatting context—is collapsed to have zero advance width.
             // : "<span>  </span> " <- the trailing whitespace collapses completely.
-            // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
+            // Not that when the inline box has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
             ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
@@ -372,8 +372,8 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
 {
     // Remove trimmable trailing content and move all the subsequent trailing runs.
     // <span> </span><span></span>
-    // [trailing whitespace][container end][container start][container end]
-    // Trim the whitespace run and move the trailing inline container runs to the logical left.
+    // [trailing whitespace][inline box end][inline box start][inline box end]
+    // Trim the whitespace run and move the trailing inline box runs to the logical left.
     ASSERT(!isEmpty());
     auto& trimmableRun = m_runs[*m_firstTrimmableRunIndex];
     ASSERT(trimmableRun.isText());
