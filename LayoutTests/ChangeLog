@@ -1,5 +1,29 @@
 2021-02-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273567. rdar://problem/74798808
+
+    Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly
+    https://bugs.webkit.org/show_bug.cgi?id=222438
+    <rdar://problem/74382039>
+    
+    Unreviewed test gardening.
+    
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273567 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly
+            https://bugs.webkit.org/show_bug.cgi?id=222438
+            <rdar://problem/74382039>
+
+            Unreviewed test gardening.
+
+            * platform/mac/TestExpectations:
+
+2021-02-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273539. rdar://problem/74798808
 
     Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly

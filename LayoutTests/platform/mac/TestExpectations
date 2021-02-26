@@ -2274,4 +2274,4 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 [ Catalina Mojave ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
 # Not all OSes support the same set of emoji.
-[ Mojave Catalina ] fast/text/mending-heart.html [ Failure ] 
+[ Mojave Catalina BigSur ] fast/text/mending-heart.html [ Failure ]
