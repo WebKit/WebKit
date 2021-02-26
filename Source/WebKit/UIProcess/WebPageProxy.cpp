@@ -8020,6 +8020,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     
     parameters.textInteractionEnabled = preferences().textInteractionEnabled();
 
+#if PLATFORM(IOS)
+    parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
+#endif
+
     return parameters;
 }
 

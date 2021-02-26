@@ -249,6 +249,10 @@ struct WebPageCreationParameters {
 #endif
 
     bool textInteractionEnabled { true };
+    
+#if PLATFORM(IOS)
+    bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
+#endif
 };
 
 } // namespace WebKit
