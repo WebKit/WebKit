@@ -23,12 +23,12 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 messages -> WebInspectorUIExtensionController NotRefCounted {
-    RegisterExtension(String extensionID, String displayName) -> (Expected<bool, WebKit::InspectorExtensionError> result) Async
-    UnregisterExtension(String extensionID) -> (Expected<bool, WebKit::InspectorExtensionError> result) Async
+    RegisterExtension(String extensionID, String displayName) -> (Expected<bool, Inspector::ExtensionError> result) Async
+    UnregisterExtension(String extensionID) -> (Expected<bool, Inspector::ExtensionError> result) Async
 
-    CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, WebKit::InspectorExtensionError> result) Async
-    EvaluateScriptForExtension(String extensionID, String scriptSource, Optional<URL> frameURL, Optional<URL> contextSecurityOrigin, Optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details, Optional<WebKit::InspectorExtensionError> error) Async
-    ReloadForExtension(String extensionID, Optional<bool> ignoreCache, Optional<String> userAgent, Optional<String> injectedScript) -> (Optional<WebKit::InspectorExtensionError> error) Async
+    CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, Inspector::ExtensionError> result) Async
+    EvaluateScriptForExtension(String extensionID, String scriptSource, Optional<URL> frameURL, Optional<URL> contextSecurityOrigin, Optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details, Optional<Inspector::ExtensionError> error) Async
+    ReloadForExtension(String extensionID, Optional<bool> ignoreCache, Optional<String> userAgent, Optional<String> injectedScript) -> (Optional<Inspector::ExtensionError> error) Async
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

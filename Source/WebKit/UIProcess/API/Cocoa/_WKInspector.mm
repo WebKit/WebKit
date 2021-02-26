@@ -187,13 +187,19 @@
 - (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    _inspector->extensionController().registerExtension(extensionID, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
+    // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
+    if (!_inspector->extensionController()) {
+        completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)}], nil);
+        return;
+    }
+
+    _inspector->extensionController()->registerExtension(extensionID, displayName, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
             return;
         }
 
-        capturedBlock(nil, wrapper(API::InspectorExtension::create(protectedExtensionID.get(), protectedSelf->_inspector->extensionController())));
+        capturedBlock(nil, wrapper(result.value()));
     });
 #else
     completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil], nil);
@@ -203,9 +209,15 @@
 - (void)unregisterExtension:(_WKInspectorExtension *)extension completionHandler:(void(^)(NSError *))completionHandler
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    _inspector->extensionController().unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
+    // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
+    if (!_inspector->extensionController()) {
+        completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)}]);
+        return;
+    }
+
+    _inspector->extensionController()->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}]);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}]);
             return;
         }
 

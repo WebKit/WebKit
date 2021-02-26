@@ -28,7 +28,9 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+#include "APIInspectorExtension.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
+#include "WebInspectorUIExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -37,18 +39,25 @@ namespace WebKit {
 WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage)
     : m_inspectorPage(makeWeakPtr(inspectorPage))
 {
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
 }
 
 WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy()
 {
-    if (!m_inspectorPage)
-        return;
-
-    m_inspectorPage = nullptr;
-
     auto callbacks = std::exchange(m_frontendLoadedCallbackQueue, { });
     for (auto& callback : callbacks)
         callback();
+
+    if (!m_inspectorPage)
+        return;
+
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID());
+    m_inspectorPage = nullptr;
+}
+
+Ref<WebInspectorUIExtensionControllerProxy> WebInspectorUIExtensionControllerProxy::create(WebPageProxy& inspectorPage)
+{
+    return adoptRef(*new WebInspectorUIExtensionControllerProxy(inspectorPage));
 }
 
 void WebInspectorUIExtensionControllerProxy::whenFrontendHasLoaded(Function<void()>&& callback)
@@ -74,35 +83,54 @@ void WebInspectorUIExtensionControllerProxy::inspectorFrontendLoaded()
 
 // API
 
-void WebInspectorUIExtensionControllerProxy::registerExtension(const InspectorExtensionID& extensionID, const String& displayName, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::registerExtension(const Inspector::ExtensionID& extensionID, const String& displayName, WTF::CompletionHandler<void(Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError>)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, displayName, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
-            completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
+            completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::RegisterExtension { extensionID, displayName }, WTFMove(completionHandler));
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::RegisterExtension { extensionID, displayName }, [strongThis = makeRef(*weakThis.get()), extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
+            if (!result) {
+                completionHandler(makeUnexpected(Inspector::ExtensionError::RegistrationFailed));
+                return;
+            }
+
+            RefPtr<API::InspectorExtension> extensionAPIObject = API::InspectorExtension::create(extensionID, strongThis.get());
+            strongThis->m_extensionAPIObjectMap.set(extensionID, extensionAPIObject.copyRef());
+
+            completionHandler(WTFMove(extensionAPIObject));
+        });
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::unregisterExtension(const InspectorExtensionID& extensionID, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::unregisterExtension(const Inspector::ExtensionID& extensionID, WTF::CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
-            completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
+            completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::UnregisterExtension { extensionID }, WTFMove(completionHandler));
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::UnregisterExtension { extensionID }, [strongThis = makeRef(*weakThis.get()), extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
+            if (!result) {
+                completionHandler(makeUnexpected(Inspector::ExtensionError::RegistrationFailed));
+                return;
+            }
+
+            strongThis->m_extensionAPIObjectMap.take(extensionID);
+
+            completionHandler(WTFMove(result));
+        });
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::createTabForExtension(const InspectorExtensionID& extensionID, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::createTabForExtension(const Inspector::ExtensionID& extensionID, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, tabName, tabIconURL, sourceURL, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
-            completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
+            completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
             return;
         }
 
@@ -110,15 +138,15 @@ void WebInspectorUIExtensionControllerProxy::createTabForExtension(const Inspect
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const InspectorExtensionID& extensionID, const String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const Inspector::ExtensionID& extensionID, const String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
-            completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension {extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const Optional<WebCore::ExceptionDetails>& details, const Optional<InspectorExtensionError> error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension {extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const Optional<WebCore::ExceptionDetails>& details, const Optional<Inspector::ExtensionError> error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;
@@ -137,15 +165,15 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::reloadForExtension(const InspectorExtensionID& extensionID, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, WTF::CompletionHandler<void(InspectorExtensionEvaluationResult)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector::ExtensionID& extensionID, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, ignoreCache, userAgent, injectedScript, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
-            completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::ReloadForExtension {extensionID, ignoreCache, userAgent, injectedScript}, [completionHandler = WTFMove(completionHandler)](const Optional<InspectorExtensionError> error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::ReloadForExtension {extensionID, ignoreCache, userAgent, injectedScript}, [completionHandler = WTFMove(completionHandler)](const Optional<Inspector::ExtensionError> error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;
@@ -154,6 +182,36 @@ void WebInspectorUIExtensionControllerProxy::reloadForExtension(const InspectorE
             completionHandler({ });
         });
     });
+}
+
+// WebInspectorUIExtensionControllerProxy IPC messages.
+
+void WebInspectorUIExtensionControllerProxy::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
+{
+    auto it = m_extensionAPIObjectMap.find(extensionID);
+    if (it == m_extensionAPIObjectMap.end())
+        return;
+
+    RefPtr<API::InspectorExtension> extension = it->value;
+    auto extensionClient = extension->client();
+    if (!extensionClient)
+        return;
+
+    extensionClient->didShowExtensionTab(extensionTabID);
+}
+
+void WebInspectorUIExtensionControllerProxy::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
+{
+    auto it = m_extensionAPIObjectMap.find(extensionID);
+    if (it == m_extensionAPIObjectMap.end())
+        return;
+
+    RefPtr<API::InspectorExtension> extension = it->value;
+    auto extensionClient = extension->client();
+    if (!extensionClient)
+        return;
+
+    extensionClient->didHideExtensionTab(extensionTabID);
 }
 
 } // namespace WebKit

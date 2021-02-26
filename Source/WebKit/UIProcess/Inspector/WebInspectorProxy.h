@@ -108,7 +108,7 @@ public:
     WebPageProxy* inspectorPage() const { return m_inspectorPage; }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebInspectorUIExtensionControllerProxy& extensionController() const { return *m_extensionController; }
+    WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }
@@ -292,7 +292,7 @@ private:
     std::unique_ptr<API::InspectorClient> m_inspectorClient;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    std::unique_ptr<WebInspectorUIExtensionControllerProxy> m_extensionController;
+    RefPtr<WebInspectorUIExtensionControllerProxy> m_extensionController;
 #endif
     
     bool m_underTest { false };

@@ -673,4 +673,32 @@ void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const St
 }
 #endif // ENABLE(INSPECTOR_TELEMETRY)
 
+bool InspectorFrontendHost::supportsWebExtensions()
+{
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    return m_client && m_client->supportsWebExtensions();
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+{
+    if (!m_client)
+        return;
+    
+    m_client->didShowExtensionTab(extensionID, extensionTabID);
+}
+
+void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
+{
+    if (!m_client)
+        return;
+    
+    m_client->didHideExtensionTab(extensionID, extensionTabID);
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
+
+
 } // namespace WebCore

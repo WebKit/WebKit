@@ -426,7 +426,7 @@ void WebInspectorProxy::createFrontendPage()
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionControllerProxy>(*m_inspectorPage);
+    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
 #endif
 }
 

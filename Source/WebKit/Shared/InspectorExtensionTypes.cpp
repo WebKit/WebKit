@@ -30,20 +30,20 @@
 
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace Inspector {
 
-WTF::String inspectorExtensionErrorToString(InspectorExtensionError error)
+WTF::String extensionErrorToString(ExtensionError error)
 {
     switch (error) {
-    case InspectorExtensionError::InternalError:
+    case ExtensionError::InternalError:
         return "InternalError"_s;
-    case InspectorExtensionError::InvalidRequest:
+    case ExtensionError::InvalidRequest:
         return "InvalidRequest"_s;
-    case InspectorExtensionError::ContextDestroyed:
+    case ExtensionError::ContextDestroyed:
         return "ContextDestroyed"_s;
-    case InspectorExtensionError::RegistrationFailed:
+    case ExtensionError::RegistrationFailed:
         return "RegistrationFailed"_s;
-    case InspectorExtensionError::NotImplemented:
+    case ExtensionError::NotImplemented:
         return "NotImplemented"_s;
     }
 

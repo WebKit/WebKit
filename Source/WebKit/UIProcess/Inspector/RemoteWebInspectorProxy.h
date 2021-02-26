@@ -92,7 +92,7 @@ public:
     void sendMessageToFrontend(const String& message);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebInspectorUIExtensionControllerProxy& extensionController() const { return *m_extensionController; }
+    WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
 #endif
     
 #if PLATFORM(MAC)
@@ -158,7 +158,7 @@ private:
     WebPageProxy* m_inspectorPage { nullptr };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    std::unique_ptr<WebInspectorUIExtensionControllerProxy> m_extensionController;
+    RefPtr<WebInspectorUIExtensionControllerProxy> m_extensionController;
 #endif
     
     Ref<API::DebuggableInfo> m_debuggableInfo;

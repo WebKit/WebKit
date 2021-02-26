@@ -45,30 +45,35 @@ Ref<InspectorExtension> InspectorExtension::create(const WTF::String& identifier
     return adoptRef(*new InspectorExtension(identifier, extensionControllerProxy));
 }
 
-void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError>)>&& completionHandler)
+void InspectorExtension::setClient(UniqueRef<InspectorExtensionClient>&& client)
+{
+    m_client = client.moveToUniquePtr();
+}
+
+void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
-        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
     m_extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
 }
 
-void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
-        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 
     m_extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
 }
 
-void InspectorExtension::reloadIgnoringCache(const Optional<bool>& ignoreCache, const Optional<WTF::String>& userAgent, const Optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::reloadIgnoringCache(const Optional<bool>& ignoreCache, const Optional<WTF::String>& userAgent, const Optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
-        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
         return;
     }
 

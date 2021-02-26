@@ -32,6 +32,10 @@
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#include "InspectorExtensionTypes.h"
+#endif
+
 namespace WebCore {
 class InspectorController;
 class InspectorFrontendHost;
@@ -146,6 +150,12 @@ public:
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
     void logDiagnosticEvent(const WTF::String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+#endif
+        
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    bool supportsWebExtensions() override;
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
+    void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
 #endif
 
     void sendMessageToBackend(const String&) override;

@@ -422,6 +422,7 @@ UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 
 UIProcess/Inspector/Cocoa/InspectorDelegate.mm
+UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 
 UIProcess/Inspector/ios/WKInspectorHighlightView.mm
 UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm

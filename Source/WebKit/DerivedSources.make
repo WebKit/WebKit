@@ -148,6 +148,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/UserContent/WebUserContentControllerProxy \
 	UIProcess/Inspector/WebInspectorProxy \
 	UIProcess/Inspector/RemoteWebInspectorProxy \
+	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
 	UIProcess/Plugins/PluginProcessProxy \
 	UIProcess/DrawingAreaProxy \
 	UIProcess/Network/NetworkProcessProxy \

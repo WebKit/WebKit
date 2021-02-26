@@ -33,6 +33,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol _WKInspectorExtensionDelegate;
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
 @interface _WKInspectorExtension : NSObject
 
@@ -45,8 +47,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
  * @param tabIconURL The location of an image resource to use for display in the created tab's title.
  * @param sourceURL The location of the main resource to load in the new tab's iframe browsing context.
  * @param completionHandler The completion handler to be called when creating a tab succeeds or fails.
+ * @discussion The inspectorTabIdentifier provided to the completion handler can be used to identify tabs
+ * that are passed as a parameter to _WKInspectorExtensionDelegate methods.
  */
-- (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError * _Nullable, NSString * _Nullable inspectorTabID))completionHandler;
+- (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError * _Nullable, NSString * _Nullable inspectorTabIdentifier))completionHandler;
 
 /**
  * @abstract Evaluates JavaScript in the context of the inspected page on behalf of the _WKInspectorExtension.
@@ -71,6 +75,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
 - (void)reloadIgnoringCache:(BOOL)ignoreCache userAgent:(NSString *)userAgent injectedScript:(NSString *)injectedScript completionHandler:(void(^)(NSError * _Nullable))completionHandler;
 
 @property (readonly, nonatomic) NSString *extensionID;
+
+/**
+ * @abstract Allows the client to receive extension lifecycle events that
+ * arise from within Web Inspector.
+ */
+@property (nonatomic, weak) id <_WKInspectorExtensionDelegate> delegate WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
 

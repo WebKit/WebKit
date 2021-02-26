@@ -27,6 +27,7 @@
 
 #import "WKFormPeripheralBase.h"
 
+@class UIColor;
 @class WKContentView;
 
 @interface WKFormColorControl : WKFormPeripheralBase

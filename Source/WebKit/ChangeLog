@@ -1,3 +1,152 @@
+2021-02-25  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=222252
+        <rdar://problem/71206685>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds support for clients to receive extension lifecycle events. For now this includes
+        extension tab shown/hidden, but will eventually include page navigations and other events exposed
+        via Web Extensions API.
+
+        This is implemented at the WebKit level via new InspectorFrontendClient methods. This gets piped to
+        WebInspectorUIExtensionControllerProxy via IPC, which then passes on the event to _WKInspectorExtensionDelegate.
+
+        _WKInspectorExtensionDelegate is a delegate of _WKInspectorExtension. It's for receiving lifecycle events, and
+        is implemented similarly to _WKInspectorDelegate. WebInspectorUIExtensionControllerProxy now keeps a map of
+        extension API objects so that it can call out to the the appropriate extension API object's client/delegate.
+
+        To better handle the situation where client completion handlers may be invoked after the inspector page has been torn down,
+        switch WebInspectorUIExtensionControllerProxy to be RefCounted instead of std::unique_ptr so that the appropriate
+        API object can be retrieved in the async IPC reply block. (IPC message receiver code knows how to ref the receiver
+        if it expects to deliver a response).
+
+        Lastly, since this patch introduces InspectorExtensionError at the WebCore level, I decided to move the contents
+        of InspectorExtensionTypes.h to the Inspector namespace. It made more sense than typing out WebCore::InspectorExtensionError
+        and the like. As part of this change, the string type aliases Inspector::ExtensionID and Inspector:ExtensionTabID are
+        now defined in InspectorFrontendClient.h.
+
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        Add generated files for new message receiver.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files for inspector extension client/delegate boilerplate classes.
+
+        * Scripts/webkit/messages.py:
+        * Shared/InspectorExtensionTypes.h:
+        * Shared/InspectorExtensionTypes.cpp:
+        (Inspector::extensionErrorToString):
+        (WebKit::inspectorExtensionErrorToString): Deleted.
+        Move these types and helpers to Inspector namespace.
+
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::setClient): Add a client member which is used to call out to _WKInspectorExtensionDelegate.
+        (API::InspectorExtension::createTab): Fix namespaces.
+        (API::InspectorExtension::evaluateScript): Fix namespaces.
+
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/APIInspectorExtensionClient.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKInspectorExtensionInternal.h.
+        (API::InspectorExtensionClient::didShowExtensionTab):
+        (API::InspectorExtensionClient::didHideExtensionTab):
+        Added.
+
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector registerExtensionWithID:displayName:completionHandler:]):
+        (-[_WKInspector unregisterExtension:completionHandler:]):
+        Adjust to new type signature that returns an initialized API::InspectorExtension.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController registerExtensionWithID:displayName:completionHandler:]):
+        (-[_WKRemoteWebInspectorViewController unregisterExtension:completionHandler:]):
+        Adjust to new type signature that returns an initialized API::InspectorExtension.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionDelegate.h: Added.
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h: Add the delegate property and update documentation to mention its intended usage.
+        * UIProcess/API/Cocoa/_WKInspectorExtensionInternal.h: Add delegate storage.
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension delegate]):
+        (-[_WKInspectorExtension setDelegate:]):
+        Added.
+
+        (-[_WKInspectorExtension createTabWithName:tabIconURL:sourceURL:completionHandler:]): Fix namespaces.
+        (-[_WKInspectorExtension evaluateScript:frameURL:contextSecurityOrigin:useContentScriptContext:completionHandler:]):  Fix namespaces.
+
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.h: Added.
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm: Added.
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionDelegate):
+        (WebKit::InspectorExtensionDelegate::delegate):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::InspectorExtensionClient):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::~InspectorExtensionClient):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab):
+        Added. This is ObjC-to-C++ bridge code to connect API::InspectorExtensionClient (used by WebInspectorUIExtensionControllerProxy)
+        to _WKInspectorExtensionDelegate (used by client code).
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h: Fix namespaces.
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in: Added.
+        Make this class an IPC::MessageReceiver. It receives messages for extension lifecycle events.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy):
+        (WebKit::WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy):
+        Make this class an IPC::MessageReceiver. It receives messages for extension lifecycle events.
+
+        (WebKit::WebInspectorUIExtensionControllerProxy::registerExtension):
+        Expand this code out so that we can save API::InspectorExtension instances into our own map
+        before sending it to the completionHandler. This map keeps strong references to the extension
+        API objects since they need to be used to send events at an arbitrary time in the future.
+        Previously, they were kept alive (or not) by the API client.
+
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+        When the extension is no longer registered, remove the associated extension API object (and
+        our strong reference to it).
+
+        (WebKit::WebInspectorUIExtensionControllerProxy::createTabForExtension): Fix namespaces.
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension): Fix namespaces.
+        (WebKit::WebInspectorUIExtensionControllerProxy::didShowExtensionTab):
+        (WebKit::WebInspectorUIExtensionControllerProxy::didHideExtensionTab):
+        Added. Try to look up the associated API object for the extension and forward the event to
+        the client of the API object, which is ultimately _WKInspectorExtensionDelegate.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::supportsWebExtensions):
+        (WebKit::RemoteWebInspectorUI::didShowExtensionTab):
+        (WebKit::RemoteWebInspectorUI::didHideExtensionTab):
+        Added. Defer to the extension controller to handle further event propagation.
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::supportsWebExtensions):
+        (WebKit::WebInspectorUI::didShowExtensionTab):
+        (WebKit::WebInspectorUI::didHideExtensionTab):
+        Added. Defer to the extension controller to handle further event propagation.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+        Fix namespaces.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::WebInspectorUIExtensionController):
+        (WebKit::WebInspectorUIExtensionController::~WebInspectorUIExtensionController):
+        Be more precise about associating this message receiver with the inspector page's identifier.
+        Also, save the page identifier so that methods that need to send IPC messages can send
+        the message to the correct destinationID.
+
+        (WebKit::WebInspectorUIExtensionController::parseInspectorExtensionErrorFromEvaluationResult):
+        (WebKit::WebInspectorUIExtensionController::registerExtension):
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        (WebKit::WebInspectorUIExtensionController::createTabForExtension):
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+        Fix namespaces.
+
+        (WebKit::WebInspectorUIExtensionController::didShowExtensionTab):
+        (WebKit::WebInspectorUIExtensionController::didHideExtensionTab):
+        Added.
+
 2021-02-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273503.

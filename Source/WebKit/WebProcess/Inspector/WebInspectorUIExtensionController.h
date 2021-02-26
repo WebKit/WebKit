@@ -32,6 +32,7 @@
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -63,17 +64,24 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // WebInspectorUIExtensionController IPC messages.
-    void registerExtension(const InspectorExtensionID&, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
-    void unregisterExtension(const InspectorExtensionID&, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
-    void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
-    void evaluateScriptForExtension(const InspectorExtensionID&, const String& scriptSource, const Optional<URL>& frameURL, const Optional<URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&, const Optional<InspectorExtensionError>&)>&&);
-    void reloadForExtension(const InspectorExtensionID&, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, CompletionHandler<void(const Optional<InspectorExtensionError>&)>&&);
+    void registerExtension(const Inspector::ExtensionID&, const String& displayName, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&&);
+    void unregisterExtension(const Inspector::ExtensionID&, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&&);
+    void createTabForExtension(const Inspector::ExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
+    void evaluateScriptForExtension(const Inspector::ExtensionID&, const String& scriptSource, const Optional<URL>& frameURL, const Optional<URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&, const Optional<Inspector::ExtensionError>&)>&&);
+    void reloadForExtension(const Inspector::ExtensionID&, const Optional<bool>& ignoreCache, const Optional<String>& userAgent, const Optional<String>& injectedScript, CompletionHandler<void(const Optional<Inspector::ExtensionError>&)>&&);
+
+    // Callbacks from the frontend.
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+    void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+#endif
 
 private:
     JSC::JSObject* unwrapEvaluationResultAsObject(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
-    Optional<InspectorExtensionError> parseInspectorExtensionErrorFromEvaluationResult(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
+    Optional<Inspector::ExtensionError> parseExtensionErrorFromEvaluationResult(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
 
     WeakPtr<WebCore::InspectorFrontendClient> m_frontendClient;
+    WebCore::PageIdentifier m_inspectorPageIdentifier;
 };
 
 } // namespace WebKit

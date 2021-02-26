@@ -26,14 +26,15 @@
 #import "config.h"
 #import "_WKInspectorExtensionInternal.h"
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+
+#import "InspectorExtensionDelegate.h"
 #import "InspectorExtensionTypes.h"
 #import "WKError.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/ExceptionDetails.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
 
 @implementation _WKInspectorExtension
 
@@ -49,13 +50,26 @@
     return *_extension;
 }
 
+- (id <_WKInspectorExtensionDelegate>)delegate
+{
+    return _delegate->delegate().autorelease();
+}
+
+- (void)setDelegate:(id<_WKInspectorExtensionDelegate>)delegate
+{
+    if (!delegate && !_delegate)
+        return;
+
+    _delegate = makeUnique<WebKit::InspectorExtensionDelegate>(self, delegate);
+}
+
 // MARK: API
 
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
 {
-    _extension->createTab(tabName, tabIconURL, sourceURL, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError> result) mutable {
+    _extension->createTab(tabName, tabIconURL, sourceURL, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
             return;
         }
 
@@ -67,9 +81,9 @@
 {
     Optional<URL> optionalFrameURL = frameURL ? makeOptional(URL(frameURL)) : WTF::nullopt;
     Optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? makeOptional(URL(contextSecurityOrigin)) : WTF::nullopt;
-    _extension->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (WebKit::InspectorExtensionEvaluationResult&& result) mutable {
+    _extension->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
             return;
         }
         
@@ -88,9 +102,9 @@
 {
     Optional<String> optionalUserAgent = userAgent ? makeOptional(String(userAgent)) : WTF::nullopt;
     Optional<String> optionalInjectedScript = injectedScript ? makeOptional(String(injectedScript)) : WTF::nullopt;
-    _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (WebKit::InspectorExtensionEvaluationResult&& result) mutable {
+    _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error()) }]);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()) }]);
             return;
         }
         

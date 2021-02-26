@@ -39,6 +39,13 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+namespace Inspector {
+using ExtensionID = WTF::String;
+using ExtensionTabID = WTF::String;
+}
+#endif
+
 namespace WebCore {
 
 class FloatRect;
@@ -109,6 +116,12 @@ public:
     virtual bool supportsDiagnosticLogging() { return false; }
     virtual bool diagnosticLoggingAvailable() { return false; }
     virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingClient::ValueDictionary&) { }
+#endif
+    
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    virtual bool supportsWebExtensions() { return false; }
+    virtual void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
+    virtual void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
 #endif
 
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
