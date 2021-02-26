@@ -1,3 +1,10 @@
+2021-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after SDK r273544 deployment
+
+        * TestWebKitAPI/PlatformWPE.cmake: GLib include path was missing in the TestJavaScriptCore
+        build.
+
 2021-02-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273122 and r273123.
