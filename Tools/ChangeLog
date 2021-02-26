@@ -1,3 +1,13 @@
+2021-02-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=222477
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+
 2021-02-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Commit queue should show commit identifier every time it updates local checkout
