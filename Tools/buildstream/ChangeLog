@@ -1,3 +1,18 @@
+2021-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add recipe for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222419
+
+        Reviewed by Carlos Garcia Campos.
+
+        LibSoup3 is parallel-installable with libsoup2, for now we want to keep libsoup2 in the SDK,
+        at least until porting to libsoup3 has progressed enough.
+
+        * elements/sdk-platform.bst:
+        * elements/sdk/glib.bst: Bump to latest 2.67 release.
+        * elements/sdk/gtk+-3.bst: Bump to latest 3.24 release, not strictly needed but I was driving by.
+        * elements/sdk/libsoup3.bst: Added.
+
 2021-02-24  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to sccache 0.2.15

@@ -43,6 +43,7 @@ depends:
 - sdk/libnotify.bst
 - sdk/libsecret.bst
 - sdk/libsoup.bst
+- sdk/libsoup3.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
 - sdk/libzstd.bst
