@@ -1,5 +1,64 @@
 2021-02-25  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r273438. rdar://problem/74753272
+
+    Regression(r268700) postMessage changes prototype of basic types
+    https://bugs.webkit.org/show_bug.cgi?id=222228
+    <rdar://problem/74612853>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    r268700 updated ScriptExecutionContext::globalObject() to call:
+    `WebCore::globalObject(mainThreadNormalWorld(), downcast<Document>(*this).page())`
+    instead of
+    `frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr`
+    
+    This was not right for subframes because globalObject() gets the globalObject from
+    the page's main frame instead of the document's frame.
+    
+    This patch gets rid of the error-prone WebCore::globalObject() taking in a Page*
+    and replaces it with one taking in a Frame* to avoid such issues in the future.
+    
+    Test: fast/dom/Window/postMessage-Object-prototype.html
+    
+    * bindings/js/ScriptState.cpp:
+    (WebCore::globalObject):
+    * bindings/js/ScriptState.h:
+    * dom/ScriptExecutionContext.cpp:
+    (WebCore::ScriptExecutionContext::globalObject):
+    * inspector/InspectorFrontendHost.cpp:
+    (WebCore::InspectorFrontendHost::addSelfToGlobalObjectInWorld):
+    (WebCore::InspectorFrontendHost::showContextMenu):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * fast/dom/Window/postMessage-Object-prototype-expected.txt: Added.
+    * fast/dom/Window/postMessage-Object-prototype.html: Added.
+    * fast/dom/Window/resources/postMessage-Object-prototype-frame.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273438 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-24  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r268700) postMessage changes prototype of basic types
+            https://bugs.webkit.org/show_bug.cgi?id=222228
+            <rdar://problem/74612853>
+
+            Reviewed by Geoffrey Garen.
+
+            Add layout test coverage.
+
+            * fast/dom/Window/postMessage-Object-prototype-expected.txt: Added.
+            * fast/dom/Window/postMessage-Object-prototype.html: Added.
+            * fast/dom/Window/resources/postMessage-Object-prototype-frame.html: Added.
+
+2021-02-25  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273385. rdar://problem/74753323
 
     Runtime-disabled CSS features still appear enabled via CSS.supports()

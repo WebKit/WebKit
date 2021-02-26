@@ -42,7 +42,6 @@ class DOMWindow;
 class DOMWrapperWorld;
 class Frame;
 class Node;
-class Page;
 class ScriptExecutionContext;
 class WorkerOrWorkletGlobalScope;
 
@@ -53,7 +52,7 @@ ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::JSGlobalObject*
 JSC::JSGlobalObject* mainWorldExecState(Frame*);
 
 JSC::JSGlobalObject* globalObject(DOMWrapperWorld&, Node*);
-WEBCORE_EXPORT JSC::JSGlobalObject* globalObject(DOMWrapperWorld&, Page*);
+WEBCORE_EXPORT JSC::JSGlobalObject* globalObject(DOMWrapperWorld&, Frame*);
 JSC::JSGlobalObject* globalObject(WorkerOrWorkletGlobalScope&);
 
 } // namespace WebCore
