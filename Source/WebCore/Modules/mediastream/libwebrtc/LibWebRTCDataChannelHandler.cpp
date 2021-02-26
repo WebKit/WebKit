@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "EventNames.h"
+#include "LibWebRTCUtils.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
 #include <wtf/MainThread.h>
@@ -48,12 +49,8 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
         init.negotiated = *options.negotiated;
     if (options.id)
         init.id = *options.id;
+    init.priority = fromRTCPriorityType(options.priority);
     return init;
-}
-
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
 }
 
 Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(Document& document, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
@@ -68,6 +65,7 @@ Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(Document& doc
     init.protocol = fromStdString(protocol);
     init.negotiated = dataChannel->negotiated();
     init.id = dataChannel->id();
+    init.priority = toRTCPriorityType(dataChannel->priority());
 
     auto handler =  makeUnique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
     auto channel = RTCDataChannel::create(document, WTFMove(handler), fromStdString(label), WTFMove(init));

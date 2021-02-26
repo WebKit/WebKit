@@ -58,6 +58,7 @@ public:
     String protocol() const { return m_options.protocol; }
     bool negotiated() const { return *m_options.negotiated; };
     Optional<unsigned short> id() const { return m_options.id; };
+    RTCPriorityType priority() const { return m_options.priority; };
 
     String label() const { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }

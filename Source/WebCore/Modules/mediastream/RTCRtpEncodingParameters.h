@@ -41,7 +41,8 @@ struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
     RTCRtpFecParameters fec;
     Optional<RTCDtxStatus> dtx;
     bool active { false};
-    RTCPriorityType priority { RTCPriorityType::Medium };
+    RTCPriorityType priority { RTCPriorityType::Low };
+    Optional<RTCPriorityType> networkPriority;
     unsigned long maxBitrate { 0 };
     unsigned long maxFramerate { 0 };
     double scaleResolutionDownBy { 1 };

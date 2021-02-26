@@ -45,6 +45,59 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
+webrtc::Priority fromRTCPriorityType(RTCPriorityType priority)
+{
+    switch (priority) {
+    case RTCPriorityType::VeryLow:
+        return webrtc::Priority::kVeryLow;
+    case RTCPriorityType::Low:
+        return webrtc::Priority::kLow;
+    case RTCPriorityType::Medium:
+        return webrtc::Priority::kMedium;
+    case RTCPriorityType::High:
+        return webrtc::Priority::kHigh;
+    }
+}
+
+RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
+{
+    switch (priority) {
+    case webrtc::Priority::kVeryLow:
+        return RTCPriorityType::VeryLow;
+    case webrtc::Priority::kLow:
+        return RTCPriorityType::Low;
+    case webrtc::Priority::kMedium:
+        return RTCPriorityType::Medium;
+    case webrtc::Priority::kHigh:
+        return RTCPriorityType::High;
+    }
+}
+
+static inline double toWebRTCBitRatePriority(RTCPriorityType priority)
+{
+    switch (priority) {
+    case RTCPriorityType::VeryLow:
+        return 0.5;
+    case RTCPriorityType::Low:
+        return 1;
+    case RTCPriorityType::Medium:
+        return 2;
+    case RTCPriorityType::High:
+        return 4;
+    }
+}
+
+static inline RTCPriorityType fromWebRTCBitRatePriority(double priority)
+{
+    if (priority < 0.7)
+        return RTCPriorityType::VeryLow;
+    if (priority < 1.5)
+        return RTCPriorityType::Low;
+    if (priority < 2.5)
+        return RTCPriorityType::Medium;
+    return RTCPriorityType::High;
+}
+
 static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
 {
     RTCRtpEncodingParameters parameters;
@@ -60,6 +113,9 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::Rtp
     parameters.rid = fromStdString(rtcParameters.rid);
     if (rtcParameters.scale_resolution_down_by)
         parameters.scaleResolutionDownBy = *rtcParameters.scale_resolution_down_by;
+
+    parameters.priority = fromWebRTCBitRatePriority(rtcParameters.bitrate_priority);
+    parameters.networkPriority = toRTCPriorityType(rtcParameters.network_priority);
 
     return parameters;
 }
@@ -80,6 +136,9 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
     if (parameters.scaleResolutionDownBy)
         rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
 
+    rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority);
+    if (parameters.networkPriority)
+        rtcParameters.network_priority = fromRTCPriorityType(*parameters.networkPriority);
     return rtcParameters;
 }
 
@@ -191,6 +250,9 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
             rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
         if (parameters.encodings[i].scaleResolutionDownBy)
             rtcParameters.encodings[i].scale_resolution_down_by = parameters.encodings[i].scaleResolutionDownBy;
+        rtcParameters.encodings[i].bitrate_priority = toWebRTCBitRatePriority(parameters.encodings[i].priority);
+        if (parameters.encodings[i].networkPriority)
+            rtcParameters.encodings[i].network_priority = fromRTCPriorityType(*parameters.encodings[i].networkPriority);
     }
 
     rtcParameters.header_extensions.clear();
