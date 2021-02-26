@@ -1,3 +1,35 @@
+2021-02-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Move some css3 blending baselines to glib and update expectations
+
+        Unreviewed test gardening.
+
+        These tests are passing in GTK and in WPE, so move the baselines to
+        glib.
+
+        The two GTK expectations left are now in GLIB and the PASS flakiness
+        removed as they are consistently ImageOnlyFailing. Also moved the
+        other expectations to the compositing section.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/css3/blending/svg-blend-color-burn-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-color-burn-expected.txt.
+        * platform/glib/css3/blending/svg-blend-color-dodge-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-color-dodge-expected.txt.
+        * platform/glib/css3/blending/svg-blend-darken-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-darken-expected.txt.
+        * platform/glib/css3/blending/svg-blend-difference-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-difference-expected.txt.
+        * platform/glib/css3/blending/svg-blend-exclusion-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-exclusion-expected.txt.
+        * platform/glib/css3/blending/svg-blend-hard-light-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-hard-light-expected.txt.
+        * platform/glib/css3/blending/svg-blend-lighten-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-lighten-expected.txt.
+        * platform/glib/css3/blending/svg-blend-multiply-alpha-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-multiply-alpha-expected.txt.
+        * platform/glib/css3/blending/svg-blend-multiply-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-multiply-expected.txt.
+        * platform/glib/css3/blending/svg-blend-normal-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-normal-expected.txt.
+        * platform/glib/css3/blending/svg-blend-overlay-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-overlay-expected.txt.
+        * platform/glib/css3/blending/svg-blend-plus-darker-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-plus-darker-expected.txt.
+        * platform/glib/css3/blending/svg-blend-plus-lighter-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-plus-lighter-expected.txt.
+        * platform/glib/css3/blending/svg-blend-screen-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-screen-expected.txt.
+        * platform/glib/css3/blending/svg-blend-soft-light-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/svg-blend-soft-light-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly

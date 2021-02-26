@@ -465,25 +465,6 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 # No support for resource load statistics yet
 webkit.org/b/177943 http/tests/resourceLoadStatistics/ [ Skip ]
 
-# Failures related with ENABLE_CSS_COMPOSITING=ON
-webkit.org/b/169916 css3/blending/blend-mode-body-composited-child-background-color.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-body-composited-child.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/svg-blend-color-burn.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-color-dodge.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-darken.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-difference.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-exclusion.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-hard-light.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-lighten.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-multiply-alpha.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-multiply.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-normal.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-overlay.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-plus-darker.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-plus-lighter.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-screen.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-soft-light.html [ Missing Failure ]
-
 # Missing UIScriptController implementation, causing crashes
 webkit.org/b/200295 fast/events/autoscroll-when-input-is-offscreen.html [ Crash ]
 webkit.org/b/200295 fast/events/autoscroll-with-software-keyboard.html [ Crash ]
