@@ -1,3 +1,12 @@
+2021-02-26  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] log when the request is cancelled while waiting for the `Promise` provided to `show()`/`updateWith()` to settle
+        https://bugs.webkit.org/show_bug.cgi?id=222491
+
+        Reviewed by Andy Estes.
+
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt:
+
 2021-02-26  Sam Weinig  <weinig@apple.com>
 
         Remove non-standard 'css'/'Css' prefixed properties on CSSStyleDeclaration

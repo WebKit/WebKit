@@ -849,6 +849,7 @@ void PaymentRequest::cancel()
 
     if (m_isUpdating) {
         m_isCancelPending = true;
+        scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Error, "payment request timed out while waiting for Promise given to show() or updateWith() to settle."_s);
         return;
     }
 
