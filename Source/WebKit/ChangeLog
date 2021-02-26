@@ -1,3 +1,13 @@
+2021-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Convert WKMediaPlaybackState NS_ENUM back to NSUInteger type
+        https://bugs.webkit.org/show_bug.cgi?id=222475
+        <rdar://problem/74787665>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2021-02-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r269824): macCatalyst WKWebView shows chunks of other tiles in the middle of content
