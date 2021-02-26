@@ -21,8 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
-import getpass
-import os
 import re
 import requests
 import six
@@ -30,9 +28,8 @@ import sys
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
-from subprocess import CalledProcessError
-from webkitcorepy import OutputCapture, decorators
-from webkitscmpy import Commit, Contributor
+from webkitcorepy import credentials, decorators
+from webkitscmpy import Commit
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
 
@@ -61,67 +58,13 @@ class GitHub(Scm):
         super(GitHub, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
 
     def credentials(self, required=True):
-        if self._cached_credentials:
-            return self._cached_credentials
-
-        prefix = self.url.split('/')[2].replace('.', '_').upper()
-        username = os.environ.get('{}_USERNAME'.format(prefix))
-        access_token = os.environ.get('{}_ACCESS_TOKEN'.format(prefix))
-        if username and access_token:
-            self._cached_credentials = (username, access_token)
-            return username, access_token
-
-        with OutputCapture():
-            try:
-                import keyring
-            except (CalledProcessError, ImportError):
-                keyring = None
-
-        username_prompted = False
-        password_prompted = False
-        if not username:
-            try:
-                if keyring:
-                    username = keyring.get_password(self.api_url, 'username')
-            except RuntimeError:
-                pass
-
-            if not username and required:
-                if not sys.stderr.isatty() or not sys.stdin.isatty():
-                    raise OSError('No tty to prompt user for username')
-                sys.stderr.write("Authentication required to use GitHub's API\n")
-                sys.stderr.write("Please generate a 'Personal access token' via 'Developer settings' for your user\n")
-                sys.stderr.write('Username: ')
-                username = (input if sys.version_info > (3, 0) else raw_input)()
-                username_prompted = True
-
-        if not access_token and required:
-            try:
-                if keyring:
-                    access_token = keyring.get_password(self.api_url, username)
-            except RuntimeError:
-                pass
-
-            if not access_token:
-                if not sys.stderr.isatty() or not sys.stdin.isatty():
-                    raise OSError('No tty to prompt user for username')
-                access_token = getpass.getpass('API key: ')
-                password_prompted = True
-
-        if username and access_token:
-            self._cached_credentials = (username, access_token)
-
-        if keyring and (username_prompted or password_prompted):
-            sys.stderr.write('Store username and access token in system keyring for {}? (Y/N): '.format(self.api_url))
-            response = (input if sys.version_info > (3, 0) else raw_input)()
-            if response.lower() in ['y', 'yes', 'ok']:
-                sys.stderr.write('Storing credentials...\n')
-                keyring.set_password(self.api_url, 'username', username)
-                keyring.set_password(self.api_url, username, access_token)
-            else:
-                sys.stderr.write('Credentials cached in process.\n')
-
-        return username, access_token
+        return credentials(
+            url=self.api_url,
+            required=required,
+            name=self.url.split('/')[2].replace('.', '_').upper(),
+            prompt="GitHub's API\nPlease generate a 'Personal access token' via 'Developer settings' for your user",
+            key_name='token',
+        )
 
     @property
     def is_git(self):

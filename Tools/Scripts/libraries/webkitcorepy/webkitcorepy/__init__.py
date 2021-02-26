@@ -35,8 +35,9 @@ from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 from webkitcorepy.task_pool import TaskPool
+from webkitcorepy.credentials import credentials
 
-version = Version(0, 5, 3)
+version = Version(0, 5, 4)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -48,8 +49,10 @@ else:
 
 AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
 AutoInstall.register(Package('chardet', Version(3, 0, 4)))
+AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
+AutoInstall.register(Package('keyring', Version(7, 3, 1)))
 AutoInstall.register(Package('packaging', Version(20, 4)))
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
@@ -59,5 +62,9 @@ AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
+
+# This is needed for python-keyring.
+if sys.platform == 'linux':
+    AutoInstall.register(Package('secretstorage', Version(2, 3, 1)))
 
 name = 'webkitcorepy'

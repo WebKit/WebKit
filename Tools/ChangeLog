@@ -1,5 +1,21 @@
 2021-02-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Move credential access from webkitscmpy
+        https://bugs.webkit.org/show_bug.cgi?id=222487
+        <rdar://problem/74801487>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, move keyring libraries.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py: Add.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version, move keyring libraries.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Use webkitcorepy credentials.
+
+2021-02-26  Jonathan Bedard  <jbedard@apple.com>
+
         [resultsdbpy] Use webkitcorepy requests mocking
         https://bugs.webkit.org/show_bug.cgi?id=222443
         <rdar://problem/74764567>
