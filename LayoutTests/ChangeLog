@@ -1,3 +1,11 @@
+2021-02-25  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening a couple crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly

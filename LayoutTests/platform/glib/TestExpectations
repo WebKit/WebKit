@@ -570,6 +570,17 @@ webkit.org/b/220610 storage/indexeddb/result-request-cycle.html [ Failure ]
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+#////////////////////////////////////////////////////////////////////////////////////////
+# JavaScriptCore-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/222453 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-4-tla.html [ Crash ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of JavaScriptCore-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # MathML-related bugs
@@ -1001,7 +1012,7 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 
 webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Crash Failure Pass ]
 
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
+webkit.org/b/216538 webkit.org/b/222451 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure Crash ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
