@@ -110,33 +110,14 @@ Controller = Utilities.createClass(
         return comment in this._marks;
     },
 
-    filterOutOutliers: function(array)
-    {
-        if (array.length == 0)
-            return [];
-
-        array.sort();
-        var q1 = array[Math.min(Math.round(array.length * 1 / 4), array.length - 1)];
-        var q3 = array[Math.min(Math.round(array.length * 3 / 4), array.length - 1)];
-        var interquartileRange = q3 - q1;
-        var minimum = q1 - interquartileRange * 1.5;
-        var maximum = q3 + interquartileRange * 1.5;
-        return array.filter(x => x >= minimum && x <= maximum);
-    },
-
     _measureAndResetInterval: function(currentTimestamp)
     {
         var sampleCount = this._sampler.sampleCount;
         var averageFrameLength = 0;
 
         if (this._intervalEndTimestamp) {
-            var durations = [];
-            for (var i = Math.max(this._intervalStartIndex, 1); i < sampleCount; ++i) {
-                durations.push(this._sampler.samples[0][i] - this._sampler.samples[0][i - 1]);
-            }
-            var filteredDurations = this.filterOutOutliers(durations);
-            if (filteredDurations.length > 0)
-                averageFrameLength = filteredDurations.reduce((a, b) => a + b, 0) / filteredDurations.length;
+            var intervalStartTimestamp = this._sampler.samples[0][this._intervalStartIndex];
+            averageFrameLength = (currentTimestamp - intervalStartTimestamp) / (sampleCount - this._intervalStartIndex);
         }
 
         this._intervalStartIndex = sampleCount;
@@ -157,32 +138,19 @@ Controller = Utilities.createClass(
                 this._frameLengthEstimator.sample(lastFrameLength);
                 frameLengthEstimate = this._frameLengthEstimator.estimate;
             }
-        } else {
-            this.registerFrameTime(lastFrameLength);
-            if (this.intervalHasConcluded(timestamp)) {
-                var intervalStartTimestamp = this._sampler.samples[0][this._intervalStartIndex];
-                intervalAverageFrameLength = this._measureAndResetInterval(timestamp);
-                if (this._isFrameLengthEstimatorEnabled) {
-                    this._frameLengthEstimator.sample(intervalAverageFrameLength);
-                    frameLengthEstimate = this._frameLengthEstimator.estimate;
-                }
-                didFinishInterval = true;
-                this.didFinishInterval(timestamp, stage, intervalAverageFrameLength);
-                this._frameLengthEstimator.reset();
+        } else if (timestamp >= this._intervalEndTimestamp) {
+            var intervalStartTimestamp = this._sampler.samples[0][this._intervalStartIndex];
+            intervalAverageFrameLength = this._measureAndResetInterval(timestamp);
+            if (this._isFrameLengthEstimatorEnabled) {
+                this._frameLengthEstimator.sample(intervalAverageFrameLength);
+                frameLengthEstimate = this._frameLengthEstimator.estimate;
             }
+            didFinishInterval = true;
+            this.didFinishInterval(timestamp, stage, intervalAverageFrameLength);
         }
 
         this._sampler.record(timestamp, stage.complexity(), frameLengthEstimate);
         this.tune(timestamp, stage, lastFrameLength, didFinishInterval, intervalAverageFrameLength);
-    },
-
-    registerFrameTime: function(lastFrameLength)
-    {
-    },
-
-    intervalHasConcluded: function(timestamp)
-    {
-        return timestamp >= this._intervalEndTimestamp;
     },
 
     didFinishInterval: function(timestamp, stage, intervalAverageFrameLength)
@@ -368,8 +336,6 @@ RampController = Utilities.createSubclass(Controller,
     tierFastTestLength: 250,
     // If the engine is under stress, let the test run a little longer to let the measurement settle
     tierSlowTestLength: 750,
-    // Tier intervals must have this number of non-outlier frames in order to end.
-    numberOfFramesRequiredInInterval: 9,
 
     rampWarmupLength: 200,
 
@@ -389,25 +355,10 @@ RampController = Utilities.createSubclass(Controller,
         Controller.prototype.start.call(this, startTimestamp, stage);
         this._rampStartTimestamp = 0;
         this.intervalSamplingLength = 100;
-        this._frameTimeHistory = [];
-    },
-
-    registerFrameTime: function(lastFrameLength)
-    {
-        this._frameTimeHistory.push(lastFrameLength);
-    },
-
-    intervalHasConcluded: function(timestamp)
-    {
-        if (!Controller.prototype.intervalHasConcluded.call(this, timestamp))
-            return false;
-
-        return this._finishedTierSampling || this.filterOutOutliers(this._frameTimeHistory).length > this.numberOfFramesRequiredInInterval;
     },
 
     didFinishInterval: function(timestamp, stage, intervalAverageFrameLength)
     {
-        this._frameTimeHistory = [];
         if (!this._finishedTierSampling) {
             if (this._tierStartTimestamp > 0 && timestamp < this._tierStartTimestamp + this.tierFastTestLength)
                 return;
