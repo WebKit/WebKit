@@ -2295,4 +2295,4 @@ webkit.org/b/222195 inspector/animation/lifecycle-css-transition.html [ Pass Tim
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
 
 # Not all OSes support the same set of emoji.
-webkit.org/b/222479 fast/text/mending-heart.html [ Failure ] 
+[ Mojave Catalina BigSur ] fast/text/mending-heart.html [ Failure ]
