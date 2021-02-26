@@ -623,7 +623,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-CVPixelBufferRef MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime()
+RetainPtr<CVPixelBufferRef> MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
     // a decompression session, even if that means the native video can't also be displayed
@@ -638,7 +638,7 @@ CVPixelBufferRef MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime
             return nullptr;
     }
 
-    return m_lastPixelBuffer.get();
+    return m_lastPixelBuffer;
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const

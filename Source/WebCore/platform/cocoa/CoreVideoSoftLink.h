@@ -62,6 +62,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVPixelBufferGetIOSurface, IOS
 #define CVPixelBufferGetIOSurface softLink_CoreVideo_CVPixelBufferGetIOSurface
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVPixelBufferPoolGetPixelBufferAttributes, CFDictionaryRef, (CVPixelBufferPoolRef pool), (pool))
 #define CVPixelBufferPoolGetPixelBufferAttributes softLink_CoreVideo_CVPixelBufferPoolGetPixelBufferAttributes
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVImageBufferGetColorSpace, CGColorSpaceRef, (CVImageBufferRef pixelBuffer), (pixelBuffer))
+#define CVImageBufferGetColorSpace softLink_CoreVideo_CVImageBufferGetColorSpace
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferPixelFormatTypeKey, CFStringRef)
 #define kCVPixelBufferPixelFormatTypeKey get_CoreVideo_kCVPixelBufferPixelFormatTypeKey()

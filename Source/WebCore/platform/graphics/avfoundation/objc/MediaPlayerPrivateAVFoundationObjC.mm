@@ -2391,13 +2391,13 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-CVPixelBufferRef MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
+RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
 {
     updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
         return nullptr;
 
-    return m_lastPixelBuffer.get();
+    return m_lastPixelBuffer;
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

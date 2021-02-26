@@ -254,7 +254,7 @@ private:
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     void waitForVideoOutputMediaDataWillChange();
 
-    CVPixelBufferRef pixelBufferForCurrentTime() final;
+    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;

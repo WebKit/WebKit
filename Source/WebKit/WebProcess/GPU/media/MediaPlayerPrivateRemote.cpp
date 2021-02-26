@@ -42,6 +42,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
@@ -838,14 +839,22 @@ void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const IntSize& size, con
 }
 #endif
 
-void MediaPlayerPrivateRemote::paint(GraphicsContext&, const FloatRect&)
+void MediaPlayerPrivateRemote::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    notImplemented();
+    paintCurrentFrameInContext(context, rect);
 }
 
-void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext&, const FloatRect&)
+void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    notImplemented();
+    if (context.paintingDisabled())
+        return;
+
+    auto nativeImage = nativeImageForCurrentTime();
+    if (!nativeImage)
+        return;
+
+    FloatRect imageRect { FloatPoint::zero(), nativeImage->size() };
+    context.drawNativeImage(*nativeImage, imageRect.size(), rect, imageRect);
 }
 
 #if !USE(AVFOUNDATION)
@@ -854,13 +863,21 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::Graphi
     notImplemented();
     return false;
 }
+#elif !PLATFORM(COCOA)
+RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
+{
+    notImplemented();
+    return false;
+}
 #endif
 
+#if !PLATFORM(COCOA)
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
     notImplemented();
     return nullptr;
 }
+#endif
 
 bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
 {

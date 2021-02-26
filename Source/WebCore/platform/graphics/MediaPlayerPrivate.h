@@ -164,7 +164,7 @@ public:
 #if !USE(AVFOUNDATION)
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
 #else
-    virtual CVPixelBufferRef pixelBufferForCurrentTime() { return nullptr; }
+    virtual RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() { return nullptr; }
 #endif
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
 
