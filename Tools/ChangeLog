@@ -1,3 +1,9 @@
+2021-02-26  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, add myself to the `ConsoleUsage` watchlist
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2021-02-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Move credential access from webkitscmpy
