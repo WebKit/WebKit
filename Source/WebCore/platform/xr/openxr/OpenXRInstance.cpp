@@ -56,16 +56,12 @@ Instance::Impl::Impl()
         if (!m_extensions)
             return;
 
-        if (!m_extensions->isExtensionSupported(XR_MND_HEADLESS_EXTENSION_NAME)) {
-            LOG(XR, "Required extension %s not supported", XR_MND_HEADLESS_EXTENSION_NAME);
-            return;
-        }
-
         static const char* s_applicationName = "WebXR (WebKit)";
         static const uint32_t s_applicationVersion = 1;
 
         const char* const enabledExtensions[] = {
-            XR_MND_HEADLESS_EXTENSION_NAME
+            XR_KHR_OPENGL_ENABLE_EXTENSION_NAME,
+            XR_MNDX_EGL_ENABLE_EXTENSION_NAME
         };
 
         auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
@@ -81,6 +77,8 @@ Instance::Impl::Impl()
         RETURN_IF_FAILED(result, "xrCreateInstance()", m_instance);
         if (m_instance == XR_NULL_HANDLE)
             return;
+
+        m_extensions->loadMethods(m_instance);
 
         LOG(XR, "xrCreateInstance(): using instance %p\n", m_instance);
     });

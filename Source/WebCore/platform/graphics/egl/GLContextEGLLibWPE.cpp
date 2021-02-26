@@ -40,10 +40,11 @@
 
 namespace WebCore {
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, struct wpe_renderer_backend_egl_offscreen_target* target)
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, struct wpe_renderer_backend_egl_offscreen_target* target)
     : GLContext(display)
     , m_context(context)
     , m_surface(surface)
+    , m_config(config)
     , m_type(WindowSurface)
     , m_wpeTarget(target)
 {
@@ -89,7 +90,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, target));
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, target));
 }
 
 void GLContextEGL::destroyWPETarget()

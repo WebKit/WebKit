@@ -28,6 +28,11 @@
 
 namespace PlatformXR {
 
+struct OpenXRExtensionMethods {
+    PFNEGLGETPROCADDRESSPROC getProcAddressFunc { nullptr };
+    PFN_xrGetOpenGLGraphicsRequirementsKHR xrGetOpenGLGraphicsRequirementsKHR { nullptr };
+};
+
 class OpenXRExtensions final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(OpenXRExtensions);
@@ -35,10 +40,13 @@ public:
     static std::unique_ptr<OpenXRExtensions> create();
     OpenXRExtensions(Vector<XrExtensionProperties>&&);
 
+    void loadMethods(XrInstance);
     bool isExtensionSupported(const char*) const;
+    const OpenXRExtensionMethods& methods() const { return m_methods; }
 
 private:
     Vector<XrExtensionProperties> m_extensions;
+    OpenXRExtensionMethods m_methods;
 };
 
 } // namespace PlatformXR

@@ -28,10 +28,11 @@
 
 namespace WebCore {
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, XUniquePixmap&& pixmap)
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, XUniquePixmap&& pixmap)
     : GLContext(display)
     , m_context(context)
     , m_surface(surface)
+    , m_config(config)
     , m_type(PixmapSurface)
     , m_pixmap(WTFMove(pixmap))
 {
@@ -90,7 +91,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay&
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, WTFMove(pixmap)));
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, WTFMove(pixmap)));
 }
 
 } // namespace WebCore

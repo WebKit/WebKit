@@ -21,6 +21,7 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
+#include "GLContextEGL.h"
 #include "OpenXRUtils.h"
 #include "PlatformXR.h"
 
@@ -58,7 +59,7 @@ private:
     Vector<ViewData> views(SessionMode) const final;
 
     // Custom methods
-    ListOfEnabledFeatures enumerateReferenceSpaces(XrSession) const;
+    ListOfEnabledFeatures collectEnabledFeatures();
     void collectSupportedSessionModes();
     void collectConfigurationViews();
     XrSpace createReferenceSpace(XrReferenceSpaceType);
@@ -75,6 +76,8 @@ private:
     const OpenXRExtensions& m_extensions;
     XrSession m_session { XR_NULL_HANDLE };
     XrSessionState m_sessionState { XR_SESSION_STATE_UNKNOWN };
+    XrGraphicsBindingEGLMNDX m_graphicsBinding;
+    std::unique_ptr<WebCore::GLContextEGL> m_egl;
 
     using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationPropertiesMap m_viewConfigurationProperties;

@@ -196,6 +196,8 @@ if (ENABLE_WEBXR)
         message(FATAL_ERROR "OpenXR is required to enable WebXR support.")
     endif ()
     SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
+    SET_AND_EXPOSE_TO_BUILD(XR_USE_PLATFORM_EGL TRUE)
+    SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL TRUE)
 endif ()
 
 if (USE_SYSTEMD)

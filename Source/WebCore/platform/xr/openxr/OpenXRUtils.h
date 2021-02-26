@@ -21,9 +21,24 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
+#if USE(EGL)
+// EGL symbols required by openxr_platform.h
+#if USE(LIBEPOXY)
+#define __GBM__ 1
+#include "EpoxyEGL.h"
+#else
+#if PLATFORM(WAYLAND)
+#include <wayland-egl.h>
+#endif
+#include <EGL/egl.h>
+#endif
+
+#endif // USE(EGL)
+
 #include "Logging.h"
 #include "PlatformXR.h"
 #include <openxr/openxr.h>
+#include <openxr/openxr_platform.h>
 
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>

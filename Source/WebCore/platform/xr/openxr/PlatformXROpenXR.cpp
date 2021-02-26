@@ -81,15 +81,38 @@ void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
     m_queue.dispatch([this, mode]() {
         ASSERT(m_instance != XR_NULL_HANDLE);
         ASSERT(m_session == XR_NULL_HANDLE);
+        ASSERT(m_extensions.methods().xrGetOpenGLGraphicsRequirementsKHR);
 
         m_currentViewConfigurationType = toXrViewConfigurationType(mode);
         ASSERT(m_configurationViews.contains(m_currentViewConfigurationType));
 
+        // https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/xrGetOpenGLGraphicsRequirementsKHR.html
+        // OpenXR requires to call xrGetOpenGLGraphicsRequirementsKHR before creating a session.
+        auto requirements = createStructure<XrGraphicsRequirementsOpenGLKHR, XR_TYPE_GRAPHICS_REQUIREMENTS_OPENGL_KHR>();
+        auto result = m_extensions.methods().xrGetOpenGLGraphicsRequirementsKHR(m_instance, m_systemId, &requirements);
+        RETURN_IF_FAILED(result, "xrGetOpenGLGraphicsRequirementsKHR", m_instance);
+
+        m_graphicsBinding = createStructure<XrGraphicsBindingEGLMNDX, XR_TYPE_GRAPHICS_BINDING_EGL_MNDX>();
+        m_egl = GLContextEGL::createSharingContext(PlatformDisplay::sharedDisplay());
+        if (!m_egl) {
+            LOG(XR, "Failed to create EGL context");
+            return;
+        }
+
+        auto& context = static_cast<GLContext&>(*m_egl);
+        context.makeContextCurrent();
+
+        m_graphicsBinding.display = PlatformDisplay::sharedDisplay().eglDisplay();
+        m_graphicsBinding.context = context.platformContext();
+        m_graphicsBinding.config = m_egl->config();
+        m_graphicsBinding.getProcAddress = m_extensions.methods().getProcAddressFunc;
+
         // Create the session.
         auto sessionCreateInfo = createStructure<XrSessionCreateInfo, XR_TYPE_SESSION_CREATE_INFO>();
         sessionCreateInfo.systemId = m_systemId;
+        sessionCreateInfo.next = &m_graphicsBinding;
 
-        auto result = xrCreateSession(m_instance, &sessionCreateInfo, &m_session);
+        result = xrCreateSession(m_instance, &sessionCreateInfo, &m_session);
         RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties", m_instance);
 
         // Create the default reference spaces
@@ -220,43 +243,26 @@ Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
     return views;
 }
 
-Device::ListOfEnabledFeatures OpenXRDevice::enumerateReferenceSpaces(XrSession session) const
+Device::ListOfEnabledFeatures OpenXRDevice::collectEnabledFeatures()
 {
-    uint32_t referenceSpacesCount;
-    auto result = xrEnumerateReferenceSpaces(session, 0, &referenceSpacesCount, nullptr);
-    RETURN_IF_FAILED(result, "xrEnumerateReferenceSpaces", m_instance, { });
+    Device::ListOfEnabledFeatures features;
 
-    Vector<XrReferenceSpaceType> referenceSpaces(referenceSpacesCount);
-    referenceSpaces.fill(XR_REFERENCE_SPACE_TYPE_VIEW, referenceSpacesCount);
-    result = xrEnumerateReferenceSpaces(session, referenceSpacesCount, &referenceSpacesCount, referenceSpaces.data());
-    RETURN_IF_FAILED(result, "xrEnumerateReferenceSpaces", m_instance, { });
+    // https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/XrReferenceSpaceType.html
+    // OpenXR runtimes must support Viewer and Local spaces.
+    features.append(ReferenceSpaceType::Viewer);
+    features.append(ReferenceSpaceType::Local);
 
-    ListOfEnabledFeatures enabledFeatures;
-    for (auto& referenceSpace : referenceSpaces) {
-        switch (referenceSpace) {
-        case XR_REFERENCE_SPACE_TYPE_VIEW:
-            enabledFeatures.append(ReferenceSpaceType::Viewer);
-            LOG(XR, "\tDevice supports VIEW reference space");
-            break;
-        case XR_REFERENCE_SPACE_TYPE_LOCAL:
-            enabledFeatures.append(ReferenceSpaceType::Local);
-            LOG(XR, "\tDevice supports LOCAL reference space");
-            break;
-        case XR_REFERENCE_SPACE_TYPE_STAGE:
-            enabledFeatures.append(ReferenceSpaceType::LocalFloor);
-            enabledFeatures.append(ReferenceSpaceType::BoundedFloor);
-            LOG(XR, "\tDevice supports STAGE reference space");
-            break;
-        case XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT:
-            enabledFeatures.append(ReferenceSpaceType::Unbounded);
-            LOG(XR, "\tDevice supports UNBOUNDED reference space");
-            break;
-        default:
-            continue;
-        }
-    }
+    // Mark LocalFloor as supported regardless if XR_REFERENCE_SPACE_TYPE_STAGE is available.
+    // The spec uses a estimated height if we don't provide a floor transform in frameData.
+    features.append(ReferenceSpaceType::LocalFloor);
 
-    return enabledFeatures;
+    // FIXME: Enable BoundedFloor when we implement xrGetReferenceSpaceBoundsRect and the related bits in the DOM.
+    // enabledFeatures.append(ReferenceSpaceType::BoundedFloor);
+
+    if (m_extensions.isExtensionSupported(XR_MSFT_UNBOUNDED_REFERENCE_SPACE_EXTENSION_NAME))
+        features.append(ReferenceSpaceType::Unbounded);
+
+    return features;
 }
 
 void OpenXRDevice::collectSupportedSessionModes()
@@ -270,15 +276,7 @@ void OpenXRDevice::collectSupportedSessionModes()
     result = xrEnumerateViewConfigurations(m_instance, m_systemId, viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
     RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
 
-    // Retrieving the supported reference spaces requires an initialized session. There is no need to initialize all the graphics
-    // stuff so we'll use a headless session that will be discarded after getting the info we need.
-    auto sessionCreateInfo = createStructure<XrSessionCreateInfo, XR_TYPE_SESSION_CREATE_INFO>();
-    sessionCreateInfo.systemId = m_systemId;
-    XrSession ephemeralSession;
-    result = xrCreateSession(m_instance, &sessionCreateInfo, &ephemeralSession);
-    RETURN_IF_FAILED(result, "xrCreateSession", m_instance);
-
-    ListOfEnabledFeatures features = enumerateReferenceSpaces(ephemeralSession);
+    ListOfEnabledFeatures features = collectEnabledFeatures();
     for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
         auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
         result = xrGetViewConfigurationProperties(m_instance, m_systemId, viewConfigurations[i], &viewConfigurationProperties);
@@ -299,7 +297,6 @@ void OpenXRDevice::collectSupportedSessionModes()
         };
         m_viewConfigurationProperties.add(configType, WTFMove(viewConfigurationProperties));
     }
-    xrDestroySession(ephemeralSession);
 }
 
 void OpenXRDevice::collectConfigurationViews()
@@ -416,6 +413,9 @@ void OpenXRDevice::resetSession()
         m_session = XR_NULL_HANDLE;
     }
     m_sessionState = XR_SESSION_STATE_UNKNOWN;
+
+    // deallocate graphic resources
+    m_egl.reset();
 }
 
 void OpenXRDevice::handleSessionStateChange()

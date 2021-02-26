@@ -1,3 +1,14 @@
+2021-02-26  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement OpenXR port graphics binding
+        https://bugs.webkit.org/show_bug.cgi?id=222173
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable OpenXR defines required for EGL graphics binding.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.1
