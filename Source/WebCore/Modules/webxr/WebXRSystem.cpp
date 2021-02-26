@@ -533,7 +533,7 @@ void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFra
 
 Vector<PlatformXR::Device::ViewData> WebXRSystem::DummyInlineDevice::views(XRSessionMode) const
 {
-    return { { .active = true, PlatformXR::Eye::None } };
+    return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
 

@@ -237,8 +237,8 @@ Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
         views.append({ .active = true, .eye = Eye::None });
     else {
         ASSERT(configurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO);
-        views.append({ .active = true, Eye::Left });
-        views.append({ .active = true, Eye::Right });
+        views.append({ .active = true, .eye = Eye::Left });
+        views.append({ .active = true, .eye = Eye::Right });
     }
     return views;
 }

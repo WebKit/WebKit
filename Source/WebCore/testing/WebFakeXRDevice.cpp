@@ -125,9 +125,9 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
 Vector<PlatformXR::Device::ViewData> SimulatedXRDevice::views(PlatformXR::SessionMode mode) const
 {
     if (mode == PlatformXR::SessionMode::ImmersiveVr)
-        return { { .active = true, PlatformXR::Eye::Left }, { .active = true, PlatformXR::Eye::Right } };
+        return { { .active = true, .eye = PlatformXR::Eye::Left }, { .active = true, .eye = PlatformXR::Eye::Right } };
 
-    return { { .active = true, PlatformXR::Eye::None } };
+    return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
 void SimulatedXRDevice::scheduleOnNextFrame(Function<void()>&& func)
