@@ -61,7 +61,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebView : NSView
 #endif
 
-typedef NS_ENUM(NSUInteger, WKMediaPlaybackState) {
+typedef NS_ENUM(NSInteger, WKMediaPlaybackState) {
     WKMediaPlaybackStateNone,
     WKMediaPlaybackStatePlaying,
     WKMediaPlaybackStatePaused,
