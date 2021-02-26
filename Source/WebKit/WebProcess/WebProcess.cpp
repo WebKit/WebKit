@@ -2026,42 +2026,6 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
 
 #endif
 
-#if ENABLE(VP9)
-void WebProcess::enableVP9Decoder()
-{
-    if (m_vp9DecoderEnabled)
-        return;
-
-    m_vp9DecoderEnabled = true;
-
-#if PLATFORM(COCOA)
-    WebCore::registerSupplementalVP9Decoder();
-#endif
-}
-
-void WebProcess::enableVP8SWDecoder()
-{
-    if (m_vp9SWDecoderEnabled)
-        return;
-
-    m_vp8SWDecoderEnabled = true;
-#if PLATFORM(COCOA)
-    WebCore::registerWebKitVP8Decoder();
-#endif
-}
-
-void WebProcess::enableVP9SWDecoder()
-{
-    if (m_vp9SWDecoderEnabled)
-        return;
-
-    m_vp9SWDecoderEnabled = true;
-#if PLATFORM(COCOA)
-    WebCore::registerWebKitVP9Decoder();
-#endif
-}
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager()
 {

@@ -64,6 +64,15 @@ public:
     WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
     WEBCORE_EXPORT static bool opusDecoderEnabled();
 
+#if ENABLE(VP9)
+    WEBCORE_EXPORT static void setShouldEnableVP9Decoder(bool);
+    WEBCORE_EXPORT static bool shouldEnableVP9Decoder();
+    WEBCORE_EXPORT static void setShouldEnableVP8Decoder(bool);
+    WEBCORE_EXPORT static bool shouldEnableVP8Decoder();
+    WEBCORE_EXPORT static void setShouldEnableVP9SWDecoder(bool);
+    WEBCORE_EXPORT static bool shouldEnableVP9SWDecoder();
+#endif
+
     virtual ~PlatformMediaSessionManager() = default;
 
     virtual void scheduleSessionStatusUpdate() { }
@@ -219,6 +228,12 @@ private:
 #endif
 #if ENABLE(OPUS) && PLATFORM(MAC)
     static bool m_opusDecoderEnabled;
+#endif
+
+#if ENABLE(VP9)
+    static bool m_vp9DecoderEnabled;
+    static bool m_vp8DecoderEnabled;
+    static bool m_vp9SWDecoderEnabled;
 #endif
 
 #if !RELEASE_LOG_DISABLED

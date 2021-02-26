@@ -1,3 +1,23 @@
+2021-02-26  Per Arne  <pvollan@apple.com>
+
+        [Cocoa] Register VP9 decoders when PlatformMediaSessionManager is created
+        https://bugs.webkit.org/show_bug.cgi?id=222473
+        <rdar://problem/74790242>
+
+        Reviewed by Eric Carlson.
+
+        Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered when
+        PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will then not
+        be made unconditionally when creating a Web page, but delayed until required.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::enableVP9Decoder): Deleted.
+        (WebKit::WebProcess::enableVP8SWDecoder): Deleted.
+        (WebKit::WebProcess::enableVP9SWDecoder): Deleted.
+        * WebProcess/WebProcess.h:
+
 2021-02-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Convert WKMediaPlaybackState NS_ENUM back to NSUInteger type

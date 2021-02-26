@@ -38,6 +38,7 @@
 #import "NowPlayingInfo.h"
 #import "PlatformMediaSession.h"
 #import "PlatformStrategies.h"
+#import "VP9UtilitiesCocoa.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 
@@ -56,6 +57,14 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
 {
+#if ENABLE(VP9)
+    if (shouldEnableVP9Decoder())
+        registerSupplementalVP9Decoder();
+    if (shouldEnableVP8Decoder())
+        registerWebKitVP8Decoder();
+    if (shouldEnableVP9SWDecoder())
+        registerWebKitVP9Decoder();
+#endif
 }
 
 void MediaSessionManagerCocoa::updateSessionState()

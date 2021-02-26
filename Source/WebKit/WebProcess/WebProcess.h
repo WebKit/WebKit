@@ -359,12 +359,6 @@ public:
 #endif
 #endif
 
-#if ENABLE(VP9)
-    void enableVP9Decoder();
-    void enableVP8SWDecoder();
-    void enableVP9SWDecoder();
-#endif
-
 #if PLATFORM(COCOA)
     void willWriteToPasteboardAsynchronously(const String& pasteboardName);
     void waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
@@ -723,12 +717,6 @@ private:
 #if ENABLE(WEBGL)
     bool m_useGPUProcessForWebGL { false };
 #endif
-#endif
-
-#if ENABLE(VP9)
-    bool m_vp9DecoderEnabled { false };
-    bool m_vp8SWDecoderEnabled { false };
-    bool m_vp9SWDecoderEnabled { false };
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -861,14 +861,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(VP9)
-    if (parameters.shouldEnableVP9Decoder)
-        WebProcess::singleton().enableVP9Decoder();
-
-    if (parameters.shouldEnableVP8Decoder)
-        WebProcess::singleton().enableVP8SWDecoder();
-
-    if (parameters.shouldEnableVP9SWDecoder)
-        WebProcess::singleton().enableVP9SWDecoder();
+    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP8Decoder(parameters.shouldEnableVP8Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(parameters.shouldEnableVP9SWDecoder);
 #endif
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
