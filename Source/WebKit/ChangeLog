@@ -1,5 +1,26 @@
 2021-02-26  Per Arne  <pvollan@apple.com>
 
+        [Cocoa] Send QOS parameters as part of Web process creation parameters
+        https://bugs.webkit.org/show_bug.cgi?id=222474
+
+        Reviewed by Chris Dumez.
+
+        In order to save one IPC call when starting a WebContent process, send QOS parameters as part of Web process creation parameters.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2021-02-26  Per Arne  <pvollan@apple.com>
+
         [Cocoa] Start WebContent process pre-warming when process is initialized
         https://bugs.webkit.org/show_bug.cgi?id=222476
 

@@ -207,6 +207,8 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    setQOS(parameters.latencyQOS, parameters.throughputQOS);
+    
     SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)

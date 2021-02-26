@@ -322,6 +322,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
     parameters.uiProcessSDKVersion = applicationSDKVersion();
 
+    parameters.latencyQOS = webProcessLatencyQOS();
+    parameters.throughputQOS = webProcessThroughputQOS();
+    
 #if PLATFORM(IOS_FAMILY)
     if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);

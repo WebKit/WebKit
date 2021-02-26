@@ -77,9 +77,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
-#if PLATFORM(COCOA)
-    SetQOS(int latencyQOS, int throughputQOS)
-#endif
 
     SetMemoryCacheDisabled(bool disabled);
 
