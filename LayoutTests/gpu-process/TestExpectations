@@ -54,7 +54,6 @@ imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure
 imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure ]
 imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.2.html [ Crash ]
@@ -75,11 +74,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/e
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Crash ]
 
 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
-
-# webkit.org/b/220805
-webaudio/Panner/hrtf-database.html [ Timeout ]
-webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]
-webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
 
 # webkit.org/b/220333
 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Failure ]

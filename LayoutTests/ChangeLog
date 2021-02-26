@@ -1,3 +1,30 @@
+2021-02-26  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Clean up TestExpectations related to media tests
+        https://bugs.webkit.org/show_bug.cgi?id=222456
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+        Remove a duplicated expectation (imported/w3c/web-platform-tests/fetch/range/general.window.html).
+        Move webaudio related test expectations to platform/wk2/TestExpectations.
+
+        * platform/ios-wk2/TestExpectations:
+        webkit.org/b/221821 has been fixed in r273504.
+
+        * platform/mac-wk2/TestExpectations:
+        Two media capabilities test failures have been fixed in r273504.
+        Move a test expectation (platform/mac/media/media-source/videoplaybackquality-decompressionsession.html)
+        to platform/mac/TestExpectations.
+        Reorganize expectations for tests in webgl/2.0.0/conformance2/textures/video.
+
+        * platform/mac/TestExpectations:
+        Remove a duplicated test expectation (mediaElementAudioSourceToScriptProcessorTest.html).
+
+        * platform/wk2/TestExpectations:
+        Track all modern-media-controls test failures in one bug.
+        Track all canvas related media test failures in one bug.
+
 2021-02-26  Zalan Bujtas  <zalan@apple.com>
 
         Remove unnecessary whitespace (css1/text_properties/text_decoration.html)

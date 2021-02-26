@@ -221,15 +221,6 @@ http/tests/media/hls/video-duration-accessibility.html [ Timeout ]
 http/tests/media/media-document-referer.html [ Failure ]
 http/tests/media/media-document.html [ Failure ]
 http/tests/media/media-play-stream-chunked-icy.html [ Failure ]
-http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Timeout ]
-http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/1-to-10-hours.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/10-hours-or-more.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html [ Timeout ]
 http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Failure ]
 http/tests/media/video-auth.html [ Failure ]
 http/tests/media/video-no-content-length-stall.html [ Timeout ]
@@ -259,6 +250,15 @@ media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.h
 media/modern-media-controls/placard/placard-ltr.html [ Failure Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
+http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
+http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html [ Timeout ]
+http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Timeout ]
+http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
+http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html [ Timeout ]
+http/tests/media/modern-media-controls/time-control/1-to-10-hours.html [ Timeout ]
+http/tests/media/modern-media-controls/time-control/10-hours-or-more.html [ Timeout ]
+http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ Timeout ]
+http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html [ Timeout ]
 
 # webkit.org/b/221689
 media/picture-in-picture/picture-in-picture-api-pip-window.html [ Timeout Pass ]
@@ -273,10 +273,8 @@ media/media-controller-time.html [ Timeout ]
 media/media-controller-unpause.html [ Timeout ]
 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 media/video-as-img-output-pts.html [ Timeout Pass ]
-media/video-canvas-createPattern.html [ Crash ]
 media/video-controller-child-rate.html [ Timeout ]
 media/video-controller-currentTime-rate.html [ Failure ]
-media/video-orientation-canvas.html [ Failure ]
 media/video-set-rate-from-pause.html [ Timeout Pass ]
 
 # webkit.org/b/220805
@@ -335,7 +333,10 @@ webkit.org/b/221818 imported/w3c/web-platform-tests/html/canvas/element/imagebit
 
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 
-webkit.org/b/221820 media/video-canvas-drawing-output.html [ Failure ]
+# webkit.org/b/221820
+media/video-canvas-drawing-output.html [ Failure ]
+media/video-canvas-createPattern.html [ Crash ]
+media/video-orientation-canvas.html [ Failure ]
 
 webkit.org/b/221783 [ Debug ] loader/change-src-during-iframe-load-crash.html [ Skip ]
 
