@@ -3873,7 +3873,6 @@
 		4990001F24D2429C00049CB4 /* WKRenderLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
 		4990002224D24C1C00049CB4 /* WKRenderObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderObject.cpp; sourceTree = "<group>"; };
 		4990002324D24C1C00049CB4 /* WKRenderObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKRenderObject.h; sourceTree = "<group>"; };
-		49917DA6252D649E0050313F /* WKMediaPlaybackState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKMediaPlaybackState.h; sourceTree = "<group>"; };
 		49917DB0252E30750050313F /* MediaPlaybackState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackState.h; sourceTree = "<group>"; };
 		49BCA19023A175490028A836 /* _WKResourceLoadStatisticsFirstPartyInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadStatisticsFirstPartyInternal.h; sourceTree = "<group>"; };
 		49BCA19123A177660028A836 /* APIResourceLoadStatisticsFirstParty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIResourceLoadStatisticsFirstParty.h; sourceTree = "<group>"; };

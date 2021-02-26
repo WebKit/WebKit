@@ -1,3 +1,13 @@
+2021-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove unnecessary WKMediaPlaybackState header from Xcode project file
+        https://bugs.webkit.org/show_bug.cgi?id=222496
+        <rdar://problem/74808525>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-02-26  John Wilander  <wilander@apple.com>
 
         Non-cookie website data not deleted after 7 days of browser use without user interaction
