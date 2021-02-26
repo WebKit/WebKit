@@ -1,3 +1,28 @@
+2021-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]
+        https://bugs.webkit.org/show_bug.cgi?id=218637
+        <rdar://problem/71102126>
+
+        Reviewed by Kenneth Russell.
+
+        Remove incorrect validation that IOSurface pixel format matches
+        the pixel format of the texture image being specified.
+
+        The "Element" in IOSurface is a block of pixels, while the validation assumed
+        it means one pixel. The validation failed for a compressed format.
+
+        Currently we map non-public YUV formats, to which there is no elequent way
+        of implementing the validation.
+        Most likely this started to reproduce if IOSurfaceGetBytesPerElementOfPlane
+        was changed to produce correct results for the above YUV format.
+
+        Later commits could add the validation back for formats that we know the
+        pixel format type.
+
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        (rx::IOSurfaceSurfaceEAGL::validateAttributes):
+
 2021-02-25  Kyle Piddington  <kpiddington@apple.com>
 
         Fix crashes in fast/canvas/webgl/texImage video tests
