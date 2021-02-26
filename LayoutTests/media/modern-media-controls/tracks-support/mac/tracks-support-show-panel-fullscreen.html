@@ -15,10 +15,18 @@ setTimeout(() => {
     finishJSTest();
 }, 10000);
 
+internals.setMockVideoPresentationModeEnabled(true);
+
 const media = document.querySelector("video");
 
 media.addEventListener("webkitfullscreenchange", () => {
-    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+    debug("webkitfullscreenchange event is fired");
+    shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
+        if (!media.webkitDisplayingFullscreen) {
+            media.remove();
+            finishJSTest();
+        }
+
         shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks")`, "null", () => {
             shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width`, "0", () => {
                 shouldBecomeEqual(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right`, "582", async () => {
@@ -28,8 +36,7 @@ media.addEventListener("webkitfullscreenchange", () => {
                         shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.right", "218px");
                         shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.bottom", "101px");
                         debug("");
-                        media.remove();
-                        finishJSTest();
+                        media.webkitExitFullscreen();
                     });
                 });
             });

@@ -5,7 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS internals.shadowRoot(media).querySelector("button.fullscreen") became different from null
 PASS internals.shadowRoot(media).querySelector("button.fullscreen").getBoundingClientRect().width became different from 0
-PASS media.webkitDisplayingFullscreen became true
+webkitfullscreenchange event is fired
+PASS internals.isChangingPresentationMode(media) became false
 PASS internals.shadowRoot(media).querySelector("button.tracks") became different from null
 PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width became different from 0
 PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right became 582
@@ -13,6 +14,8 @@ PASS internals.shadowRoot(media).querySelector('.tracks-panel') became different
 PASS internals.shadowRoot(media).querySelector('.tracks-panel').style.right is "218px"
 PASS internals.shadowRoot(media).querySelector('.tracks-panel').style.bottom is "101px"
 
+webkitfullscreenchange event is fired
+PASS internals.isChangingPresentationMode(media) became false
 PASS successfullyParsed is true
 
 TEST COMPLETE
