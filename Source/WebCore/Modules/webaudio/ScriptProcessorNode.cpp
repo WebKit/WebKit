@@ -118,7 +118,7 @@ RefPtr<AudioBuffer> ScriptProcessorNode::createInputBufferForJS(AudioBuffer* inp
 RefPtr<AudioBuffer> ScriptProcessorNode::createOutputBufferForJS(AudioBuffer& outputBuffer) const
 {
     // As an optimization, we reuse the same buffer as last time when possible.
-    if (!m_cachedOutputBufferForJS || m_cachedOutputBufferForJS->topologyMatches(outputBuffer))
+    if (!m_cachedOutputBufferForJS || !m_cachedOutputBufferForJS->topologyMatches(outputBuffer))
         m_cachedOutputBufferForJS = outputBuffer.clone(AudioBuffer::ShouldCopyChannelData::No);
     else
         m_cachedOutputBufferForJS->zero();
@@ -148,9 +148,10 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 {
     // Discussion about inputs and outputs:
     // As in other AudioNodes, ScriptProcessorNode uses an AudioBus for its input and output (see inputBus and outputBus below).
-    // Additionally, there is a double-buffering for input and output which is exposed directly to JavaScript (see inputBuffer and outputBuffer below).
+    // Additionally, there is a double-buffering for input and output (see inputBuffer and outputBuffer below).
     // This node is the producer for inputBuffer and the consumer for outputBuffer.
-    // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer.
+    // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer. The JavaScript gets its own copy
+    // of the buffers for safety reasons.
 
     // Get input and output busses.
     AudioBus* inputBus = this->input(0)->bus();
