@@ -1,3 +1,16 @@
+2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Emoji sequences with constituents in the UBLOCK_SYMBOLS_AND_PICTOGRAPHS_EXTENDED_A Unicode block don't get combined properly
+        https://bugs.webkit.org/show_bug.cgi?id=222438
+        <rdar://problem/74382039>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/mending-heart-expected.txt: Added.
+        * fast/text/mending-heart.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-02-25  Saam Barati  <sbarati@apple.com>
 
         Add some exception checks to the bindings generator
