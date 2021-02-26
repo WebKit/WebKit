@@ -1,3 +1,18 @@
+2021-02-25  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] The GPU Process crashes in WebKit::RemoteLegacyCDMFactoryProxy::getSession() with an assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=222435
+
+        Reviewed by Eric Carlson.
+
+        Fix an assertion failure on debug bots.
+
+        No new tests. Fix crashes on the bots.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId const):
+        We should not search the hash table with an empty key (`m_legacySession`).
+
 2021-02-25  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate

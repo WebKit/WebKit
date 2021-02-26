@@ -647,6 +647,9 @@ RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const S
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return nullptr;
 
+    if (!m_legacySession)
+        return nullptr;
+
     if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy().getSession(m_legacySession))
         return cdmSession->getCachedKeyForKeyId(keyId);
     return nullptr;
