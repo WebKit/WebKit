@@ -1,5 +1,16 @@
 2021-02-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Commit queue should show commit identifier every time it updates local checkout
+        https://bugs.webkit.org/show_bug.cgi?id=222287
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__): Added ShowIdentifier step.
+        * CISupport/ews-build/factories_unittest.py: Updated unit-test.
+
+2021-02-26  Aakash Jain  <aakash_jain@apple.com>
+
         Remove old buildbot version from webkitpy autoinstaller
         https://bugs.webkit.org/show_bug.cgi?id=222272
 

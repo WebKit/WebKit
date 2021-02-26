@@ -276,6 +276,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(RunWebKitTests())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource())
+        self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
         self.addStep(CreateLocalGITCommit())

@@ -425,6 +425,7 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.RunWebKitTests),
             _BuildStepFactory(steps.ValidatePatch, addURLs=False, verifycqplus=True),
             _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.ShowIdentifier),
             _BuildStepFactory(steps.UpdateWorkingDirectory),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.CreateLocalGITCommit),
