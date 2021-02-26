@@ -2801,7 +2801,7 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
 {
     SQLiteStatement countOperatingDatesStatement(m_database, "SELECT COUNT(*) FROM OperatingDates;"_s);
     SQLiteStatement getMostRecentOperatingDateStatement(m_database, "SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1;"_s);
-    SQLiteStatement getLeastRecentOperatingDateStatement(m_database, "SELECT * FROM OperatingDates ORDER BY year, month, monthDay LIMIT 1;"_s);
+    SQLiteStatement getOperatingDateWindowStatement(m_database, "SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1 OFFSET ?;"_s);
 
     if (countOperatingDatesStatement.prepare() != SQLITE_OK
         || countOperatingDatesStatement.step() != SQLITE_ROW) {
@@ -2818,17 +2818,38 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
         ASSERT_NOT_REACHED();
         return;
     }
-
     m_mostRecentOperatingDate = OperatingDate(getMostRecentOperatingDateStatement.getColumnInt(0), getMostRecentOperatingDateStatement.getColumnInt(1), getMostRecentOperatingDateStatement.getColumnInt(2));
 
-    if (getLeastRecentOperatingDateStatement.prepare() != SQLITE_OK
-        || getLeastRecentOperatingDateStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getLeastRecentOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+    if (getOperatingDateWindowStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getOperatingDateWindowStatement failed during the call to prepare() with error message: %{private}s.", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_leastRecentOperatingDate = OperatingDate(getLeastRecentOperatingDateStatement.getColumnInt(0), getLeastRecentOperatingDateStatement.getColumnInt(1), getLeastRecentOperatingDateStatement.getColumnInt(2));
+    if (m_operatingDatesSize <= operatingDatesWindowShort - 1)
+        m_shortWindowOperatingDate = WTF::nullopt;
+    else {
+        if (getOperatingDateWindowStatement.bindInt(1, operatingDatesWindowShort - 1) != SQLITE_OK
+            || getOperatingDateWindowStatement.step() != SQLITE_ROW) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getOperatingDateWindowStatement failed with error message: %{private}s. The error could be in the calls to bind() or step().", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        m_shortWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement.getColumnInt(0), getOperatingDateWindowStatement.getColumnInt(1), getOperatingDateWindowStatement.getColumnInt(2));
+    }
+
+    if (m_operatingDatesSize <= operatingDatesWindowLong - 1)
+        m_longWindowOperatingDate = WTF::nullopt;
+    else {
+        getOperatingDateWindowStatement.reset();
+        if (getOperatingDateWindowStatement.bindInt(1, operatingDatesWindowLong - 1) != SQLITE_OK
+            || getOperatingDateWindowStatement.step() != SQLITE_ROW) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getOperatingDateWindowStatement failed with error message: %{private}s. The error could be in the calls to bind() or step().", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        m_longWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement.getColumnInt(0), getOperatingDateWindowStatement.getColumnInt(1), getOperatingDateWindowStatement.getColumnInt(2));
+    }
 }
 
 void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary()
@@ -2869,23 +2890,19 @@ bool ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired(WallTime mostRece
 {
     ASSERT(!RunLoop::isMain());
 
-    unsigned operatingDatesWindowInDays = 0;
     switch (operatingDatesWindow) {
     case OperatingDatesWindow::Long:
-        operatingDatesWindowInDays = operatingDatesWindowLong;
+        if (m_longWindowOperatingDate && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_longWindowOperatingDate)
+            return true;
         break;
     case OperatingDatesWindow::Short:
-        operatingDatesWindowInDays = operatingDatesWindowShort;
+        if (m_shortWindowOperatingDate && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_shortWindowOperatingDate)
+            return true;
         break;
     case OperatingDatesWindow::ForLiveOnTesting:
         return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
     case OperatingDatesWindow::ForReproTesting:
         return true;
-    }
-
-    if (m_operatingDatesSize >= operatingDatesWindowInDays) {
-        if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_leastRecentOperatingDate)
-            return true;
     }
 
     // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
@@ -2896,11 +2913,11 @@ bool ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired(WallTime mostRece
     return false;
 }
 
-void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
+void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
 {
     // Populate the Operating Dates table with enough days to require pruning.
     double daysAgoInSeconds = 0;
-    for (unsigned i = 1; i <= operatingDatesWindowLong; i++) {
+    for (unsigned i = 1; i <= numberOfOperatingDaysPassed; i++) {
         double daysToSubtract = Seconds::fromHours(24 * i).value();
         daysAgoInSeconds = WallTime::now().secondsSinceEpoch().value() - daysToSubtract;
         auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));

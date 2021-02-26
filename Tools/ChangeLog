@@ -1,3 +1,25 @@
+2021-02-26  John Wilander  <wilander@apple.com>
+
+        Non-cookie website data not deleted after 7 days of browser use without user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=222248
+        <rdar://problem/74612589>
+
+        Reviewed by Brent Fulgham and informally by Kate Cheney.
+
+        A new numberOfOperatingDaysPassed parameter was added to
+        testRunner.setStatisticsExpiredStatistic() to control the exact
+        number of operating days passed since user interaction.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsExpiredStatistic):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsExpiredStatistic):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2021-02-26  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, add myself to the `ConsoleUsage` watchlist

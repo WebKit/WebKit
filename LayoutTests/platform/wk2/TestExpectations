@@ -841,7 +841,7 @@ http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Ski
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Skip ]
 
 # This test is flaky. <rdar://problem/69748720>
-http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html [ Pass Failure ]
+http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html [ Pass Failure ]
 
 # The CNAME and cookie transform SPIs are only available in macOS Big Sur + iOS 14 and above.
 http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html [ Skip ]

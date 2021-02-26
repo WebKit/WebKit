@@ -8,7 +8,7 @@ Before statistics processing: IDB entry does exist.
 After statistics processing: HttpOnly cookie exists.
 After statistics processing: Client-side cookie exists.
 After statistics processing: Regular server-side cookie exists.
-After statistics processing: LocalStorage entry does not exist.
-After statistics processing: IDB entry does not exist.
+After statistics processing: LocalStorage entry does exist.
+After statistics processing: IDB entry does exist.
 
 

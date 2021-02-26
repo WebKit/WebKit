@@ -1,3 +1,58 @@
+2021-02-26  John Wilander  <wilander@apple.com>
+
+        Non-cookie website data not deleted after 7 days of browser use without user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=222248
+        <rdar://problem/74612589>
+
+        Reviewed by Brent Fulgham and informally by Kate Cheney.
+
+        Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html
+               http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+            Now sets two new member variables:
+            - Optional<OperatingDate> m_longWindowOperatingDate
+            - Optional<OperatingDate> m_shortWindowOperatingDate
+            These are only set if the minimum number of operating days has passed.
+            This function no longer sets m_leastRecentOperatingDate.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+            Now checks against the two new member variables m_longWindowOperatingDate
+            and m_shortWindowOperatingDate. This fixes the bug.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+            Test infrastructure. Now takes the new parameter numberOfOperatingDaysPassed
+            with which layout tests can control the exact number of operating days
+            passed since user interaction.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+            Added m_longWindowOperatingDate and m_shortWindowOperatingDate, and
+            removed m_leastRecentOperatingDate since it's no longer used.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+            Test infrastructure. The same changes as in the DB store.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+            Test infrastructure.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+            Test infrastructure.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+            Test infrastructure.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+            Test infrastructure.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+            Test infrastructure.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-02-26  BJ Burg  <bburg@apple.com>
 
         Web Inspector: give WebInspectorUIExtensionControllerProxy a chance to teardown when the frontend is about to close
