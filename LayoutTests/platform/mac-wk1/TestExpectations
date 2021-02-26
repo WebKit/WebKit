@@ -1253,3 +1253,5 @@ webkit.org/b/221717 [ BigSur ] http/tests/security/http-0.9/default-port-script-
 webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/221559 [ BigSur ] svg/canvas/canvas-global-alpha-svg.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/222493 [ BigSur ] platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
