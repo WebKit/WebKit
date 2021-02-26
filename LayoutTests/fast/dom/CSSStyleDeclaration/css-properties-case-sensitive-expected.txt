@@ -8,13 +8,6 @@ normal cases
 PASS element.style.zIndex is '1'
 PASS element.style.ZIndex is undefined.
 
-"css" prefix
-
-PASS element.style.cssZIndex is '1'
-PASS element.style.CssZIndex is '1'
-PASS element.style.CsszIndex is undefined.
-PASS element.style.csszIndex is undefined.
-
 "pixel" prefix
 
 PASS element.style.pixelZIndex is 1

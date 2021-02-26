@@ -46,7 +46,6 @@ namespace {
 enum class PropertyNamePrefix {
     None,
     Epub,
-    CSS,
     Pixel,
     Pos,
     WebKit
@@ -90,10 +89,6 @@ static PropertyNamePrefix propertyNamePrefix(const StringImpl& propertyName)
     // First character of the prefix within the property name may be upper or lowercase.
     UChar firstChar = toASCIILower(propertyName[0]);
     switch (firstChar) {
-    case 'c':
-        if (matchesCSSPropertyNamePrefix(propertyName, "css"))
-            return PropertyNamePrefix::CSS;
-        break;
     case 'e':
         if (matchesCSSPropertyNamePrefix(propertyName, "epub"))
             return PropertyNamePrefix::Epub;
@@ -167,16 +162,13 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
     const char* name = bufferPtr;
 
     unsigned i = 0;
-    // Prefixes CSS, Pixel, Pos are ignored.
+    // Prefixes Pixel and Pos are ignored.
     // Prefixes Apple, KHTML and Webkit are transposed to "-webkit-".
     // The prefix "Epub" becomes "-epub-".
     switch (propertyNamePrefix(*propertyNameString)) {
     case PropertyNamePrefix::None:
         if (isASCIIUpper((*propertyNameString)[0]))
             return propertyInfo;
-        break;
-    case PropertyNamePrefix::CSS:
-        i += 3;
         break;
     case PropertyNamePrefix::Pixel:
         i += 5;
