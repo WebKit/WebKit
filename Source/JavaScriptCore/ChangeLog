@@ -1,3 +1,23 @@
+2021-02-26  Michael Saboff  <msaboff@apple.com>
+
+        unexpected minimumInputSize in setupDisjunctionOffsets for regexp engine(yarr)
+        https://bugs.webkit.org/show_bug.cgi?id=220357
+
+        Reviewed by Saam Barati.
+
+        Removed an unnecessary ASSERT.
+        This assert checked that the minimum size wasn't UINT_MAX which I believe was
+        intended to make sure the minimum size was changed while computing the  
+        disjunction's size and offsets.  Those calculations involve checked arithmetic,
+        which would catch any overflow.
+
+        The other part of this patch adds a test that checks this condition as well
+        as the case where the pattern is one character longer, 2^32, which triggers
+        the arithmetic overflow.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+
 2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Flaky JSC test: stress/atomic-increment-bigint64.js

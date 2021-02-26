@@ -1,3 +1,21 @@
+2021-02-26  Michael Saboff  <msaboff@apple.com>
+
+        unexpected minimumInputSize in setupDisjunctionOffsets for regexp engine(yarr)
+        https://bugs.webkit.org/show_bug.cgi?id=220357
+
+        Reviewed by Saam Barati.
+
+        New tests to check the boundary conditions for overflowing a pattern in a RegExp.
+
+        * stress/regexp-max-size.js: Added.
+        (testMaxRegExp):
+        (testTooBigRegExp):
+        (testMaxBMPRegExp):
+        (testTooBigBMPRegExp):
+        (testMaxNonBMPRegExp):
+        (testTooBigNonBMPRegExp):
+        (testAll):
+
 2021-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix typo in wasm error message
