@@ -1621,7 +1621,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

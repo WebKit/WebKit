@@ -1,3 +1,28 @@
+2021-02-26  Devin Rousso  <drousso@apple.com>
+
+        Provide the image URL for accessibility image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=222483
+        <rdar://problem/74144895>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestImageExtraction):
+
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestImageExtraction):
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::requestImageExtraction):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestImageExtraction):
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
 2021-02-26  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Allow painting of GPUP hosted video from the WebContent process

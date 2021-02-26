@@ -62,6 +62,7 @@
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
+#import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
 #import "WKSafeBrowsingWarning.h"

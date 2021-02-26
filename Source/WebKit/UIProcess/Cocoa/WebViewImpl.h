@@ -584,7 +584,7 @@ public:
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
 #endif
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
