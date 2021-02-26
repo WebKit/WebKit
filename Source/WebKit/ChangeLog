@@ -1,3 +1,16 @@
+2021-02-26  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=222252
+        <rdar://problem/71206685>
+
+        Unreviewed, revert one unintentionally changed error code.
+
+        Fixes failing API test WKInspectorExtensionHost.UnregisterExtension.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+
 2021-02-26  Per Arne  <pvollan@apple.com>
 
         [Cocoa] Send QOS parameters as part of Web process creation parameters

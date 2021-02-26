@@ -115,7 +115,7 @@ void WebInspectorUIExtensionControllerProxy::unregisterExtension(const Inspector
 
         weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::UnregisterExtension { extensionID }, [strongThis = makeRef(*weakThis.get()), extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
             if (!result) {
-                completionHandler(makeUnexpected(Inspector::ExtensionError::RegistrationFailed));
+                completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
                 return;
             }
 
