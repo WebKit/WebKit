@@ -1,3 +1,9 @@
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-02-26  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement OpenXR port graphics binding
