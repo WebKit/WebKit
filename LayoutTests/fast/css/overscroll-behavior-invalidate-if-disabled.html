@@ -6,10 +6,14 @@
 </head>
 <body>
 <script>
-description("Test overscrollBehavior should be invalidated if overscrollBehaviorEnabled is disabled");
+description("Tests that overscroll-behavior is not exposed when the feature is disabled");
 
 shouldBeFalse("'overscrollBehavior' in document.documentElement.style");
 shouldBeFalse("'overscroll-behavior' in getComputedStyle(document.documentElement)");
+shouldBeFalse("CSS.supports('overscroll-behavior: contain')");
+shouldBeFalse("CSS.supports('overscroll-behavior: inherit')");
+shouldBeFalse("CSS.supports('overscroll-behavior-x: inherit')");
+shouldBeFalse("CSS.supports('overscroll-behavior-y: inherit')");
 
 </script>
 </body>
