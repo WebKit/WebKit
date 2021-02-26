@@ -1,3 +1,51 @@
+2021-02-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273314. rdar://problem/74753323
+
+    aspect-ratio shows in computed style when disabled
+    https://bugs.webkit.org/show_bug.cgi?id=222286
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2021-02-23
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Make aspect-ratio invisible from style when disabled.
+    
+    Test: fast/css/aspect-ratio-invalidate-if-disabled.html
+    
+    * css/CSSComputedStyleDeclaration.cpp:
+    (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+    * css/CSSProperties.json:
+    
+    Tools:
+    
+    Add support for disabling aspect-ratio in wk1.
+    
+    * DumpRenderTree/TestOptions.cpp:
+    (WTR::TestOptions::defaults):
+    
+    LayoutTests:
+    
+    Add test.
+    
+    * fast/css/aspect-ratio-invalidate-if-disabled-expected.txt: Added.
+    * fast/css/aspect-ratio-invalidate-if-disabled.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273314 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-23  Rob Buis  <rbuis@igalia.com>
+
+            aspect-ratio shows in computed style when disabled
+            https://bugs.webkit.org/show_bug.cgi?id=222286
+
+            Reviewed by Simon Fraser.
+
+            Add test.
+
+            * fast/css/aspect-ratio-invalidate-if-disabled-expected.txt: Added.
+            * fast/css/aspect-ratio-invalidate-if-disabled.html: Added.
+
 2021-02-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r272039. rdar://problem/74451201

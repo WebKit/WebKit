@@ -4521,7 +4521,8 @@
         },
         "aspect-ratio": {
             "codegen-properties": {
-                "custom": "All"
+                "custom": "All",
+                "settings-flag": "aspectRatio"
             },
             "status": {
                 "status": "experimental"
