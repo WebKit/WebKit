@@ -1,3 +1,18 @@
+2021-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unnecessary whitespace (css1/text_properties/text_decoration.html)
+        https://bugs.webkit.org/show_bug.cgi?id=222446
+
+        Reviewed by Antti Koivisto.
+
+        Whitespace characters often end up as trailing content and legacy line layout does not trim them properly.
+        They cause unnecessary noise in renderer tree dumps when switching to modern line layout.
+
+        * css1/box_properties/border.html:
+        * css1/text_properties/text_decoration.html:
+        * platform/mac/css1/box_properties/border-expected.txt:
+        * platform/mac/css1/text_properties/text_decoration-expected.txt:
+
 2021-02-25  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening a couple crashes
