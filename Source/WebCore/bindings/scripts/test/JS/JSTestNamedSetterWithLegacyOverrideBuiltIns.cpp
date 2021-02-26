@@ -206,25 +206,28 @@ bool JSTestNamedSetterWithLegacyOverrideBuiltIns::put(JSCell* cell, JSGlobalObje
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyOverrideBuiltIns*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
+
     if (!propertyName.isSymbol()) {
-        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
         invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
         return true;
     }
 
-    return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
+    throwScope.assertNoException();
+    RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));
 }
 
 bool JSTestNamedSetterWithLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyOverrideBuiltIns*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
+    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     auto propertyName = Identifier::from(vm, index);
-    auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
     auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, true);
     invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
@@ -236,10 +239,11 @@ bool JSTestNamedSetterWithLegacyOverrideBuiltIns::defineOwnProperty(JSObject* ob
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyOverrideBuiltIns*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
+
     if (!propertyName.isSymbol()) {
         if (!propertyDescriptor.isDataDescriptor())
             return false;
-        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
         RETURN_IF_EXCEPTION(throwScope, true);
         invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
@@ -248,6 +252,7 @@ bool JSTestNamedSetterWithLegacyOverrideBuiltIns::defineOwnProperty(JSObject* ob
 
     PropertyDescriptor newPropertyDescriptor = propertyDescriptor;
     newPropertyDescriptor.setConfigurable(true);
+    throwScope.release();
     return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);
 }
 

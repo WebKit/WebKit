@@ -1,3 +1,14 @@
+2021-02-25  Saam Barati  <sbarati@apple.com>
+
+        Add some exception checks to the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=222434
+        <rdar://69066130>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/local-storage-exception-checks-expected.txt: Added.
+        * js/dom/local-storage-exception-checks.html: Added.
+
 2021-02-25  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur wk1] svg/canvas/canvas-global-alpha-svg.html is flakey failing
