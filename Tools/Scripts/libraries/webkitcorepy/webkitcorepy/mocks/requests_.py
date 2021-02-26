@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -83,12 +83,19 @@ class Response(object):
 class Requests(ContextStack):
     top = None
 
-    def __init__(self, *hosts):
+    def __init__(self, *hosts, **kwargs):
         super(Requests, self).__init__(cls=Requests)
         self.hosts = hosts
         self._temp_patches = None
+        self._responses = kwargs
 
     def request(self, method, url, **kwargs):
+        stripped_url = url.split('://')[-1]
+        candidate = self._responses.get('/'.join(stripped_url.split('/')[1:]))
+        if isinstance(candidate, Response):
+            return candidate
+        if candidate:
+            return candidate(method, url, **kwargs)
         return Response.create404(url)
 
     def __enter__(self):

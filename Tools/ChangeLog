@@ -1,3 +1,31 @@
+2021-02-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Use webkitcorepy requests mocking
+        https://bugs.webkit.org/show_bug.cgi?id=222443
+        <rdar://problem/74764567>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/casserole_unittest.py:
+        (CasseroleTest.test_synchronous): Use webkitcorepy's requests mocking.
+        (CasseroleTest.test_asynchronous): Ditto.
+        (CasseroleTest.test_list_like): Ditto.
+        (MockRequest): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/ci_context_unittest.py:
+        (URLFactoryTest.mock): Use webkitcorepy's requests mocking.
+        (URLFactoryTest.MockRequest): Deleted.
+        (URLFactoryTest.get): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/view_routes_unittest.py:
+        (WebSiteTestCase.decorator): Referenced static files have already been moved.
+        (WebSiteTestCase.decorator.MockRequest): Deleted.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/setup.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/requests_.py:
+        (Requests.__init__): Allow caller to specify certain responses.
+        (Requests.request):
+
 2021-02-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.

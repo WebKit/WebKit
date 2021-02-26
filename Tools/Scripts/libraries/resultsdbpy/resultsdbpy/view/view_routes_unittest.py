@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,6 +36,8 @@ from resultsdbpy.model.mock_repository import MockStashRepository, MockSVNReposi
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.view.view_routes import ViewRoutes
 
+from webkitcorepy import mocks
+
 
 class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
     KEYSPACE = 'web_site_testcase_keyspace'
@@ -71,29 +73,7 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def decorator(cls):
-        class MockRequest(object):
-            def __init__(self, text='', status_code=200, headers={'content-type': 'text/html'}):
-                self.text = text
-                self.status_code = status_code
-                self.headers = headers
-
-        original_get = requests.get
-
-        def mock_get(url, original_get=original_get, **kwargs):
-            # FIXME: Long term, the results database might actually be the better place for Ref.js and webkit.css to live
-            base_path = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))))), 'Internal', 'Tools', 'BuildAutomation', 'build-safari', 'public_html', 'dashboard')
-            if url == 'https://build.webkit.org/dashboard/devices/Scripts/Ref.js':
-                with open(os.path.join(base_path, 'devices', 'Scripts', 'Ref.js'), 'r') as f:
-                    return MockRequest(f.read(), headers={'content-type': 'text/javascript'})
-            elif url == 'https://build.webkit.org/dashboard/Styles/webkit.css':
-                with open(os.path.join(base_path, 'Styles', 'webkit.css'), 'r') as f:
-                    return MockRequest(f.read(), headers={'content-type': 'text/css'})
-            return original_get(url, **kwargs)
-
-        return FlaskTestCase.combine(
-            mock.patch('requests.get', new=mock_get),
-            FlaskTestCase.run_with_selenium(),
-        )
+        return FlaskTestCase.run_with_selenium()
 
 
 class WebSiteUnittest(WebSiteTestCase):
