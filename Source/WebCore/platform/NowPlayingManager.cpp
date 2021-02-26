@@ -64,10 +64,11 @@ void NowPlayingManager::setNowPlayingInfo(Client& client, NowPlayingInfo&& nowPl
 
     m_remoteCommandListener->setSupportsSeeking(nowPlayingInfo.supportsSeeking);
     m_client = makeWeakPtr(client);
+    bool wasPlaying = !!m_nowPlayingInfo;
     m_nowPlayingInfo = WTFMove(nowPlayingInfo);
 
 #if PLATFORM(COCOA)
-    MediaSessionManagerCocoa::setNowPlayingInfo(!m_nowPlayingInfo, *m_nowPlayingInfo);
+    MediaSessionManagerCocoa::setNowPlayingInfo(!wasPlaying && m_nowPlayingInfo, *m_nowPlayingInfo);
 #endif
 }
 
