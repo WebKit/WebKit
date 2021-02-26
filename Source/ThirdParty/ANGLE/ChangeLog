@@ -1,3 +1,39 @@
+2021-02-26  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix iOS simulator crashes due to unsupported simulator pixel formats: r8Unorm_srgb, a1bgr5Unorm, b5g6r5Unorm, abgr4Unorm, bgr5A1Unorm, and program generation asserts.
+
+        iOS Simulator doesn't support the following packed 16 bit formats natively. While some of these can be emulated, we should fix up the crashing cases first.
+
+        Also fix up program generation issues for void fragment shaders
+
+        Disable support for PVRTC temporarily, as Non-square / NPOT PVRTC textures are not supported nativley on metal.
+
+        https://bugs.webkit.org/show_bug.cgi?id=222458
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitStructDeclaration):
+        (GenMetalTraverser::emitFunctionReturn):
+        (GenMetalTraverser::emitFunctionParameter):
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.cpp:
+        (PipelineStructs::matches const):
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.h:
+        (sh::PipelineScoped::matches const):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::setPerSliceSubImage):
+        * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+        (rx::mtl::VertexFormat::init):
+        (rx::mtl::FormatTable::initNativeFormatCapsAutogen):
+        * src/libANGLE/renderer/metal/mtl_format_utils.mm:
+        (rx::mtl::FormatTable::initialize):
+        * src/libANGLE/renderer/metal/mtl_resources.mm:
+        (rx::mtl::Texture::Make2DTexture):
+        (rx::mtl::Texture::MakeTexture):
+
 2021-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]

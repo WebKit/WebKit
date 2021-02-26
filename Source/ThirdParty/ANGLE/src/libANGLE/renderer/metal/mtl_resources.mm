@@ -119,7 +119,6 @@ angle::Result Texture::Make2DTexture(ContextMtl *context,
                                                                width:width
                                                               height:height
                                                            mipmapped:mips == 0 || mips > 1];
-
         return MakeTexture(context, format, desc, mips, renderTargetOnly, allowFormatView, refOut);
     }  // ANGLE_MTL_OBJC_SCOPE
 }
@@ -283,6 +282,10 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                    bool memoryLess,
                                    TextureRef *refOut)
 {
+    if(desc.pixelFormat == MTLPixelFormatInvalid)
+    {
+        return angle::Result::Stop;
+    }
     refOut->reset(new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess));
 
     if (!refOut || !refOut->get())
