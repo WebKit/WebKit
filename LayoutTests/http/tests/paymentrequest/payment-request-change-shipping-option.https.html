@@ -72,7 +72,8 @@ function testShippingOptionChanged() {
       });
     });
     const handlerPromise = new Promise(resolve => {
-      request.onshippingoptionchange = () => {
+      request.onshippingoptionchange = (event) => {
+        event.updateWith({});
         resolve(request.shippingOption);
       };
     });

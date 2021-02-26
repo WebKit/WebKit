@@ -1,3 +1,20 @@
+2021-02-26  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] log if `updateWith` is not called synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=222436
+
+        Reviewed by Andy Estes.
+
+        * http/tests/paymentrequest/updateWith-log-error-if-not-synchronous.https.html: Added.
+        * http/tests/paymentrequest/updateWith-log-error-if-not-synchronous.https-expected.txt: Added.
+
+        * http/tests/paymentrequest/payment-request-change-shipping-address.https.html:
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https.html:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+        * http/tests/ssl/applepay/ApplePayBillingAddress.html:
+        * http/tests/ssl/applepay/ApplePayPaymentMethodChangeEvent.https.html:
+        Add `updateWith({})` calls to avoid the log.
+
 2021-02-26  Robert Jenner  <jenner@apple.com>
 
         [ macOS ] fast/text/mending-heart.html is a constant text failure

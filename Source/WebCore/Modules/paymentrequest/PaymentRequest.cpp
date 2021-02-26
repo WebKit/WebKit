@@ -630,7 +630,7 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
         m_shippingAddress = WTFMove(shippingAddress);
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
+        dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
     });
 }
 
@@ -638,7 +638,7 @@ void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingOption]() mutable {
         m_shippingOption = shippingOption;
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
+        dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
     });
 }
 
@@ -647,7 +647,7 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
         auto& eventName = eventNames().paymentmethodchangeEvent;
         if (hasEventListeners(eventName))
-            dispatchEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
+            dispatchAndCheckUpdateEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
         else
             activePaymentHandler()->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
     });
@@ -698,6 +698,16 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
     });
 
     return { };
+}
+
+void PaymentRequest::dispatchAndCheckUpdateEvent(Ref<PaymentRequestUpdateEvent>&& event)
+{
+    dispatchEvent(event);
+
+    if (event->didCallUpdateWith())
+        return;
+
+    scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, makeString("updateWith() should be called synchronously when handling \""_s, event->type(), "\"."_s));
 }
 
 void PaymentRequest::settleDetailsPromise(UpdateReason reason)

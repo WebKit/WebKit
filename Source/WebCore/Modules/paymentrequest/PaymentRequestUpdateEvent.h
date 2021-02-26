@@ -45,6 +45,8 @@ public:
     ~PaymentRequestUpdateEvent();
     ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
 
+    bool didCallUpdateWith() const { return m_waitForUpdate; }
+
 protected:
     explicit PaymentRequestUpdateEvent(const AtomString& type);
     PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit&);

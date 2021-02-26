@@ -44,6 +44,7 @@ class Document;
 class Event;
 class PaymentAddress;
 class PaymentHandler;
+class PaymentRequestUpdateEvent;
 class PaymentResponse;
 enum class PaymentComplete;
 enum class PaymentShippingType;
@@ -117,6 +118,7 @@ private:
 
     PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
 
+    void dispatchAndCheckUpdateEvent(Ref<PaymentRequestUpdateEvent>&&);
     void settleDetailsPromise(UpdateReason);
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
