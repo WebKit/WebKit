@@ -1,3 +1,12 @@
+2021-02-26  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] fast/text/mending-heart.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=222479
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Test consantly fails. Already marked in test for iOS, updating test expectation to fail for macOS until the test is fixed.
+
 2021-02-26  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Clean up TestExpectations related to media tests
