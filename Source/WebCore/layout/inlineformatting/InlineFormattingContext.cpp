@@ -535,8 +535,12 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
             if (lineRun.isInlineBoxEnd()) {
                 inlineBoxEndSet.add(&layoutBox);
-                auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState.boxGeometry(layoutBox));
-                enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, inlineBoxLogicalRect.bottom());
+                if (!inlineBoxStartSet.contains(&layoutBox)) {
+                    // An inline box can span multiple lines. Use the [inline box end] signal to include it in the enclosing geometry
+                    // only when it starts at a previous line.
+                    auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState.boxGeometry(layoutBox));
+                    enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, inlineBoxLogicalRect.bottom());
+                }
                 continue;
             }
             ASSERT(lineRun.isWordBreakOpportunity());
