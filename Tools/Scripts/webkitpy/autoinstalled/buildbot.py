@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,24 +24,15 @@ import sys
 
 from webkitscmpy import AutoInstall, Package, Version
 
-if sys.version_info[0] >= 3:
-    AutoInstall.register(Package('autobahn', Version(20, 7, 1)))
-    AutoInstall.register(Package('buildbot', Version(2, 8, 4)))
-    AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
-    AutoInstall.register(Package('jinja2', Version(2, 11, 2), pypi_name='Jinja2'))
-    AutoInstall.register(Package('jwt', Version(1, 7, 1), pypi_name='PyJWT'))
-    AutoInstall.register(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
-    AutoInstall.register(Package('sqlalchemy', Version(1, 3, 20), pypi_name='SQLAlchemy'))
-    AutoInstall.register(Package('sqlalchemy-migrate', Version(0, 13, 0)))
-    AutoInstall.register(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
-    AutoInstall.register(Package('txaio', Version(20, 4, 1)))
-
-else:
-    AutoInstall.register(Package('buildbot', Version(0, 8, 6)))
-    AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
-    AutoInstall.register(Package('jinja2', Version(2, 6), pypi_name='Jinja2'))
-    AutoInstall.register(Package('sqlalchemy', Version(0, 7, 7), pypi_name='SQLAlchemy'))
-    AutoInstall.register(Package('sqlalchemy-migrate', Version(0, 7, 2)))
-    AutoInstall.register(Package('twisted', Version(12, 1, 0), pypi_name='Twisted'))
+AutoInstall.register(Package('autobahn', Version(20, 7, 1)))
+AutoInstall.register(Package('buildbot', Version(2, 10, 1)))
+AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
+AutoInstall.register(Package('jinja2', Version(2, 11, 2), pypi_name='Jinja2'))
+AutoInstall.register(Package('jwt', Version(1, 7, 1), pypi_name='PyJWT'))
+AutoInstall.register(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
+AutoInstall.register(Package('sqlalchemy', Version(1, 3, 20), pypi_name='SQLAlchemy'))
+AutoInstall.register(Package('sqlalchemy-migrate', Version(0, 13, 0)))
+AutoInstall.register(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
+AutoInstall.register(Package('txaio', Version(20, 4, 1)))
 
 sys.modules[__name__] = __import__('buildbot')
