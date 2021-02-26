@@ -1,5 +1,32 @@
 2021-02-26  BJ Burg  <bburg@apple.com>
 
+        Web Inspector: give WebInspectorUIExtensionControllerProxy a chance to teardown when the frontend is about to close
+        https://bugs.webkit.org/show_bug.cgi?id=222486
+
+        Reviewed by Devin Rousso.
+
+        Sometimes when closing Web Inspector, the message receiver for WebInspectorUIExtensionControllerProxy
+        is not removed. Move this teardown into a separate method. It's too late to do this in the destructor
+        if a lambda has kept a strong reference to the controller beyond the point when the frontend was closed.
+
+        Covered by existing API tests, which will hopefully become less flaky as a result.
+
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::closeFrontendPageAndWindow):
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        Notify the extensions controller that it's time to teardown.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy):
+        By the time this destructor runs, we should have already gotten the message to teardown.
+
+        (WebKit::WebInspectorUIExtensionControllerProxy::inspectorFrontendWillClose): Added.
+        Use the soon-to-be-gone m_frontendPage to unregister as a message receiver.
+
+2021-02-26  BJ Burg  <bburg@apple.com>
+
         [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate
         https://bugs.webkit.org/show_bug.cgi?id=222252
         <rdar://problem/71206685>

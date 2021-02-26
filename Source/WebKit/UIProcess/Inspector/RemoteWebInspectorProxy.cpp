@@ -201,6 +201,13 @@ void RemoteWebInspectorProxy::closeFrontendPageAndWindow()
 
     untrackInspectorPage(m_inspectorPage);
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // This extension controller may be kept alive by the IPC dispatcher beyond the point
+    // when m_inspectorPage is cleared below. Notify the controller so it can clean up before then.
+    m_extensionController->inspectorFrontendWillClose();
+    m_extensionController = nullptr;
+#endif
+
     m_inspectorPage = nullptr;
 
     platformCloseFrontendPageAndWindow();

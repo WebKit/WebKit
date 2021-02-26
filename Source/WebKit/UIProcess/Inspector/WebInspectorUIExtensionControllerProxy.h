@@ -68,6 +68,7 @@ public:
 
     // Notifications.
     void inspectorFrontendLoaded();
+    void inspectorFrontendWillClose();
 
 private:
     explicit WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage);
