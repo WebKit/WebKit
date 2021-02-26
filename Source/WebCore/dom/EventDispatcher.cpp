@@ -230,9 +230,4 @@ void EventDispatcher::dispatchEvent(const Vector<EventTarget*>& targets, Event& 
     dispatchEventWithType<EventTarget>(targets, event);
 }
 
-void EventDispatcher::dispatchEvent(const Vector<Element*>& targets, Event& event)
-{
-    dispatchEventWithType<Element>(targets, event);
-}
-
 }
