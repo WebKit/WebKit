@@ -26,7 +26,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
-    PrewarmGlobally();
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
 
     # Global preferences.

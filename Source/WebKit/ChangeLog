@@ -1,3 +1,19 @@
+2021-02-26  Per Arne  <pvollan@apple.com>
+
+        [Cocoa] Start WebContent process pre-warming when process is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=222476
+
+        Reviewed by Chris Dumez.
+
+        Instead of pre-warming in response to a message, the WebContent process can start pre-warming automatically
+        if it is of a pre-warmed process type. This saves one IPC message on startup of the WebContent process.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2021-02-26  Devin Rousso  <drousso@apple.com>
 
         Provide the image URL for accessibility image extraction
