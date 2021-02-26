@@ -1,3 +1,9 @@
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.31.90 release
+
+        * gtk/NEWS:Add release notes for 2.31.90.
+
 2021-02-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r269824): macCatalyst WKWebView shows chunks of other tiles in the middle of content

@@ -1,3 +1,21 @@
+=================
+WebKitGTK 2.31.90
+=================
+
+What's new in WebKitGTK 2.31.90?
+
+  - Add permission request API for MediaKeySystem access.
+  - Fix rendering when using opacity filters on hardware accelerated layers.
+  - Fix flatpak-spawn subsandbox to not clear environment variables.
+  - Ensure a URI scheme handler can't be registered multiple times.
+  - Fix several crashes and rendering issues.
+  - The minimum required GStreamer version is now 1.14.
+  - CEA-608 closed captions support (requires WEBKIT_GST_USE_PLAYBIN3=1 environment variable).
+  - Advertise CBCS decryption and VP9 support in Thunder.
+  - Advertise DASH as supported in the media player.
+  - Improved support for playbin3.
+  - Translation updates: Ukrainian.
+
 ================
 WebKitGTK 2.31.1
 ================
