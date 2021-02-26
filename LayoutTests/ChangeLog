@@ -1,5 +1,54 @@
 2021-02-25  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r273501. rdar://problem/74760623
+
+    [Cocoa] Files from webmfiles.org do not play through MSE
+    https://bugs.webkit.org/show_bug.cgi?id=222403
+    <rdar://74640660>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-webm-vp8-malformed-header.html
+    
+    As per RFC 6386, each VP8 frame begins with a three-byte (minimum) frame header, with extra
+    bytes if that preamble indicates that the frame is a keyframe. Files from webmfiles.org (and
+    others) have valid frame headers for keyframes, but invalid or no header for interframes;
+    these interframes' headers, when parsed, erroneously report they are keyframes, and thus the
+    optional extra bytes are parsed, fail parsing, and generate an error.
+    
+    Rather than drop frames when parsing fails, just assume the frame is an interframe, and
+    proceed normally.
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+    
+    LayoutTests:
+    
+    * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header-manifest.json: Added.
+    * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header.webm: Added.
+    * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header-expected.txt: Added.
+    * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273501 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-25  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Files from webmfiles.org do not play through MSE
+            https://bugs.webkit.org/show_bug.cgi?id=222403
+            <rdar://74640660>
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header-manifest.json: Added.
+            * platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header.webm: Added.
+            * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header-expected.txt: Added.
+            * platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html: Added.
+
+2021-02-25  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273438. rdar://problem/74753272
 
     Regression(r268700) postMessage changes prototype of basic types
