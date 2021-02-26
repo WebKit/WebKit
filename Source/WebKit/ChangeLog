@@ -1,3 +1,28 @@
+2021-02-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273560. rdar://problem/74796083
+
+    Convert WKMediaPlaybackState NS_ENUM back to NSUInteger type
+    https://bugs.webkit.org/show_bug.cgi?id=222475
+    <rdar://problem/74787665>
+    
+    Reviewed by Alex Christensen.
+    
+    * UIProcess/API/Cocoa/WKWebView.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273560 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+            Convert WKMediaPlaybackState NS_ENUM back to NSUInteger type
+            https://bugs.webkit.org/show_bug.cgi?id=222475
+            <rdar://problem/74787665>
+
+            Reviewed by Alex Christensen.
+
+            * UIProcess/API/Cocoa/WKWebView.h:
+
 2021-02-24  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r273424. rdar://problem/74708164
