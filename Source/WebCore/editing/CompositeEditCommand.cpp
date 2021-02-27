@@ -1058,6 +1058,10 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         int endOffset = textNode.ptr() == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
         deleteInsignificantText(textNode, startOffset, endOffset);
     }
+    if (!nodes.isEmpty()) {
+        // Callers expect render tree to be in sync.
+        document().updateLayoutIgnorePendingStylesheets();
+    }
 }
 
 void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& position)

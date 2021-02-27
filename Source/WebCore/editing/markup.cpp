@@ -1385,7 +1385,6 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
     auto* containerChild = containerNode->firstChild();
     if (containerChild && !containerChild->nextSibling()) {
         if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
-            ASSERT(!fragment->firstChild()->refCount());
             downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data());
             return { };
         }

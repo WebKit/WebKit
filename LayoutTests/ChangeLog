@@ -1,3 +1,17 @@
+2021-02-27  Antti Koivisto  <antti@apple.com>
+
+        Render tree updates for Text node content mutations should happen during rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=222406
+
+        Reviewed by Simon Fraser.
+
+        These are progressions.
+
+        * fast/text/splitText-dirty-lines-expected.txt:
+        * imported/blink/fast/css/first-letter-range-insert-expected.txt:
+
+        Here we were actually drawing text that didn't exist in DOM anymore.
+
 2021-02-26  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Refresh test expectations after adding the support to paint GPUP hosted video to 2D canvas and WebGL surfaces

@@ -76,8 +76,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 
     document().textNodeSplit(*this);
 
-    if (renderer())
-        renderer()->setTextWithOffset(data(), 0, oldData.length());
+    updateRendererAfterContentChange(0, oldData.length());
 
     return newText;
 }
@@ -215,7 +214,9 @@ Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, un
 
 void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
-    ASSERT(parentNode());
+    if (!isConnected())
+        return;
+
     if (styleValidity() >= Style::Validity::SubtreeAndRenderersInvalid)
         return;
 

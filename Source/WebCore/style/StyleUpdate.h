@@ -69,7 +69,7 @@ class Update {
 public:
     Update(Document&);
 
-    const ListHashSet<ContainerNode*>& roots() const { return m_roots; }
+    const ListHashSet<RefPtr<ContainerNode>>& roots() const { return m_roots; }
 
     const ElementUpdates* elementUpdates(const Element&) const;
     ElementUpdates* elementUpdates(const Element&);
@@ -90,10 +90,10 @@ public:
 private:
     void addPossibleRoot(Element*);
 
-    Document& m_document;
-    ListHashSet<ContainerNode*> m_roots;
-    HashMap<const Element*, ElementUpdates> m_elements;
-    HashMap<const Text*, TextUpdate> m_texts;
+    Ref<Document> m_document;
+    ListHashSet<RefPtr<ContainerNode>> m_roots;
+    HashMap<RefPtr<const Element>, ElementUpdates> m_elements;
+    HashMap<RefPtr<const Text>, TextUpdate> m_texts;
 };
 
 }
