@@ -1,3 +1,15 @@
+2021-02-27  Rob Buis  <rbuis@igalia.com>
+
+        Null check ArrayBufferView RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check ArrayBufferView RefPtr before using it.
+
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::unsharedImpl):
+
 2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Avoid creating functions unnecessarily in builtins
