@@ -1,5 +1,17 @@
 2021-02-26  Kyle Piddington  <kpiddington@apple.com>
 
+        Support  fast/canvas/webgl/copyBufferSubData.html, fix bugs in fast/canvas/webgl/getBufferSubData-webgl1.html in Metal ANGLE on Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222508
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::BufferMtl::unmap):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMaxSupportedESVersion const):
+
+2021-02-26  Kyle Piddington  <kpiddington@apple.com>
+
         Fix iOS simulator crashes due to unsupported simulator pixel formats: r8Unorm_srgb, a1bgr5Unorm, b5g6r5Unorm, abgr4Unorm, bgr5A1Unorm, and program generation asserts.
 
         iOS Simulator doesn't support the following packed 16 bit formats natively. While some of these can be emulated, we should fix up the crashing cases first.
