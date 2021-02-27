@@ -34,25 +34,6 @@
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
-static void waitForConditionWithLogging(BOOL(^condition)(), NSTimeInterval loggingTimeout, NSString *message, ...)
-{
-    NSDate *startTime = [NSDate date];
-    BOOL exceededLoggingTimeout = NO;
-    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        if (condition())
-            break;
-
-        if (exceededLoggingTimeout || [[NSDate date] timeIntervalSinceDate:startTime] < loggingTimeout)
-            continue;
-
-        va_list args;
-        va_start(args, message);
-        NSLogv(message, args);
-        va_end(args);
-        exceededLoggingTimeout = YES;
-    }
-}
-
 TEST(DragAndDropTests, NumberOfValidItemsForDrop)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
@@ -101,7 +82,7 @@ TEST(DragAndDropTests, DragImageElementIntoFileUpload)
     [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
 
-    waitForConditionWithLogging([&] () -> BOOL {
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
         return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
     }, 2, @"Expected image to finish loading.");
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
@@ -117,7 +98,7 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
     [simulator writePromisedFiles:@[ imageURL ]];
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
 
-    waitForConditionWithLogging([&] () -> BOOL {
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
         return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
     }, 2, @"Expected image to finish loading.");
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
@@ -133,7 +114,7 @@ TEST(DragAndDropTests, DragImageFileIntoFileUpload)
     [simulator writeFiles:@[ imageURL ]];
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
 
-    waitForConditionWithLogging([&] () -> BOOL {
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
         return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
     }, 2, @"Expected image to finish loading.");
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);

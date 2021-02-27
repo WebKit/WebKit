@@ -54,6 +54,25 @@ bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected)
     return [expected isEqualToDictionary:result];
 }
 
+void waitForConditionWithLogging(std::function<bool()>&& condition, NSTimeInterval loggingTimeout, NSString *message, ...)
+{
+    NSDate *startTime = [NSDate date];
+    BOOL exceededLoggingTimeout = NO;
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        if (condition())
+            break;
+
+        if (exceededLoggingTimeout || [[NSDate date] timeIntervalSinceDate:startTime] < loggingTimeout)
+            continue;
+
+        va_list args;
+        va_start(args, message);
+        NSLogv(message, args);
+        va_end(args);
+        exceededLoggingTimeout = YES;
+    }
+}
+
 NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
 
 } // namespace Util

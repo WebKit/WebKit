@@ -101,6 +101,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
+#include "HighlightRegister.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -5910,6 +5911,22 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
     UNUSED_PARAM(process);
     UNUSED_PARAM(ioKitClass);
     return false;
+}
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+unsigned Internals::numberOfAppHighlights()
+{
+    Document* document = contextDocument();
+    if (!document)
+        return 0;
+    auto appHighlightRegister = document->appHighlightRegisterIfExists();
+    if (!appHighlightRegister)
+        return 0;
+    unsigned numHighlights = 0;
+    for (auto& highlight : appHighlightRegister->map())
+        numHighlights += highlight.value->rangesData().size();
+    return numHighlights;
 }
 #endif
 

@@ -957,6 +957,8 @@ enum TreeType {
 
     unsigned long createSleepDisabler(DOMString reason, boolean display);
     boolean destroySleepDisabler(unsigned long identifier);
+    
+    [Conditional=APP_HIGHLIGHTS] unsigned long numberOfAppHighlights();
 
     [Conditional=WEBXR, MayThrowException] readonly attribute WebXRTest xrTest;
 

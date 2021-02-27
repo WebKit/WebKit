@@ -35,6 +35,7 @@
 #if USE(FOUNDATION)
 OBJC_CLASS NSString;
 OBJC_CLASS NSDictionary;
+typedef double NSTimeInterval;
 #endif
 
 namespace TestWebKitAPI {
@@ -44,6 +45,7 @@ std::string toSTD(const char*);
 #if USE(FOUNDATION)
 std::string toSTD(NSString *);
 bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected);
+void waitForConditionWithLogging(std::function<bool()>&&, NSTimeInterval loggingTimeout, NSString *message, ...);
 #endif
 
 #if WK_HAVE_C_SPI

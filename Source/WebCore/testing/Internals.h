@@ -1047,6 +1047,10 @@ public:
 
     unsigned createSleepDisabler(const String& reason, bool display);
     bool destroySleepDisabler(unsigned identifier);
+        
+#if ENABLE(APP_HIGHLIGHTS)
+    unsigned numberOfAppHighlights();
+#endif
 
 #if ENABLE(WEBXR)
     ExceptionOr<RefPtr<WebXRTest>> xrTest();
