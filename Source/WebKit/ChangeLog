@@ -1,3 +1,87 @@
+2021-02-26  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Replace references to GPUProcessConnection and Connection with WeakPtr<GPUProcessConnection>
+        https://bugs.webkit.org/show_bug.cgi?id=222492
+
+        Reviewed by Eric Carlson.
+
+        As we did in r273473, this patch replaces some references to `GPUProcessConnection` and `Connection`
+        with `WeakPtr<GPUProcessConnection>`. r273473 was for the GPU process, this patch is for web processes.
+        When the GPU process crashes, the `GPUProcessConnection` object (as well as its `Connection` object)
+        will be destroyed, and the reference will be invalid.
+
+        No new tests, fixing test crashes on bots.
+
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        (WebKit::AudioTrackPrivateRemote::setEnabled):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::~MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::addSourceBuffer):
+        (WebKit::MediaSourcePrivateRemote::durationChanged):
+        (WebKit::MediaSourcePrivateRemote::setReadyState):
+        (WebKit::MediaSourcePrivateRemote::setIsSeeking):
+        (WebKit::MediaSourcePrivateRemote::waitForSeekCompleted):
+        (WebKit::MediaSourcePrivateRemote::seekCompleted):
+        (WebKit::MediaSourcePrivateRemote::setTimeFudgeFactor):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::RemoteImageDecoderAVF):
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+        (WebKit::RemoteImageDecoderAVF::setExpectedContentSize):
+        (WebKit::RemoteImageDecoderAVF::setData):
+        (WebKit::RemoteImageDecoderAVF::gpuProcessConnection const): Deleted.
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        (WebKit::RemoteImageDecoderAVFManager::gpuProcessConnection const):
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::SourceBufferPrivateRemote):
+        (WebKit::SourceBufferPrivateRemote::~SourceBufferPrivateRemote):
+        (WebKit::SourceBufferPrivateRemote::append):
+        (WebKit::SourceBufferPrivateRemote::abort):
+        (WebKit::SourceBufferPrivateRemote::resetParserState):
+        (WebKit::SourceBufferPrivateRemote::removedFromMediaSource):
+        (WebKit::SourceBufferPrivateRemote::setReadyState):
+        (WebKit::SourceBufferPrivateRemote::setActive):
+        (WebKit::SourceBufferPrivateRemote::setMediaSourceEnded):
+        (WebKit::SourceBufferPrivateRemote::setMode):
+        (WebKit::SourceBufferPrivateRemote::updateBufferedFromTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::removeCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::evictCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::addTrackBuffer):
+        (WebKit::SourceBufferPrivateRemote::resetTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::clearTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::setAllTrackBuffersNeedRandomAccess):
+        (WebKit::SourceBufferPrivateRemote::setGroupStartTimestamp):
+        (WebKit::SourceBufferPrivateRemote::setGroupStartTimestampToEndTimestamp):
+        (WebKit::SourceBufferPrivateRemote::setShouldGenerateTimestamps):
+        (WebKit::SourceBufferPrivateRemote::reenqueueMediaIfNeeded):
+        (WebKit::SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::startChangingType):
+        (WebKit::SourceBufferPrivateRemote::setTimestampOffset):
+        (WebKit::SourceBufferPrivateRemote::setAppendWindowStart):
+        (WebKit::SourceBufferPrivateRemote::setAppendWindowEnd):
+        (WebKit::SourceBufferPrivateRemote::seekToTime):
+        (WebKit::SourceBufferPrivateRemote::updateTrackIds):
+        (WebKit::SourceBufferPrivateRemote::bufferedSamplesForTrackId):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::TextTrackPrivateRemote):
+        (WebKit::TextTrackPrivateRemote::setMode):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        (WebKit::VideoTrackPrivateRemote::setSelected):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+        (WebKit::VideoTrackPrivateRemote::create):
+
 2021-02-26  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC retain] in WebKit

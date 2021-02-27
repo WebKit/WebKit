@@ -55,7 +55,7 @@ Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnect
 }
 
 MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient* client)
-    : m_gpuProcessConnection(gpuProcessConnection)
+    : m_gpuProcessConnection(makeWeakPtr(gpuProcessConnection))
     , m_identifier(identifier)
     , m_mimeTypeCache(mimeTypeCache)
     , m_mediaPlayerPrivate(makeWeakPtr(mediaPlayerPrivate))
@@ -67,7 +67,7 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64(), *this);
+    m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64(), *this);
 
 #if !RELEASE_LOG_DISABLED
     m_client->setLogIdentifier(m_logIdentifier);
@@ -77,7 +77,8 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_gpuProcessConnection.messageReceiverMap().removeMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64());
+    if (m_gpuProcessConnection)
+        m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64());
 
     for (auto it = m_sourceBuffers.begin(), end = m_sourceBuffers.end(); it != end; ++it)
         (*it)->clearMediaSource();
@@ -93,14 +94,16 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     if (m_mimeTypeCache.supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return AddStatus::NotSupported;
 
-    AddStatus status;
+    AddStatus status = AddStatus::NotSupported;
+    if (!m_gpuProcessConnection)
+        return status;
+
     Optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier;
-    if (!m_gpuProcessConnection.connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(contentType), Messages::RemoteMediaSourceProxy::AddSourceBuffer::Reply(status, remoteSourceBufferIdentifier), m_identifier))
-        status = AddStatus::NotSupported;
+    m_gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(contentType), Messages::RemoteMediaSourceProxy::AddSourceBuffer::Reply(status, remoteSourceBufferIdentifier), m_identifier);
 
     if (status == AddStatus::Ok) {
         ASSERT(remoteSourceBufferIdentifier.hasValue());
-        auto newSourceBuffer = SourceBufferPrivateRemote::create(m_gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *m_mediaPlayerPrivate);
+        auto newSourceBuffer = SourceBufferPrivateRemote::create(*m_gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *m_mediaPlayerPrivate);
         outPrivate = newSourceBuffer.copyRef();
         m_sourceBuffers.append(WTFMove(newSourceBuffer));
     }
@@ -110,7 +113,10 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
 
 void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
 {
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
 }
 
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus)
@@ -136,29 +142,44 @@ MediaPlayer::ReadyState MediaSourcePrivateRemote::readyState() const
 
 void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetReadyState(readyState), m_identifier);
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetReadyState(readyState), m_identifier);
 }
 
 void MediaSourcePrivateRemote::setIsSeeking(bool isSeeking)
 {
+    if (!m_gpuProcessConnection)
+        return;
+
     MediaSourcePrivate::setIsSeeking(isSeeking);
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetIsSeeking(isSeeking), m_identifier);
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetIsSeeking(isSeeking), m_identifier);
 }
 
 void MediaSourcePrivateRemote::waitForSeekCompleted()
 {
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::WaitForSeekCompleted(), m_identifier);
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::WaitForSeekCompleted(), m_identifier);
 }
 
 void MediaSourcePrivateRemote::seekCompleted()
 {
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SeekCompleted(), m_identifier);
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SeekCompleted(), m_identifier);
 }
 
 void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 {
+    if (!m_gpuProcessConnection)
+        return;
+
     MediaSourcePrivate::setTimeFudgeFactor(fudgeFactor);
-    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
 void MediaSourcePrivateRemote::seekToTime(const MediaTime& time)

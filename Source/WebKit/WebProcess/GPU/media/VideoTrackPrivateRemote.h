@@ -33,12 +33,9 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/VideoTrackPrivate.h>
 
-namespace IPC {
-class Connection;
-}
-
 namespace WebKit {
 
+class GPUProcessConnection;
 class MediaPlayerPrivateRemote;
 struct TrackPrivateRemoteConfiguration;
 
@@ -46,9 +43,9 @@ class VideoTrackPrivateRemote
     : public WebCore::VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateRemote)
 public:
-    static Ref<VideoTrackPrivateRemote> create(IPC::Connection& connection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new VideoTrackPrivateRemote(connection, playerIdentifier, idendifier, WTFMove(configuration)));
+        return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, idendifier, WTFMove(configuration)));
     }
 
     void updateConfiguration(TrackPrivateRemoteConfiguration&&);
@@ -61,11 +58,11 @@ public:
     int trackIndex() const final { return m_trackIndex; }
 
 private:
-    VideoTrackPrivateRemote(IPC::Connection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    VideoTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     void setSelected(bool) final;
 
-    IPC::Connection& m_connection;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
     VideoTrackKind m_kind { None };
     AtomString m_id;

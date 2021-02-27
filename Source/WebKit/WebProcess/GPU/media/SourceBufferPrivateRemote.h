@@ -120,7 +120,7 @@ private:
     void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&);
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
 
-    GPUProcessConnection& m_gpuProcessConnection;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
