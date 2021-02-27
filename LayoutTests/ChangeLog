@@ -1,3 +1,14 @@
+2021-02-27  Sam Weinig  <weinig@apple.com>
+
+       Remove support for 'pixel' and 'pos' CSSOM prefixes
+       https://bugs.webkit.org/show_bug.cgi?id=119712
+
+       Reviewed by Simon Fraser.
+
+       * fast/dom/CSSStyleDeclaration/css-properties-case-sensitive-expected.txt:
+       * fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html:
+        Update test to reflect removal of pos/pixel prefixes.
+
 2021-02-27  Rob Buis  <rbuis@igalia.com>
 
         Null check ArrayBufferView RefPtr
