@@ -222,6 +222,32 @@ size_t AudioBuffer::memoryCost() const
     return cost;
 }
 
+bool AudioBuffer::topologyMatches(const AudioBuffer& other) const
+{
+    return numberOfChannels() == other.numberOfChannels() && length() == other.length() && sampleRate() == other.sampleRate();
+}
+
+bool AudioBuffer::copyTo(AudioBuffer& other) const
+{
+    if (!topologyMatches(other))
+        return false;
+
+    for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex)
+        memcpy(other.channelData(channelIndex)->data(), m_channels[channelIndex]->data(), length() * sizeof(float));
+
+    return true;
+}
+
+Ref<AudioBuffer> AudioBuffer::clone(ShouldCopyChannelData shouldCopyChannelData) const
+{
+    auto clone = AudioBuffer::create(numberOfChannels(), length(), sampleRate());
+    ASSERT(clone);
+    if (shouldCopyChannelData == ShouldCopyChannelData::Yes)
+        copyTo(*clone);
+    return clone.releaseNonNull();
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)
