@@ -1,3 +1,33 @@
+2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid creating functions unnecessarily in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=222509
+
+        Reviewed by Ross Kirsling.
+
+        Avoid unnecessary function creation and make them @globalPrivate.
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.maxWithPositives):
+        (globalPrivate.minWithMaybeNegativeZeroAndPositive):
+        (copyWithin):
+        (maxWithPositives): Deleted.
+        (minWithMaybeNegativeZeroAndPositive): Deleted.
+        * builtins/DatePrototype.js:
+        (globalPrivate.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (globalPrivate.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        (globalPrivate.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        (toLocaleString.toDateTimeOptionsAnyAll): Deleted.
+        (toLocaleDateString.toDateTimeOptionsDateDate): Deleted.
+        (toLocaleTimeString.toDateTimeOptionsTimeTime): Deleted.
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.getSubstitution):
+        (overriddenName.string_appeared_here.replace):
+        (getSubstitution): Deleted.
+
 2021-02-26  Saam Barati  <sbarati@apple.com>
 
         Remove bad assertion of AI ArrayMode state in various "by val" opcodes

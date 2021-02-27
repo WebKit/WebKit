@@ -23,57 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function toLocaleString(/* locales, options */)
+@globalPrivate
+function toDateTimeOptionsAnyAll(opts)
 {
     "use strict";
 
-    function toDateTimeOptionsAnyAll(opts)
-    {
-        // ToDateTimeOptions(options, "any", "all")
-        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
+    // ToDateTimeOptions(options, "any", "all")
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
 
-        var options;
-        if (opts === @undefined)
-            options = null;
-        else if (opts === null)
-            @throwTypeError("null is not an object");
-        else
-            options = @toObject(opts);
+    var options;
+    if (opts === @undefined)
+        options = null;
+    else if (opts === null)
+        @throwTypeError("null is not an object");
+    else
+        options = @toObject(opts);
 
-        // Check original instead of descendant to reduce lookups up the prototype chain.
-        var needsDefaults = !options || (
-            options.weekday === @undefined &&
-            options.year === @undefined &&
-            options.month === @undefined &&
-            options.day === @undefined &&
-            (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
-            options.hour === @undefined &&
-            options.minute === @undefined &&
-            options.second === @undefined &&
-            options.fractionalSecondDigits === @undefined
-        );
+    // Check original instead of descendant to reduce lookups up the prototype chain.
+    var needsDefaults = !options || (
+        options.weekday === @undefined &&
+        options.year === @undefined &&
+        options.month === @undefined &&
+        options.day === @undefined &&
+        (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
+        options.hour === @undefined &&
+        options.minute === @undefined &&
+        options.second === @undefined &&
+        options.fractionalSecondDigits === @undefined
+    );
 
-        if (options) {
-            var dateStyle = options.dateStyle;
-            var timeStyle = options.timeStyle;
-            if (dateStyle !== @undefined || timeStyle !== @undefined)
-                needsDefaults = false;
-        }
-
-        // Only create descendant if it will have own properties.
-        if (needsDefaults) {
-            options = @Object.@create(options);
-            options.year = "numeric";
-            options.month = "numeric";
-            options.day = "numeric";
-            options.hour = "numeric";
-            options.minute = "numeric";
-            options.second = "numeric";
-        }
-
-        // 9. Return options.
-        return options;
+    if (options) {
+        var dateStyle = options.dateStyle;
+        var timeStyle = options.timeStyle;
+        if (dateStyle !== @undefined || timeStyle !== @undefined)
+            needsDefaults = false;
     }
+
+    // Only create descendant if it will have own properties.
+    if (needsDefaults) {
+        options = @Object.@create(options);
+        options.year = "numeric";
+        options.month = "numeric";
+        options.day = "numeric";
+        options.hour = "numeric";
+        options.minute = "numeric";
+        options.second = "numeric";
+    }
+
+    // 9. Return options.
+    return options;
+}
+
+function toLocaleString(/* locales, options */)
+{
+    "use strict";
 
     // 13.3.1 Date.prototype.toLocaleString ([locales [, options ]]) (ECMA-402 2.0)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleString
@@ -82,55 +85,58 @@ function toLocaleString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsAnyAll(@argument(1));
+    var options = @toDateTimeOptionsAnyAll(@argument(1));
     var locales = @argument(0);
     return @dateTimeFormat(locales, options, value);
+}
+
+@globalPrivate
+function toDateTimeOptionsDateDate(opts)
+{
+    "use strict";
+
+    // ToDateTimeOptions(options, "date", "date")
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
+
+    var options;
+    if (opts === @undefined)
+        options = null;
+    else if (opts === null)
+        @throwTypeError("null is not an object");
+    else
+        options = @toObject(opts);
+
+    // Check original instead of descendant to reduce lookups up the prototype chain.
+    var needsDefaults = !options || (
+        options.weekday === @undefined &&
+        options.year === @undefined &&
+        options.month === @undefined &&
+        options.day === @undefined
+    );
+
+    if (options) {
+        var dateStyle = options.dateStyle;
+        var timeStyle = options.timeStyle;
+        if (timeStyle !== @undefined)
+            @throwTypeError("timeStyle cannot be specified");
+        if (dateStyle !== @undefined)
+            needsDefaults = false;
+    }
+
+    // Only create descendant if it will have own properties.
+    if (needsDefaults) {
+        options = @Object.@create(options);
+        options.year = "numeric";
+        options.month = "numeric";
+        options.day = "numeric";
+    }
+
+    return options;
 }
 
 function toLocaleDateString(/* locales, options */)
 {
     "use strict";
-
-    function toDateTimeOptionsDateDate(opts)
-    {
-        // ToDateTimeOptions(options, "date", "date")
-        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
-
-        var options;
-        if (opts === @undefined)
-            options = null;
-        else if (opts === null)
-            @throwTypeError("null is not an object");
-        else
-            options = @toObject(opts);
-
-        // Check original instead of descendant to reduce lookups up the prototype chain.
-        var needsDefaults = !options || (
-            options.weekday === @undefined &&
-            options.year === @undefined &&
-            options.month === @undefined &&
-            options.day === @undefined
-        );
-
-        if (options) {
-            var dateStyle = options.dateStyle;
-            var timeStyle = options.timeStyle;
-            if (timeStyle !== @undefined)
-                @throwTypeError("timeStyle cannot be specified");
-            if (dateStyle !== @undefined)
-                needsDefaults = false;
-        }
-
-        // Only create descendant if it will have own properties.
-        if (needsDefaults) {
-            options = @Object.@create(options);
-            options.year = "numeric";
-            options.month = "numeric";
-            options.day = "numeric";
-        }
-
-        return options;
-    }
 
     // 13.3.2 Date.prototype.toLocaleDateString ([locales [, options ]]) (ECMA-402 2.0)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleDateString
@@ -139,56 +145,59 @@ function toLocaleDateString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsDateDate(@argument(1));
+    var options = @toDateTimeOptionsDateDate(@argument(1));
     var locales = @argument(0);
     return @dateTimeFormat(locales, options, value);
+}
+
+@globalPrivate
+function toDateTimeOptionsTimeTime(opts)
+{
+    "use strict";
+
+    // ToDateTimeOptions(options, "time", "time")
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
+
+    var options;
+    if (opts === @undefined)
+        options = null;
+    else if (opts === null)
+        @throwTypeError("null is not an object");
+    else
+        options = @toObject(opts);
+
+    // Check original instead of descendant to reduce lookups up the prototype chain.
+    var needsDefaults = !options || (
+        (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
+        options.hour === @undefined &&
+        options.minute === @undefined &&
+        options.second === @undefined &&
+        options.fractionalSecondDigits === @undefined
+    );
+
+    if (options) {
+        var dateStyle = options.dateStyle;
+        var timeStyle = options.timeStyle;
+        if (dateStyle !== @undefined)
+            @throwTypeError("dateStyle cannot be specified");
+        if (timeStyle !== @undefined)
+            needsDefaults = false;
+    }
+
+    // Only create descendant if it will have own properties.
+    if (needsDefaults) {
+        options = @Object.@create(options);
+        options.hour = "numeric";
+        options.minute = "numeric";
+        options.second = "numeric";
+    }
+
+    return options;
 }
 
 function toLocaleTimeString(/* locales, options */)
 {
     "use strict";
-
-    function toDateTimeOptionsTimeTime(opts)
-    {
-        // ToDateTimeOptions(options, "time", "time")
-        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
-
-        var options;
-        if (opts === @undefined)
-            options = null;
-        else if (opts === null)
-            @throwTypeError("null is not an object");
-        else
-            options = @toObject(opts);
-
-        // Check original instead of descendant to reduce lookups up the prototype chain.
-        var needsDefaults = !options || (
-            (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
-            options.hour === @undefined &&
-            options.minute === @undefined &&
-            options.second === @undefined &&
-            options.fractionalSecondDigits === @undefined
-        );
-
-        if (options) {
-            var dateStyle = options.dateStyle;
-            var timeStyle = options.timeStyle;
-            if (dateStyle !== @undefined)
-                @throwTypeError("dateStyle cannot be specified");
-            if (timeStyle !== @undefined)
-                needsDefaults = false;
-        }
-
-        // Only create descendant if it will have own properties.
-        if (needsDefaults) {
-            options = @Object.@create(options);
-            options.hour = "numeric";
-            options.minute = "numeric";
-            options.second = "numeric";
-        }
-
-        return options;
-    }
 
     // 13.3.3 Date.prototype.toLocaleTimeString ([locales [, options ]]) (ECMA-402 2.0)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleTimeString
@@ -197,7 +206,7 @@ function toLocaleTimeString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsTimeTime(@argument(1));
+    var options = @toDateTimeOptionsTimeTime(@argument(1));
     var locales = @argument(0);
     return @dateTimeFormat(locales, options, value);
 }

@@ -174,109 +174,110 @@ function matchAll(strArg)
     return new @RegExpStringIterator(matcher, string, global, fullUnicode);
 }
 
+@globalPrivate
+function getSubstitution(matched, str, position, captures, namedCaptures, replacement)
+{
+    "use strict";
+
+    var matchLength = matched.length;
+    var stringLength = str.length;
+    var tailPos = position + matchLength;
+    var m = captures.length;
+    var replacementLength = replacement.length;
+    var result = "";
+    var lastStart = 0;
+
+    for (var start = 0; start = @stringIndexOfInternal.@call(replacement, "$", lastStart), start !== -1; lastStart = start) {
+        if (start - lastStart > 0)
+            result = result + @stringSubstringInternal.@call(replacement, lastStart, start);
+        start++;
+        if (start >= replacementLength)
+            result = result + "$";
+        else {
+            var ch = replacement[start];
+            switch (ch)
+            {
+            case "$":
+                result = result + "$";
+                start++;
+                break;
+            case "&":
+                result = result + matched;
+                start++;
+                break;
+            case "`":
+                if (position > 0)
+                    result = result + @stringSubstringInternal.@call(str, 0, position);
+                start++;
+                break;
+            case "'":
+                if (tailPos < stringLength)
+                    result = result + @stringSubstringInternal.@call(str, tailPos);
+                start++;
+                break;
+            case "<":
+                if (namedCaptures !== @undefined) {
+                    var groupNameStartIndex = start + 1;
+                    var groupNameEndIndex = @stringIndexOfInternal.@call(replacement, ">", groupNameStartIndex);
+                    if (groupNameEndIndex !== -1) {
+                        var groupName = @stringSubstringInternal.@call(replacement, groupNameStartIndex, groupNameEndIndex);
+                        var capture = namedCaptures[groupName];
+                        if (capture !== @undefined)
+                            result = result + @toString(capture);
+
+                        start = groupNameEndIndex + 1;
+                        break;
+                    }
+                }
+
+                result = result + "$<";
+                start++;
+                break;
+            default:
+                var chCode = ch.@charCodeAt(0);
+                if (chCode >= 0x30 && chCode <= 0x39) {
+                    var originalStart = start - 1;
+                    start++;
+
+                    var n = chCode - 0x30;
+                    if (n > m) {
+                        result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
+                        break;
+                    }
+
+                    if (start < replacementLength) {
+                        var nextChCode = replacement.@charCodeAt(start);
+                        if (nextChCode >= 0x30 && nextChCode <= 0x39) {
+                            var nn = 10 * n + nextChCode - 0x30;
+                            if (nn <= m) {
+                                n = nn;
+                                start++;
+                            }
+                        }
+                    }
+
+                    if (n == 0) {
+                        result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
+                        break;
+                    }
+
+                    var capture = captures[n - 1];
+                    if (capture !== @undefined)
+                        result = result + capture;
+                } else
+                    result = result + "$";
+                break;
+            }
+        }
+    }
+
+    return result + @stringSubstringInternal.@call(replacement, lastStart);
+}
+
 @overriddenName="[Symbol.replace]"
 function replace(strArg, replace)
 {
     "use strict";
-
-    function getSubstitution(matched, str, position, captures, namedCaptures, replacement)
-    {
-        "use strict";
-
-        var matchLength = matched.length;
-        var stringLength = str.length;
-        var tailPos = position + matchLength;
-        var m = captures.length;
-        var replacementLength = replacement.length;
-        var result = "";
-        var lastStart = 0;
-
-        for (var start = 0; start = @stringIndexOfInternal.@call(replacement, "$", lastStart), start !== -1; lastStart = start) {
-            if (start - lastStart > 0)
-                result = result + @stringSubstringInternal.@call(replacement, lastStart, start);
-            start++;
-            if (start >= replacementLength)
-                result = result + "$";
-            else {
-                var ch = replacement[start];
-                switch (ch)
-                {
-                case "$":
-                    result = result + "$";
-                    start++;
-                    break;
-                case "&":
-                    result = result + matched;
-                    start++;
-                    break;
-                case "`":
-                    if (position > 0)
-                        result = result + @stringSubstringInternal.@call(str, 0, position);
-                    start++;
-                    break;
-                case "'":
-                    if (tailPos < stringLength)
-                        result = result + @stringSubstringInternal.@call(str, tailPos);
-                    start++;
-                    break;
-                case "<":
-                    if (namedCaptures !== @undefined) {
-                        var groupNameStartIndex = start + 1;
-                        var groupNameEndIndex = @stringIndexOfInternal.@call(replacement, ">", groupNameStartIndex);
-                        if (groupNameEndIndex !== -1) {
-                            var groupName = @stringSubstringInternal.@call(replacement, groupNameStartIndex, groupNameEndIndex);
-                            var capture = namedCaptures[groupName];
-                            if (capture !== @undefined)
-                                result = result + @toString(capture);
-
-                            start = groupNameEndIndex + 1;
-                            break;
-                        }
-                    }
-
-                    result = result + "$<";
-                    start++;
-                    break;
-                default:
-                    var chCode = ch.@charCodeAt(0);
-                    if (chCode >= 0x30 && chCode <= 0x39) {
-                        var originalStart = start - 1;
-                        start++;
-
-                        var n = chCode - 0x30;
-                        if (n > m) {
-                            result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
-                            break;
-                        }
-
-                        if (start < replacementLength) {
-                            var nextChCode = replacement.@charCodeAt(start);
-                            if (nextChCode >= 0x30 && nextChCode <= 0x39) {
-                                var nn = 10 * n + nextChCode - 0x30;
-                                if (nn <= m) {
-                                    n = nn;
-                                    start++;
-                                }
-                            }
-                        }
-
-                        if (n == 0) {
-                            result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
-                            break;
-                        }
-
-                        var capture = captures[n - 1];
-                        if (capture !== @undefined)
-                            result = result + capture;
-                    } else
-                        result = result + "$";
-                    break;
-                }
-            }
-        }
-
-        return result + @stringSubstringInternal.@call(replacement, lastStart);
-    }
 
     if (!@isObject(this))
         @throwTypeError("RegExp.prototype.@@replace requires that |this| be an Object");
@@ -363,7 +364,7 @@ function replace(strArg, replace)
             if (namedCaptures !== @undefined)
                 namedCaptures = @toObject(namedCaptures, "RegExp.prototype[Symbol.replace] requires 'groups' property of a match not be null");
 
-            replacement = getSubstitution(matched, str, position, captures, namedCaptures, replace);
+            replacement = @getSubstitution(matched, str, position, captures, namedCaptures, replace);
         }
 
         if (position >= nextSourcePosition) {
