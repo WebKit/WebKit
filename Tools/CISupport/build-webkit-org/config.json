@@ -1,20 +1,21 @@
 {
     "workers":     [
-                    { "name": "bot279", "platform": "mac-bigsur"},
-                    { "name": "bot600", "platform": "mac-bigsur"},
+                    { "name": "bot279", "platform": "mac-bigsur" },
+                    { "name": "bot302", "platform": "mac-bigsur" },
+                    { "name": "bot600", "platform": "mac-bigsur" },
                     { "name": "bot603", "platform": "mac-bigsur" },
-                    { "name": "bot614", "platform": "mac-bigsur"},
+                    { "name": "bot614", "platform": "mac-bigsur" },
                     { "name": "bot632", "platform": "mac-bigsur" },
-                    { "name": "bot684", "platform": "mac-bigsur"},
-                    { "name": "bot685", "platform": "mac-bigsur"},
-                    { "name": "bot1020", "platform": "mac-bigsur"},
-                    { "name": "bot1021", "platform": "mac-bigsur"},
-                    { "name": "bot1022", "platform": "mac-bigsur"},
-                    { "name": "bot1023", "platform": "mac-bigsur"},
-                    { "name": "bot1024", "platform": "mac-bigsur"},
-                    { "name": "bot1025", "platform": "mac-bigsur"},
-                    { "name": "bot1026", "platform": "mac-bigsur"},
-                    { "name": "bot1027", "platform": "mac-bigsur"},
+                    { "name": "bot684", "platform": "mac-bigsur" },
+                    { "name": "bot685", "platform": "mac-bigsur" },
+                    { "name": "bot1020", "platform": "mac-bigsur "},
+                    { "name": "bot1021", "platform": "mac-bigsur" },
+                    { "name": "bot1022", "platform": "mac-bigsur" },
+                    { "name": "bot1023", "platform": "mac-bigsur" },
+                    { "name": "bot1024", "platform": "mac-bigsur" },
+                    { "name": "bot1025", "platform": "mac-bigsur" },
+                    { "name": "bot1026", "platform": "mac-bigsur" },
+                    { "name": "bot1027", "platform": "mac-bigsur" },
 
                     { "name": "bot121", "platform": "mac-catalina" },
                     { "name": "bot187", "platform": "mac-catalina" },
@@ -28,7 +29,6 @@
                     { "name": "bot247", "platform": "mac-catalina" },
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot260", "platform": "mac-catalina" },
-                    { "name": "bot302", "platform": "mac-catalina" },
                     { "name": "bot610", "platform": "mac-catalina" },
                     { "name": "bot638", "platform": "mac-catalina" },
                     { "name": "bot674", "platform": "mac-catalina" },
@@ -121,7 +121,7 @@
     "builders":   [
                     { "name": "Apple-BigSur-Release-Build", "factory": "BuildFactory", "builddir": "bigsur-release",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "triggers": ["bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2"],
+                      "triggers": ["bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2", "bigsur-release-tests-wk2-webgl"],
                       "workernames": ["bot279", "bot600", "bot614"]
                     },
                     { "name": "Apple-BigSur-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-release-tests-test262",
@@ -137,6 +137,11 @@
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1022", "bot1023"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK2-WebGL-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-release-tests-wk2-webgl",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
+                      "workernames": ["bot302"]
                     },
                     { "name": "Apple-BigSur-Debug-Build", "factory": "BuildFactory", "builddir": "bigsur-debug",
                       "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -180,7 +185,7 @@
                     },
                     { "name": "Apple-Catalina-Release-Build", "factory": "BuildFactory", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2", "catalina-release-tests-wk2-webgl"],
+                      "triggers": ["catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2"],
                       "workernames": ["bot683", "bot674"]
                     },
                     { "name": "Apple-Catalina-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "catalina-release-tests-wk1",
@@ -192,11 +197,6 @@
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot247", "bot248"]
-                    },
-                    { "name": "Apple-Catalina-Release-WK2-WebGL-Tests", "factory": "TestAllButJSCFactory", "builddir": "catalina-release-tests-wk2-webgl",
-                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
-                      "workernames": ["bot302"]
                     },
                     { "name": "Apple-Catalina-Debug-JSC-Tests", "factory": "TestJSCFactory", "builddir": "catalina-debug-tests-jsc",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
@@ -508,6 +508,9 @@
                     { "type": "Triggerable", "name": "bigsur-release-tests-wk2",
                       "builderNames": ["Apple-BigSur-Release-WK2-Tests"]
                     },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2-webgl",
+                      "builderNames": ["Apple-BigSur-Release-WK2-WebGL-Tests"]
+                    },
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk1",
                       "builderNames": ["Apple-BigSur-Debug-WK1-Tests"]
                     },
@@ -537,9 +540,6 @@
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
                       "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-release-tests-wk2-webgl",
-                      "builderNames": ["Apple-Catalina-Release-WK2-WebGL-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-Catalina-Debug-WK2-GPUProcess-Tests"]
