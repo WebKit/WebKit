@@ -1,5 +1,17 @@
 2021-02-27  Antoine Quint  <graouts@webkit.org>
 
+        border-image-slice blending does not account for the fill keyword
+        https://bugs.webkit.org/show_bug.cgi?id=222513
+
+        Reviewed by Antti Koivisto.
+
+        Pass an extra 96 WPT tests for border-image-slice.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+
+2021-02-27  Antoine Quint  <graouts@webkit.org>
+
         Improve blending of LengthBox values
         https://bugs.webkit.org/show_bug.cgi?id=222512
 

@@ -736,16 +736,22 @@ protected:
 class LengthBoxPropertyWrapper : public PropertyWrapperGetter<const LengthBox&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class IsLengthPercentage { Yes, No };
-    LengthBoxPropertyWrapper(CSSPropertyID prop, const LengthBox& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthBox&&), IsLengthPercentage isLengthPercentage = IsLengthPercentage::No)
+    enum class Flags {
+        IsLengthPercentage  = 1 << 0,
+        UsesFillKeyword     = 1 << 1,
+    };
+    LengthBoxPropertyWrapper(CSSPropertyID prop, const LengthBox& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthBox&&), OptionSet<Flags> flags = { })
         : PropertyWrapperGetter<const LengthBox&>(prop, getter)
         , m_setter(setter)
-        , m_isLengthPercentage(isLengthPercentage)
+        , m_flags(flags)
     {
     }
 
     bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
     {
+        if (m_flags.contains(Flags::UsesFillKeyword) && a->borderImage().fill() != b->borderImage().fill())
+            return false;
+
         auto canInterpolateBetweenLengths = [&](const Length& a, const Length& b) -> bool {
             if (a.type() == b.type() || a.isZero() || b.isZero())
                 return true;
@@ -754,7 +760,7 @@ public:
             // between a <length> and a <percentage>, but exclude animating between a <number> and either
             // a <length> or <percentage>. We can use Length::isRelative() to determine whether we are
             // dealing with a <number> as opposed to a <length> or <percentage>.
-            if (m_isLengthPercentage == IsLengthPercentage::Yes)
+            if (m_flags.contains(Flags::IsLengthPercentage))
                 return a.isRelative() == b.isRelative();
 
             return false;
@@ -770,8 +776,12 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        if (!canInterpolate(a, b))
+        if (!canInterpolate(a, b)) {
             progress = progress < 0.5 ? 0 : 1;
+            if (m_flags.contains(Flags::UsesFillKeyword))
+                dst->setBorderImageSliceFill((progress ? b : a)->borderImage().fill());
+        } else if (m_flags.contains(Flags::UsesFillKeyword))
+            dst->setBorderImageSliceFill(a->borderImage().fill());
         (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const LengthBox&>::m_getter)(), (b->*PropertyWrapperGetter<const LengthBox&>::m_getter)(), progress));
     }
 
@@ -779,7 +789,7 @@ protected:
     void (RenderStyle::*m_setter)(LengthBox&&);
 
 private:
-    IsLengthPercentage m_isLengthPercentage;
+    OptionSet<Flags> m_flags;
 };
 
 class PropertyWrapperClipPath : public RefCountedPropertyWrapper<ClipPathOperation> {
@@ -1843,8 +1853,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new StyleImagePropertyWrapper(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage),
 
         new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource),
-        new LengthBoxPropertyWrapper(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices),
-        new LengthBoxPropertyWrapper(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth, LengthBoxPropertyWrapper::IsLengthPercentage::Yes),
+        new LengthBoxPropertyWrapper(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices, { LengthBoxPropertyWrapper::Flags::UsesFillKeyword }),
+        new LengthBoxPropertyWrapper(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth, { LengthBoxPropertyWrapper::Flags::IsLengthPercentage }),
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset),
 
         new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource),
