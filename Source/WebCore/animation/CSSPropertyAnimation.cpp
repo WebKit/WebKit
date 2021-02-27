@@ -88,9 +88,9 @@ static inline Color blendFunc(const CSSPropertyBlendingClient*, const Color& fro
     return blend(from, to, progress);
 }
 
-static inline Length blendFunc(const CSSPropertyBlendingClient*, const Length& from, const Length& to, double progress)
+static inline Length blendFunc(const CSSPropertyBlendingClient*, const Length& from, const Length& to, double progress, ValueRange valueRange = ValueRangeAll)
 {
-    return blend(from, to, progress);
+    return blend(from, to, progress, valueRange);
 }
 
 static inline GapLength blendFunc(const CSSPropertyBlendingClient*, const GapLength& from, const GapLength& to, double progress)
@@ -699,31 +699,18 @@ protected:
     void (RenderStyle::*m_setter)(Length&&);
 };
 
-class NonNegativeLengthPropertyWrapper : public PropertyWrapperGetter<const Length&> {
+class NonNegativeLengthPropertyWrapper : public LengthPropertyWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NonNegativeLengthPropertyWrapper(CSSPropertyID prop, const Length& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Length&&))
-        : PropertyWrapperGetter<const Length&>(prop, getter)
-        , m_setter(setter)
+        : LengthPropertyWrapper(prop, getter, setter)
     {
-    }
-
-    bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
-    {
-        return !(a->*PropertyWrapperGetter<const Length&>::m_getter)().isAuto() && !(b->*PropertyWrapperGetter<const Length&>::m_getter)().isAuto();
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        auto blended = blendFunc(anim, (a->*PropertyWrapperGetter<const Length&>::m_getter)(), (b->*PropertyWrapperGetter<const Length&>::m_getter)(), progress);
-        if (blended.isNegative())
-            (dst->*m_setter)(Length(0, LengthType::Fixed));
-        else
-            (dst->*m_setter)(WTFMove(blended));
+        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const Length&>::m_getter)(), (b->*PropertyWrapperGetter<const Length&>::m_getter)(), progress, ValueRangeNonNegative));
     }
-
-protected:
-    void (RenderStyle::*m_setter)(Length&&);
 };
 
 template <typename T>
