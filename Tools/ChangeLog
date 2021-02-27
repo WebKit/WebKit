@@ -1,3 +1,14 @@
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add a script to show a list of bugs closed since a given revision
+        https://bugs.webkit.org/show_bug.cgi?id=222470
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's useful to get a list of specific changes when making releases.
+
+        * Scripts/webkit-filter-log: Added.
+
 2021-02-26  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC retain] in WebKit
