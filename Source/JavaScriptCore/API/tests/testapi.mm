@@ -53,6 +53,7 @@
 #import <wtf/MemoryFootprint.h>
 #import <wtf/Optional.h>
 #import <wtf/DataLog.h>
+#import <wtf/RetainPtr.h>
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" void JSSynchronousEdenCollectForDebugging(JSContextRef);
@@ -217,7 +218,7 @@ bool testXYZTested = false;
 
 @implementation TinyDOMNode {
     NSMutableArray *m_children;
-    JSVirtualMachine *m_sharedVirtualMachine;
+    RetainPtr<JSVirtualMachine> m_sharedVirtualMachine;
 }
 
 - (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
@@ -228,9 +229,6 @@ bool testXYZTested = false;
 
     m_children = [[NSMutableArray alloc] initWithCapacity:0];
     m_sharedVirtualMachine = virtualMachine;
-#if !__has_feature(objc_arc)
-    [m_sharedVirtualMachine retain];
-#endif
 
     return self;
 }

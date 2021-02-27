@@ -4503,11 +4503,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!_page->editorState().isContentEditable)
         return nil;
 
-    static NSArray* editableKeyCommands = [@[
+    static NeverDestroyed<RetainPtr<NSArray>> editableKeyCommands = @[
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_previousAccessoryTab:)]
-    ] retain];
-    return editableKeyCommands;
+    ];
+    return editableKeyCommands.get().get();
 }
 #endif
 

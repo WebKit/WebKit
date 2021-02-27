@@ -58,13 +58,13 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
-    static NSFont *menuFont = [[NSFont menuFontOfSize:0] retain];
+    static NeverDestroyed<RetainPtr<NSFont>> menuFont = [NSFont menuFontOfSize:0];
 
-    ASSERT(menuFont);
-    if (!menuFont)
+    ASSERT(menuFont.get());
+    if (!menuFont.get())
         return nil;
 
-    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(menuFont));
+    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(menuFont.get().get()));
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font

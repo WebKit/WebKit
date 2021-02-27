@@ -97,34 +97,33 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
 + (NSArray *)supportedMIMETypes
 {
-    static NSArray *staticSupportedMIMETypes = [[[[self supportedNonImageMIMETypes] arrayByAddingObjectsFromArray:
-        [self supportedImageMIMETypes]] arrayByAddingObjectsFromArray:
-        [self supportedMediaMIMETypes]] retain];
-    return staticSupportedMIMETypes;
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMIMETypes = [[[self supportedNonImageMIMETypes] arrayByAddingObjectsFromArray:
+        [self supportedImageMIMETypes]] arrayByAddingObjectsFromArray:[self supportedMediaMIMETypes]];
+    return staticSupportedMIMETypes.get().get();
 }
 
 + (NSArray *)supportedMediaMIMETypes
 {
-    static NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedMediaMIMETypes()).leakRef();
-    return staticSupportedMediaMIMETypes;
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedMediaMIMETypes());
+    return staticSupportedMediaMIMETypes.get().get();
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    static NSArray *staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedNonImageMIMETypes()).leakRef();
-    return staticSupportedNonImageMIMETypes;
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedNonImageMIMETypes());
+    return staticSupportedNonImageMIMETypes.get().get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NSArray *staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedImageMIMETypes()).leakRef();
-    return staticSupportedImageMIMETypes;
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedImageMIMETypes());
+    return staticSupportedImageMIMETypes.get().get();
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static NSArray *staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::unsupportedTextMIMETypes()).leakRef();
-    return staticUnsupportedTextMIMETypes;
+    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::unsupportedTextMIMETypes());
+    return staticUnsupportedTextMIMETypes.get().get();
 }
 
 - (id)init

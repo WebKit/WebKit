@@ -1,3 +1,30 @@
+2021-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC retain] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222439
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC retain] in WebKit by using RetainPtr<>.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        (-[DRTMockScroller drawKnob]):
+        (-[DRTMockScroller drawRect:]):
+        (prepareConsistentTestingEnvironment):
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView selectionRectsAfterPresentationUpdate]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformLibraryPathForTesting):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+        (WTR::systemHiddenFontFamilySet):
+        (WTR::TestController::platformLibraryPathForTesting):
+        * WebKitTestRunner/mac/main.mm:
+        (disableAppNapInUIProcess):
+
 2021-02-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         macOS bots should build with ONLY_ACTIVE_ARCH=NO

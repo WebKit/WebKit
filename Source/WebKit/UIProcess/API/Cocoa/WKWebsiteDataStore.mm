@@ -231,7 +231,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate
 {
     static dispatch_once_t onceToken;
-    static NSSet *allWebsiteDataTypes;
+    static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
     dispatch_once(&onceToken, ^ {
         auto *privateTypes = @[
             _WKWebsiteDataTypeHSTSCache,
@@ -247,10 +247,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
         ];
 
-        allWebsiteDataTypes = [[[self allWebsiteDataTypes] setByAddingObjectsFromArray:privateTypes] retain];
+        allWebsiteDataTypes.get() = [[self allWebsiteDataTypes] setByAddingObjectsFromArray:privateTypes];
     });
 
-    return allWebsiteDataTypes;
+    return allWebsiteDataTypes.get().get();
 }
 
 + (BOOL)_defaultDataStoreExists

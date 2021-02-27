@@ -47,6 +47,7 @@
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
 #import <wtf/ThreadSpecific.h>
@@ -111,7 +112,6 @@ static RecursiveLock webCoreReleaseLock;
 
 static void* autoreleasePoolMark;
 static CFRunLoopRef webThreadRunLoop;
-static NSRunLoop* webThreadNSRunLoop;
 static pthread_t webThread;
 static BOOL isWebThreadLocked;
 static BOOL webThreadStarted;
@@ -127,11 +127,8 @@ typedef enum {
 static CFRunLoopSourceRef WebThreadReleaseSource;
 static CFMutableArrayRef WebThreadReleaseObjArray;
 
-static void MainThreadAdoptAndRelease(id obj);
-
 static Lock delegateLock;
 static StaticCondition delegateCondition;
-static NSInvocation* delegateInvocation;
 static CFRunLoopSourceRef delegateSource = nullptr;
 static BOOL delegateHandled;
 #if LOG_MAIN_THREAD_LOCKING
@@ -161,14 +158,30 @@ static RetainPtr<NSMutableArray>& sAsyncDelegates()
     return asyncDelegates;
 }
 
+static RetainPtr<NSRunLoop>& webThreadNSRunLoop()
+{
+    static NeverDestroyed<RetainPtr<NSRunLoop>> webThreadNSRunLoop;
+    return webThreadNSRunLoop;
+}
+
+static RetainPtr<NSInvocation>& delegateInvocation()
+{
+    static NeverDestroyed<RetainPtr<NSInvocation>> delegateInvocation;
+    return delegateInvocation;
+}
+
 WEBCORE_EXPORT volatile unsigned webThreadDelegateMessageScopeCount = 0;
 
 static bool perCalloutAutoreleasepoolEnabled;
 
-static inline void SendMessage(NSInvocation* invocation)
+static inline void SendMessage(RetainPtr<NSInvocation>&& invocation)
 {
     [invocation invoke];
-    MainThreadAdoptAndRelease(invocation);
+
+    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
+        return;
+
+    RunLoop::main().dispatch([invocation = WTFMove(invocation)] { });
 }
 
 static void HandleDelegateSource(void*)
@@ -185,15 +198,15 @@ static void HandleDelegateSource(void*)
         auto locker = holdLock(delegateLock);
 
 #if LOG_MESSAGES
-        if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]]) {
+        if ([[delegateInvocation() target] isKindOfClass:[NSNotificationCenter class]]) {
             id argument0;
-            [delegateInvocation getArgument:&argument0 atIndex:0];
+            [delegateInvocation() getArgument:&argument0 atIndex:0];
             NSLog(@"notification receive: %@", argument0);
         } else
-            NSLog(@"delegate receive: %@", NSStringFromSelector([delegateInvocation selector]));
+            NSLog(@"delegate receive: %@", NSStringFromSelector([delegateInvocation() selector]));
 #endif
 
-        SendMessage(delegateInvocation);
+        SendMessage(WTFMove(delegateInvocation()));
 
         delegateHandled = YES;
         delegateCondition.notifyOne();
@@ -214,26 +227,26 @@ public:
     }
 };
 
-static void SendDelegateMessage(NSInvocation* invocation)
+static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
 {
     if (!WebThreadIsCurrent()) {
-        SendMessage(invocation);
+        SendMessage(WTFMove(invocation));
         return;
     }
 
     ASSERT(delegateSource);
     delegateLock.lock();
 
-    delegateInvocation = invocation;
+    delegateInvocation() = WTFMove(invocation);
     delegateHandled = NO;
 
 #if LOG_MESSAGES
-    if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]]) {
+    if ([[delegateInvocation() target] isKindOfClass:[NSNotificationCenter class]]) {
         id argument0;
-        [delegateInvocation getArgument:&argument0 atIndex:0];
+        [delegateInvocation() getArgument:&argument0 atIndex:0];
         NSLog(@"notification send: %@", argument0);
     } else
-        NSLog(@"delegate send: %@", NSStringFromSelector([delegateInvocation selector]));
+        NSLog(@"delegate send: %@", NSStringFromSelector([delegateInvocation() selector]));
 #endif
 
     {
@@ -248,10 +261,10 @@ static void SendDelegateMessage(NSInvocation* invocation)
         while (!delegateHandled) {
             if (!delegateCondition.waitFor(delegateLock, DelegateWaitInterval)) {
                 id delegateInformation;
-                if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]])
-                    [delegateInvocation getArgument:&delegateInformation atIndex:0];
+                if ([[delegateInvocation() target] isKindOfClass:[NSNotificationCenter class]])
+                    [delegateInvocation() getArgument:&delegateInformation atIndex:0];
                 else
-                    delegateInformation = NSStringFromSelector([delegateInvocation selector]);
+                    delegateInformation = NSStringFromSelector([delegateInvocation() selector]);
     
                 CFStringRef mode = CFRunLoopCopyCurrentMode(CFRunLoopGetMain());
                 NSLog(@"%s: delegate (%@) failed to return after waiting %f seconds. main run loop mode: %@", __PRETTY_FUNCTION__, delegateInformation, DelegateWaitInterval.seconds(), mode);
@@ -280,19 +293,6 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
     Block_release(delegateBlockCopy);
 
     _WebThreadLock();
-}
-
-static void MainThreadAdoptAndRelease(id obj)
-{
-    auto adoptedObj = adoptNS(obj);
-    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
-        return;
-#if LOG_RELEASES
-    NSLog(@"Release send [web thread] : %@", obj);
-#endif
-    // We own obj at this point, so we don't need the block to implicitly
-    // retain it.
-    RunLoop::main().dispatch([adoptedObj = WTFMove(adoptedObj)] { });
 }
 
 void WebThreadAdoptAndRelease(id obj)
@@ -426,7 +426,7 @@ static void HandleWebThreadReleaseSource(void*)
 void WebThreadCallDelegate(NSInvocation* invocation)
 {
     // NSInvocation released in SendMessage()
-    SendDelegateMessage([invocation retain]);
+    SendDelegateMessage(invocation);
 }
 
 void WebThreadPostNotification(NSString* name, id object, id userInfo)
@@ -505,7 +505,7 @@ static void WebRunLoopUnlockInternal(AutoreleasePoolOperation poolOperation)
     ASSERT(sAsyncDelegates());
     if ([sAsyncDelegates() count]) {
         for (NSInvocation* invocation in sAsyncDelegates().get())
-            SendDelegateMessage([invocation retain]);
+            SendDelegateMessage(invocation);
         [sAsyncDelegates() removeAllObjects];
     }
 
@@ -632,7 +632,7 @@ static void* RunWebThread(void*)
 
     webThreadContext = CurrentThreadContext();
     webThreadRunLoop = CFRunLoopGetCurrent();
-    webThreadNSRunLoop = [[NSRunLoop currentRunLoop] retain];
+    webThreadNSRunLoop() = [NSRunLoop currentRunLoop];
 
     CFRunLoopObserverRef webRunLoopLockObserverRef = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeTimers | kCFRunLoopBeforeSources | kCFRunLoopAfterWaiting, YES, 0, WebRunLoopLock, nullptr);
     CFRunLoopAddObserver(webThreadRunLoop, webRunLoopLockObserverRef, kCFRunLoopCommonModes);
@@ -898,8 +898,8 @@ CFRunLoopRef WebThreadRunLoop(void)
 NSRunLoop* WebThreadNSRunLoop(void)
 {
     if (webThreadStarted) {
-        ASSERT(webThreadNSRunLoop);
-        return webThreadNSRunLoop;
+        ASSERT(webThreadNSRunLoop());
+        return webThreadNSRunLoop().get();
     }
 
     return [NSRunLoop currentRunLoop];

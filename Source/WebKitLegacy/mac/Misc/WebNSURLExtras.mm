@@ -276,17 +276,16 @@ using namespace WTF;
     NSRange colon = [self rangeOfString:@":"];
     if (colon.location != NSNotFound && colon.location > 0) {
         NSRange scheme = {0, colon.location};
-        static NSCharacterSet *InverseSchemeCharacterSet = nil;
-        if (!InverseSchemeCharacterSet) {
+        static auto inverseSchemeCharacterSet = makeNeverDestroyed([] {
             /*
              This stuff is very expensive.  10-15 msec on a 2x1.2GHz.  If not cached it swamps
              everything else when adding items to the autocomplete DB.  Makes me wonder if we
              even need to enforce the character set here.
             */
             NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
-            InverseSchemeCharacterSet = [[[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] retain];
-        }
-        NSRange illegals = [self rangeOfCharacterFromSet:InverseSchemeCharacterSet options:0 range:scheme];
+            return retainPtr([[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet]);
+        }());
+        NSRange illegals = [self rangeOfCharacterFromSet:inverseSchemeCharacterSet.get().get() options:0 range:scheme];
         if (illegals.location == NSNotFound)
             return scheme;
     }

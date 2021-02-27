@@ -1,3 +1,38 @@
+2021-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC retain] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222439
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC retain] in WebKit by using RetainPtr<>.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSString _webkit_rangeOfURLScheme]):
+        * Misc/WebStringTruncator.mm:
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        * Storage/WebStorageManager.mm:
+        (+[WebStorageManager _storageDirectoryPath]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (_WebCreateFragment):
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _close]):
+        (-[WebView _checkDidPerformFirstNavigation]):
+        (-[WebView setPreferences:]):
+        (-[WebView preferences]):
+        (-[WebView setGroupName:]):
+        * WebView/WebViewData.h:
+
 2021-02-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r273462.

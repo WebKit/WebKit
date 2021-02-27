@@ -253,25 +253,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    static NSArray *attributeNames = 0;
+    static NeverDestroyed<RetainPtr<NSArray>> attributeNames = @[
+        NSAccessibilityParentAttribute,
+        NSAccessibilityWindowAttribute,
+        NSAccessibilityTopLevelUIElementAttribute,
+        NSAccessibilityRoleDescriptionAttribute,
+        NSAccessibilitySizeAttribute,
+        NSAccessibilityEnabledAttribute,
+        NSAccessibilityPositionAttribute,
+        NSAccessibilityFocusedAttribute,
+        // PDFLayerController has its own accessibilityChildren.
+        NSAccessibilityChildrenAttribute
+    ];
 
-    if (!attributeNames) {
-        attributeNames = @[
-            NSAccessibilityParentAttribute,
-            NSAccessibilityWindowAttribute,
-            NSAccessibilityTopLevelUIElementAttribute,
-            NSAccessibilityRoleDescriptionAttribute,
-            NSAccessibilitySizeAttribute,
-            NSAccessibilityEnabledAttribute,
-            NSAccessibilityPositionAttribute,
-            NSAccessibilityFocusedAttribute,
-            // PDFLayerController has its own accessibilityChildren.
-            NSAccessibilityChildrenAttribute
-            ];
-        [attributeNames retain];
-    }
-
-    return attributeNames;
+    return attributeNames.get().get();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

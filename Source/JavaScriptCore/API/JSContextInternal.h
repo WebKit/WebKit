@@ -32,12 +32,12 @@
 struct CallbackData {
     CallbackData* next;
     JSContext *context;
-    JSValue *preservedException;
+    RetainPtr<JSValue> preservedException;
     JSValueRef calleeValue;
     JSValueRef thisValue;
     size_t argumentCount;
     const JSValueRef *arguments;
-    NSArray *currentArguments;
+    RetainPtr<NSArray> currentArguments;
 };
 
 @class JSWrapperMap;

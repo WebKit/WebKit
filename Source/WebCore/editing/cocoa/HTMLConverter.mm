@@ -415,16 +415,13 @@ AttributedString HTMLConverter::convert()
 // Returns the font to be used if the NSFontAttributeName doesn't exist
 static NSFont *WebDefaultFont()
 {
-    static NSFont *defaultFont = nil;
-    if (defaultFont)
-        return defaultFont;
-
-    NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
-    if (!font)
-        font = [NSFont systemFontOfSize:12];
-
-    defaultFont = [font retain];
-    return defaultFont;
+    static auto defaultFont = makeNeverDestroyed([] {
+        NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
+        if (!font)
+            font = [NSFont systemFontOfSize:12];
+        return retainPtr(font);
+    }());
+    return defaultFont.get().get();
 }
 #endif
 

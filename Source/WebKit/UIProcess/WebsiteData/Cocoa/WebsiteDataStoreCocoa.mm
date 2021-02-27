@@ -332,7 +332,7 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
-    static NSURL *tempURL;
+    static NeverDestroyed<RetainPtr<NSURL>> tempURL;
     
     dispatch_once(&onceToken, ^{
         NSURL *url = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
@@ -346,10 +346,10 @@ WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::S
             url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
         }
         
-        tempURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+        tempURL.get() = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
     });
     
-    NSURL *url = [tempURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    NSURL *url = [tempURL.get() URLByAppendingPathComponent:directoryName isDirectory:YES];
 
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes
         && (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr]))
@@ -361,7 +361,7 @@ WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::S
 WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
-    static NSURL *cacheURL;
+    static NeverDestroyed<RetainPtr<NSURL>> cacheURL;
 
     dispatch_once(&onceToken, ^{
         NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -375,10 +375,10 @@ WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::
             url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
         }
 
-        cacheURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+        cacheURL.get() = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
     });
 
-    NSURL *url = [cacheURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    NSURL *url = [cacheURL.get() URLByAppendingPathComponent:directoryName isDirectory:YES];
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes
         && ![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", url);
@@ -389,7 +389,7 @@ WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::
 WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
     static dispatch_once_t onceToken;
-    static NSURL *websiteDataURL;
+    static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL;
 
     dispatch_once(&onceToken, ^{
         NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -405,10 +405,10 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
             url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
         }
 
-        websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
+        websiteDataURL.get() = [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
     });
 
-    NSURL *url = [websiteDataURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    NSURL *url = [websiteDataURL.get() URLByAppendingPathComponent:directoryName isDirectory:YES];
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", url);
 

@@ -669,7 +669,7 @@ static UICalloutBar *suppressUICalloutBar()
     __block bool isDone = false;
     __block RetainPtr<NSArray> selectionRects;
     [self _doAfterNextPresentationUpdate:^() {
-        selectionRects = adoptNS([[retainedSelf _uiTextSelectionRects] retain]);
+        selectionRects = [retainedSelf _uiTextSelectionRects];
         isDone = true;
     }];
 

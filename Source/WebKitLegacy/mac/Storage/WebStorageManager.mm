@@ -97,19 +97,19 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 + (NSString *)_storageDirectoryPath
 {
-    static NSString *sLocalStoragePath;
+    static NeverDestroyed<RetainPtr<NSString>> sLocalStoragePath;
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        sLocalStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
-        if (!sLocalStoragePath || ![sLocalStoragePath isKindOfClass:[NSString class]]) {
+        RetainPtr<NSString> localStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
+        if (!localStoragePath || ![localStoragePath isKindOfClass:[NSString class]]) {
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
             NSString *libraryDirectory = [paths objectAtIndex:0];
-            sLocalStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
+            localStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
         }
-        sLocalStoragePath = [[sLocalStoragePath stringByStandardizingPath] retain];
+        sLocalStoragePath.get() = [localStoragePath stringByStandardizingPath];
     });
-    return sLocalStoragePath;
+    return sLocalStoragePath.get().get();
 }
 
 + (void)setStorageDatabaseIdleInterval:(double)interval

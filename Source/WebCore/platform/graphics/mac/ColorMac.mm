@@ -116,16 +116,16 @@ NSColor *nsColor(const Color& color)
     if (color.isInline()) {
         switch (PackedColor::RGBA { color.asInline() }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
-            static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
-            return clearColor;
+            static NeverDestroyed<RetainPtr<NSColor>> clearColor = [NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0];
+            return clearColor.get().get();
         }
         case PackedColor::RGBA { Color::black }.value: {
-            static NSColor *blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
-            return blackColor;
+            static NeverDestroyed<RetainPtr<NSColor>> blackColor = [NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1];
+            return blackColor.get().get();
         }
         case PackedColor::RGBA { Color::white }.value: {
-            static NSColor *whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
-            return whiteColor;
+            static NeverDestroyed<RetainPtr<NSColor>> whiteColor = [NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1];
+            return whiteColor.get().get();
         }
         }
     }

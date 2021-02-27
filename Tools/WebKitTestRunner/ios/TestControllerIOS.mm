@@ -316,12 +316,12 @@ void TestController::abortModal()
 
 const char* TestController::platformLibraryPathForTesting()
 {
-    static NSString *platformLibraryPath = nil;
+    static NeverDestroyed<RetainPtr<NSString>> platformLibraryPath;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        platformLibraryPath = [[@"~/Library/Application Support/WebKitTestRunner" stringByExpandingTildeInPath] retain];
+        platformLibraryPath.get() = [@"~/Library/Application Support/WebKitTestRunner" stringByExpandingTildeInPath];
     });
-    return platformLibraryPath.UTF8String;
+    return [platformLibraryPath.get() UTF8String];
 }
 
 void TestController::setHidden(bool)
