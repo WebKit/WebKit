@@ -75,6 +75,9 @@ private:
 
     void fireProcessEvent();
 
+    RefPtr<AudioBuffer> createInputBufferForJS(AudioBuffer*) const;
+    RefPtr<AudioBuffer> createOutputBufferForJS(AudioBuffer&) const;
+
     // Double buffering
     unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
@@ -82,6 +85,8 @@ private:
     unsigned m_doubleBufferIndexForEvent;
     Vector<RefPtr<AudioBuffer>> m_inputBuffers;
     Vector<RefPtr<AudioBuffer>> m_outputBuffers;
+    mutable RefPtr<AudioBuffer> m_cachedInputBufferForJS;
+    mutable RefPtr<AudioBuffer> m_cachedOutputBufferForJS;
 
     size_t m_bufferSize;
     unsigned m_bufferReadWriteIndex;
@@ -92,6 +97,7 @@ private:
 
     RefPtr<AudioBus> m_internalInputBus;
     RefPtr<PendingActivity<ScriptProcessorNode>> m_pendingActivity;
+    Lock m_processLock;
 };
 
 } // namespace WebCore

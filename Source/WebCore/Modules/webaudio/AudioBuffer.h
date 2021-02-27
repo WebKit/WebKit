@@ -70,6 +70,13 @@ public:
 
     size_t memoryCost() const;
     
+    bool copyTo(AudioBuffer&) const;
+
+    enum class ShouldCopyChannelData : bool { No, Yes };
+    Ref<AudioBuffer> clone(ShouldCopyChannelData = ShouldCopyChannelData::Yes) const;
+
+    bool topologyMatches(const AudioBuffer&) const;
+
 private:
     AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate);
     explicit AudioBuffer(AudioBus&);
