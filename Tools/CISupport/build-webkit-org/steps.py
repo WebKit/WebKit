@@ -254,8 +254,7 @@ class CompileWebKit(shell.Compile):
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios', 'tvos', 'watchos') and architecture:
             self.setCommand(self.command + ['ARCHS=' + architecture])
-            if platform in ['ios', 'tvos', 'watchos']:
-                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+            self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
         if platform in ('mac', 'ios', 'tvos', 'watchos') and buildOnly:
             # For build-only bots, the expectation is that tests will be run on separate machines,
             # so we need to package debug info as dSYMs. Only generating line tables makes

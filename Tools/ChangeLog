@@ -1,5 +1,17 @@
 2021-02-26  Ryan Haddad  <ryanhaddad@apple.com>
 
+        macOS bots should build with ONLY_ACTIVE_ARCH=NO
+        https://bugs.webkit.org/show_bug.cgi?id=222502
+
+        Reviewed by Aakash Jain.
+
+        We need this to correctly build for both arm64e and x86_64 and support M1 hardware in our infrastructure.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CompileWebKit.start):
+
+2021-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
         Move WebGL test bot to Big Sur
         https://bugs.webkit.org/show_bug.cgi?id=222501
 
