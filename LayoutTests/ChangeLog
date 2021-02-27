@@ -1,3 +1,13 @@
+2021-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Coverage] Do not bail out on text underline position when text-decoration is 'none'
+        https://bugs.webkit.org/show_bug.cgi?id=222481
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-with-text-underline-position-expected.html:
+        * fast/text/simple-line-layout-with-text-underline-position.html:
+
 2021-02-26  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Wk1] platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html is consistently failing
