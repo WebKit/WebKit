@@ -1,3 +1,20 @@
+2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid function allocations for non-user-provided Promise then callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=222490
+
+        Reviewed by Keith Miller.
+
+        At @performPromiseThen point, callback function objects themselves are not accessible from users
+        if they are not passed from users. So, we can reuse functions if users do not pass functions.
+
+        * builtins/PromiseOperations.js:
+        (globalPrivate.promiseEmptyOnFulfilled):
+        (globalPrivate.promiseEmptyOnRejected):
+        (globalPrivate.performPromiseThen):
+        (onFulfilled): Deleted.
+        (onRejected): Deleted.
+
 2021-02-26  Michael Saboff  <msaboff@apple.com>
 
         unexpected minimumInputSize in setupDisjunctionOffsets for regexp engine(yarr)

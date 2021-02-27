@@ -520,15 +520,31 @@ function promiseResolveThenableJobWithDerivedPromise(thenable, constructor, reso
 }
 
 @globalPrivate
+function promiseEmptyOnFulfilled(argument)
+{
+    "use strict";
+
+    return argument;
+}
+
+@globalPrivate
+function promiseEmptyOnRejected(argument)
+{
+    "use strict";
+
+    throw argument;
+}
+
+@globalPrivate
 function performPromiseThen(promise, onFulfilled, onRejected, promiseOrCapability)
 {
     "use strict";
 
     if (!@isCallable(onFulfilled))
-        onFulfilled = function (argument) { return argument; };
+        onFulfilled = @promiseEmptyOnFulfilled;
 
     if (!@isCallable(onRejected))
-        onRejected = function (argument) { throw argument; };
+        onRejected = @promiseEmptyOnRejected;
 
     var reaction = @newPromiseReaction(promiseOrCapability, onFulfilled, onRejected);
 
