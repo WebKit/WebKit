@@ -1329,22 +1329,8 @@ platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess.htm
 platform/mac/media/encrypted-media/fps-generateRequest.html [ Crash ]
 platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Crash ]
 
-# webkit.org/b/221797
-fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout ]
-
-# webkit.org/b/221823
-webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Failure ]
-webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Failure ]
-webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Failure ]
-
-# webkit.org/b/221825
-fast/canvas/webgl/texImage2D-video-flipY-true.html [ Failure ]
-
 # webkit.org/b/221826
 fast/mediastream/media-element-current-time.html [ Failure ]
-
-webkit.org/b/221838 webgl/2.0.0/conformance2/textures/video [ Failure ]
 
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Timeout ]
 

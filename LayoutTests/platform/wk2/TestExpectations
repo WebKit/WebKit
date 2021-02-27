@@ -287,14 +287,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interfa
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
 
-# webkit.org/b/221791
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
-fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Failure ]
-fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure ]
-
 # webkit.org/b/221792
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
@@ -312,30 +304,13 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Timeou
 # webkit.org/b/221795
 fast/images/animated-image-mp4.html [ Timeout ]
 
-# webkit.org/b/221790
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
-
-# webkit.org/b/221806
-webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Failure ]
-webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Failure ]
-webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
-
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/221817 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 
-webkit.org/b/221818 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
-
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 
 # webkit.org/b/221820
-media/video-canvas-drawing-output.html [ Failure ]
-media/video-canvas-createPattern.html [ Crash ]
 media/video-orientation-canvas.html [ Failure ]
 
 webkit.org/b/221783 [ Debug ] loader/change-src-during-iframe-load-crash.html [ Skip ]
