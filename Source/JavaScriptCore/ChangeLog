@@ -1,3 +1,36 @@
+2021-02-26  Saam Barati  <sbarati@apple.com>
+
+        Remove bad assertion of AI ArrayMode state in various "by val" opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=222494
+        <rdar://73613460>
+
+        Reviewed by Filip Pizlo.
+
+        It's invalid to ever assert that AI must have proved something. We've been
+        slowly removing these faulty asserts from the compiler, and this patch
+        removes some more of them. AI is conservative, and it's not guaranteed
+        that it will prove X, even if X must be true.
+        
+        In this particular test case, we are looking at a race between the concurrent
+        compiler thread and the main thread, and the compilation will be thrown away
+        because of a Structure transition.
+        
+        What happened in this particular program is we had a CheckStructure that was
+        proved to exit in an early run of AI, that is not shown to exit during a later
+        run of AI. Because of that, in the earlier AI run, we have some narrower type
+        info (because fewer predecessory type info). This narrower type info allowed
+        us to elide a CheckArray. The later runs don't have this narrower type info,
+        because the CheckStructure doesn't exit. The safety of all of this is
+        guaranteed by the compilation being thrown away because we fired the transition
+        watchpoint from the earlier Structure seen by AI.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+
 2021-02-26  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC retain] in WebKit
