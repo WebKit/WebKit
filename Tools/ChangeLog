@@ -1,3 +1,13 @@
+2021-02-26  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] Ensure MediaSample is properly trimmed.
+        https://bugs.webkit.org/show_bug.cgi?id=222462
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebCore/SampleMap.cpp:
+        Update per new MediaSample::divide prototype.
+
 2021-02-26  John Wilander  <wilander@apple.com>
 
         Non-cookie website data not deleted after 7 days of browser use without user interaction

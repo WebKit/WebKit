@@ -61,7 +61,7 @@ public:
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     bool isDivisable() const override;
-    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) override;
+    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
     VideoRotation videoRotation() const override { return m_rotation; }

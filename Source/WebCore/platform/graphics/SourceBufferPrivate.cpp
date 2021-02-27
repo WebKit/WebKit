@@ -1016,9 +1016,11 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
             if (sample->isDivisable()) {
                 std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(m_appendWindowStart);
                 if (replacementSamples.second) {
-                    replacementSamples = replacementSamples.second->divide(m_appendWindowEnd);
+                    ASSERT(replacementSamples.second->presentationTime() >= m_appendWindowStart);
+                    replacementSamples = replacementSamples.second->divide(m_appendWindowEnd, MediaSample::UseEndTime::Use);
                     if (replacementSamples.first) {
                         sample = replacementSamples.first.releaseNonNull();
+                        ASSERT(sample->presentationTime() >= m_appendWindowStart && sample->presentationTime() + sample->duration() <= m_appendWindowEnd);
                         if (m_appendMode != SourceBufferAppendMode::Sequence && trackBuffer.roundedTimestampOffset)
                             sample->offsetTimestampsBy(-trackBuffer.roundedTimestampOffset);
                         continue;
