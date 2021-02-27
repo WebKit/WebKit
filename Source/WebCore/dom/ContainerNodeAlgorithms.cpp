@@ -41,20 +41,19 @@ ContainerChildRemovalScope* ContainerChildRemovalScope::s_scope = nullptr;
 
 enum class TreeScopeChange { Changed, DidNotChange };
 
-static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, OptionSet<Node::AncestorState> ancestorStates, NodeVector& postInsertionNotificationTargets)
+static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, NodeVector& postInsertionNotificationTargets)
 {
     ASSERT(parentOfInsertedTree.isConnected());
     ASSERT(!node.isConnected());
-    if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ true, treeScopeChange == TreeScopeChange::Changed, ancestorStates }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
+    if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ true, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
         postInsertionNotificationTargets.append(node);
 
     if (!is<ContainerNode>(node))
         return;
 
-    auto ancestorStatesOfChildNodes = node.inclusiveAncestorStates();
     for (RefPtr<Node> child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(node.isConnected() && child->parentNode() == &node);
-        notifyNodeInsertedIntoDocument(parentOfInsertedTree, *child, treeScopeChange, ancestorStatesOfChildNodes, postInsertionNotificationTargets);
+        notifyNodeInsertedIntoDocument(parentOfInsertedTree, *child, treeScopeChange, postInsertionNotificationTargets);
     }
 
     if (!is<Element>(node))
@@ -62,30 +61,29 @@ static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, 
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(node.isConnected() && root->host() == &node);
-        notifyNodeInsertedIntoDocument(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, { }, postInsertionNotificationTargets);
+        notifyNodeInsertedIntoDocument(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
     }
 }
 
-static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, OptionSet<Node::AncestorState> ancestorStates, NodeVector& postInsertionNotificationTargets)
+static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, NodeVector& postInsertionNotificationTargets)
 {
     ASSERT(!parentOfInsertedTree.isConnected());
     ASSERT(!node.isConnected());
 
-    if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed, ancestorStates }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
+    if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
         postInsertionNotificationTargets.append(node);
 
     if (!is<ContainerNode>(node))
         return;
 
-    auto ancestorStatesOfChildNodes = node.inclusiveAncestorStates();
     for (RefPtr<Node> child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling())
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, *child, treeScopeChange, ancestorStatesOfChildNodes, postInsertionNotificationTargets);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, *child, treeScopeChange, postInsertionNotificationTargets);
 
     if (!is<Element>(node))
         return;
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot())
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, { }, postInsertionNotificationTargets);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
 }
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node)
@@ -102,9 +100,9 @@ NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& no
     // Tree scope has changed if the container node into which "node" is inserted is in a document or a shadow root.
     auto treeScopeChange = parentOfInsertedTree.isInTreeScope() ? TreeScopeChange::Changed : TreeScopeChange::DidNotChange;
     if (parentOfInsertedTree.isConnected())
-        notifyNodeInsertedIntoDocument(parentOfInsertedTree, node, treeScopeChange, parentOfInsertedTree.inclusiveAncestorStates(), postInsertionNotificationTargets);
+        notifyNodeInsertedIntoDocument(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
     else
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange, parentOfInsertedTree.inclusiveAncestorStates(), postInsertionNotificationTargets);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
 
     return postInsertionNotificationTargets;
 }
@@ -121,20 +119,19 @@ inline void updateObservability(RemovedSubtreeObservability& currentObservabilit
         currentObservability = newStatus;
 }
 
-static RemovedSubtreeObservability notifyNodeRemovedFromDocument(ContainerNode& oldParentOfRemovedTree, TreeScopeChange treeScopeChange, OptionSet<Node::AncestorState> ancestorStates, Node& node)
+static RemovedSubtreeObservability notifyNodeRemovedFromDocument(ContainerNode& oldParentOfRemovedTree, TreeScopeChange treeScopeChange, Node& node)
 {
     ASSERT(oldParentOfRemovedTree.isConnected());
     ASSERT(node.isConnected());
-    node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ true, treeScopeChange == TreeScopeChange::Changed, ancestorStates }, oldParentOfRemovedTree);
+    node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ true, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
 
     auto observability = observabilityOfRemovedNode(node);
     if (!is<ContainerNode>(node))
         return observability;
 
-    auto ancestorStatesOfChildNodes = node.inclusiveAncestorStates();
     for (RefPtr<Node> child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!node.isConnected() && child->parentNode() == &node);
-        updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, treeScopeChange, ancestorStatesOfChildNodes, *child.get()));
+        updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, treeScopeChange, *child.get()));
     }
 
     if (!is<Element>(node))
@@ -142,30 +139,29 @@ static RemovedSubtreeObservability notifyNodeRemovedFromDocument(ContainerNode& 
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!node.isConnected() && root->host() == &node);
-        updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, { }, *root.get()));
+        updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root.get()));
     }
     return observability;
 }
 
-static RemovedSubtreeObservability notifyNodeRemovedFromTree(ContainerNode& oldParentOfRemovedTree, TreeScopeChange treeScopeChange, OptionSet<Node::AncestorState> ancestorStates, Node& node)
+static RemovedSubtreeObservability notifyNodeRemovedFromTree(ContainerNode& oldParentOfRemovedTree, TreeScopeChange treeScopeChange, Node& node)
 {
     ASSERT(!oldParentOfRemovedTree.isConnected());
 
-    node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ false, treeScopeChange == TreeScopeChange::Changed, ancestorStates }, oldParentOfRemovedTree);
+    node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ false, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
 
     auto observability = observabilityOfRemovedNode(node);
     if (!is<ContainerNode>(node))
         return observability;
 
-    auto ancestorStatesOfChildNodes = node.inclusiveAncestorStates();
     for (RefPtr<Node> child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling())
-        updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, ancestorStatesOfChildNodes, *child));
+        updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, *child));
 
     if (!is<Element>(node))
         return observability;
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot())
-        updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, { }, *root));
+        updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root));
 
     return observability;
 }
@@ -179,8 +175,8 @@ RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRem
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.
     auto treeScopeChange = oldParentOfRemovedTree.isInTreeScope() ? TreeScopeChange::Changed : TreeScopeChange::DidNotChange;
     if (child.isConnected())
-        return notifyNodeRemovedFromDocument(oldParentOfRemovedTree, treeScopeChange, { }, child);
-    return notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, { }, child);
+        return notifyNodeRemovedFromDocument(oldParentOfRemovedTree, treeScopeChange, child);
+    return notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, child);
 }
 
 void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)

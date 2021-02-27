@@ -128,7 +128,6 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , CanvasBase(IntSize(defaultWidth, defaultHeight))
     , ActiveDOMObject(document)
 {
-    addInclusiveAncestorState(AncestorState::Canvas);
     ASSERT(hasTagName(canvasTag));
 }
 
@@ -1050,10 +1049,7 @@ Node::InsertedIntoAncestorResult HTMLCanvasElement::insertedIntoAncestor(Inserti
             document.canvasChanged(*this, FloatRect { });
     }
 
-    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    addInclusiveAncestorState(AncestorState::Canvas);
-
-    return InsertedIntoAncestorResult::Done;
+    return HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -1064,7 +1060,6 @@ void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNo
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    addInclusiveAncestorState(AncestorState::Canvas);
 }
 
 bool HTMLCanvasElement::needsPreparationForDisplay()
