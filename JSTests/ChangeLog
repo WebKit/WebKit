@@ -1,3 +1,15 @@
+2021-02-26  Michael Saboff  <msaboff@apple.com>
+
+        Followup test fix to r273594
+        https://bugs.webkit.org/show_bug.cgi?id=222506
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/regexp-max-size.js:
+        (testTooBigBMPRegExp):
+        (testTooBigNonBMPRegExp):
+        (testAll):
+
 2021-02-26  Saam Barati  <sbarati@apple.com>
 
         Remove bad assertion of AI ArrayMode state in various "by val" opcodes

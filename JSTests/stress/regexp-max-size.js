@@ -17,7 +17,7 @@ function testMaxBMPRegExp() {
 }
 
 function testTooBigBMPRegExp() {
-    let patt = '\u{1234}{4294967294}\u{4567}';
+    let patt = '\u{1234}{4294967295}\u{4567}';
     const re = RegExp(patt, 'u');
     return "\u{1234}\u{1234}\u{4567}".match(re);
 }
@@ -29,13 +29,13 @@ function testMaxNonBMPRegExp() {
 }
 
 function testTooBigNonBMPRegExp() {
-    let patt = '\u{10234}{2147483646}\u{10100}';
+    let patt = '\u{10234}{2147483647}\u{10100}';
     const re = RegExp(patt, 'u');
     return "\u{10234}\u{10234}\u{10100}".match(re);
 }
 
-let shouldCompile = [testMaxRegExp, testMaxRegExp, testMaxRegExp];
-let shouldntCompile = [testTooBigRegExp, testTooBigRegExp, testTooBigRegExp];
+let shouldCompile = [testMaxRegExp, testMaxBMPRegExp, testMaxNonBMPRegExp];
+let shouldntCompile = [testTooBigRegExp, testTooBigBMPRegExp, testTooBigNonBMPRegExp];
 
 function testAll()
 {
@@ -56,7 +56,7 @@ function testAll()
         }
 
         if (notSyntaxError)
-            throw "This RegExp: " + shouldntCompile + " should throw a Syntax Error when it is compiled";
+            throw "This RegExp: " + shouldntCompile[i] + " should throw a Syntax Error when it is compiled";
     }
 }
 
