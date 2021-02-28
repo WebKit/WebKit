@@ -157,10 +157,9 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto& runs = lineContent.runs;
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
     auto contentLogicalWidth = lineContent.contentLogicalWidth;
-    auto lineBox = LineBox { lineContent.logicalTopLeft, lineLogicalWidth, contentLogicalWidth, runs.size() };
+    auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent);
+    auto lineBox = LineBox { rootBox(), lineContent.logicalTopLeft, lineLogicalWidth, contentLogicalWidth, horizontalAlignmentOffset, runs.size() };
 
-    if (auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent))
-        lineBox.setHorizontalAlignmentOffset(*horizontalAlignmentOffset);
     constructInlineLevelBoxes(lineBox, runs);
     if (m_inlineLevelBoxesNeedVerticalAlignment)
         computeLineBoxHeightAndAlignInlineLevelBoxesVertically(lineBox);
@@ -209,15 +208,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         InlineLayoutUnit lineBoxBottom { 0 };
         InlineLayoutUnit rootInlineBoxTop { 0 };
     };
-    auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { };
-
-    auto createRootInlineBox = [&] {
-        auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.contentLogicalWidth());
-        setVerticalGeometryForInlineBox(*rootInlineBox);
-        simplifiedVerticalAlignment = { { } , rootInlineBox->layoutBounds().height(), rootInlineBox->layoutBounds().ascent - rootInlineBox->baseline() };
-        lineBox.addRootInlineBox(WTFMove(rootInlineBox));
-    };
-    createRootInlineBox();
+    auto& rootInlineBox = lineBox.rootInlineBox();
+    setVerticalGeometryForInlineBox(rootInlineBox);
+    auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { { } , rootInlineBox.layoutBounds().height(), rootInlineBox.layoutBounds().ascent - rootInlineBox.baseline() };
 
     auto createWrappedInlineBoxes = [&] {
         if (runs.isEmpty())
@@ -255,7 +248,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     };
     createWrappedInlineBoxes();
 
-    auto& rootInlineBox = lineBox.rootInlineBox();
     auto lineHasContent = false;
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
