@@ -43,11 +43,11 @@
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/RAMSize.h>
 
+// FIXME: This should go into a WAKViewInternals.h header.
 @interface WAKView (WebViewExtras)
-- (void)_dispatchTileDidDraw:(CALayer*)tile;
+- (void)_dispatchTileDidDraw:(CALayer *)tile;
 - (void)_willStartScrollingOrZooming;
 - (void)_didFinishScrollingOrZooming;
-- (void)_dispatchTileDidDraw;
 - (void)_scheduleRenderingUpdateForPendingTileCacheRepaint;
 @end
 
@@ -55,13 +55,10 @@
     BOOL dead;
 }
 @property(getter=isDead) BOOL dead;
-
 @end
 
 @implementation LegacyTileCacheTombstone
-
 @synthesize dead;
-
 @end
 
 namespace WebCore {
@@ -773,11 +770,6 @@ void LegacyTileCache::setSpeculativeTileCreationEnabled(bool enabled)
     m_isSpeculativeTileCreationEnabled = enabled;
     if (m_isSpeculativeTileCreationEnabled)
         m_tileCreationTimer.startOneShot(0_s);
-}
-
-bool LegacyTileCache::hasPendingDraw() const
-{
-    return !m_savedDisplayRects.isEmpty();
 }
 
 void LegacyTileCache::prepareToDraw()
