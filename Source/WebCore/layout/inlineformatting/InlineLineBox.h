@@ -140,8 +140,6 @@ public:
     InlineLayoutSize logicalSize() const { return logicalRect().size(); }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
-
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
@@ -166,7 +164,6 @@ private:
     friend class LineBoxBuilder;
 
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
-    void setHorizontalAlignmentOffset(InlineLayoutUnit horizontalAlignmentOffset) { m_horizontalAlignmentOffset = horizontalAlignmentOffset; }
 
     void addInlineLevelBox(std::unique_ptr<InlineLevelBox>&&);
 
@@ -181,7 +178,6 @@ private:
     InlineRect m_logicalRect;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasContent { false };
-    Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
     UniqueRef<InlineLevelBox> m_rootInlineBox;

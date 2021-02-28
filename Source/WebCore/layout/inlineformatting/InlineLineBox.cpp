@@ -86,7 +86,6 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
 LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, Optional<InlineLayoutUnit> horizontalAlignmentOffset, size_t numberOfRuns)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { lineLogicalWidth, { } })
     , m_contentLogicalWidth(contentLogicalWidth)
-    , m_horizontalAlignmentOffset(horizontalAlignmentOffset)
     , m_rootInlineBox(makeUniqueRef<LineBox::InlineLevelBox>(rootLayoutBox, horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox))
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(numberOfRuns);
@@ -115,7 +114,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
         runlogicalTop += parentInlineBox->logicalTop();
     }
     InlineLayoutUnit logicalHeight = fontMetrics.height();
-    return { runlogicalTop, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), logicalHeight };
+    return { runlogicalTop, m_rootInlineBox->logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
 InlineRect LineBox::logicalRectForLineBreakBox(const Box& layoutBox) const

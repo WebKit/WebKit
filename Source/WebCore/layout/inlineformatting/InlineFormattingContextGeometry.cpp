@@ -202,7 +202,6 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
-    auto horizontalAligmentOffset = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { });
     struct SimplifiedVerticalAlignment {
         InlineLayoutUnit lineBoxTop { 0 };
         InlineLayoutUnit lineBoxBottom { 0 };
@@ -241,7 +240,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         }
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, horizontalAligmentOffset, lineBox.contentLogicalWidth());
+            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), lineBox.contentLogicalWidth());
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
@@ -268,7 +267,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         };
         lineHasContent = lineHasContent || runHasContent();
 
-        auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
+        auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
         if (run.isBox()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
             auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
