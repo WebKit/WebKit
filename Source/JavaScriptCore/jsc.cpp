@@ -629,7 +629,7 @@ private:
         addFunction(vm, dollar, "detachArrayBuffer", functionTransferArrayBuffer, 1);
         addFunction(vm, dollar, "evalScript", functionDollarEvalScript, 1);
         
-        dollar->putDirect(vm, Identifier::fromString(vm, "global"), this, DontEnum);
+        dollar->putDirect(vm, Identifier::fromString(vm, "global"), globalThis(), DontEnum);
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
             CustomGetterSetter::create(vm, accessorMakeMasquerader, nullptr),
             static_cast<unsigned>(PropertyAttribute::CustomValue)
@@ -1908,11 +1908,12 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     
     JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    while (global.inherits<JSProxy>(vm))
+        global = jsCast<JSProxy*>(global)->target();
     GlobalObject* realm = jsDynamicCast<GlobalObject*>(vm, global);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
-    
+
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(realm, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
     if (evaluationException)

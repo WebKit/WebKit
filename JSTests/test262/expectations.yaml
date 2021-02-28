@@ -606,9 +606,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
-test/built-ins/Function/call-bind-this-realm-undef.js:
-  default: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
-  strict mode: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
 test/built-ins/Function/internals/Call/class-ctor-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
