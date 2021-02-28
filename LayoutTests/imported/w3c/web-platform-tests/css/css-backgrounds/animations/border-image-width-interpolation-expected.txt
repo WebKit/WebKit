@@ -319,34 +319,34 @@ PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [
 PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (0.6) should be [ 70px auto auto  80]
 PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (1) should be [110px auto auto 120]
 PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (1.5) should be [160px auto auto 170]
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "0px auto auto 20 "
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "10px auto auto 20 "
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "40px auto auto 20 "
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "60px auto 120 "
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "70px auto 120 "
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [110px auto 120 auto]
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [110px auto 120 auto]
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [110px auto 120 auto]
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto]
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto]
 PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1) should be [110px auto 120 auto]
-FAIL CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "160px auto 120 "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "0px auto auto 20 "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "10px auto auto 20 "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "40px auto auto 20 "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "60px auto 120 "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "70px auto 120 "
+PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto]
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [110px auto 120 auto]
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [110px auto 120 auto]
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [110px auto 120 auto]
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto]
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto]
 PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1) should be [110px auto 120 auto]
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "160px auto 120 "
-FAIL CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [10px auto auto 20] assert_equals: expected "10px auto auto 20 " but got "0px auto auto 20 "
+PASS CSS Transitions with transition: all: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto]
+PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [10px auto auto 20]
 PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [10px auto auto 20]
-FAIL CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [10px auto auto 20] assert_equals: expected "10px auto auto 20 " but got "40px auto auto 20 "
-FAIL CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "60px auto 120 "
-FAIL CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "70px auto 120 "
+PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [10px auto auto 20]
+PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto]
+PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto]
 PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1) should be [110px auto 120 auto]
-FAIL CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "160px auto 120 "
-FAIL Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [10px auto auto 20] assert_equals: expected "10px auto auto 20 " but got "0px auto auto 20 "
+PASS CSS Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto]
+PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (-0.3) should be [10px auto auto 20]
 PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0) should be [10px auto auto 20]
-FAIL Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [10px auto auto 20] assert_equals: expected "10px auto auto 20 " but got "40px auto auto 20 "
-FAIL Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "60px auto 120 "
-FAIL Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "70px auto 120 "
+PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.3) should be [10px auto auto 20]
+PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.5) should be [110px auto 120 auto]
+PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (0.6) should be [110px auto 120 auto]
 PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1) should be [110px auto 120 auto]
-FAIL Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto] assert_equals: expected "110px auto 120 " but got "160px auto 120 "
+PASS Web Animations: property <border-image-width> from [10px auto auto 20] to [110px auto 120 auto] at (1.5) should be [110px auto 120 auto]
 PASS CSS Transitions: property <border-image-width> from [10px] to [20] at (-0.3) should be [20]
 PASS CSS Transitions: property <border-image-width> from [10px] to [20] at (0) should be [20]
 PASS CSS Transitions: property <border-image-width> from [10px] to [20] at (0.3) should be [20]

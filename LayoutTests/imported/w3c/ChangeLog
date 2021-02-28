@@ -1,3 +1,25 @@
+2021-02-28  Antoine Quint  <graouts@webkit.org>
+
+        Blending of border-image-width should be discrete between "auto" values and other types
+        https://bugs.webkit.org/show_bug.cgi?id=222516
+
+        Reviewed by Dean Jackson.
+
+        Pass an extra 22 WPT interpolation tests for border-image-width. We also get 3 new FAIL results
+        in css/css-transitions/properties-value-auto-001.html but that test seems incorrect in assuming
+        there can be a transition for "clip" between "auto" and a non-auto value, at least Chrome and
+        Firefox both fail the newly-failed tests.
+
+        Incidentally, we also get 50 new PASS results from css-grid tests.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-auto-001-expected.txt:
+
 2021-02-27  Antoine Quint  <graouts@webkit.org>
 
         border-image-slice blending does not account for the fill keyword

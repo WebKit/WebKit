@@ -375,7 +375,7 @@ inline bool Length::isPositive() const
 inline bool Length::isZero() const
 {
     ASSERT(!isUndefined());
-    if (isCalculated())
+    if (isCalculated() || isAuto())
         return false;
     return m_isFloat ? !m_floatValue : !m_intValue;
 }
