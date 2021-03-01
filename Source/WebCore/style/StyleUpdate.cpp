@@ -90,7 +90,9 @@ void Update::addElement(Element& element, Element* parent, ElementUpdates&& elem
     ASSERT(!m_elements.contains(&element));
     ASSERT(composedTreeAncestors(element).first() == parent);
 
+    m_roots.remove(&element);
     addPossibleRoot(parent);
+
     m_elements.add(&element, WTFMove(elementUpdates));
 }
 
@@ -99,6 +101,7 @@ void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
     ASSERT(composedTreeAncestors(text).first() == parent);
 
     addPossibleRoot(parent);
+
     auto result = m_texts.ensure(&text, [&] {
         return WTFMove(textUpdate);
     });
