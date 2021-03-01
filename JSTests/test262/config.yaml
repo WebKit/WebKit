@@ -23,7 +23,6 @@ skip:
     - legacy-regexp
 
     - cleanupSome
-    - host-gc-required
   paths:
   files:
     # Slightly different formatting. We should update test262 side.

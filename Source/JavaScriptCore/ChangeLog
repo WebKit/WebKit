@@ -1,5 +1,19 @@
 2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add gc and clearKeptObjects to $262
+        https://bugs.webkit.org/show_bug.cgi?id=222527
+
+        Reviewed by Ross Kirsling.
+
+        Add $262.gc and $262.clearKeptObjects functions. They are required for test262 host-gc-required.
+        Since all the tests using "host-gc-required" are currently also marked with cleanupSome, we are currently not running them.
+        But if some more tests are landed in test262 with "host-gc-required", we will run them with these functions.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update test262 host environments
         https://bugs.webkit.org/show_bug.cgi?id=222525
 
