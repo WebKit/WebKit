@@ -42,7 +42,7 @@ namespace Wasm {
 class Module;
 struct ModuleInformation;
 class Plan;
-using SignatureIndex = uint64_t;
+using SignatureIndex = uintptr_t;
 }
 
 class SymbolTable;

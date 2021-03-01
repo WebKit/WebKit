@@ -41,7 +41,7 @@ class LLIntPlan;
 struct Context;
 struct ModuleInformation;
 
-using SignatureIndex = uint64_t;
+using SignatureIndex = uintptr_t;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:

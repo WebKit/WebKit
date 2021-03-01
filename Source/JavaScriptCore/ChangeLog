@@ -1,3 +1,19 @@
+2021-03-01  Xan Lopez  <xan@igalia.com>
+
+        [JSC] WebAssembly: make Wasm::Signature 32bit friendly
+        https://bugs.webkit.org/show_bug.cgi?id=222543
+
+        Reviewed by Yusuke Suzuki.
+
+        The Wasm code uses the address of a Signature object as its
+        index. To make this work in 32bit just change Wasm::SignatureIndex
+        to be a uintptr_t instead of uint64_t. Also, remove some
+        unnecessary includes while we are at it.
+
+        * wasm/WasmModule.h:
+        * wasm/WasmSignature.h:
+        * wasm/js/JSWebAssemblyModule.h:
+
 2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Throw TypeError when getFunctionRealm hits revoked Proxy
