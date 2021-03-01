@@ -146,6 +146,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
     }
 

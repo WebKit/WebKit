@@ -1,3 +1,12 @@
+2021-03-01  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Some DisplayList items may not be replayed back before calling getImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=222343
+
+        Reviewed by Tim Horton.
+
+        * gpu-process/TestExpectations:
+
 2021-03-01  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r272004): transform transition with delay doesn't behave correctly

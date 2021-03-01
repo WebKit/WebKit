@@ -5,12 +5,6 @@ compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
 
 # webkit.org/b/220389
-fast/canvas/canvas-arc-360-winding.html [ Failure ]
-fast/canvas/canvas-arc-connecting-line.html [ Failure ]
-fast/canvas/canvas-arc-zero-lineto.html [ Failure ]
-fast/canvas/canvas-bezier-same-endpoint.html [ Failure Pass ]
-fast/canvas/canvas-blend-image.html [ Failure Pass ]
-fast/canvas/canvas-blend-solid.html [ Failure Pass ]
 fast/canvas/canvas-drawImage-composite-copy.html [ ImageOnlyFailure ]
 fast/canvas/canvas-render-layer.html [ Failure ]
 fast/canvas/hidpi-repaint-on-retina-leaves-bits-behind.html [ ImageOnlyFailure ]
@@ -50,7 +44,6 @@ imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFai
 imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.2.html [ Crash ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
