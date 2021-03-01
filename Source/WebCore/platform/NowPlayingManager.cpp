@@ -64,7 +64,9 @@ void NowPlayingManager::setNowPlayingInfo(Client& client, NowPlayingInfo&& nowPl
 
     m_remoteCommandListener->setSupportsSeeking(nowPlayingInfo.supportsSeeking);
     m_client = makeWeakPtr(client);
+#if PLATFORM(COCOA)
     bool wasPlaying = !!m_nowPlayingInfo;
+#endif
     m_nowPlayingInfo = WTFMove(nowPlayingInfo);
 
 #if PLATFORM(COCOA)
