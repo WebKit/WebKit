@@ -239,7 +239,9 @@ bool AppHighlightStorage::restoreAppHighlight(Ref<SharedBuffer>&& buffer)
         return false;
 
     auto range = findRange(*appHighlightRangeData, *strongDocument);
-
+    
+    if (!range)
+        return false;
     strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
 
     return true;

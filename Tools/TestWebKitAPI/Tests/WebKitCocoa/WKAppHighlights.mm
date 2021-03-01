@@ -80,6 +80,35 @@ TEST(AppHighlights, AppHighlightCreateAndRestore)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(AppHighlights, AppHighlightRestoreFailure)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto delegate = adoptNS([[AppHighlightDelegate alloc] init]);
+    auto webViewCreate = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webViewCreate _setAppHighlightDelegate:delegate.get()];
+    [webViewCreate synchronouslyLoadHTMLString:@"Test"];
+    [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
+    __block bool finished = NO;
+    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup) {
+        EXPECT_EQ(delegateWebView, webViewCreate.get());
+        EXPECT_NOT_NULL(highlight);
+        EXPECT_WK_STREQ(highlight.text, @"Test");
+        EXPECT_NOT_NULL(highlight.highlight);
+        
+        [webViewRestore synchronouslyLoadHTMLString:@"Not the same"];
+        [webViewRestore _restoreAppHighlights:@[ highlight.highlight ]];
+        
+        TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+            return ![webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue;
+        }, 2, @"Expected Highlights to be populated.");
+        
+        finished = YES;
+    }];
+    [webViewCreate _addAppHighlight];
+    TestWebKitAPI::Util::run(&finished);
+}
+
 }
 
 #endif
