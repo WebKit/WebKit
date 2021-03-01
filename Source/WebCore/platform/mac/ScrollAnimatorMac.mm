@@ -302,41 +302,28 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 }
 #endif
 
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-@interface WebScrollbarPartAnimation : NSAnimation
-#else
 @interface WebScrollbarPartAnimation : NSObject
-#endif
 {
     Scrollbar* _scrollbar;
     RetainPtr<NSScrollerImp> _scrollerImp;
     FeatureToAnimate _featureToAnimate;
     CGFloat _startValue;
     CGFloat _endValue;
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     NSTimeInterval _duration;
     RetainPtr<NSTimer> _timer;
     RetainPtr<NSDate> _startDate;
     RefPtr<CubicBezierTimingFunction> _timingFunction;
-#endif
 }
 - (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setCurrentProgress:(NSTimer *)timer;
 - (void)setDuration:(NSTimeInterval)duration;
 - (void)stopAnimation;
-#endif
 @end
 
 @implementation WebScrollbarPartAnimation
 
 - (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
 {
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    self = [super initWithDuration:duration animationCurve:NSAnimationEaseInOut];
-    if (!self)
-        return nil;
-#else
     self = [super init];
     if (!self)
         return nil;
@@ -345,7 +332,6 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
     _timer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:0] interval:timeInterval target:self selector:@selector(setCurrentProgress:) userInfo:nil repeats:YES]);
     _duration = duration;
     _timingFunction = CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut);
-#endif
 
     LOG_WITH_STREAM(OverlayScrollbars, stream << "Creating WebScrollbarPartAnimation for " << featureToAnimate << " from " << startValue << " to " << endValue);
 
@@ -353,10 +339,6 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
     _featureToAnimate = featureToAnimate;
     _startValue = startValue;
     _endValue = endValue;
-
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    [self setAnimationBlockingMode:NSAnimationNonblocking];
-#endif
 
     return self;
 }
@@ -369,12 +351,8 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 
     LOG_WITH_STREAM(OverlayScrollbars, stream << "-[WebScrollbarPartAnimation " << self << "startAnimation] for " << _featureToAnimate);
 
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    [super startAnimation];
-#else
     [[NSRunLoop mainRunLoop] addTimer:_timer.get() forMode:NSDefaultRunLoopMode];
     _startDate = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:0]);
-#endif
 }
 
 - (void)setStartValue:(CGFloat)startValue
@@ -387,15 +365,8 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
     _endValue = endValue;
 }
 
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-- (void)setCurrentProgress:(NSAnimationProgress)progress
-#else
 - (void)setCurrentProgress:(NSTimer *)timer
-#endif
 {
-#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    [super setCurrentProgress:progress];
-#else
     CGFloat progress = 0;
     NSDate *now = [NSDate dateWithTimeIntervalSinceNow:0];
     NSTimeInterval elapsed = [now timeIntervalSinceDate:_startDate.get()];
@@ -408,7 +379,6 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
             t = elapsed / _duration;
         progress = _timingFunction->transformTime(t, _duration);
     }
-#endif
     ASSERT(_scrollbar);
 
     LOG_WITH_STREAM(OverlayScrollbars, stream << "-[WebScrollbarPartAnimation " << self << "setCurrentProgress:" << progress <<"] for " << _featureToAnimate);
@@ -446,7 +416,6 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
     _scrollbar = 0;
 }
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setDuration:(NSTimeInterval)duration
 {
     _duration = duration;
@@ -456,7 +425,6 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 {
     [_timer invalidate];
 }
-#endif
 
 @end
 

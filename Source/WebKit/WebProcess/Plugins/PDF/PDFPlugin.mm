@@ -628,12 +628,10 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = frame.coreFrame()->view();
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
     }
-#endif
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {

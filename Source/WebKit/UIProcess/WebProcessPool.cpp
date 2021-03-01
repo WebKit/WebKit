@@ -686,9 +686,7 @@ static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayC
     auto screenProperties = WebCore::collectScreenProperties();
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-#endif
     }
 }
 
@@ -1949,7 +1947,7 @@ void WebProcessPool::resetMockMediaDevices()
 
 void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     auto display = CGSMainDisplayID();
 
     for (auto& processPool : WebProcessPool::allProcessPools()) {

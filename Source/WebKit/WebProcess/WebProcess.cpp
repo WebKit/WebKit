@@ -154,6 +154,10 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <WebCore/DisplayRefreshMonitorManager.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "WebSQLiteDatabaseTracker.h"
 #endif
@@ -210,10 +214,6 @@
 #if PLATFORM(COCOA)
 #include <WebCore/SystemBattery.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
-#endif
-
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include <WebCore/DisplayRefreshMonitorManager.h>
 #endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
@@ -1882,7 +1882,7 @@ bool WebProcess::areAllPagesThrottleable() const
     });
 }
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 void WebProcess::displayWasRefreshed(uint32_t displayID)
 {
     ASSERT(RunLoop::isMain());

@@ -1,3 +1,56 @@
+2021-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING which is always true for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=222459
+
+        Reviewed by Sam Weinig.
+
+        ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING is always defined for PLATFORM(MAC), so remove it,
+        replacing with PLATFORM(MAC) in a few places. In order to reduce the number PLATFORM(MAC), define
+        HAVE(CVDISPLAYLINK) and use it in WK2 code that relates to DisplayLinks.
+
+        * Platform/cocoa/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        (WebKit::setClientsMayIgnoreEvents):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ScrollingObserver::singleton):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::updateCurrentModifierState):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::displayReconfigurationCallBack):
+        (WebKit::WebProcessPool::sendDisplayConfigurationChangedMessageForTesting):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::processWillShutDown):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp:
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::stopDisplayLink):
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize):
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DrawingArea::createDisplayRefreshMonitor):
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2021-03-01  Chris Dumez  <cdumez@apple.com>
 
         Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess

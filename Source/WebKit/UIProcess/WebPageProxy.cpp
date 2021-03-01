@@ -224,6 +224,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "DisplayLink.h"
 #include <WebCore/ImageUtilities.h>
 #include <WebCore/UTIUtilities.h>
 #endif
@@ -294,10 +295,6 @@
 #include "WebDateTimePicker.h"
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include "DisplayLink.h"
-#endif
-
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -321,7 +318,7 @@ using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 class ScrollingObserver {
     WTF_MAKE_NONCOPYABLE(ScrollingObserver);
     WTF_MAKE_FAST_ALLOCATED;
@@ -348,7 +345,7 @@ ScrollingObserver& ScrollingObserver::singleton()
     static NeverDestroyed<ScrollingObserver> detector;
     return detector;
 }
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#endif
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -2747,7 +2744,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     ScrollingObserver::singleton().willSendWheelEvent();
 #endif
 
@@ -9935,7 +9932,7 @@ void WebPageProxy::getIsViewVisible(bool& result)
 
 void WebPageProxy::updateCurrentModifierState()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     send(Messages::WebPage::UpdateCurrentModifierState(modifiers));
 #endif

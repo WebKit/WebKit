@@ -202,13 +202,10 @@ IORegistryGPUID primaryGPUID()
 
 IORegistryGPUID gpuIDForDisplay(PlatformDisplayID displayID)
 {
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (auto data = screenData(displayID))
         return data->gpuID;
+
     return 0;
-#else
-    return gpuIDForDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
-#endif
 }
 
 IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)

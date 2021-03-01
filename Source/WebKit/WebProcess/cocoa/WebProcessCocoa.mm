@@ -352,7 +352,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         launchServicesExtension->revoke();
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     // App nap must be manually enabled when not running the NSApplication run loop.
     __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
 #endif
@@ -388,7 +388,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     WebCore::setScreenProperties(parameters.screenProperties);
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
 
@@ -633,21 +633,12 @@ void WebProcess::registerWithStateDumper()
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
     auto retval = CGSSetDenyWindowServerConnections(true);
     RELEASE_ASSERT(retval == kCGErrorSuccess);
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
-#else
-
-    if (![NSApp isRunning]) {
-        // This call is needed when the WebProcess is not running the NSApplication event loop.
-        // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
-        launchServicesCheckIn();
-    }
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
@@ -992,7 +983,7 @@ void WebProcess::updateFreezerStatus()
 }
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
 void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
 {
     ScrollerStyle::setUseOverlayScrollbars(useOverlayScrollbars);

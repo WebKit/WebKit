@@ -106,7 +106,7 @@ private:
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEvent::Type, bool didHandleEvent);
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     void displayWasRefreshed(WebCore::PlatformDisplayID);
 #endif
 

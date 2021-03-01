@@ -62,11 +62,6 @@ void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context
     if (!context)
         return;
 
-#if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (!m_contexts.size())
-        CGDisplayRegisterReconfigurationCallback(displayWasReconfigured, nullptr);
-#endif
-
     ASSERT(!m_contexts.contains(context));
     m_contexts.append(context);
 }
@@ -76,10 +71,6 @@ void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* cont
     if (!m_contexts.contains(context))
         return;
     m_contexts.removeFirst(context);
-#if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (!m_contexts.size())
-        CGDisplayRemoveReconfigurationCallback(displayWasReconfigured, nullptr);
-#endif
 }
 
 void GraphicsContextGLOpenGLManager::recycleContextIfNecessary()

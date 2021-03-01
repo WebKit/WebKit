@@ -349,7 +349,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     
     m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
         if (hostWindow && hostWindow->displayID())
             displayMask = displayMaskForDisplay(hostWindow->displayID());

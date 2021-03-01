@@ -111,7 +111,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(COCOA)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
@@ -188,7 +188,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DidWriteToPasteboardAsynchronously(String pasteboardName);
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     DisplayWasRefreshed(uint32_t displayID)
 #endif
 

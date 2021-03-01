@@ -82,7 +82,7 @@ void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void 
     function();
 }
 
-#if !(PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING))
+#if !PLATFORM(MAC)
 RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
 {
     return nullptr;

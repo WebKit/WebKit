@@ -291,7 +291,7 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 #endif
 }
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
 {
     ASSERT(!RunLoop::isMain());

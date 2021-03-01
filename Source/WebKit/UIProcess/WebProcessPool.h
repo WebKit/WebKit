@@ -70,11 +70,9 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
 
 #if PLATFORM(MAC)
-#import <WebCore/PowerObserverMac.h>
-#import <pal/system/SystemSleepListener.h>
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include "DisplayLink.h"
-#endif
+#include <WebCore/PowerObserverMac.h>
+#include <pal/system/SystemSleepListener.h>
 #endif
 
 namespace API {
@@ -240,7 +238,7 @@ public:
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     Optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
     void startDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
     void stopDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
@@ -667,9 +665,7 @@ private:
     RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_accessibilityDisplayOptionsNotificationObserver;
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
-#endif
     RetainPtr<NSObject> m_deactivationObserver;
     RetainPtr<WKWebInspectorPreferenceObserver> m_webInspectorPreferenceObserver;
 
@@ -753,7 +749,7 @@ private:
 
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
 #endif
 

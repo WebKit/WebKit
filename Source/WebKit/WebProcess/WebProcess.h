@@ -503,7 +503,7 @@ private:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     void displayWasRefreshed(uint32_t displayID);
 #endif
 
@@ -523,7 +523,7 @@ private:
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
