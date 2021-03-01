@@ -1,3 +1,14 @@
+2021-03-01  Youenn Fablet  <youenn@apple.com>
+
+        [GPUP] Fix WebRTC layout test failures with GPU Process enabled
+        https://bugs.webkit.org/show_bug.cgi?id=222505
+        <rdar://problem/74814573>
+
+        Unreviewed.
+
+        * gpu-process/TestExpectations:
+        Removed no longer valid expectations.
+
 2021-02-27  Sam Weinig  <weinig@apple.com>
 
        Remove support for 'pixel' and 'pos' CSSOM prefixes
