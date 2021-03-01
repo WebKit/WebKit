@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content" role="group">
+    <p>Think <em>different</em> <a href="apple.com">Apple</a></p>
+    <p><b>bold</b> <i>italic</i><br><u>underline</u> <em>last!</em></p>
+    <button>Hello World!</button>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test that textMarkerRangeForRange works properly.");
+
+    if (window.accessibilityController) {
+        axElement = accessibilityController.accessibleElementById("content");
+        contentTextMarkerRange = axElement.textMarkerRangeForElement(axElement);
+        textLength = axElement.stringForTextMarkerRange(contentTextMarkerRange).length;
+        debug("content length: " + textLength);
+
+        debug("All ranges from index 0 to each character in the text:");
+        for (i = 0; i < textLength; ++i) {
+            debug(i);
+            textMarkerRange = axElement.textMarkerRangeForRange(0, i);
+            debug("'" + axElement.stringForTextMarkerRange(textMarkerRange) + "'");
+        }
+
+        debug("Get the range for the word Apple:");
+        textMarkerRange = axElement.textMarkerRangeForRange(16, 5);
+        debug("'" + axElement.stringForTextMarkerRange(textMarkerRange) + "'");
+
+        debug("Out of range values:");
+        textMarkerRange = axElement.textMarkerRangeForRange(0, 100);
+        debug("'" + axElement.stringForTextMarkerRange(textMarkerRange) + "'");
+        textMarkerRange = axElement.textMarkerRangeForRange(70, 100);
+        debug("'" + axElement.stringForTextMarkerRange(textMarkerRange) + "'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

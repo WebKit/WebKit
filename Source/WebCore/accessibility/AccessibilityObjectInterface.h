@@ -49,6 +49,8 @@
 OBJC_CLASS WebAccessibilityObjectWrapper;
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 typedef struct _NSRange NSRange;
+typedef const struct __AXTextMarker* AXTextMarkerRef;
+typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
 #elif USE(ATK)
 typedef struct _WebKitAccessible WebKitAccessible;
 typedef struct _WebKitAccessible AccessibilityObjectWrapper;
@@ -1274,6 +1276,10 @@ public:
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
 
     virtual Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const = 0;
+#if PLATFORM(MAC)
+    // FIXME: make this a COCOA method.
+    virtual AXTextMarkerRangeRef textMarkerRangeForNSRange(const NSRange&) const = 0;
+#endif
 
     virtual String stringForRange(const SimpleRange&) const = 0;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const = 0;

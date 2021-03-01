@@ -1,22 +1,87 @@
-    2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
 
-            Unreviewed, reverting r273390 and r273391.
-            https://bugs.webkit.org/show_bug.cgi?id=222449
+        Cherry-pick r273227. rdar://problem/74880937
 
-            Didn't fix the extreme test variance, and caused some internal
-            performance bots to hang during testing
+    Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
+    https://bugs.webkit.org/show_bug.cgi?id=222154
+    
+    Reviewed by Chris Fleizach and Darin Adler.
+    
+    Source/WebCore:
+    
+    Test: accessibility/mac/textmarker-range-for-range.html
+    
+    Clients like VoiceOver often need the ability to convert a text range
+    into an accessibility TextMarkerRange.
+    This patch adds [WebAccessibilityObjectWrapper textMarkerRangeForNSRange]
+    to allow clients to efficiently perform this conversion.
+    This is the Mac implementation, iOS implementation is pending.
+    
+    * accessibility/AccessibilityObject.h:
+    (WebCore::AccessibilityObject::allowsTextRanges const):
+    * accessibility/AccessibilityObjectInterface.h:
+    * accessibility/isolatedtree/AXIsolatedObject.h:
+    * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+    (WebCore::AXIsolatedObject::textMarkerRangeForNSRange const):
+    * accessibility/mac/AccessibilityObjectMac.mm:
+    (WebCore::AccessibilityObject::textMarkerRangeForNSRange const):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper textMarkerRangeForNSRange:]):
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    * editing/Editing.cpp:
+    (WebCore::visiblePositionForIndexUsingCharacterIterator):
+    Only advance the CharacterIterator if not atEnd yet.
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    
+    LayoutTests:
+    
+    * accessibility/mac/textmarker-range-for-range-expected.txt: Added.
+    * accessibility/mac/textmarker-range-for-range.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273227 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-            Reverted changesets:
+    2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
 
-            "MotionMark scores are super sensitive to a single long frame"
-            https://bugs.webkit.org/show_bug.cgi?id=220847
-            https://trac.webkit.org/changeset/273390
+            Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
+            https://bugs.webkit.org/show_bug.cgi?id=222154
 
-            "MotionMark scores are super sensitive to a single long frame"
-            https://bugs.webkit.org/show_bug.cgi?id=220847
-            https://trac.webkit.org/changeset/273391
+            Reviewed by Chris Fleizach and Darin Adler.
 
-            * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+
+        2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+                Unreviewed, reverting r273390 and r273391.
+                https://bugs.webkit.org/show_bug.cgi?id=222449
+
+                Didn't fix the extreme test variance, and caused some internal
+                performance bots to hang during testing
+
+                Reverted changesets:
+
+                "MotionMark scores are super sensitive to a single long frame"
+                https://bugs.webkit.org/show_bug.cgi?id=220847
+                https://trac.webkit.org/changeset/273390
+
+                "MotionMark scores are super sensitive to a single long frame"
+                https://bugs.webkit.org/show_bug.cgi?id=220847
+                https://trac.webkit.org/changeset/273391
+
+                * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
 
 2021-02-25  Russell Epstein  <repstein@apple.com>
 

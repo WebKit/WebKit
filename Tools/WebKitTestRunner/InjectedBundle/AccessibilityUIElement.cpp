@@ -102,6 +102,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return 
 #endif
 
 #if !PLATFORM(MAC) || !HAVE(ACCESSIBILITY)
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned, unsigned) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange() { return nullptr; }
 void AccessibilityUIElement::resetSelectedTextMarkerRange() { }
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
