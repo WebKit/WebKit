@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -78,6 +78,32 @@ class MyClass {
         return 0
     }
 
+}
+
+struct MyStruct {
+    // `MyStruct.structFunction(argument:)`
+    func structFunction(argument arg: Arg) {
+    }
+}
+
+enum MyEnum {
+    case a, b, c
+
+    // `MyEnum.enumFunction(argument:)`
+    func enumFunction(argument arg: Arg) {
+    }
+}
+
+protocol MyProtocol {
+    // `MyProtocol.protocolFunction(argument:)`
+    func protocolFunction(argument arg: Arg) {
+    }
+}
+
+extension ExtendedType {
+    // `ExtendedType.extensionFunction(argument:)`
+    func extensionFunction(argument arg: Arg) {
+    }
 }
 
 // Swift functions also support type overloading. Traditionally we don't include types in

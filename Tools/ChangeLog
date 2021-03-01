@@ -1,3 +1,28 @@
+2021-03-01  Adam Roben  <aroben@apple.com>
+
+        Teach prepare-ChangeLog to recognize Swift structs/enums/protocols/extensions
+        https://bugs.webkit.org/show_bug.cgi?id=222551
+
+        It formerly only knew how to recognize classes.
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_swift): Replaced "class" with "type" in
+        variable names to make them more general. Generalized the pattern used
+        to find class declarations to find struct/enum/protocol/extension
+        declarations as well.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests-expected.txt:
+        Added new ranges to the results.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests.swift:
+        (MyStruct.structFunction(argument:)):
+        (MyEnum.enumFunction(argument:)):
+        (MyProtocol.protocolFunction(argument:)):
+        (ExtendedType.extensionFunction(argument:)):
+        Added these new types/functions (and look, they got parsed!).
+
 2021-02-27  Megan Gardner  <megan_gardner@apple.com>
 
         API test for AppHighlights

@@ -47,5 +47,25 @@
       '79',
       'MyClass.readOnlyComputedVariable'
     ],
+    [
+      '85',
+      '86',
+      'MyStruct.structFunction(argument:)'
+    ],
+    [
+      '93',
+      '94',
+      'MyEnum.enumFunction(argument:)'
+    ],
+    [
+      '99',
+      '100',
+      'MyProtocol.protocolFunction(argument:)'
+    ],
+    [
+      '105',
+      '106',
+      'ExtendedType.extensionFunction(argument:)'
+    ],
   ]
 }
