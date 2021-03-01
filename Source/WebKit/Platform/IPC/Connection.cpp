@@ -81,9 +81,9 @@ public:
         m_waitForSyncReplySemaphore.signal();
     }
 
-    bool wait(TimeWithDynamicClockType absoluteTime)
+    bool wait(Timeout timeout)
     {
-        return m_waitForSyncReplySemaphore.waitUntil(absoluteTime);
+        return m_waitForSyncReplySemaphore.waitUntil(timeout.deadline());
     }
 
     // Returns true if this message will be handled on a client thread that is currently
@@ -450,7 +450,7 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
         auto wrappedMessage = createSyncMessageEncoder(MessageName::WrappedAsyncMessageForTesting, encoder->destinationID(), syncRequestID);
         wrappedMessage->setFullySynchronousModeForTesting();
         wrappedMessage->wrapForTesting(WTFMove(encoder));
-        return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Seconds::infinity(), { }));
+        return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Timeout::infinity(), { }));
     }
 
     if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply)
@@ -480,12 +480,12 @@ bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
     return sendMessage(WTFMove(encoder), { });
 }
 
-Seconds Connection::timeoutRespectingIgnoreTimeoutsForTesting(Seconds timeout) const
+Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) const
 {
-    return m_ignoreTimeoutsForTesting ? Seconds::infinity() : timeout;
+    return m_ignoreTimeoutsForTesting ? Timeout::infinity() : timeout;
 }
 
-std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)
+std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     ASSERT(RunLoop::isMain());
     auto protectedThis = makeRef(*this);
@@ -539,8 +539,6 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         m_waitingForMessage = &waitingForMessage;
     }
 
-    MonotonicTime absoluteTimeout = MonotonicTime::now() + timeout;
-
     // Now wait for it to be set.
     while (true) {
         // Handle any messages that are blocked on a response from us.
@@ -555,7 +553,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         }
 
         // Now we wait.
-        bool didTimeout = !m_waitForMessageCondition.waitUntil(lock, absoluteTimeout);
+        bool didTimeout = !m_waitForMessageCondition.waitUntil(lock, timeout.deadline());
         // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
         if (didTimeout || m_waitingForMessage->messageWaitingInterrupted) {
             m_waitingForMessage = nullptr;
@@ -566,7 +564,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     return nullptr;
 }
 
-std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     ASSERT(RunLoop::isMain());
 
@@ -616,10 +614,9 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     return reply;
 }
 
-std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, MessageName messageName, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, MessageName messageName, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
-    MonotonicTime absoluteTime = MonotonicTime::now() + timeout;
 
     willSendSyncMessage(sendSyncOptions);
     
@@ -657,7 +654,7 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Me
         // We didn't find a sync reply yet, keep waiting.
         // This allows the WebProcess to still serve clients while waiting for the message to return.
         // Notably, it can continue to process accessibility requests, which are on the main thread.
-        timedOut = !SyncMessageState::singleton().wait(absoluteTime);
+        timedOut = !SyncMessageState::singleton().wait(timeout);
     }
 
 #if OS(DARWIN)

@@ -25,51 +25,29 @@
 
 #pragma once
 
-#include "Timeout.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
-#include <wtf/Seconds.h>
-
-#if OS(DARWIN)
-#include <mach/semaphore.h>
-#include <wtf/MachSendRight.h>
-#endif
+#include <algorithm>
+#include <wtf/MonotonicTime.h>
+#include <wtf/TimeWithDynamicClockType.h>
 
 namespace IPC {
 
-class Decoder;
-class Encoder;
-
-class Semaphore {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(Semaphore);
+class Timeout {
 public:
-    Semaphore();
-    Semaphore(Semaphore&&);
-    ~Semaphore();
-    Semaphore& operator=(Semaphore&&);
-
-    void encode(Encoder&) const;
-    static Optional<Semaphore> decode(Decoder&);
-
-#if OS(DARWIN)
-    explicit Semaphore(MachSendRight&&);
-
-    void signal();
-    void wait();
-    void waitFor(Timeout);
-    MachSendRight createSendRight() const;
-    explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
-#else
-    explicit operator bool() const { return true; }
-#endif
-
+    Timeout(Seconds timeDelta)
+        : m_deadline(MonotonicTime::now() + timeDelta)
+    {
+    }
+    static constexpr Timeout infinity() { return Timeout { }; }
+    static Timeout now() { return 0_s; }
+    Seconds secondsUntilDeadline() const { return std::max(m_deadline - MonotonicTime::now(), 0_s ); }
+    constexpr MonotonicTime deadline() const { return m_deadline; }
+    bool didTimeOut() const { return MonotonicTime::now() >= m_deadline; }
 private:
-#if OS(DARWIN)
-    void destroy();
-    MachSendRight m_sendRight;
-    semaphore_t m_semaphore { SEMAPHORE_NULL };
-#endif
+    explicit constexpr Timeout()
+        : m_deadline(MonotonicTime::infinity())
+    {
+    }
+    MonotonicTime m_deadline;
 };
 
-} // namespace IPC
+}

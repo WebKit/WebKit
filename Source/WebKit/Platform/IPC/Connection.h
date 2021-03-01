@@ -32,6 +32,7 @@
 #include "Encoder.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
+#include "Timeout.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -240,9 +241,9 @@ public:
     // Sync senders should check the SendSyncResult for true/false in case they need to know if the result was really received.
     // Sync senders should hold on to the SendSyncResult in case they reference the contents of the reply via DataRefererence / ArrayReference.
     using SendSyncResult = std::unique_ptr<Decoder>;
-    template<typename T> SendSyncResult sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
-    template<typename> bool waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
-    template<typename> bool waitForAsyncCallbackAndDispatchImmediately(uint64_t callbackID, Seconds timeout); // Main thread only.
+    template<typename T> SendSyncResult sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
+    template<typename> bool waitForAndDispatchImmediately(uint64_t destinationID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
+    template<typename> bool waitForAsyncCallbackAndDispatchImmediately(uint64_t callbackID, Timeout); // Main thread only.
 
     // Thread-safe.
     template<typename T, typename C, typename U>
@@ -260,21 +261,21 @@ public:
 
     // Main thread only.
     template<typename T, typename U>
-    SendSyncResult sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    SendSyncResult sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         return sendSync<T>(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
     
     // Main thread only.
     template<typename T, typename U>
-    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { })
+    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions = { })
     {
         return waitForAndDispatchImmediately<T>(destinationID.toUInt64(), timeout, waitForOptions);
     }
 
     bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
     std::unique_ptr<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, uint64_t& syncRequestID);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
+    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(std::unique_ptr<Encoder>);
 
     void wakeUpRunLoop();
@@ -320,9 +321,9 @@ private:
 
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
-    std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption>);
+    std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
     
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Seconds timeout, OptionSet<SendSyncOption>);
+    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
@@ -349,7 +350,7 @@ private:
     void willSendSyncMessage(OptionSet<SendSyncOption>);
     void didReceiveSyncReply(OptionSet<SendSyncOption>);
 
-    Seconds timeoutRespectingIgnoreTimeoutsForTesting(Seconds) const;
+    Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
 
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);
@@ -549,7 +550,7 @@ void moveTuple(std::tuple<A...>&& a, std::tuple<B...>& b)
     TupleMover<sizeof...(A), std::tuple<A...>, std::tuple<B...>>::move(WTFMove(a), b);
 }
 
-template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
     RELEASE_ASSERT(RunLoop::isMain());
@@ -579,7 +580,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     return replyDecoder;
 }
 
-template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)
+template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     std::unique_ptr<Decoder> decoder = waitForMessage(T::name(), destinationID, timeout, waitForOptions);
@@ -591,7 +592,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
     return true;
 }
 
-template<typename T> bool Connection::waitForAsyncCallbackAndDispatchImmediately(uint64_t destinationID, Seconds timeout)
+template<typename T> bool Connection::waitForAsyncCallbackAndDispatchImmediately(uint64_t destinationID, Timeout timeout)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     std::unique_ptr<Decoder> decoder = waitForMessage(T::asyncMessageReplyName(), destinationID, timeout, { });

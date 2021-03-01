@@ -1,3 +1,50 @@
+2021-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Timeout calculations are error-prone for compound IPC operations
+        https://bugs.webkit.org/show_bug.cgi?id=222305
+
+        Reviewed by Geoffrey Garen.
+
+        Add Timeout class to hold the timeout value in blocking functions
+        of IPC::.
+        This makes it possible to forward absolute points of time as the timeout
+        value, as well as preserving the ability to pass points of time relative
+        to the invocation.
+
+        Call the concept Timeout instead of TimeOut since word 'timeout' is an
+        English word and preferable when used as a noun according to ell stackoverflow.
+
+        No new tests, a refactor.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::waitForSyncReply):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendSync):
+        (IPC::Connection::waitForAndDispatchImmediately):
+        (IPC::Connection::waitForAsyncCallbackAndDispatchImmediately):
+        * Platform/IPC/IPCSemaphore.h:
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendSync):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::send):
+        (IPC::StreamClientConnection::sendSync):
+        (IPC::StreamClientConnection::trySendDestinationIDIfNeeded):
+        (IPC::StreamClientConnection::tryAcquire):
+        Here are few examples of compound use-case.
+
+        * Platform/IPC/Timeout.h: Copied from Source/WebKit/Platform/IPC/IPCSemaphore.h.
+        (IPC::Timeout::Timeout):
+        (IPC::Timeout::infinity):
+        (IPC::Timeout::operator Seconds const):
+        (IPC::Timeout::hasPassed const):
+        * Platform/IPC/darwin/IPCSemaphoreDarwin.cpp:
+        (IPC::Semaphore::waitFor):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendSync):
+
 2021-03-01  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fails to build in i386: static assertion failed: divisor must be a power of two
