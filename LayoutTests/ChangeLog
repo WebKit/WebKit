@@ -1,3 +1,21 @@
+2021-03-01  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/websocket convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221912
+        <rdar://problem/74358196>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.py: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.php: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.py: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/resources/block-cookies-worker.js:
+        (clearCookies):
+        * http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html:
+        * http/tests/websocket/tests/hybi/resources/status-404-without-body.php: Removed.
+        * http/tests/websocket/tests/hybi/resources/status-404-without-body.py: Added.
+
 2021-03-01  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Clean up LayoutTests/gpu-process/TestExpectations related to media tests
