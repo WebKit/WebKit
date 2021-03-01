@@ -1,3 +1,20 @@
+2021-03-01  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r272004): transform transition with delay doesn't behave correctly
+        https://bugs.webkit.org/show_bug.cgi?id=222545
+        <rdar://problem/74865413>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test where an element with a non-identity transform starts a transform transition with a
+        long delay. Prior to this patch, this test failed because, while in the delay phase, the transition
+        would mean the underlying transform was applied twice: once by the non-interpolating animation
+        generated for the underlying "transform" value, and once by the first keyframe of the transition
+        since it fills backwards.
+
+        * webanimations/transform-transition-with-delay-on-forced-layer-with-transform-expected.html: Added.
+        * webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html: Added.
+
 2021-03-01  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/fetch convert PHP to Python
