@@ -83,10 +83,10 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, Optional<InlineLayoutUnit> horizontalAlignmentOffset, size_t numberOfRuns)
+LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { lineLogicalWidth, { } })
     , m_contentLogicalWidth(contentLogicalWidth)
-    , m_rootInlineBox(makeUniqueRef<LineBox::InlineLevelBox>(rootLayoutBox, horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox))
+    , m_rootInlineBox(makeUniqueRef<LineBox::InlineLevelBox>(rootLayoutBox, contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox))
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(numberOfRuns);
     m_inlineLevelBoxRectMap.reserveInitialCapacity(numberOfRuns);

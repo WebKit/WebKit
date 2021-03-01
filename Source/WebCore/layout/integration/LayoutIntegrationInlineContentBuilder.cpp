@@ -359,7 +359,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
         auto runCount = runIndex - firstRunIndex;
-        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
     }
 }
 
