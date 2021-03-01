@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dragging the scrollbar thumb should trigger scroll snapping</title>
+        <style type="text/css">
+            /* Use customized scrollbar to avoid platform differences. */
+            ::-webkit-scrollbar {
+                width: 20px;
+                height: 20px;
+            }
+            ::-webkit-scrollbar-button {
+                height: 20px;
+                width: 20px;
+                background-color: blue;
+            }
+
+            ::-webkit-scrollbar-track-piece  {
+                background-color: gray;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                height: 20px;
+                width: 20px;
+                background-color: black;
+            }
+
+            body {
+                margin: 0px;
+            }
+
+            .container {
+                height: 200px;
+                width: 200px;
+                overflow: auto;
+                scroll-snap-type: both mandatory;
+            }
+
+            .horizontal-drawer {
+                height: 100%;
+                width: 500px;
+            }
+
+            .block {
+                height: 100%;
+                width: 250px;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Dragging the scrollbar thumb should trigger scroll snapping.";
+                return;
+            }
+            try {
+                eventSender.mouseMoveTo(20, 190);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(80, 190);
+                eventSender.mouseUp();
+
+                let horizontalContainer = document.getElementById("horizontal-container");
+                await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
+                expectTrue(horizontalContainer.scrollLeft == 250, "dragging the horizontal scrollbar thumb snapped");
+
+                eventSender.mouseMoveTo(190, 220);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(190, 270);
+                eventSender.mouseUp();
+                let verticalContainer = document.getElementById("vertical-container");
+                await UIHelper.waitForTargetScrollAnimationToSettle(verticalContainer);
+                expectTrue(verticalContainer.scrollTop == 180, "dragging the vertical scrollbar thumb snapped");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="horizontal-container" class="container">
+            <div class="horizontal-drawer">
+                <div class="block" style="float: left; background: #80475E"></div>
+                <div class="block" style="float: left; background: #CC5A71"></div>
+            </div>
+        </div>
+        <div id="vertical-container" class="container">
+            <div class="block" style="background: #80475E"></div>
+            <div class="block" style="background: #CC5A71"></div>
+        </div>
+        <p id="console"></p>
+        <script>
+        </script>
+    </body>
+</html>

@@ -103,6 +103,7 @@ public:
 #endif
 
     void updateScrollSnapState();
+    void doPostThumbMoveSnapping(ScrollbarOrientation);
 
 #if ENABLE(TOUCH_EVENTS)
     virtual bool handleTouchEvent(const PlatformTouchEvent&);

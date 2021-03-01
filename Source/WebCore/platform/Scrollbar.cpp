@@ -356,6 +356,7 @@ bool Scrollbar::mouseExited()
 
 bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
 {
+    auto previouslyPressedPart = m_pressedPart;
     setPressedPart(NoPart);
     m_pressedPos = 0;
     m_draggingDocument = false;
@@ -368,6 +369,9 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
     ScrollbarPart part = theme().hitTest(*this, mouseEvent.position());
     if (part == NoPart)
         m_scrollableArea.mouseExitedScrollbar(this);
+
+    if (previouslyPressedPart == ThumbPart)
+        m_scrollableArea.doPostThumbMoveSnapping(m_orientation);
 
     return true;
 }

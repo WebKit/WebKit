@@ -1,3 +1,34 @@
+2021-03-01  Martin Robinson  <mrobinson@webkit.org>
+
+        Scroll snapping doesn't kick in when dragging scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=146696
+
+        Reviewed by Simon Fraser.
+
+        Add support for scroll snap after dragging scrollbar thumb
+
+        This change adds support for scroll snap when the scrollbar thumb is
+        released from a drag operation. This animation is currently done with
+        the non-native scroll animator for all platforms, since that is also
+        what is used for smooth scrolling.
+
+        This change adjusts the non-native scroll animator's smoothness factor,
+        because it is too slow for short scroll snaps. I have verified that the
+        new smoothness factor is also a good selection for smooth scrolling
+        operations (still an experimental feature). A further change should use
+        "native" animations when possible for both smooth scrolling and scroll
+        snap after thumb drags. This is tracked by the following bug:
+        https://bugs.webkit.org/show_bug.cgi?id=218857
+
+        * css3/scroll-snap/scroll-snap-click-scrollbar-gutter-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html: Added.
+        * css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html: Added.
+        * platform/ios-wk2/TestExpectations: Mark new test as failing on iOS
+        which has issues with scrollbars.
+        * platform/ios/TestExpectations: Skip the new test on iOS which does not
+        support scrolling by dragging the scrollbar.
+
 2021-03-01  Truitt Savell  <tsavell@apple.com>
 
         media/media-fullscreen-pause-inline.html is flaky failing

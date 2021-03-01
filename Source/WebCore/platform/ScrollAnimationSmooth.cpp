@@ -40,7 +40,7 @@ namespace WebCore {
 static const double frameRate = 60;
 static const Seconds tickTime = 1_s / frameRate;
 static const Seconds minimumTimerInterval { 1_ms };
-static const double smoothFactorForProgrammaticScroll = 5;
+static const double smoothFactorForProgrammaticScroll = 1;
 
 ScrollAnimationSmooth::PerAxisData::PerAxisData(ScrollbarOrientation orientation, const FloatPoint& position, ScrollExtentsCallback& extentsCallback)
 {
