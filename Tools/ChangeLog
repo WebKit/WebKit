@@ -1,5 +1,14 @@
 2021-03-01  Aakash Jain  <aakash_jain@apple.com>
 
+        [Python-3] Change shebang in runUnittests.py
+        https://bugs.webkit.org/show_bug.cgi?id=222554
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/runUnittests.py:
+
+2021-03-01  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Use logname instead of deprecated logfile in PrintConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=222378
 
