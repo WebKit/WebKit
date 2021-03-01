@@ -1,3 +1,20 @@
+2021-03-01  Antti Koivisto  <antti@apple.com>
+
+        Use PriorityQueue in NetworkCache::Storage
+        https://bugs.webkit.org/show_bug.cgi?id=222555
+
+        Reviewed by Chris Dumez.
+
+        Replace Vector<Deque<>> with a more flexible, simpler to use data structure.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation):
+        (WebKit::NetworkCache::Storage::isHigherPriority):
+        (WebKit::NetworkCache::Storage::cancelAllReadOperations):
+        (WebKit::NetworkCache::Storage::dispatchPendingReadOperations):
+        (WebKit::NetworkCache::Storage::retrieve):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2021-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         EventDispatcher::wheelEvent is accessing m_scrollingTrees without locking m_scrollingTreesMutex since r271235
