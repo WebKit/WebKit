@@ -245,7 +245,7 @@ void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascade
     if (!segmentedFontFace)
         return;
     for (auto& face : segmentedFontFace->constituentFaces())
-        face->opportunisticallyStartFontDataURLLoading(*this);
+        face->opportunisticallyStartFontDataURLLoading();
 }
 
 void CSSFontSelector::fontLoaded(CSSFontFace&)
