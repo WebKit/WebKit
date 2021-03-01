@@ -2915,7 +2915,10 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_win)
 
         for command in command_list:
-            self.commands.append(util.ShellArg(command=command, logfile='stdio'))
+            if sys.version_info > (3, 0):
+                self.commands.append(util.ShellArg(command=command, logname='stdio'))
+            else:
+                self.commands.append(util.ShellArg(command=command, logfile='stdio'))
         return super(PrintConfiguration, self).run()
 
     def convert_build_to_os_name(self, build):

@@ -1,3 +1,13 @@
+2021-03-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Use logname instead of deprecated logfile in PrintConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=222378
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (PrintConfiguration.run):
+
 2021-03-01  Adam Roben  <aroben@apple.com>
 
         Teach prepare-ChangeLog to recognize Swift structs/enums/protocols/extensions
