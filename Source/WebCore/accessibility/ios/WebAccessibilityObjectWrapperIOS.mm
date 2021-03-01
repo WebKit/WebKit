@@ -1870,10 +1870,19 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    AXCoreObject::AccessibilityChildrenVector axObjects;
-    self.axBackingObject->ariaErrorMessageElements(axObjects);
+    AXCoreObject::AccessibilityChildrenVector errorElements;
+    self.axBackingObject->ariaErrorMessageElements(errorElements);
 
-    return convertToNSArray(axObjects);
+    AXCoreObject::AccessibilityChildrenVector accessibleElements;
+    for (const auto& element : errorElements) {
+        ASSERT(element);
+        Accessibility::enumerateDescendants<AXCoreObject>(*element, true, [&accessibleElements] (AXCoreObject& descendant) {
+            if (descendant.wrapper().isAccessibilityElement)
+                accessibleElements.append(&descendant);
+        });
+    }
+
+    return convertToNSArray(accessibleElements);
 }
 
 - (id)accessibilityLinkedElement

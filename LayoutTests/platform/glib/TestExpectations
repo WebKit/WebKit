@@ -299,7 +299,6 @@ webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
 
 # Not supported
-accessibility/aria-errormessage.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,13 @@
+Please enter a start time for the meeting:
+This verifies the exposure of aria-errormessage.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS errorMessages.length is 2
+PASS errorMessages[0].domIdentifier is 'errorMessage1'
+PASS errorMessages[1].domIdentifier is 'errorMessage2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

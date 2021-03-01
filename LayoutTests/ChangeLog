@@ -1,3 +1,21 @@
+2021-03-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        WebAccessibilityObjectWrapper method to retrieve related error message elements should return not-ignored accessibility elements.
+        https://bugs.webkit.org/show_bug.cgi?id=222375
+
+        Reviewed by Chris Fleizach.
+
+        Replaced accessibility/aria-errormessage.html with mac and ios-simulator variants.
+
+        * accessibility/ios-simulator/aria-errormessage-expected.txt: Added.
+        * accessibility/ios-simulator/aria-errormessage.html: Copied from LayoutTests/accessibility/aria-errormessage.html.
+        * accessibility/mac/aria-errormessage-expected.txt: Renamed from LayoutTests/accessibility/aria-errormessage-expected.txt.
+        * accessibility/mac/aria-errormessage.html: Renamed from LayoutTests/accessibility/aria-errormessage.html.
+        * platform/glib/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-03-01  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 color-contrast()

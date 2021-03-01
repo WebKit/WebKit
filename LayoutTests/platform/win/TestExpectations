@@ -1424,7 +1424,6 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-namefrom-author.html [ Skip ] #
 webkit.org/b/140798 [ Release ] accessibility/aria-sort.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-sort.html [ Skip ] # Debug assertion
 accessibility/aria-sort-changed-notification.html [ Skip ]
-accessibility/aria-errormessage.html [ Skip ]
 webkit.org/b/140798 [ Release ] accessibility/aria-tables.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]
