@@ -1,5 +1,70 @@
 2021-03-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273564. rdar://problem/74886738
+
+    [Cocoa] Register VP9 decoders when PlatformMediaSessionManager is created
+    https://bugs.webkit.org/show_bug.cgi?id=222473
+    <rdar://problem/74790242>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered
+    when PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will
+    then not be made unconditionally when creating a Web page, but delayed until required.
+    
+    No new tests, covered by existing tests.
+    
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP9Decoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP9Decoder):
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP8Decoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP8Decoder):
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP9SWDecoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP9SWDecoder):
+    * platform/audio/PlatformMediaSessionManager.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::MediaSessionManagerCocoa):
+    
+    Source/WebKit:
+    
+    Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered when
+    PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will then not
+    be made unconditionally when creating a Web page, but delayed until required.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::m_lastNavigationWasAppBound):
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::enableVP9Decoder): Deleted.
+    (WebKit::WebProcess::enableVP8SWDecoder): Deleted.
+    (WebKit::WebProcess::enableVP9SWDecoder): Deleted.
+    * WebProcess/WebProcess.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273564 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Per Arne  <pvollan@apple.com>
+
+            [Cocoa] Register VP9 decoders when PlatformMediaSessionManager is created
+            https://bugs.webkit.org/show_bug.cgi?id=222473
+            <rdar://problem/74790242>
+
+            Reviewed by Eric Carlson.
+
+            Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered when
+            PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will then not
+            be made unconditionally when creating a Web page, but delayed until required.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::m_lastNavigationWasAppBound):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::enableVP9Decoder): Deleted.
+            (WebKit::WebProcess::enableVP8SWDecoder): Deleted.
+            (WebKit::WebProcess::enableVP9SWDecoder): Deleted.
+            * WebProcess/WebProcess.h:
+
+2021-03-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273590. rdar://problem/74881366
 
     Non-cookie website data not deleted after 7 days of browser use without user interaction
