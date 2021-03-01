@@ -1,3 +1,16 @@
+2021-03-01  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r273655.
+
+        Broke internal Mac
+
+        Reverted changeset:
+
+        "Set ownership of IOSurfaces from the GPUProcess instead of
+        the WebProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        https://commits.webkit.org/r273655
+
 2021-03-01  Chris Dumez  <cdumez@apple.com>
 
         Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess

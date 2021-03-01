@@ -102,10 +102,6 @@ typedef CF_ENUM(int, IOSurfaceMemoryLedgerTags) {
 IOReturn IOSurfaceSetOwnership(IOSurfaceRef buffer, task_t newOwner, int newLedgerTag, uint32_t newLedgerOptions);
 #endif // HAVE(IOSURFACE_SET_OWNERSHIP)
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-kern_return_t IOSurfaceSetOwnershipIdentity(IOSurfaceRef buffer, mach_port_t task_id_token, int newLedgerTag, uint32_t newLedgerOptions);
-#endif
-
 WTF_EXTERN_C_END
 
 #endif

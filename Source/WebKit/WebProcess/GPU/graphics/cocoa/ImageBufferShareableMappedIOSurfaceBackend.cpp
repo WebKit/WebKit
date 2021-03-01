@@ -69,6 +69,9 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     if (!surface)
         return nullptr;
 
+    // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
+    surface->setOwnership(mach_task_self());
+
     return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
@@ -76,14 +79,6 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createImage
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
-
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-void ImageBufferShareableMappedIOSurfaceBackend::setProcessOwnership(task_id_token_t processIdentityToken)
-{
-    ASSERT(surface());
-    surface()->setOwnershipIdentity(processIdentityToken);
-}
-#endif
 
 } // namespace WebKit
 

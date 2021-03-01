@@ -45,10 +45,6 @@ public:
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
-
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    void setProcessOwnership(task_id_token_t);
-#endif
 };
 
 } // namespace WebKit
