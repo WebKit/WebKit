@@ -43,7 +43,6 @@ public:
     CanvasStyle();
     CanvasStyle(Color);
     CanvasStyle(const SRGBA<float>&);
-    CanvasStyle(const CMYKA<float>&);
     CanvasStyle(CanvasGradient&);
     CanvasStyle(CanvasPattern&);
 
@@ -63,7 +62,6 @@ public:
 
     bool isEquivalentColor(const CanvasStyle&) const;
     bool isEquivalent(const SRGBA<float>&) const;
-    bool isEquivalent(const CMYKA<float>&) const;
 
 private:
     struct Invalid { };

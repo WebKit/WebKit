@@ -33,14 +33,16 @@
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
 class IOSurfacePool {
     WTF_MAKE_NONCOPYABLE(IOSurfacePool);
     WTF_MAKE_FAST_ALLOCATED;
-    friend class NeverDestroyed<IOSurfacePool>;
+    friend class LazyNeverDestroyed<IOSurfacePool>;
 
 public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
@@ -69,6 +71,12 @@ private:
     typedef Deque<std::unique_ptr<IOSurface>> CachedSurfaceQueue;
     typedef HashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
     typedef HashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
+
+    static constexpr size_t defaultMaximumBytesCached { 1024 * 1024 * 64 };
+
+    // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
+    // they can't be immediately returned when requested (but will be freed up in the future).
+    static constexpr size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
     
     bool shouldCacheSurface(const IOSurface&) const;
 
@@ -89,17 +97,20 @@ private:
 
     void platformGarbageCollectNow();
 
+    void discardAllSurfacesInternal();
+
     void showPoolStatistics(const char*);
 
-    Timer m_collectionTimer;
+    RunLoop::Timer<IOSurfacePool> m_collectionTimer;
+    Lock m_lock;
     CachedSurfaceMap m_cachedSurfaces;
     CachedSurfaceQueue m_inUseSurfaces;
     CachedSurfaceDetailsMap m_surfaceDetails;
     Vector<IntSize> m_sizesInPruneOrder;
 
-    size_t m_bytesCached;
-    size_t m_inUseBytesCached;
-    size_t m_maximumBytesCached;
+    size_t m_bytesCached { 0 };
+    size_t m_inUseBytesCached { 0 };
+    size_t m_maximumBytesCached { defaultMaximumBytesCached };
 };
 
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2013 Google Inc. All rights reserved.
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,8 +29,6 @@ CWD="$(pwd)"
 cd "$(dirname "$0")"
 
 QUEUE_TYPE=commit-queue
-BUGZILLA_USERNAME=commit-queue@webkit.org
-read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 SVN_USERNAME=commit-queue@webkit.org
 read -s -p "Subversion Password: " SVN_PASSWORD && echo
 
@@ -40,16 +38,13 @@ bash tools/configure-svn-auth.sh $SVN_USERNAME $SVN_PASSWORD
 
 echo "Cloning WebKit git repository, process takes ~30m."
 echo "Note: No status output will be shown via remote pipe."
-git clone git://git.webkit.org/WebKit.git WebKit
+git clone https://github.com/WebKit/WebKit.git WebKit
 cd WebKit
 
 cat >> .git/config <<EOF
-[bugzilla]
-	username = $BUGZILLA_USERNAME
-	password = $BUGZILLA_PASSWORD
 [svn-remote "svn"]
-	url = http://svn.webkit.org/repository/webkit
-	fetch = trunk:refs/remotes/origin/master
+	url = https://svn.webkit.org/repository/webkit
+	fetch = trunk:refs/remotes/origin/main
 [user]
 	email = commit-queue@webkit.org
 	name = Commit Queue

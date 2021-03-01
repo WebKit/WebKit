@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmB3IRGenerator.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "AirCode.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
@@ -63,6 +63,10 @@
 #include <limits>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+
+#if !ENABLE(WEBASSEMBLY)
+#error ENABLE(WEBASSEMBLY_B3JIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
+#endif
 
 void dumpProcedure(void* ptr)
 {
@@ -3038,4 +3042,4 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionTy
 
 #include "WasmB3IRGeneratorInlines.h"
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

@@ -60,8 +60,8 @@ public:
     void prepareToRenderSVGContent(RenderElement&, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
-    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, ColorSpace, RenderingMode, const GraphicsContext* = nullptr);
-    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace, RenderingMode, const GraphicsContext* = nullptr);
+    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, DestinationColorSpace, RenderingMode, const GraphicsContext* = nullptr);
+    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, DestinationColorSpace, RenderingMode, const GraphicsContext* = nullptr);
 
     static void renderSubtreeToContext(GraphicsContext&, RenderElement&, const AffineTransform&);
     static void clipToImageBuffer(GraphicsContext&, const AffineTransform& absoluteTransform, const FloatRect& targetRect, RefPtr<ImageBuffer>&, bool safeToClear);

@@ -62,9 +62,10 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CreateSocketStream(URL url, String cachePartition, WebCore::WebSocketIdentifier identifier)
     CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier)
 
+    ClearPageSpecificData(WebCore::PageIdentifier pageID);
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
-    ClearPageSpecificDataForResourceLoadStatistics(WebCore::PageIdentifier pageID);
     LogUserInteraction(WebCore::RegistrableDomain domain)
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> () Async
     HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
@@ -101,4 +102,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if PLATFORM(MAC)
     UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)
 #endif
+    SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)
+    PrioritizeResourceLoads(Vector<uint64_t> loadIdentifiers)
 }

@@ -32,6 +32,7 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValue.h"
 #include "JSSourceCode.h"
+#include "WasmFormat.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
 
@@ -127,12 +128,20 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue value, WebAssemblyF
     return isWebAssemblyHostFunction(vm, jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction);
 }
 
-
 ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
 {
     WebAssemblyFunction* unused;
     WebAssemblyWrapperFunction* unused2;
     return isWebAssemblyHostFunction(vm, object, unused, unused2);
+}
+
+ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
+{
+    ASSERT(Wasm::isRefType(type));
+    if (type == Wasm::Type::Externref)
+        return jsUndefined();
+    ASSERT(type == Wasm::Type::Funcref);
+    return jsNull();
 }
 
 } // namespace JSC

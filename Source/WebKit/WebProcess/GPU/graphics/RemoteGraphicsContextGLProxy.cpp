@@ -90,6 +90,9 @@ void RemoteGraphicsContextGLProxy::prepareForDisplay()
     sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(displayBufferSendRight), m_graphicsContextGLIdentifier, 10_s);
     auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), sRGBColorSpaceRef());
     if (displayBuffer) {
+        // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
+        displayBuffer->setOwnership(mach_task_self());
+
         auto& sc = platformSwapChain();
         sc.recycleBuffer();
         sc.present({ WTFMove(displayBuffer), nullptr });

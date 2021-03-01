@@ -191,7 +191,7 @@ private:
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
 
-    bool hasPercentHeightDescendants(const RenderBox&) const;
+    bool childHasPercentHeightDescendants(const RenderBox&) const;
 
     enum class GapType { BetweenLines, BetweenItems };
     LayoutUnit computeGap(GapType) const;

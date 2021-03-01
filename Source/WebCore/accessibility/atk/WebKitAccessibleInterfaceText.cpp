@@ -443,7 +443,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (coreObject->roleValue() == AccessibilityRole::ColorWell) {
-        auto color = convertToComponentFloats(coreObject->colorValue());
+        auto color = convertColor<SRGBA<float>>(coreObject->colorValue());
         return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue);
     }
 #endif

@@ -65,6 +65,7 @@ NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkHTTPSUpgradeChecker.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
+NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkProcessCreationParameters.cpp
 NetworkProcess/NetworkProcessPlatformStrategies.cpp
@@ -140,6 +141,7 @@ Platform/IPC/Attachment.cpp @no-unify
 Platform/IPC/Connection.cpp @no-unify
 Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
+Platform/IPC/IPCSemaphore.cpp @no-unify
 Platform/IPC/JSIPCBinding.cpp @no-unify
 Platform/IPC/MessageReceiverMap.cpp @no-unify
 Platform/IPC/MessageSender.cpp @no-unify
@@ -202,7 +204,6 @@ Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebKeyboardEvent.cpp @no-unify
 Shared/WebKit2Initialize.cpp @no-unify
-Shared/WebKitJITOperations.cpp @no-unify
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp @no-unify
 Shared/WebPageCreationParameters.cpp
@@ -285,6 +286,8 @@ UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
 UIProcess/LegacyGlobalSettings.cpp
+UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
+UIProcess/MediaKeySystemPermissionRequestProxy.cpp
 UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
@@ -391,6 +394,7 @@ UIProcess/API/C/WKHitTestResult.cpp
 UIProcess/API/C/WKIconDatabase.cpp
 UIProcess/API/C/WKInspector.cpp
 UIProcess/API/C/WKKeyValueStorageManager.cpp
+UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp
 UIProcess/API/C/WKMessageListener.cpp
 UIProcess/API/C/WKMockDisplay.cpp
 UIProcess/API/C/WKMockMediaDevice.cpp
@@ -510,6 +514,8 @@ WebProcess/Cache/WebCacheStorageProvider.cpp
 WebProcess/Databases/WebDatabaseProvider.cpp
 
 WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
+
+WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 
 WebProcess/FileAPI/BlobRegistryProxy.cpp
 
@@ -665,6 +671,7 @@ WebProcess/WebCoreSupport/WebDragClient.cpp
 WebProcess/WebCoreSupport/WebEditorClient.cpp
 WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebGeolocationClient.cpp
+WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp
 WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
 WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp

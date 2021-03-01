@@ -34,6 +34,11 @@ namespace WebCore {
 class FormAssociatedElement;
 class FormNamedItem;
 class HTMLFormElement;
+class VisibleSelection;
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
 
 enum class EnterKeyHint : uint8_t;
 
@@ -121,6 +126,13 @@ public:
     WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
     String enterKeyHint() const;
     void setEnterKeyHint(const String& value);
+
+    static bool shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
+    bool hasImageOverlay() const;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    WEBCORE_EXPORT void updateWithImageExtractionResult(ImageExtractionResult&&);
+#endif
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);

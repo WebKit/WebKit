@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,9 @@ public:
     WEBCORE_EXPORT void setAcceleratesDrawing(bool) override;
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool) override;
     WEBCORE_EXPORT void setUserInteractionEnabled(bool) override;
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    WEBCORE_EXPORT void setSeparated(bool) override;
+#endif
 
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
 
@@ -441,6 +444,10 @@ private:
     void updateShape();
     void updateWindRule();
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    void updateSeparated();
+#endif
+
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
@@ -467,7 +474,7 @@ private:
         Optional<Seconds> computedBeginTime() const
         {
             if (m_beginTime)
-                return m_beginTime - m_timeOffset;
+                return *m_beginTime - m_timeOffset;
             return WTF::nullopt;
         }
 
@@ -477,7 +484,7 @@ private:
         int m_index;
         int m_subIndex;
         Seconds m_timeOffset { 0_s };
-        Seconds m_beginTime { 0_s };
+        Optional<Seconds> m_beginTime;
         PlayState m_playState { PlayState::PlayPending };
         bool m_pendingRemoval { false };
     };
@@ -547,6 +554,9 @@ private:
 #if ENABLE(SCROLLING_THREAD)
         ScrollingNodeChanged                    = 1LLU << 41,
 #endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        SeparatedChanged                        = 1LLU << 42,
+#endif
     };
     typedef uint64_t LayerChangeFlags;
     void addUncommittedChanges(LayerChangeFlags);
@@ -606,6 +616,7 @@ private:
     
     Vector<LayerPropertyAnimation> m_animations;
     Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;
+    Vector<LayerPropertyAnimation> m_animationGroups;
 
     Vector<FloatRect> m_dirtyRects;
 

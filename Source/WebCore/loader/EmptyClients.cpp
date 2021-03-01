@@ -502,6 +502,12 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void EmptyChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+{
+}
+#endif
+
 void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
 {
 }
@@ -606,6 +612,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         SocketProvider::create(),
         LibWebRTCProvider::create(),
         CacheStorageProvider::create(),
+        adoptRef(*new EmptyUserContentProvider),
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
@@ -640,7 +647,6 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
     pageConfiguration.databaseProvider = adoptRef(*new EmptyDatabaseProvider);
     pageConfiguration.pluginInfoProvider = adoptRef(*new EmptyPluginInfoProvider);
     pageConfiguration.storageNamespaceProvider = adoptRef(*new EmptyStorageNamespaceProvider);
-    pageConfiguration.userContentProvider = adoptRef(*new EmptyUserContentProvider);
     pageConfiguration.visitedLinkStore = adoptRef(*new EmptyVisitedLinkStore);
     
     return pageConfiguration;

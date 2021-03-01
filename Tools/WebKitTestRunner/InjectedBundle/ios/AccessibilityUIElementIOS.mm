@@ -70,7 +70,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (UIAccessibilityTraits)_axTextAreaTrait;
 - (UIAccessibilityTraits)_axSearchFieldTrait;
-- (NSString *)accessibilityARIACurrentStatus;
+- (NSString *)accessibilityCurrentState;
 - (NSUInteger)accessibilityRowCount;
 - (NSUInteger)accessibilityColumnCount;
 - (NSUInteger)accessibilityARIARowCount;
@@ -95,6 +95,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
 - (NSString *)accessibilityColorStringValue;
+- (id)_accessibilityTableAncestor;
+- (id)_accessibilityLandmarkAncestor;
+- (id)_accessibilityListAncestor;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -114,6 +117,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
+- (NSString *)accessibilityDOMIdentifier;
 - (CGPathRef)_accessibilityPath;
 @end
 
@@ -170,6 +174,14 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
     if (!otherElement)
         return false;
     return platformUIElement() == otherElement->platformUIElement();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    id value = [m_element accessibilityDOMIdentifier];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::headerElementAtIndex(unsigned index)
@@ -360,7 +372,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
         return [[m_element accessibilityColorStringValue] createJSStringRef];
 
     if (JSStringIsEqualToUTF8CString(attribute, "AXARIACurrent"))
-        return [[m_element accessibilityARIACurrentStatus] createJSStringRef];
+        return [[m_element accessibilityCurrentState] createJSStringRef];
 
     if (JSStringIsEqualToUTF8CString(attribute, "AXExpandedTextValue"))
         return [[m_element accessibilityExpandedTextValue] createJSStringRef];
@@ -607,6 +619,22 @@ bool AccessibilityUIElement::isChecked() const
     return false;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
+{
+    id value = [m_element accessibilityCurrentState];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
+{
+    id value = [m_element accessibilitySortDirection];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
+}
+
 int AccessibilityUIElement::hierarchicalLevel() const
 {
     return 0;
@@ -790,6 +818,21 @@ int AccessibilityUIElement::columnCount()
 bool AccessibilityUIElement::isInTableCell() const
 {
     return [m_element _accessibilityIsInTableCell];
+}
+
+bool AccessibilityUIElement::isInTable() const
+{
+    return [m_element _accessibilityTableAncestor] != nullptr;
+}
+
+bool AccessibilityUIElement::isInLandmark() const
+{
+    return [m_element _accessibilityLandmarkAncestor] != nullptr;
+}
+
+bool AccessibilityUIElement::isInList() const
+{
+    return [m_element _accessibilityListAncestor] != nullptr;
 }
 
 int AccessibilityUIElement::indexInTable()

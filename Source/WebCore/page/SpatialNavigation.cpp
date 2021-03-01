@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -394,7 +395,8 @@ bool scrollInDirection(Node* container, FocusDirection direction)
             return false;
         }
 
-        container->renderBox()->enclosingLayer()->scrollByRecursively(IntSize(dx, dy));
+        if (auto* scrollableArea = container->renderBox()->enclosingLayer()->scrollableArea())
+            scrollableArea->scrollByRecursively(IntSize(dx, dy));
         return true;
     }
 

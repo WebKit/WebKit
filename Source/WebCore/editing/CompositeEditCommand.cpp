@@ -530,6 +530,9 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
 
 void CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
+    auto* parent = refChild.parentNode();
+    if (!parent || (!parent->hasEditableStyle() && parent->renderer()))
+        return;
     applyCommandToComposite(InsertNodeBeforeCommand::create(WTFMove(insertChild), refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
 }
 
@@ -1262,10 +1265,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             // Move lastNode up in the tree as much as node was moved up in the
             // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
             // node and the original start node is maintained in the clone.
-            while (startNode->parentNode() && startNode->parentNode() != node->parentNode()) {
+            while (startNode->parentNode() && lastNode->parentNode() && startNode->parentNode() != node->parentNode()) {
                 startNode = startNode->parentNode();
                 lastNode = lastNode->parentNode();
-                ASSERT(lastNode);
             }
 
             auto clonedNode = node->cloneNode(true);
@@ -1412,8 +1414,11 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     // We upstream() the end and downstream() the start so that we don't include collapsed whitespace in the move.
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
-    auto start = startOfParagraphToMove.deepEquivalent().downstream();
-    auto end = endOfParagraphToMove.deepEquivalent().upstream();
+    VisiblePosition start = startOfParagraphToMove.deepEquivalent().downstream();
+    VisiblePosition end = endOfParagraphToMove.deepEquivalent().upstream();
+
+    if (start.isNull() || end.isNull())
+        return;
 
     // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;

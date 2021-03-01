@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ActiveDOMObject.h"
+#include "AddEventListenerOptions.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"

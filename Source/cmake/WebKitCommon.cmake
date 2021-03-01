@@ -13,6 +13,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
     endif ()
 
+    set(ENABLE_JAVASCRIPTCORE ON)
     set(ENABLE_WEBCORE ON)
 
     if (NOT DEFINED ENABLE_WEBKIT)

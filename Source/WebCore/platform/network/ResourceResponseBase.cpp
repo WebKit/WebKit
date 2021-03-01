@@ -28,6 +28,7 @@
 #include "ResourceResponseBase.h"
 
 #include "CacheValidation.h"
+#include "DataURLDecoder.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -146,6 +147,17 @@ ResourceResponse ResourceResponseBase::syntheticRedirectResponse(const URL& from
     redirectResponse.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-store"_s);
 
     return redirectResponse;
+}
+
+ResourceResponse ResourceResponseBase::dataURLResponse(const URL& url, const DataURLDecoder::Result& result)
+{
+    ResourceResponse dataResponse { url, result.mimeType, static_cast<long long>(result.data.size()), result.charset };
+    dataResponse.setHTTPStatusCode(200);
+    dataResponse.setHTTPStatusText("OK"_s);
+    dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
+    dataResponse.setSource(ResourceResponse::Source::Network);
+
+    return dataResponse;
 }
 
 ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, PerformExposeAllHeadersCheck performCheck)

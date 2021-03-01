@@ -62,7 +62,7 @@ private:
     WeakPtr<TextTrackCue> m_cue;
 };
 
-class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData, public CanMakeWeakPtr<TextTrackCue> {
+class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(TextTrackCue);
 public:
     static const AtomString& cueShadowPseudoId();

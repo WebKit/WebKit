@@ -14,9 +14,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 link1
-PASS document.activeElement == element1 is true
 link2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -31,9 +29,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 button1
-PASS document.activeElement == element1 is true
 button2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -48,9 +44,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 labeled-button1
-PASS document.activeElement == element1 is true
 labeled-button2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -65,9 +59,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 button-with-title1
-PASS document.activeElement == element1 is true
 button-with-title2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -82,9 +74,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 text1
-PASS document.activeElement == element1 is true
 text2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -99,9 +89,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 checkbox1
-PASS document.activeElement == element1 is true
 checkbox2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -116,9 +104,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 number1
-PASS document.activeElement == element1 is true
 number2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -133,9 +119,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 radio1
-PASS document.activeElement == element1 is true
 radio2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -150,9 +134,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 slider1
-PASS document.activeElement == element1 is true
 slider2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -167,9 +149,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 submit1
-PASS document.activeElement == element1 is true
 submit2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -184,9 +164,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 combobox1
-PASS document.activeElement == element1 is true
 combobox2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -201,9 +179,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 listbox1
-PASS document.activeElement == element1 is true
 listbox2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -218,9 +194,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 textarea1
-PASS document.activeElement == element1 is true
 textarea2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -235,9 +209,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 focusable1
-PASS document.activeElement == element1 is true
 focusable2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -252,9 +224,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 heading1
-PASS document.activeElement == element1 is true
 heading2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -269,9 +239,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-button1
-PASS document.activeElement == element1 is true
 aria-button2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -286,9 +254,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-disabledbutton1
-PASS document.activeElement == element1 is true
 aria-disabledbutton2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -303,9 +269,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-enabledbutton1
-PASS document.activeElement == element1 is true
 aria-enabledbutton2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -320,9 +284,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-requiredbutton1
-PASS document.activeElement == element1 is true
 aria-requiredbutton2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -337,9 +299,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-togglebutton1
-PASS document.activeElement == element1 is true
 aria-togglebutton2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title
@@ -354,9 +314,7 @@ PASS axElement2.minValue is axElement1.minValue
 PASS axElement2.maxValue is axElement1.maxValue
 
 aria-link1
-PASS document.activeElement == element1 is true
 aria-link2
-PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
 PASS axElement2.title is axElement1.title

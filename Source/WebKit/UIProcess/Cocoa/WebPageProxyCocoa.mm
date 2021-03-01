@@ -38,6 +38,7 @@
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
+#import "SharedBufferDataReference.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
@@ -210,7 +211,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Ha
 // FIXME: Move these functions to WebPageProxyIOS.mm.
 #if PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::IPCHandle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::IPCHandle&)
+void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::IPCHandle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::IPCHandle&, const String&)
 {
     notImplemented();
 }
@@ -539,6 +540,16 @@ void WebPageProxy::createAppHighlightInSelectedRange(CreateNewGroupForHighlight 
         return;
 
     send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup));
+}
+
+void WebPageProxy::restoreAppHighlights(Ref<SharedBuffer>&& data)
+{
+    if (!hasRunningProcess())
+        return;
+
+    IPC::SharedBufferDataReference dataReference { data };
+
+    send(Messages::WebPage::RestoreAppHighlights(dataReference));
 }
 #endif
 

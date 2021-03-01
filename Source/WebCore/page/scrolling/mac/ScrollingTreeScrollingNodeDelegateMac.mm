@@ -55,28 +55,6 @@ void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
     m_scrollController.stopAllTimers();
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-static inline Vector<LayoutUnit> convertToLayoutUnits(const Vector<float>& snapOffsetsAsFloat)
-{
-    Vector<LayoutUnit> snapOffsets;
-    snapOffsets.reserveInitialCapacity(snapOffsetsAsFloat.size());
-    for (auto offset : snapOffsetsAsFloat)
-        snapOffsets.uncheckedAppend(offset);
-
-    return snapOffsets;
-}
-
-static inline Vector<ScrollOffsetRange<LayoutUnit>> convertToLayoutUnits(const Vector<ScrollOffsetRange<float>>& snapOffsetRangesAsFloat)
-{
-    Vector<ScrollOffsetRange<LayoutUnit>> snapOffsetRanges;
-    snapOffsetRanges.reserveInitialCapacity(snapOffsetRangesAsFloat.size());
-    for (auto range : snapOffsetRangesAsFloat)
-        snapOffsetRanges.uncheckedAppend({ LayoutUnit(range.start), LayoutUnit(range.end) });
-
-    return snapOffsetRanges;
-}
-#endif
-
 void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
 {
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::PainterForScrollbar)) {
@@ -86,28 +64,15 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsetRanges))
-        updateScrollSnapPoints(ScrollEventAxis::Horizontal, convertToLayoutUnits(scrollingStateNode.horizontalSnapOffsets()), convertToLayoutUnits(scrollingStateNode.horizontalSnapOffsetRanges()));
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsetRanges))
-        updateScrollSnapPoints(ScrollEventAxis::Vertical, convertToLayoutUnits(scrollingStateNode.verticalSnapOffsets()), convertToLayoutUnits(scrollingStateNode.verticalSnapOffsetRanges()));
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo))
+        m_scrollController.updateScrollSnapPoints(scrollingStateNode.snapOffsetsInfo().convertUnits<LayoutUnit>());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex))
-        setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, scrollingStateNode.currentHorizontalSnapPointIndex());
-    
+        m_scrollController.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, scrollingStateNode.currentHorizontalSnapPointIndex());
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex))
-        setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, scrollingStateNode.currentVerticalSnapPointIndex());
+        m_scrollController.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, scrollingStateNode.currentVerticalSnapPointIndex());
 #endif
-}
-
-void ScrollingTreeScrollingNodeDelegateMac::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
-{
-    m_scrollController.updateScrollSnapPoints(axis, snapOffsets, snapRanges);
-}
-
-void ScrollingTreeScrollingNodeDelegateMac::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
-{
-    m_scrollController.setActiveScrollSnapIndexForAxis(axis, index);
 }
 
 unsigned ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
@@ -356,7 +321,14 @@ bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDi
     if (scrollingNode().isRootNode())
         return scrollingTree().mainFrameCanRubberBandInDirection(direction);
 
-    // FIXME: Consult the node.
+    switch (direction) {
+    case ScrollDirection::ScrollUp:
+    case ScrollDirection::ScrollDown:
+        return allowsVerticalScrolling();
+    case ScrollDirection::ScrollLeft:
+    case ScrollDirection::ScrollRight:
+        return allowsHorizontalScrolling();
+    }
     return true;
 }
 

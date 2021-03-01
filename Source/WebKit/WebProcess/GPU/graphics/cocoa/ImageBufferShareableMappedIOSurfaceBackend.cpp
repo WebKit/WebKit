@@ -28,7 +28,9 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
 
+#include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
@@ -66,6 +68,9 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), cachedCGColorSpace(parameters.colorSpace));
     if (!surface)
         return nullptr;
+
+    // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
+    surface->setOwnership(mach_task_self());
 
     return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }

@@ -78,7 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister, (JSGlobalObject*
         return throwVMTypeError(globalObject, scope, "register requires an object as the target"_s);
 
     JSValue holdings = callFrame->argument(1);
-    if (sameValue(globalObject, target, holdings))
+    if (target == holdings)
         return throwVMTypeError(globalObject, scope, "register expects the target object and the holdings parameter are not the same. Otherwise, the target can never be collected"_s);
 
     JSValue unregisterToken = callFrame->argument(2);

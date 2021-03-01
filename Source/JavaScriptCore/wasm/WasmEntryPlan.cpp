@@ -41,20 +41,20 @@ namespace WasmEntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
+EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
     : Base(context, WTFMove(info), WTFMove(task))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Validated)
-    , m_asyncWork(work)
+    , m_compilerMode(compilerMode)
 {
 }
 
-EntryPlan::EntryPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
+EntryPlan::EntryPlan(Context* context, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
     : Base(context, WTFMove(task))
     , m_source(WTFMove(source))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Initial)
-    , m_asyncWork(work)
+    , m_compilerMode(compilerMode)
 {
 }
 

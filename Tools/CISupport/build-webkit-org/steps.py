@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,7 +37,8 @@ BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
 CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
-S3URL = "https://s3-us-west-2.amazonaws.com/"
+S3URL = 'https://s3-us-west-2.amazonaws.com/'
+S3_RESULTS_URL = '{}build.webkit.org-results/'.format(S3URL)
 USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 WithProperties = properties.WithProperties
 if USE_BUILDBOT_VERSION2:
@@ -413,8 +414,8 @@ class DownloadBuiltProduct(shell.ShellCommand):
     name = "download-built-product"
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]
-    haltOnFailure = True
-    flunkOnFailure = True
+    haltOnFailure = False
+    flunkOnFailure = False
 
     def start(self):
         if 'apple' in self.getProperty('buildername').lower():
@@ -423,6 +424,36 @@ class DownloadBuiltProduct(shell.ShellCommand):
             else:
                 self.slaveEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
         return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE and USE_BUILDBOT_VERSION2:
+            self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+        return rc
+
+
+class DownloadBuiltProductFromMaster(transfer.FileDownload):
+    mastersrc = WithProperties('archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip')
+    workerdest = WithProperties('WebKitBuild/%(configuration)s.zip')
+    name = 'download-built-product-from-master'
+    description = ['downloading built product from buildbot master']
+    descriptionDone = ['Downloaded built product']
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        # Allow the unit test to override mastersrc
+        if 'mastersrc' not in kwargs:
+            kwargs['mastersrc'] = self.mastersrc
+        kwargs['workerdest'] = self.workerdest
+        kwargs['mode'] = 0o0644
+        kwargs['blocksize'] = 1024 * 256
+        transfer.FileDownload.__init__(self, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to download built product from build master'}
+        return super(DownloadBuiltProductFromMaster, self).getResultSummary()
 
 
 class RunJavaScriptCoreTests(TestWithFailureCount):
@@ -486,12 +517,6 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
             count += int(match.group(1))
 
         return count
-
-
-class RunRemoteJavaScriptCoreTests(RunJavaScriptCoreTests):
-    def start(self):
-        self.setCommand(self.command + ["--remote-config-file", "../../remote-jsc-tests-config.json"])
-        return RunJavaScriptCoreTests.start(self)
 
 
 class RunTest262Tests(TestWithFailureCount):
@@ -791,7 +816,7 @@ class RunWebKitPyTests(RunPythonTests):
     description = ["python-tests running"]
     descriptionDone = ["python-tests"]
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/test-webkitpy",
         "--verbose",
         "--buildbot-master", CURRENT_HOSTNAME,
@@ -1269,12 +1294,13 @@ class ExtractTestResults(master.MasterShellCommand):
             kwargs['logEnviron'] = False
             self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s).zip')
             self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s)')
-            kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
+            kwargs['command'] = ['echo', 'Unzipping in background, it might take a while.']
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def resultDirectoryURL(self):
         if USE_BUILDBOT_VERSION2:
-            return self.resultDirectory.replace('public_html/', '/') + '/'
+            path = self.resultDirectory.replace('public_html/results/', '') + '/'
+            return '{}{}'.format(S3_RESULTS_URL, path)
         else:
             return self.build.getProperties().render(self.resultDirectory).replace('public_html/', '/') + '/'
 
@@ -1294,10 +1320,3 @@ class ExtractTestResults(master.MasterShellCommand):
     def finished(self, result):
         self.addCustomURLs()
         return master.MasterShellCommand.finished(self, result)
-
-
-class ExtractTestResultsAndLeaks(ExtractTestResults):
-    def addCustomURLs(self):
-        ExtractTestResults.addCustomURLs(self)
-        url = "/LeaksViewer/?url=" + urllib.quote(self.resultDirectoryURL(), safe="")
-        self.addURL("view leaks", url)

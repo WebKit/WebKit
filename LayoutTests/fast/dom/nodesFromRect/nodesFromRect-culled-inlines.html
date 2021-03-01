@@ -38,9 +38,9 @@
             /* Rect based test over and outside word1. */
             checkRect(70, 19, 20, 8, "'   ', 'word1', SPAN#wordinline1, SPAN#culledinline");
             /* Rect based test over word1 and word2. */
-            checkRect(70, 19, 40, 8, "'word2', SPAN#wordinline2, '   ', 'word1', SPAN#wordinline1, SPAN#culledinline");
+            checkRect(70, 19, 40, 8, "'word2', '   ', 'word1', SPAN#wordinline2, SPAN#wordinline1, SPAN#culledinline");
             /* Rect based test over word2 and word3. */
-            checkRect(170, 19, 40, 8, "'word3', SPAN#wordinline3, '   ', 'word2', SPAN#wordinline2, SPAN#culledinline, P");
+            checkRect(170, 19, 40, 8, "'word3', '   ', 'word2', SPAN#wordinline3, SPAN#wordinline2, SPAN#culledinline, P");
 
             document.getElementById('sandbox').style.display = 'none';
         }

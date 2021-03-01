@@ -32,6 +32,7 @@
 #include "config.h"
 #include "EventTarget.h"
 
+#include "AddEventListenerOptions.h"
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include "EventTargetConcrete.h"
@@ -81,19 +82,28 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     listener->checkValidityForEventTarget(*this);
 #endif
 
+    if (options.signal && options.signal->aborted())
+        return false;
+
     auto passive = options.passive;
 
     if (!passive.hasValue() && Quirks::shouldMakeEventListenerPassive(*this, eventType, listener.get()))
         passive = true;
 
     bool listenerCreatedFromScript = listener->type() == EventListener::JSEventListenerType && !listener->wasCreatedFromMarkup();
-    auto listenerRef = listener.copyRef();
 
-    if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, passive.valueOr(false), options.once }))
+    if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.valueOr(false), options.once }))
         return false;
 
+    if (options.signal) {
+        options.signal->addAlgorithm([weakThis = makeWeakPtr(*this), eventType, listener = makeWeakPtr(listener.get()), capture = options.capture] {
+            if (weakThis && listener)
+                weakThis->removeEventListener(eventType, *listener, capture);
+        });
+    }
+
     if (listenerCreatedFromScript)
-        InspectorInstrumentation::didAddEventListener(*this, eventType, listenerRef.get(), options.capture);
+        InspectorInstrumentation::didAddEventListener(*this, eventType, listener.get(), options.capture);
 
     if (eventNames().isWheelEventType(eventType))
         invalidateEventListenerRegions();
@@ -116,12 +126,12 @@ void EventTarget::addEventListenerForBindings(const AtomString& eventType, RefPt
     WTF::visit(visitor, variant);
 }
 
-void EventTarget::removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&& listener, ListenerOptionsOrBoolean&& variant)
+void EventTarget::removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&& listener, EventListenerOptionsOrBoolean&& variant)
 {
     if (!listener)
         return;
 
-    auto visitor = WTF::makeVisitor([&](const ListenerOptions& options) {
+    auto visitor = WTF::makeVisitor([&](const EventListenerOptions& options) {
         removeEventListener(eventType, *listener, options);
     }, [&](bool capture) {
         removeEventListener(eventType, *listener, capture);
@@ -130,7 +140,7 @@ void EventTarget::removeEventListenerForBindings(const AtomString& eventType, Re
     WTF::visit(visitor, variant);
 }
 
-bool EventTarget::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool EventTarget::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     auto* data = eventTargetData();
     if (!data)
@@ -170,7 +180,7 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
 
         return true;
     }
-    return addEventListener(eventType, listener.releaseNonNull());
+    return addEventListener(eventType, listener.releaseNonNull(), { });
 }
 
 EventListener* EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -319,7 +329,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
 
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
-            removeEventListener(event.type(), registeredListener->callback(), ListenerOptions(registeredListener->useCapture()));
+            removeEventListener(event.type(), registeredListener->callback(), registeredListener->useCapture());
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);

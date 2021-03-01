@@ -45,7 +45,7 @@ ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
         if (lastIndex > input.length())
             return UINT_MAX;
     } else {
-        double doubleLastIndex = jsLastIndex.toInteger(globalObject);
+        double doubleLastIndex = jsLastIndex.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, UINT_MAX);
         if (doubleLastIndex > input.length())
             return UINT_MAX;

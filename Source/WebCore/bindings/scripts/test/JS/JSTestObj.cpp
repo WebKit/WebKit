@@ -7795,8 +7795,12 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodOve
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod9Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod13Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (hasIteratorMethod(lexicalGlobalObject, distinguishingArg))
-            RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod7Body(lexicalGlobalObject, callFrame, castedThis)));
+        {
+            bool success = hasIteratorMethod(lexicalGlobalObject, distinguishingArg);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            if (success)
+                RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod7Body(lexicalGlobalObject, callFrame, castedThis)));
+        }
         if (distinguishingArg.isObject())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod5Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body svg {
+        position: absolute;
+        width: 0;
+        height: 0;
+    }
+
+    .box {
+        margin: 10px;
+        height: 200px;
+        width: 200px;
+        border: 20px solid blue;
+        background-color: green;
+        box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+    <svg version='1.1' xmlns='http://www.w3.org/2000/svg'>
+      <defs>
+        <filter id='filter1'>
+          <feturbulence basefrequency='0.005 0.005' id='frequency1' numoctaves='1' result='noise' seed='1' type='fractalNoise'></feturbulence>
+          <fedisplacementmap id='displacement1' in2='fractalNoise' in='SourceGraphic' scale='0'></fedisplacementmap> <!-- in2 is invalid -->
+        </filter>
+      </defs>
+    </svg>
+    <div class='box' style="filter: url(#filter1) saturate(0);"></div>
+    <div class='box' style="filter: invert() url(#filter1) saturate(0);"></div>
+    <div class='box' style="filter: invert() url(#filter1)"></div>
+</body>
+</html>
+ 
+

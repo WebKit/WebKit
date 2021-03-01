@@ -61,7 +61,7 @@ Color NativeImage::singlePixelSolidColor() const
     if (!pixel[3])
         return Color::transparentBlack;
 
-    return clampToComponentBytes<SRGBA>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
 void NativeImage::clearSubimages()

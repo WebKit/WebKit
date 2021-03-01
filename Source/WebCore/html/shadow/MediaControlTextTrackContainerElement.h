@@ -102,7 +102,7 @@ private:
     IntRect m_videoDisplaySize;
     int m_fontSize { 0 };
     bool m_fontSizeIsImportant { false };
-    bool m_needsGenerateTextTrackRepresentation { false };
+    bool m_needsToGenerateTextTrackRepresentation { false };
 };
 
 } // namespace WebCore

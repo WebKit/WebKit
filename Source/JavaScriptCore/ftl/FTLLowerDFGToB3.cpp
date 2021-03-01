@@ -362,8 +362,8 @@ public:
             if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
                 auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
                 jitCode->argumentFlushFormats().reserveInitialCapacity(codeBlock()->numParameters());
-                for (unsigned i = codeBlock()->numParameters(); i--;)
-                    jitCode->argumentFlushFormats().append(m_graph.m_argumentFormats[0][i]);
+                for (int i = 0; i < codeBlock()->numParameters(); ++i)
+                    jitCode->argumentFlushFormats().uncheckedAppend(m_graph.m_argumentFormats[0][i]);
             } else {
                 for (unsigned i = codeBlock()->numParameters(); i--;) {
                     MethodOfGettingAValueProfile profile(&m_graph.m_profiledBlock->valueProfileForArgument(i));
@@ -4275,7 +4275,27 @@ private:
 
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(lowCell(baseEdge));
-        setIntTypedArrayLoadResult(result, type);
+
+        if (m_node->op() == AtomicsStore) {
+            Edge operand = argEdges[0];
+            switch (operand.useKind()) {
+            case Int32Use:
+                setInt32(lowInt32(operand));
+                break;
+            case Int52RepUse:
+                setStrictInt52(lowStrictInt52(operand));
+                break;
+            case DoubleRepUse:
+                setDouble(toIntegerOrInfinity(lowDouble(operand)));
+                break;
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad result type");
+                break;
+            }
+            return;
+        }
+        constexpr bool canSpeculate = false;
+        setIntTypedArrayLoadResult(result, type, canSpeculate);
     }
     
     void compileAtomicsIsLockFree()
@@ -4295,10 +4315,11 @@ private:
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(trueCase);
         
-        Vector<SwitchCase> cases;
+        Vector<SwitchCase, 4> cases;
         cases.append(SwitchCase(m_out.constInt32(1), trueCase, Weight()));
         cases.append(SwitchCase(m_out.constInt32(2), trueCase, Weight()));
         cases.append(SwitchCase(m_out.constInt32(4), trueCase, Weight()));
+        cases.append(SwitchCase(m_out.constInt32(8), trueCase, Weight()));
         m_out.switchInstruction(bytes, cases, falseCase, Weight());
         
         m_out.appendTo(trueCase, falseCase);
@@ -5063,6 +5084,8 @@ private:
             return;
         }
             
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
@@ -5244,7 +5267,7 @@ private:
                     LValue result = loadFromIntTypedArray(pointer, type);
                     // We have to keep base alive since that keeps storage alive.
                     ensureStillAliveHere(base);
-                    bool canSpeculate = true;
+                    constexpr bool canSpeculate = true;
                     setIntTypedArrayLoadResult(result, type, canSpeculate);
                     return;
                 }
@@ -5358,6 +5381,8 @@ private:
         
         ArrayMode arrayMode = m_node->arrayMode().modeForPut();
         switch (arrayMode.type()) {
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (child1.useKind() == CellUse) {
                 V_JITOperation_GCCJ operation = nullptr;
@@ -5647,6 +5672,8 @@ private:
         case Array::SelectUsingPredictions:
         case Array::Undecided:
         case Array::Unprofiled:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
         }
@@ -15037,10 +15064,16 @@ private:
         if (LIKELY(!Options::returnEarlyFromInfiniteLoopsForFuzzing()))
             return;
 
-        CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_origin.semantic);
-        if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+        bool emitEarlyReturn = true;
+        m_origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
+            CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(origin);
+            if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+                emitEarlyReturn = false;
+        });
+        if (!emitEarlyReturn)
             return;
 
+        CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_origin.semantic);
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
         const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
         VM* vm = &this->vm();
@@ -16879,7 +16912,7 @@ private:
         }
     }
     
-    void setIntTypedArrayLoadResult(LValue result, TypedArrayType type, bool canSpeculate = false)
+    void setIntTypedArrayLoadResult(LValue result, TypedArrayType type, bool canSpeculate)
     {
         if (elementSize(type) < 4 || isSigned(type)) {
             setInt32(result);
@@ -19619,6 +19652,14 @@ private:
     LValue toButterfly(LValue immutableButterfly)
     {
         return m_out.addPtr(immutableButterfly, JSImmutableButterfly::offsetOfData());
+    }
+
+    LValue toIntegerOrInfinity(LValue doubleValue)
+    {
+        // https://tc39.es/ecma262/#sec-tointegerorinfinity
+        // 1. If value is either of +0, -0, or NaN, return +0
+        // 2. Otherwise, return trunc(value)
+        return m_out.select(m_out.doubleNotEqualAndOrdered(doubleValue, m_out.doubleZero), m_out.doubleTrunc(doubleValue), m_out.doubleZero);
     }
 
     void addWeakReference(JSCell* target)

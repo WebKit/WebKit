@@ -47,7 +47,7 @@ class WebSpeechRecognitionConnection final : public WebCore::SpeechRecognitionCo
 public:
     static Ref<WebSpeechRecognitionConnection> create(SpeechRecognitionConnectionIdentifier);
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&) final;
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier) final;
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
 
@@ -56,6 +56,7 @@ private:
     ~WebSpeechRecognitionConnection();
 
     void registerClient(WebCore::SpeechRecognitionConnectionClient&) final;
+    void unregisterClient(WebCore::SpeechRecognitionConnectionClient&) final;
     void didReceiveUpdate(WebCore::SpeechRecognitionUpdate&&) final;
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
 

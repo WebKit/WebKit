@@ -31,6 +31,7 @@
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/WebAuthenticationConstants.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -65,7 +66,7 @@ public:
 
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTFMove(handler); }
     void setLAContext(LAContext *);
-    void didSelectAssertionResponse(ASCLoginChoiceProtocol *, LAContext *);
+    void didSelectAssertionResponse(const String& credentialName, LAContext *);
     void setPin(const String&);
 
 private:
@@ -73,6 +74,10 @@ private:
     RetainPtr<ASCAuthorizationPresentationContext> m_context;
     RetainPtr<ASCAuthorizationPresenter> m_presenter;
     RetainPtr<WKASCAuthorizationPresenterDelegate> m_presenterDelegate;
+    Function<void()> m_delayedPresentation;
+#if HAVE(ASC_AUTH_UI)
+    bool m_delayedPresentationNeedsSecurityKey { false };
+#endif
 
     CredentialRequestHandler m_credentialRequestHandler;
 
@@ -80,9 +85,12 @@ private:
     RetainPtr<LAContext> m_laContext;
 
     CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)> m_responseHandler;
-    HashMap<ASCLoginChoiceProtocol *, RefPtr<WebCore::AuthenticatorAssertionResponse>> m_credentials;
+    HashMap<String, RefPtr<WebCore::AuthenticatorAssertionResponse>> m_credentials;
 
     CompletionHandler<void(const String&)> m_pinHandler;
+#if HAVE(ASC_AUTH_UI)
+    bool m_presentedPIN { false };
+#endif
 };
 
 } // namespace WebKit

@@ -34,7 +34,7 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL&, GraphicsContextGLOpenGL::Destination);
+    TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL&);
     virtual ~TextureMapperGCGLPlatformLayer();
 
     bool makeContextCurrent();

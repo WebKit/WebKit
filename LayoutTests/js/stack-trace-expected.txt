@@ -6,7 +6,7 @@ This test checks stack trace corectness in special cases.
 
 --> Stack Trace:
     0   inner at stack-trace.js:84:44
-    1    at eval code
+    1   eval code at 
     2   eval at [native code]
     3   evaler at stack-trace.js:85:29
     4   global code at stack-trace.js:95:13
@@ -14,7 +14,7 @@ This test checks stack trace corectness in special cases.
 --> Stack Trace:
     0   inner at stack-trace.js:84:44
     1   outer at stack-trace.js:83:34
-    2    at eval code
+    2   eval code at 
     3   eval at [native code]
     4   evaler at stack-trace.js:85:29
     5   global code at stack-trace.js:96:13
@@ -245,7 +245,7 @@ This test checks stack trace corectness in special cases.
     99   selfRecursive2 at stack-trace.js:118:27
 
 --> Stack Trace matches pattern:
-    0    at eval code
+    0   eval code at 
     1   eval at [native code]
     2   selfRecursive3 at stack-trace.js
 

@@ -823,14 +823,14 @@ void Frame::overflowScrollPositionChangedForNode(const IntPoint& position, Node*
     auto* layer = downcast<RenderBoxModelObject>(*renderer).layer();
     if (!layer)
         return;
-    auto* scrollableLayer = layer->ensureLayerScrollableArea();
+    auto* scrollableArea = layer->ensureLayerScrollableArea();
 
-    auto oldScrollType = scrollableLayer->currentScrollType();
-    scrollableLayer->setCurrentScrollType(isUserScroll ? ScrollType::User : ScrollType::Programmatic);
-    scrollableLayer->scrollToOffsetWithoutAnimation(position);
-    scrollableLayer->setCurrentScrollType(oldScrollType);
+    auto oldScrollType = scrollableArea->currentScrollType();
+    scrollableArea->setCurrentScrollType(isUserScroll ? ScrollType::User : ScrollType::Programmatic);
+    scrollableArea->scrollToOffsetWithoutAnimation(position);
+    scrollableArea->setCurrentScrollType(oldScrollType);
 
-    scrollableLayer->didEndScroll(); // FIXME: Should we always call this?
+    scrollableArea->didEndScroll(); // FIXME: Should we always call this?
 }
 
 void Frame::resetAllGeolocationPermission()

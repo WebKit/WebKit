@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function changeElementDisplayValue(id, value)
+{
+    document.getElementById(id).style.display = value;
+}
+
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutContextTypeChanged");
+
+    function addTestCase({name, description, selector, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+                await domNodeHandler(domNode);
+            },
+        });
+    }
+
+    async function changeElementDisplayValue(id, value)
+    {
+        await InspectorTest.evaluateInPage(`changeElementDisplayValue("${id}", "${value}")`);
+    }
+
+    addTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.GridToNonGrid",
+        description: "Change a `grid` to a non-grid.",
+        selector: "#gridToNonGrid",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should be `grid`.");
+
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("gridToNonGrid", "block"),
+            ]);
+
+            InspectorTest.expectEqual(domNode.layoutContextType, undefined, "Layout context should now be `undefined`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NonGridToGrid",
+        description: "Change a non-grid to a grid.",
+        selector: "#nonGridToGrid",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectEqual(domNode.layoutContextType, undefined, "Layout context should be `undefined`.");
+
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("nonGridToGrid", "grid"),
+            ]);
+
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should now be `grid`.");
+        }
+    });
+
+    WI.domManager.requestDocument().then((doc) => {
+        documentNode = doc;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+<style>
+    .grid-container {
+        display: grid;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.nodeLayoutContextTypeChanged event.</p>
+    <div id="gridToNonGrid" class="grid-container">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div id="nonGridToGrid">
+        <div></div>
+        <div></div>
+    </div>
+</body>
+</html>

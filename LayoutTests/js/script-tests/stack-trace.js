@@ -129,7 +129,7 @@ try {
     selfRecursive3();
 } catch (e) {
     var pattern = [
-        " at eval code",
+        "eval code at ",
         "eval at [native code]",
         "selfRecursive3 at stack-trace.js"
     ];

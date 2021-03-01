@@ -84,9 +84,12 @@ public:
 
     bool alwaysCreateLineBoxes() const { return renderInlineAlwaysCreatesLineBoxes(); }
     void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
+    bool shouldCreateLineBoxes() const;
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
     bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
+
+    bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext() || hasRunningAcceleratedAnimations(); }
 
 protected:
     void willBeDestroyed() override;
@@ -117,8 +120,6 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
-
-    bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext() || hasRunningAcceleratedAnimations(); }
 
     LayoutUnit offsetLeft() const final;
     LayoutUnit offsetTop() const final;

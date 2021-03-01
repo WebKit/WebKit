@@ -69,14 +69,18 @@ public:
     void setFloorOrigin(RefPtr<WebXRRigidTransform>&& origin) { m_floorOrigin = WTFMove(origin); }
     void setEmulatedPosition(bool emulated) { m_emulatedPosition = emulated; }
     Vector<Ref<FakeXRView>>& views() { return m_views; }
+    void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
+    void simulateShutdownCompleted();
 private:
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
-    void shutDownTrackingAndRendering() final { }
+    void shutDownTrackingAndRendering() final;
+    bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }
     Optional<Vector<FakeXRBoundsPoint>> m_nativeBoundsGeometry;
     RefPtr<WebXRRigidTransform> m_viewerOrigin;
     RefPtr<WebXRRigidTransform> m_floorOrigin;
     bool m_emulatedPosition { false };
     Vector<Ref<FakeXRView>> m_views;
+    bool m_supportsShutdownNotification { false };
 };
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {
@@ -106,6 +110,10 @@ public:
     static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
 
     SimulatedXRDevice& simulatedXRDevice() { return m_device; }
+
+    void setSupportsShutdownNotification();
+
+    void simulateShutdown();
 
 private:
     WebFakeXRDevice();

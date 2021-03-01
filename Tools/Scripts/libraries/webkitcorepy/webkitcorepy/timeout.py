@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ ORIGINAL_SLEEP = time.sleep
 
 
 class Timeout(object):
+    SIGALRM = getattr(signal, 'SIGALRM', None)
     _process_to_timeout_map = collections.defaultdict(list)
 
     class Data(object):
@@ -64,7 +65,8 @@ class Timeout(object):
                 self._patch = None
 
         def __enter__(self):
-            signal.alarm(0)
+            if Timeout.SIGALRM:
+                signal.alarm(0)
             if self._patch:
                 self._patch.__enter__()
 
@@ -111,17 +113,18 @@ class Timeout(object):
         current = cls.current()
         current.triggered = True
         cls.bind()
-        current.handler(signal.SIGALRM, None)
+        current.handler(Timeout.SIGALRM, None)
 
     @classmethod
     def bind(cls):
         current = cls.current()
         if not current:
-            signal.alarm(0)
+            if Timeout.SIGALRM:
+                signal.alarm(0)
             return
 
         def handler(signum, frame):
-            assert signum == signal.SIGALRM
+            assert signum == Timeout.SIGALRM
             if current.thread_id != threading.current_thread().ident:
                 log.critical('Using both alarms and threading in the same process, this is unsupported')
                 raise ValueError('Timeout originates from a different thread')
@@ -131,8 +134,9 @@ class Timeout(object):
 
         current_time = time.time()
         cls.check(current_time=current_time)
-        signal.signal(signal.SIGALRM, handler)
-        signal.alarm(int(math.ceil(current.alarm_time - current_time)))
+        if Timeout.SIGALRM:
+            signal.signal(Timeout.SIGALRM, handler)
+            signal.alarm(int(math.ceil(current.alarm_time - current_time)))
 
     @classmethod
     def sleep(cls, seconds):
@@ -142,7 +146,7 @@ class Timeout(object):
             current = cls.current()
             current.triggered = True
             cls.bind()
-            current.handler(signal.SIGALRM, None)
+            current.handler(Timeout.SIGALRM, None)
         return ORIGINAL_SLEEP(seconds)
 
     def __init__(self, seconds=1, handler=None, patch=True):

@@ -64,6 +64,7 @@
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
+#define NETWORK_SESSION_COCOA_HTTP_REDIRECT_ADDITIONS
 #endif
 
 #import "DeviceManagementSoftLink.h"
@@ -529,6 +530,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
+    NETWORK_SESSION_COCOA_HTTP_REDIRECT_ADDITIONS
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu willPerformHTTPRedirection from %s to %s", taskIdentifier, response.URL.absoluteString.UTF8String, request.URL.absoluteString.UTF8String);
 
@@ -1232,6 +1234,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         if ([configuration respondsToSelector:@selector(_hstsStorage)])
             configuration._hstsStorage = [[alloc_NSHSTSStorageInstance() initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]] autorelease];
     }
+#endif
+
+#if HAVE(NETWORK_LOADER)
+    configuration._usesNWLoader = parameters.useNetworkLoader;
 #endif
 
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)

@@ -25,9 +25,9 @@
                     }
     
                     consoleWrite("<br><i>** Test current cue colors<" + "/i>");
-                    testExpected("cueNode.style.color", "rgb(255, 255, 255)");
-                    testExpected("cueNode.style.backgroundColor", "rgb(0, 0, 0)");
-    
+                    testExpected("getComputedStyle(cueNode).color", "rgb(255, 255, 255)");
+                    testExpected("getComputedStyle(cueNode).backgroundColor", "rgba(0, 0, 0, 0.8)");
+
                     endTest();
                 }
                 

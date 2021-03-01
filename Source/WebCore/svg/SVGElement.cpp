@@ -381,7 +381,7 @@ bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener
     return true;
 }
 
-bool SVGElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool SVGElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, options);

@@ -91,19 +91,19 @@ bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
 {
     switch (m_type) {
     case GRAYSCALE: {
-        color = asSRGBA(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case SEPIA: {
-        color = asSRGBA(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case HUE_ROTATE: {
-        color = asSRGBA(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case SATURATE: {
-        color = asSRGBA(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     default:
@@ -172,7 +172,7 @@ bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) 
     }
     case BRIGHTNESS:
         color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
-            return std::max<float>(m_amount * component, 0.0f);
+            return std::clamp<float>(m_amount * component, 0.0f, 1.0f);
         });
         return true;
     default:
@@ -224,15 +224,78 @@ RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperat
     return InvertLightnessFilterOperation::create();
 }
 
+// FIXME: This hueRotate code exists to allow InvertLightnessFilterOperation to perform hue rotation
+// on color values outside of the non-extended SRGB value range (0-1) to maintain the behavior of colors
+// prior to clamping being enforced. It should likely just use the existing hueRotateColorMatrix(amount)
+// in ColorMatrix.h
+static ColorComponents<float> hueRotate(const ColorComponents<float>& color, float amount)
+{
+    auto [r, g, b, alpha] = color;
+
+    auto [min, max] = std::minmax({ r, g, b });
+    float chroma = max - min;
+
+    float lightness = 0.5f * (max + min);
+    float saturation;
+    if (!chroma)
+        saturation = 0;
+    else if (lightness <= 0.5f)
+        saturation = (chroma / (max + min));
+    else
+        saturation = (chroma / (2.0f - (max + min)));
+
+    if (!saturation)
+        return { lightness, lightness, lightness, alpha };
+
+    float hue;
+    if (!chroma)
+        hue = 0;
+    else if (max == r)
+        hue = (60.0f * ((g - b) / chroma)) + 360.0f;
+    else if (max == g)
+        hue = (60.0f * ((b - r) / chroma)) + 120.0f;
+    else
+        hue = (60.0f * ((r - g) / chroma)) + 240.0f;
+
+    if (hue >= 360.0f)
+        hue -= 360.0f;
+
+    hue /= 360.0f;
+
+    // Perform rotation.
+    hue = std::fmod(hue + amount, 1.0f);
+
+    float temp2 = lightness <= 0.5f ? lightness * (1.0f + saturation) : lightness + saturation - lightness * saturation;
+    float temp1 = 2.0f * lightness - temp2;
+    
+    hue *= 6.0f; // calcHue() wants hue in the 0-6 range.
+
+    // Hue is in the range 0-6, other args in 0-1.
+    auto calcHue = [](float temp1, float temp2, float hueVal) {
+        if (hueVal < 0.0f)
+            hueVal += 6.0f;
+        else if (hueVal >= 6.0f)
+            hueVal -= 6.0f;
+        if (hueVal < 1.0f)
+            return temp1 + (temp2 - temp1) * hueVal;
+        if (hueVal < 3.0f)
+            return temp2;
+        if (hueVal < 4.0f)
+            return temp1 + (temp2 - temp1) * (4.0f - hueVal);
+        return temp1;
+    };
+
+    return {
+        calcHue(temp1, temp2, hue + 2.0f),
+        calcHue(temp1, temp2, hue),
+        calcHue(temp1, temp2, hue - 2.0f),
+        alpha
+    };
+}
+
 bool InvertLightnessFilterOperation::transformColor(SRGBA<float>& color) const
 {
-    auto hsla = toHSLA(color);
-    
-    // Rotate the hue 180deg.
-    hsla.hue = std::fmod(hsla.hue + 0.5f, 1.0f);
-    
-    // Convert back to RGB.
-    auto hueRotatedSRGBA = toSRGBA(hsla);
+    auto hueRotatedSRGBAComponents = hueRotate(asColorComponents(color), 0.5f);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
     constexpr ColorMatrix<5, 3> toDarkModeMatrix {
@@ -240,7 +303,7 @@ bool InvertLightnessFilterOperation::transformColor(SRGBA<float>& color) const
         0.030f, -0.741f, -0.089f, 0.0f, 1.0f,
         0.030f,  0.059f, -0.890f, 0.0f, 1.0f
     };
-    color = asSRGBA(toDarkModeMatrix.transformedColorComponents(asColorComponents(hueRotatedSRGBA)));
+    color = makeFromComponentsClamping<SRGBA<float>>(toDarkModeMatrix.transformedColorComponents(hueRotatedSRGBAComponents));
     return true;
 }
 
@@ -252,16 +315,11 @@ bool InvertLightnessFilterOperation::inverseTransformColor(SRGBA<float>& color) 
         -0.049f, -1.347f,  0.146f, 0.0f, 1.25f,
         -0.049f, -0.097f, -1.104f, 0.0f, 1.25f
     };
-    auto convertedToLightMode = asSRGBA(toLightModeMatrix.transformedColorComponents(asColorComponents(color)));
+    auto convertedToLightModeComponents = toLightModeMatrix.transformedColorComponents(asColorComponents(color));
 
-    // Convert to HSL.
-    auto hsla = toHSLA(convertedToLightMode);
+    auto hueRotatedSRGBAComponents = hueRotate(convertedToLightModeComponents, 0.5f);
 
-    // Hue rotate by 180deg.
-    hsla.hue = std::fmod(hsla.hue + 0.5f, 1.0f);
-
-    // And return RGB.
-    color = toSRGBA(hsla);
+    color = makeFromComponentsClamping<SRGBA<float>>(hueRotatedSRGBAComponents);
     return true;
 }
 

@@ -252,6 +252,12 @@
                 { "name": "maximumValue", "type": "number", "description": "The maximum value that will affect the axis." },
                 { "name": "defaultValue", "type": "number", "description": "The value that is used for the axis when it is not otherwise controlled." }
             ]
+        },
+        {
+            "id": "LayoutContextType",
+            "type": "string",
+            "enum": ["grid"],
+            "description": "The layout context type of a node."
         }
     ],
     "commands": [
@@ -440,6 +446,14 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the removed stylesheet." }
+            ]
+        },
+        {
+            "name": "nodeLayoutContextTypeChanged",
+            "description": "Called when a node's layout context type has changed.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node whose layout context type changed." },
+                { "name": "layoutContextType", "$ref": "LayoutContextType", "optional": true, "description": "The new layout context type of the node. When not provided, the <code>LayoutContextType</code> of the node is not a context for which Web Inspector has specific functionality." }
             ]
         }
     ]

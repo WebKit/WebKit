@@ -50,6 +50,7 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -60,7 +61,9 @@ RenderMarquee::RenderMarquee(RenderLayer* layer)
     : m_layer(layer)
     , m_timer(*this, &RenderMarquee::timerFired)
 {
-    layer->setConstrainsScrollingToContentEdge(false);
+    ASSERT(layer);
+    ASSERT(layer->scrollableArea());
+    layer->scrollableArea()->setConstrainsScrollingToContentEdge(false);
 }
 
 RenderMarquee::~RenderMarquee() = default;
@@ -171,12 +174,15 @@ void RenderMarquee::start()
     if (m_timer.isActive() || m_layer->renderer().style().marqueeIncrement().isZero())
         return;
 
+    auto* scrollableArea = m_layer->scrollableArea();
+    ASSERT(scrollableArea);
+
     auto details = ScrollPositionChangeOptions::createProgrammaticUnclamped();
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(ScrollOffset(m_start, 0), details);
+            scrollableArea->scrollToOffset(ScrollOffset(m_start, 0), details);
         else
-            m_layer->scrollToOffset(ScrollOffset(0, m_start), details);
+            scrollableArea->scrollToOffset(ScrollOffset(0, m_start), details);
     } else {
         m_suspended = false;
         m_stopped = false;
@@ -244,13 +250,16 @@ void RenderMarquee::timerFired()
 {
     if (m_layer->renderer().view().needsLayout())
         return;
-    
+
+    auto* scrollableArea = m_layer->scrollableArea();
+    ASSERT(scrollableArea);
+
     if (m_reset) {
         m_reset = false;
         if (isHorizontal())
-            m_layer->scrollToXOffset(m_start);
+            scrollableArea->scrollToXOffset(m_start);
         else
-            m_layer->scrollToYOffset(m_start);
+            scrollableArea->scrollToYOffset(m_start);
         return;
     }
     
@@ -273,7 +282,7 @@ void RenderMarquee::timerFired()
         bool positive = range > 0;
         int clientSize = (isHorizontal() ? roundToInt(m_layer->renderBox()->clientWidth()) : roundToInt(m_layer->renderBox()->clientHeight()));
         int increment = abs(intValueForLength(m_layer->renderer().style().marqueeIncrement(), clientSize));
-        int currentPos = (isHorizontal() ? m_layer->scrollOffset().x() : m_layer->scrollOffset().y());
+        int currentPos = (isHorizontal() ? scrollableArea->scrollOffset().x() : scrollableArea->scrollOffset().y());
         newPos =  currentPos + (addIncrement ? increment : -increment);
         if (positive)
             newPos = std::min(newPos, endPoint);
@@ -290,9 +299,9 @@ void RenderMarquee::timerFired()
     }
     
     if (isHorizontal())
-        m_layer->scrollToXOffset(newPos);
+        scrollableArea->scrollToXOffset(newPos);
     else
-        m_layer->scrollToYOffset(newPos);
+        scrollableArea->scrollToYOffset(newPos);
 }
 
 } // namespace WebCore

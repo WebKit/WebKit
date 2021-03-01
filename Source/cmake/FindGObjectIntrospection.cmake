@@ -44,6 +44,10 @@ if (PKG_CONFIG_FOUND)
         _gir_get_pkgconfig_var(INTROSPECTION_GENERATE "g_ir_generate" "")
         _gir_get_pkgconfig_var(INTROSPECTION_GIRDIR "girdir" "")
         _gir_get_pkgconfig_var(INTROSPECTION_TYPELIBDIR "typelibdir" "")
+        set(INTROSPECTION_VERSION "${_pc_gir_VERSION}")
+        if (${INTROSPECTION_VERSION} VERSION_GREATER_EQUAL "1.59.1")
+            set(INTROSPECTION_HAVE_SOURCES_TOP_DIRS YES)
+        endif ()
         set(INTROSPECTION_CFLAGS "${_pc_gir_CFLAGS}")
         set(INTROSPECTION_LIBS "${_pc_gir_LIBS}")
     endif ()
@@ -57,4 +61,6 @@ mark_as_advanced(
     INTROSPECTION_TYPELIBDIR
     INTROSPECTION_CFLAGS
     INTROSPECTION_LIBS
+    INTROSPECTION_VERSION
+    INTROSPECTION_HAVE_SOURCES_TOP_DIRS
 )

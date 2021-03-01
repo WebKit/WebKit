@@ -15,7 +15,7 @@ var xhr = new XMLHttpRequest;
 function f1()
 {
     // "?login1" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/re-login/resource.php?login1", true, "user1", "pass");
+    xhr.open("GET", "resources/re-login/resource.py?login1", true, "user1", "pass");
     xhr.send("");
     xhr.onload = function() {
         document.getElementById("login").innerHTML = xhr.responseText == "User: user1, password: pass." ? "PASS" : "FAIL";
@@ -26,7 +26,7 @@ function f1()
 function f2()
 {
     // "?default" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/re-login/resource.php?default", true);
+    xhr.open("GET", "resources/re-login/resource.py?default", true);
     xhr.send("");
     xhr.onload = function() {
         document.getElementById("default").innerHTML = xhr.responseText == "User: user1, password: pass." ? "PASS" : "FAIL";
@@ -37,7 +37,7 @@ function f2()
 function f3()
 {
     // "?login2" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/re-login/resource.php?login2", true, "user2", "pass");
+    xhr.open("GET", "resources/re-login/resource.py?login2", true, "user2", "pass");
     xhr.send("");
     xhr.onload = function() {
         document.getElementById("relogin").innerHTML = xhr.responseText == "User: user2, password: pass." ? "PASS" : "FAIL";
@@ -48,7 +48,7 @@ function f3()
 function f4()
 {
     // "?newdefault" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/re-login/resource.php?newdefault", true);
+    xhr.open("GET", "resources/re-login/resource.py?newdefault", true);
     xhr.send("");
     xhr.onload = function() {
         document.getElementById("newdefault").innerHTML = xhr.responseText == "User: user2, password: pass." ? "PASS" : "FAIL";

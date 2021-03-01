@@ -33,6 +33,7 @@
 #import "DOMNodeListInternal.h"
 #import "ExceptionHandlers.h"
 #import "ObjCEventListener.h"
+#import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/Element.h>
 #import <WebCore/JSExecState.h>

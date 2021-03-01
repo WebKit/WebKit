@@ -40,6 +40,7 @@
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "LayerTreeContext.h"
+#include "MediaKeySystemPermissionRequestManagerProxy.h"
 #include "MediaPlaybackState.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
@@ -52,6 +53,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "ShareableResource.h"
+#include "SpeechRecognitionPermissionRequest.h"
 #include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "SystemPreviewController.h"
@@ -72,8 +74,8 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPageProxyMessagesReplies.h"
 #include "WebPaymentCoordinatorProxy.h"
-#include "WebPreferences.h"
 #include "WebPopupMenuProxy.h"
+#include "WebPreferences.h"
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/ActivityState.h>
@@ -226,6 +228,7 @@ class ProtectionSpace;
 class RunLoopObserver;
 class SelectionData;
 class SharedBuffer;
+class SpeechRecognitionRequest;
 class TextIndicator;
 class ValidationBubble;
 
@@ -269,6 +272,10 @@ struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
 
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
@@ -628,6 +635,9 @@ public:
 
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
+
+    // Corresponds to the web content's `<meta name="theme-color" content="...">`.
+    WebCore::Color themeColor() const { return m_themeColor; }
 
     WebCore::Color underlayColor() const { return m_underlayColor; }
     void setUnderlayColor(const WebCore::Color&);
@@ -1173,7 +1183,7 @@ public:
 #if PLATFORM(COCOA)
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& dragImageHandle);
     void setPromisedDataForImage(const String& pasteboardName, const SharedMemory::IPCHandle& imageHandle, const String& filename, const String& extension,
-        const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle);
+        const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
     void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, const ShareableBitmap::Handle& dragImage);
@@ -1332,9 +1342,9 @@ public:
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
     void stopMediaCapture();
 
-    void pauseAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void suspendAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void resumeAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void pauseAllMediaPlayback(CompletionHandler<void()>&&);
+    void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void resumeAllMediaPlayback(CompletionHandler<void()>&&);
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
 
 #if ENABLE(POINTER_LOCK)
@@ -1440,7 +1450,8 @@ public:
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
     void updateReportedMediaCaptureState();
 
-    void updatePlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
+    enum class CanDelayNotification { No, Yes };
+    void updatePlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, CanDelayNotification = CanDelayNotification::No);
     bool isCapturingAudio() const { return m_mediaState & WebCore::MediaProducer::AudioCaptureMask; }
     bool isCapturingVideo() const { return m_mediaState & WebCore::MediaProducer::VideoCaptureMask; }
     bool hasActiveAudioStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveAudioCaptureDevice; }
@@ -1606,6 +1617,10 @@ public:
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+#endif
+
     static WebPageProxy* nonEphemeralWebPageProxy();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1741,6 +1756,7 @@ public:
     void setOrientationForMediaCapture(uint64_t);
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
+    bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 
     bool hasQueuedKeyEvent() const;
     const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
@@ -1811,13 +1827,18 @@ public:
     void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
     size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
-    void requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&&);
-    void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+    void requestSpeechRecognitionPermission(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&);
+    void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
+    void requestUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+
+    void requestMediaKeySystemPermissionByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 
     void syncIfMockDevicesEnabledChanged();
 
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
+    void updateAppHighlightsStorage(const IPC::SharedBufferCopy&);
+    void restoreAppHighlights(Ref<WebCore::SharedBuffer>&& data);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1988,12 +2009,18 @@ private:
     void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
     void beginMonitoringCaptureDevices();
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    MediaKeySystemPermissionRequestManagerProxy& mediaKeySystemPermissionRequestManager();
+#endif
+    void requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, const String&);
+
     void runModal();
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide);
     void didChangePageCount(unsigned);
+    void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
@@ -2496,6 +2523,10 @@ private:
     std::unique_ptr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    std::unique_ptr<MediaKeySystemPermissionRequestManagerProxy> m_mediaKeySystemPermissionRequestManager;
+#endif
+
     OptionSet<WebCore::ActivityState::Flag> m_activityState;
     bool m_viewWasEverInWindow { false };
 #if PLATFORM(MACCATALYST)
@@ -2539,6 +2570,7 @@ private:
 
     LayerHostingMode m_layerHostingMode { LayerHostingMode::InProcess };
 
+    WebCore::Color m_themeColor;
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
 
@@ -2619,6 +2651,7 @@ private:
 
     bool m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart { false };
     uint64_t m_handlingPreventableTouchStartCount { 0 };
+    uint64_t m_handlingPreventableTouchEndCount { 0 };
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;

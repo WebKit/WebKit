@@ -88,7 +88,7 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
 void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeMediaSource>&& source)
 {
     if (source->type() == RealtimeMediaSource::Type::Audio)
-        m_remoteCaptureSampleManager.addSource(source.copyRef());
+        m_remoteAudioCaptureSampleManager.addSource(source.copyRef());
 
     auto identifier = source->identifier();
     ASSERT(!m_sources.contains(identifier));
@@ -144,9 +144,6 @@ void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifi
 
 CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    if (!constraints)
-        return { };
-
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
@@ -158,7 +155,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager);
+    return RemoteRealtimeMediaSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
 }
 
 void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool value)
@@ -168,15 +165,12 @@ void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool va
 
 CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    if (!constraints)
-        return { };
-
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager);
+    return RemoteRealtimeMediaSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -188,10 +182,13 @@ void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&
 
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
 {
-    if (!constraints)
-        return { };
+    return RemoteRealtimeMediaSource::create(device, constraints, { }, { }, m_manager, false);
+}
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, { }, m_manager);
+void UserMediaCaptureManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
+{
+    if (source.type() == RealtimeMediaSource::Type::Audio)
+        m_remoteAudioCaptureSampleManager.didUpdateSourceConnection(source);
 }
 
 }

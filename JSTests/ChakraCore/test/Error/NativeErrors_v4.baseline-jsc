@@ -1,7 +1,7 @@
 EvalError
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:68:5
@@ -10,7 +10,7 @@ toString()     = EvalError
 RangeError('This is a range error')
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:69:5
@@ -19,7 +19,7 @@ toString()     = RangeError: This is a range error
 ReferenceError
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:70:5
@@ -28,7 +28,7 @@ toString()     = ReferenceError
 SyntaxError
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:71:5
@@ -37,7 +37,7 @@ toString()     = SyntaxError
 TypeError('This is a type error')
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:72:5
@@ -46,7 +46,7 @@ toString()     = TypeError: This is a type error
 URIError
 description    = (undefined)undefined
 number         = (undefined)undefined
-stack          = (string)  eval code
+stack          = (string)  eval code@
 eval@[native code]
 Test@NativeErrors.js:49:20
 global code@NativeErrors.js:73:5

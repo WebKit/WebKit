@@ -37,9 +37,10 @@
 namespace WebCore {
 
 class DateTimeLocalInputType final : public BaseDateAndTimeInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit DateTimeLocalInputType(HTMLInputElement& element)
-        : BaseDateAndTimeInputType(element)
+        : BaseDateAndTimeInputType(Type::DateTimeLocal, element)
     {
     }
 
@@ -51,7 +52,6 @@ private:
     StepRange createStepRange(AnyStepHandling) const final;
     Optional<DateComponents> parseToDateComponents(const StringView&) const final;
     Optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    bool isDateTimeLocalField() const final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

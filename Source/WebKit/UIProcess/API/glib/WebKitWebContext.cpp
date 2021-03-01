@@ -1242,9 +1242,12 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     }
 
     auto handler = WebKitURISchemeHandler::create(context, callback, userData, destroyNotify);
-    auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WTFMove(handler));
-    for (auto* webView : context->priv->webViews.values())
-        webkitWebViewGetPage(webView).setURLSchemeHandlerForScheme(*addResult.iterator->value, String::fromUTF8(scheme));
+    auto addResult = context->priv->uriSchemeHandlers.add(String::fromUTF8(scheme), WTFMove(handler));
+    if (addResult.isNewEntry) {
+        for (auto* webView : context->priv->webViews.values())
+            webkitWebViewGetPage(webView).setURLSchemeHandlerForScheme(*addResult.iterator->value, String::fromUTF8(scheme));
+    } else
+        g_critical("Cannot register URI scheme %s more than once", scheme);
 }
 
 /**

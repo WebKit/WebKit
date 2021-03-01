@@ -49,9 +49,11 @@ namespace LLInt {
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) WTF_INTERNAL
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
 WASM_SLOW_PATH_HIDDEN_DECL(loop_osr);
 WASM_SLOW_PATH_HIDDEN_DECL(epilogue_osr);
+#endif
 
 WASM_SLOW_PATH_HIDDEN_DECL(trace);
 WASM_SLOW_PATH_HIDDEN_DECL(out_of_line_jump_target);

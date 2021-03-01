@@ -40,7 +40,7 @@ For example:
 - If you store a variable in JavaScript in the scope of a particular WKContentWorld while viewing a particular web page document, after navigating to a new document that variable will be gone.
 - If you store a variable in JavaScript in the scope of a particular WKContentWorld in one WKWebView, that variable will not exist in the same world in another WKWebView.
 */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @interface WKContentWorld : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;

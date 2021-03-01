@@ -89,18 +89,9 @@
 // FIXME: This should go into an SPI.h file in the spi directory.
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/AppKitDefines_Private.h>
-#import <AppKit/NSServicesRolloverButtonCell.h>
 #else
 #define APPKIT_PRIVATE_CLASS
-@interface NSServicesRolloverButtonCell : NSButtonCell
-@end
 #endif
-
-// FIXME: This should go into an SPI.h file in the spi directory.
-@interface NSServicesRolloverButtonCell ()
-+ (NSServicesRolloverButtonCell *)serviceRolloverButtonCellForStyle:(NSSharingServicePickerStyle)style;
-- (NSRect)rectForBounds:(NSRect)bounds preferredEdge:(NSRectEdge)preferredEdge;
-@end
 
 #endif // ENABLE(SERVICE_CONTROLS)
 
@@ -360,15 +351,6 @@ String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String&
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 }
 
-#if ENABLE(SERVICE_CONTROLS)
-
-String RenderThemeMac::imageControlsStyleSheet() const
-{
-    return String(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet));
-}
-
-#endif
-
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
@@ -506,7 +488,7 @@ static SRGBA<uint8_t> menuBackgroundColor()
     NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
 
-    return clampToComponentBytes<SRGBA>(pixel[0], pixel[1], pixel[2], pixel[3]);
+    return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
@@ -1376,7 +1358,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
     float deviceScaleFactor = renderObject.document().deviceScaleFactor();
     bool isIndeterminate = renderProgress.position() < 0;
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, ColorSpace::SRGB, paintInfo.context());
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, DestinationColorSpace::SRGB, paintInfo.context());
     if (!imageBuffer)
         return true;
 
@@ -2275,56 +2257,6 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
 
-#if ENABLE(SERVICE_CONTROLS)
-NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
-{
-    if (!m_servicesRolloverButton) {
-        m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
-        [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
-        [m_servicesRolloverButton setButtonType:NSButtonTypePushOnPushOff];
-        [m_servicesRolloverButton setImagePosition:NSImageOnly];
-        [m_servicesRolloverButton setState:NO];
-    }
-
-    return m_servicesRolloverButton.get();
-}
-
-bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (paintInfo.phase != PaintPhase::BlockBackground)
-        return true;
-
-    NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    paintInfo.context().translate(rect.location());
-
-    IntRect innerFrame(IntPoint(), rect.size());
-    [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
-    [cell setControlView:nil];
-
-    return true;
-}
-
-IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject&) const
-{
-    return IntSize(servicesRolloverButtonCell().cellSize);
-}
-
-IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
-{
-    // FIXME: Currently the offsets will always be the same no matter what image rect you try with.
-    // This may not always be true in the future.
-    static const int dummyDimension = 100;
-    IntRect dummyImageRect(0, 0, dummyDimension, dummyDimension);
-    NSRect bounds = [servicesRolloverButtonCell() rectForBounds:dummyImageRect preferredEdge:NSMinYEdge];
-
-    return IntSize(dummyDimension - bounds.origin.x, bounds.origin.y);
-}
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 const CGFloat attachmentIconSize = 48;
 const CGFloat attachmentIconBackgroundPadding = 6;
@@ -2659,8 +2591,10 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
     imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));
     auto imageRect = NSMakeRect(0, 0, imageSize.width(), imageSize.height());
     auto cgImage = [image CGImageForProposedRect:&imageRect context:nil hints:@{
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSImageHintSymbolFont : [NSFont systemFontOfSize:32],
         NSImageHintSymbolScale : @(NSImageSymbolScaleMedium)
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }];
     return { BitmapImage::create(cgImage), deviceScaleFactor };
 #else

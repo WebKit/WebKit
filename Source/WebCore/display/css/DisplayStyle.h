@@ -50,6 +50,8 @@ namespace Display {
 // All colors should be resolved to their painted values [visitedDependentColorWithColorFilter()].
 // Should contain only absolute float values; no Lengths (which can contain calc values).
 // Should be sharable between boxes with different geometry but the same style.
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Style);
 class Style {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Style);
 public:

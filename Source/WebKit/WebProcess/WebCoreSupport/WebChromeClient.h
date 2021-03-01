@@ -242,7 +242,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
 
 #if ENABLE(GPU_PROCESS)
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat) const final;
 #if ENABLE(WEBGL)
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&, WebCore::PlatformDisplayID hostWindowDisplayID) const final;
 #endif
@@ -328,6 +328,7 @@ private:
 
     WebCore::Color underlayColor() const final;
 
+    void themeColorChanged(WebCore::Color) const final;
     void pageExtendedBackgroundColorDidChange(WebCore::Color) const final;
     
     void wheelEventHandlersChanged(bool) final;
@@ -344,6 +345,10 @@ private:
 
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
+
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const final;
+#endif
 
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
@@ -407,6 +412,10 @@ private:
 
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&) final;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(WebCore::Element&) final;
 #endif
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

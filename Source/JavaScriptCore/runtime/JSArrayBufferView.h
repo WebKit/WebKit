@@ -224,6 +224,8 @@ protected:
     TypedArrayMode m_mode;
 };
 
+JSArrayBufferView* validateTypedArray(JSGlobalObject*, JSValue);
+
 } // namespace JSC
 
 namespace WTF {

@@ -157,6 +157,7 @@ void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineForm
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
     createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayNonRootInlineBoxes(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
 InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
@@ -325,6 +326,25 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
         }
         auto runCount = runIndex - firstRunIndex;
         inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
+    }
+}
+
+void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList&) const
+{
+    for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
+        auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
+        auto& lineBoxLogicalRect = lineBox.logicalRect();
+
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (!inlineLevelBox->isInlineBox())
+                continue;
+            auto& layoutBox = inlineLevelBox->layoutBox();
+            auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
+            auto inlineBoxRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+            inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
+
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect });
+        }
     }
 }
 

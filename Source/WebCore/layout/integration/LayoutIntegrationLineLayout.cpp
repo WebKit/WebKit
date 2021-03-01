@@ -173,9 +173,17 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
 {
     auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
 
-    boxGeometry.setBorder({ { renderInline.borderLeft(), renderInline.borderRight() }, { renderInline.borderTop(), renderInline.borderBottom() } });
-    boxGeometry.setPadding(Layout::Edges { { renderInline.paddingLeft(), renderInline.paddingRight() }, { renderInline.paddingTop(), renderInline.paddingBottom() } });
-    boxGeometry.setHorizontalMargin({ renderInline.marginLeft(), renderInline.marginRight() });
+    // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
+    auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.parent()->isAnonymousBlock() && renderInline.isContinuation();
+    auto shouldNotRetainBorderPaddingAndMarginEnd = renderInline.parent()->isAnonymousBlock() && !renderInline.isContinuation() && renderInline.inlineContinuation();
+    
+    auto horizontalMargin = Layout::BoxGeometry::HorizontalMargin { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.marginLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.marginRight() };
+    auto horizontalBorder = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.borderLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.borderRight() };
+    auto horizontalPadding = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.paddingLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.paddingRight() };
+    
+    boxGeometry.setPadding(Layout::Edges { horizontalPadding, { renderInline.paddingTop(), renderInline.paddingBottom() } });
+    boxGeometry.setBorder({ horizontalBorder, { renderInline.borderTop(), renderInline.borderBottom() } });
+    boxGeometry.setHorizontalMargin(horizontalMargin);
     boxGeometry.setVerticalMargin({ });
 }
 
@@ -394,6 +402,9 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent)
         return { };
 
+    if (m_inlineContent->runs.isEmpty())
+        return { };
+
     auto boxGeometry = m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline));
     return { Layout::BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
 }
@@ -506,13 +517,13 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!locationInContainer.intersects(runRect))
             continue;
 
-        auto& style = run.style();
-        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
-            continue;
-
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
         if (is<RenderText>(renderer)) {
+            auto& style = run.style();
+            if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+                continue;
+
             renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
             if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
                 return true;
@@ -529,6 +540,24 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
                 return true;
             }
         }
+    }
+
+    for (auto& inlineBox : WTF::makeReversedRange(inlineContent.nonRootInlineBoxes)) {
+        auto inlineBoxRect = Layout::toLayoutRect(inlineBox.rect());
+        inlineBoxRect.moveBy(accumulatedOffset);
+
+        if (!locationInContainer.intersects(inlineBoxRect))
+            continue;
+
+        auto& style = inlineBox.style();
+        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+            continue;
+
+        auto& renderer = m_boxTree.rendererForLayoutBox(inlineBox.layoutBox());
+
+        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, inlineBoxRect) == HitTestProgress::Stop)
+            return true;
     }
 
     return false;

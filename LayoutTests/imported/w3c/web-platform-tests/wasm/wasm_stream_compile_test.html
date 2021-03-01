@@ -37,7 +37,7 @@
 
   promise_test(async function() {
     try {
-      var result = fetch('resources/incrementer.no_mime_type.wasm');
+      var result = fetch('resources/incrementer.no_mime_type.wasm?pipe=header(Content-Type,)');
       const module = await WebAssembly.compileStreaming(result);
       assert_true(false);
     } catch (e) {
@@ -48,7 +48,7 @@
 
   promise_test(async function() {
     try {
-      var result = fetch('resources/incrementer1.wasm');
+      var result = fetch('webapi/status.py?status=404');
       const module = await WebAssembly.compileStreaming(result);
       assert_true(false);
     } catch (e) {
@@ -105,5 +105,21 @@
       .then(stream => WebAssembly.compileStreaming(new Response(stream, { headers: { "Content-Type" : "application/wasm" }})));
     assert_true(module instanceof WebAssembly.Module);
   }, "compileStreaming receive response that deliver data by chunks as bufferArray");
+
+  promise_test(async function() {
+      var response = await fetch('resources/incrementer.wasm');
+      var blob = await response.blob();
+      const module = await WebAssembly.compileStreaming(new Response(blob, { headers: { "Content-Type" : "application/wasm" }}));
+      assert_true(module instanceof WebAssembly.Module);
+  }, "compileStreaming using blob");
+
+  promise_test(async function(t) {
+      var response = await fetch('resources/incrementer.wasm');
+      var blob = await response.blob();
+      var formData = new FormData;
+      formData.append('blob', blob);
+      formData.append('blob2', "Hello");
+      await promise_rejects_js(t, WebAssembly.CompileError, WebAssembly.compileStreaming(new Response(formData, { headers: { "Content-Type" : "application/wasm" }})));
+  }, "compileStreaming using FormData");
 </script>
 

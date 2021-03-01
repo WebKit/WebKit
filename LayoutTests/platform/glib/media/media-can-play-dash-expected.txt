@@ -1,0 +1,8 @@
+
+Test HTMLMediaElement canPlayType() method for DASH.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (video.canPlayType('application/dash+xml') == 'maybe') OK
+END OF TEST
+

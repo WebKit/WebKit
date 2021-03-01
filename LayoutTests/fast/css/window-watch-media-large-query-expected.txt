@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: matchMedia returned: [object MediaQueryList]
+This test passes if it does not crash

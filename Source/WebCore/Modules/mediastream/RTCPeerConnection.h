@@ -45,6 +45,7 @@
 #include "RTCIceConnectionState.h"
 #include "RTCIceGatheringState.h"
 #include "RTCPeerConnectionState.h"
+#include "RTCRtpEncodingParameters.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCSignalingState.h"
 #include <JavaScriptCore/Uint8Array.h>
@@ -71,13 +72,13 @@ struct RTCSessionDescriptionInit;
 struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction { RTCRtpTransceiverDirection::Sendrecv };
     Vector<RefPtr<MediaStream>> streams;
+    Vector<RTCRtpEncodingParameters> sendEncodings;
 };
 
 class RTCPeerConnection final
     : public RefCounted<RTCPeerConnection>
     , public EventTargetWithInlineData
     , public ActiveDOMObject
-    , public CanMakeWeakPtr<RTCPeerConnection>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif

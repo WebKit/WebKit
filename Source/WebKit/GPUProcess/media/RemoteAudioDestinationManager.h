@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "Connection.h"
+#include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
 #include "SharedMemory.h"
 #include <memory>
@@ -37,10 +38,6 @@
 #if PLATFORM(COCOA)
 namespace WebCore {
 class CAAudioStreamDescription;
-}
-
-namespace WTF {
-class MachSendRight;
 }
 #endif
 
@@ -63,12 +60,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-#if PLATFORM(COCOA)
-    using CreationCompletionHandler = CompletionHandler<void(RemoteAudioDestinationIdentifier, WTF::MachSendRight)>;
-#else
-    using CreationCompletionHandler = CompletionHandler<void(RemoteAudioDestinationIdentifier)>;
-#endif
-    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, CreationCompletionHandler&&);
+    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&&);
+
     void deleteAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void()>&&);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);

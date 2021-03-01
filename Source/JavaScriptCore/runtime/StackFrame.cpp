@@ -124,9 +124,8 @@ String StackFrame::toString(VM& vm) const
     String functionName = this->functionName(vm);
     String sourceURL = this->sourceURL();
     traceBuild.append(functionName);
+    traceBuild.append('@');
     if (!sourceURL.isEmpty()) {
-        if (!functionName.isEmpty())
-            traceBuild.append('@');
         traceBuild.append(sourceURL);
         if (hasLineAndColumnInfo()) {
             unsigned line;

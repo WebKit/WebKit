@@ -49,6 +49,13 @@ function update_builds($db, $updates) {
         $status_description = array_get($info, 'statusDescription');
         $build_request_for_root_reuse_id = array_get($info, 'buildRequestForRootReuse');
         $request_row = $db->select_first_row('build_requests', 'request', array('id' => $id));
+
+        $fields_to_update = array();
+        if (array_key_exists('url', $info))
+            $fields_to_update['url'] = $url;
+        if (array_key_exists('statusDescription', $info))
+            $fields_to_update['status_description'] = $status_description;
+
         if ($status == 'failedIfNotCompleted') {
             if (!$request_row) {
                 $db->rollback_transaction();
@@ -62,13 +69,15 @@ function update_builds($db, $updates) {
                     WHERE request_group = $1 AND request_order > $2',
                     array($request_row['request_group'], $request_row['request_order']));
             }
-            $db->update_row('build_requests', 'request', array('id' => $id), array('status' => 'failed', 'url' => $url, 'status_description' => $status_description));
+            $fields_to_update['status'] = 'failed';
+            $db->update_row('build_requests', 'request', array('id' => $id), $fields_to_update);
         } else {
             if (!in_array($status, array('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled'))) {
                 $db->rollback_transaction();
                 exit_with_error('UnknownBuildRequestStatus', array('buildRequest' => $id, 'status' => $status));
             }
-            $db->update_row('build_requests', 'request', array('id' => $id), array('status' => $status, 'url' => $url, 'status_description' => $status_description));
+            $fields_to_update['status'] = $status;
+            $db->update_row('build_requests', 'request', array('id' => $id), $fields_to_update);
             if ($build_request_for_root_reuse_id) {
                 $build_request_for_root_reuse_id = intval($build_request_for_root_reuse_id);
                 $build_request_for_root_reuse = $db->select_first_row('build_requests', 'request', array('id' => $build_request_for_root_reuse_id));

@@ -37,6 +37,7 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +45,15 @@ namespace WebCore {
 
 constexpr unsigned kMinFFTPow2Size = 2;
 constexpr unsigned kMaxFFTPow2Size = 24;
+
+static Lock fftSetupsLock;
+
+static Vector<FFTSetup>& fftSetups()
+{
+    ASSERT(fftSetupsLock.isHeld());
+    static NeverDestroyed<Vector<FFTSetup>> fftSetups(kMaxFFTPow2Size, nullptr);
+    return fftSetups;
+}
 
 // Normal constructor: allocates for a given fftSize
 FFTFrame::FFTFrame(unsigned fftSize)
@@ -123,11 +133,11 @@ void FFTFrame::doInverseFFT(float* data)
 
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
 {
-    static NeverDestroyed<Vector<FFTSetup>> fftSetups(kMaxFFTPow2Size, nullptr);
-
     auto pow2size = static_cast<size_t>(log2(fftSize));
     ASSERT(pow2size < kMaxFFTPow2Size);
-    auto& fftSetup = fftSetups->at(pow2size);
+
+    auto locker = holdLock(fftSetupsLock);
+    auto& fftSetup = fftSetups().at(pow2size);
     if (!fftSetup)
         fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
 

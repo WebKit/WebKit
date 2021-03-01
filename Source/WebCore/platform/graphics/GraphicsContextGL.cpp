@@ -415,9 +415,8 @@ RefPtr<GraphicsContextGL> GraphicsContextGL::create(const GraphicsContextGLAttri
     return result;
 }
 
-GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, Destination destination, GraphicsContextGL*)
+GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, GraphicsContextGL*)
     : m_attrs(attrs)
-    , m_destination(destination)
 {
 }
 

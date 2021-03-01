@@ -1258,7 +1258,14 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
+
+@interface UIAction (IPI)
+- (void)_performActionWithSender:(id)sender;
+@end
+
+#if HAVE(LINK_PREVIEW)
+
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
@@ -1281,7 +1288,9 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
 @end
 
-#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#endif // HAVE(LINK_PREVIEW)
+
+#endif // USE(UICONTEXTMENU)
 
 @interface UIPhysicalKeyboardEvent : UIPressesEvent
 @end
@@ -1366,17 +1375,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (void)pasteAndMatchStyle:(id)sender;
 - (void)makeTextWritingDirectionNatural:(id)sender;
 @property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
-@end
-
-@interface _UIEventAttribution : NSObject <NSCopying>
-@property (nonatomic, assign, readonly) uint8_t sourceIdentifier;
-@property (nonatomic, copy, readonly) NSURL *attributeOn;
-@property (nonatomic, /*nullable,*/ copy, readonly) NSURL *reportEndpoint;
-@property (nonatomic, copy, readonly) NSString *sourceDescription;
-@property (nonatomic, copy, readonly) NSString *purchaser;
-- (instancetype)initWithSourceIdentifier:(uint8_t)sourceIdentifier attributeOn:(NSURL *)attributeOn sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser;
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
 @end
 
 @interface _UINavigationInteractiveTransitionBase ()

@@ -45,7 +45,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 SearchInputType::SearchInputType(HTMLInputElement& element)
-    : BaseTextInputType(element)
+    : BaseTextInputType(Type::Search, element)
     , m_searchEventTimer(*this, &SearchInputType::searchEventTimerFired)
 {
 }
@@ -97,22 +97,17 @@ const AtomString& SearchInputType::formControlType() const
     return InputTypeNames::search();
 }
 
-bool SearchInputType::isSearchField() const
-{
-    return true;
-}
-
 bool SearchInputType::needsContainer() const
 {
     return true;
 }
 
-void SearchInputType::createShadowSubtree()
+void SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool isInnerTextElementEditable)
 {
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
 
-    TextFieldInputType::createShadowSubtree();
+    TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(source, isInnerTextElementEditable);
     RefPtr<HTMLElement> container = containerElement();
     RefPtr<HTMLElement> textWrapper = innerBlockElement();
     ASSERT(container);

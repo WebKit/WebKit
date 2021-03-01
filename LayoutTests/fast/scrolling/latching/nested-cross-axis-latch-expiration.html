@@ -1,0 +1,144 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+
+        .scroller {
+            margin: 20px;
+            height: 500px;
+            width: 500px;
+            border: 2px solid gray;
+            padding: 5px;
+            overflow-y: hidden;
+            overflow-x: scroll;
+        }
+        
+        .inner-scroller {
+            margin-top: 50px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: 2px solid blue;
+            height: 500px;
+            width: 300px;
+        }
+        
+        .wide {
+            width: 300%;
+            height: 10px;
+            background-color: silver;
+        }
+
+        .filler {
+            width: 10px;
+            height: 200%;
+            background-color: silver;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var outerOverflowScrollEventCount = 0;
+        var innerOverflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function scrollTest()
+        {
+            await UIHelper.delayFor(100);
+
+            eventSender.mouseMoveTo(150, 150);
+
+            eventSender.monitorWheelEvents();
+            // Latch to the inner vertical scroller.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+            await UIHelper.waitForScrollCompletion();
+        
+            // Now try to scroll on the other axis while still latched.
+            eventSender.monitorWheelEvents({ resetLatching: false });
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'begin');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+            await UIHelper.waitForScrollCompletion();
+
+            checkForScroll();
+        }
+        
+        function checkForScroll()
+        {
+            shouldBeTrue('innerOverflowScrollEventCount > 0');
+            shouldBeTrue('outerOverflowScrollEventCount > 0');
+            shouldBe('windowScrollEventCount', '0');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++outerOverflowScrollEventCount;
+            }, false);
+
+            innerScroller = document.querySelector('.inner-scroller');
+            innerScroller.addEventListener('scroll', () => {
+                ++innerOverflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="wide"></div>
+        <div class="inner-scroller">
+            <div class="filler"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

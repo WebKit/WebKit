@@ -66,8 +66,12 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString, MediaQueryPa
 {
     if (mediaString.isEmpty())
         return MediaQuerySet::create();
+
+    auto parsedMediaQuerySet = MediaQueryParser::parseMediaQuerySet(mediaString, context);
+    if (UNLIKELY(!parsedMediaQuerySet))
+        return MediaQuerySet::create();
     
-    return MediaQueryParser::parseMediaQuerySet(mediaString, context).releaseNonNull();
+    return parsedMediaQuerySet.releaseNonNull();
 }
 
 MediaQuerySet::MediaQuerySet() = default;

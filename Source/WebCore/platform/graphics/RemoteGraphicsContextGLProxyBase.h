@@ -61,7 +61,6 @@ public:
     PlatformLayer* platformLayer() const final;
     ExtensionsGL& getExtensions() final;
     void setContextVisibility(bool) final;
-    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const final;
     bool isGLES2Compliant() const final;
     void markContextChanged() final;
     bool layerComposited() const final;
@@ -80,17 +79,9 @@ public:
     bool isEnabled(const String&) final;
 
 #if !USE(ANGLE)
-    // FIXME: These are supposed to be removed in https://bugs.webkit.org/show_bug.cgi?id=218896.
     void readnPixelsEXT(GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLvoid*) final;
     void getnUniformfvEXT(GCGLuint, GCGLint, GCGLsizei, GCGLfloat*) final;
     void getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*) final;
-    bool isNVIDIA() final;
-    bool isAMD() final;
-    bool isIntel() final;
-    bool isImagination() final;
-    String vendor() final;
-    bool requiresBuiltInFunctionEmulation() final;
-    bool requiresRestrictedMaximumTextureSize() final;
 #endif
 
 protected:

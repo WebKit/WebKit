@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,36 @@ struct MediaMetadataInit {
     String artist;
     String album;
     Vector<MediaImage> artwork;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaMetadataInit> decode(Decoder&);
 };
+
+template<class Encoder> inline void MediaMetadataInit::encode(Encoder& encoder) const
+{
+    encoder << title << artist << album << artwork;
+}
+
+template<class Decoder> inline Optional<MediaMetadataInit> MediaMetadataInit::decode(Decoder& decoder)
+{
+    String title;
+    if (!decoder.decode(title))
+        return { };
+
+    String artist;
+    if (!decoder.decode(artist))
+        return { };
+
+    String album;
+    if (!decoder.decode(album))
+        return { };
+
+    Vector<MediaImage> artwork;
+    if (!decoder.decode(artwork))
+        return { };
+
+    return MediaMetadataInit { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(artwork) };
+}
 
 }
 

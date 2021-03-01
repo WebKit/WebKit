@@ -39,6 +39,7 @@ class BoxRareGeometry;
 
 // A box in the sense of the CSS Box Model.
 // This box can draw backgrounds and borders.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxModelBox);
 class BoxModelBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
     friend class BoxFactory;

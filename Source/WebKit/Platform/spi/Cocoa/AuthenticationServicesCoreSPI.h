@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ASCAuthorizationPresenter : NSObject <ASCAuthorizationPresenterHostProtocol>
 
 - (void)presentAuthorizationWithContext:(ASCAuthorizationPresentationContext *)context completionHandler:(void (^)(id<ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
+- (void)presentError:(NSError *)error forService:(NSString *)service completionHandler:(void (^)(void))completionHandler;
 - (void)updateInterfaceWithLoginChoices:(NSArray<id <ASCLoginChoiceProtocol>> *)loginChoices;
 - (void)presentPINEntryInterface;
 - (void)updateInterfaceForUserVisibleError:(NSError *)userVisibleError;
@@ -172,14 +173,9 @@ typedef NS_ERROR_ENUM(ASCAuthorizationErrorDomain, ASCAuthorizationError) {
     ASCAuthorizationErrorNoCredentialsFound,
     ASCAuthorizationErrorLAError,
     ASCAuthorizationErrorLAExcludeCredentialsMatched,
-};
-
-extern NSString * const ASCPINValidationResultKey;
-
-typedef NS_ENUM(NSInteger, ASCPINValidationResult) {
-    ASCPINValidationResultPINBlocked,
-    ASCPINValidationResultPINAuthBlocked,
-    ASCPINValidationResultPINInvalid,
+    ASCAuthorizationErrorPINInvalid,
+    ASCAuthorizationErrorAuthenticatorTemporarilyLocked,
+    ASCAuthorizationErrorAuthenticatorPermanentlyLocked,
 };
 
 NS_ASSUME_NONNULL_END

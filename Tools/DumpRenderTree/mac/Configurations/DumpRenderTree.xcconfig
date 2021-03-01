@@ -41,3 +41,6 @@ INSTALL_PATH_Production = $(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RE
 INSTALL_PATH_engineering = $(INSTALL_PATH);
 
 CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = mac/Configurations/DumpRenderTree.entitlements;
+
+CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+INFOPLIST_FILE = $(SRCROOT)/mac/Info.plist;

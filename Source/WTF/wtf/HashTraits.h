@@ -51,6 +51,9 @@ template<typename T> struct GenericHashTraitsBase<false, T> {
     // The starting table size. Can be overridden when we know beforehand that
     // a hash table will have at least N entries.
     static constexpr unsigned minimumTableSize = 8;
+
+    // Whenever traversing the hash table, assert it is not full
+    static constexpr bool assertNotFull = false;
 };
 
 // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).
@@ -378,6 +381,11 @@ struct HashTraits<Vector<T, inlineCapacity>> : GenericHashTraits<Vector<T, inlin
 
     static void constructDeletedValue(Vector<T, inlineCapacity>& slot) { new (NotNull, std::addressof(slot)) Vector<T, inlineCapacity>(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const Vector<T, inlineCapacity>& value) { return value.isHashTableDeletedValue(); }
+};
+
+template<typename Traits>
+struct HardenedHashTraits : public Traits {
+    static constexpr bool assertNotFull = true;
 };
 
 // Useful for classes that want complete control over what is empty and what is deleted,

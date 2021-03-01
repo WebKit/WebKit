@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatRect.h"
+#include "LayoutBox.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -83,6 +84,28 @@ private:
     float m_baseline { 0 };
     float m_contentLeftOffset { 0 };
     float m_contentWidth { 0 };
+};
+
+class NonRootInlineBox {
+public:
+    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect)
+        : m_lineIndex(lineIndex)
+        , m_layoutBox(makeWeakPtr(layoutBox))
+        , m_rect(rect)
+    {
+    }
+
+    const Layout::Box& layoutBox() const { return *m_layoutBox; }
+    const RenderStyle& style() const { return m_layoutBox->style(); }
+
+    size_t lineIndex() const { return m_lineIndex; }
+
+    FloatRect rect() const { return m_rect; }
+
+private:
+    const size_t m_lineIndex;
+    WeakPtr<const Layout::Box> m_layoutBox;
+    FloatRect m_rect;
 };
 
 }

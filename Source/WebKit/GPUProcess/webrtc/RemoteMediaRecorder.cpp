@@ -112,9 +112,10 @@ void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&,
     });
 }
 
-void RemoteMediaRecorder::stopRecording()
+void RemoteMediaRecorder::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
     m_writer->stopRecording();
+    completionHandler();
 }
 
 void RemoteMediaRecorder::pause(CompletionHandler<void()>&& completionHandler)

@@ -1,0 +1,24 @@
+<script src="../resources/js-test.js"></script>
+<script>
+  description("This test passes if it does not crash.");
+
+  debug("* OfflineAudioContext");
+  let constantSourceNode1 = new ConstantSourceNode(new OfflineAudioContext({
+    length: 128,
+    sampleRate: 44100
+  }));
+  gc();
+  shouldBe("constantSourceNode1.context.sampleRate", "44100"); // On BaseAudioContext.
+  gc();
+  shouldBe("constantSourceNode1.context.length", "128"); // On OfflineAudioContext.
+
+  debug("");
+  debug("* AudioContext");
+  let constantSourceNode2 = new ConstantSourceNode(new AudioContext({
+    sampleRate: 44100
+  }));
+  gc();
+  shouldBe("constantSourceNode2.context.sampleRate", "44100"); // On BaseAudioContext.
+  gc();
+  shouldBeTrue("constantSourceNode2.context.baseLatency > 0"); // On AudioContext.
+</script>

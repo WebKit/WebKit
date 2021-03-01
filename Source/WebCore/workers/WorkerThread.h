@@ -104,7 +104,7 @@ private:
 
     // WorkerOrWorkletThread.
     Ref<WTF::Thread> createThread() final;
-    Ref<WorkerOrWorkletGlobalScope> createGlobalScope() final;
+    RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
     void evaluateScriptIfNecessary(String& exceptionMessage) final;
     bool shouldWaitForWebInspectorOnStartup() const final;
 

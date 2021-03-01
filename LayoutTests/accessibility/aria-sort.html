@@ -30,25 +30,24 @@
 
 <script>
     description("This tests that aria-sort is exposed correctly to the Mac accessibility API.");
-    
+
     if (window.accessibilityController) {
         var col1 = accessibilityController.accessibleElementById("col1");
         shouldBe("col1.isAttributeSupported('AXSortDirection')", "true");
-        shouldBe("col1.stringAttributeValue('AXSortDirection')", "'AXAscendingSortDirection'");
-        
+        shouldBe("col1.sortDirection", "'AXAscendingSortDirection'");
+
         var col2 = accessibilityController.accessibleElementById("col2");
         shouldBe("col2.isAttributeSupported('AXSortDirection')", "true");
-        shouldBe("col2.stringAttributeValue('AXSortDirection')", "'AXDescendingSortDirection'");
-        
+        shouldBe("col2.sortDirection", "'AXDescendingSortDirection'");
+
         var col3 = accessibilityController.accessibleElementById("col3");
         shouldBe("col3.isAttributeSupported('AXSortDirection')", "true");
-        shouldBe("col3.stringAttributeValue('AXSortDirection')", "'AXUnknownSortDirection'");
-        
+        shouldBe("col3.sortDirection", "'AXUnknownSortDirection'");
+
         var row1 = accessibilityController.accessibleElementById("row1");
         shouldBe("row1.isAttributeSupported('AXSortDirection')", "false");
     }
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

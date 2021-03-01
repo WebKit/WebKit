@@ -1,3 +1,580 @@
+2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=221494
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/redefine-property-same-value-exception-check.js: Added.
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewd, update test262/config.yaml
+
+        Tests are failing only in OSS build since OSS build is building WebKit with very old ICU headers.
+
+        * test262/config.yaml:
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] globalFuncCopyDataProperties should not perform GC-sensitive operation in the middle of Structure::forEachProperty
+        https://bugs.webkit.org/show_bug.cgi?id=221454
+
+        Reviewed by Mark Lam.
+
+        * stress/copy-data-properties-fast-path.js: Added.
+        (foo):
+
+2021-02-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Object.assign should throw for property creation on non-extensible `target`
+        https://bugs.webkit.org/show_bug.cgi?id=220712
+
+        Reviewed by Ross Kirsling.
+
+        * stress/object-assign-fast-path.js:
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSImmutableButterfly's toString cache should not happen for generic join
+        https://bugs.webkit.org/show_bug.cgi?id=221444
+        <rdar://problem/73972862>
+
+        Reviewed by Mark Lam.
+
+        * stress/immutable-butterfly-to-string-cache-should-not-happen-for-generic-join.js: Added.
+        (foo):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics.store in DFG / FTL should return ToNumber(input) value
+        https://bugs.webkit.org/show_bug.cgi?id=221438
+        <rdar://problem/73973264>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/atomic-store-result-type-in-ai.js: Added.
+        * stress/atomics-store-result-double-nan.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-double-negative-zero.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-double.js: Added.
+        (shouldBe):
+        (test):
+        * stress/atomics-store-result-int52.js: Added.
+        (shouldBe):
+        * stress/atomics-store-result.js: Added.
+        (shouldBe):
+
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=221367
+
+        Reviewed by Ross Kirsling.
+
+        This patch updates test262 results. And since test262 bot is upgraded to Big Sur,
+        we also clean up some of failures in config.yaml.
+        Still some of Intl tests are failing because test262 strongly assumes a certain
+        kind of format. We should fix it in test262 side since the spec does not require that.
+
+        * test262/config.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Function/property-order.js: Added.
+        * test262/test/built-ins/Function/prototype/property-order.js: Added.
+        * test262/test/built-ins/Object/property-order.js: Added.
+        * test262/test/built-ins/Promise/all/resolve-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/allSettled/reject-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/allSettled/resolve-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/any/reject-element-function-property-order.js: Added.
+        (thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/executor-function-property-order.js: Added.
+        (NotPromise):
+        * test262/test/built-ins/Promise/property-order.js: Added.
+        * test262/test/built-ins/Promise/reject-function-property-order.js: Added.
+        (new.Promise):
+        * test262/test/built-ins/Promise/resolve-function-property-order.js: Added.
+        (new.Promise):
+        * test262/test/built-ins/Proxy/property-order.js: Added.
+        * test262/test/built-ins/Proxy/revocable/revocation-function-property-order.js: Added.
+        * test262/test/built-ins/ThrowTypeError/property-order.js: Added.
+        (ThrowTypeError.Object.getOwnPropertyDescriptor):
+        * test262/test/intl402/Collator/prototype/compare/compare-function-property-order.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/format-function-property-order.js: Added.
+        * test262/test/intl402/NumberFormat/prototype/format/format-function-property-order.js: Added.
+        * test262/test/language/export/escaped-as-export-specifier.js:
+        * test262/test/language/export/escaped-default.js:
+        * test262/test/language/export/escaped-from.js:
+        * test262/test/language/expressions/async-arrow-function/escaped-async-line-terminator.js:
+        * test262/test/language/expressions/async-arrow-function/escaped-async.js:
+        * test262/test/language/expressions/async-function/escaped-async.js:
+        * test262/test/language/expressions/async-generator/escaped-async.js:
+        * test262/test/language/expressions/dynamic-import/escape-sequence-import.js:
+        * test262/test/language/expressions/import.meta/syntax/escape-sequence-import.js:
+        * test262/test/language/expressions/import.meta/syntax/escape-sequence-meta.js:
+        * test262/test/language/expressions/new.target/escaped-new.js:
+        * test262/test/language/expressions/new.target/escaped-target.js:
+        * test262/test/language/expressions/object/method-definition/async-gen-meth-escaped-async.js:
+        * test262/test/language/expressions/object/method-definition/async-meth-escaped-async.js:
+        * test262/test/language/expressions/object/method-definition/escaped-get.js:
+        * test262/test/language/expressions/object/method-definition/escaped-set.js:
+        * test262/test/language/import/escaped-as-import-specifier.js:
+        * test262/test/language/import/escaped-as-namespace-import.js:
+        * test262/test/language/import/escaped-from.js:
+        * test262/test/language/statements/async-function/escaped-async.js:
+        * test262/test/language/statements/async-generator/escaped-async.js:
+        * test262/test/language/statements/class/async-gen-meth-escaped-async.js:
+        * test262/test/language/statements/class/async-meth-escaped-async.js:
+        * test262/test/language/statements/class/syntax/escaped-static.js:
+        * test262/test/language/statements/for-await-of/escaped-of.js:
+        * test262/test/language/statements/for-of/escaped-of.js:
+        * test262/test/language/statements/let/syntax/escaped-let.js:
+        * test262/test262-Revision.txt:
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics should support BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=221245
+
+        Reviewed by Keith Miller.
+
+        * stress/atomic-increment-bigint64.js: Added.
+        (shouldBe):
+        (i.agent.start.262.agent.receiveBroadcast):
+        * stress/bigint-atomics-fail.js: Added.
+        (shouldThrow):
+        * stress/bigint64-atomics.js: Added.
+        (shouldBe):
+        (test):
+        * stress/biguint64-atomics.js: Added.
+        (shouldBe):
+        (test):
+        * stress/isLockFree.js:
+        (foo6):
+        (foo7):
+        (foo8):
+        (foo9):
+        * stress/shared-array-buffer-bigint.js: Added.
+        (shouldFail):
+        (shouldSucceed):
+        (runAtomic):
+        * test262/config.yaml:
+
+2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Completion value of a finally block should not be ignored if completion is abrupt
+        https://bugs.webkit.org/show_bug.cgi?id=221238
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/completion-value.js:
+        Correct tests to match spec.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray#fill should be implemented in C++
+        https://bugs.webkit.org/show_bug.cgi?id=221182
+
+        Reviewed by Ross Kirsling.
+
+        * stress/bigint-typed-array-fill.js: Added.
+        (shouldBe):
+        * stress/typed-array-fill.js: Added.
+        (shouldBe):
+
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement BigInt64Array and BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=190800
+
+        Reviewed by Ross Kirsling.
+
+        Through this patch, we encounter two test262 failures and found that these tests have issues.
+
+        * stress/bigint-typed-array-array-modes-profile.js: Added.
+        (foo):
+        * stress/bigint-typed-array-byte-offset.js: Added.
+        (foo):
+        * stress/bigint-typed-array-canonical-numeric-index-string.js: Added.
+        (makeTest.assert):
+        (makeTest):
+        (const.testInvalidIndices.makeTest.set assert):
+        (const.testInvalidIndices.makeTest):
+        (const.testValidIndices.makeTest.set assert):
+        (const.testValidIndices.makeTest):
+        * stress/bigint-typed-array-constructor-undefined.js: Added.
+        * stress/bigint-typed-array-get-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+        * stress/bigint-typed-array-lastIndexOf-exception-check.js: Added.
+        * stress/bigint-typed-array-put-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+        * stress/bigint-typedarray-getownproperty.js: Added.
+        (assert):
+        (foo):
+        * stress/bigint64array-bytelength.js: Added.
+        (test1):
+        (test2):
+        (shouldBe):
+        * stress/bigint64array-get-by-val.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        * stress/bigint64array-put-by-val.js: Added.
+        (shouldBe):
+        (test11):
+        (test12):
+        (test21):
+        (test22):
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        * ChakraCore/test/Error/NativeErrors_v4.baseline-jsc:
+        * ChakraCore/test/Error/validate_line_column.baseline-jsc:
+        * ChakraCore/test/StackTrace/FunctionName.js.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist6.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist6b.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist7.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_negzero.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_undefined_global.baseline-jsc:
+        * ChakraCore/test/fieldopts/fieldhoist_unreachable.baseline-jsc:
+        * stress/error-stack-at.js: Added.
+        (shouldBe):
+        (catch):
+        (try.eval):
+
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Date.parse returns non-integral time value
+        https://bugs.webkit.org/show_bug.cgi?id=220687
+
+        Reviewed by Ross Kirsling.
+
+        * complex.yaml:
+        * complex/date-parse-milliseconds.js: Added.
+        (shouldBe):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adjust property order of host JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=221168
+
+        Reviewed by Darin Adler.
+
+        * stress/host-function-property-order.js: Added.
+        (shouldBe):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        * wasm/stress/global-wrong-type.js: Added.
+        (assert.throws):
+
+2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [JSC] WebAssembly.Global should support Funcref and Externref
+        https://bugs.webkit.org/show_bug.cgi?id=220914
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests for WebAssembly.Global ctors with
+        new reference types:
+        https://webassembly.github.io/reference-types/js-api/index.html#dom-global-global.
+
+        * wasm/references/globals.js: Added.
+        (Pelmen):
+        (testGlobalConstructorForExternref):
+        (async testGlobalConstructorForFuncref):
+
+2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, recover removed tests
+        https://bugs.webkit.org/show_bug.cgi?id=220216
+
+        These tests are important since we need to ensure that we are not accidentally expose internal-only functions.
+
+        * stress/function-caller-async-arrow-function-body.js:
+        (shouldBe):
+        (thingy.foo.async try): Deleted.
+        (thingy): Deleted.
+        * stress/function-caller-async-function-body.js:
+        (shouldBe):
+        (thingy.async foo):
+        (thingy):
+        * stress/function-caller-async-generator-body.js:
+        (shouldBe):
+        (thingy.async foo):
+        (thingy):
+        * stress/function-caller-generator-body.js:
+        (shouldBe):
+        (thingy.foo):
+        (thingy):
+        * stress/function-caller-generator-method-body.js:
+        (shouldBe):
+        (thingy.C.prototype.foo):
+        (thingy.C):
+        (thingy):
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=221078
+
+        Reviewed by Alexey Shvayka.
+
+        Update test262 to the latest one.
+
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/sort/precise-comparefn-throws.js: Added.
+        (set logs):
+        (set const):
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-appends-elements.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-decreases-length.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-deletes-predecessor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-deletes-successor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-increases-length.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-pops-elements.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-sets-predecessor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-getter-sets-successor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-prototype-accessors.js: Added.
+        (set logs):
+        * test262/test/built-ins/Array/prototype/sort/precise-prototype-element.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-appends-elements.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-decreases-length.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-deletes-predecessor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-deletes-successor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-increases-length.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-pops-elements.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-sets-predecessor.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/precise-setter-sets-successor.js: Added.
+        * test262/test/built-ins/Object/seal/object-seal-configurable-attribute-of-own-data-property-of-o-is-set-from-true-to-false-and-other-attributes-of-the-property-are-unaltered.js: Renamed from JSTests/test262/test/built-ins/Object/seal/object-seal-the-configurable-attribute-of-own-data-property-of-o-is-set-from-true-to-false-and-other-attributes-of-the-property-are-unaltered.js.
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-same-returns-single-date.js:
+        (dtf.format):
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-same-returns-single-date.js:
+        (assert.sameValue):
+        * test262/test/language/expressions/class/elements/super-access-from-arrow-func-on-field.js: Added.
+        (C):
+        (C.staticFunc):
+        * test262/test/language/statements/class/elements/super-access-from-arrow-func-on-field.js: Added.
+        (C.prototype.func):
+        (C.staticFunc):
+        (C):
+        * test262/test/language/statements/for-of/head-lhs-async-dot.js: Added.
+        * test262/test/language/statements/for-of/head-lhs-async-invalid.js: Added.
+        * test262/test/language/statements/for/head-init-async-of.js: Added.
+        (async of):
+        * test262/test262-Revision.txt:
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        * wasm/stress/resources/tsf.wasm: Added.
+        * wasm/stress/wasm-streaming-compiler-compile.js: Added.
+        (shouldBe):
+        (slice):
+        (async main):
+        (main.catch):
+        * wasm/stress/wasm-streaming-compiler-instantiate.js: Added.
+        (shouldBe):
+        (slice):
+        (async main.):
+        (async main):
+        (main.catch):
+
+2021-01-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r271186.
+        https://bugs.webkit.org/show_bug.cgi?id=221051
+
+        Breaks Facebook on arm64e devices
+
+        Reverted changeset:
+
+        "[JSC] DFG/FTL DirectCall need to respect Wasm IC"
+        https://bugs.webkit.org/show_bug.cgi?id=220339
+        https://trac.webkit.org/changeset/271186
+
+2021-01-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Change default value for externref's tables from null to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=220918
+
+        Reviewed by Yusuke Suzuki.
+
+        According to the reference types spec
+        https://webassembly.github.io/reference-types/js-api/#defaultvaluey
+        we should use undefined as a default value in Table ctor, set and grow
+        methods, so this patch replaces previous null default value for
+        externref's table to undefined.
+
+        * wasm/references/externref_table_import.js:
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/table_js_api.js:
+        (testTableGrowForExternrefTables):
+        * wasm/references/table_misc.js:
+
+2021-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSPromise should not propagate TerminatedExecutionError
+        https://bugs.webkit.org/show_bug.cgi?id=220820
+        <rdar://problem/72929399>
+
+        Reviewed by Mark Lam.
+
+        * stress/terminated-execution-error-in-promise.js: Added.
+        (let.x.get toString):
+        (import.x.then):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL::prepareOSREntry can clear OSR entry CodeBlock if it is already invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=220718
+        <rdar://problem/70527068>
+
+        Reviewed by Mark Lam.
+
+        * stress/ftl-osr-failure-clear-twice.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] earlyReturnFromInfiniteLoopsLimit should check all caller functions when emitting
+        https://bugs.webkit.org/show_bug.cgi?id=220700
+        <rdar://problem/71229150>
+
+        Reviewed by Mark Lam.
+
+        * stress/early-return-from-builtin.js: Added.
+        (let.o.get value):
+        (let.iter.Symbol.iterator):
+        * stress/early-return-from-builtin2.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add another tests for r271571 part 2
+        https://bugs.webkit.org/show_bug.cgi?id=220702
+        <rdar://problem/71365255>
+
+        Reviewed by Mark Lam.
+
+        This patch adds yet another test for r271571.
+
+        * stress/ftl-osr-entry-order-reverse3.js: Added.
+        (foo.bar):
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add another tests for r271571
+        https://bugs.webkit.org/show_bug.cgi?id=220701
+        <rdar://problem/72464341>
+
+        Reviewed by Mark Lam.
+
+        This patch adds another test for r271571 "[JSC] FTL OSR entry FlushFormat array is reversed".
+
+        * stress/ftl-osr-entry-order-reverse2.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add another tests for r271571 part 3
+        https://bugs.webkit.org/show_bug.cgi?id=220703
+        <rdar://problem/71224976>
+
+        Reviewed by Mark Lam.
+
+        This patch adds yet another test for r271571.
+
+        * stress/ftl-osr-entry-order-reverse4.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] callerIsOMGCompiled should be robust
+        https://bugs.webkit.org/show_bug.cgi?id=220697
+
+        Reviewed by Mark Lam.
+
+        * stress/callerIsOMGCompiled-should-be-robust.js: Added.
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG/FTL Atomics should not accept Float32/Float64 typed arrays
+        https://bugs.webkit.org/show_bug.cgi?id=220692
+        <rdar://problem/73238369>
+
+        Reviewed by Mark Lam.
+
+        * stress/atomics-float-edge.js: Added.
+        (foo):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL OSR entry FlushFormat array is reversed
+        https://bugs.webkit.org/show_bug.cgi?id=220695
+        <rdar://problem/72930932>
+
+        Reviewed by Mark Lam.
+
+        * stress/ftl-osr-entry-order-reverse.js: Added.
+        (shouldThrow):
+        (foo):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] GenericArguments<Type>::defineOwnProperty's assumption about error is not correct
+        https://bugs.webkit.org/show_bug.cgi?id=220693
+        <rdar://problem/72929171>
+
+        Reviewed by Mark Lam.
+
+        * stress/freeze-invokes-out-of-memory.js: Added.
+        (shouldThrow):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add some more exception checks in globalFuncCopyDataProperties
+        https://bugs.webkit.org/show_bug.cgi?id=220691
+
+        Reviewed by Mark Lam.
+
+        * stress/spread-object-check.js: Added.
+        * stress/spread-object-check2.js: Added.
+
 2021-01-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Add skips for Big Sur-dependent test262 tests.

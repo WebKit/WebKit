@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class AudioSourceProvider;
 class GraphicsContext;
 class MediaSample;
 class RealtimeMediaSourceCapabilities;
@@ -109,7 +108,7 @@ public:
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);
 
-    AudioSourceProvider* audioSourceProvider();
+    RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
@@ -153,7 +152,6 @@ private:
     bool m_isEnded { false };
     bool m_hasStartedProducingData { false };
     HintValue m_contentHint { HintValue::Empty };
-    RefPtr<WebAudioSourceProvider> m_audioSourceProvider;
     Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;

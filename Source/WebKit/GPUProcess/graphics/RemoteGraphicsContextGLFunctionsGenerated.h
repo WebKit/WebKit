@@ -1118,14 +1118,6 @@
         returnValue = m_context->getExtensions().getGraphicsResetStatusARB();
         completionHandler(returnValue);
     }
-    void blitFramebufferANGLE(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
-    {
-        m_context->getExtensions().blitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    }
-    void renderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
-    {
-        m_context->getExtensions().renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
-    }
     void createVertexArrayOES(CompletionHandler<void(uint32_t)>&& completionHandler)
     {
         PlatformGLObject returnValue = { };
@@ -1152,18 +1144,6 @@
         returnValue = m_context->getExtensions().getTranslatedShaderSourceANGLE(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void insertEventMarkerEXT(String&& arg0)
-    {
-        m_context->getExtensions().insertEventMarkerEXT(arg0);
-    }
-    void pushGroupMarkerEXT(String&& arg0)
-    {
-        m_context->getExtensions().pushGroupMarkerEXT(arg0);
-    }
-    void popGroupMarkerEXT()
-    {
-        m_context->getExtensions().popGroupMarkerEXT();
-    }
     void drawBuffersEXT(IPC::ArrayReference<uint32_t>&& bufs)
     {
         m_context->getExtensions().drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
@@ -1185,5 +1165,21 @@
         Vector<GCGLint, 4> params(static_cast<size_t>(paramsSize), 0);
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
+    }
+    void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& firsts, IPC::ArrayReference<int32_t>&& counts, int32_t drawcount)
+    {
+        m_context->multiDrawArraysANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLint*>(firsts.data()), firsts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), drawcount);
+    }
+    void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& firsts, IPC::ArrayReference<int32_t>&& counts, IPC::ArrayReference<int32_t>&& instanceCounts, int32_t drawcount)
+    {
+        m_context->multiDrawArraysInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLint*>(firsts.data()), firsts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
+    }
+    void multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& counts, uint32_t type, IPC::ArrayReference<int32_t>&& offsets, int32_t drawcount)
+    {
+        m_context->multiDrawElementsANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), drawcount);
+    }
+    void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& counts, uint32_t type, IPC::ArrayReference<int32_t>&& offsets, IPC::ArrayReference<int32_t>&& instanceCounts, int32_t drawcount)
+    {
+        m_context->multiDrawElementsInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
     }
 

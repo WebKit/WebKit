@@ -9,6 +9,11 @@ PASS Empty module with undefined imports argument
 PASS Empty module with empty imports argument
 FAIL getter order for imports object assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
 PASS imports
+PASS imports with empty module names
+PASS imports with empty names
+PASS exports with empty name: function
+PASS exports with empty name: table
+PASS exports with empty name: global
 PASS No imports
 PASS exports and imports
 PASS i64 exports and imports

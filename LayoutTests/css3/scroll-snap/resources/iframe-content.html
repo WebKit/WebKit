@@ -69,7 +69,7 @@
         top.succeeded = shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both mandatory");
         document.querySelectorAll(".colorBox").forEach(colorBox => {
             window.colorBox = colorBox;
-            top.succeeded = shouldMatch("getComputedStyle(colorBox).getPropertyValue('scroll-snap-align')", "start start");
+            top.succeeded = shouldMatch("getComputedStyle(colorBox).getPropertyValue('scroll-snap-align')", "start");
         });
         if (top.succeeded)
             top.debug("iframe processed all tests successfully.");

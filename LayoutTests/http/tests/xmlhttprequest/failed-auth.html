@@ -27,7 +27,7 @@ if (window.testRunner) {
 
 try {
     var r = new XMLHttpRequest();
-    r.open("GET", "resources/basic-auth/basic-auth.php?uid=login1", false);
+    r.open("GET", "resources/basic-auth/basic-auth.py?uid=login1", false);
     r.send();
     checkResult(1, r.status);
 } catch (ex) {
@@ -36,7 +36,7 @@ try {
 
 try {
     var r = new XMLHttpRequest();
-    r.open("GET", "resources/basic-auth/basic-auth.php?uid=login2", false, "badname", "passpw");
+    r.open("GET", "resources/basic-auth/basic-auth.py?uid=login2", false, "badname", "passpw");
     r.send();
     checkResult(2, r.status);
 } catch (ex) {
@@ -45,7 +45,7 @@ try {
 
 try {
     var r = new XMLHttpRequest();
-    r.open("GET", "resources/basic-auth/basic-auth.php?uid=login3", true);
+    r.open("GET", "resources/basic-auth/basic-auth.py?uid=login3", true);
     r.onreadystatechange = function() {
       if (r.readyState == 4) {
         checkResult(3, r.status);
@@ -61,7 +61,7 @@ try {
 function test4() {
     try {
         var r = new XMLHttpRequest();
-        r.open("GET", "resources/basic-auth/basic-auth.php?uid=login4", true, "badname", "passpw");
+        r.open("GET", "resources/basic-auth/basic-auth.py?uid=login4", true, "badname", "passpw");
         r.onreadystatechange = function() {
           if (r.readyState == 4) {
             checkResult(4, r.status);

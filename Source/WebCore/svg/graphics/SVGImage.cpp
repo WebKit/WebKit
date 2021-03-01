@@ -208,60 +208,30 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     return result;
 }
 
-#if USE(CAIRO)
-// Passes ownership of the native image to the caller so NativeImage needs
-// to be a smart pointer type.
-RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
+RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
+{
+    return nativeImage(targetContext);
+}
+
+RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext*)
 {
     if (!m_page)
         return nullptr;
 
-    // Cairo does not use the accelerated drawing flag, so it's OK to make an unconditionally unaccelerated buffer.
-    auto buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated);
-    if (!buffer) // failed to allocate image
+    auto imageBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated);
+    if (!imageBuffer)
         return nullptr;
 
-    draw(buffer->context(), rect(), rect());
+    ImageObserver* observer = imageObserver();
 
-    // FIXME: WK(Bug 113657): We should use DontCopyBackingStore here.
-    return buffer->copyImage(CopyBackingStore)->nativeImageForCurrentFrame();
+    setImageObserver(nullptr);
+    setContainerSize(size());
+
+    imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
+
+    setImageObserver(observer);
+    return ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
 }
-#endif
-
-#if USE(DIRECT2D)
-RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext* targetContext)
-{
-    ASSERT(targetContext);
-    if (!m_page || !targetContext)
-        return nullptr;
-
-    ASSERT(targetContext->hasPlatformContext());
-    auto* renderTarget = targetContext->platformContext()->renderTarget();
-
-    IntSize bitmapSize(size().width(), size().height());
-    auto nativeImageTarget = Direct2D::createBitmapRenderTargetOfSize(bitmapSize, renderTarget, 1.0);
-    if (!nativeImageTarget)
-        return nullptr;
-
-    PlatformContextDirect2D platformContext(nativeImageTarget.get());
-    GraphicsContext localContext(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
-
-    draw(localContext, rect(), rect(), { CompositeOperator::SourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None });
-
-    COMPtr<ID2D1Bitmap> nativeImage;
-    HRESULT hr = nativeImageTarget->GetBitmap(&nativeImage);
-    if (!SUCCEEDED(hr))
-        return nullptr;
-
-#if ASSERT_ENABLED
-    auto nativeImageSize = nativeImage->GetPixelSize();
-    ASSERT(nativeImageSize.height = rect().size().height());
-    ASSERT(nativeImageSize.width = rect().size().width());
-#endif
-
-    return nativeImage;
-}
-#endif
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, const ImagePaintingOptions& options)
@@ -278,7 +248,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     FloatRect imageBufferSize = zoomedContainerRect;
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
-    auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(imageBufferSize.size()), 1, ColorSpace::SRGB, context);
+    auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(imageBufferSize.size()), 1, DestinationColorSpace::SRGB, context);
     if (!buffer) // Failed to allocate buffer.
         return;
     drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);

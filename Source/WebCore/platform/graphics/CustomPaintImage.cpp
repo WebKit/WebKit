@@ -198,7 +198,7 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
     adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
     adjustedSrcRect.scale(xScale, yScale);
 
-    auto buffer = ImageBuffer::createCompatibleBuffer(adjustedSize, ColorSpace::SRGB, destContext);
+    auto buffer = ImageBuffer::createCompatibleBuffer(adjustedSize, DestinationColorSpace::SRGB, destContext);
     if (!buffer)
         return;
     doCustomPaint(buffer->context(), adjustedSize);

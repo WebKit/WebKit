@@ -30,6 +30,7 @@
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
+#import "CocoaColor.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
@@ -51,6 +52,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
+#import "SharedBufferCopy.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -98,6 +100,7 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "WebViewImpl.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKAppHighlightDelegate.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -117,6 +120,7 @@
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/AttributedString.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
@@ -135,6 +139,7 @@
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
@@ -463,7 +468,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if PLATFORM(MAC)
     pageConfiguration->preferences()->setShowsURLsInToolTipsEnabled(!![_configuration _showsURLsInToolTips]);
     pageConfiguration->preferences()->setServiceControlsEnabled(!![_configuration _serviceControlsEnabled]);
-    pageConfiguration->preferences()->setImageControlsEnabled(!![_configuration _imageControlsEnabled]);
 
     pageConfiguration->preferences()->setUserInterfaceDirectionPolicy(convertUserInterfaceDirectionPolicy([_configuration userInterfaceDirectionPolicy]));
     // We are in the View's initialization routine, so our client hasn't had time to set our user interface direction.
@@ -905,17 +909,19 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)closeAllMediaPresentations
+- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
 {
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
 #if ENABLE(FULLSCREEN_API)
     if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
-            model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
+        videoFullscreenManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
+            model.requestCloseAllMediaPresentations(false, [callbackAggregator] { });
         });
     }
 
     if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
-        fullScreenManager->close();
+        fullScreenManager->closeWithCallback([callbackAggregator] { });
 #endif
 }
 
@@ -1402,6 +1408,35 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+
+- (id <_WKAppHighlightDelegate>)_appHighlightDelegate
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    return _appHighlightDelegate.getAutoreleased();
+#else
+    return nil;
+#endif
+}
+
+- (void)_setAppHighlightDelegate:(id <_WKAppHighlightDelegate>)delegate
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _appHighlightDelegate = delegate;
+#endif
+}
+
+#if ENABLE(APP_HIGHLIGHTS)
+- (void)_updateAppHighlightsStorage:(NSData *)data
+{
+    auto delegate = self._appHighlightDelegate;
+    if (!delegate)
+        return;
+
+    if ([delegate respondsToSelector:@selector(_webView:updateAppHighlightsStorage:)])
+        [delegate _webView:self updateAppHighlightsStorage:data];
+}
+#endif
 
 - (WKPageRef)_pageForTesting
 {
@@ -1989,7 +2024,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
-    [self closeAllMediaPresentations];
+    [self closeAllMediaPresentations:nil];
 }
 
 - (void)_stopMediaCapture
@@ -2010,6 +2045,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_resumeAllMediaPlayback
 {
     [self resumeAllMediaPlayback:nil];
+}
+
+- (void)_restoreAppHighlights:(NSData *)data
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _page->restoreAppHighlights(WebCore::SharedBuffer::create(data));
+#else
+    UNUSED_PARAM(data);
+#endif
 }
 
 - (NSURL *)_unreachableURL
@@ -2350,6 +2394,25 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
     [self _evaluateJavaScript:functionBody asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+}
+
+
+- (BOOL)_allMediaPresentationsClosed
+{
+#if ENABLE(FULLSCREEN_API)
+    bool hasOpenMediaPresentations = false;
+    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
+        hasOpenMediaPresentations = videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+            || videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    }
+
+    if (!hasOpenMediaPresentations && _page->fullScreenManager() && _page->fullScreenManager()->isFullScreen())
+        hasOpenMediaPresentations = true;
+
+    return !hasOpenMediaPresentations;
+#else
+    return true;
+#endif
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
@@ -2784,6 +2847,22 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setCanUseCredentialStorage:(BOOL)canUseCredentialStorage
 {
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
+}
+
+- (CocoaColor *)_themeColor
+{
+    auto themeColor = _page->themeColor();
+    if (!themeColor.isValid())
+        return nil;
+    return WebCore::platformColor(themeColor);
+}
+
+- (CocoaColor *)_pageExtendedBackgroundColor
+{
+    auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
+    if (!pageExtendedBackgroundColor.isValid())
+        return nil;
+    return WebCore::platformColor(pageExtendedBackgroundColor);
 }
 
 - (id <_WKInputDelegate>)_inputDelegate

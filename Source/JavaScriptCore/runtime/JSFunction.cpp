@@ -129,9 +129,9 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, cons
     // JSBoundFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
     ASSERT(!this->inherits<JSBoundFunction>(vm));
 
+    putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     if (!name.isNull())
         putDirect(vm, vm.propertyNames->name, jsString(vm, name), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 FunctionRareData* JSFunction::allocateRareData(VM& vm)

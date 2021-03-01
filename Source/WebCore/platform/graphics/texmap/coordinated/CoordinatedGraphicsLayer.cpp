@@ -853,9 +853,13 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         if (!m_animatedBackingStoreHost)
             m_animatedBackingStoreHost = AnimatedBackingStoreHost::create(*this);
         m_nicosia.animatedBackingStoreClient = CoordinatedAnimatedBackingStoreClient::create(m_animatedBackingStoreHost.copyRef(), m_coordinator->visibleContentsRect(), { }, m_size, effectiveContentsScale());
+        m_nicosia.delta.animatedBackingStoreClientChanged = true;
+    } else  {
+        if (m_nicosia.animatedBackingStoreClient) {
+            m_nicosia.animatedBackingStoreClient = nullptr;
+            m_nicosia.delta.animatedBackingStoreClientChanged = true;
+        }
     }
-    // Each layer flush changes the AnimatedBackingStoreClient, being it null or a real one.
-    m_nicosia.delta.animatedBackingStoreClientChanged = true;
 
     // Determine image backing presence according to the composited image source.
     if (m_compositedNativeImage) {
@@ -1342,8 +1346,18 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 
 bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 {
-    return drawsContent() && contentsAreVisible() && !m_size.isEmpty()
-        && (!!opacity() || m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity));
+    // If the CSS opacity value is 0 and there's no animation over the opacity property, the layer is invisible.
+    bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity);
+
+    // Check if there's a filter that sets the opacity to zero.
+    bool hasOpacityZeroFilter = notFound != filters().operations().findMatching([&](const auto& operation) {
+        return operation->type() == FilterOperation::OperationType::OPACITY && !downcast<BasicComponentTransferFilterOperation>(*operation).amount();
+    });
+
+    // If there's a filter that sets opacity to 0 and the filters are not being animated, the layer is invisible.
+    isInvisibleBecauseOpacityZero |= hasOpacityZeroFilter && !m_animations.hasActiveAnimationsOfType(AnimatedPropertyFilter);
+
+    return drawsContent() && contentsAreVisible() && !m_size.isEmpty() && !isInvisibleBecauseOpacityZero;
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const

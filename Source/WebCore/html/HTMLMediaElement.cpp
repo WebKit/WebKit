@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1074,6 +1074,9 @@ void HTMLMediaElement::load()
 
     INFO_LOG(LOGIDENTIFIER);
 
+    if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture && document().quirks().requiresUserGestureToLoadInPictureInPicture() && !document().processingUserGestureForMedia())
+        return;
+
     prepareForLoad();
     m_resourceSelectionTaskQueue.enqueueTask([this] {
         prepareToPlay();
@@ -1193,6 +1196,30 @@ void HTMLMediaElement::prepareForLoad()
     // 10 - Note: Playback of any previously playing media resource for this element stops.
 
     configureMediaControls();
+}
+
+void HTMLMediaElement::mediaPlayerReloadAndResumePlaybackIfNeeded()
+{
+    auto previousMediaTime = m_cachedTime;
+    bool wasPaused = paused();
+
+    load();
+
+    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+        enterFullscreen(m_videoFullscreenMode);
+
+    if (previousMediaTime) {
+        m_resourceSelectionTaskQueue.enqueueTask([this, previousMediaTime] {
+            if (m_player)
+                m_player->seekWhenPossible(previousMediaTime);
+        });
+    }
+
+    if (!wasPaused) {
+        m_resourceSelectionTaskQueue.enqueueTask([this] {
+            playInternal();
+        });
+    }
 }
 
 void HTMLMediaElement::selectMediaResource()
@@ -3063,6 +3090,11 @@ MediaPlayer::MovieLoadType HTMLMediaElement::movieLoadType() const
     return m_player ? m_player->movieLoadType() : MediaPlayer::MovieLoadType::Unknown;
 }
 
+MediaSessionGroupIdentifier HTMLMediaElement::mediaSessionGroupIdentifier() const
+{
+    return document().page() ? document().page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
+}
+
 bool HTMLMediaElement::hasAudio() const
 {
     return m_player ? m_player->hasAudio() : false;
@@ -3492,7 +3524,7 @@ void HTMLMediaElement::pause()
     if (m_waitingToEnterFullscreen)
         m_waitingToEnterFullscreen = false;
 
-    if (!m_mediaSession->playbackPermitted())
+    if (!m_mediaSession->playbackPermitted(MediaPlaybackOperation::Pause))
         return;
 
     if (processingUserGestureForMedia())
@@ -3500,7 +3532,6 @@ void HTMLMediaElement::pause()
 
     pauseInternal();
 }
-
 
 void HTMLMediaElement::pauseInternal()
 {
@@ -5790,7 +5821,7 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
     return true;
 }
 
-bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     if (eventType == eventNames().webkitneedkeyEvent)
@@ -6877,16 +6908,6 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 
 #endif
 
-void HTMLMediaElement::mediaPlayerEnterFullscreen()
-{
-    enterFullscreen();
-}
-
-void HTMLMediaElement::mediaPlayerExitFullscreen()
-{
-    exitFullscreen();
-}
-
 bool HTMLMediaElement::mediaPlayerIsFullscreen() const
 {
     return isFullscreen();
@@ -6934,7 +6955,8 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 
 RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceLoader()
 {
-    auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin()));
+    auto destination = isVideo() ? FetchOptions::Destination::Video : FetchOptions::Destination::Audio;
+    auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin(), destination));
 
     m_lastMediaResourceLoaderForTesting = makeWeakPtr(mediaResourceLoader.get());
 
@@ -7134,7 +7156,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-#ifndef NDEBUG
+#if ENGINEERING_BUILD || !defined(NDEBUG)
         // Setting a scriptURL allows the source to be debuggable in the inspector.
         URL scriptURL = URL({ }, "mediaControlsScript"_s);
 #else
@@ -7441,7 +7463,7 @@ void HTMLMediaElement::suspendPlayback()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
     if (!paused())
-        pause();
+        pauseInternal();
 }
 
 void HTMLMediaElement::resumeAutoplaying()
@@ -7497,6 +7519,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
     UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
+    double offset = 15;
     switch (command) {
     case PlatformMediaSession::PlayCommand:
         play();
@@ -7517,6 +7540,16 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     case PlatformMediaSession::EndSeekingBackwardCommand:
     case PlatformMediaSession::EndSeekingForwardCommand:
         endScanning();
+        break;
+    case PlatformMediaSession::SkipForwardCommand:
+        if (argument)
+            offset = argument->asDouble;
+        handleSeekToPlaybackPosition(offset);
+        break;
+    case PlatformMediaSession::SkipBackwardCommand:
+        if (argument)
+            offset = argument->asDouble;
+        handleSeekToPlaybackPosition(0 - offset);
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument);

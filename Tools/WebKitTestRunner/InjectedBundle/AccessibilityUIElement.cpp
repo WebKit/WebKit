@@ -88,6 +88,9 @@ bool AccessibilityUIElement::isTextArea() const { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { return nullptr; }
 bool AccessibilityUIElement::isInTableCell() const { return false; }
+bool AccessibilityUIElement::isInTable() const { return false; }
+bool AccessibilityUIElement::isInLandmark() const { return false; }
+bool AccessibilityUIElement::isInList() const { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
@@ -108,6 +111,9 @@ bool AccessibilityUIElement::isOnScreen() const { return true; }
 #endif
 
 #if !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }

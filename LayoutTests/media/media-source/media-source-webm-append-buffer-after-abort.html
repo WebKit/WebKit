@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-webm-append-buffer-after-abort</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-vp9-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
+
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.abort()');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            failTestIn(2000);
+
+            await waitFor(video, 'canplaythrough');
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept
+        a new initialization segment and a new media segment, and the video element should fire "canplaythrough" event.
+    </div>
+    <video controls></video>
+</body>
+</html>

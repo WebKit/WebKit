@@ -69,7 +69,7 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-void FEDisplacementMap::setResultColorSpace(ColorSpace)
+void FEDisplacementMap::setResultColorSpace(DestinationColorSpace)
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
     // and does not apply to the 'in' source image. The 'in' source image must remain in its

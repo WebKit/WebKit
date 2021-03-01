@@ -70,6 +70,7 @@ WI.IssueMessage = class IssueMessage extends WI.Object
         case WI.ConsoleMessage.MessageSource.WebRTC:
         case WI.ConsoleMessage.MessageSource.ITPDebug:
         case WI.ConsoleMessage.MessageSource.PrivateClickMeasurement:
+        case WI.ConsoleMessage.MessageSource.PaymentRequest:
         case WI.ConsoleMessage.MessageSource.AdClickAttribution: // COMPATIBILITY (iOS 14.0): `Console.ChannelSource.AdClickAttribution` was renamed to `Console.ChannelSource.PrivateClickMeasurement`.
         case WI.ConsoleMessage.MessageSource.Other:
             this._type = WI.IssueMessage.Type.OtherIssue;

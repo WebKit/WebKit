@@ -1,0 +1,42 @@
+<script>
+
+    var bytesRead = 0;
+
+    function recursiveRead(reader) {
+        reader.read().then(function({ done, value }) {
+            for (var i = 0; i < value.length; i++) {
+                alert("RECEIVED BYTE '" + String.fromCharCode(value[i]) + "'");
+                bytesRead = bytesRead + 1;
+            }
+            if (bytesRead == 4) {
+                if (window.testRunner) {
+                    testRunner.notifyDone();
+                }
+            } else {
+                recursiveRead(reader);
+            }
+        });
+    }
+    
+    function runTest() {
+        let fileBits = [
+            'a',
+            new File([], 'x'),
+            'b',
+            new File([], 'x'),
+            'c',
+            new File([], 'x'),
+            'd'
+        ];
+        let file = new File(fileBits, 'y');
+        recursiveRead(file.stream().getReader());
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+</script>
+<body onload="runTest()">
+</body>

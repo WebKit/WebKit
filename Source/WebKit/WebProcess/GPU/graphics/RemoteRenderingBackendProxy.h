@@ -29,6 +29,7 @@
 
 #include "GPUProcessConnection.h"
 #include "GPUProcessWakeupMessageArguments.h"
+#include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -39,10 +40,6 @@
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/cocoa/MachSemaphore.h>
-#endif
-
 namespace WebCore {
 namespace DisplayList {
 class DisplayList;
@@ -51,7 +48,7 @@ class Item;
 class FloatSize;
 class ImageData;
 enum class AlphaPremultiplication : uint8_t;
-enum class ColorSpace : uint8_t;
+enum class DestinationColorSpace : uint8_t;
 enum class RenderingMode : bool;
 }
 
@@ -83,7 +80,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Messages to be sent.
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat);
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
     String getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution, WebCore::RenderingResourceIdentifier);
     Vector<uint8_t> getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier);
@@ -126,9 +123,7 @@ private:
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
-#if PLATFORM(COCOA)
-    MachSemaphore m_resumeDisplayListSemaphore;
-#endif
+    IPC::Semaphore m_resumeDisplayListSemaphore;
 };
 
 } // namespace WebKit

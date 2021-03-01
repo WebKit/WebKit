@@ -60,8 +60,6 @@ typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
 class BView;
 typedef BView PlatformGraphicsContext;
 struct pattern;
-#elif USE(WINGDI)
-typedef struct HDC__ PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif
@@ -82,12 +80,6 @@ typedef unsigned char UInt8;
 #endif
 
 namespace WebCore {
-
-#if USE(WINGDI)
-class SharedBitmap;
-class Font;
-class GlyphBuffer;
-#endif
 
 class AffineTransform;
 class FloatRoundedRect;
@@ -417,7 +409,7 @@ public:
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
 
     enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };
-    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&&);
+    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace, Function<void(GraphicsContext&)>&&);
     
     IntRect clipBounds() const;
 
@@ -529,20 +521,6 @@ public:
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
     HDC hdc() const;
 #if PLATFORM(WIN)
-#if USE(WINGDI)
-    const AffineTransform& affineTransform() const;
-    AffineTransform& affineTransform();
-    void resetAffineTransform();
-    void fillRect(const FloatRect&, const Gradient*);
-    void drawText(const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
-    void drawFrameControl(const IntRect& rect, unsigned type, unsigned state);
-    void drawFocusRect(const IntRect& rect);
-    void paintTextField(const IntRect& rect, unsigned state);
-    void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator, BlendMode);
-    void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect, const IntSize& origSourceSize);
-    void drawIcon(HICON icon, const IntRect& dstRect, UINT flags);
-    void drawRoundCorner(bool newClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height);
-#else
     GraphicsContext(HDC, bool hasAlpha = false); // FIXME: To be removed.
 
     // When set to true, child windows should be rendered into this context
@@ -580,7 +558,6 @@ public:
     std::unique_ptr<WindowsBitmap> createWindowsBitmap(const IntSize&);
     // The bitmap should be non-premultiplied.
     void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
-#endif
 #if USE(DIRECT2D)
     GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
 
@@ -615,7 +592,7 @@ private:
     void platformInit(PlatformGraphicsContext*);
     void platformDestroy();
 
-#if PLATFORM(WIN) && !USE(WINGDI)
+#if PLATFORM(WIN)
     void platformInit(HDC, bool hasAlpha = false);
 #endif
 

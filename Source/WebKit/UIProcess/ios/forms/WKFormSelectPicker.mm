@@ -33,7 +33,9 @@
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WKFormSelectControl.h"
+#import "WKWebViewPrivateForTesting.h"
 #import "WebPageProxy.h"
+#import <WebCore/LocalizedStrings.h>
 
 using namespace WebKit;
 
@@ -464,4 +466,237 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 @end
 
-#endif  // PLATFORM(IOS_FAMILY)
+#pragma mark - Form Control Refresh
+
+@implementation WKSelectPicker {
+    __weak WKContentView *_view;
+    CGPoint _interactionPoint;
+
+#if USE(UICONTEXTMENU)
+    RetainPtr<UIMenu> _selectMenu;
+    RetainPtr<UIContextMenuInteraction> _selectContextMenuInteraction;
+#endif
+}
+
+- (instancetype)initWithView:(WKContentView *)view
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _view = view;
+    _interactionPoint = [_view lastInteractionLocation];
+#if USE(UICONTEXTMENU)
+    _selectMenu = [self createMenu];
+#endif
+
+    return self;
+}
+
+- (UIView *)controlView
+{
+    return nil;
+}
+
+- (void)controlBeginEditing
+{
+    [_view startRelinquishingFirstResponderToFocusedElement];
+
+#if USE(UICONTEXTMENU)
+    WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_view.focusedElementInformation.lastInteractionLocation) };
+    [_view doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
+        [self showSelectPicker];
+    } forRequest:positionInformationRequest];
+#endif
+}
+
+- (void)controlEndEditing
+{
+    [_view stopRelinquishingFirstResponderToFocusedElement];
+
+#if USE(UICONTEXTMENU)
+    [self removeContextMenuInteraction];
+#endif
+}
+
+- (void)dealloc
+{
+#if USE(UICONTEXTMENU)
+    [self removeContextMenuInteraction];
+#endif
+    [super dealloc];
+}
+
+- (void)didSelectOptionIndex:(NSInteger)index
+{
+    [_view page]->setFocusedElementSelectedIndex(index);
+}
+
+#if USE(UICONTEXTMENU)
+
+- (UIMenu *)createMenu
+{
+    if (!_view.focusedSelectElementOptions.size()) {
+        UIAction *emptyAction = [UIAction actionWithTitle:WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list") image:nil identifier:nil handler:^(__kindof UIAction *action) { }];
+        emptyAction.attributes = UIMenuElementAttributesDisabled;
+        return [UIMenu menuWithTitle:@"" children:@[emptyAction]];
+    }
+
+    NSMutableArray *items = [NSMutableArray array];
+    NSInteger optionIndex = 0;
+
+    size_t currentIndex = 0;
+    while (currentIndex < _view.focusedSelectElementOptions.size()) {
+        auto& optionItem = _view.focusedSelectElementOptions[currentIndex];
+        if (optionItem.isGroup) {
+            NSString *groupText = optionItem.text;
+            NSMutableArray *groupedItems = [NSMutableArray array];
+
+            currentIndex++;
+            while (currentIndex < _view.focusedSelectElementOptions.size()) {
+                optionItem = _view.focusedSelectElementOptions[currentIndex];
+                if (optionItem.isGroup)
+                    break;
+
+                UIAction *action = [self actionForOptionItem:optionItem withIndex:optionIndex];
+                [groupedItems addObject:action];
+                optionIndex++;
+                currentIndex++;
+            }
+
+            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText children:groupedItems];
+            [items addObject:groupMenu];
+            continue;
+        }
+
+        UIAction *action = [self actionForOptionItem:optionItem withIndex:optionIndex];
+        [items addObject:action];
+        optionIndex++;
+        currentIndex++;
+    }
+
+    return [UIMenu menuWithTitle:@"" children:items];
+}
+
+- (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
+{
+    UIAction *optionAction = [UIAction actionWithTitle:option.text image:nil identifier:nil handler:^(__kindof UIAction *action) {
+        [self didSelectOptionIndex:optionIndex];
+    }];
+
+    if (option.disabled)
+        optionAction.attributes = UIMenuElementAttributesDisabled;
+
+    if (option.isSelected)
+        optionAction.state = UIMenuElementStateOn;
+
+    return optionAction;
+}
+
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    return [_view _createTargetedContextMenuHintPreviewIfPossible];
+}
+
+- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
+    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
+    return style;
+}
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
+{
+    UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKSelectPicker>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return nil;
+
+        return strongSelf->_selectMenu.get();
+    };
+
+    return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:actionMenuProvider];
+}
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf)
+            [strongSelf->_view.webView _didShowContextMenu];
+    }];
+}
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf) {
+            [strongSelf->_view accessoryDone];
+            [strongSelf->_view.webView _didDismissContextMenu];
+        }
+    }];
+}
+
+- (void)removeContextMenuInteraction
+{
+    if (!_selectContextMenuInteraction)
+        return;
+
+    [_view removeInteraction:_selectContextMenuInteraction.get()];
+    _selectContextMenuInteraction = nil;
+    [_view _removeContextMenuViewIfPossible];
+    [_view.webView _didDismissContextMenu];
+}
+
+- (void)ensureContextMenuInteraction
+{
+    if (_selectContextMenuInteraction)
+        return;
+
+    _selectContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
+    [_view addInteraction:_selectContextMenuInteraction.get()];
+}
+
+- (void)showSelectPicker
+{
+    [self ensureContextMenuInteraction];
+    [_selectContextMenuInteraction _presentMenuAtLocation:_interactionPoint];
+}
+
+#endif // USE(UICONTEXTMENU)
+
+// WKSelectTesting
+- (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection
+{
+#if USE(UICONTEXTMENU)
+    NSInteger currentRow = 0;
+
+    NSArray<UIMenuElement *> *menuElements = [_selectMenu children];
+    for (UIMenuElement *menuElement in menuElements) {
+        if ([menuElement isKindOfClass:UIAction.class]) {
+            if (currentRow == rowIndex) {
+                [(UIAction *)menuElement _performActionWithSender:nil];
+                break;
+            }
+
+            currentRow++;
+            continue;
+        }
+
+        UIMenu *groupedMenu = (UIMenu *)menuElement;
+        if (currentRow + groupedMenu.children.count <= (NSUInteger)rowIndex)
+            currentRow += groupedMenu.children.count;
+        else {
+            UIAction *action = (UIAction *)[groupedMenu.children objectAtIndex:rowIndex - currentRow];
+            [action _performActionWithSender:nil];
+            break;
+        }
+    }
+
+    [self removeContextMenuInteraction];
+#endif
+}
+
+@end
+
+#endif // PLATFORM(IOS_FAMILY)

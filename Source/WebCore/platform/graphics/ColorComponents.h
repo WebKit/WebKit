@@ -41,6 +41,9 @@ struct ColorComponents {
     {
     }
 
+    template<typename F>
+    constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>()))>;
+
     constexpr ColorComponents& operator+=(const ColorComponents&);
 
     constexpr ColorComponents operator+(T) const;
@@ -58,58 +61,53 @@ struct ColorComponents {
     std::array<T, Size> components;
 };
 
+template<typename F, typename T, typename... Ts>
+constexpr auto mapColorComponents(F&& function, T component, Ts... components) -> ColorComponents<decltype(function(component[0], components[0]...))>
+{
+    static_assert(std::conjunction_v<std::bool_constant<Ts::Size == T::Size>...>, "All ColorComponents passed to mapColorComponents must have the same size");
+
+    ColorComponents<decltype(function(component[0], components[0]...))> result;
+    for (size_t i = 0; i < T::Size; ++i)
+        result[i] = function(component[i], components[i]...);
+    return result;
+}
+
+template<typename T>
+template<typename F>
+constexpr auto ColorComponents<T>::map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>()))>
+{
+    return mapColorComponents(std::forward<F>(function), *this);
+}
+
 template<typename T>
 constexpr ColorComponents<T>& ColorComponents<T>::operator+=(const ColorComponents& rhs)
 {
-    components[0] += rhs[0];
-    components[1] += rhs[1];
-    components[2] += rhs[2];
-    components[3] += rhs[3];
+    *this = mapColorComponents([](T c1, T c2) { return c1 + c2; }, *this, rhs);
     return *this;
 }
 
 template<typename T>
 constexpr ColorComponents<T> ColorComponents<T>::operator+(T rhs) const
 {
-    return {
-        components[0] + rhs,
-        components[1] + rhs,
-        components[2] + rhs,
-        components[3] + rhs
-    };
+    return map([rhs](T c) { return c + rhs; });
 }
 
 template<typename T>
 constexpr ColorComponents<T> ColorComponents<T>::operator/(T denominator) const
 {
-    return {
-        components[0] / denominator,
-        components[1] / denominator,
-        components[2] / denominator,
-        components[3] / denominator
-    };
+    return map([denominator](T c) { return c / denominator; });
 }
 
 template<typename T>
 constexpr ColorComponents<T> ColorComponents<T>::operator*(T factor) const
 {
-    return {
-        components[0] * factor,
-        components[1] * factor,
-        components[2] * factor,
-        components[3] * factor
-    };
+    return map([factor](T c) { return c * factor; });
 }
 
 template<typename T>
 constexpr ColorComponents<T> ColorComponents<T>::abs() const
 {
-    return {
-        std::abs(components[0]),
-        std::abs(components[1]),
-        std::abs(components[2]),
-        std::abs(components[3])
-    };
+    return map([](T c) { return std::abs(c); });
 }
 
 template<typename T>
@@ -122,23 +120,13 @@ constexpr T ColorComponents<T>::get() const
 template<typename T>
 constexpr ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
-    return {
-        std::max(a[0], b[0]),
-        std::max(a[1], b[1]),
-        std::max(a[2], b[2]),
-        std::max(a[3], b[3])
-    };
+    return mapColorComponents([](T c1, T c2) { return std::max(c1, c2); }, a, b);
 }
 
 template<typename T>
 constexpr ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
-    return {
-        std::min(a[0], b[0]),
-        std::min(a[1], b[1]),
-        std::min(a[2], b[2]),
-        std::min(a[3], b[3])
-    };
+    return mapColorComponents([](T c1, T c2) { return std::min(c1, c2); }, a, b);
 }
 
 template<typename T>

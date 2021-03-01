@@ -30,6 +30,7 @@ import sys
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
+from subprocess import CalledProcessError
 from webkitcorepy import OutputCapture, decorators
 from webkitscmpy import Commit, Contributor
 from webkitscmpy.remote.scm import Scm
@@ -71,12 +72,20 @@ class GitHub(Scm):
             return username, access_token
 
         with OutputCapture():
-            import keyring
+            try:
+                import keyring
+            except (CalledProcessError, ImportError):
+                keyring = None
 
         username_prompted = False
         password_prompted = False
         if not username:
-            username = keyring.get_password(self.api_url, 'username')
+            try:
+                if keyring:
+                    username = keyring.get_password(self.api_url, 'username')
+            except RuntimeError:
+                pass
+
             if not username and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')
@@ -87,7 +96,12 @@ class GitHub(Scm):
                 username_prompted = True
 
         if not access_token and required:
-            access_token = keyring.get_password(self.api_url, username)
+            try:
+                if keyring:
+                    access_token = keyring.get_password(self.api_url, username)
+            except RuntimeError:
+                pass
+
             if not access_token:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')
@@ -97,7 +111,7 @@ class GitHub(Scm):
         if username and access_token:
             self._cached_credentials = (username, access_token)
 
-        if username_prompted or password_prompted:
+        if keyring and (username_prompted or password_prompted):
             sys.stderr.write('Store username and access token in system keyring for {}? (Y/N): '.format(self.api_url))
             response = (input if sys.version_info > (3, 0) else raw_input)()
             if response.lower() in ['y', 'yes', 'ok']:
@@ -326,8 +340,14 @@ class GitHub(Scm):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
+        if argument in self.DEFAULT_BRANCHES:
+            argument = self.default_branch
+
         parsed_commit = Commit.parse(argument, do_assert=False)
         if parsed_commit:
+            if parsed_commit.branch in self.DEFAULT_BRANCHES:
+                parsed_commit.branch = self.default_branch
+
             return self.commit(
                 hash=parsed_commit.hash,
                 revision=parsed_commit.revision,

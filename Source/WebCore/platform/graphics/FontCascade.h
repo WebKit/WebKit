@@ -34,6 +34,12 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
 
+// "X11/X.h" defines Complex to 0 and conflicts
+// with Complex value in CodePath enum.
+#ifdef Complex
+#undef Complex
+#endif
+
 namespace WebCore {
 
 class GraphicsContext;

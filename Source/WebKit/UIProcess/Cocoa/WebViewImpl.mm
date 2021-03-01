@@ -134,6 +134,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenate.h>
 
+#if ENABLE(IMAGE_EXTRACTION)
+#import <WebCore/ImageExtractionResult.h>
+#endif
+
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
@@ -155,6 +159,10 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @interface AVTouchBarScrubber ()
 - (void)setCanShowMediaSelectionButton:(BOOL)canShowMediaSelectionButton;
 @end
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.mm>
 #endif
 
 @interface WKAccessibilitySettingsObserver : NSObject {
@@ -4329,13 +4337,21 @@ void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NS
     m_promisedURL = url;
 }
 
-void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName)
+void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *originIdentifier)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardType(), nil]);
 
     if (image && !image->uti().isEmpty() && image->data() && !image->data()->isEmpty())
         [types addObject:image->uti()];
+
+    RetainPtr<NSData> customDataBuffer;
+    if (originIdentifier.length) {
+        [types addObject:@(PasteboardCustomData::cocoaType())];
+        PasteboardCustomData customData;
+        customData.setOrigin(originIdentifier);
+        customDataBuffer = customData.createSharedBuffer()->createNSData();
+    }
 
     [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
     [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
@@ -4348,6 +4364,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
         [pasteboard setData:nsData.get() forType:PasteboardTypes::WebArchivePboardType];
     }
+
+    if (customDataBuffer)
+        [pasteboard setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
     m_promisedImage = image;
 }

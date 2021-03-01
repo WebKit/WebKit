@@ -52,6 +52,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddEventListenerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddEventListenerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesCbcCfbParams.cpp
@@ -743,6 +745,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventListenerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventListenerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventModifierInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventModifierInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventSource.cpp
@@ -1683,6 +1687,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPriorityType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPriorityType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtcpParameters.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtcpParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodecCapability.cpp
@@ -2351,6 +2357,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLFramebuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLFramebuffer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLLoseContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLLoseContext.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDraw.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDraw.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLQuery.cpp
@@ -2629,6 +2637,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRWebGLLayerInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRWebGLLayerInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXSLTProcessor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXSLTProcessor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/LocalizableAdditions.strings.out
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementTypeHelpers.h

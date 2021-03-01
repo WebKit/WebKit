@@ -785,6 +785,9 @@ Benchmark = Utilities.createClass(
     {
         this._animateLoop = this._animateLoop.bind(this);
         this._warmupLength = options["warmup-length"];
+        this._frameCount = 0;
+        this._warmupFrameCount = options["warmup-frame-count"];
+        this._firstFrameMinimumLength = options["first-frame-minimum-length"];
 
         this._stage = stage;
         this._stage.initialize(this, options);
@@ -870,14 +873,18 @@ Benchmark = Utilities.createClass(
             if (!this._previousTimestamp) {
                 this._previousTimestamp = timestamp;
                 this._benchmarkStartTimestamp = timestamp;
-            } else if (timestamp - this._previousTimestamp >= this._warmupLength) {
+            } else if (timestamp - this._previousTimestamp >= this._warmupLength && this._frameCount >= this._warmupFrameCount) {
                 this._didWarmUp = true;
                 this._benchmarkStartTimestamp = timestamp;
                 this._controller.start(timestamp, this._stage);
                 this._previousTimestamp = timestamp;
+
+                while (this._getTimestamp && this._getTimestamp() - timestamp < this._firstFrameMinimumLength) {
+                }
             }
 
             this._stage.animate(0);
+            ++this._frameCount;
             requestAnimationFrame(this._animateLoop);
             return;
         }

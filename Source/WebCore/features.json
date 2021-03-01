@@ -816,6 +816,17 @@
         }
     },
     {
+        "name": "WebXR",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://immersive-web.github.io/webxr/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=208988",
+        "keywords": ["webxr", "webgl", "webgpu"],
+        "category": "html",
+        "description": "The WebXR device API is for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web."
+    },
+    {
         "name": "Worklets Level 1",
         "status": {
             "status": "Under Consideration"

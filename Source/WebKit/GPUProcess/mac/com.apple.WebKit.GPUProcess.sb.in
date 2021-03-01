@@ -525,8 +525,6 @@
     (subpath "/Library/Speech/Synthesizers")
     (regex #"^/private/etc/(hosts|group|passwd)$")
 
-    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
-
     ;; System and user preferences
     (home-literal "/.CFUserTextEncoding")
 
@@ -647,12 +645,17 @@
     (global-name "com.apple.awdd")
     (global-name "com.apple.cfprefsd.agent")
     (global-name "com.apple.cookied")
-    (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
     (global-name "com.apple.mobileassetd")
-    (global-name "com.apple.powerlog.plxpclogger.xpc")
-    (global-name "com.apple.system.logger")
+)
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")
+        (global-name "com.apple.powerlog.plxpclogger.xpc")
+    )
 )
 
 ;; Various services required by AppKit and other frameworks
@@ -662,7 +665,6 @@
 #endif
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.analyticsd")
        (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.toolbox.reporting.service")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
@@ -703,7 +705,11 @@
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
 
-(allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(with-filter (uid 0)
+    (allow file-write*
+        (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+)
 
 (allow file-read*
        (subpath "/private/var/db/mds")

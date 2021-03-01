@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,101 @@
 
 namespace WebCore {
 
+CGColorSpaceRef a98RGBColorSpaceRef()
+{
+    static CGColorSpaceRef a98RGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        a98RGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
+#else
+        a98RGBColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return a98RGBColorSpace;
+}
+
+CGColorSpaceRef displayP3ColorSpaceRef()
+{
+    static CGColorSpaceRef displayP3ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+#else
+        displayP3ColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return displayP3ColorSpace;
+}
+
+CGColorSpaceRef extendedSRGBColorSpaceRef()
+{
+    static CGColorSpaceRef extendedSRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        CGColorSpaceRef colorSpace = nullptr;
+#if PLATFORM(COCOA)
+        colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
+#endif
+        // If there is no support for extended sRGB, fall back to sRGB.
+        if (!colorSpace)
+            colorSpace = sRGBColorSpaceRef();
+
+        extendedSRGBColorSpace = colorSpace;
+    });
+    return extendedSRGBColorSpace;
+}
+
+CGColorSpaceRef labColorSpaceRef()
+{
+    // FIXME: Add support for conversion to Lab on supported platforms.
+    return sRGBColorSpaceRef();
+}
+
+CGColorSpaceRef linearRGBColorSpaceRef()
+{
+    static CGColorSpaceRef linearRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(WIN)
+        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
+        linearRGBColorSpace = sRGBColorSpaceRef();
+#else
+        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
+#endif
+    });
+    return linearRGBColorSpace;
+}
+
+CGColorSpaceRef proPhotoRGBColorSpaceRef()
+{
+    static CGColorSpaceRef proPhotoRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        proPhotoRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceROMMRGB);
+#else
+        proPhotoRGBColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return proPhotoRGBColorSpace;
+}
+
+CGColorSpaceRef rec2020ColorSpaceRef()
+{
+    static CGColorSpaceRef rec2020ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        rec2020ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020);
+#else
+        rec2020ColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return rec2020ColorSpace;
+}
+
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     static CGColorSpaceRef sRGBColorSpace;
@@ -53,57 +148,18 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBColorSpace;
 }
 
-CGColorSpaceRef linearRGBColorSpaceRef()
+CGColorSpaceRef xyzD50ColorSpaceRef()
 {
-    static CGColorSpaceRef linearRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(WIN)
-        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-        linearRGBColorSpace = sRGBColorSpaceRef();
-#else
-        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
-#endif
-    });
-    return linearRGBColorSpace;
-}
-
-CGColorSpaceRef displayP3ColorSpaceRef()
-{
-    static CGColorSpaceRef displayP3ColorSpace;
+    static CGColorSpaceRef xyzD50ColorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if PLATFORM(COCOA)
-        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+        xyzD50ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericXYZ);
 #else
-        displayP3ColorSpace = sRGBColorSpaceRef();
+        xyzD50ColorSpace = sRGBColorSpaceRef();
 #endif
     });
-    return displayP3ColorSpace;
-}
-
-CGColorSpaceRef labColorSpaceRef()
-{
-    // FIXME: Add support for conversion to Lab on supported platforms.
-    return sRGBColorSpaceRef();
-}
-
-CGColorSpaceRef extendedSRGBColorSpaceRef()
-{
-    static CGColorSpaceRef extendedSRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        CGColorSpaceRef colorSpace = nullptr;
-#if PLATFORM(COCOA)
-        colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
-#endif
-        // If there is no support for extended sRGB, fall back to sRGB.
-        if (!colorSpace)
-            colorSpace = sRGBColorSpaceRef();
-
-        extendedSRGBColorSpace = colorSpace;
-    });
-    return extendedSRGBColorSpace;
+    return xyzD50ColorSpace;
 }
 
 }

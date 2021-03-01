@@ -112,6 +112,7 @@ public:
 
     bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
     void flushPendingUpdate();
+    void insertedInDocument();
 
 #if ENABLE(XSLT)
     Vector<Ref<ProcessingInstruction>> collectXSLTransforms();
@@ -135,7 +136,7 @@ private:
 
     void didRemovePendingStylesheet();
 
-    enum class UpdateType { ActiveSet, ContentsOrInterpretation };
+    enum class UpdateType : uint8_t { ActiveSet, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
@@ -160,9 +161,6 @@ private:
 
     void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
 
-    void pendingUpdateTimerFired();
-    void clearPendingUpdate();
-
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
@@ -170,8 +168,6 @@ private:
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
-
-    Timer m_pendingUpdateTimer;
 
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
@@ -183,13 +179,14 @@ private:
     HashSet<const Element*> m_elementsInHeadWithPendingSheets;
     HashSet<const Element*> m_elementsInBodyWithPendingSheets;
 
-    Optional<UpdateType> m_pendingUpdate;
-    bool m_hasDescendantWithPendingUpdate { false };
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 
     String m_preferredStylesheetSetName;
 
+    Optional<UpdateType> m_pendingUpdate;
+
+    bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };
 };

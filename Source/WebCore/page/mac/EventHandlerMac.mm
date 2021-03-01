@@ -792,10 +792,8 @@ static ScrollableArea* scrollableAreaForBox(RenderBox& box)
     if (is<RenderListBox>(box))
         return downcast<RenderListBox>(&box);
 
-    if (box.layer()) {
-        if (auto* scrollableLayer = box.layer()->scrollableArea())
-            return scrollableLayer;
-    }
+    if (auto* scrollableArea = box.layer() ? box.layer()->scrollableArea() : nullptr)
+        return scrollableArea;
 
     return nullptr;
 }

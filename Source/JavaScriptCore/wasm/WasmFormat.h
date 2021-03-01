@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Type.h"
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "MacroAssemblerCodeRef.h"
@@ -46,9 +45,7 @@
 
 namespace JSC {
 
-namespace B3 {
 class Compilation;
-}
 
 namespace Wasm {
 
@@ -340,7 +337,7 @@ struct UnlinkedWasmToWasmCall {
 
 struct Entrypoint {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    std::unique_ptr<B3::Compilation> compilation;
+    std::unique_ptr<Compilation> compilation;
     RegisterAtOffsetList calleeSaveRegisters;
 };
 

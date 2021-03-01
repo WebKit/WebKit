@@ -21,7 +21,7 @@
             if (window.internals)
                 window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
 
-            xhr.open('GET', `/xmlhttprequest/resources/download-with-delay.php?iteration=1&delay=${delay}`, true);
+            xhr.open('GET', `/xmlhttprequest/resources/download-with-delay.py?iteration=1&delay=${delay}`, true);
 
             xhr.onload = (evt) => {
                 consoleWrite(`EVENT(load): readyState = ${xhr.readyState}`);
@@ -46,7 +46,7 @@
             if (window.internals)
                 window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
 
-            fetch(`/xmlhttprequest/resources/download-header-with-delay.php?delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+            fetch(`/xmlhttprequest/resources/download-header-with-delay.py?delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
                 consoleWrite(`FETCH(resolved): status = ${response.status}`);
                 completionHandler();
             }, error => {
@@ -56,7 +56,7 @@
 
         function doFetchBlob(delay, timeout, completionHandler)
         {
-            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1&delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1&delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
                 consoleWrite(`FETCH(resolved): status = ${response.status}`);
                 if (window.internals)
                     window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
@@ -85,7 +85,7 @@
 
         function doFetchThenPromise(completionHandler)
         {
-            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
                 consoleWrite(`FETCH(resolved): status = ${response.status}`);
                 return new Promise( (resolutionFunc) => resolutionFunc() );
             }).then(() => {
@@ -96,7 +96,7 @@
 
         function doFetchThenCrypto(completionHandler)
         {
-            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
                 consoleWrite(`FETCH(resolved): status = ${response.status}`);
                 return crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]), hash: "sha-1"}, false, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]);
             }).then(key => {

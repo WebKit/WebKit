@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const AtomString& family, UScriptCode script)
+static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const String& family, UScriptCode script)
 {
     if (family.isEmpty())
         return fontMap.remove(static_cast<int>(script));
-    auto& familyInMap = fontMap.add(static_cast<int>(script), AtomString { }).iterator->value;
+    auto& familyInMap = fontMap.add(static_cast<int>(script), String { }).iterator->value;
     if (familyInMap == family)
         return false;
     familyInMap = family;
@@ -64,7 +64,7 @@ static void languageChanged(void*)
     cachedUserPrefersSimplified() = computeUserPrefersSimplified();
 }
 
-static const AtomString& genericFontFamilyForScript(const ScriptFontFamilyMap& fontMap, UScriptCode script)
+static const String& genericFontFamilyForScript(const ScriptFontFamilyMap& fontMap, UScriptCode script)
 {
     ScriptFontFamilyMap::const_iterator it = fontMap.find(static_cast<int>(script));
     if (it != fontMap.end())
@@ -83,76 +83,99 @@ static const AtomString& genericFontFamilyForScript(const ScriptFontFamilyMap& f
 
 FontGenericFamilies::FontGenericFamilies()
 {
-    addLanguageChangeObserver(this, &languageChanged);
-    languageChanged(nullptr);
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        addLanguageChangeObserver(&once, &languageChanged);
+        languageChanged(nullptr);
+    });
 }
 
-const AtomString& FontGenericFamilies::standardFontFamily(UScriptCode script) const
+FontGenericFamilies FontGenericFamilies::isolatedCopy() const
+{
+    FontGenericFamilies copy;
+    for (auto &keyValue : m_standardFontFamilyMap)
+        copy.m_standardFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_serifFontFamilyMap)
+        copy.m_serifFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_fixedFontFamilyMap)
+        copy.m_fixedFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_sansSerifFontFamilyMap)
+        copy.m_sansSerifFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_cursiveFontFamilyMap)
+        copy.m_cursiveFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_fantasyFontFamilyMap)
+        copy.m_fantasyFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_pictographFontFamilyMap)
+        copy.m_pictographFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    return copy;
+}
+
+const String& FontGenericFamilies::standardFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_standardFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::fixedFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::fixedFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_fixedFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::serifFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::serifFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_serifFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::sansSerifFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::sansSerifFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_sansSerifFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::cursiveFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::cursiveFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_cursiveFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::fantasyFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::fantasyFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_fantasyFontFamilyMap, script);
 }
 
-const AtomString& FontGenericFamilies::pictographFontFamily(UScriptCode script) const
+const String& FontGenericFamilies::pictographFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_pictographFontFamilyMap, script);
 }
 
-bool FontGenericFamilies::setStandardFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setStandardFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_standardFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setFixedFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setFixedFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_fixedFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setSerifFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setSerifFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_serifFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setSansSerifFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setSansSerifFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_sansSerifFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setCursiveFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setCursiveFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_cursiveFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setFantasyFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setFantasyFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_fantasyFontFamilyMap, family, script);
 }
 
-bool FontGenericFamilies::setPictographFontFamily(const AtomString& family, UScriptCode script)
+bool FontGenericFamilies::setPictographFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_pictographFontFamilyMap, family, script);
 }

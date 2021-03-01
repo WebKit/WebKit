@@ -15,7 +15,7 @@ function log(message)
 function presetAuthorization()
 {
     if (window.testRunner)
-        testRunner.authenticateSession("http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", "test", "test");
+        testRunner.authenticateSession("http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.py", "test", "test");
 
     test();
 }
@@ -23,7 +23,7 @@ function presetAuthorization()
 function test()
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", false);
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.py", false);
     try {
         req.send();
         log((req.status == 401) ? "PASS" : "FAIL: credentials were sent");

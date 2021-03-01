@@ -35,6 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
+#include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
@@ -49,9 +50,12 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderQuote.h"
+#include "RenderRuby.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGImage.h"
@@ -170,6 +174,43 @@ String quoteAndEscapeNonPrintables(StringView s)
     return result.toString();
 }
 
+static inline bool isRenderInlineEmpty(const RenderInline& inlineRenderer)
+{
+    if (isEmptyInline(inlineRenderer))
+        return true;
+
+    for (auto& child : childrenOfType<RenderObject>(inlineRenderer)) {
+        if (child.isFloatingOrOutOfFlowPositioned())
+            continue;
+        auto isChildEmpty = false;
+        if (is<RenderInline>(child))
+            isChildEmpty = isRenderInlineEmpty(downcast<RenderInline>(child));
+        else if (is<RenderText>(child))
+            isChildEmpty = !downcast<RenderText>(child).linesBoundingBox().height();
+        if (!isChildEmpty)
+            return false;
+    }
+    return true;
+}
+
+static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
+{
+    auto* parent = inlineRenderer.parent();
+    if (!parent)
+        return false;
+
+    for (auto& sibling : childrenOfType<RenderObject>(*parent)) {
+        if (&sibling == &inlineRenderer || sibling.isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (!is<RenderInline>(sibling))
+            return true;
+        auto& siblingRendererInline = downcast<RenderInline>(sibling);
+        if (siblingRendererInline.shouldCreateLineBoxes() || !isRenderInlineEmpty(siblingRendererInline))
+            return true;
+    }
+    return false;
+}
+
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
     ts << o.renderName();
@@ -209,12 +250,30 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
         IntRect linesBox = br.linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-        if (!br.inlineBoxWrapper())
+        if (!br.inlineBoxWrapper() && !LayoutIntegration::runFor(br))
             adjustForTableCells = false;
     } else if (is<RenderInline>(o)) {
         const RenderInline& inlineFlow = downcast<RenderInline>(o);
         // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-        r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
+        auto width = inlineFlow.linesBoundingBox().width();
+        auto inlineHeight = [&] {
+            // Let's match legacy line layout's RenderInline behavior and report 0 height when the inline box is "empty".
+            // FIXME: Remove and rebaseline when LFC inline boxes are enabled (see webkit.org/b/220722) 
+            auto height = inlineFlow.linesBoundingBox().height();
+            if (width)
+                return height;
+            if (is<RenderQuote>(inlineFlow) || is<RenderRubyAsInline>(inlineFlow))
+                return height;
+            if (inlineFlow.marginStart() || inlineFlow.marginEnd())
+                return height;
+            // This is mostly pre/post continuation content. Also see webkit.org/b/220735
+            if (hasNonEmptySibling(inlineFlow))
+                return height;
+            if (isRenderInlineEmpty(inlineFlow))
+                return 0;
+            return height;
+        };
+        r = IntRect(0, 0, width, inlineHeight());
         adjustForTableCells = false;
     } else if (is<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
@@ -600,19 +659,21 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     }
 
     if (layer.renderer().hasOverflowClip()) {
-        if (layer.scrollOffset().x())
-            ts << " scrollX " << layer.scrollOffset().x();
-        if (layer.scrollOffset().y())
-            ts << " scrollY " << layer.scrollOffset().y();
-        if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != layer.scrollWidth())
-            ts << " scrollWidth " << layer.scrollWidth();
-        if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != layer.scrollHeight())
-            ts << " scrollHeight " << layer.scrollHeight();
+        if (auto* scrollableArea = layer.scrollableArea()) {
+            if (scrollableArea->scrollOffset().x())
+                ts << " scrollX " << scrollableArea->scrollOffset().x();
+            if (scrollableArea->scrollOffset().y())
+                ts << " scrollY " << scrollableArea->scrollOffset().y();
+            if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != scrollableArea->scrollWidth())
+                ts << " scrollWidth " << scrollableArea->scrollWidth();
+            if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != scrollableArea->scrollHeight())
+                ts << " scrollHeight " << scrollableArea->scrollHeight();
+        }
 #if PLATFORM(MAC)
         ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
-        if (!scrollbarTheme.isMockTheme() && layer.hasVerticalScrollbar()) {
+        if (!scrollbarTheme.isMockTheme() && layer.scrollableArea() && layer.scrollableArea()->hasVerticalScrollbar()) {
             ScrollbarThemeMac& macTheme = *static_cast<ScrollbarThemeMac*>(&scrollbarTheme);
-            if (macTheme.isLayoutDirectionRTL(*layer.verticalScrollbar()))
+            if (macTheme.isLayoutDirectionRTL(*layer.scrollableArea()->verticalScrollbar()))
                 ts << " scrollbarHasRTLLayoutDirection";
         }
 #endif

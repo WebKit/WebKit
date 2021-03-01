@@ -77,7 +77,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 using ErrorIDLUnion = IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>>;
 using ErrorPromise = DOMPromiseDeferred<IDLNullable<ErrorIDLUnion>>;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice>, public EventTargetWithInlineData, public CanMakeWeakPtr<WebGPUDevice> {
+class WebGPUDevice : public RefCounted<WebGPUDevice>, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(WebGPUDevice);
 public:
     virtual ~WebGPUDevice();

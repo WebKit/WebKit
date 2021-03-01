@@ -44,6 +44,7 @@ class ValidationMessage;
 // unless there is a special reason.
 class HTMLFormControlElement : public LabelableElement, public FormAssociatedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
+    friend class DelayedUpdateValidityScope;
 public:
     virtual ~HTMLFormControlElement();
 
@@ -99,6 +100,7 @@ public:
     WEBCORE_EXPORT AutocapitalizeType autocapitalizeType() const final;
 #endif
 
+    // "willValidate" means "is a candidate for constraint validation".
     WEBCORE_EXPORT bool willValidate() const final;
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();
@@ -112,7 +114,7 @@ public:
     void setCustomValidity(const String&) override;
 
     bool isReadOnly() const { return m_isReadOnly; }
-    bool isDisabledOrReadOnly() const { return isDisabledFormControl() || m_isReadOnly; }
+    bool isDisabledOrReadOnly() const { return m_disabled || m_disabledByAncestorFieldset || m_isReadOnly; }
 
     bool hasAutofocused() { return m_hasAutofocused; }
     void setAutofocused() { m_hasAutofocused = true; }
@@ -152,7 +154,7 @@ protected:
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
     // This must be called any time the result of willValidate() has changed.
-    void setNeedsWillValidateCheck();
+    void updateWillValidateAndValidity();
     virtual bool computeWillValidate() const;
 
     bool validationMessageShadowTreeContains(const Node&) const;
@@ -172,6 +174,9 @@ private:
     bool isValidFormControlElement() const;
 
     bool computeIsDisabledByFieldsetAncestor() const;
+    
+    void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }
+    void endDelayingUpdateValidity();
 
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
@@ -181,6 +186,9 @@ private:
     bool needsMouseFocusableQuirk() const;
 
     std::unique_ptr<ValidationMessage> m_validationMessage;
+    
+    unsigned m_delayedUpdateValidityCount { 0 };
+
     bool m_isFocusingWithValidationMessage { false };
 
     unsigned m_disabled : 1;
@@ -206,6 +214,24 @@ private:
 
     unsigned m_hasAutofocused : 1;
 };
+
+class DelayedUpdateValidityScope {
+public:
+    DelayedUpdateValidityScope(HTMLFormControlElement& element)
+        : m_element(element)
+    {
+        m_element.startDelayingUpdateValidity();
+    }
+    
+    ~DelayedUpdateValidityScope()
+    {
+        m_element.endDelayingUpdateValidity();
+    }
+
+private:
+    HTMLFormControlElement& m_element;
+};
+
 
 } // namespace WebCore
 

@@ -126,24 +126,27 @@ static JSObject* objectForPaymentDetailsModifier(VM& vm, JSGlobalObject* exec, c
 
 static JSObject* objectForPaymentDetails(VM& vm, JSGlobalObject* exec, const PaymentDetailsInit& paymentDetails)
 {
-    auto* displayItems = constructEmptyArray(exec, nullptr);
-    for (unsigned i = 0; i < paymentDetails.displayItems.size(); ++i)
-        displayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, paymentDetails.displayItems[i]));
-
-    auto* shippingOptions = constructEmptyArray(exec, nullptr);
-    for (unsigned i = 0; i < paymentDetails.shippingOptions.size(); ++i)
-        shippingOptions->putDirectIndex(exec, i, objectForPaymentShippingOption(vm, exec, paymentDetails.shippingOptions[i]));
-
-    auto* modifiers = constructEmptyArray(exec, nullptr);
-    for (unsigned i = 0; i < paymentDetails.modifiers.size(); ++i)
-        modifiers->putDirectIndex(exec, i, objectForPaymentDetailsModifier(vm, exec, paymentDetails.modifiers[i]));
-
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "id"), jsString(vm, paymentDetails.id));
     object->putDirect(vm, Identifier::fromString(vm, "total"), objectForPaymentItem(vm, exec, paymentDetails.total));
-    object->putDirect(vm, Identifier::fromString(vm, "displayItems"), displayItems);
-    object->putDirect(vm, Identifier::fromString(vm, "shippingOptions"), shippingOptions);
-    object->putDirect(vm, Identifier::fromString(vm, "modifiers"), modifiers);
+    if (paymentDetails.displayItems) {
+        auto* displayItems = constructEmptyArray(exec, nullptr);
+        for (unsigned i = 0; i < paymentDetails.displayItems->size(); ++i)
+            displayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, paymentDetails.displayItems->at(i)));
+        object->putDirect(vm, Identifier::fromString(vm, "displayItems"), displayItems);
+    }
+    if (paymentDetails.shippingOptions) {
+        auto* shippingOptions = constructEmptyArray(exec, nullptr);
+        for (unsigned i = 0; i < paymentDetails.shippingOptions->size(); ++i)
+            shippingOptions->putDirectIndex(exec, i, objectForPaymentShippingOption(vm, exec, paymentDetails.shippingOptions->at(i)));
+        object->putDirect(vm, Identifier::fromString(vm, "shippingOptions"), shippingOptions);
+    }
+    if (paymentDetails.modifiers) {
+        auto* modifiers = constructEmptyArray(exec, nullptr);
+        for (unsigned i = 0; i < paymentDetails.modifiers->size(); ++i)
+            modifiers->putDirectIndex(exec, i, objectForPaymentDetailsModifier(vm, exec, paymentDetails.modifiers->at(i)));
+        object->putDirect(vm, Identifier::fromString(vm, "modifiers"), modifiers);
+    }
     return object;
 }
 

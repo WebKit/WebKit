@@ -25,6 +25,7 @@
 #include "config.h"
 #include "ImageDocument.h"
 
+#include "AddEventListenerOptions.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"

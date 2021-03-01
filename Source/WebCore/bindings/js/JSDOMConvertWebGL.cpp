@@ -63,6 +63,7 @@
 #include "JSWebGLDrawBuffers.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLLoseContext.h"
+#include "JSWebGLMultiDraw.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
@@ -233,6 +234,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLColorBufferFloat&>(extension));
     case WebGLExtension::EXTColorBufferFloatName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTColorBufferFloat&>(extension));
+    case WebGLExtension::WebGLMultiDrawName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLMultiDraw&>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

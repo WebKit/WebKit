@@ -44,7 +44,6 @@ class GCGLLayer : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GCGLLayer(WebCore::GraphicsContextGLOpenGL&);
-    GCGLLayer(WebCore::GraphicsContextGLOpenGL&, WebCore::GraphicsContextGLOpenGL::Destination);
 
     virtual ~GCGLLayer();
 

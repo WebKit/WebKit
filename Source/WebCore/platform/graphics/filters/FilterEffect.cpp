@@ -285,7 +285,7 @@ ImageBuffer* FilterEffect::imageBufferResult()
     return m_imageBufferResult.get();
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, Optional<ColorSpace> colorSpace)
+RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -297,7 +297,7 @@ RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, 
     return imageData;
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect, Optional<ColorSpace> colorSpace)
+RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -433,10 +433,11 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
 #endif
 }
 
-RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(ColorSpace targetColorSpace, ImageData& inputData, AlphaPremultiplication outputFormat)
+RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(DestinationColorSpace targetColorSpace, ImageData& inputData, AlphaPremultiplication outputFormat)
 {
     IntRect destinationRect(IntPoint(), inputData.size());
-    FloatSize clampedSize = ImageBuffer::clampedSize(inputData.size());
+    destinationRect.scale(1 / m_filter.filterScale());
+    FloatSize clampedSize = ImageBuffer::clampedSize(destinationRect.size());
     // Create an ImageBuffer to store incoming ImageData
     auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace());
     if (!buffer)
@@ -445,7 +446,7 @@ RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(ColorSpace targetCo
     return convertImageBufferToColorSpace(targetColorSpace, *buffer, destinationRect, outputFormat);
 }
 
-RefPtr<ImageData> FilterEffect::convertImageBufferToColorSpace(ColorSpace targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputFormat)
+RefPtr<ImageData> FilterEffect::convertImageBufferToColorSpace(DestinationColorSpace targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputFormat)
 {
     FloatSize clampedSize = ImageBuffer::clampedSize(rect.size());
     // Create an ImageBuffer with the correct color space and utilize CG to handle color space conversion
@@ -457,7 +458,7 @@ RefPtr<ImageData> FilterEffect::convertImageBufferToColorSpace(ColorSpace target
     return convertedBuffer->getImageData(outputFormat, rect);
 }
 
-void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& destination, ColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
+void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& destination, DestinationColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
 {
     // Converts the data stored in m_imageBufferResult, and save to destination
     auto convertedImageData = convertImageBufferToColorSpace(colorSpace, *m_imageBufferResult, { IntPoint(), m_absolutePaintRect.size() }, outputFormat);
@@ -466,7 +467,7 @@ void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& dest
     copyImageBytes(*convertedImageData->data(), destination, destRect);
 }
 
-void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destination, ImageData& imageData, ColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
+void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destination, ImageData& imageData, DestinationColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
 {
     // Converts the data stored in m_unmultipliedImageResult/m_premultipliedImageResult,
     // whichever isn't null, and save to destination
@@ -476,7 +477,7 @@ void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destin
     copyImageBytes(*convertedImageData->data(), destination, destRect);
 }
 
-void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<ColorSpace> colorSpace)
+void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
 {
     ASSERT(hasResult());
     
@@ -509,7 +510,7 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
     copyImageBytes(*m_unmultipliedImageResult->data(), destination, rect);
 }
 
-void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<ColorSpace> colorSpace)
+void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
 {
     ASSERT(hasResult());
 
@@ -535,8 +536,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
             copyPremultiplyingAlpha(*m_unmultipliedImageResult->data(), *m_premultipliedImageResult->data(), inputSize);
         }
     }
-    
-    RefPtr<ImageData> convertedImageData;
+
     if (requiresImageDataColorSpaceConversion(colorSpace)) {
         copyConvertedImageDataToDestination(destination, *m_premultipliedImageResult, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
         return;
@@ -590,7 +590,7 @@ ImageData* FilterEffect::createPremultipliedImageResult()
     return m_premultipliedImageResult.get();
 }
 
-bool FilterEffect::requiresImageDataColorSpaceConversion(Optional<ColorSpace> dstColorSpace)
+bool FilterEffect::requiresImageDataColorSpaceConversion(Optional<DestinationColorSpace> dstColorSpace)
 {
 #if USE(CG)
     // This function determines whether we need the step of an extra color space conversion
@@ -604,7 +604,7 @@ bool FilterEffect::requiresImageDataColorSpaceConversion(Optional<ColorSpace> ds
 #endif
 }
 
-void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
+void FilterEffect::transformResultColorSpace(DestinationColorSpace dstColorSpace)
 {
 #if USE(CG)
     // CG handles color space adjustments internally.

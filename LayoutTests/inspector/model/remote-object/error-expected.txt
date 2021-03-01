@@ -31,7 +31,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "global code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+        "_value": "global code@\nevaluateWithScopeExtension@[native code]\n@\n_wrapCall@"
       }
     ],
     "_entries": null
@@ -70,7 +70,7 @@ EXPRESSION: error = null; try { eval("if()"); } catch (e) { error = e; }; error
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "eval@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+        "_value": "eval@[native code]\nglobal code@\nevaluateWithScopeExtension@[native code]\n@\n_wrapCall@"
       }
     ],
     "_entries": null
@@ -104,7 +104,7 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "splitText@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+        "_value": "splitText@[native code]\nglobal code@\nevaluateWithScopeExtension@[native code]\n@\n_wrapCall@"
       },
       {
         "_name": "code",

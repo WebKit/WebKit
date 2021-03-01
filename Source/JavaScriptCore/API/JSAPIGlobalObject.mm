@@ -134,41 +134,36 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
 JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* specifierValue, JSValue, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto reject = [&] (JSValue error) -> JSInternalPromise* {
-        scope.clearException();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto reject = [&] (ThrowScope& scope) -> JSInternalPromise* {
         auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-        // FIXME: We could have error since any JS call can throw stack-overflow errors.
-        // https://bugs.webkit.org/show_bug.cgi?id=203402
-        promise->reject(globalObject, error);
-        scope.clearException();
-        return promise;
+        return promise->rejectWithCaughtException(globalObject, scope);
     };
 
     auto import = [&] (URL& url) {
         auto result = importModule(globalObject, Identifier::fromString(vm, url.string()), jsUndefined(), jsUndefined());
-        if (UNLIKELY(scope.exception()))
-            return reject(scope.exception()->value());
+        RETURN_IF_EXCEPTION(scope, reject(scope));
         return result;
     };
 
     auto specifier = specifierValue->value(globalObject);
-    if (UNLIKELY(scope.exception())) {
-        Exception* exception = scope.exception();
-        scope.clearException();
-        return reject(exception->value());
-    }
+    RETURN_IF_EXCEPTION(scope, reject(scope));
 
     auto result = computeValidImportSpecifier(sourceOrigin.url(), specifier);
     if (result)
         return import(result.value());
-    return reject(createError(globalObject, result.error()));
+    scope.release();
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    promise->reject(globalObject, createError(globalObject, result.error()));
+    return promise;
 }
 
 JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(globalObject == globalObject);
     JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
@@ -176,15 +171,10 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     Identifier moduleKey = key.toPropertyKey(globalObject);
-    if (UNLIKELY(scope.exception())) {
-        Exception* exception = scope.exception();
-        scope.clearException();
-        promise->reject(globalObject, exception->value());
-        scope.clearException();
-        return promise;
-    }
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     if (UNLIKELY(![context moduleLoaderDelegate])) {
+        scope.release();
         promise->reject(globalObject, createError(globalObject, "No module loader provided."));
         return promise;
     }
@@ -228,6 +218,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
 
     [[context moduleLoaderDelegate] context:context fetchModuleForIdentifier:[::JSValue valueWithJSValueRef:toRef(globalObject, key) inContext:context] withResolveHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, resolve) inContext:context] andRejectHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, reject) inContext:context]];
     if (context.exception) {
+        scope.release();
         promise->reject(globalObject, toJS(globalObject, [context.exception JSValueRef]));
         context.exception = nil;
     }

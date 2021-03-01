@@ -58,7 +58,7 @@ public:
 
     WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, uint32_t sampleCount);
 
-    void zeroFlatBuffer();
+    WEBCORE_EXPORT void zeroFlatBuffer();
 
 private:
     Kind kind() const { return Kind::WebAudioBufferList; }

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
 
 PASS If details.id is missing, assign an identifier
 PASS If details.id is missing, assign a unique identifier
@@ -5,7 +6,7 @@ PASS If the same id is provided, then use it
 PASS Use ids even if they are strange
 PASS Use provided request ID
 PASS If the length of the methodData sequence is zero, then throw a TypeError
-FAIL If payment method is duplicate, then throw a RangeError assert_throws_js: function "() => new PaymentRequest(duplicateMethods, defaultDetails)" did not throw
+PASS If payment method is duplicate, then throw a RangeError
 PASS Modifier method data must be JSON-serializable object
 PASS Rethrow any exceptions of JSON-serializing paymentMethod.data into a string
 PASS If details.total.amount.value is not a valid decimal monetary value, then throw a TypeError
@@ -17,7 +18,7 @@ PASS it handles high precision currency values without throwing
 PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value, then throw a TypeError
 PASS If there is no selected shipping option, then PaymentRequest.shippingOption remains null
 PASS If there is a selected shipping option, and requestShipping is set, then that option becomes synchronously selected
-PASS If requestShipping is set, and if there is a multiple selected shipping options, only the last is selected.
+FAIL If requestShipping is set, and if there is a multiple selected shipping options, only the last is selected. assert_equals: selected option must 'the-id expected "the-id" but got "FAIL1"
 PASS If there are any duplicate shipping option ids, and shipping is requested, then throw a TypeError
 PASS Throw when there are duplicate shippingOption ids, even if other values are different
 PASS Throw TypeError if modifier.total.amount.value is not a valid decimal monetary value

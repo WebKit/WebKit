@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,7 +130,7 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 
 - (BOOL)shouldSuppressPasswordEcho;
 
-#if ENABLE_ORIENTATION_EVENTS
+#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
 - (int)deviceOrientation;
 #endif
 

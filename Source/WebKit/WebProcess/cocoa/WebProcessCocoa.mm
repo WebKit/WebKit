@@ -64,6 +64,7 @@
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
+#import <WebCore/MainThreadSharedTimer.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
@@ -183,6 +184,14 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
+
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
+{
+    // WebKit prohibits communication with Launch Services after entering the sandbox. This method override
+    // prevents AppKit from attempting to update application information with Launch Services from the WebContent process.
+}
+#endif
 #endif
 
 
@@ -293,7 +302,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // We don't need to talk to the Dock.
     [NSApplication _preventDockConnections];
 
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES }];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES, @"ApplePersistence" : @NO }];
 
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
@@ -317,9 +326,16 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     [NSApplication _accessibilityInitialize];
 
     // Update process name while holding the Launch Services sandbox extension
-    updateProcessName();
+    updateProcessName(IsInProcessInitialization::Yes);
 
-    // FIXME: (<rdar://problem/70345312): Notify LaunchServices that we will be disconnecting.
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    auto method = class_getInstanceMethod([NSApplication class], @selector(_updateCanQuitQuietlyAndSafely));
+    method_setImplementation(method, (IMP)preventAppKitFromContactingLaunchServices);
+
+    // FIXME: Replace the constant 4 with kLSServerConnectionStatusReleaseNotificationsMask when available in the SDK, see <https://bugs.webkit.org/show_bug.cgi?id=220988>.
+    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | /*kLSServerConnectionStatusReleaseNotificationsMask*/ 4, nullptr);
+#endif
+
     if (launchServicesExtension)
         launchServicesExtension->revoke();
 #endif
@@ -401,11 +417,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
     
-#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
-#endif
-
-    WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
+    if (!parameters.maximumIOSurfaceSize.isEmpty())
+        WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -433,7 +446,7 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
-void WebProcess::updateProcessName()
+void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitialization)
 {
 #if PLATFORM(MAC)
     RetainPtr<NSString> applicationName;
@@ -456,31 +469,37 @@ void WebProcess::updateProcessName()
     }
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    audit_token_t auditToken = { 0 };
-    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
-        return;
-    }
-    String displayName = applicationName.get();
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
-#else
-    RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
-        // Note that it is important for _RegisterApplication() to have been called before setting the display name.
-        auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
-        ASSERT(!error);
-        if (error) {
-            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+    // During WebProcess initialization, we are still able to talk to LaunchServices to set the process name so there is no need to go
+    // via the NetworkProcess. Prewarmed WebProcesses also do not have a network process connection until they are actually used by
+    // a page.
+    if (isInProcessInitialization == IsInProcessInitialization::No) {
+        audit_token_t auditToken = { 0 };
+        mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+        kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+        if (kr != KERN_SUCCESS) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
             return;
         }
-#if ASSERT_ENABLED
-        // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
-        String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
-        ASSERT(!actualApplicationName.isEmpty());
-#endif
-    });
+        String displayName = applicationName.get();
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+        return;
+    }
 #endif // ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+
+    // Note that it is important for _RegisterApplication() to have been called before setting the display name.
+    auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
+    ASSERT(!error);
+    if (error) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+        return;
+    }
+#if ASSERT_ENABLED
+    // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
+    String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
+    ASSERT(!actualApplicationName.isEmpty());
+#endif
+#else
+    UNUSED_PARAM(isInProcessInitialization);
 #endif // PLATFORM(MAC)
 }
 
@@ -615,6 +634,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
+    MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
@@ -686,8 +706,11 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 
-    auto hasMessageFilterEntitlement = WTF::processHasEntitlement("com.apple.private.security.message-filter");
-    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", hasMessageFilterEntitlement ? "YES" : "NO");
+    bool enableMessageFilter = false;
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
+    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter");
+#endif
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #endif
@@ -740,13 +763,13 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
     audit_token_t auditToken = { 0 };
     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateActivePages: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
         return;
     }
 
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
 #else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
@@ -994,6 +1017,13 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
 }
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+void WebProcess::colorPreferencesDidChange()
+{
+    CFNotificationCenterPostNotification(CFNotificationCenterGetLocalCenter(), CFSTR("NSColorLocalPreferencesChangedNotification"), nullptr, nullptr, true);
+}
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 void WebProcess::enableRemoteWebInspector()
 {
@@ -1176,6 +1206,13 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
         }
     }
 }
+
+#if PLATFORM(MAC)
+void WebProcess::systemWillPowerOn()
+{
+    MainThreadSharedTimer::restartSharedTimer();
+}
+#endif
 
 } // namespace WebKit
 

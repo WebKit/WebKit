@@ -61,7 +61,7 @@ class IDBConnectionProxy;
 class IDBConnectionToServer;
 }
 
-class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public ThreadSafeRefCounted<IDBRequest>, public CanMakeWeakPtr<IDBRequest> {
+class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public ThreadSafeRefCounted<IDBRequest> {
     WTF_MAKE_ISO_ALLOCATED(IDBRequest);
 public:
     enum class NullResultType {

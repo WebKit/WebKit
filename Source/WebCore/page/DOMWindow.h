@@ -111,7 +111,6 @@ struct WindowPostMessageOptions : public PostMessageOptions {
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
     : public AbstractDOMWindow
-    , public CanMakeWeakPtr<DOMWindow>
     , public ContextDestructionObserver
     , public Base64Utilities
     , public Supplementable<DOMWindow> {
@@ -314,7 +313,7 @@ public:
     // Events
     // EventTarget API
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) final;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
     void removeAllEventListeners() final;
 
     using EventTarget::dispatchEvent;
@@ -400,6 +399,9 @@ public:
     void willDestroyDocumentInFrame();
     void frameDestroyed();
 
+    bool wasWrappedWithoutInitializedSecurityOrigin() const { return m_wasWrappedWithoutInitializedSecurityOrigin; }
+    void setAsWrappedWithoutInitializedSecurityOrigin() { m_wasWrappedWithoutInitializedSecurityOrigin = true; }
+
 private:
     explicit DOMWindow(Document&);
 
@@ -481,6 +483,7 @@ private:
     // value is positive infinity.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
 
+    bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif

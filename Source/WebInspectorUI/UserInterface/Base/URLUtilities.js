@@ -133,7 +133,7 @@ function parseURL(url)
     if (parsed.port)
         result.port = Number(parsed.port);
 
-    if (parsed.origin)
+    if (parsed.origin && parsed.origin !== "null")
         result.origin = parsed.origin;
     else if (result.scheme && result.host) {
         result.origin = result.scheme + "://" + result.host;

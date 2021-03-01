@@ -541,4 +541,23 @@ ResourceResponse FetchResponse::resourceResponse() const
     return response;
 }
 
+bool FetchResponse::isCORSSameOrigin() const
+{
+    // https://html.spec.whatwg.org/#cors-same-origin
+    // A response whose type is "basic", "cors", or "default" is CORS-same-origin.
+    switch (type()) {
+    case ResourceResponse::Type::Basic:
+    case ResourceResponse::Type::Cors:
+    case ResourceResponse::Type::Default:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool FetchResponse::hasWasmMIMEType() const
+{
+    return equalLettersIgnoringASCIICase(m_headers->fastGet(HTTPHeaderName::ContentType), "application/wasm");
+}
+
 } // namespace WebCore

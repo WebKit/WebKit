@@ -324,7 +324,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             event.stopPropagation();
         }
 
-        if (!treeElement.treeOutline.selectable)
+        if (treeElement.treeOutline && !treeElement.treeOutline.selectable)
             treeElement.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementClicked, {treeElement});
     }
 

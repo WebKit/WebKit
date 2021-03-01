@@ -37,7 +37,7 @@ namespace WebCore {
 // Base of button, file, image, reset, and submit types.
 class BaseButtonInputType : public BaseClickableWithKeyInputType {
 protected:
-    explicit BaseButtonInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
+    explicit BaseButtonInputType(Type type, HTMLInputElement& element) : BaseClickableWithKeyInputType(type, element) { }
 
 private:
     bool shouldSaveAndRestoreFormControlState() const override;

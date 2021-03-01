@@ -238,6 +238,25 @@ void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme
     localURLSchemes().remove(scheme);
 }
 
+static HashSet<String>& schemesHandledBySchemeHandler()
+{
+    ASSERT(schemeRegistryLock.isHeld());
+    static NeverDestroyed<HashSet<String>> set;
+    return set.get();
+}
+
+void LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(const String& scheme)
+{
+    Locker<Lock> locker(schemeRegistryLock);
+    schemesHandledBySchemeHandler().add(scheme);
+}
+
+bool LegacySchemeRegistry::schemeIsHandledBySchemeHandler(StringView scheme)
+{
+    Locker<Lock> locker(schemeRegistryLock);
+    return schemesHandledBySchemeHandler().contains(scheme.toString());
+}
+
 static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
     ASSERT(isMainThread());

@@ -159,13 +159,13 @@ TEST(WKWebViewAutoFillTests, AccountCreationPage)
     auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'><input id='confirm_password' type='password'>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"user.focus()"];
-    EXPECT_FALSE([webView textInputHasAutoFillContext]);
+    EXPECT_TRUE([webView textInputHasAutoFillContext]);
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"password.focus()"];
-    EXPECT_FALSE([webView textInputHasAutoFillContext]);
+    EXPECT_TRUE([webView textInputHasAutoFillContext]);
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"confirm_password.focus()"];
-    EXPECT_FALSE([webView textInputHasAutoFillContext]);
+    EXPECT_TRUE([webView textInputHasAutoFillContext]);
 }
 
 static BOOL overrideIsInHardwareKeyboardMode()

@@ -53,7 +53,7 @@ static const int timeStepScaleFactor = 1000;
 static const StepRange::StepDescription timeStepDescription { timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
 TimeInputType::TimeInputType(HTMLInputElement& element)
-    : BaseDateAndTimeInputType(element)
+    : BaseDateAndTimeInputType(Type::Time, element)
 {
 }
 
@@ -100,11 +100,6 @@ Optional<DateComponents> TimeInputType::parseToDateComponents(const StringView& 
 Optional<DateComponents> TimeInputType::setMillisecondToDateComponents(double value) const
 {
     return DateComponents::fromMillisecondsSinceMidnight(value);
-}
-
-bool TimeInputType::isTimeField() const
-{
-    return true;
 }
 
 void TimeInputType::handleDOMActivateEvent(Event&)

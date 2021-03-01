@@ -37,19 +37,19 @@ class AccessibilitySVGRoot final : public AccessibilitySVGElement {
 public:
     static Ref<AccessibilitySVGRoot> create(RenderObject*);
     virtual ~AccessibilitySVGRoot();
-    
-    void setParent(AccessibilityRenderObject*);
 
+    void setParent(AccessibilityRenderObject*);
+    bool hasAccessibleContent() const;
 private:
     explicit AccessibilitySVGRoot(RenderObject*);
-    
+
     AccessibilityObject* parentObject() const override;
     bool isAccessibilitySVGRoot() const override { return true; }
+    AccessibilityRole roleValue() const override;
 
     WeakPtr<AccessibilityRenderObject> m_parent;
-    AccessibilityRole roleValue() const override;
 };
-    
+
 } // namespace WebCore 
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySVGRoot, isAccessibilitySVGRoot())

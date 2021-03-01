@@ -41,62 +41,62 @@ strictness following axis: `inline mandatory`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'inline mandatory'
 
 invalid snap align: `potato`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 empty string: ``
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 too many values: `start center end`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 invalid second value: `start wut`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 invalid first value: `wat center`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 one length: `10px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 two lengths: `10px 50px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 initial value: `initial`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none'
 
 single value: `start`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start start'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start'
 
 two values: `start end`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start end'
 
 invalid scroll padding: `potato`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'auto'
 
 empty string: ``
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'auto'
 
 too many values: `1px 2px 3px 4px 5px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'auto'
 
 attempt to use auto: `auto auto`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is 'auto'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'auto'
 
 single length: `10px`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10px'
@@ -147,7 +147,7 @@ PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-lef
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '6.5px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10.4375px'
 
-invalid scroll padding: `potato`
+invalid scroll margin: `potato`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'

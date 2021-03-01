@@ -35,8 +35,8 @@
 #include <wtf/OSObjectPtr.h>
 #endif
 
-#if USE(SOUP)
-#include <WebCore/GRefPtrSoup.h>
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 #if USE(CURL)
@@ -64,8 +64,8 @@ public:
     enum class Backing { Buffer, Map };
     Data(OSObjectPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
 #endif
-#if USE(SOUP)
-    Data(GRefPtr<SoupBuffer>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
+#if USE(GLIB)
+    Data(GRefPtr<GBytes>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
 #elif USE(CURL)
     Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
 #endif
@@ -87,15 +87,15 @@ public:
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
 #endif
 
-#if USE(SOUP)
-    SoupBuffer* soupBuffer() const { return m_buffer.get(); }
+#if USE(GLIB)
+    GBytes* bytes() const { return m_buffer.get(); }
 #endif
 private:
 #if PLATFORM(COCOA)
     mutable OSObjectPtr<dispatch_data_t> m_dispatchData;
 #endif
-#if USE(SOUP)
-    mutable GRefPtr<SoupBuffer> m_buffer;
+#if USE(GLIB)
+    mutable GRefPtr<GBytes> m_buffer;
     FileSystem::PlatformFileHandle m_fileDescriptor { FileSystem::invalidPlatformFileHandle };
 #endif
 #if USE(CURL)

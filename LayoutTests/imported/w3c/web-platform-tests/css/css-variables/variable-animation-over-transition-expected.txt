@@ -1,0 +1,7 @@
+This text should animate from blue to green over a period of 1 second. The transition is not visible because the animation overrides it.
+
+FAIL Verify CSS variable value before animation assert_equals: --value is blue before animation runs expected "blue" but got "red"
+FAIL Verify substituted color value before animation assert_equals: color is blue before animation runs expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL Verify CSS variable value after animation assert_equals: --value is green after animation runs expected "green" but got "black"
+FAIL Verify substituted color value after animation assert_equals: color is green after animation runs expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

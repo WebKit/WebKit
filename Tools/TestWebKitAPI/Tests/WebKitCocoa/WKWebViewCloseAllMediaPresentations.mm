@@ -36,21 +36,8 @@
 // We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
 #if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
 
-TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
+static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
 {
-    if (!WebCore::supportsPictureInPicture())
-        return;
-
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
-        @"WebCoreLogging": @"Fullscreen=debug",
-        @"WebKit2Logging": @"Fullscreen=debug",
-    }];
-
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
-
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{
@@ -71,15 +58,32 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 
         TestWebKitAPI::Util::sleep(0.5);
     } while (true);
+}
 
-    presentationModeChanged = false;
-    [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
+TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
+{
+    if (!WebCore::supportsPictureInPicture())
+        return;
 
-    [webView _closeAllMediaPresentations];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
 
-    ASSERT(TestWebKitAPI::Util::runFor(&presentationModeChanged, 10));
 
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('video').webkitPresentationMode"].UTF8String, "inline");
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+
+    loadPictureInPicture(webView);
+
+    static bool isDone = false;
+    [webView closeAllMediaPresentations:^{
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
 
 #endif
@@ -109,14 +113,13 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
         TestWebKitAPI::Util::sleep(0.5);
     } while (true);
 
-    presentationModeChanged = false;
-    [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
-
-    [webView _closeAllMediaPresentations];
-
-    TestWebKitAPI::Util::run(&presentationModeChanged);
-
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('video').webkitPresentationMode"].UTF8String, "inline");
+    static bool isDone = false;
+    [webView closeAllMediaPresentations:^{
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    
+    EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
 
 TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
@@ -138,11 +141,45 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
     fullscreenModeChanged = false;
     [webView performAfterReceivingMessage:@"fullscreenchange" action:^{ fullscreenModeChanged = true; }];
 
-    [webView _closeAllMediaPresentations];
+    static bool isDone = false;
+    [webView closeAllMediaPresentations:^{
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    
+    EXPECT_TRUE([webView _allMediaPresentationsClosed]);
+}
 
-    TestWebKitAPI::Util::run(&fullscreenModeChanged);
+TEST(WKWebViewCloseAllMediaPresentations, MultipleSequentialCloseAllMediaPresentations)
+{
+    if (!WebCore::supportsPictureInPicture())
+        return;
 
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.webkitFullscreenElement"].UTF8String, "<null>");
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+
+    loadPictureInPicture(webView);
+
+    static bool firstIsDone = false;
+    [webView closeAllMediaPresentations:^{
+        firstIsDone = true;
+    }];
+
+    static bool secondIsDone = false;
+    [webView closeAllMediaPresentations:^{
+        secondIsDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&firstIsDone);
+    TestWebKitAPI::Util::run(&secondIsDone);
+
+    EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
 
 #endif

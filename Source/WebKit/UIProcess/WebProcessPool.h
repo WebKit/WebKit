@@ -69,8 +69,11 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
+#import <WebCore/PowerObserverMac.h>
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include "DisplayLink.h"
+#endif
 #endif
 
 namespace API {
@@ -366,7 +369,7 @@ public:
     void removeFromServiceWorkerProcesses(WebProcessProxy&);
     size_t serviceWorkerProxiesCount() const { return serviceWorkerProcesses().computeSize(); }
     void updateServiceWorkerUserAgent(const String& userAgent);
-    const Optional<UserContentControllerIdentifier>& userContentControllerIdentifierForServiceWorkers() const { return m_userContentControllerIDForServiceWorker; }
+    UserContentControllerIdentifier userContentControllerIdentifierForServiceWorkers();
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
@@ -565,6 +568,10 @@ private:
 #endif
 #endif
 
+#if PLATFORM(MAC)
+    static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+#endif
+    
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void startObservingPreferenceChanges();
 #endif
@@ -585,7 +592,7 @@ private:
     bool m_waitingForWorkerContextProcessConnection { false };
     String m_serviceWorkerUserAgent;
     Optional<WebPreferencesStore> m_serviceWorkerPreferences;
-    Optional<UserContentControllerIdentifier> m_userContentControllerIDForServiceWorker;
+    RefPtr<WebUserContentControllerProxy> m_userContentControllerForServiceWorker;
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -767,6 +774,10 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
     HashMap<TopFrameDomain, SubResourceDomain> m_domainsWithCrossPageStorageAccessQuirk;
+#endif
+    
+#if PLATFORM(MAC)
+    std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
 #endif
 };
 

@@ -61,6 +61,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyHelpers.h"
+#include "WasmModuleInformation.h"
+#include "WasmStreamingCompiler.h"
 #include "WasmStreamingParser.h"
 #endif
 
@@ -1772,6 +1774,87 @@ JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingParserFinalize, (JSGlobalObject* g
     return JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().finalize())));
 }
 
+static JSC_DECLARE_HOST_FUNCTION(functionWasmStreamingCompilerAddBytes);
+
+class WasmStreamingCompiler : public JSDestructibleObject {
+public:
+    using Base = JSDestructibleObject;
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace;
+    }
+
+    WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject)
+        : Base(vm, structure)
+        , m_promise(vm, this, promise)
+        , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject))
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    static WasmStreamingCompiler* create(VM& vm, JSGlobalObject* globalObject, Wasm::CompilerMode compilerMode, JSObject* importObject)
+    {
+        DollarVMAssertScope assertScope;
+        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        WasmStreamingCompiler* result = new (NotNull, allocateCell<WasmStreamingCompiler>(vm.heap)) WasmStreamingCompiler(vm, structure, compilerMode, globalObject, promise, importObject);
+        result->finishCreation(vm);
+        return result;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    Wasm::StreamingCompiler& streamingCompiler() { return m_streamingCompiler.get(); }
+
+    JSPromise* promise() const { return m_promise.get(); }
+
+    void finishCreation(VM& vm)
+    {
+        DollarVMAssertScope assertScope;
+        Base::finishCreation(vm);
+
+        JSGlobalObject* globalObject = this->globalObject(vm);
+        putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "addBytes"), 0, functionWasmStreamingCompilerAddBytes, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        DollarVMAssertScope assertScope;
+        auto* thisObject = jsCast<WasmStreamingCompiler*>(cell);
+        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+        Base::visitChildren(thisObject, visitor);
+        visitor.append(thisObject->m_promise);
+    }
+
+    DECLARE_INFO;
+
+    WriteBarrier<JSPromise> m_promise;
+    Ref<Wasm::StreamingCompiler> m_streamingCompiler;
+};
+
+const ClassInfo WasmStreamingCompiler::s_info = { "WasmStreamingCompiler", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingCompiler) };
+
+JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingCompilerAddBytes, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+
+    auto* thisObject = jsDynamicCast<WasmStreamingCompiler*>(vm, callFrame->thisValue());
+    if (!thisObject)
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(false)));
+
+    auto data = getWasmBufferFromValue(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+    thisObject->streamingCompiler().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second);
+    return JSValue::encode(jsUndefined());
+}
+
 #endif
 
 } // namespace
@@ -1827,6 +1910,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionCreateDOMJITCheckJSCastObject);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateDOMJITGetterBaseJSObject);
 #if ENABLE(WEBASSEMBLY)
 static JSC_DECLARE_HOST_FUNCTION(functionCreateWasmStreamingParser);
+static JSC_DECLARE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile);
+static JSC_DECLARE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate);
 #endif
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomAccessor);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomValue);
@@ -2728,6 +2813,55 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingParser, (JSGlobalObject* glo
     JSLockHolder lock(vm);
     return JSValue::encode(WasmStreamingParser::create(vm, globalObject));
 }
+
+JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto callback = jsDynamicCast<JSFunction*>(vm, callFrame->argument(0));
+    if (!callback)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+
+    auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::Validation, nullptr);
+    MarkedArgumentBuffer args;
+    args.append(compiler);
+    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+    if (UNLIKELY(scope.exception()))
+        scope.clearException();
+    compiler->streamingCompiler().finalize(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(compiler->promise());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto callback = jsDynamicCast<JSFunction*>(vm, callFrame->argument(0));
+    if (!callback)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+
+    JSValue importArgument = callFrame->argument(1);
+    JSObject* importObject = importArgument.getObject();
+    if (UNLIKELY(!importArgument.isUndefined() && !importObject))
+        return throwVMTypeError(globalObject, scope);
+
+    auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject);
+    MarkedArgumentBuffer args;
+    args.append(compiler);
+    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+    if (UNLIKELY(scope.exception()))
+        scope.clearException();
+    compiler->streamingCompiler().finalize(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(compiler->promise());
+}
 #endif
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateStaticCustomAccessor, (JSGlobalObject* globalObject, CallFrame*))
@@ -3476,6 +3610,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
 #if ENABLE(WEBASSEMBLY)
     addFunction(vm, "createWasmStreamingParser", functionCreateWasmStreamingParser, 0);
+    addFunction(vm, "createWasmStreamingCompilerForCompile", functionCreateWasmStreamingCompilerForCompile, 0);
+    addFunction(vm, "createWasmStreamingCompilerForInstantiate", functionCreateWasmStreamingCompilerForInstantiate, 0);
 #endif
     addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
     addFunction(vm, "createStaticCustomValue", functionCreateStaticCustomValue, 0);

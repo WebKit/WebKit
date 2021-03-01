@@ -336,7 +336,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTFMove(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
-    m_networkLoad->start();
+    m_networkLoad->startWithScheduling();
 
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Going to the network (description=%" PUBLIC_LOG_STRING ")", m_networkLoad->description().utf8().data());
 }
@@ -392,6 +392,8 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
             return ResourceLoadInfo::Type::Image;
         case WebCore::FetchOptions::Destination::Manifest:
             return ResourceLoadInfo::Type::ApplicationManifest;
+        case WebCore::FetchOptions::Destination::Model:
+            return ResourceLoadInfo::Type::Media;
         case WebCore::FetchOptions::Destination::Object:
             return ResourceLoadInfo::Type::Object;
         case WebCore::FetchOptions::Destination::Paintworklet:
@@ -877,14 +879,14 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     RELEASE_LOG_IF_ALLOWED("continueWillSendRedirectedRequest: (m_isKeptAlive=%d, hasAdClickConversion=%d)", m_isKeptAlive, !!privateClickMeasurementAttributionTriggerData);
     ASSERT(!isSynchronous());
 
+    NetworkSession* networkSession = nullptr;
+    if (privateClickMeasurementAttributionTriggerData && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
+        networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest);
+
     if (m_isKeptAlive) {
         continueWillSendRequest(WTFMove(redirectRequest), false);
         return;
     }
-
-    NetworkSession* networkSession = nullptr;
-    if (privateClickMeasurementAttributionTriggerData && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
-        networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest);
 
     // We send the request body separately because the ResourceRequest body normally does not get encoded when sent over IPC, as an optimization.
     // However, we really need the body here because a redirect cross-site may cause a process-swap and the request to start again in a new WebContent process.

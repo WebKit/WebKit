@@ -65,6 +65,7 @@ CompositingRepaintCountersVisible:
 DeveloperExtrasEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitDeveloperExtrasEnabledPreferenceKey
+  webKitLegacyBinding: custom
   defaultValue:
     WebKitLegacy:
       default: false

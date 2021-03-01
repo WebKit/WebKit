@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#include "GenericTaskQueue.h"
 #include "SourceBufferParser.h"
 #include "SourceBufferPrivate.h"
 #include <dispatch/group.h>
@@ -60,6 +61,7 @@ namespace WebCore {
 class CDMInstance;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionMediaSourceAVFObjC;
+class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateAVFObjC;
 class TimeRanges;
 class AudioTrackPrivate;
@@ -138,9 +140,9 @@ private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*, Ref<SourceBufferParser>&&);
 
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    void didParseInitializationData(InitializationSegment&&, CompletionHandler<void()>&&);
+    void didParseInitializationData(InitializationSegment&&);
     void didEncounterErrorDuringParsing(int32_t);
-    void didProvideMediaDataForTrackID(Ref<MediaSample>&&, uint64_t trackID, const String& mediaType);
+    void didProvideMediaDataForTrackId(Ref<MediaSample>&&, uint64_t trackId, const String& mediaType);
 
     // SourceBufferPrivate overrides
     void append(Vector<unsigned char>&&) final;
@@ -175,6 +177,8 @@ private:
     void flushAudio(AVSampleBufferAudioRenderer *);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 
+    MediaPlayerPrivateMediaSourceAVFObjC* player() const;
+
     Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
@@ -182,6 +186,11 @@ private:
     WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
 
     Ref<SourceBufferParser> m_parser;
+    bool m_initializationSegmentIsHandled { false };
+    bool m_hasPendingAppendCompletedCallback { false };
+    Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
+    GenericTaskQueue<Timer> m_mediaSampleTaskQueue;
+
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;

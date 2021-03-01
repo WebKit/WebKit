@@ -180,8 +180,10 @@ void ApplicationCacheGroup::selectCache(Frame& frame, const URL& passedManifestU
     }
 
     // The resource was loaded from the network, check if it is a HTTP/HTTPS GET.    
-    auto& request = frame.loader().activeDocumentLoader()->request();
-
+    auto loader = frame.loader().activeDocumentLoader();
+    if (!loader)
+        return;
+    auto& request = loader->request();
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return;
 

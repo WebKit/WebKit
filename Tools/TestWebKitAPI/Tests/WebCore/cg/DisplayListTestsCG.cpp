@@ -37,11 +37,13 @@ using namespace WebCore;
 using DisplayList::DisplayList;
 using namespace DisplayList;
 
+constexpr size_t globalItemBufferCapacity = 1 << 12;
+static uint8_t globalItemBuffer[globalItemBufferCapacity];
+constexpr CGFloat contextWidth = 100;
+constexpr CGFloat contextHeight = 100;
+
 TEST(DisplayListTests, ReplayWithMissingResource)
 {
-    constexpr CGFloat contextWidth = 100;
-    constexpr CGFloat contextHeight = 100;
-
     FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
@@ -77,6 +79,79 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
         EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
     }
+}
+
+TEST(DisplayListTests, OutOfLineItemDecodingFailure)
+{
+    static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::generate();
+
+    class ReadingClient : public ItemBufferReadingClient {
+    private:
+        Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
+        {
+            EXPECT_EQ(type, ItemType::FillPath);
+            return WTF::nullopt;
+        }
+    };
+
+    class WritingClient : public ItemBufferWritingClient {
+    private:
+        ItemBufferHandle createItemBuffer(size_t capacity) final
+        {
+            EXPECT_LT(capacity, globalItemBufferCapacity);
+            return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
+        }
+
+        RefPtr<SharedBuffer> encodeItem(ItemHandle) const final { return SharedBuffer::create(); }
+        void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
+    };
+
+    FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
+
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    GraphicsContext context { cgContext.get() };
+
+    DisplayList originalList;
+    WritingClient writer;
+    originalList.setItemBufferClient(&writer);
+
+    Path path;
+    path.moveTo({ 10., 10. });
+    path.addLineTo({ 50., 50. });
+    path.addLineTo({ 10., 10. });
+    originalList.append<SetInlineStrokeColor>(Color::blue);
+    originalList.append<FillPath>(WTFMove(path));
+
+    DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, originalList.sizeInBytes() } }};
+    ReadingClient reader;
+    shallowCopy.setItemBufferClient(&reader);
+
+    Replayer replayer { context, shallowCopy };
+    auto result = replayer.replay();
+    EXPECT_GT(result.numberOfBytesRead, 0U);
+    EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
+    EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+}
+
+TEST(DisplayListTests, InlineItemValidationFailure)
+{
+    FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
+
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    GraphicsContext context { cgContext.get() };
+
+    DisplayList list;
+    list.append<FlushContext>(FlushIdentifier { });
+
+    Replayer replayer { context, list };
+    auto result = replayer.replay();
+    EXPECT_EQ(result.numberOfBytesRead, 0U);
+    EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
+    EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
 }
 
 } // namespace TestWebKitAPI

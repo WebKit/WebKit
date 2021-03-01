@@ -400,8 +400,8 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
                 requestNotificationWhenReadyForVideoData();
                 return;
             }
-
-            enqueueSampleBuffer(m_pendingVideoSampleQueue.takeFirst().get());
+            auto sample = m_pendingVideoSampleQueue.takeFirst();
+            enqueueSampleBuffer(sample);
         }
     }];
 }

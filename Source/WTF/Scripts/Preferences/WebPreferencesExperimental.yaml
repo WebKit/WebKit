@@ -102,6 +102,17 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
     WebCore:
       default: true
 
+CFNetworkNetworkLoaderEnabled:
+  type: bool
+  humanReadableName: "Experimental network loader"
+  humanReadableDescription: "Enable experimental network loader"
+  webcoreBinding: none
+  condition: HAVE(NETWORK_LOADER)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"
@@ -665,6 +676,15 @@ PrivateClickMeasurementDebugModeEnabled:
     WebKit:
       default: false
 
+PrivateClickMeasurementFraudPreventionEnabled:
+  type: bool
+  humanReadableName: "Private Click Measurement Fraud Prevention"
+  humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKit:
+      default: false
+
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   humanReadableName: "Swap Processes on Cross-Site Navigation"
@@ -1090,9 +1110,9 @@ WebRTCVP9Profile0CodecEnabled:
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 WebRTCVP9Profile2CodecEnabled:
   type: bool

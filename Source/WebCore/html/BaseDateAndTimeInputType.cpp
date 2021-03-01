@@ -40,9 +40,11 @@
 #include "DateTimeChooserParameters.h"
 #include "Decimal.h"
 #include "FocusController.h"
+#include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "PlatformLocale.h"
@@ -165,11 +167,6 @@ Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
     double ms = WallTime::now().secondsSinceEpoch().milliseconds();
     int offset = calculateLocalTimeOffset(ms).offset / msPerMinute;
     return Decimal::fromDouble(ms + (offset * msPerMinute));
-}
-
-bool BaseDateAndTimeInputType::isSteppable() const
-{
-    return true;
 }
 
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
@@ -297,7 +294,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
         return;
 
     DateTimeChooserParameters parameters;
-    if (!element()->setupDateTimeChooserParameters(parameters))
+    if (!setupDateTimeChooserParameters(parameters))
         return;
 
     if (auto chrome = this->chrome()) {
@@ -307,7 +304,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
     }
 }
 
-void BaseDateAndTimeInputType::createShadowSubtree()
+void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
 
@@ -316,12 +313,12 @@ void BaseDateAndTimeInputType::createShadowSubtree()
 
     if (document.settings().dateTimeInputsEditableComponentsEnabled()) {
         m_dateTimeEditElement = DateTimeEditElement::create(document, *this);
-        element.userAgentShadowRoot()->appendChild(*m_dateTimeEditElement);
+        element.userAgentShadowRoot()->appendChild(source, *m_dateTimeEditElement);
     } else {
         static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
         auto valueContainer = HTMLDivElement::create(document);
         valueContainer->setPseudo(valueContainerPseudo);
-        element.userAgentShadowRoot()->appendChild(valueContainer);
+        element.userAgentShadowRoot()->appendChild(source, valueContainer);
     }
     updateInnerTextValue();
 }
@@ -416,6 +413,11 @@ auto BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event) -> Shoul
 
 void BaseDateAndTimeInputType::handleKeypressEvent(KeyboardEvent& event)
 {
+    // The return key should not activate the element, as it conflicts with
+    // the key binding to submit a form.
+    if (event.charCode() == '\r')
+        return;
+
     ASSERT(element());
     BaseClickableWithKeyInputType::handleKeypressEvent(*element(), event);
 }
@@ -465,7 +467,7 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
     InputType::setValue(value, value != element()->value(), DispatchInputAndChangeEvent);
 
     DateTimeChooserParameters parameters;
-    if (!element()->setupDateTimeChooserParameters(parameters))
+    if (!setupDateTimeChooserParameters(parameters))
         return;
 
     if (m_dateTimeChooser)
@@ -499,6 +501,68 @@ void BaseDateAndTimeInputType::didChooseValue(StringView value)
 void BaseDateAndTimeInputType::didEndChooser()
 {
     m_dateTimeChooser = nullptr;
+}
+
+bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
+{
+    ASSERT(element());
+
+    auto& element = *this->element();
+    auto& document = element.document();
+
+    if (!document.view())
+        return false;
+
+    parameters.type = element.type();
+    parameters.minimum = element.minimum();
+    parameters.maximum = element.maximum();
+    parameters.required = element.isRequired();
+
+    if (!document.settings().langAttributeAwareFormControlUIEnabled())
+        parameters.locale = defaultLanguage();
+    else {
+        AtomString computedLocale = element.computeInheritedLanguage();
+        parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;
+    }
+
+    auto stepRange = createStepRange(AnyStepHandling::Reject);
+    if (stepRange.hasStep()) {
+        parameters.step = stepRange.step().toDouble();
+        parameters.stepBase = stepRange.stepBase().toDouble();
+    } else {
+        parameters.step = 1.0;
+        parameters.stepBase = 0;
+    }
+
+    if (RenderElement* renderer = element.renderer())
+        parameters.anchorRectInRootView = document.view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+    else
+        parameters.anchorRectInRootView = IntRect();
+    parameters.currentValue = element.value();
+
+    auto* computedStyle = element.computedStyle();
+    parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
+    parameters.useDarkAppearance = document.useDarkAppearance(computedStyle);
+
+    auto date = parseToDateComponents(element.value()).valueOr(DateComponents());
+    parameters.hasSecondField = shouldHaveSecondField(date);
+    parameters.hasMillisecondField = shouldHaveMillisecondField(date);
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (auto dataList = element.dataList()) {
+        for (auto& option : dataList->suggestions()) {
+            auto label = option.label();
+            auto value = option.value();
+            if (!element.isValidValue(value))
+                continue;
+            parameters.suggestionValues.append(element.sanitizeValue(value));
+            parameters.localizedSuggestionValues.append(element.localizeValue(value));
+            parameters.suggestionLabels.append(value == label ? String() : label);
+        }
+    }
+#endif
+
+    return true;
 }
 
 void BaseDateAndTimeInputType::closeDateTimeChooser()

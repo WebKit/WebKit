@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKErrorPrivate.h>
@@ -1370,4 +1371,25 @@ TEST(URLSchemeHandler, Frames)
         }];
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(URLSchemeHandler, Origin)
+{
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *responseString = @"<script>alert("
+            "new URL('registered://host:123/path').origin + ', ' + "
+            "new URL('notregistered://host:123/path').origin"
+        ")</script>";
+        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil] autorelease]];
+        [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    auto delegate = [[TestUIDelegate new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"registered"];
+    auto webView = [[[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    webView.UIDelegate = delegate;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"registered:///"]]];
+    EXPECT_WK_STREQ([delegate waitForAlert], "registered://host:123, null");
 }

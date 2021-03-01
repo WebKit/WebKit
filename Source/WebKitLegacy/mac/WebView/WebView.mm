@@ -85,6 +85,7 @@
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
+#import "WebMediaKeySystemClient.h"
 #import "WebNSDataExtras.h"
 #import "WebNSDataExtrasPrivate.h"
 #import "WebNSDictionaryExtras.h"
@@ -1521,6 +1522,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::SocketProvider::create(),
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
+        _private->group->userContentController(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
@@ -1552,7 +1554,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
-    pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     _private->page = new WebCore::Page(WTFMove(pageConfiguration));
     storageProvider->setPage(*_private->page);
@@ -1567,6 +1568,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 #if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS_FAMILY)
     WebCore::provideDeviceOrientationTo(*_private->page, *new WebDeviceOrientationClient(self));
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    WebCore::provideMediaKeySystemTo(*_private->page, *new WebMediaKeySystemClient());
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1797,6 +1801,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::SocketProvider::create(),
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
+        _private->group->userContentController(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
@@ -1817,7 +1822,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
-    pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 
@@ -2928,6 +2932,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings.setBackForwardCacheExpirationInterval(Seconds { [preferences _backForwardCacheExpirationInterval] });
     settings.setPitchCorrectionAlgorithm(static_cast<WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm>([preferences _pitchCorrectionAlgorithm]));
+
+    // FIXME: Add a way to have a preference check multiple different keys.
+    settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
 
     BOOL mediaPlaybackRequiresUserGesture = [preferences mediaPlaybackRequiresUserGesture];
     settings.setVideoPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);

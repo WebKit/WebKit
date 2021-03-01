@@ -386,7 +386,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
         soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
@@ -404,7 +404,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/echoPort")) {
-        char* port = g_strdup_printf("%u", soup_server_get_port(server));
+        char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS((soup_client_context_get_local_address(context)))));
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, port, strlen(port));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);

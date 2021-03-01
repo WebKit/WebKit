@@ -183,7 +183,7 @@ const char* capsMediaType(const GstCaps* caps)
         return nullptr;
     }
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-webm-enc"))
+    if (gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-cbcs") || gst_structure_has_name(structure, "application/x-webm-enc"))
         return gst_structure_get_string(structure, "original-media-type");
 #endif
     return gst_structure_get_name(structure);

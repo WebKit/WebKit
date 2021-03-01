@@ -672,8 +672,8 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 #endif
 
     ASSERT(m_prewarmedProcess->isPrewarmed());
-    m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
     m_prewarmedProcess->setWebsiteDataStore(websiteDataStore);
+    m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
 
     return std::exchange(m_prewarmedProcess, nullptr);
 }
@@ -1013,6 +1013,14 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
     return createNewWebProcess(&websiteDataStore);
 }
 
+UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForServiceWorkers()
+{
+    if (!m_userContentControllerForServiceWorker)
+        m_userContentControllerForServiceWorker = WebUserContentControllerProxy::create();
+
+    return m_userContentControllerForServiceWorker->identifier();
+}
+
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     if (!pageConfiguration->pageGroup())
@@ -1062,7 +1070,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             serviceWorkerProcess.updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
     }
     if (userContentController)
-        m_userContentControllerIDForServiceWorker = userContentController->identifier();
+        m_userContentControllerForServiceWorker = userContentController;
 #endif
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
@@ -1265,7 +1273,8 @@ void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
     LegacyGlobalSettings::singleton().registerURLSchemeAsSecure(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
     WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
     });
 }
 
@@ -1274,7 +1283,8 @@ void WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy(const Str
     LegacyGlobalSettings::singleton().registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme));
     WebsiteDataStore::forEachWebsiteDataStore([urlScheme] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::RegisterURLSchemeAsBypassingContentSecurityPolicy(urlScheme), 0);
     });
 }
 
@@ -1718,7 +1728,8 @@ WeakHashSet<WebProcessProxy>& WebProcessPool::serviceWorkerProcesses()
 void WebProcessPool::updateProcessAssertions()
 {
     WebsiteDataStore::forEachWebsiteDataStore([] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().updateProcessAssertion();
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->updateProcessAssertion();
     });
 #if ENABLE(GPU_PROCESS)
     if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())

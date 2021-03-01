@@ -115,8 +115,8 @@ usrsctp_init(uint16_t port,
 
 void
 usrsctp_init_nothreads(uint16_t port,
-		       int (*conn_output)(void *addr, void *buffer, size_t length, uint8_t tos, uint8_t set_df),
-		       void (*debug_printf)(const char *format, ...))
+                       int (*conn_output)(void *addr, void *buffer, size_t length, uint8_t tos, uint8_t set_df),
+                       void (*debug_printf)(const char *format, ...))
 {
 	init_sync();
 	sctp_init(port, conn_output, debug_printf, 0);
@@ -1328,7 +1328,7 @@ usrsctp_socket(int domain, int type, int protocol,
 	       uint32_t sb_threshold,
 	       void *ulp_info)
 {
-	struct socket *so;
+	struct socket *so = NULL;
 
 	if ((protocol == IPPROTO_SCTP) && (SCTP_BASE_VAR(sctp_pcb_initialized) == 0)) {
 		errno = EPROTONOSUPPORT;
@@ -1978,11 +1978,8 @@ int usrsctp_connect(struct socket *so, struct sockaddr *name, int namelen)
 	struct sockaddr *sa = NULL;
 
 	errno = getsockaddr(&sa, (caddr_t)name, namelen);
-    if (errno) {
-        if (sa)
-            FREE(sa, M_SONAME);
-        return (-1);
-    }
+	if (errno)
+		return (-1);
 
 	errno = user_connect(so, sa);
 	FREE(sa, M_SONAME);
@@ -3300,7 +3297,7 @@ usrsctp_conninput(void *addr, const void *buffer, size_t length, uint8_t ecn_bit
 	struct mbuf *m, *mm;
 	struct sctphdr *sh;
 	struct sctp_chunkhdr *ch;
-	int remaining;
+	int remaining, offset;
 
 	SCTP_STAT_INCR(sctps_recvpackets);
 	SCTP_STAT_INCR_COUNTER64(sctps_inpackets);
@@ -3330,17 +3327,19 @@ usrsctp_conninput(void *addr, const void *buffer, size_t length, uint8_t ecn_bit
 	}
 	KASSERT(remaining == 0, ("usrsctp_conninput: %zu bytes left", remaining));
 	m_copyback(m, 0, (int)length, (caddr_t)buffer);
-	if (SCTP_BUF_LEN(m) < (int)(sizeof(struct sctphdr) + sizeof(struct sctp_chunkhdr))) {
-		if ((m = m_pullup(m, sizeof(struct sctphdr) + sizeof(struct sctp_chunkhdr))) == NULL) {
+	offset = sizeof(struct sctphdr) + sizeof(struct sctp_chunkhdr);
+	if (SCTP_BUF_LEN(m) < offset) {
+		if ((m = m_pullup(m, offset)) == NULL) {
 			SCTP_STAT_INCR(sctps_hdrops);
 			return;
 		}
 	}
-	sh = mtod(m, struct sctphdr *);;
+	sh = mtod(m, struct sctphdr *);
 	ch = (struct sctp_chunkhdr *)((caddr_t)sh + sizeof(struct sctphdr));
+	offset -= sizeof(struct sctp_chunkhdr);
 	src.sconn_port = sh->src_port;
 	dst.sconn_port = sh->dest_port;
-	sctp_common_input_processing(&m, 0, sizeof(struct sctphdr), (int)length,
+	sctp_common_input_processing(&m, 0, offset, (int)length,
 	                             (struct sockaddr *)&src,
 	                             (struct sockaddr *)&dst,
 	                             sh, ch,

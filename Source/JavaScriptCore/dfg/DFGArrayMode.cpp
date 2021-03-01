@@ -145,6 +145,10 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
         return ArrayMode(Array::Float32Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
     case Float64ArrayMode:
         return ArrayMode(Array::Float64Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
+    case BigInt64ArrayMode:
+        return ArrayMode(Array::BigInt64Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
+    case BigUint64ArrayMode:
+        return ArrayMode(Array::BigUint64Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
 
     default:
         // If we have seen multiple TypedArray types, or a TypedArray and non-typed array, it doesn't make sense to try to convert the object since you can't convert typed arrays.
@@ -288,11 +292,14 @@ ArrayMode ArrayMode::refine(
     case Array::Uint32Array:
     case Array::Float32Array:
     case Array::Float64Array:
+    case Array::BigInt64Array:
+    case Array::BigUint64Array:
         if (node->op() == PutByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 return typedArrayResult(withSpeculation(Array::OutOfBounds));
         }
         return typedArrayResult(withSpeculation(Array::InBounds));
+
     case Array::Unprofiled:
     case Array::SelectUsingPredictions: {
         base &= ~SpecOther;
@@ -353,6 +360,12 @@ ArrayMode ArrayMode::refine(
         
         if (isFloat64ArraySpeculation(base))
             return typedArrayResult(result.withType(Array::Float64Array));
+
+        if (isBigInt64ArraySpeculation(base))
+            return typedArrayResult(result.withType(Array::BigInt64Array));
+
+        if (isBigUint64ArraySpeculation(base))
+            return typedArrayResult(result.withType(Array::BigUint64Array));
 
         if (type() == Array::Unprofiled)
             return ArrayMode(Array::ForceExit, action());
@@ -605,6 +618,12 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     case Array::Float64Array:
         return speculationChecked(value.m_type, SpecFloat64Array);
 
+    case Array::BigInt64Array:
+        return speculationChecked(value.m_type, SpecBigInt64Array);
+
+    case Array::BigUint64Array:
+        return speculationChecked(value.m_type, SpecBigUint64Array);
+
     case Array::AnyTypedArray:
         return speculationChecked(value.m_type, SpecTypedArrayView);
 
@@ -679,6 +698,10 @@ const char* arrayTypeToString(Array::Type type)
         return "Float32Array";
     case Array::Float64Array:
         return "Float64Array";
+    case Array::BigInt64Array:
+        return "BigInt64Array";
+    case Array::BigUint64Array:
+        return "BigUint64Array";
     case Array::AnyTypedArray:
         return "AnyTypedArray";
     default:
@@ -781,6 +804,10 @@ TypedArrayType toTypedArrayType(Array::Type type)
         return TypeFloat32;
     case Array::Float64Array:
         return TypeFloat64;
+    case Array::BigInt64Array:
+        return TypeBigInt64;
+    case Array::BigUint64Array:
+        return TypeBigUint64;
     case Array::AnyTypedArray:
         RELEASE_ASSERT_NOT_REACHED();
         return NotTypedArray;
@@ -810,6 +837,10 @@ Array::Type toArrayType(TypedArrayType type)
         return Array::Float32Array;
     case TypeFloat64:
         return Array::Float64Array;
+    case TypeBigInt64:
+        return Array::BigInt64Array;
+    case TypeBigUint64:
+        return Array::BigUint64Array;
     default:
         return Array::Generic;
     }
@@ -845,6 +876,8 @@ bool permitsBoundsCheckLowering(Array::Type type)
     case Array::Uint32Array:
     case Array::Float32Array:
     case Array::Float64Array:
+    case Array::BigInt64Array:
+    case Array::BigUint64Array:
     case Array::AnyTypedArray:
         return true;
     default:

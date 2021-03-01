@@ -43,6 +43,11 @@ class JS_EXPORT_PRIVATE DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
+    struct TicketData {
+        Vector<Strong<JSCell>> dependencies;
+        Strong<JSObject> scriptExecutionOwner;
+    };
+
     void doWork(VM&) final;
 
     using Ticket = JSObject*;
@@ -56,7 +61,7 @@ public:
     // to make sure your memory ownership model won't leak memory when
     // this occurs. The easiest way is to make sure everything is either owned
     // by a GC'd value in dependencies or by the Task lambda.
-    using Task = Function<void()>;
+    using Task = Function<void(Ticket, TicketData&&)>;
     void scheduleWorkSoon(Ticket, Task&&);
     void didResumeScriptExecutionOwner();
 
@@ -72,10 +77,6 @@ private:
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
     Deque<std::tuple<Ticket, Task>> m_tasks;
-    struct TicketData {
-        Vector<Strong<JSCell>> dependencies;
-        Strong<JSObject> scriptExecutionOwner;
-    };
     HashMap<Ticket, TicketData> m_pendingTickets;
 };
 

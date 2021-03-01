@@ -1,3 +1,328 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+
+2021-02-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement backend support for maintaining a list of Grid layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221228
+
+        Reviewed by Devin Rousso.
+
+        Added `layoutContextType` property to `WI.DOMNode` and listener for `CSS.nodeLayoutContextTypeChanged` event.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.nodeLayoutContextTypeChanged):
+        - When a node's layout context changes, update the WI.DOMNode
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.get layoutContextType):
+        (WI.DOMNode.prototype.set layoutContextType):
+        - Fire an event when the layout context type changes.
+        * UserInterface/Protocol/CSSObserver.js:
+        (WI.CSSObserver.prototype.nodeLayoutContextTypeChanged):
+        - Listen for the `CSS.nodeLayoutContextTypeChanged` event.
+
+2021-02-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Update .eslintrc to account for ECMAScript 2020
+        https://bugs.webkit.org/show_bug.cgi?id=221402
+
+        Reviewed by Devin Rousso.
+        
+        Add ES2020 parser option so ESLint-based linters don't throw errors
+        for newer JavaScript language features used in WebInspectorUI.
+        
+        Note: The linter in an editor must support ESLint v6.2.0 or newer to 
+        understand ES2020.
+
+        * .eslintrc:
+        Drive-by: add 4 spaces indentation rule to match Coding Style Guidelines.
+
+2021-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Collapse blackboxed call frames in Sources
+        https://bugs.webkit.org/show_bug.cgi?id=216897
+
+        Reviewed by Devin Rousso.
+
+        Stack traces often have dozens of blackboxed call frames when using blackboxing for JS-frameworks such as React.js.
+        It makes it hard to see more relevant non-framework code.
+
+        To improve this, introduce "Collapse blackboxed call frames" experimental setting, that collapses adjacent
+        blackboxed call frames into expandable items.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Images/TypeIcons.svg:
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame):
+        (WI.CallFrame.prototype.get blackboxed):
+        (WI.CallFrame.fromDebuggerPayload):
+        (WI.CallFrame.fromPayload):
+        * UserInterface/Views/BlackboxedGroupTreeElement.css: Added.
+        (.tree-outline .item.blackboxed-group):
+        (.tree-outline .item.blackboxed-group .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline .item.blackboxed-group .icon):
+        * UserInterface/Views/BlackboxedGroupTreeElement.js: Added.
+        (WI.BlackboxedGroupTreeElement):
+        (WI.BlackboxedGroupTreeElement.prototype.expand):
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame.blackboxed:not(.selected)):
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame.blackboxed > .title,):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype.refresh):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.treeElementToggled):
+        This is necessary since `WI.BlackboxedGroupTreeElement` removes itself when expanded.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 14.5)
+        https://bugs.webkit.org/show_bug.cgi?id=221288
+        <rdar://66351870>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/Legacy/14.5/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-14.5.json: Added.
+
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: implement the basics for showing/hiding grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221062
+
+        Reviewed by Devin Rousso.
+
+        Expose new DOM.showGridOverlay and DOM.hideGridOverlay commands
+        via WI.DOMNode. Add initial engineering UI to toggle grid overlays.
+
+        New methods are covered by a new test:
+
+            inspector/dom/showGridOverlay.html
+
+        Additions to WI.DOMManager.prototype.requestDocument are covered
+        by existing tests (callback case) and a new test (promise case).
+
+        Additions to WI.Color are covered by a new test case in:
+
+            inspector/model/color.html
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.requestDocument):
+        (WI.DOMManager.prototype._requestDocumentWithPromise):
+        Drive-by: upgrade requestDocument() to return a promise if
+        no callback argument was passed. This is used by a new test.
+
+        * UserInterface/Models/Color.js:
+        (WI.Color.prototype.toProtocol): Added. The protocol object is
+        DOM.RGBAColor, which is the same thing as WI.Color.Format.RGBA.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.showGridOverlay):
+        (WI.DOMNode.prototype.hideGridOverlay):
+        Added. These are the methods that the rest of WebInspectorUI uses
+        to interact with grid overlays for a particular node. Note that
+        these methods return either an unsettled promise (from the agent call)
+        or a rejected promise (in the case that the node is destroyed).
+        This allows test cases to `await` before checking the grid overlay count.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectException): Improve logging output
+        when InspectorTest.expectException does not catch an exception.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        Add some engineering-only context menu items for showing/hiding
+        grid overlays to DOMTreeElements in the Elements Tab.
+
+        These are in place for development purposes and should eventually
+        be removed when no longer needed.
+
+2021-02-01  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION(r270637): Web Inspector: Filtering field no longer shows in Computed panel
+        https://bugs.webkit.org/show_bug.cgi?id=221001
+
+        Reviewed by Devin Rousso.
+
+        The filter bar keeps separate filters for the Rules and Computed panes. It is therefor incorrect to hide the
+        entire filter bar when showing multiple sidebars, instead hide the controls that have a common state between the
+        two panels (the Classes list).
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,):
+
+2021-02-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: add Box Model into Layout panel
+        https://bugs.webkit.org/show_bug.cgi?id=220987
+
+        Reviewed by BJ Burg.
+
+        Add Box Model section to the experimental Layout panel.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.get minimumWidth):
+        (WI.LayoutDetailsSidebarPanel.prototype.inspect):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._nodeStylesRefreshed):
+        (WI.LayoutDetailsSidebarPanel.prototype._nodeStylesNeedsRefreshed):
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        * UserInterface/Models/StackTrace.js:
+        (WI.StackTrace.isLikelyStackTrace):
+
+2021-01-27  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: REGRESSION(r269166): not enough space around up/down arrows in execution context picker
+        https://bugs.webkit.org/show_bug.cgi?id=221014
+        <rdar://problem/73635556>
+
+        Reviewed by BJ Burg.
+        
+        Fix shorthand notation for logical property `margin-start` 
+        used on active execution context picker.
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .navigation-bar .active-execution-context > .selector-arrows):
+
+2021-01-26  Razvan Caliman  <rcaliman@apple.com>
+
+        REGRESSION(r270637) Filtering does not work in Styles sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=220993
+        <rdar://problem/73623818>
+
+        Reviewed by Devin Rousso.
+
+        Stop expecting StyleDetailsPanel to define an abstract filterDidChange() method.
+        Subclasses implement their own on a per-use case basis.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.filterDidChange):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.filterDidChange):
+
+2021-01-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add experimental setting to show Layout panel in Elements tab
+        https://bugs.webkit.org/show_bug.cgi?id=220954
+        <rdar://problem/73590856>
+
+        Reviewed by BJ Burg.
+
+        Add "Show layout panel" checkbox to the Experimental settings that shows an empty
+        panel (for now) in Elements tab.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js: Added.
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.supportsDOMNode):
+        (WI.LayoutDetailsSidebarPanel.prototype.attached):
+        (WI.LayoutDetailsSidebarPanel.prototype.detached):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._mainResourceDidChange):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
+        https://bugs.webkit.org/show_bug.cgi?id=220810
+
+        Reviewed by Andy Estes.
+
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Models/IssueMessage.js:
+        (WI.IssueMessage):
+        Add a new `PaymentRequest` value to the `ChannelSource` enum.
+
+2021-01-21  Ebrahim Byagowi  <ebrahim@gnu.org>
+
+        Web Inspector: Fix bidi confusion when evaluation result has RTL text
+        https://bugs.webkit.org/show_bug.cgi?id=220639
+
+        Reviewed by BJ Burg.
+
+        Apply `unicode-bidi: isolate` to formatted string and regexp so that
+        when they contain RTL text the bidi algorithm won't mix
+        saved variable name ($1, $2, ...) with the content.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-string, .formatted-regexp):
+
+2021-01-20  Kenneth Russell  <kbr@chromium.org>
+
+        Support WEBGL_multi_draw extension
+        https://bugs.webkit.org/show_bug.cgi?id=219139
+
+        Reviewed by Dean Jackson.
+
+        Tell the Inspector about the method signatures in the
+        WEBGL_multi_draw extension.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
+2021-01-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Font Details sidebar - Fractional variation axis ranges/default values are rounded.
+        https://bugs.webkit.org/show_bug.cgi?id=220474
+
+        Reviewed by BJ Burg.
+
+        Fixes Font Details sidebar display of variation axis values, ranges, and defaults to show fractional precision
+        when such precision is present.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/FontDetailsPanel.js:
+        (WI.FontDetailsPanel.prototype.refresh):
+        (WI.FontDetailsPanel.prototype._formatSimpleSingleValue):
+        (WI.FontDetailsPanel.prototype._formatVariationValue):
+        (WI.FontDetailsPanel.prototype._createVariationValueElement):
+        (WI.FontDetailsPanel.prototype._formatAxisValueAsString):
+        - Show fractional values with between 0 and 2 decimal places.
+
+2021-01-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `Historical Figures` string should be `Alternate Glyphs`
+        https://bugs.webkit.org/show_bug.cgi?id=220731
+
+        Reviewed by BJ Burg.
+
+        Changed title for CSS property `font-variant-alternates` to be `Alternate Glyphs`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/FontDetailsPanel.js:
+        (WI.FontDetailsPanel.prototype.initialLayout):
+
 2021-01-15  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Font Details sidebar - Improve line wrapping of table row titles when space is available

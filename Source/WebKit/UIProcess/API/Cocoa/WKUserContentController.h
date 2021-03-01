@@ -74,7 +74,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  The above restriction applies to any type of script message handler - WKScriptMessageHandler and WKScriptMessageHandlerWithReply
  objects will conflict with each other if you try to add them to the same WKContentWorld with the same name.
  */
-- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler contentWorld:(WKContentWorld *)world name:(NSString *)name WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler contentWorld:(WKContentWorld *)world name:(NSString *)name WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Adds a script message handler.
  @param scriptMessageHandlerWithReply The script message handler to add.
@@ -95,7 +95,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
  Refer to the WKScriptMessageHandlerWithReply documentation for examples of how it is more flexible than WKScriptMessageHandler.
  */
-- (void)addScriptMessageHandlerWithReply:(id <WKScriptMessageHandlerWithReply>)scriptMessageHandlerWithReply contentWorld:(WKContentWorld *)contentWorld name:(NSString *)name WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)addScriptMessageHandlerWithReply:(id <WKScriptMessageHandlerWithReply>)scriptMessageHandlerWithReply contentWorld:(WKContentWorld *)contentWorld name:(NSString *)name WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Adds a script message handler to the main world used by page content itself.
  @param scriptMessageHandler The script message handler to add.
@@ -109,7 +109,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param name The name of the message handler to remove.
  @param contentWorld The WKContentWorld from which to remove the script message handler.
  */
-- (void)removeScriptMessageHandlerForName:(NSString *)name contentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeScriptMessageHandlerForName:(NSString *)name contentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Removes a script message handler.
  @param name The name of the message handler to remove.
@@ -121,11 +121,11 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract Removes all script message handlers from a given WKContentWorld.
  @param contentWorld The WKContentWorld from which to remove all script message handlers.
  */
-- (void)removeAllScriptMessageHandlersFromContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeAllScriptMessageHandlersFromContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Removes all associated script message handlers.
  */
-- (void)removeAllScriptMessageHandlers WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeAllScriptMessageHandlers WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Adds a content rule list.
  @param contentRuleList The content rule list to add.

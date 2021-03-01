@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferDirect2DBackend);
 
-std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
+std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(const FloatSize& size, float resolutionScale, DestinationColorSpace colorSpace, const HostWindow* hostWindow)
 {
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())
@@ -87,10 +87,10 @@ std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(c
 
 std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(const FloatSize& size, const GraphicsContext& context)
 {
-    return ImageBufferDirect2DBackend::create(size, 1, ColorSpace::SRGB, nullptr);
+    return ImageBufferDirect2DBackend::create(size, 1, DestinationColorSpace::SRGB, nullptr);
 }
 
-ImageBufferDirect2DBackend::ImageBufferDirect2DBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, std::unique_ptr<PlatformContextDirect2D>&& platformContext, std::unique_ptr<GraphicsContext>&& context, PlatformImagePtr&& bitmap)
+ImageBufferDirect2DBackend::ImageBufferDirect2DBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, DestinationColorSpace colorSpace, std::unique_ptr<PlatformContextDirect2D>&& platformContext, std::unique_ptr<GraphicsContext>&& context, PlatformImagePtr&& bitmap)
     : ImageBufferCGBackend(logicalSize, backendSize, resolutionScale, colorSpace)
     , m_platformContext(WTFMove(platformContext))
     , m_context(WTFMove(context))

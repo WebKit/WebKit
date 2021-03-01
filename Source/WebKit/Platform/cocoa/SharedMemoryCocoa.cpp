@@ -26,8 +26,7 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ArgumentCoders.h"
 #include "Logging.h"
 #include "MachPort.h"
 #include <WebCore/SharedBuffer.h>
@@ -39,7 +38,31 @@
 #include <wtf/RefPtr.h>
 #include <wtf/spi/cocoa/MachVMSPI.h>
 
+#if HAVE(MACH_MEMORY_ENTRY)
+#include <mach/memory_entry.h>
+#endif
+
 namespace WebKit {
+
+#if HAVE(MACH_MEMORY_ENTRY)
+static int toVMMemoryLedger(MemoryLedger memoryLedger)
+{
+    switch (memoryLedger) {
+    case MemoryLedger::None:
+        return VM_LEDGER_TAG_NONE;
+    case MemoryLedger::Default:
+        return VM_LEDGER_TAG_DEFAULT;
+    case MemoryLedger::Network:
+        return VM_LEDGER_TAG_NETWORK;
+    case MemoryLedger::Media:
+        return VM_LEDGER_TAG_MEDIA;
+    case MemoryLedger::Graphics:
+        return VM_LEDGER_TAG_GRAPHICS;
+    case MemoryLedger::Neural:
+        return VM_LEDGER_TAG_NEURAL;
+    }
+}
+#endif
 
 static inline Optional<size_t> safeRoundPage(size_t size)
 {
@@ -72,6 +95,20 @@ auto SharedMemory::Handle::operator=(Handle&& other) -> Handle&
 SharedMemory::Handle::~Handle()
 {
     clear();
+}
+
+void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
+{
+#if HAVE(MACH_MEMORY_ENTRY)
+    if (!m_port)
+        return;
+
+    kern_return_t kr = mach_memory_entry_ownership(m_port, mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
+    if (kr != KERN_SUCCESS)
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::setOwnership: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
+#else
+    UNUSED_PARAM(memoryLedger);
+#endif
 }
 
 bool SharedMemory::Handle::isNull() const
@@ -147,7 +184,8 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     }
 
     mach_vm_address_t address = 0;
-    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, *roundedSize, VM_FLAGS_ANYWHERE);
+    // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
+    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, *roundedSize, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
     if (kr != KERN_SUCCESS) {
 #if RELEASE_LOG_DISABLED
         LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr);
@@ -188,16 +226,21 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
     }
 
     memory_object_size_t memoryObjectSize = *roundedSize;
-
     mach_port_t port = MACH_PORT_NULL;
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+
+    // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
+        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
+        kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+        if (kr != KERN_SUCCESS) {
 #if RELEASE_LOG_DISABLED
-        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+            LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
 #else
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. %{public}s (%x)", nullptr, mach_error_string(kr), kr);
+            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
 #endif
-        return { };
+            return { };
+        }
     }
 
     RELEASE_ASSERT(memoryObjectSize >= size);

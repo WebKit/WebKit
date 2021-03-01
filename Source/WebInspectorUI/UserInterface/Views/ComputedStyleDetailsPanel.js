@@ -149,8 +149,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     filterDidChange(filterBar)
     {
-        super.filterDidChange(filterBar);
-
         this.applyFilter(filterBar.filters.text);
     }
 

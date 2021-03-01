@@ -180,7 +180,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
 
 void HTMLFormControlElement::disabledStateChanged()
 {
-    setNeedsWillValidateCheck();
+    updateWillValidateAndValidity();
     invalidateStyleForSubtree();
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
@@ -188,7 +188,7 @@ void HTMLFormControlElement::disabledStateChanged()
 
 void HTMLFormControlElement::readOnlyStateChanged()
 {
-    setNeedsWillValidateCheck();
+    updateWillValidateAndValidity();
     invalidateStyleForSubtree();
 }
 
@@ -293,7 +293,7 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
     if (m_dataListAncestorState == NotInsideDataList)
         m_dataListAncestorState = Unknown;
 
-    setNeedsWillValidateCheck();
+    updateWillValidateAndValidity();
     if (willValidate() && !isValidFormControlElement())
         addInvalidElementToAncestorFromInsertionPoint(*this, &parentOfInsertedTree);
     if (document().hasDisabledFieldsetElement())
@@ -329,7 +329,7 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
         removeInvalidElementToAncestorFromInsertionPoint(*this, &oldParentOfRemovedTree);
 
     if (wasInsideDataList)
-        setNeedsWillValidateCheck();
+        updateWillValidateAndValidity();
 }
 
 void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool changed)
@@ -391,7 +391,7 @@ bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 bool HTMLFormControlElement::isMouseFocusable() const
 {
-#if PLATFORM(GTK)
+#if (PLATFORM(GTK) || PLATFORM(WPE))
     return HTMLElement::isMouseFocusable();
 #else
     if (needsMouseFocusableQuirk())
@@ -410,12 +410,18 @@ bool HTMLFormControlElement::matchesInvalidPseudoClass() const
     return willValidate() && !isValidFormControlElement();
 }
 
+void HTMLFormControlElement::endDelayingUpdateValidity()
+{
+    ASSERT(m_delayedUpdateValidityCount);
+    if (!--m_delayedUpdateValidityCount)
+        updateValidity();
+}
+
 bool HTMLFormControlElement::computeWillValidate() const
 {
     if (m_dataListAncestorState == Unknown) {
 #if ENABLE(DATALIST_ELEMENT)
-        m_dataListAncestorState = ancestorsOfType<HTMLDataListElement>(*this).first()
-            ? InsideDataList : NotInsideDataList;
+        m_dataListAncestorState = (document().hasDataListElements() && ancestorsOfType<HTMLDataListElement>(*this).first()) ? InsideDataList : NotInsideDataList;
 #else
         m_dataListAncestorState = NotInsideDataList;
 #endif
@@ -431,7 +437,7 @@ bool HTMLFormControlElement::willValidate() const
         if (m_willValidate != newWillValidate)
             m_willValidate = newWillValidate;
     } else {
-        // If the following assertion fails, setNeedsWillValidateCheck() is not
+        // If the following assertion fails, updateWillValidateAndValidity() is not
         // called correctly when something which changes computeWillValidate() result
         // is updated.
         ASSERT(m_willValidate == computeWillValidate());
@@ -439,7 +445,7 @@ bool HTMLFormControlElement::willValidate() const
     return m_willValidate;
 }
 
-void HTMLFormControlElement::setNeedsWillValidateCheck()
+void HTMLFormControlElement::updateWillValidateAndValidity()
 {
     // We need to recalculate willValidate immediately because willValidate change can causes style change.
     bool newWillValidate = computeWillValidate();
@@ -576,6 +582,9 @@ void HTMLFormControlElement::didChangeForm()
 
 void HTMLFormControlElement::updateValidity()
 {
+    if (m_delayedUpdateValidityCount)
+        return;
+
     bool willValidate = this->willValidate();
     bool wasValid = m_isValid;
 

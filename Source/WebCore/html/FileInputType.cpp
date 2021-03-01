@@ -106,7 +106,7 @@ UploadButtonElement::UploadButtonElement(Document& document)
 }
 
 FileInputType::FileInputType(HTMLInputElement& element)
-    : BaseClickableWithKeyInputType(element)
+    : BaseClickableWithKeyInputType(Type::File, element)
     , m_fileList(FileList::create())
 {
 }
@@ -273,16 +273,11 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     element()->invalidateStyleForSubtree();
 }
 
-bool FileInputType::isFileUpload() const
-{
-    return true;
-}
-
-void FileInputType::createShadowSubtree()
+void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
     ASSERT(element()->shadowRoot());
-    element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));
+    element()->userAgentShadowRoot()->appendChild(source, element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));
 }
 
 void FileInputType::disabledStateChanged()

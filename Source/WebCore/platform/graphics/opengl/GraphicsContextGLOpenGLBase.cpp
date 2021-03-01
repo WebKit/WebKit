@@ -106,7 +106,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         // We don't allow the logic where stencil is required and depth is not.
         // See GraphicsContextGLOpenGL::validateAttributes.
 
-        ExtensionsGL& extensions = getExtensions();
+        ExtensionsGLOpenGLCommon& extensions = getExtensions();
         // Use a 24 bit depth buffer where we know we have it.
         if (extensions.supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
@@ -407,7 +407,7 @@ void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 }
 
 #if !PLATFORM(GTK)
-ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
         m_extensions = makeUnique<ExtensionsGLOpenGL>(this, isGLES2Compliant());

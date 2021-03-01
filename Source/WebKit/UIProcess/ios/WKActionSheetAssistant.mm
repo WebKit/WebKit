@@ -567,6 +567,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (elementInfo.type == _WKActivatedElementTypeImage || [elementInfo image]) {
         if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeImageExtraction assistant:self]];
+        if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeRevealImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeRevealImageActionForElement:elementInfo])
+            [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage assistant:self]];
     }
 #endif
 
@@ -596,6 +598,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(IMAGE_EXTRACTION)
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeImageExtraction assistant:self]];
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeRevealImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeRevealImageActionForElement:elementInfo])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage assistant:self]];
 #endif
 
     return defaultActions;
@@ -849,7 +853,12 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleImageExtraction:element.image];
+        [delegate actionSheetAssistant:self handleImageExtraction:element.image title:element.title];
+#endif
+        break;
+    case _WKElementActionTypeRevealImage:
+#if ENABLE(IMAGE_EXTRACTION)
+        [delegate actionSheetAssistant:self handleRevealImage:element.image title:element.title];
 #endif
         break;
     default:

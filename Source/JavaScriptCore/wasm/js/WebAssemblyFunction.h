@@ -41,10 +41,6 @@ struct ProtoCallFrame;
 class WebAssemblyInstance;
 using Wasm::WasmToWasmImportableFunction;
 
-namespace B3 {
-class Compilation;
-}
-
 class WebAssemblyFunction final : public WebAssemblyFunctionBase {
 public:
     using Base = WebAssemblyFunctionBase;

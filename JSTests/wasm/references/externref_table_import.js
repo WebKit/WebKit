@@ -48,8 +48,8 @@ import Builder from '../Builder.js';
     const $1 = makeImport()
     fullGC()
 
-    assert.eq($1.exports.get_tbl(), null)
-    assert.eq($1.exports.tbl_is_null(), 1)
+    assert.eq($1.exports.get_tbl(), undefined)
+    assert.eq($1.exports.tbl_is_null(), 0)
 
     $1.exports.set_tbl("hi")
     fullGC()
@@ -57,7 +57,7 @@ import Builder from '../Builder.js';
     assert.eq($1.exports.tbl_is_null(), 0)
 
     assert.eq($1.exports.tbl.get(0), "hi")
-    assert.eq($1.exports.tbl.get(1), null)
+    assert.eq($1.exports.tbl.get(1), undefined)
 
     $1.exports.tbl.set(0, { test: "test" });
     fullGC()
@@ -163,7 +163,7 @@ import Builder from '../Builder.js';
     assert.eq($1.exports.tbl_is_null(), 0)
 
     assert.eq($1.exports.tbl.get(0), "hi")
-    assert.eq($1.exports.tbl.get(1), null)
+    assert.eq($1.exports.tbl.get(1), undefined)
 
     $1.exports.tbl.set(0, { test: "test" });
     fullGC()

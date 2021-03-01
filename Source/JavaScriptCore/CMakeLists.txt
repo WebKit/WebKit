@@ -65,7 +65,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/DatePrototype.cpp
     runtime/ErrorPrototype.cpp
     runtime/GeneratorPrototype.cpp
-    runtime/InspectorInstrumentationObject.cpp
     runtime/IntlCollatorConstructor.cpp
     runtime/IntlCollatorPrototype.cpp
     runtime/IntlDateTimeFormatConstructor.cpp
@@ -521,7 +520,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/X86_64Registers.h
 
     b3/B3Common.h
-    b3/B3Compilation.h
     b3/B3Type.h
 
     bindings/ScriptFunctionCall.h
@@ -757,6 +755,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/JITAllocator.h
     jit/JITCode.h
     jit/JITCodeMap.h
+    jit/JITCompilation.h
     jit/JITCompilationEffort.h
     jit/JITMathICForwards.h
     jit/JITOperations.h
@@ -823,8 +822,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/AuxiliaryBarrierInlines.h
     runtime/BasicBlockLocation.h
     runtime/BatchedTransitionOptimizer.h
+    runtime/BigInt64Array.h
     runtime/BigIntObject.h
     runtime/BigIntPrototype.h
+    runtime/BigUint64Array.h
     runtime/BooleanObject.h
     runtime/BooleanPrototype.h
     runtime/Butterfly.h
@@ -1104,7 +1105,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmName.h
     wasm/WasmNameSection.h
     wasm/WasmPageCount.h
+    wasm/WasmSections.h
     wasm/WasmSignature.h
+    wasm/WasmStreamingCompiler.h
+    wasm/WasmStreamingParser.h
     wasm/WasmTierUpCount.h
 
     wasm/js/JSWebAssembly.h
@@ -1287,7 +1291,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/InspectorInstrumentationObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorPrototype.js

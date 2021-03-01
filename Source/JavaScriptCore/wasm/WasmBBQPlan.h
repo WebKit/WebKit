@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "CompilationResult.h"
 #include "WasmB3IRGenerator.h"
@@ -58,7 +58,7 @@ public:
 
     bool hasWork() const final
     {
-        if (m_asyncWork == AsyncWork::Validation)
+        if (m_compilerMode == CompilerMode::Validation)
             return m_state < State::Validated;
         return m_state < State::Compiled;
     }
@@ -94,4 +94,4 @@ private:
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

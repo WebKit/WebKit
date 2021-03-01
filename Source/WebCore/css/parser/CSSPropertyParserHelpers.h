@@ -70,9 +70,11 @@ struct LengthRaw {
 
 using LengthOrPercentRaw = Variant<LengthRaw, double>;
 
+Optional<int> consumeIntegerRaw(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
+Optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-bool consumeNumberRaw(CSSParserTokenRange&, double& result, ValueRange = ValueRangeAll);
+Optional<double> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
@@ -108,9 +110,14 @@ enum class PositionSyntax {
     BackgroundPosition // <bg-position>
 };
 
+struct PositionCoordinates {
+    Ref<CSSPrimitiveValue> x;
+    Ref<CSSPrimitiveValue> y;
+};
+
 RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
-bool consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
-bool consumeOneOrTwoValuedPosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
+Optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
+Optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
 
 enum class AllowedImageType : uint8_t {
     URLFunction = 1 << 0,

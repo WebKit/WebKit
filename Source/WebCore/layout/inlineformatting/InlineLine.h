@@ -141,7 +141,6 @@ private:
     void removeTrailingTrimmableContent();
     void visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizontalSpace);
 
-    bool isRunConsideredEmpty(const Run&) const;
     const InlineFormattingContext& formattingContext() const;
 
     struct TrimmableTrailingContent {

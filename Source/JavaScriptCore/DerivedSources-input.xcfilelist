@@ -34,7 +34,6 @@ $(PROJECT_DIR)/builtins/FunctionPrototype.js
 $(PROJECT_DIR)/builtins/GeneratorPrototype.js
 $(PROJECT_DIR)/builtins/GlobalObject.js
 $(PROJECT_DIR)/builtins/GlobalOperations.js
-$(PROJECT_DIR)/builtins/InspectorInstrumentationObject.js
 $(PROJECT_DIR)/builtins/InternalPromiseConstructor.js
 $(PROJECT_DIR)/builtins/IteratorHelpers.js
 $(PROJECT_DIR)/builtins/IteratorPrototype.js
@@ -132,7 +131,6 @@ $(PROJECT_DIR)/runtime/DateConstructor.cpp
 $(PROJECT_DIR)/runtime/DatePrototype.cpp
 $(PROJECT_DIR)/runtime/ErrorPrototype.cpp
 $(PROJECT_DIR)/runtime/GeneratorPrototype.cpp
-$(PROJECT_DIR)/runtime/InspectorInstrumentationObject.cpp
 $(PROJECT_DIR)/runtime/IntlCollatorConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlCollatorPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlDateTimeFormatConstructor.cpp

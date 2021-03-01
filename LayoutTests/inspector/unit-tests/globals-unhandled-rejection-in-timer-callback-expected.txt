@@ -2,4 +2,6 @@ Test that the uncaught exception hook will immediately terminate the test and pr
 
 Unhandled promise rejection in inspector page: This is an exception thrown in the inspector page.
 
+Stack Trace: (suppressed)
+
 

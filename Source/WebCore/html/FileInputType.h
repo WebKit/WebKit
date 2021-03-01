@@ -45,6 +45,7 @@ class FileList;
 class Icon;
 
 class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient, public CanMakeWeakPtr<FileInputType> {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit FileInputType(HTMLInputElement&);
     virtual ~FileInputType();
@@ -76,8 +77,7 @@ private:
 #endif
 
     Icon* icon() const final;
-    bool isFileUpload() const final;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
     String defaultToolTip() const final;

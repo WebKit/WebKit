@@ -51,7 +51,7 @@ class TextFieldInputType : public InputType, protected SpinButtonElement::SpinBu
 #endif
 {
 protected:
-    explicit TextFieldInputType(HTMLInputElement&);
+    explicit TextFieldInputType(Type, HTMLInputElement&);
     virtual ~TextFieldInputType();
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeydownEventForSpinButton(KeyboardEvent&);
@@ -70,7 +70,7 @@ protected:
 #endif
 
     virtual bool needsContainer() const;
-    void createShadowSubtree() override;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) override;
     void destroyShadowSubtree() override;
     void attributeChanged(const QualifiedName&) override;
     void disabledStateChanged() final;
@@ -81,6 +81,7 @@ protected:
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     void updateInnerTextValue() final;
     String sanitizeValue(const String&) const override;
+    bool valueMissing(const String&) const final;
 
     virtual String convertFromVisibleValue(const String&) const;
     virtual void didSetValueByUserEdit();
@@ -88,9 +89,7 @@ protected:
 private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
-    bool isTextField() const final;
     bool isEmptyValue() const final;
-    bool valueMissing(const String&) const final;
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) final;
     void forwardEvent(Event&) final;
     bool shouldSubmitImplicitly(Event&) final;

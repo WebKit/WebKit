@@ -1,3 +1,75 @@
+2021-02-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Connect MediaSession with MediaRemote and NowPlaying
+        https://bugs.webkit.org/show_bug.cgi?id=221431
+        <rdar://problem/74000363>
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/mac/MediaRemoteSPI.h:
+
+2021-02-01  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Disable interstitial events on AVPlayerItem.
+        https://bugs.webkit.org/show_bug.cgi?id=221215
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-stretch is not applied to system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=221103
+        <rdar://problem/73719139>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
+2021-01-28  Per Arne  <pvollan@apple.com>
+
+        [macOS] Crash when updating color preferences
+        https://bugs.webkit.org/show_bug.cgi?id=221088
+        <rdar://problem/73709142>
+
+        Reviewed by Brent Fulgham.
+
+        Declare NSApplication SPI for updating application information with Launch Services.
+
+        * pal/spi/mac/NSApplicationSPI.h:
+
+2021-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add experimental feature to use network loader
+        https://bugs.webkit.org/show_bug.cgi?id=220521
+        <rdar://problem/69394713>
+
+        Reviewed by Geoff Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        Add forward declaration for CALayer's separated property.
+
+2021-01-19  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Claim ownership of IOSurface backing for ImageBufferBackends in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=220663
+
+        Reviewed by Geoffrey Garen.
+
+        Declare new IOSurface SPI.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2021-01-14  Tim Horton  <timothy_horton@apple.com>
 
         Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS

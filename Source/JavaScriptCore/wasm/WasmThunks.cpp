@@ -72,6 +72,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
 }
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const AbstractLocker&)
 {
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
@@ -95,6 +96,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG entry tier up");
 }
+#endif
 
 static Thunks* thunks;
 void Thunks::initialize()

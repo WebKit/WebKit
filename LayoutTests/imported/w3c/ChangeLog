@@ -1,3 +1,944 @@
+2021-02-08  Imanol Fernandez  <ifernandez@igalia.com>
+
+        WebXRSystem::RequestSession with 'viewer' as a required feature should succeed
+        https://bugs.webkit.org/show_bug.cgi?id=221267
+
+        Reviewed by Sergio Villar Senin.
+
+        Mark xrSession_viewer_availability test as passing.
+
+        * web-platform-tests/webxr/xrSession_viewer_availability.https-expected.txt: Added.
+
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+
+2021-02-05  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Update LayoutTests/imported/w3c/web-platform-tests/shadow-dom to the upstream
+        https://bugs.webkit.org/show_bug.cgi?id=220768
+
+        Reviewed by Ryosuke Niwa.
+
+        This imported https://github.com/web-platform-tests/wpt/tree/875f4c73ec1122cd0ea05580f6b56fda0ef71cc7
+
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface.html:
+        * web-platform-tests/shadow-dom/ShadowRoot-interface.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative-expected.txt:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.tentative.html: Added.
+        * web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative-expected.txt:
+        * web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/support/declarative-child-frame.html: Added.
+        * web-platform-tests/shadow-dom/declarative/support/helpers.js: Added.
+        (setInnerHTML):
+        * web-platform-tests/shadow-dom/declarative/support/w3c-import.log: Added.
+        * web-platform-tests/shadow-dom/declarative/w3c-import.log:
+        * web-platform-tests/shadow-dom/focus/w3c-import.log:
+        * web-platform-tests/shadow-dom/nested-slot-remove-crash.html: Added.
+        * web-platform-tests/shadow-dom/slotchange-expected.txt:
+        * web-platform-tests/shadow-dom/slotchange.html:
+        * web-platform-tests/shadow-dom/slots-imperative-api-slotchange.tentative-expected.txt:
+        * web-platform-tests/shadow-dom/slots-imperative-api-slotchange.tentative.html:
+        * web-platform-tests/shadow-dom/slots-imperative-slot-api.tentative.html:
+        * web-platform-tests/shadow-dom/untriaged/events/event-dispatch/test-002.html:
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
+2021-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r272338.
+        https://bugs.webkit.org/show_bug.cgi?id=221403
+
+        Broke a layout test percentage-height-in-flexbox.html
+
+        Reverted changeset:
+
+        "the nested grid container which has replaced item with 'max-
+        height' has wrong width(0px)."
+        https://bugs.webkit.org/show_bug.cgi?id=219194
+        https://trac.webkit.org/changeset/272338
+
+2021-02-04  Martin Robinson  <mrobinson@webkit.org>
+
+        Improve the serialization of scroll-snap-type and scroll-snap-align
+        https://bugs.webkit.org/show_bug.cgi?id=221324
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-align-valid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-snap-type-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+2021-02-03  Sam Weinig  <weinig@apple.com>
+
+        Add support for hwb() colors defined in CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221352
+
+        Reviewed by Darin Adler.
+
+        Add some new WPT tests for hwb() that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/color-resolving-hwb-expected.txt: Added.
+        * web-platform-tests/css/css-color/color-resolving-hwb.html: Added.
+        * web-platform-tests/css/css-color/hwb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-001.html: Added.
+        * web-platform-tests/css/css-color/hwb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-002.html: Added.
+        * web-platform-tests/css/css-color/hwb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-003.html: Added.
+        * web-platform-tests/css/css-color/hwb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-004.html: Added.
+        * web-platform-tests/css/css-color/hwb-005-expected.html: Added.
+        * web-platform-tests/css/css-color/hwb-005.html: Added.
+
+2021-02-03  Ziran Sun  <zsun@igalia.com>
+
+        the nested grid container which has replaced item with 'max-height' has wrong width(0px).
+        https://bugs.webkit.org/show_bug.cgi?id=219194
+
+        Reviewed by Javier Fernandez.
+
+        The test is imported from WPT.
+
+        * web-platform-tests/css/css-grid/grid-items/grid-auto-margin-and-replaced-item-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-auto-margin-and-replaced-item-001.html: Added.
+
+2021-02-03  Rob Buis  <rbuis@igalia.com>
+
+        Rename aspect-ratio/parsing/contain-intrinsic-size*
+        https://bugs.webkit.org/show_bug.cgi?id=221329
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Rename aspect-ratio/parsing/contain-intrinsic-size* since they deal with
+        parsing aspect-ratio, not contain-intrinsic-size.
+
+        Relevant WPT PR is https://github.com/web-platform-tests/wpt/pull/27457.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-computed-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-computed.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-valid-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid-expected.txt.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-valid.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid.html.
+
+2021-02-03  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(xyz ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221190
+
+        Reviewed by Simon Fraser.
+
+        Add some new WPT tests for color(xyz ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/xyz-001-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-001.html: Added.
+        * web-platform-tests/css/css-color/xyz-002-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-002.html: Added.
+        * web-platform-tests/css/css-color/xyz-003-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-003.html: Added.
+        * web-platform-tests/css/css-color/xyz-004-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-004.html: Added.
+        * web-platform-tests/css/css-color/xyz-005-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-005.html: Added.
+
+2021-02-03  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] max-height percentages are wrongly resolved for replaced grid items
+        https://bugs.webkit.org/show_bug.cgi?id=220733
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The following tests are imported from WPT.
+        * web-platform-tests/css/css-grid/grid-items/grid-img-item-percent-max-height-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-img-item-percent-max-height-001.html: Added.
+
+2021-02-03  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] WPT test css/css-grid/grid-model/grid-box-sizing-001.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=204578
+
+        Reviewed by Javier Fernandez.
+
+        All test cases in grid-box-sizing-001.html should pass now due to this change.
+
+        * web-platform-tests/css/css-grid/grid-model/grid-box-sizing-001-expected.txt:
+
+2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, update expect files for wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=221281
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+
+2021-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs - JavaScript API: Implement loading for the Blob type
+        https://bugs.webkit.org/show_bug.cgi?id=184886
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_compile_test.html:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test.html:
+
+2021-02-02  Rob Buis  <rbuis@igalia.com>
+
+        Support aspect-ratio on <body> in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=219489
+
+        Reviewed by Simon Fraser.
+
+        Update test expectation.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/quirks-mode-001-expected.txt:
+
+2021-01-31  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(prophoto-rgb ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221116
+
+        Reviewed by Antti Koivisto.
+
+        Add some new WPT tests for color(prophoto-rgb ) that will be upstreamed shortly.
+        (see https://github.com/web-platform-tests/wpt/pull/27416).
+
+        * web-platform-tests/css/css-color/prophoto-rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-001.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-002.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-003.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-004.html: Added.
+
+2021-01-30  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(rec2020 ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221114
+
+        Reviewed by Antti Koivisto.
+
+        Add some new WPT tests for color(rec2020 ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/rec2020-001-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-001.html: Added.
+        * web-platform-tests/css/css-color/rec2020-002-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-002.html: Added.
+        * web-platform-tests/css/css-color/rec2020-003-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-003.html: Added.
+        * web-platform-tests/css/css-color/rec2020-004-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-004.html: Added.
+
+2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Remove support for image controls
+        https://bugs.webkit.org/show_bug.cgi?id=221156
+
+        Reviewed by Tim Horton.
+
+        Rebaseline an imported layout test.
+
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        We also update test expect files failing after r272074.
+
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt:
+
+2021-01-28  Martin Robinson  <mrobinson@webkit.org>
+
+        Add support for logical variants of 'scroll-padding' and 'scroll-margin'
+        https://bugs.webkit.org/show_bug.cgi?id=220766
+        <rdar://problem/73661278>
+
+        Reviewed by Darin Adler.
+
+        Update test expectations for this change.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/inheritance-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-shorthand-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-margin-block-inline-valid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-shorthand-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-block-inline-valid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-computed-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-invalid-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-shorthand-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/parsing/scroll-padding-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+2021-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=221037
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/selectors/focus-visible-007-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-007.html:
+        * web-platform-tests/css/selectors/focus-visible-011.html:
+        * web-platform-tests/css/selectors/focus-visible-013-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-013.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-017-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-017.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-018-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-018.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_compile_test.html:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test.html:
+        * web-platform-tests/wasm/webapi/abort.any-expected.txt:
+        * web-platform-tests/wasm/webapi/abort.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/body.any-expected.txt:
+        * web-platform-tests/wasm/webapi/body.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/contenttype.any-expected.txt:
+        * web-platform-tests/wasm/webapi/contenttype.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/empty-body.any-expected.txt:
+        * web-platform-tests/wasm/webapi/empty-body.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/historical.any-expected.txt:
+        * web-platform-tests/wasm/webapi/historical.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/webapi/idlharness.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-args.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-args.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/origin.sub.any-expected.txt:
+        * web-platform-tests/wasm/webapi/origin.sub.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/rejected-arg.any-expected.txt:
+        * web-platform-tests/wasm/webapi/rejected-arg.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/status.any-expected.txt:
+        * web-platform-tests/wasm/webapi/status.any.worker-expected.txt:
+
+2021-01-27  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(a98-rgb ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221018
+
+        Reviewed by Darin Adler.
+
+        Add some new WPT tests for color(a98-rgb ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/a98rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-001.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-002.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-003.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-004.html: Added.
+
+2021-01-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Upstream to WPT Shadow DOM tests related to :focus pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=220907
+
+        Reviewed by Ryosuke Niwa.
+
+        These tests landed originally in r250788 (bug #202432).
+
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host-expected.txt: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-matches-on-shadow-host-expected.txt.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-matches-on-shadow-host.html.
+          Removed workaround to wait until :focus matches on "focus" event, as that has been fixed in r271146 (bug #220243).
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-1.html.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-2.html.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-3.html.
+
+2021-01-27  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Complete WebXRRigidTransform implementation
+        https://bugs.webkit.org/show_bug.cgi?id=220732
+        <rdar://problem/73617302>
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable XRRigidTransform WebXR tests.
+
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrRigidTransform_matrix.https-expected.txt: Added.
+
+2021-01-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCRtpParameters.rtcp
+        https://bugs.webkit.org/show_bug.cgi?id=220912
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpParameters-codecs-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpParameters-encodings-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpParameters-headerExtensions-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpParameters-rtcp-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpParameters-transactionId-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpReceiver-getParameters-expected.txt:
+
+2021-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Forbid '|' in URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=220778
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+
+2021-01-26  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=220968
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream c882810b64.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-016.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-006.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-029-crash.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-003-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-003.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-005.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-006-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-006.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-007-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-007.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-008-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-008.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-009.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-010.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-011-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-011.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-012-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-012.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-014-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-014.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-010.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-011-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-011.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/percentage-resolution-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/percentage-resolution-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-028-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-028.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-029-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-029.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-030.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/100x100-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/1x1-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/200x200-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/table-element-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/table-element-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010.html: Added.
+
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Import test coverage from WPT.
+
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any-expected.txt: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.html: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.js: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.worker-expected.txt: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.worker.html: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+
+2021-01-25  Sam Weinig  <weinig@apple.com>
+
+        Import css/css-color tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=220247
+        <rdar://problem/73002231>
+
+        Reviewed by Simon Fraser.
+
+        Update WPT css/css-color tests. 
+
+        * web-platform-tests/css/css-color/lab-002-expected.html:
+        * web-platform-tests/css/css-color/lab-003-expected.html:
+        * web-platform-tests/css/css-color/lch-001-expected.html:
+        * web-platform-tests/css/css-color/lch-002-expected.html:
+        * web-platform-tests/css/css-color/lch-003-expected.html:
+        * web-platform-tests/css/css-color/predefined-001-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-001.html: Added.
+        * web-platform-tests/css/css-color/predefined-002-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-002.html: Added.
+        * web-platform-tests/css/css-color/predefined-003-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-003.html: Added.
+        * web-platform-tests/css/css-color/predefined-004-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-004.html: Added.
+        * web-platform-tests/css/css-color/predefined-005-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-005.html: Added.
+        * web-platform-tests/css/css-color/predefined-006-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-006.html: Added.
+        * web-platform-tests/css/css-color/predefined-007-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-007.html: Added.
+        * web-platform-tests/css/css-color/predefined-008-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-008.html: Added.
+        * web-platform-tests/css/css-color/predefined-009-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-009.html: Added.
+        * web-platform-tests/css/css-color/predefined-010-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-010.html: Added.
+        * web-platform-tests/css/css-color/predefined-011-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-011.html: Added.
+        * web-platform-tests/css/css-color/predefined-012-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-012.html: Added.
+        * web-platform-tests/css/css-color/predefined-013-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-013.html: Added.
+        * web-platform-tests/css/css-color/predefined-014-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-014.html: Added.
+        * web-platform-tests/css/css-color/predefined-015-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-015.html: Added.
+        * web-platform-tests/css/css-color/predefined-016-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-016.html: Added.
+        * web-platform-tests/css/css-color/predefined-017-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-017.html: Added.
+        * web-platform-tests/css/css-color/system-color-compute-expected.txt: Added.
+        * web-platform-tests/css/css-color/system-color-compute.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.6-a.xht:
+        * web-platform-tests/css/css-color/t32-opacity-zorder-c-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-zorder-c.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex3-expand-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t421-rgb-hex3-expand-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-a0.6-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t422-rgba-a0.6-a.xht:
+        * web-platform-tests/css/css-color/t425-hsla-basic-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t425-hsla-basic-a.xht:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
+2021-01-25  Youenn Fablet  <youenn@apple.com>
+
+        Activate simulcast through addTransceiver
+        https://bugs.webkit.org/show_bug.cgi?id=173262
+        <rdar://problem/32713416>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-transceivers.https-expected.txt:
+        * web-platform-tests/webrtc/protocol/simulcast-offer-expected.txt:
+
+2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should SharedArrayBuffer/WebAssembly.Memory really throw?
+        https://bugs.webkit.org/show_bug.cgi?id=220364
+
+        Reviewed by Mark Lam.
+
+        Update common/sab.js and wasm/.
+
+        * web-platform-tests/common/sab.js:
+        (const.createBuffer):
+        * web-platform-tests/wasm/jsapi/META.yml: Added.
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.js: Added.
+        (assert_type):
+        (test):
+        (string_appeared_here.test):
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instanceTestFactory.js:
+        (const.imports.string_appeared_here.string_appeared_here):
+        (return.verify):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.js: Added.
+        (assert_type):
+        (test):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/module/exports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/exports.any.js:
+        (test):
+        * web-platform-tests/wasm/jsapi/module/exports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/imports.any.js:
+        (test):
+        * web-platform-tests/wasm/jsapi/module/imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/w3c-import.log:
+        * web-platform-tests/wasm/webapi/META.yml: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any.js:
+        (string_appeared_here.Invalid.code):
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.html: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.js: Added.
+        (string_appeared_here.forEach.method.promise_test.async t):
+        (string_appeared_here.forEach.method.with.Content.Type.set late):
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/w3c-import.log:
+
+2021-01-22  Devin Rousso  <drousso@apple.com>
+
+        [WPT] [Payment Request] slight adjustment to payment-request/payment-request-constructor-thcrash.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=220872
+
+        Reviewed by Andy Estes.
+
+        The first test in `payment-request/payment-request-constructor-thcrash.https.html` is
+        incorrect because duplicate items in `methodData` provided to `PaymentRequest` should throw
+        a `RangeError` according to step 4.3.3 of <https://www.w3.org/TR/payment-request/#constructor>.
+
+        The spec does mention in <https://www.w3.org/TR/payment-request/#conformance>
+        > User agents _MAY_ impose implementation-specific limits on otherwise unconstrained inputs,
+        > e.g., to prevent denial of service attacks, to guard against running out of memory, or to
+        > work around platform-specific limitations. When an input exceeds implementation-specific
+        > limit, the user agent _MUST_ throw, or, in the context of a promise, reject with, a
+        > `TypeError` optionally informing the developer of how a particular input exceeded an
+        > implementation-specific limit.
+        but does not specify whether this should happen before or after the above.
+
+        In WebKit's case, there is no "implementation-specific limit", so a `TypeError` should not
+        be thrown in either case.
+
+        * web-platform-tests/payment-request/payment-request-constructor-thcrash.https.html:
+        * web-platform-tests/payment-request/payment-request-constructor-thcrash.https-expected.txt:
+
+2021-01-22  Youenn Fablet  <youenn@apple.com>
+
+        Add more descriptive messages to setLocalDescription/setRemoteDescription error cases
+        https://bugs.webkit.org/show_bug.cgi?id=220857
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-operations.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-rollback-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-rollback-expected.txt:
+
+2021-01-22  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Relayout grid items when definiteness changes.
+        https://bugs.webkit.org/show_bug.cgi?id=220657
+
+        Tests percentage-size-subitems-002.html and relative-grandchild.html are
+        imported from WPT.
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-002.html: Added.
+        * LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild.html: Added.
+        * LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
+        https://bugs.webkit.org/show_bug.cgi?id=220810
+
+        Reviewed by Andy Estes.
+
+        * web-platform-tests/payment-request/payment-request-constructor.https.sub-expected.txt:
+        * web-platform-tests/payment-request/payment-request-shippingOption-attribute.https-expected.txt:
+
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] constructor should throw if a payment method is provided more than once
+        https://bugs.webkit.org/show_bug.cgi?id=220824
+
+        Reviewed by Andy Estes.
+
+        * web-platform-tests/payment-request/payment-request-constructor-thcrash.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-constructor.https.sub-expected.txt:
+
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Remove explicit clamp to SRGB for Lab colors on CG platforms that support wide color
+        https://bugs.webkit.org/show_bug.cgi?id=220684
+
+        Reviewed by Simon Fraser.
+
+        Update existing lab/lch tests to match new more precise values from https://github.com/web-platform-tests/wpt/pull/27202
+        and add two new tests for colors outside the sRGB gamut that will be upstreamed to WPT after landing.
+
+        * web-platform-tests/css/css-color/lab-001.html:
+        * web-platform-tests/css/css-color/lab-002.html:
+        * web-platform-tests/css/css-color/lab-003.html:
+        * web-platform-tests/css/css-color/lab-004-expected.html:
+        * web-platform-tests/css/css-color/lab-004.html:
+        * web-platform-tests/css/css-color/lab-005-expected.html:
+        * web-platform-tests/css/css-color/lab-005.html:
+        * web-platform-tests/css/css-color/lab-006-expected.html:
+        * web-platform-tests/css/css-color/lab-006.html:
+        * web-platform-tests/css/css-color/lab-007-expected.html:
+        * web-platform-tests/css/css-color/lab-007.html:
+        * web-platform-tests/css/css-color/lab-008-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-008.html: Added.
+        * web-platform-tests/css/css-color/lch-001.html:
+        * web-platform-tests/css/css-color/lch-002.html:
+        * web-platform-tests/css/css-color/lch-003.html:
+        * web-platform-tests/css/css-color/lch-004-expected.html:
+        * web-platform-tests/css/css-color/lch-004.html:
+        * web-platform-tests/css/css-color/lch-005-expected.html:
+        * web-platform-tests/css/css-color/lch-005.html:
+        * web-platform-tests/css/css-color/lch-006-expected.html:
+        * web-platform-tests/css/css-color/lch-006.html:
+        * web-platform-tests/css/css-color/lch-007-expected.html:
+        * web-platform-tests/css/css-color/lch-007.html:
+        * web-platform-tests/css/css-color/lch-008-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-008.html: Added.
+
+2021-01-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import css-variables WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=220787
+
+        Reviewed by Darin Adler.
+
+        Import WPTs for CSS variables via `Tools/Scripts/import-w3c-tests` and add expectations.
+
+        https://wpt.fyi/results/css/css-variables?label=master&label=experimental&aligned
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-variables/META.yml: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html: Added.
+        * web-platform-tests/css/css-variables/resources/variable-reference-refresh-iframe.css: Added.
+        (#testElement):
+        * web-platform-tests/css/css-variables/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-variables/test_variable_legal_values-expected.txt: Added.
+        * web-platform-tests/css/css-variables/test_variable_legal_values.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-from-to-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-from-to.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-over-transition-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-over-transition.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-fallback-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-fallback.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-to-only-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-to-only.html: Added.
+        * web-platform-tests/css/css-variables/variable-created-document-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-created-document.html: Added.
+        * web-platform-tests/css/css-variables/variable-created-element-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-created-element.html: Added.
+        * web-platform-tests/css/css-variables/variable-cssText-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-cssText.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-border-shorthand-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-border-shorthand-serialize.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-cascading-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-cascading.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-keywords-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-keywords.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition.html: Added.
+        * web-platform-tests/css/css-variables/variable-first-letter-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-first-letter.html: Added.
+        * web-platform-tests/css/css-variables/variable-first-line-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-first-line.html: Added.
+        * web-platform-tests/css/css-variables/variable-generated-content-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/variable-generated-content-dynamic-001.html: Added.
+        * web-platform-tests/css/css-variables/variable-invalidation-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-invalidation.html: Added.
+        * web-platform-tests/css/css-variables/variable-presentation-attribute-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-presentation-attribute.html: Added.
+        * web-platform-tests/css/css-variables/variable-pseudo-element-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-pseudo-element.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-cssom-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-cssom.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-refresh-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-refresh.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-cssom-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-cssom.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-variable-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-variable.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-without-whitespace-expected.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-without-whitespace.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-background-properties-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-background-properties.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-basic-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-basic.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-filters-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-filters.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-plus-box-shadow-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-plus-box-shadow.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-replaced-size-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-replaced-size.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shadow-properties-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shadow-properties.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shorthands.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-from-no-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-from-no-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-to-no-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-to-no-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable.html: Added.
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001.html: Added.
+        * web-platform-tests/css/css-variables/vars-border-shorthand-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-variables/vars-border-shorthand-serialize.html: Added.
+        * web-platform-tests/css/css-variables/vars-font-shorthand-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/vars-font-shorthand-001.html: Added.
+        * web-platform-tests/css/css-variables/w3c-import.log: Added.
+
+2021-01-19  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur ] imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=220631
+        <rdar://problem/73212492>
+
+        Reviewed by Alex Christensen.
+
+        I reproduced locally the error and saw a -1005 error, 'The network connection was lost'.
+        When running tests sequentially instead of in parallel, I do not see this anymore.
+
+        * web-platform-tests/fetch/nosniff/parsing-nosniff.window.js:
+        (runTests):
+
 2021-01-14  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] scroll-snap-align parsing is incorrect/backwards

@@ -37,6 +37,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Box);
+
 Box::Box(Tree& tree, AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : m_tree(tree)
     , m_absoluteBoxRect(absoluteRect)

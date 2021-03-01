@@ -49,16 +49,11 @@ item 1
         var landmarkItem = root.childAtIndex(3).childAtIndex(0);
         var nonTableItem = root.childAtIndex(4);
 
-        shouldBe("listItem.traits != initialItem.traits", "true");
-        shouldBe("listItem.traits != tableItem.traits", "true");
-        shouldBe("listItem.traits != landmarkItem.traits", "true");
+        shouldBe("listItem.isInList", "true");
+        shouldBe("tableItem.isInTable", "true");
+        shouldBe("landmarkItem.isInLandmark", "true");
 
-        shouldBe("tableItem.traits != initialItem.traits", "true");
-        shouldBe("tableItem.traits != landmarkItem.traits", "true");
-
-        shouldBe("landmarkItem.traits != initialItem.traits", "true");
-
-        shouldBe("nonTableItem.traits != tableItem.traits", "true");
+        shouldBe("nonTableItem.isInTable", "false");
     }
 
     successfullyParsed = true;

@@ -38,7 +38,6 @@
 #import "SigillCrashAnalyzer.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
-#import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 

@@ -75,17 +75,8 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
         m_scrollOrigin = state.scrollOrigin();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (state.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsets))
-        m_snapOffsetsInfo.horizontalSnapOffsets = state.horizontalSnapOffsets();
-
-    if (state.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsets))
-        m_snapOffsetsInfo.verticalSnapOffsets = state.verticalSnapOffsets();
-
-    if (state.hasChangedProperty(ScrollingStateNode::Property::HorizontalSnapOffsetRanges))
-        m_snapOffsetsInfo.horizontalSnapOffsetRanges = state.horizontalSnapOffsetRanges();
-
-    if (state.hasChangedProperty(ScrollingStateNode::Property::VerticalSnapOffsetRanges))
-        m_snapOffsetsInfo.verticalSnapOffsetRanges = state.verticalSnapOffsetRanges();
+    if (state.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo))
+        m_snapOffsetsInfo = state.snapOffsetsInfo();
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex))
         m_currentHorizontalSnapPointIndex = state.currentHorizontalSnapPointIndex();
@@ -334,6 +325,13 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
         ts.dumpProperty("synchronous scrolling reasons", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
 #endif
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+const ScrollSnapOffsetsInfo<float>& ScrollingTreeScrollingNode::snapOffsetsInfo() const
+{
+    return m_snapOffsetsInfo;
+}
+#endif
 
 } // namespace WebCore
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#import "AddEventListenerOptions.h"
 #import "DOMWindow.h"
 #import "Event.h"
 #import "EventListener.h"

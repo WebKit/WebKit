@@ -239,8 +239,6 @@ private:
 
     String mediaPlayerReferrer() const final;
     String mediaPlayerUserAgent() const final;
-    void mediaPlayerEnterFullscreen() final;
-    void mediaPlayerExitFullscreen() final;
     bool mediaPlayerIsFullscreen() const final;
     bool mediaPlayerIsFullscreenPermitted() const final;
     bool mediaPlayerIsVideo() const final;
@@ -312,7 +310,7 @@ private:
     RefPtr<RemoteMediaSourceProxy> m_mediaSourceProxy;
 #endif
 
-    WebCore::LayoutRect m_videoContentBoxRect;
+    WebCore::IntSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };
 
     bool m_bufferedChanged { true };

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "WasmB3IRGenerator.h"
 
@@ -35,4 +35,4 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

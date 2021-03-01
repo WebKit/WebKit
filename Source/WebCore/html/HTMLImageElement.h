@@ -111,8 +111,6 @@ public:
     bool canContainRangeEndPoint() const override { return false; }
 
     const AtomString& imageSourceURL() const override;
-
-    bool hasShadowControls() const { return m_experimentalImageMenuEnabled; }
     
     HTMLPictureElement* pictureElement() const;
     void setPictureElement(HTMLPictureElement*);
@@ -185,14 +183,6 @@ private:
 
     float effectiveImageDevicePixelRatio() const;
 
-#if ENABLE(SERVICE_CONTROLS)
-    void updateImageControls();
-    void tryCreateImageControls();
-    void destroyImageControls();
-    bool hasImageControls() const;
-    bool childShouldCreateRenderer(const Node&) const override;
-#endif
-
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
     WeakPtr<HTMLFormElement> m_form;
     WeakPtr<HTMLFormElement> m_formSetByParser;
@@ -202,7 +192,6 @@ private:
     AtomString m_currentSrc;
     AtomString m_parsedUsemap;
     float m_imageDevicePixelRatio;
-    bool m_experimentalImageMenuEnabled;
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
     bool m_isDroppedImagePlaceholder { false };
 

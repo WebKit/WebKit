@@ -203,7 +203,7 @@ class TestRunner(object):
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
-            return 1
+            sys.exit(1)
 
         tests = []
         prefix = None
@@ -250,10 +250,11 @@ class TestRunner(object):
 
         return {subtest: "PASS"}
 
-    def _run_google_test_suite(self, test_program, skipped_test_cases):
+    def _run_google_test_suite(self, test_program, subtests, skipped_test_cases):
         result = {}
         for subtest in self._get_tests_from_google_test_suite(test_program, skipped_test_cases):
-            result.update(self._run_google_test(test_program, subtest))
+            if subtest in subtests or not subtests:
+                result.update(self._run_google_test(test_program, subtest))
         return result
 
     def is_glib_test(self, test_program):
@@ -270,19 +271,20 @@ class TestRunner(object):
             return self._run_test_glib(test_program, subtests, skipped_test_cases)
 
         if self.is_google_test(test_program):
-            return self._run_google_test_suite(test_program, skipped_test_cases)
+            return self._run_google_test_suite(test_program, subtests, skipped_test_cases)
 
         # FIXME: support skipping Qt subtests
         if self.is_qt_test(test_program):
             return self._run_test_qt(test_program)
 
+        sys.stderr.write("WARNING: %s doesn't seem to be a supported test program.\n" % test_program)
         return {}
 
     def run_tests(self):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
             sys.stderr.flush()
-            return 1
+            sys.exit(1)
 
         self._setup_testing_environment()
 
@@ -300,8 +302,13 @@ class TestRunner(object):
             subtests = self._options.subtests
             for test in self._tests:
                 skipped_subtests = self._test_cases_to_skip(test)
-                number_of_total_tests += len(skipped_subtests)
+                number_of_total_tests += len(skipped_subtests if not subtests else set(skipped_subtests).intersection(subtests))
                 results = self._run_test(test, subtests, skipped_subtests)
+                if len(results) == 0:
+                    # No subtests were emitted, either the test binary didn't exist, or we don't know how to run it, or it crashed.
+                    sys.stderr.write("ERROR: %s failed to run, as it didn't emit any subtests.\n" % test)
+                    crashed_tests[test] = ["(problem in test executable)"]
+                    continue
                 number_of_executed_subtests_for_test = len(results)
                 if number_of_executed_subtests_for_test > 1:
                     number_of_executed_tests += number_of_executed_subtests_for_test

@@ -149,12 +149,48 @@ public:
     // Note that output is undefined when all points are colinear.
     bool isCounterclockwise() const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<FloatQuad> decode(Decoder&);
+
 private:
     FloatPoint m_p1;
     FloatPoint m_p2;
     FloatPoint m_p3;
     FloatPoint m_p4;
 };
+
+template<class Encoder> void FloatQuad::encode(Encoder& encoder) const
+{
+    encoder << m_p1;
+    encoder << m_p2;
+    encoder << m_p3;
+    encoder << m_p4;
+}
+
+template<class Decoder> Optional<FloatQuad> FloatQuad::decode(Decoder& decoder)
+{
+    Optional<FloatPoint> p1;
+    decoder >> p1;
+    if (!p1)
+        return WTF::nullopt;
+
+    Optional<FloatPoint> p2;
+    decoder >> p2;
+    if (!p2)
+        return WTF::nullopt;
+
+    Optional<FloatPoint> p3;
+    decoder >> p3;
+    if (!p3)
+        return WTF::nullopt;
+
+    Optional<FloatPoint> p4;
+    decoder >> p4;
+    if (!p4)
+        return WTF::nullopt;
+
+    return {{ *p1, *p2, *p3, *p4 }};
+}
 
 inline FloatQuad& operator+=(FloatQuad& a, const FloatSize& b)
 {

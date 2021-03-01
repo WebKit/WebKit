@@ -38,6 +38,7 @@ class ScmBase(object):
     DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
     PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
     GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
+    DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
@@ -99,6 +100,9 @@ class ScmBase(object):
                 offset += int(s) if s else 1
             argument = argument.split('~')[0]
 
+        if argument in self.DEFAULT_BRANCHES:
+            argument = self.default_branch
+
         if argument == 'HEAD':
             result = self.commit(include_log=include_log)
 
@@ -113,6 +117,9 @@ class ScmBase(object):
                 raise ValueError("'~' offsets are not supported for revisions and identifiers")
 
             parsed_commit = Commit.parse(argument)
+            if parsed_commit.branch in self.DEFAULT_BRANCHES:
+                parsed_commit.branch = self.default_branch
+
             return self.commit(
                 hash=parsed_commit.hash,
                 revision=parsed_commit.revision,

@@ -59,10 +59,7 @@ namespace WebCore {
 // Able to represent:
 //    - Special "invalid color" state, treated as transparent black but distinguishable
 //    - 4x 8-bit (0-255) sRGBA, stored inline, no allocation
-//    - 4x float (0-1) sRGBA, stored in a reference counted sub-object
-//    - 4x float (0-1) Linear sRGBA, stored in a reference counted sub-object
-//    - 4x float (0-1) DisplayP3, stored in a reference counted sub-object
-//    - 4x float (0-1) Lab, stored in a reference counted sub-object
+//    - 4x float color components + color space, stored in a reference counted sub-object
 //
 // Additionally, the inline 8-bit sRGBA can have an optional "semantic" bit set on it,
 // which indicates the color originated from a CSS semantic color name.
@@ -105,16 +102,22 @@ public:
 
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asInline().alpha == 255; }
     bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asInline().alpha > 0; }
-    uint8_t alphaByte() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asInline().alpha; }
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertToComponentFloat(asInline().alpha); }
+    uint8_t alphaByte() const { return isExtended() ? convertFloatAlphaTo<uint8_t>(asExtended().alpha()) : asInline().alpha; }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
 
     WEBCORE_EXPORT float luminance() const;
     WEBCORE_EXPORT float lightness() const; // FIXME: Replace remaining uses with luminance.
 
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
-    // This will convert non-sRGB colorspace colors into sRGB.
-    template<typename T> SRGBA<T> toSRGBALossy() const;
+    // This will convert the underlying color into ColorType, potentially lossily if the gamut
+    // or precision of ColorType is smaller than the current underlying type.
+    template<typename ColorType> ColorType toColorTypeLossy() const;
+
+    // This will convert the underlying color into sRGB, potentially lossily if the gamut
+    // or precision of sRGB is smaller than the current underlying type. This is a convenience
+    // wrapper around toColorTypeLossy<>().
+    template<typename T> SRGBA<T> toSRGBALossy() const { return toColorTypeLossy<SRGBA<T>>(); }
 
     WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float>> colorSpaceAndComponents() const;
 
@@ -333,22 +336,11 @@ template<typename Functor> decltype(auto) Color::callOnUnderlyingType(Functor&& 
     return std::invoke(std::forward<Functor>(functor), asInline());
 }
 
-template<typename T> SRGBA<T> Color::toSRGBALossy() const
+template<typename ColorType> ColorType Color::toColorTypeLossy() const
 {
-    return callOnUnderlyingType(WTF::makeVisitor(
-        [] (const SRGBA<uint8_t>& color) {
-            if constexpr (std::is_same_v<T, uint8_t>)
-                return color;
-            if constexpr (std::is_same_v<T, float>)
-                return convertToComponentFloats(color);
-        },
-        [] (const auto& color) {
-            if constexpr (std::is_same_v<T, uint8_t>)
-                return convertToComponentBytes(toSRGBA(color));
-            if constexpr (std::is_same_v<T, float>)
-                return toSRGBA(color);
-        }
-    ));
+    return callOnUnderlyingType([] (const auto& underlyingColor) {
+        return convertColor<ColorType>(underlyingColor);
+    });
 }
 
 inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const
@@ -401,15 +393,15 @@ inline void Color::setExtendedColor(Ref<ExtendedColor>&& extendedColor)
 #ifndef __HAIKU__
 inline bool Color::isBlackColor(const Color& color)
 {
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isBlack(color);
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isBlack(underlyingColor);
     });
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isWhite(color);
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isWhite(underlyingColor);
     });
 }
 #endif

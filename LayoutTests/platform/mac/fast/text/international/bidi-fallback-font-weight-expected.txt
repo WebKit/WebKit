@@ -20,14 +20,14 @@ layer at (0,0) size 800x173
             text run at (125,0) width 38 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,87) size 784x19
-        RenderText {#text} at (0,1) size 92x18
-          text run at (0,1) width 49: "abcd "
-          text run at (48,1) width 35 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
-          text run at (82,1) width 10: " "
-        RenderInline {B} at (0,0) size 86x18
-          RenderText {#text} at (91,1) size 86x18
-            text run at (91,1) width 49: "abcd "
-            text run at (139,1) width 38 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {#text} at (0,0) size 97x18
+          text run at (0,0) width 49: "abcd "
+          text run at (48,0) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (86,0) width 11: " "
+        RenderInline {B} at (0,0) size 87x18
+          RenderText {#text} at (96,0) size 87x18
+            text run at (96,0) width 49: "abcd "
+            text run at (144,0) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,122) size 784x19
         RenderText {#text} at (0,1) size 73x18

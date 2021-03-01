@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
                    RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount,
+                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
 
@@ -236,7 +236,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + 0,
         )
@@ -252,7 +252,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + 2,
         )
@@ -268,7 +268,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='''ERROR: Source/WebCore/layout/FloatingContext.cpp:36:  Code inside a namespace should not be indented.  [whitespace/indent] [4]
 ERROR: Source/WebCore/layout/FormattingContext.h:94:  Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]
@@ -291,7 +291,7 @@ Total errors found: 8 in 48 files''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 6 files')
             + 0,
@@ -308,7 +308,7 @@ Total errors found: 8 in 48 files''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/check-webkit-style'],
+                        command=['python3', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 0 files')
             + 2,
@@ -773,7 +773,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
-                        timeout=60,
+                        timeout=120,
                         )
             + 0,
         )
@@ -786,7 +786,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
-                        timeout=60,
+                        timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
@@ -1153,7 +1153,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.assertEqual(expected_output, output)
 
     def test_filter_logs_containing_error_with_no_error(self):
-        logs = 'CompileC /Volumes/Data/worker/macOS-Mojave-Release-Build-EWS'
+        logs = 'CompileC /Volumes/Data/worker/macOS-Catalina-Release-Build-EWS'
         expected_output = ''
         output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
         self.assertEqual(expected_output, output)
@@ -2268,7 +2268,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Updated working directory (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to updated working directory')
         return self.runStep()
 
 
@@ -2401,7 +2401,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_relevant_wk1_patch(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'macOS-Mojave-Release-WK1-Tests-EWS')
+        self.setProperty('buildername', 'macOS-Catalina-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
@@ -2420,24 +2420,20 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_relevant_webkitpy_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/webkitpy'
-        self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
-        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
-        return self.runStep()
-
-    def test_relevant_libraries_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/libraries'
-        self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
-        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
-        return self.runStep()
+        file_names = ['Tools/Scripts/webkitpy', 'Tools/Scripts/libraries', 'Tools/Scripts/commit-log-editor']
+        for file_name in file_names:
+            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            self.setupStep(CheckPatchRelevance())
+            self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+            self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            rc = self.runStep()
+        return rc
 
     def test_queues_without_relevance_info(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
-                  'macOS-Mojave-Release-Build-EWS', 'macOS-Mojave-Release-WK2-Tests-EWS', 'macOS-Mojave-Debug-Build-EWS',
+                  'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
                   'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckPatchRelevance())
@@ -2449,7 +2445,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_relevant_patch_on_various_queues(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
-                  'macOS-Mojave-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
+                  'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckPatchRelevance())
             self.setProperty('buildername', queue)
@@ -2780,7 +2776,7 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_mac(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
 
@@ -2869,7 +2865,7 @@ Ran 1316 tests of 1318 with 1316 successful
 
     def test_one_failure(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2911,7 +2907,7 @@ Testing completed, Exit status: 3
 
     def test_multiple_failures_and_timeouts(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2967,7 +2963,7 @@ Testing completed, Exit status: 3
 
     def test_unexpected_failure(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2985,7 +2981,7 @@ Testing completed, Exit status: 3
 
     def test_no_failures_or_timeouts_with_disabled(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -3024,7 +3020,7 @@ class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_mac(self):
         self.setupStep(RunAPITestsWithoutPatch())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
@@ -3060,7 +3056,7 @@ All tests successfully passed!
 
     def test_one_failure(self):
         self.setupStep(RunAPITestsWithoutPatch())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'ios-simulator')
         self.setProperty('configuration', 'debug')
         self.setProperty('buildername', 'API-Tests-iOS-EWS')
@@ -3178,7 +3174,7 @@ class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(ArchiveTestResults())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
@@ -3380,27 +3376,27 @@ Build version 9F2000''')
             + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
             ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''ProductName:	Mac OS X
-ProductVersion:	10.14.5
-BuildVersion:	18F132'''),
+ProductVersion:	10.15.6
+BuildVersion:	19H2'''),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-            + ExpectShell.log('stdio', stdout='''iPhoneSimulator12.2.sdk - Simulator - iOS 12.2 (iphonesimulator12.2)
-SDKVersion: 12.2
-Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator12.2.sdk
-PlatformVersion: 12.2
+            + ExpectShell.log('stdio', stdout='''iPhoneSimulator13.4.sdk - Simulator - iOS 13.4 (iphonesimulator13.4)
+SDKVersion: 13.4
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator13.4.sdk
+PlatformVersion: 13.4
 PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
-BuildID: 15C4BAF8-4632-11E9-86EB-BA47F1FFAC3C
-ProductBuildVersion: 16E226
-ProductCopyright: 1983-2019 Apple Inc.
+BuildID: BB4C82AE-5F8A-11EA-A1A5-838AD03DDE06
+ProductBuildVersion: 17E255
+ProductCopyright: 1983-2020 Apple Inc.
 ProductName: iPhone OS
-ProductVersion: 12.2
+ProductVersion: 13.4
 
-Xcode 10.2
+Xcode 11.7
 Build version 10E125''')
             + 0,
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: Mojave (10.14.5), Xcode: 10.2')
+        self.expectOutcome(result=SUCCESS, state_string='OS: Catalina (10.15.6), Xcode: 11.7')
         return self.runStep()
 
     def test_success_webkitpy(self):
@@ -3742,6 +3738,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -3751,10 +3748,14 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        return rc
 
     def test_failure(self):
         self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '2345')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -3764,6 +3765,47 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
+        return rc
+
+
+class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('ews_revision', '51a6aec9f664')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('identifier'), '233175@main')
+        return rc
+
+    def test_failure(self):
+        self.setupStep(ShowIdentifier())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
         return self.runStep()
 
 

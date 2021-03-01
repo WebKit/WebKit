@@ -9,7 +9,7 @@ jsTestIsAsync = true;
 onload = () => {
     debug ("* Synchronous XHR");
     syncXHR = new XMLHttpRequest();
-    syncXHR.open("GET", 'resources/echo-user-agent.php', false);
+    syncXHR.open("GET", 'resources/echo-user-agent.py', false);
     syncXHR.send("");
     shouldBe("syncXHR.status", "200");
     syncXHRUserAgent = syncXHR.responseText;
@@ -27,7 +27,7 @@ onload = () => {
         debug("");
         finishJSTest();
     }
-    asyncXHR.open("GET", 'resources/echo-user-agent.php', true);
+    asyncXHR.open("GET", 'resources/echo-user-agent.py', true);
     asyncXHR.send("");
 }
 </script>

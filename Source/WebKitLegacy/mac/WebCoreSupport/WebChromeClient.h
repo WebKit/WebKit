@@ -151,6 +151,10 @@ private:
     std::unique_ptr<WebCore::DateTimeChooser> createDateTimeChooser(WebCore::DateTimeChooserClient&) final;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const final;
+#endif
+
 #if ENABLE(POINTER_LOCK)
     bool requestPointerLock() final;
     void requestPointerUnlock() final;

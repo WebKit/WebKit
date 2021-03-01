@@ -181,6 +181,16 @@ void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& clien
     m_clients.remove(&client);
 }
 
+void VideoFullscreenModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_manager) {
+        completionHandler();
+        return;
+    }
+
+    m_manager->requestCloseAllMediaPresentations(m_contextId, finishedWithMedia, WTFMove(completionHandler));
+}
+
 void VideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     if (m_manager)
@@ -328,6 +338,8 @@ VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, Pla
 
 VideoFullscreenManagerProxy::~VideoFullscreenManagerProxy()
 {
+    callCloseCompletionHandlers();
+
     if (!m_page)
         return;
     invalidate();
@@ -475,7 +487,7 @@ void VideoFullscreenManagerProxy::removeClientForContext(PlaybackSessionContextI
     m_clientCounts.set(contextId, clientCount);
 }
 
-void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenModel&, PlatformVideoFullscreenInterface&)>&& callback)
+void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&& callback)
 {
     if (m_contextMap.isEmpty())
         return;
@@ -727,6 +739,25 @@ void VideoFullscreenManagerProxy::preparedToExitFullscreen(PlaybackSessionContex
 
 #pragma mark Messages to VideoFullscreenManager
 
+void VideoFullscreenManagerProxy::callCloseCompletionHandlers()
+{
+    auto closeMediaCallbacks = WTFMove(m_closeCompletionHandlers);
+    for (auto& callback : closeMediaCallbacks)
+        callback();
+}
+
+void VideoFullscreenManagerProxy::requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier contextId, bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+        && !hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
+        completionHandler();
+        return;
+    }
+
+    m_closeCompletionHandlers.append(WTFMove(completionHandler));
+    requestFullscreenMode(contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone, finishedWithMedia);
+}
+
 void VideoFullscreenManagerProxy::requestFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     m_page->send(Messages::VideoFullscreenManager::RequestFullscreenMode(contextId, mode, finishedWithMedia));
@@ -766,10 +797,13 @@ void VideoFullscreenManagerProxy::didExitFullscreen(PlaybackSessionContextIdenti
     m_page->send(Messages::VideoFullscreenManager::DidExitFullscreen(contextId));
 
 #if PLATFORM(IOS_FAMILY)
-    if (ensureInterface(contextId).changingStandbyOnly())
+    if (ensureInterface(contextId).changingStandbyOnly()) {
+        callCloseCompletionHandlers();
         return;
+    }
 #endif
     m_page->didExitFullscreen();
+    callCloseCompletionHandlers();
 }
 
 void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, const WebCore::FloatSize& size)

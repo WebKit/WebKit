@@ -36,8 +36,9 @@
 namespace WebCore {
 
 class NumberInputType final : public TextFieldInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
+    explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(Type::Number, element) { }
 
 private:
     const AtomString& formControlType() const final;
@@ -49,7 +50,6 @@ private:
     bool typeMismatch() const final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
     float decorationWidth() const final;
-    bool isSteppable() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     Decimal parseToNumber(const String&, const Decimal&) const final;
@@ -61,7 +61,6 @@ private:
     bool hasBadInput() const final;
     String badInputText() const final;
     bool supportsPlaceholder() const final;
-    bool isNumberField() const final;
     void attributeChanged(const QualifiedName&) final;
 };
 

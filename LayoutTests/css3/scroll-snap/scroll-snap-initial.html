@@ -165,7 +165,7 @@
         shouldBeEmptyString("noInitial.style['scroll-snap-margin']");
         shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-margin')", "1px");
         shouldBeEmptyString("noInitial.style['scroll-snap-align']");
-        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-align')", "center");
 
         var initialType = document.getElementById('initialType');
         shouldBeEqualToString("initialType.style['scroll-snap-type']", "initial");
@@ -175,17 +175,17 @@
         shouldBeEmptyString("initialType.style['scroll-snap-margin']");
         shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-margin')", "1px");
         shouldBeEmptyString("initialType.style['scroll-snap-align']");
-        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-align')", "center");
 
         var initialPadding = document.getElementById('initialPadding');
         shouldBeEmptyString("initialPadding.style['scroll-snap-type']");
         shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-type')", "both");
         shouldBeEqualToString("initialPadding.style['scroll-padding']", "initial");
-        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-padding')", "0px");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-padding')", "auto");
         shouldBeEmptyString("initialPadding.style['scroll-snap-margin']");
         shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-margin')", "1px");
         shouldBeEmptyString("initialPadding.style['scroll-snap-align']");
-        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-align')", "center");
 
         var initialMargin = document.getElementById('initialMargin');
         shouldBeEmptyString("initialMargin.style['scroll-snap-type']");
@@ -195,7 +195,7 @@
         shouldBeEqualToString("initialMargin.style['scroll-snap-margin']", "initial");
         shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-margin')", "0px");
         shouldBeEmptyString("initialMargin.style['scroll-snap-align']");
-        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-align')", "center");
 
         var initialAlign = document.getElementById('initialAlign');
         shouldBeEmptyString("initialAlign.style['scroll-snap-type']");
@@ -205,17 +205,17 @@
         shouldBeEmptyString("initialAlign.style['scroll-snap-margin']");
         shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-margin')", "1px");
         shouldBeEqualToString("initialAlign.style['scroll-snap-align']", "initial");
-        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-align')", "none none");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-align')", "none");
 
         var allInitial = document.getElementById('allInitial');
         shouldBeEqualToString("allInitial.style['scroll-snap-type']", "initial");
         shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-type')", "none");
         shouldBeEqualToString("allInitial.style['scroll-padding']", "initial");
-        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-padding')", "0px");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-padding')", "auto");
         shouldBeEqualToString("allInitial.style['scroll-snap-margin']", "initial");
         shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-margin')", "0px");
         shouldBeEqualToString("allInitial.style['scroll-snap-align']", "initial");
-        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-align')", "none none");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-align')", "none");
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

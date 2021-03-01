@@ -52,8 +52,9 @@ MediaRecorderPrivateMock::~MediaRecorderPrivateMock()
 {
 }
 
-void MediaRecorderPrivateMock::stopRecording()
+void MediaRecorderPrivateMock::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
 void MediaRecorderPrivateMock::pauseRecording(CompletionHandler<void()>&& completionHandler)

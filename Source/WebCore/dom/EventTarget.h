@@ -31,6 +31,7 @@
 #pragma once
 
 #include "EventListenerMap.h"
+#include "EventListenerOptions.h"
 #include "EventTargetInterfaces.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
@@ -38,9 +39,11 @@
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Variant.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+struct AddEventListenerOptions;
 class DOMWrapperWorld;
 
 struct EventTargetData {
@@ -51,7 +54,7 @@ public:
     bool isFiringEventListeners { false };
 };
 
-class EventTarget : public ScriptWrappable {
+class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget> {
     WTF_MAKE_ISO_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
@@ -62,40 +65,21 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    virtual bool isNode() const;
-    virtual bool isPaymentRequest() const;
-
-    struct ListenerOptions {
-        ListenerOptions(bool capture = false)
-            : capture(capture)
-        { }
-
-        bool capture { false };
-    };
-
-    struct AddEventListenerOptions : ListenerOptions {
-        AddEventListenerOptions(bool capture = false, Optional<bool> passive = WTF::nullopt, bool once = false)
-            : ListenerOptions(capture)
-            , passive(passive)
-            , once(once)
-        { }
-
-        Optional<bool> passive;
-        bool once { false };
-    };
+    WEBCORE_EXPORT virtual bool isNode() const;
+    WEBCORE_EXPORT virtual bool isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
     WEBCORE_EXPORT void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
-    using ListenerOptionsOrBoolean = Variant<ListenerOptions, bool>;
-    WEBCORE_EXPORT void removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, ListenerOptionsOrBoolean&&);
+    using EventListenerOptionsOrBoolean = Variant<EventListenerOptions, bool>;
+    WEBCORE_EXPORT void removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, EventListenerOptionsOrBoolean&&);
     WEBCORE_EXPORT ExceptionOr<bool> dispatchEventForBindings(Event&);
 
-    WEBCORE_EXPORT virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });
-    virtual bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions& = { });
+    WEBCORE_EXPORT virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&);
+    WEBCORE_EXPORT virtual bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions& = { });
 
-    virtual void removeAllEventListeners();
-    virtual void dispatchEvent(Event&);
-    virtual void uncaughtExceptionInEventHandler();
+    WEBCORE_EXPORT virtual void removeAllEventListeners();
+    WEBCORE_EXPORT virtual void dispatchEvent(Event&);
+    WEBCORE_EXPORT virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onevent" attributes.
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);

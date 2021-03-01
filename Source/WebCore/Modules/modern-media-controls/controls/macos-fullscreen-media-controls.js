@@ -41,8 +41,6 @@ class MacOSFullscreenMediaControls extends MediaControls
         this.element.classList.add("fullscreen");
 
         // Set up fullscreen-specific buttons.
-        this.volumeDownButton = new VolumeDownButton(this);
-        this.volumeUpButton = new VolumeUpButton(this);
         this.rewindButton = new RewindButton(this);
         this.forwardButton = new ForwardButton(this);
         this.fullscreenButton.isFullscreen = true;
@@ -146,7 +144,7 @@ class MacOSFullscreenMediaControls extends MediaControls
 
     _volumeControlsForCurrentDirection()
     {
-        return this.usesLTRUserInterfaceLayoutDirection ? [this.volumeDownButton, this.volumeSlider, this.volumeUpButton] : [this.volumeUpButton, this.volumeSlider, this.volumeDownButton];
+        return this.usesLTRUserInterfaceLayoutDirection ? [this.muteButton, this.volumeSlider] : [this.volumeSlider, this.muteButton];
     }
 
     _handleMousedown(event)

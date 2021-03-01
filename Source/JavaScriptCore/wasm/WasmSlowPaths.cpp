@@ -75,6 +75,7 @@ namespace JSC { namespace LLInt {
         ? JSValue::decode(CODE_BLOCK()->getConstant(virtualRegister)) \
         : callFrame->r(virtualRegister))
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 enum class RequiredWasmJIT { Any, OMG };
 
 inline bool shouldJIT(Wasm::FunctionCodeBlock* codeBlock, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
@@ -254,7 +255,7 @@ WASM_SLOW_PATH_DECL(epilogue_osr)
     jitCompileAndSetHeuristics(callee, codeBlock, instance);
     WASM_END_IMPL();
 }
-
+#endif
 
 WASM_SLOW_PATH_DECL(trace)
 {

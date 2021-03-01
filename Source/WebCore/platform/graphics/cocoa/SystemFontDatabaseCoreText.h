@@ -64,6 +64,7 @@ public:
             return fontName == other.fontName
                 && locale == other.locale
                 && weight == other.weight
+                && width == other.width
                 && size == other.size
                 && allowUserInstalledFonts == other.allowUserInstalledFonts
                 && italic == other.italic;
@@ -76,6 +77,7 @@ public:
             hasher.add(locale.existingHash());
             hasher.add(locale.isNull() ? 0 : locale.existingHash());
             hasher.add(weight);
+            hasher.add(width);
             hasher.add(size);
             hasher.add(static_cast<unsigned>(allowUserInstalledFonts));
             hasher.add(italic);
@@ -97,6 +99,7 @@ public:
         AtomString fontName;
         AtomString locale;
         CGFloat weight { 0 };
+        CGFloat width { 0 };
         float size { 0 };
         AllowUserInstalledFonts allowUserInstalledFonts { AllowUserInstalledFonts::No };
         bool italic { false };
@@ -123,7 +126,7 @@ private:
     RetainPtr<CTFontRef> createSystemDesignFont(SystemFontKind, const CascadeListParameters&);
     RetainPtr<CTFontRef> createTextStyleFont(const CascadeListParameters&);
 
-    static RetainPtr<CTFontRef> createFontByApplyingWeightItalicsAndFallbackBehavior(CTFontRef, CGFloat weight, bool italic, float size, AllowUserInstalledFonts, CFStringRef design = nullptr);
+    static RetainPtr<CTFontRef> createFontByApplyingWeightWidthItalicsAndFallbackBehavior(CTFontRef, CGFloat weight, CGFloat width, bool italic, float size, AllowUserInstalledFonts, CFStringRef design = nullptr);
     static RetainPtr<CTFontDescriptorRef> removeCascadeList(CTFontDescriptorRef);
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
     static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);

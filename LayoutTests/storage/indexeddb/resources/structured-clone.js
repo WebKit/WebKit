@@ -513,7 +513,9 @@ function testTypedArray(callback)
         "new Int32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])",
         "new Uint8ClampedArray([0, 1, 254, 255])",
         "new Float32Array([-Infinity, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, Infinity, NaN])",
-        "new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])"
+        "new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])",
+        "new BigInt64Array([0x7fffffffffffffffn, 1n, 0n, -1n, -0x8000000000000000n])",
+        "new BigUint64Array([0n, 0xffffffffffffffffn])",
     ], callback);
 }
 

@@ -773,7 +773,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchStartDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch start deferrer (synthetic tap)"];
 
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch end deferrer (immediate reset)"];
+
+    _touchEndDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch end deferrer (delayed reset)"];
+
+    _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch end deferrer (synthetic tap)"];
+
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         gesture.delegate = self;
         [self addGestureRecognizer:gesture];
     }
@@ -933,7 +942,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 
     _textInteractionDidChangeFocusedElement = NO;
-    _textInteractionIsHappening = NO;
+    _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
 
@@ -949,7 +958,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         gesture.delegate = nil;
         [self removeGestureRecognizer:gesture];
     }
@@ -1080,7 +1089,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_removeDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures)
         [self removeGestureRecognizer:gesture];
 #endif
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1107,7 +1116,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_addDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures)
         [self addGestureRecognizer:gesture];
 #endif
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1369,7 +1378,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
-        if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _textInteractionIsHappening))
+        if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _activeTextInteractionCount))
             [_textInteractionAssistant activateSelection];
 
         [self _scheduleResetInputViewDeferralAfterBecomingFirstResponder];
@@ -1546,12 +1555,18 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
             [self.window makeKeyWindow];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-        if (!_page->isHandlingPreventableTouchStart()) {
-            for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+        auto stopDeferringNativeGesturesIfNeeded = [] (NSArray<WKDeferringGestureRecognizer *> *deferringGestures) {
+            for (WKDeferringGestureRecognizer *gesture in deferringGestures) {
                 if (gesture.state == UIGestureRecognizerStatePossible)
                     gesture.state = UIGestureRecognizerStateFailed;
             }
-        }
+        };
+
+        if (!_page->isHandlingPreventableTouchStart())
+            stopDeferringNativeGesturesIfNeeded(self._touchStartDeferringGestures);
+
+        if (!_page->isHandlingPreventableTouchEnd())
+            stopDeferringNativeGesturesIfNeeded(self._touchEndDeferringGestures);
 #endif // ENABLE(IOS_TOUCH_EVENTS)
     }
 #endif // ENABLE(TOUCH_EVENTS)
@@ -1732,6 +1747,14 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 
+- (NSArray<WKDeferringGestureRecognizer *> *)_deferringGestures
+{
+    auto gestures = [NSMutableArray arrayWithCapacity:6];
+    [gestures addObjectsFromArray:self._touchStartDeferringGestures];
+    [gestures addObjectsFromArray:self._touchEndDeferringGestures];
+    return gestures;
+}
+
 - (NSArray<WKDeferringGestureRecognizer *> *)_touchStartDeferringGestures
 {
     WKDeferringGestureRecognizer *recognizers[3];
@@ -1746,9 +1769,29 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     return [NSArray arrayWithObjects:recognizers count:count];
 }
 
+- (NSArray<WKDeferringGestureRecognizer *> *)_touchEndDeferringGestures
+{
+    WKDeferringGestureRecognizer *recognizers[3];
+    NSUInteger count = 0;
+    auto add = [&] (const RetainPtr<WKDeferringGestureRecognizer>& recognizer) {
+        if (recognizer)
+            recognizers[count++] = recognizer.get();
+    };
+    add(_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures);
+    add(_touchEndDeferringGestureRecognizerForDelayedResettableGestures);
+    add(_touchEndDeferringGestureRecognizerForSyntheticTapGestures);
+    return [NSArray arrayWithObjects:recognizers count:count];
+}
+
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+        [gesture setDefaultPrevented:preventNativeGestures];
+}
+
+- (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
+{
+    for (WKDeferringGestureRecognizer *gesture in self._touchEndDeferringGestures)
         [gesture setDefaultPrevented:preventNativeGestures];
 }
 
@@ -1982,7 +2025,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
         return NO;
-    case WebKit::InputType::Select:
+    case WebKit::InputType::Select: {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if ([self _formControlRefreshEnabled])
+            return NO;
+#endif
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+    }
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
@@ -2036,7 +2085,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons || _textInteractionIsHappening)
+    if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)
         return;
 
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
@@ -2149,7 +2198,7 @@ static Class tapAndAHalfRecognizerClass()
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), gesture))
             return YES;
     }
@@ -2841,6 +2890,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     auto actionsToPerform = std::exchange(_actionsToPerformAfterResettingSingleTapGestureRecognizer, { });
     for (const auto& action : actionsToPerform)
         action();
+
+    [self _finishInteraction];
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
@@ -3023,7 +3074,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #endif
 }
 
-static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
+- (bool)_elementTypeRequiresAccessoryView:(WebKit::InputType)type
 {
     switch (type) {
     case WebKit::InputType::None:
@@ -3033,6 +3084,13 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
         return false;
+    case WebKit::InputType::Select: {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if ([self _formControlRefreshEnabled])
+            return NO;
+#endif
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+    }
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
     case WebKit::InputType::Search:
@@ -3043,7 +3101,6 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     case WebKit::InputType::NumberPad:
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
-    case WebKit::InputType::Select:
     case WebKit::InputType::Week:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
@@ -3060,7 +3117,7 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     if ([_formInputSession customInputAccessoryView])
         return YES;
 
-    return elementTypeRequiresAccessoryView(_focusedElementInformation.elementType);
+    return [self _elementTypeRequiresAccessoryView:_focusedElementInformation.elementType];
 }
 
 - (UITextInputAssistantItem *)inputAssistantItem
@@ -4409,7 +4466,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_webView _didCommitLoadForMainFrame];
 
     _textInteractionDidChangeFocusedElement = NO;
-    _textInteractionIsHappening = NO;
+    _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
@@ -5342,19 +5399,31 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
+
+    _page->setCanShowPlaceholder(context._textInputContext, false);
+
+    ++_activeTextInteractionCount;
+    if (_activeTextInteractionCount > 1)
+        return;
+
     _textInteractionDidChangeFocusedElement = NO;
     _page->setShouldRevealCurrentSelectionAfterInsertion(false);
-    _page->setCanShowPlaceholder(context._textInputContext, false);
     _usingGestureForSelection = YES;
-    _textInteractionIsHappening = YES;
 }
 
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
-    _textInteractionIsHappening = NO;
-    _usingGestureForSelection = NO;
+
     _page->setCanShowPlaceholder(context._textInputContext, true);
+
+    ASSERT(_activeTextInteractionCount > 0);
+    --_activeTextInteractionCount;
+    if (_activeTextInteractionCount)
+        return;
+
+    _usingGestureForSelection = NO;
+
     if (_textInteractionDidChangeFocusedElement) {
         // Mark to zoom to reveal the newly focused element on the next editor state update.
         // Then tell the web process to reveal the current selection, which will send us (the
@@ -5362,6 +5431,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
         _textInteractionDidChangeFocusedElement = NO;
     }
+
     _page->setShouldRevealCurrentSelectionAfterInsertion(true);
 }
 
@@ -5868,6 +5938,18 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [self _updateAccessory];
 }
 
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+
+- (BOOL)_formControlRefreshEnabled
+{
+    if (!_page)
+        return NO;
+
+    return _page->preferences().iOSFormControlRefreshEnabled();
+}
+
+#endif
+
 - (const WebKit::FocusedElementInformation&)focusedElementInformation
 {
     return _focusedElementInformation;
@@ -5910,7 +5992,7 @@ static bool mayContainSelectableText(WebKit::InputType type)
     }
 }
 
-static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation& information)
+- (bool)_shouldShowKeyboardForElement:(const WebKit::FocusedElementInformation&)information
 {
     if (information.inputMode == WebCore::InputMode::None)
         return false;
@@ -5918,7 +6000,7 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
     if (mayContainSelectableText(information.elementType))
         return true;
 
-    return elementTypeRequiresAccessoryView(information.elementType);
+    return [self _elementTypeRequiresAccessoryView:information.elementType];
 }
 
 static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)
@@ -5949,7 +6031,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
-    SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, shouldShowKeyboardForElement(information) };
+    SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, [self _shouldShowKeyboardForElement:information] };
 
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
@@ -7339,10 +7421,23 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         return NO;
     };
 
-    if ([gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class])
+    BOOL isSyntheticTap = [gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class];
+    BOOL mayDelayReset = mayDelayResetOfContainingSubgraph(gestureRecognizer);
+    if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForSyntheticTapGestures)
+            return isSyntheticTap;
+
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForDelayedResettableGestures)
+            return !isSyntheticTap && mayDelayReset;
+
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures)
+            return !isSyntheticTap && !mayDelayReset;
+    }
+
+    if (isSyntheticTap)
         return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
 
-    if (mayDelayResetOfContainingSubgraph(gestureRecognizer))
+    if (mayDelayReset)
         return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
 
     return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
@@ -7940,6 +8035,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     
     // and for the date/time picker.
     if ([self dateTimeInputControl])
+        return;
+
+    if ([self selectControl])
         return;
     
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
@@ -9117,6 +9215,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     if ([_inputPeripheral isKindOfClass:WKDateTimeInputControl.class])
         return (WKDateTimeInputControl *)_inputPeripheral.get();
+    return nil;
+}
+
+- (WKFormSelectControl *)selectControl
+{
+    if ([_inputPeripheral isKindOfClass:WKFormSelectControl.class])
+        return (WKFormSelectControl *)_inputPeripheral.get();
     return nil;
 }
 

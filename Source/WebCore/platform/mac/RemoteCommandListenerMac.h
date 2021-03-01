@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,13 @@ public:
     virtual ~RemoteCommandListenerMac();
 
 protected:
-    void updateSupportedCommands() override;
+    void updateSupportedCommands() final;
 
     void* m_commandHandler { nullptr };
+
+    const RemoteCommandsSet& defaultCommands();
+    RemoteCommandsSet m_currentCommands;
+    bool m_supportsSeeking { false };
 };
     
 }

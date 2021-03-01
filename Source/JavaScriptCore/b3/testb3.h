@@ -34,7 +34,6 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BreakCriticalEdges.h"
 #include "B3CCallValue.h"
-#include "B3Compilation.h"
 #include "B3Compile.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Const32Value.h"
@@ -67,6 +66,7 @@
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "InitializeThreading.h"
+#include "JITCompilation.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "PureNaN.h"
@@ -196,9 +196,9 @@ inline std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned o
 }
 
 template<typename T, typename... Arguments>
-T invoke(MacroAssemblerCodePtr<B3CompilationPtrTag> ptr, Arguments... arguments)
+T invoke(MacroAssemblerCodePtr<JITCompilationPtrTag> ptr, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr<B3CompilationPtrTag>(ptr.executableAddress());
+    void* executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(ptr.executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }

@@ -8,7 +8,7 @@ PASS window.getComputedStyle(mediaControls.timeControl.element).left is "10px"
 PASS window.getComputedStyle(mediaControls.timeControl.element).top is "49px"
 PASS window.getComputedStyle(mediaControls.timeControl.scrubber.element).top is "0px"
 PASS window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).fontSize is "12px"
-PASS window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).fontSize is "12px"
+PASS window.getComputedStyle(mediaControls.timeControl.durationTimeLabel.element).fontSize is "12px"
 
 PASS successfullyParsed is true
 

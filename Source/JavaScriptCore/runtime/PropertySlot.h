@@ -370,6 +370,7 @@ public:
 
     void setWatchpointSet(WatchpointSet& set)
     {
+        ASSERT(set.isStillValid());
         m_watchpointSet = &set;
     }
 

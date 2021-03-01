@@ -11,13 +11,15 @@
     function observerShouldBeRemoved()
     {
         return new Promise(function(resolve) {
-            handle = setInterval(function() {
+            function testIfRemoved() {
                 gc();
-                if (internals && internals.numberOfIntersectionObservers(document) == 0) {
-                    clearInterval(handle);
+                if (internals && internals.numberOfIntersectionObservers(document) == 0)
                     resolve();
-                }
-            }, 10);
+                else
+                    requestAnimationFrame(testIfRemoved);
+            }
+
+            testIfRemoved();
         });
     }
 

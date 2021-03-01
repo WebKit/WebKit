@@ -76,9 +76,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString == "funcref" || elementString == "anyfunc")
+        if (elementString == "funcref"_s || elementString == "anyfunc"_s)
             type = Wasm::TableElementType::Funcref;
-        else if (elementString == "externref")
+        else if (elementString == "externref"_s)
             type = Wasm::TableElementType::Externref;
         else
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
@@ -120,14 +120,16 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     JSWebAssemblyTable* jsWebAssemblyTable = JSWebAssemblyTable::tryCreate(globalObject, vm, webAssemblyTableStructure, wasmTable.releaseNonNull());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    JSValue defaultValue = callFrame->argument(1);
-    if (Options::useWebAssemblyReferences() && !defaultValue.isUndefined()) {
+    if (Options::useWebAssemblyReferences()) {
+        JSValue defaultValue = callFrame->argumentCount() < 2
+            ? defaultValueForReferenceType(jsWebAssemblyTable->table()->wasmType())
+            : callFrame->uncheckedArgument(1);
         WebAssemblyFunction* wasmFunction = nullptr;
         WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-        if (jsWebAssemblyTable->table()->isFuncrefTable() && (!defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue, wasmFunction, wasmWrapperFunction)))
+        if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue, wasmFunction, wasmWrapperFunction))
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function"_s);
         for (uint32_t tableIndex = 0; tableIndex < initial; ++tableIndex) {
-            if (jsWebAssemblyTable->table()->isFuncrefTable())
+            if (jsWebAssemblyTable->table()->isFuncrefTable() && wasmFunction)
                 jsWebAssemblyTable->set(tableIndex, wasmFunction);
             if (jsWebAssemblyTable->table()->isExternrefTable())
                 jsWebAssemblyTable->set(tableIndex, defaultValue);

@@ -118,7 +118,7 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
         return;
     }
 
-    if ((key == "Right" || code == "Comma" || code == "Minus" || code == "Period" || code == "Space" || code == "Slash" || code == "Semicolon")
+    if ((key == "Right" || code == "Comma" || code == "Minus" || code == "Period" || code == "Slash" || code == "Semicolon")
         && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;

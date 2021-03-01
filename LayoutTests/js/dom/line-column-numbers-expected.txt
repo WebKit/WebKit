@@ -71,25 +71,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     3   global code at line-column-numbers.html:124:99
 
 --> Case 15 Stack Trace:
-    0    at eval code
+    0   eval code at
     1   eval at [native code]
     2   global code at line-column-numbers.html:130:5
 
 --> Case 16 Stack Trace:
-    0    at doThrow16
-    1    at eval code
+    0   doThrow16 at
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.html:136:5
 
 --> Case 17 Stack Trace:
     0    at
-    1    at eval code
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.html:149:5
 
 --> Case 18 Stack Trace:
     0    at
-    1    at eval code
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.html:155:5
 
@@ -213,25 +213,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     3   global code at line-column-numbers.js:73:101
 
 --> Case 15 Stack Trace:
-    0    at eval code
+    0   eval code at
     1   eval at [native code]
     2   global code at line-column-numbers.js:77:5
 
 --> Case 16 Stack Trace:
-    0    at doThrow15b
-    1    at eval code
+    0   doThrow15b at
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.js:81:5
 
 --> Case 17 Stack Trace:
     0    at
-    1    at eval code
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.js:92:5
 
 --> Case 18 Stack Trace:
     0    at
-    1    at eval code
+    1   eval code at
     2   eval at [native code]
     3   global code at line-column-numbers.js:96:5
 

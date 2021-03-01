@@ -448,6 +448,34 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     const auto& lineBox = formattingState.lineBoxes().last();
     auto lineIndex = formattingState.lines().size();
     auto& lineBoxLogicalRect = lineBox.logicalRect();
+    if (!lineBox.hasContent()) {
+        // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
+        ASSERT(!lineContent.contentLogicalWidth);
+        ASSERT(!lineBoxLogicalRect.width() && !lineBoxLogicalRect.height());
+        auto updateInlineBoxesGeometryIfApplicable = [&] {
+            if (!lineBox.hasInlineBox())
+                return;
+            Vector<const Box*> layoutBoxList;
+            // Collect the empty inline boxes that showed up first on this line.
+            // Note that an inline box end on an empty line does not make the inline box taller.
+            // (e.g. <div>text<span><br></span></div>) <- the <span> inline box is as tall as the line even though the </span> is after a <br> so technically is on the following (empty)line.
+            for (auto& lineRun : lineContent.runs) {
+                if (lineRun.isInlineBoxStart())
+                    layoutBoxList.append(&lineRun.layoutBox());
+            }
+            for (auto* layoutBox : layoutBoxList) {
+                auto& boxGeometry = formattingState.boxGeometry(*layoutBox);
+                auto inlineBoxLogicalHeight = LayoutUnit::fromFloatCeil(lineBox.logicalMarginRectForInlineLevelBox(*layoutBox, boxGeometry).height());
+                boxGeometry.setContentBoxHeight(inlineBoxLogicalHeight);
+                boxGeometry.setContentBoxWidth({ });
+                boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBoxLogicalRect.topLeft()));
+            }
+        };
+        updateInlineBoxesGeometryIfApplicable();
+        formattingState.addLine({ lineBoxLogicalRect, { { }, { } }, { }, { }, { } });
+        return lineBoxLogicalRect;
+    }
+
     auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
     auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.top(), lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;
@@ -525,7 +553,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
             auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
-            auto logicalRect = Rect { LayoutPoint { inlineBoxMarginRect.topLeft() }, LayoutSize { inlineBoxMarginRect.size() } };
+            auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxMarginRect.width()), LayoutUnit::fromFloatCeil(inlineBoxMarginRect.height()) };
+            auto logicalRect = Rect { LayoutPoint { inlineBoxMarginRect.topLeft() }, inlineBoxSize };
             logicalRect.moveBy(LayoutPoint { lineBoxLogicalRect.topLeft() });
             if (inlineBoxStartSet.contains(&layoutBox)) {
                 // This inline box showed up first on this line.

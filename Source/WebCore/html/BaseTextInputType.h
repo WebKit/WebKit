@@ -38,10 +38,8 @@ namespace WebCore {
 // They support maxlength, selection functions, and so on.
 class BaseTextInputType : public TextFieldInputType {
 protected:
-    explicit BaseTextInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
+    explicit BaseTextInputType(Type type, HTMLInputElement& element) : TextFieldInputType(type, element) { }
 
-private:
-    bool isTextType() const override;
     bool patternMismatch(const String&) const override;
     bool supportsPlaceholder() const override;
     bool supportsSelectionAPI() const override;

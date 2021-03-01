@@ -1,4 +1,4 @@
-This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept a new initialization segment or a new media segment.
+This tests that a SourceBuffer can accept an initialization segment and a media segment and fire "update" events, and the video element fires a "resize" event after the SourceBuffer appends the initialization segment.
 
 RUN(video.src = URL.createObjectURL(source))
 EVENT(sourceopen)
@@ -6,10 +6,11 @@ RUN(source.duration = loader.duration())
 RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)
+EXPECTED (resizeEventFired == 'true') OK
+EXPECTED ((videoWidth == 320 || videoWidth == 0) == 'true') OK
+EXPECTED ((videoHeight == 240 || videoHeight == 0) == 'true') OK
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
-EXPECTED (resizeEventFired == 'true') OK
-EXPECTED (videoWidth == '320') OK
-EXPECTED (videoHeight == '240') OK
+EVENT(update)
 END OF TEST
 

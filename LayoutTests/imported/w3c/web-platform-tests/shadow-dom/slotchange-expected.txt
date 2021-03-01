@@ -6,12 +6,13 @@ PASS slotchange event: Change slot= attribute to make it un-assigned.
 PASS slotchange event: Change slot's name= attribute so that none is assigned.
 PASS slotchange event: Change slot= attribute to make it assigned.
 PASS slotchange event: Change slot's name= attribute so that a node is assigned to the slot.
-PASS slotchange event: Add a fallback content.
-PASS slotchange event: Remove a fallback content.
-PASS slotchange event: Add a fallback content to nested slots.
-PASS slotchange event: Remove a fallback content from nested slots.
+PASS slotchange event: Change fallback content - assignedNodes still empty.
+PASS slotchange event: Remove a fallback content - assignedNodes still empty.
+PASS slotchange event: Add a fallback content to nested slots - assignedNodes still empty.
+PASS slotchange event: Remove a fallback content from nested slots - assignedNodes still empty.
 PASS slotchange event: Insert a slot before an existing slot.
 PASS slotchange event: Remove a preceding slot.
 PASS slotchange event: A slot is assigned to another slot.
-PASS slotchange event: Even if distributed nodes do not change, slotchange should be fired if assigned nodes are changed.
+PASS slotchange event: Slotchange should be fired if assigned nodes are changed.
+PASS slotchange event: Child content is added to nested slots.
 

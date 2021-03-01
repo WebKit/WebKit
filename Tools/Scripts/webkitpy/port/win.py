@@ -370,7 +370,8 @@ class WinPort(ApplePort):
             self.write_registry_value(self.WOW64_WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], value[1], value[0])
 
     def delete_sem_locks(self):
-        os.system("rm -rf /dev/shm/sem.*")
+        if self.is_cygwin():
+            os.system("rm -rf /dev/shm/sem.*")
 
     def delete_preference_files(self):
         try:

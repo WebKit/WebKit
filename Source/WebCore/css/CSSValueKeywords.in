@@ -858,9 +858,6 @@ relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
 rating-level-indicator
-#if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS
-image-controls-button
-#endif
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif
@@ -1264,6 +1261,7 @@ rgb
 rgba
 hsl
 hsla
+hwb
 lab
 lch
 //color
@@ -1403,10 +1401,16 @@ last
 // color-gamut
 p3
 rec2020
+sRGB
 
 // color() function
-sRGB
+a98-rgb
 display-p3
+// lab
+prophoto-rgb
+// rec2020
+// sRGB
+xyz
 
 // prefers-default-appearance
 prefers

@@ -1012,7 +1012,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         [m_avPlayer.get() setMuted:m_muted];
 
 #if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
-        m_avPlayer.get().suppressesAudioRendering = YES;
+        if (player()->isVideoPlayer())
+            m_avPlayer.get().suppressesAudioRendering = YES;
 #endif
     }
 
@@ -1068,6 +1069,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
         [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
 
     [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch())];
+
+#if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    if ([m_avPlayerItem respondsToSelector:@selector(setAutomaticallyHandlesInterstitialEvents:)])
+        [m_avPlayerItem setAutomaticallyHandlesInterstitialEvents:NO];
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+#endif
 
     if (m_avPlayer)
         setAVPlayerItem(m_avPlayerItem.get());
@@ -2967,9 +2975,13 @@ void MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange(int status)
 {
     m_cachedItemStatus = status;
 
+    // Setting the pitch algorithm here causes tests to fail on Mojave; revert this change
+    // for <= Mojave builds.
+#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101400)
     // FIXME(rdar://72829354): Remove after AVFoundation radar is fixed.
     if (status == AVPlayerItemStatusReadyToPlay)
         [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch())];
+#endif
 
     updateStates();
 }

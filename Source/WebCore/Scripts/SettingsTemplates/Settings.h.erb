@@ -38,7 +38,7 @@ class Settings : public SettingsBase, public RefCounted<Settings> {
     WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static Ref<Settings> create(Page*);
-    WEBCORE_EXPORT ~Settings();
+    WEBCORE_EXPORT virtual ~Settings();
 
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.condition -%>
@@ -68,6 +68,8 @@ public:
     void <%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride) { m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride; }
     <%- end -%>
 <%- end -%>
+    FontGenericFamilies& fontGenericFamilies() final { return m_values.fontGenericFamilies; }
+    const FontGenericFamilies& fontGenericFamilies() const final { return m_values.fontGenericFamilies; }
 
     struct Values {
         void initialize();
@@ -77,6 +79,7 @@ public:
         Optional<<%= @setting.type %>> <%= @setting.name %>InspectorOverride;
 <%- end -%>
 
+        FontGenericFamilies fontGenericFamilies;
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
 <%- if @condition.condition -%>

@@ -45,7 +45,7 @@
 
     // Non-standard legacy aliases (CanvasFillStrokeStyles).
     undefined setStrokeColor(DOMString color, optional unrestricted float alpha);
-    undefined setStrokeColor(unrestricted float grayLevel, optional float alpha = 1);
+    undefined setStrokeColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
     undefined setFillColor(DOMString color, optional unrestricted float alpha);
     undefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
@@ -69,7 +69,6 @@
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    undefined setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
     undefined clearShadow();
 
     // Inspector-only.

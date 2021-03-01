@@ -539,259 +539,157 @@ void ItemHandle::destroy()
     }
 }
 
-void ItemHandle::copyTo(ItemHandle destination) const
+template<typename, typename = void> inline constexpr bool HasIsValid = false;
+template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
+
+template<typename Item>
+typename std::enable_if_t<!HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+{
+    new (destinationWithOffset) Item(itemHandle.get<Item>());
+    return true;
+}
+
+template<typename Item>
+typename std::enable_if_t<HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+{
+    auto* newItem = new (destinationWithOffset) Item(itemHandle.get<Item>());
+    return newItem->isValid();
+}
+
+bool ItemHandle::safeCopy(ItemHandle destination) const
 {
     auto itemType = type();
     destination.data[0] = static_cast<uint8_t>(itemType);
     auto itemOffset = destination.data + sizeof(uint64_t);
     switch (itemType) {
-    case ItemType::ClipOutToPath: {
-        new (itemOffset) ClipOutToPath(get<ClipOutToPath>());
-        return;
-    }
-    case ItemType::ClipPath: {
-        new (itemOffset) ClipPath(get<ClipPath>());
-        return;
-    }
-    case ItemType::ClipToDrawingCommands: {
-        new (itemOffset) ClipToDrawingCommands(get<ClipToDrawingCommands>());
-        return;
-    }
-    case ItemType::DrawFocusRingPath: {
-        new (itemOffset) DrawFocusRingPath(get<DrawFocusRingPath>());
-        return;
-    }
-    case ItemType::DrawFocusRingRects: {
-        new (itemOffset) DrawFocusRingRects(get<DrawFocusRingRects>());
-        return;
-    }
-    case ItemType::DrawGlyphs: {
-        new (itemOffset) DrawGlyphs(get<DrawGlyphs>());
-        return;
-    }
-    case ItemType::DrawImageBuffer: {
-        new (itemOffset) DrawImageBuffer(get<DrawImageBuffer>());
-        return;
-    }
-    case ItemType::DrawLinesForText: {
-        new (itemOffset) DrawLinesForText(get<DrawLinesForText>());
-        return;
-    }
-    case ItemType::DrawNativeImage: {
-        new (itemOffset) DrawNativeImage(get<DrawNativeImage>());
-        return;
-    }
-    case ItemType::DrawPattern: {
-        new (itemOffset) DrawPattern(get<DrawPattern>());
-        return;
-    }
-    case ItemType::DrawPath: {
-        new (itemOffset) DrawPath(get<DrawPath>());
-        return;
-    }
-    case ItemType::FillCompositedRect: {
-        new (itemOffset) FillCompositedRect(get<FillCompositedRect>());
-        return;
-    }
-    case ItemType::FillPath: {
-        new (itemOffset) FillPath(get<FillPath>());
-        return;
-    }
-    case ItemType::FillRectWithColor: {
-        new (itemOffset) FillRectWithColor(get<FillRectWithColor>());
-        return;
-    }
-    case ItemType::FillRectWithGradient: {
-        new (itemOffset) FillRectWithGradient(get<FillRectWithGradient>());
-        return;
-    }
-    case ItemType::FillRectWithRoundedHole: {
-        new (itemOffset) FillRectWithRoundedHole(get<FillRectWithRoundedHole>());
-        return;
-    }
-    case ItemType::FillRoundedRect: {
-        new (itemOffset) FillRoundedRect(get<FillRoundedRect>());
-        return;
-    }
-    case ItemType::PutImageData: {
-        new (itemOffset) PutImageData(get<PutImageData>());
-        return;
-    }
-    case ItemType::SetLineDash: {
-        new (itemOffset) SetLineDash(get<SetLineDash>());
-        return;
-    }
-    case ItemType::SetState: {
-        new (itemOffset) SetState(get<SetState>());
-        return;
-    }
-    case ItemType::StrokePath: {
-        new (itemOffset) StrokePath(get<StrokePath>());
-        return;
-    }
-    case ItemType::ApplyDeviceScaleFactor: {
-        new (itemOffset) ApplyDeviceScaleFactor(get<ApplyDeviceScaleFactor>());
-        return;
-    }
+    case ItemType::ClipOutToPath:
+        return copyInto<ClipOutToPath>(*this, itemOffset);
+    case ItemType::ClipPath:
+        return copyInto<ClipPath>(*this, itemOffset);
+    case ItemType::ClipToDrawingCommands:
+        return copyInto<ClipToDrawingCommands>(*this, itemOffset);
+    case ItemType::DrawFocusRingPath:
+        return copyInto<DrawFocusRingPath>(*this, itemOffset);
+    case ItemType::DrawFocusRingRects:
+        return copyInto<DrawFocusRingRects>(*this, itemOffset);
+    case ItemType::DrawGlyphs:
+        return copyInto<DrawGlyphs>(*this, itemOffset);
+    case ItemType::DrawImageBuffer:
+        return copyInto<DrawImageBuffer>(*this, itemOffset);
+    case ItemType::DrawLinesForText:
+        return copyInto<DrawLinesForText>(*this, itemOffset);
+    case ItemType::DrawNativeImage:
+        return copyInto<DrawNativeImage>(*this, itemOffset);
+    case ItemType::DrawPattern:
+        return copyInto<DrawPattern>(*this, itemOffset);
+    case ItemType::DrawPath:
+        return copyInto<DrawPath>(*this, itemOffset);
+    case ItemType::FillCompositedRect:
+        return copyInto<FillCompositedRect>(*this, itemOffset);
+    case ItemType::FillPath:
+        return copyInto<FillPath>(*this, itemOffset);
+    case ItemType::FillRectWithColor:
+        return copyInto<FillRectWithColor>(*this, itemOffset);
+    case ItemType::FillRectWithGradient:
+        return copyInto<FillRectWithGradient>(*this, itemOffset);
+    case ItemType::FillRectWithRoundedHole:
+        return copyInto<FillRectWithRoundedHole>(*this, itemOffset);
+    case ItemType::FillRoundedRect:
+        return copyInto<FillRoundedRect>(*this, itemOffset);
+    case ItemType::PutImageData:
+        return copyInto<PutImageData>(*this, itemOffset);
+    case ItemType::SetLineDash:
+        return copyInto<SetLineDash>(*this, itemOffset);
+    case ItemType::SetState:
+        return copyInto<SetState>(*this, itemOffset);
+    case ItemType::StrokePath:
+        return copyInto<StrokePath>(*this, itemOffset);
+    case ItemType::ApplyDeviceScaleFactor:
+        return copyInto<ApplyDeviceScaleFactor>(*this, itemOffset);
 #if USE(CG)
-    case ItemType::ApplyFillPattern: {
-        new (itemOffset) ApplyFillPattern(get<ApplyFillPattern>());
-        return;
-    }
-    case ItemType::ApplyStrokePattern: {
-        new (itemOffset) ApplyStrokePattern(get<ApplyStrokePattern>());
-        return;
-    }
+    case ItemType::ApplyFillPattern:
+        return copyInto<ApplyFillPattern>(*this, itemOffset);
+    case ItemType::ApplyStrokePattern:
+        return copyInto<ApplyStrokePattern>(*this, itemOffset);
 #endif
-    case ItemType::BeginTransparencyLayer: {
-        new (itemOffset) BeginTransparencyLayer(get<BeginTransparencyLayer>());
-        return;
-    }
-    case ItemType::ClearRect: {
-        new (itemOffset) ClearRect(get<ClearRect>());
-        return;
-    }
-    case ItemType::ClearShadow: {
-        new (itemOffset) ClearShadow(get<ClearShadow>());
-        return;
-    }
-    case ItemType::Clip: {
-        new (itemOffset) Clip(get<Clip>());
-        return;
-    }
-    case ItemType::ClipOut: {
-        new (itemOffset) ClipOut(get<ClipOut>());
-        return;
-    }
-    case ItemType::ClipToImageBuffer: {
-        new (itemOffset) ClipToImageBuffer(get<ClipToImageBuffer>());
-        return;
-    }
-    case ItemType::ConcatenateCTM: {
-        new (itemOffset) ConcatenateCTM(get<ConcatenateCTM>());
-        return;
-    }
-    case ItemType::DrawDotsForDocumentMarker: {
-        new (itemOffset) DrawDotsForDocumentMarker(get<DrawDotsForDocumentMarker>());
-        return;
-    }
-    case ItemType::DrawEllipse: {
-        new (itemOffset) DrawEllipse(get<DrawEllipse>());
-        return;
-    }
-    case ItemType::DrawLine: {
-        new (itemOffset) DrawLine(get<DrawLine>());
-        return;
-    }
-    case ItemType::DrawRect: {
-        new (itemOffset) DrawRect(get<DrawRect>());
-        return;
-    }
-    case ItemType::EndTransparencyLayer: {
-        new (itemOffset) EndTransparencyLayer(get<EndTransparencyLayer>());
-        return;
-    }
-    case ItemType::FillEllipse: {
-        new (itemOffset) FillEllipse(get<FillEllipse>());
-        return;
-    }
+    case ItemType::BeginTransparencyLayer:
+        return copyInto<BeginTransparencyLayer>(*this, itemOffset);
+    case ItemType::ClearRect:
+        return copyInto<ClearRect>(*this, itemOffset);
+    case ItemType::ClearShadow:
+        return copyInto<ClearShadow>(*this, itemOffset);
+    case ItemType::Clip:
+        return copyInto<Clip>(*this, itemOffset);
+    case ItemType::ClipOut:
+        return copyInto<ClipOut>(*this, itemOffset);
+    case ItemType::ClipToImageBuffer:
+        return copyInto<ClipToImageBuffer>(*this, itemOffset);
+    case ItemType::ConcatenateCTM:
+        return copyInto<ConcatenateCTM>(*this, itemOffset);
+    case ItemType::DrawDotsForDocumentMarker:
+        return copyInto<DrawDotsForDocumentMarker>(*this, itemOffset);
+    case ItemType::DrawEllipse:
+        return copyInto<DrawEllipse>(*this, itemOffset);
+    case ItemType::DrawLine:
+        return copyInto<DrawLine>(*this, itemOffset);
+    case ItemType::DrawRect:
+        return copyInto<DrawRect>(*this, itemOffset);
+    case ItemType::EndTransparencyLayer:
+        return copyInto<EndTransparencyLayer>(*this, itemOffset);
+    case ItemType::FillEllipse:
+        return copyInto<FillEllipse>(*this, itemOffset);
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath: {
-        new (itemOffset) FillInlinePath(get<FillInlinePath>());
-        return;
-    }
+    case ItemType::FillInlinePath:
+        return copyInto<FillInlinePath>(*this, itemOffset);
 #endif
-    case ItemType::FillRect: {
-        new (itemOffset) FillRect(get<FillRect>());
-        return;
-    }
-    case ItemType::FlushContext: {
-        new (itemOffset) FlushContext(get<FlushContext>());
-        return;
-    }
-    case ItemType::MetaCommandChangeDestinationImageBuffer: {
-        new (itemOffset) MetaCommandChangeDestinationImageBuffer(get<MetaCommandChangeDestinationImageBuffer>());
-        return;
-    }
-    case ItemType::MetaCommandChangeItemBuffer: {
-        new (itemOffset) MetaCommandChangeItemBuffer(get<MetaCommandChangeItemBuffer>());
-        return;
-    }
-    case ItemType::PaintFrameForMedia: {
-        new (itemOffset) PaintFrameForMedia(get<PaintFrameForMedia>());
-        return;
-    }
-    case ItemType::Restore: {
-        new (itemOffset) Restore(get<Restore>());
-        return;
-    }
-    case ItemType::Rotate: {
-        new (itemOffset) Rotate(get<Rotate>());
-        return;
-    }
-    case ItemType::Save: {
-        new (itemOffset) Save(get<Save>());
-        return;
-    }
-    case ItemType::Scale: {
-        new (itemOffset) Scale(get<Scale>());
-        return;
-    }
-    case ItemType::SetCTM: {
-        new (itemOffset) SetCTM(get<SetCTM>());
-        return;
-    }
-    case ItemType::SetInlineFillColor: {
-        new (itemOffset) SetInlineFillColor(get<SetInlineFillColor>());
-        return;
-    }
-    case ItemType::SetInlineFillGradient: {
-        new (itemOffset) SetInlineFillGradient(get<SetInlineFillGradient>());
-        return;
-    }
-    case ItemType::SetInlineStrokeColor: {
-        new (itemOffset) SetInlineStrokeColor(get<SetInlineStrokeColor>());
-        return;
-    }
-    case ItemType::SetLineCap: {
-        new (itemOffset) SetLineCap(get<SetLineCap>());
-        return;
-    }
-    case ItemType::SetLineJoin: {
-        new (itemOffset) SetLineJoin(get<SetLineJoin>());
-        return;
-    }
-    case ItemType::SetMiterLimit: {
-        new (itemOffset) SetMiterLimit(get<SetMiterLimit>());
-        return;
-    }
-    case ItemType::SetStrokeThickness: {
-        new (itemOffset) SetStrokeThickness(get<SetStrokeThickness>());
-        return;
-    }
-    case ItemType::StrokeEllipse: {
-        new (itemOffset) StrokeEllipse(get<StrokeEllipse>());
-        return;
-    }
+    case ItemType::FillRect:
+        return copyInto<FillRect>(*this, itemOffset);
+    case ItemType::FlushContext:
+        return copyInto<FlushContext>(*this, itemOffset);
+    case ItemType::MetaCommandChangeDestinationImageBuffer:
+        return copyInto<MetaCommandChangeDestinationImageBuffer>(*this, itemOffset);
+    case ItemType::MetaCommandChangeItemBuffer:
+        return copyInto<MetaCommandChangeItemBuffer>(*this, itemOffset);
+    case ItemType::PaintFrameForMedia:
+        return copyInto<PaintFrameForMedia>(*this, itemOffset);
+    case ItemType::Restore:
+        return copyInto<Restore>(*this, itemOffset);
+    case ItemType::Rotate:
+        return copyInto<Rotate>(*this, itemOffset);
+    case ItemType::Save:
+        return copyInto<Save>(*this, itemOffset);
+    case ItemType::Scale:
+        return copyInto<Scale>(*this, itemOffset);
+    case ItemType::SetCTM:
+        return copyInto<SetCTM>(*this, itemOffset);
+    case ItemType::SetInlineFillColor:
+        return copyInto<SetInlineFillColor>(*this, itemOffset);
+    case ItemType::SetInlineFillGradient:
+        return copyInto<SetInlineFillGradient>(*this, itemOffset);
+    case ItemType::SetInlineStrokeColor:
+        return copyInto<SetInlineStrokeColor>(*this, itemOffset);
+    case ItemType::SetLineCap:
+        return copyInto<SetLineCap>(*this, itemOffset);
+    case ItemType::SetLineJoin:
+        return copyInto<SetLineJoin>(*this, itemOffset);
+    case ItemType::SetMiterLimit:
+        return copyInto<SetMiterLimit>(*this, itemOffset);
+    case ItemType::SetStrokeThickness:
+        return copyInto<SetStrokeThickness>(*this, itemOffset);
+    case ItemType::StrokeEllipse:
+        return copyInto<StrokeEllipse>(*this, itemOffset);
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath: {
-        new (itemOffset) StrokeInlinePath(get<StrokeInlinePath>());
-        return;
-    }
+    case ItemType::StrokeInlinePath:
+        return copyInto<StrokeInlinePath>(*this, itemOffset);
 #endif
-    case ItemType::StrokeRect: {
-        new (itemOffset) StrokeRect(get<StrokeRect>());
-        return;
+    case ItemType::StrokeRect:
+        return copyInto<StrokeRect>(*this, itemOffset);
+    case ItemType::StrokeLine:
+        return copyInto<StrokeLine>(*this, itemOffset);
+    case ItemType::Translate:
+        return copyInto<Translate>(*this, itemOffset);
     }
-    case ItemType::StrokeLine: {
-        new (itemOffset) StrokeLine(get<StrokeLine>());
-        return;
-    }
-    case ItemType::Translate: {
-        new (itemOffset) Translate(get<Translate>());
-        return;
-    }
-    }
+    return false;
 }
 
 ItemBuffer::ItemBuffer(ItemBufferHandles&& handles)

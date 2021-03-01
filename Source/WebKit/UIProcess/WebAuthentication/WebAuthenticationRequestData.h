@@ -55,6 +55,7 @@ struct WebAuthenticationRequestData {
 
     bool processingUserGesture;
     String cachedPin; // Only used to improve NFC Client PIN experience.
+    WeakPtr<API::WebAuthenticationPanel> weakPanel;
 };
 
 WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);

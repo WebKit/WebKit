@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UIScriptController.h"
 
+#include "JSBasics.h"
 #include "JSUIScriptController.h"
 #include "UIScriptContext.h"
 #include <JavaScriptCore/JSValueRef.h>
@@ -51,6 +52,16 @@ DeviceOrientation* toDeviceOrientation(JSContextRef context, JSValueRef value)
     if (JSStringIsEqualToUTF8CString(option.get(), "landscape-right"))
         return &values[3];
     return nullptr;
+}
+
+ScrollToOptions* toScrollToOptions(JSContextRef context, JSValueRef argument)
+{
+    if (!JSValueIsObject(context, argument))
+        return nullptr;
+
+    static ScrollToOptions options;
+    options.unconstrained = booleanProperty(context, (JSObjectRef)argument, "unconstrained", false);
+    return &options;
 }
 
 UIScriptController::UIScriptController(UIScriptContext& context)

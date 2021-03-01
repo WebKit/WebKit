@@ -1,0 +1,22 @@
+<style>
+  body::-webkit-scrollbar {
+    background-image: radial-gradient(red 0%, red 100%);
+    width: 200px;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`div { aspect-ratio: 1; }`);
+    document.body.offsetTop;
+    document.documentElement.remove();
+    setTimeout(function() { document.write('This test should not crash.'); testRunner.notifyDone(); }, 50);
+  };
+</script>
+<body>
+<div></div>
+</body>

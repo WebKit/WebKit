@@ -22,8 +22,6 @@ controls/fullscreen-button.js
 controls/seek-button.js
 controls/rewind-button.js
 controls/forward-button.js
-controls/volume-down-button.js
-controls/volume-up-button.js
 controls/buttons-container.js
 controls/status-label.js
 controls/controls-bar.js
@@ -60,9 +58,7 @@ media/start-support.js
 media/status-support.js
 media/time-control-support.js
 media/tracks-support.js
-media/volume-down-support.js
 media/volume-support.js
-media/volume-up-support.js
 media/media-document-controller.js
 media/compact-media-controls-support.js
 media/media-controller.js

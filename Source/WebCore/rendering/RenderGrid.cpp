@@ -191,10 +191,10 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         beginUpdateScrollInfoAfterLayoutTransaction();
 
         LayoutSize previousSize = size();
-        // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() but it does not work for positioned stuff.
+        // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for positioned stuff.
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
-        bool hasDefiniteLogicalHeight = hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), WTF::nullopt);
-
+        // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
+        bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), WTF::nullopt);
         m_hasAnyOrthogonalItem = false;
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (child->isOutOfFlowPositioned())
@@ -1138,8 +1138,12 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
-        if (desiredLogicalHeight != child.logicalHeight()) {
-            // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+
+        // Checking the logical-height of a child isn't enough. Setting an override logical-height
+        // changes the definiteness, resulting in percentages to resolve differently.
+        //
+        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+        if (desiredLogicalHeight != child.logicalHeight() || (is<RenderBlock>(child) && downcast<RenderBlock>(child).hasPercentHeightDescendants())) {
             child.setLogicalHeight(0_lu);
             child.setNeedsLayout(MarkOnlyThis);
         }
@@ -1853,6 +1857,38 @@ const char* RenderGrid::renderName() const
     if (isRelativelyPositioned())
         return "RenderGrid (relative positioned)";
     return "RenderGrid";
+}
+
+bool RenderGrid::hasAutoSizeInColumnAxis(const RenderBox& child) const
+{
+    if (child.style().hasAspectRatio()) {
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+            // A non-auto inline size means the same for block size (column axis size) because of the aspect ratio.
+            if (!child.style().logicalWidth().isAuto())
+                return false;
+        } else {
+            const Length& logicalHeight = child.style().logicalHeight();
+            if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
+                return false;
+        }
+    }
+    return isHorizontalWritingMode() ? child.style().height().isAuto() : child.style().width().isAuto();
+}
+
+bool RenderGrid::hasAutoSizeInRowAxis(const RenderBox& child) const
+{
+    if (child.style().hasAspectRatio()) {
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+            // A non-auto block size means the same for inline size (row axis size) because of the aspect ratio.
+            const Length& logicalHeight = child.style().logicalHeight();
+            if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
+                return false;
+        } else {
+            if (!child.style().logicalWidth().isAuto())
+                return false;
+        }
+    }
+    return isHorizontalWritingMode() ? child.style().width().isAuto() : child.style().height().isAuto();
 }
 
 } // namespace WebCore

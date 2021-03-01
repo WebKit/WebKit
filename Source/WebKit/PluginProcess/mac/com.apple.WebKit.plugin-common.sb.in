@@ -334,8 +334,6 @@
     (subpath "/Library/Video/Plug-Ins")
     (home-library-subpath "/Caches/QuickTime")
 
-    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
-
     (home-library-literal "/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
 
     (subpath "/Library/ColorSync")

@@ -27,6 +27,7 @@
 #include "StaticRange.h"
 
 #include "ContainerNode.h"
+#include "JSNode.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -73,6 +74,12 @@ ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
     if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
         return Exception { InvalidNodeTypeError };
     return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
+}
+
+void StaticRange::visitNodesConcurrently(JSC::SlotVisitor& visitor) const
+{
+    visitor.addOpaqueRoot(root(start.container.get()));
+    visitor.addOpaqueRoot(root(end.container.get()));
 }
 
 }

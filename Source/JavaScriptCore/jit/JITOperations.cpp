@@ -1391,14 +1391,10 @@ inline SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalObject, C
                 reinterpret_cast<void*>(KeepTheFrame));
         }
     }
-
-    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
-    if (executable->isHostFunction())
-        codePtr = jsToWasmICCodePtr(vm, kind, function);
-    if (!codePtr)
-        codePtr = executable->entrypointFor(kind, MustCheckArity);
-
-    return encodeResult(codePtr.executableAddress(),
+    // FIXME: Support wasm IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=220339
+    return encodeResult(executable->entrypointFor(
+        kind, MustCheckArity).executableAddress(),
         reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 

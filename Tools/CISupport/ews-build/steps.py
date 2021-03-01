@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ import requests
 import socket
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
+COMMITS_INFO_URL = 'https://commits.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
 S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
@@ -104,7 +105,7 @@ class CheckOutSource(git.Git):
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        self.repourl = 'https://git.webkit.org/git/WebKit.git'
+        self.repourl = 'https://github.com/WebKit/WebKit.git'
         super(CheckOutSource, self).__init__(repourl=self.repourl,
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                                 timeout=2 * 60 * 60,
@@ -163,6 +164,64 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
+class ShowIdentifier(shell.ShellCommand):
+    name = 'show-identifier'
+    identifier_re = '^Identifier: (.*)$'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
+        if not revision:
+            revision = 'HEAD'
+        self.setCommand(['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
+        return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc != SUCCESS:
+            return rc
+
+        log_text = self.log_observer.getStdout()
+        match = re.search(self.identifier_re, log_text, re.MULTILINE)
+        if match:
+            identifier = match.group(1)
+            self.setProperty('identifier', identifier)
+            ews_revision = self.getProperty('ews_revision')
+            if ews_revision:
+                step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
+            else:
+                step = self.getLastBuildStepByName(CheckOutSource.name)
+            if not step:
+                step = self
+            step.addURL('Updated to {}'.format(identifier), self.url_for_identifier(identifier))
+            self.descriptionDone = 'Identifier: {}'.format(identifier)
+        else:
+            self.descriptionDone = 'Failed to find identifier'
+        return rc
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    def url_for_identifier(self, identifier):
+        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to find identifier'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
+
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
     description = ['clean-working-directory running']
@@ -184,13 +243,24 @@ class CleanWorkingDirectory(shell.ShellCommand):
 class UpdateWorkingDirectory(shell.ShellCommand):
     name = 'update-working-directory'
     description = ['update-workring-directory running']
-    descriptionDone = ['Updated working directory']
     flunkOnFailure = True
     haltOnFailure = True
     command = ['perl', 'Tools/Scripts/update-webkit']
 
     def __init__(self, **kwargs):
         super(UpdateWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to updated working directory'}
+        else:
+            return {u'step': u'Updated working directory'}
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE:
+            self.build.buildFinished(['Git issue, retrying build'], RETRY)
+        return rc
 
 
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
@@ -304,6 +374,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
     webkitpy_paths = [
         'Tools/Scripts/webkitpy',
         'Tools/Scripts/libraries',
+        'Tools/Scripts/commit-log-editor',
     ]
 
     group_to_paths_mapping = {
@@ -724,7 +795,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
-    url = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json'
+    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/Tools/Scripts/webkitpy/common/config/contributors.json'
     contributors = {}
 
     def load_contributors_from_disk(self):
@@ -737,7 +808,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
             return {}
 
-    def load_contributors_from_trac(self):
+    def load_contributors_from_github(self):
         try:
             response = requests.get(self.url, timeout=60)
             if response.status_code != 200:
@@ -749,7 +820,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             return {}
 
     def load_contributors(self):
-        contributors_json = self.load_contributors_from_trac()
+        contributors_json = self.load_contributors_from_github()
         if not contributors_json:
             contributors_json = self.load_contributors_from_disk()
 
@@ -1028,7 +1099,7 @@ class CheckStyle(TestWithFailureCount):
     descriptionDone = ['check-webkit-style']
     flunkOnFailure = True
     failedTestsFormatString = '%d style error%s'
-    command = ['python', 'Tools/Scripts/check-webkit-style']
+    command = ['python3', 'Tools/Scripts/check-webkit-style']
 
     def __init__(self, **kwargs):
         super(CheckStyle, self).__init__(logEnviron=False, **kwargs)
@@ -1850,12 +1921,13 @@ class KillOldProcesses(shell.Compile):
     command = ['python', 'Tools/CISupport/kill-old-processes', 'buildbot']
 
     def __init__(self, **kwargs):
-        super(KillOldProcesses, self).__init__(timeout=60, logEnviron=False, **kwargs)
+        super(KillOldProcesses, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
     def evaluateCommand(self, cmd):
-        if self.results in [FAILURE, EXCEPTION]:
+        rc = shell.Compile.evaluateCommand(self, cmd)
+        if rc in [FAILURE, EXCEPTION]:
             self.build.buildFinished(['Failed to kill old processes, retrying build'], RETRY)
-        return shell.Compile.evaluateCommand(self, cmd)
+        return rc
 
     def getResultSummary(self):
         if self.results in [FAILURE, EXCEPTION]:
@@ -3034,12 +3106,14 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         return rc
 
     def url_for_revision(self, revision):
-        return 'https://trac.webkit.org/changeset/{}'.format(revision)
+        return 'https://commits.webkit.org/r{}'.format(revision)
 
     def comment_text_for_bug(self, svn_revision=None):
         patch_id = self.getProperty('patch_id', '')
         if not svn_revision:
-            return 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
+            comment = 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
+            comment += ' To retry, please set cq+ flag again.'
+            return comment
         comment = 'Committed r{}: <{}>'.format(svn_revision, self.url_for_revision(svn_revision))
         comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
         return comment

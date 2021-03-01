@@ -31,32 +31,32 @@
 
     // sync
     req = new XMLHttpRequest;
-    req.open("GET", "resources/basic-auth/basic-auth.php?uid=sync", false, "sync", "123");
+    req.open("GET", "resources/basic-auth/basic-auth.py?uid=sync", false, "sync", "123");
     sendAndLogResponse("sync", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync2"), false, "sync2", "123");
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync2"), false, "sync2", "123");
     sendAndLogResponse("sync2", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync3").replace("http://", "http://sync3:123@"), false);
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync3").replace("http://", "http://sync3:123@"), false);
     sendAndLogResponse("sync3", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync4").replace("http://", "http://incorrect:incorrect@"), false, "sync4", "123");
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync4").replace("http://", "http://incorrect:incorrect@"), false, "sync4", "123");
     sendAndLogResponse("sync4", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync5").replace("http://", "http://sync5:123@"), false, undefined, undefined);
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync5").replace("http://", "http://sync5:123@"), false, undefined, undefined);
     sendAndLogResponse("sync5", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync6").replace("http://", "http://sync6:123@"), false, undefined);
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync6").replace("http://", "http://sync6:123@"), false, undefined);
     sendAndLogResponse("sync6", req);
 
-    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync7").replace("http://", "http://sync7:incorrect@"), false, undefined, "123");
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=sync7").replace("http://", "http://sync7:incorrect@"), false, undefined, "123");
     sendAndLogResponse("sync7", req);
 
     // async
     var asyncStep = 1;
 
     req.onreadystatechange = processStateChange;
-    req.open("GET", "resources/basic-auth/basic-auth.php?uid=async", true, "async", "123");
+    req.open("GET", "resources/basic-auth/basic-auth.py?uid=async", true, "async", "123");
     req.send("");
 
     function processStateChange() {
@@ -67,37 +67,37 @@
             asyncStep = 2;
             log('async: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async2"), true, "async2", "123");
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async2"), true, "async2", "123");
             req.send("");
           } else if (asyncStep == 2) {
             asyncStep = 3;
             log('async2: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async3").replace("http://", "http://async3:123@"), true, "async3", "123");
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async3").replace("http://", "http://async3:123@"), true, "async3", "123");
             req.send("");
           } else if (asyncStep == 3) {
             asyncStep = 4;
             log('async3: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async4").replace("http://", "http://incorrect:incorrect@"), true, "async4", "123");
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async4").replace("http://", "http://incorrect:incorrect@"), true, "async4", "123");
             req.send("");
           } else if (asyncStep == 4) {
             asyncStep = 5;
             log('async4: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async5").replace("http://", "http://async5:123@"), true, undefined, undefined);
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async5").replace("http://", "http://async5:123@"), true, undefined, undefined);
             req.send("");
           } else if (asyncStep == 5) {
             asyncStep = 6;
             log('async5: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async6").replace("http://", "http://async6:123@"), true, undefined);
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async6").replace("http://", "http://async6:123@"), true, undefined);
             req.send("");
           } else if (asyncStep == 6) {
             asyncStep = 7;
             log('async6: ' + req.responseText);
             req.onreadystatechange = processStateChange;
-            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async7").replace("http://", "http://async7:incorrect@"), true, undefined, "123");
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.py?uid=async7").replace("http://", "http://async7:incorrect@"), true, undefined, "123");
             req.send("");
           } else if (asyncStep == 7) {
             log('async7: ' + req.responseText);

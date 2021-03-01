@@ -64,6 +64,25 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::Rtp
     return parameters;
 }
 
+static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCRtpEncodingParameters& parameters)
+{
+    webrtc::RtpEncodingParameters rtcParameters;
+
+    if (parameters.ssrc)
+        rtcParameters.ssrc = parameters.ssrc;
+
+    rtcParameters.active = parameters.active;
+    if (parameters.maxBitrate)
+        rtcParameters.max_bitrate_bps = parameters.maxBitrate;
+    if (parameters.maxFramerate)
+        rtcParameters.max_framerate = parameters.maxFramerate;
+    rtcParameters.rid = parameters.rid.utf8().data();
+    if (parameters.scaleResolutionDownBy)
+        rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
+
+    return rtcParameters;
+}
+
 static inline RTCRtpHeaderExtensionParameters toRTCHeaderExtensionParameters(const webrtc::RtpExtension& rtcParameters)
 {
     RTCRtpHeaderExtensionParameters parameters;
@@ -119,6 +138,10 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
         parameters.headerExtensions.append(toRTCHeaderExtensionParameters(extension));
     for (auto& codec : rtcParameters.codecs)
         parameters.codecs.append(toRTCCodecParameters(codec));
+
+    parameters.rtcp.reducedSize = rtcParameters.rtcp.reduced_size;
+    if (rtcParameters.rtcp.cname.length())
+        parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
     return parameters;
 }
@@ -186,6 +209,11 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
         rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
         break;
     }
+
+    if (parameters.rtcp.reducedSize)
+        rtcParameters.rtcp.reduced_size = *parameters.rtcp.reducedSize;
+    if (!parameters.rtcp.cname.isNull())
+        rtcParameters.rtcp.cname = parameters.rtcp.cname.utf8().data();
 }
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)
@@ -227,6 +255,8 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
     for (auto& stream : init.streams)
         rtcInit.stream_ids.push_back(stream->id().utf8().data());
+    for (auto& encoding : init.sendEncodings)
+        rtcInit.send_encodings.push_back(fromRTCEncodingParameters(encoding));
     return rtcInit;
 }
 

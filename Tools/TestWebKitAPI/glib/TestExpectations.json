@@ -1,4 +1,34 @@
 {
+    "TestAuthentication": {
+        "subtests": {
+            "/webkit/Authentication/authentication-empty-realm": {
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+            },
+            "/webkit/Authentication/authentication-no-credential": {
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+            },
+            "/webkit/Authentication/authentication-success": {
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+            }
+        }
+    },
+    "TestGeolocationManager": {
+        "subtests": {
+            "/webkit/WebKitGeolocationManager/current-position": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/213786"}}
+            },
+            "/webkit/WebKitGeolocationManager/watch-position": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/213786"}}
+            }
+        }
+    },
+    "TestWebKitSettings": {
+        "subtests": {
+            "/webkit/WebKitSettings/javascript-markup": {
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+            }
+        }
+    },
     "TestUIClient": {
         "subtests": {
             "/webkit/WebKitWebView/mouse-target": {
@@ -110,7 +140,7 @@
     "TestWebKitFaviconDatabase": {
         "subtests": {
             "/webkit/WebKitFaviconDatabase/get-favicon": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205381"}}
+                "expected": {"gtk": {"status": ["FAIL", "PASS", "TIMEOUT"], "bug": ["webkit.org/b/205381", "webkit.org/b/220992"]}}
             }
         }
     },
@@ -118,6 +148,9 @@
         "subtests": {
             "/webkit/WebKitWebPage/get-uri": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/206728"}}
+            },
+            "/webkit/WebKitWebView/title": {
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             }
         }
     },

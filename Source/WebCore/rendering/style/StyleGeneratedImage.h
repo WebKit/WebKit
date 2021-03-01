@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,10 +54,10 @@ private:
     void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final { return !m_fixedSize; }
     void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
-    void addClient(RenderElement*) final;
-    void removeClient(RenderElement*) final;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
     RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
-    bool knownToBeOpaque(const RenderElement*) const final;
+    bool knownToBeOpaque(const RenderElement&) const final;
 
     explicit StyleGeneratedImage(Ref<CSSImageGeneratorValue>&&);
     

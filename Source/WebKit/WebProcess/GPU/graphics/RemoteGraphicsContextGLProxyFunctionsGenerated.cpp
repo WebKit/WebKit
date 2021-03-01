@@ -1380,16 +1380,6 @@ GCGLint RemoteGraphicsContextGLProxy::getGraphicsResetStatusARB()
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
-{
-    send(Messages::RemoteGraphicsContextGL::BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter), m_graphicsContextGLIdentifier);
-}
-
-void RemoteGraphicsContextGLProxy::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
-{
-    send(Messages::RemoteGraphicsContextGL::RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height), m_graphicsContextGLIdentifier);
-}
-
 PlatformGLObject RemoteGraphicsContextGLProxy::createVertexArrayOES()
 {
     uint32_t returnValue = { };
@@ -1421,21 +1411,6 @@ String RemoteGraphicsContextGLProxy::getTranslatedShaderSourceANGLE(PlatformGLOb
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::insertEventMarkerEXT(const String& arg0)
-{
-    send(Messages::RemoteGraphicsContextGL::InsertEventMarkerEXT(arg0), m_graphicsContextGLIdentifier);
-}
-
-void RemoteGraphicsContextGLProxy::pushGroupMarkerEXT(const String& arg0)
-{
-    send(Messages::RemoteGraphicsContextGL::PushGroupMarkerEXT(arg0), m_graphicsContextGLIdentifier);
-}
-
-void RemoteGraphicsContextGLProxy::popGroupMarkerEXT()
-{
-    send(Messages::RemoteGraphicsContextGL::PopGroupMarkerEXT(), m_graphicsContextGLIdentifier);
-}
-
 void RemoteGraphicsContextGLProxy::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
 {
     send(Messages::RemoteGraphicsContextGL::DrawBuffersEXT(IPC::ArrayReference<uint32_t>(reinterpret_cast<const uint32_t*>(bufs.data), bufs.bufSize)), m_graphicsContextGLIdentifier);
@@ -1465,179 +1440,24 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
     
 }
 
-void RemoteGraphicsContextGLProxy::readPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* pixels)
+void RemoteGraphicsContextGLProxy::multiDrawArraysANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLsizei drawcount)
 {
-    notImplemented();
+    send(Messages::RemoteGraphicsContextGL::MultiDrawArraysANGLE(mode, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(firsts.data), firsts.bufSize), IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(counts.data), counts.bufSize), drawcount), m_graphicsContextGLIdentifier);
 }
 
-void RemoteGraphicsContextGLProxy::texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat* params)
+void RemoteGraphicsContextGLProxy::multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount)
 {
-    notImplemented();
+    send(Messages::RemoteGraphicsContextGL::MultiDrawArraysInstancedANGLE(mode, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(firsts.data), firsts.bufSize), IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(counts.data), counts.bufSize), IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(instanceCounts.data), instanceCounts.bufSize), drawcount), m_graphicsContextGLIdentifier);
 }
 
-void RemoteGraphicsContextGLProxy::texParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint* params)
+void RemoteGraphicsContextGLProxy::multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount)
 {
-    notImplemented();
+    send(Messages::RemoteGraphicsContextGL::MultiDrawElementsANGLE(mode, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(counts.data), counts.bufSize), type, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(offsets.data), offsets.bufSize), drawcount), m_graphicsContextGLIdentifier);
 }
 
-void RemoteGraphicsContextGLProxy::getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
+void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount)
 {
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint64* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::samplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint* param)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::samplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat* param)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getSamplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getSamplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getFramebufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getProgramInterfaceivRobustANGLE(GCGLuint program, GCGLenum programInterface, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getBooleani_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei* length, GCGLboolean* data) // NOLINT
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getMultisamplefvRobustANGLE(GCGLenum pname, GCGLuint index, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* val)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getTexLevelParameterivRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getTexLevelParameterfvRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getnUniformfvRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getnUniformivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getnUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::texParameterIivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::texParameterIuivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getTexParameterIivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getTexParameterIuivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::samplerParameterIivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint* param)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::samplerParameterIuivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLuint* param)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getSamplerParameterIivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getSamplerParameterIuivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getQueryObjectivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getQueryObjecti64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint64* params)
-{
-    notImplemented();
-}
-
-void RemoteGraphicsContextGLProxy::getQueryObjectui64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint64* params)
-{
-    notImplemented();
+    send(Messages::RemoteGraphicsContextGL::MultiDrawElementsInstancedANGLE(mode, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(counts.data), counts.bufSize), type, IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(offsets.data), offsets.bufSize), IPC::ArrayReference<int32_t>(reinterpret_cast<const int32_t*>(instanceCounts.data), instanceCounts.bufSize), drawcount), m_graphicsContextGLIdentifier);
 }
 
 }

@@ -76,6 +76,8 @@ enum Type : uint8_t {
     Uint32Array,
     Float32Array,
     Float64Array,
+    BigInt64Array,
+    BigUint64Array,
     AnyTypedArray
 };
 
@@ -393,6 +395,8 @@ public:
         case Array::Uint32Array:
         case Array::Float32Array:
         case Array::Float64Array:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             return false;
         case Array::Int32:
         case Array::Double:
@@ -477,6 +481,10 @@ public:
             return Float32ArrayMode;
         case Array::Float64Array:
             return Float64ArrayMode;
+        case Array::BigInt64Array:
+            return BigInt64ArrayMode;
+        case Array::BigUint64Array:
+            return BigUint64ArrayMode;
         case Array::AnyTypedArray:
             return ALL_TYPED_ARRAY_MODES;
         default:
@@ -508,13 +516,6 @@ public:
         return type() == Array::AnyTypedArray || isTypedView(typedArrayType());
     }
 
-    bool isOneOfTypedArrayView() const
-    {
-        if (type() == Array::AnyTypedArray)
-            return false;
-        return isTypedView(typedArrayType());
-    }
-    
     bool operator==(const ArrayMode& other) const
     {
         return type() == other.type()

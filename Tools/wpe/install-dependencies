@@ -106,7 +106,7 @@ function installDependenciesWithApt {
         psmisc \
         pulseaudio-utils \
         python-gi \
-        python-psutil \
+        python3-psutil \
         ruby \
         ruby-highline \
         ruby-json"
@@ -120,6 +120,7 @@ function installDependenciesWithApt {
         git \
         gsettings-desktop-schemas-dev \
         gyp \
+        libegl-mesa0 \
         libegl1-mesa-dev \
         libexpat1-dev \
         libfdk-aac-dev \
@@ -149,7 +150,6 @@ function installDependenciesWithApt {
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
         git-svn \
-        python3-secretstorage \
         subversion"
 
     # These are GStreamer plugins needed to play different media files.
@@ -274,7 +274,6 @@ function installDependenciesWithPacman {
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
-        python-secretstorage \
         svn"
 
     # These are GStreamer plugins needed to play different media files.
@@ -405,7 +404,6 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for using webkit-patch
     packages="$packages
         git-svn \
-        python3-secretstorage \
         subversion"
 
     # These are GStreamer plugins needed to play different media files.

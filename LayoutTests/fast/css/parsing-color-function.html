@@ -1,0 +1,111 @@
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test the parsing of color() function colors.");
+
+    function computedStyle(property, value)
+    {
+        var div = document.createElement("div");
+        document.body.appendChild(div);
+        div.style.setProperty(property, value);
+        var computedValue = getComputedStyle(div).getPropertyValue(property);
+        document.body.removeChild(div);
+        return computedValue;
+    }
+
+    function innerStyle(property, value)
+    {
+        var div = document.createElement("div");
+        div.style.setProperty(property, value);
+        return div.style.getPropertyValue(property);
+    }
+
+    function testComputed(property, value, expected)
+    {
+        shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+    }
+
+    function testInner(property, value, expected)
+    {
+        if (expected === null)
+            expected = "";
+        shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+    }
+
+    for (const color of [ "srgb", "a98-rgb", "rec2020", "prophoto-rgb" ]) {
+        debug('');
+        debug(`Testing color(${color} ...)`);
+        
+        testComputed("background-color", `color(${color} 0% 0% 0%)`, `color(${color} 0 0 0)`);
+        testComputed("background-color", `color(${color} 10% 10% 10%)`, `color(${color} 0.1 0.1 0.1)`);
+        testComputed("background-color", `color(${color} .2 .2 25%)`, `color(${color} 0.2 0.2 0.25)`);
+        testComputed("background-color", `color(${color} 0 0 0 / 1)`, `color(${color} 0 0 0)`);
+        testComputed("background-color", `color(${color} 0% 0 0 / 0.5)`, `color(${color} 0 0 0 / 0.5)`);
+        testComputed("background-color", `color(${color} 20% 0 10/0.5)`, `color(${color} 0.2 0 1 / 0.5)`);
+        testComputed("background-color", `color(${color} 20% 0 10/50%)`, `color(${color} 0.2 0 1 / 0.5)`);
+        testComputed("background-color", `color(${color} 400% 0 10/50%)`, `color(${color} 1 0 1 / 0.5)`);
+        testComputed("background-color", `color(${color} 50% -160 160)`, `color(${color} 0.5 0 1)`);
+        testComputed("background-color", `color(${color} 50% -200 200)`, `color(${color} 0.5 0 1)`);
+        testComputed("background-color", `color(${color} 0 0 0 / -10%)`, `color(${color} 0 0 0 / 0)`);
+        testComputed("background-color", `color(${color} 0 0 0 / 110%)`, `color(${color} 0 0 0)`);
+        testComputed("background-color", `color(${color} 0 0 0 / 300%)`, `color(${color} 0 0 0)`);
+        testComputed("background-color", `color(${color} 50% -200)`, `color(${color} 0.5 0 0)`);
+        testComputed("background-color", `color(${color} 50%)`, `color(${color} 0.5 0 0)`);
+        testComputed("background-color", `color(${color})`, `color(${color} 0 0 0)`);
+        testComputed("background-color", `color(${color} 50% -200 / 0.5)`, `color(${color} 0.5 0 0 / 0.5)`);
+        testComputed("background-color", `color(${color} 50% / 0.5)`, `color(${color} 0.5 0 0 / 0.5)`);
+        testComputed("background-color", `color(${color} / 0.5)`, `color(${color} 0 0 0 / 0.5)`);
+
+        debug('');
+        debug('Test invalid values');
+        testComputed("background-color", `color(${color} 0 0 0 0)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 0deg 0% 0)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 0% 0 0 1)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 0% 0 0 10%)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 0% 0 0deg)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 0% 0% 0deg)`, `rgba(0, 0, 0, 0)`);
+        testComputed("background-color", `color(${color} 40% 0 0deg)`, `rgba(0, 0, 0, 0)`);
+    }
+
+    debug('');
+    debug(`Testing color(xyz ...)`);
+    
+    testComputed("background-color", `color(xyz 0 0 0)`, `color(xyz 0 0 0)`);
+    testComputed("background-color", `color(xyz 0 0 0 / 1)`, `color(xyz 0 0 0)`);
+    testComputed("background-color", `color(xyz 1 1 1)`, `color(xyz 1 1 1)`);
+    testComputed("background-color", `color(xyz 1 1 1 / 1)`, `color(xyz 1 1 1)`);
+    testComputed("background-color", `color(xyz -1 -1 -1)`, `color(xyz -1 -1 -1)`);
+    testComputed("background-color", `color(xyz 0.1 0.1 0.1)`, `color(xyz 0.1 0.1 0.1)`);
+    testComputed("background-color", `color(xyz 10 10 10)`, `color(xyz 10 10 10)`);
+    testComputed("background-color", `color(xyz .2 .2 .25)`, `color(xyz 0.2 0.2 0.25)`);
+    testComputed("background-color", `color(xyz 0 0 0 / 0.5)`, `color(xyz 0 0 0 / 0.5)`);
+    testComputed("background-color", `color(xyz .20 0 10/0.5)`, `color(xyz 0.2 0 10 / 0.5)`);
+    testComputed("background-color", `color(xyz .20 0 10/50%)`, `color(xyz 0.2 0 10 / 0.5)`);
+    testComputed("background-color", `color(xyz 0 0 0 / -10%)`, `color(xyz 0 0 0 / 0)`);
+    testComputed("background-color", `color(xyz 0 0 0 / 110%)`, `color(xyz 0 0 0)`);
+    testComputed("background-color", `color(xyz 0 0 0 / 300%)`, `color(xyz 0 0 0)`);
+    testComputed("background-color", `color(xyz 1 1)`, `color(xyz 1 1 0)`);
+    testComputed("background-color", `color(xyz 1)`, `color(xyz 1 0 0)`);
+    testComputed("background-color", `color(xyz)`, `color(xyz 0 0 0)`);
+    testComputed("background-color", `color(xyz 1 1 / .5)`, `color(xyz 1 1 0 / 0.5)`);
+    testComputed("background-color", `color(xyz 1 / 0.5)`, `color(xyz 1 0 0 / 0.5)`);
+    testComputed("background-color", `color(xyz / 50%)`, `color(xyz 0 0 0 / 0.5)`);
+
+    debug('');
+    debug('Test invalid values');
+    testComputed("background-color", `color(xyz 0 0 0 0)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0deg 0% 0)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0% 0 0)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0% 0 0 1)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0% 0 0 10%)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0% 0 0deg)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 0% 0% 0deg)`, `rgba(0, 0, 0, 0)`);
+    testComputed("background-color", `color(xyz 40% 0 0deg)`, `rgba(0, 0, 0, 0)`);
+
+</script>
+    
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

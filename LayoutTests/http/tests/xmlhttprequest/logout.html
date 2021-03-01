@@ -14,7 +14,7 @@ function login()
 {
     var xhr = new XMLHttpRequest;
     // "?login" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/logout/resource.php?login", false, "user", "pass");
+    xhr.open("GET", "resources/logout/resource.py?login", false, "user", "pass");
     xhr.send("");
 }
 
@@ -31,7 +31,7 @@ function isAuthenticated()
 {
     var xhr = new XMLHttpRequest;
     // "?isAuthenticated" is only here for ease of debugging; it doesn't affect behavior.
-    xhr.open("GET", "resources/logout/resource.php?isAuthenticated", false);
+    xhr.open("GET", "resources/logout/resource.py?isAuthenticated", false);
     xhr.send("");
     return xhr.status == 200;
 }
@@ -41,7 +41,7 @@ document.getElementById("login").innerHTML = isAuthenticated() ? "PASS" : "FAIL"
 
 // Test that a request sent before logout actually has credentials.
 var r = new XMLHttpRequest;
-r.open("GET", "resources/logout/resource.php?isAuthenticated", true);
+r.open("GET", "resources/logout/resource.py?isAuthenticated", true);
 r.onload = function() {
     document.getElementById("async").innerHTML = r.status == 200 ? "PASS" : "FAIL";
 

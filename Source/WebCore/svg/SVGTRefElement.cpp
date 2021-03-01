@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGTRefElement.h"
 
+#include "AddEventListenerOptions.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "MutationEvent.h"

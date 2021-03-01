@@ -482,36 +482,9 @@ ScrollSnapOffsetsInfo<LayoutUnit>& ScrollableArea::ensureSnapOffsetsInfo()
     return *m_snapOffsetsInfo;
 }
 
-const Vector<LayoutUnit>* ScrollableArea::horizontalSnapOffsets() const
+const ScrollSnapOffsetsInfo<LayoutUnit>* ScrollableArea::snapOffsetInfo() const
 {
-    if (!m_snapOffsetsInfo)
-        return nullptr;
-
-    return &m_snapOffsetsInfo->horizontalSnapOffsets;
-}
-
-const Vector<ScrollOffsetRange<LayoutUnit>>* ScrollableArea::horizontalSnapOffsetRanges() const
-{
-    if (!m_snapOffsetsInfo)
-        return nullptr;
-
-    return &m_snapOffsetsInfo->horizontalSnapOffsetRanges;
-}
-
-const Vector<ScrollOffsetRange<LayoutUnit>>* ScrollableArea::verticalSnapOffsetRanges() const
-{
-    if (!m_snapOffsetsInfo)
-        return nullptr;
-
-    return &m_snapOffsetsInfo->verticalSnapOffsetRanges;
-}
-
-const Vector<LayoutUnit>* ScrollableArea::verticalSnapOffsets() const
-{
-    if (!m_snapOffsetsInfo)
-        return nullptr;
-
-    return &m_snapOffsetsInfo->verticalSnapOffsets;
+    return m_snapOffsetsInfo.get();
 }
 
 void ScrollableArea::setHorizontalSnapOffsets(const Vector<LayoutUnit>& horizontalSnapOffsets)
@@ -575,29 +548,23 @@ bool ScrollableArea::usesScrollSnap() const
 
 IntPoint ScrollableArea::nearestActiveSnapPoint(const IntPoint& currentPosition)
 {
-    if (!horizontalSnapOffsets() && !verticalSnapOffsets())
+    if (!m_snapOffsetsInfo)
         return currentPosition;
     
     if (!existingScrollAnimator())
         return currentPosition;
-    
+
     IntPoint correctedPosition = currentPosition;
-    
-    if (horizontalSnapOffsets()) {
-        const auto& horizontal = *horizontalSnapOffsets();
-        
-        size_t activeIndex = currentHorizontalSnapPointIndex();
-        if (activeIndex < horizontal.size())
-            correctedPosition.setX(horizontal[activeIndex].toInt());
-    }
-    
-    if (verticalSnapOffsets()) {
-        const auto& vertical = *verticalSnapOffsets();
-        
-        size_t activeIndex = currentVerticalSnapPointIndex();
-        if (activeIndex < vertical.size())
-            correctedPosition.setY(vertical[activeIndex].toInt());
-    }
+
+    const auto& horizontal = m_snapOffsetsInfo->horizontalSnapOffsets;
+    size_t activeHorizontalIndex = currentHorizontalSnapPointIndex();
+    if (activeHorizontalIndex < horizontal.size())
+        correctedPosition.setX(horizontal[activeHorizontalIndex].toInt());
+
+    const auto& vertical = m_snapOffsetsInfo->verticalSnapOffsets;
+    size_t activeVerticalIndex = currentVerticalSnapPointIndex();
+    if (activeVerticalIndex < vertical.size())
+        correctedPosition.setY(vertical[activeVerticalIndex].toInt());
 
     return correctedPosition;
 }

@@ -700,4 +700,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebsiteDataStore::makeNextNetworkProcessLaunchFailForTesting();
 }
 
+- (BOOL)_networkProcessExists
+{
+    return !!_websiteDataStore->networkProcessIfExists();
+}
+
 @end

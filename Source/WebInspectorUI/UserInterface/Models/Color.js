@@ -638,6 +638,12 @@ WI.Color = class Color
         return "";
     }
 
+    toProtocol()
+    {
+        let [r, g, b, a] = this.rgba;
+        return {r, g, b, a};
+    }
+
     isKeyword()
     {
         if (this.keyword)

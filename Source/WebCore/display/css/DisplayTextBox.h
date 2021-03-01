@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Display {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
+
 class TextBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:

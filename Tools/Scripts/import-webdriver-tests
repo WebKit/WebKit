@@ -29,7 +29,7 @@
 
 import json
 import logging
-import optparse
+import argparse
 import os
 import sys
 
@@ -85,12 +85,13 @@ class Importer(object):
                 host.filesystem.copyfile(source_path, destination_path)
 
 
-option_parser = optparse.OptionParser(usage='usage: %prog [options]')
-option_parser.add_option('--w3c', action='store_true', dest='w3c',
+option_parser = argparse.ArgumentParser(description="Import webdriver tests from Selenium and W3C suites.",
+                                        epilog="Refer to WebDriverTests/README.md for more information.")
+option_parser.add_argument('--w3c', action='store_true', dest='w3c',
                          help='Import W3C tests')
-option_parser.add_option('--selenium', action='store_true', dest='selenium',
+option_parser.add_argument('--selenium', action='store_true', dest='selenium',
                          help='Import Selenium tests')
-options, _ = option_parser.parse_args()
+options = option_parser.parse_args()
 
 # Not giving any option means import all.
 if not options.w3c and not options.selenium:

@@ -287,7 +287,7 @@
     )
 )
 
-(define-once (debugging-support)
+(define-once (internal-debugging-support)
         (allow file-read* file-map-executable
                (subpath "/Developer"))
 
@@ -546,7 +546,9 @@
                   (front-user-home-prefix "/Library/Caches/"))))
 )
 
-(debugging-support)
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support)
+)
 
 (allow file-read*
     required-etc-files
@@ -897,6 +899,10 @@
         (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.AGXCompilerService")))
 
 (media-capture-support)
+
+(allow mach-lookup
+  (global-name "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioComponentRegistrar")
+)
 
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.

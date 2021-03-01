@@ -103,7 +103,7 @@ void PointerLockController::requestPointerUnlockAndForceCursorVisible()
     m_forceCursorVisibleUponUnlock = true;
 }
 
-void PointerLockController::elementRemoved(Element& element)
+void PointerLockController::elementWasRemoved(Element& element)
 {
     if (m_element == &element) {
         m_documentOfRemovedElementWhileWaitingForUnlock = makeWeakPtr(m_element->document());

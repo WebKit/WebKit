@@ -48,7 +48,6 @@
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "RemoteRenderingBackend.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
@@ -176,6 +175,11 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+    // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
+    // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
+    // reply from the GPU process, which would be unsafe.
+    m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }
 
@@ -224,6 +228,11 @@ Logger& GPUConnectionToWebProcess::logger()
 void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
+    terminateWebProcess();
+}
+
+void GPUConnectionToWebProcess::terminateWebProcess()
+{
     gpuProcess().parentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
@@ -286,10 +295,10 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& parameters)
+void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    auto addResult = m_remoteRenderingBackendMap.ensure(parameters.identifier, [&]() {
-        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, WTFMove(parameters)));
+    auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, identifier, WTFMove(resumeDisplayListSemaphore)));
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

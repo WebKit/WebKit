@@ -780,4 +780,63 @@ TEST(WTF_WeakPtr, WeakHashSetComputeSize)
     }
 }
 
+class MultipleInheritanceBase1 : public CanMakeWeakPtr<MultipleInheritanceBase1> {
+public:
+    virtual void meow() = 0;
+
+    int dummy; // Prevent empty base class optimization, to make testing more interesting.
+};
+
+class MultipleInheritanceBase2 : public CanMakeWeakPtr<MultipleInheritanceBase2> {
+public:
+    virtual void woof() = 0;
+
+    int dummy; // Prevent empty base class optimization, to make testing more interesting.
+};
+
+class MultipleInheritanceDerived : public MultipleInheritanceBase1, public MultipleInheritanceBase2 {
+public:
+    bool meowCalled() const
+    {
+        return m_meowCalled;
+    }
+    bool woofCalled() const
+    {
+        return m_woofCalled;
+    }
+
+private:
+    void meow() final
+    {
+        m_meowCalled = true;
+    }
+
+    void woof() final
+    {
+        m_woofCalled = true;
+    }
+
+    bool m_meowCalled { false };
+    bool m_woofCalled { false };
+};
+
+TEST(WTF_WeakPtr, MultipleInheritance)
+{
+    WeakHashSet<MultipleInheritanceBase1> base1Set;
+    WeakHashSet<MultipleInheritanceBase2> base2Set;
+    {
+        MultipleInheritanceDerived derived;
+        base1Set.add(derived);
+        base2Set.add(derived);
+        for (MultipleInheritanceBase1& base1 : base1Set)
+            base1.meow();
+        for (MultipleInheritanceBase2& base2 : base2Set)
+            base2.woof();
+        EXPECT_TRUE(derived.meowCalled());
+        EXPECT_TRUE(derived.woofCalled());
+    }
+    EXPECT_TRUE(base1Set.computesEmpty());
+    EXPECT_TRUE(base2Set.computesEmpty());
+}
+
 } // namespace TestWebKitAPI

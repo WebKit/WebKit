@@ -48,7 +48,7 @@ public:
     float scale() const { return m_scale; }
     bool setScale(float);
 
-    void setResultColorSpace(ColorSpace) override;
+    void setResultColorSpace(DestinationColorSpace) override;
     void transformResultColorSpace(FilterEffect*, const int) override;
 
 private:

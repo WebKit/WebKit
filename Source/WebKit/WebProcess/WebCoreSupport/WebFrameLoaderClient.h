@@ -293,6 +293,11 @@ private:
     bool shouldEnableInAppBrowserPrivacyProtections() const final;
     void notifyPageOfAppBoundBehavior() final;
 #endif
+
+#if ENABLE(PDFKIT_PLUGIN)
+    bool shouldUsePDFPlugin(const String& contentType, StringView path) const final;
+#endif
+
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.

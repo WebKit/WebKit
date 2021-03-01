@@ -73,4 +73,9 @@ JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunct
     RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(globalObject, function, callData, this, arguments)));
 }
 
+JSInternalPromise* JSInternalPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    return jsCast<JSInternalPromise*>(JSPromise::rejectWithCaughtException(globalObject, scope));
+}
+
 } // namespace JSC

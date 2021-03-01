@@ -54,6 +54,7 @@
 #if ENABLE(JIT_CAGE)
 #include <WebKitAdditions/JITCageAdditions.h>
 #include <machine/cpu_capabilities.h>
+#include <wtf/cocoa/Entitlements.h>
 #endif
 
 namespace JSC {
@@ -1127,7 +1128,10 @@ bool OptionReader::Option::operator==(const Option& other) const
 }
 
 #if ENABLE(JIT_CAGE)
-bool canUseJITCage() { return JSC_JIT_CAGE_VERSION(); }
+bool canUseJITCage()
+{
+    return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.securejit");
+}
 #else
 bool canUseJITCage() { return false; }
 #endif

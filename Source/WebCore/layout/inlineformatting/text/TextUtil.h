@@ -55,6 +55,7 @@ public:
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
 
     static bool shouldPreserveSpacesAndTabs(const Box&);
+    static bool shouldPreserveNewline(const Box&);
 
 private:
     static InlineLayoutUnit fixedPitchWidth(const StringView&, const RenderStyle&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);

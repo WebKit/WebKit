@@ -49,6 +49,9 @@ public:
     // need to call this from non-member functions at the moment.
     void fired();
 
+    WEBCORE_EXPORT static bool& shouldSetupPowerObserver();
+    WEBCORE_EXPORT static void restartSharedTimer();
+
 private:
     MainThreadSharedTimer();
 

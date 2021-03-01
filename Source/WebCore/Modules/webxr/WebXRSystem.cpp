@@ -204,9 +204,20 @@ bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(DOMWindow& glo
 // https://immersive-web.github.io/webxr/#inline-session-request-is-allowed
 bool WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(DOMWindow& globalObject, Document& document, const XRSessionInit& init) const
 {
-    // 1. If the session request contained any required features or optional features and the request was not made
+    auto isEmptyOrViewer = [&document](const JSFeaturesArray& features) {
+        if (features.isEmpty())
+            return true;
+        if (features.size() == 1) {
+            auto feature = parseEnumeration<XRReferenceSpaceType>(*document.globalObject(), features.first());
+            if (feature == XRReferenceSpaceType::Viewer)
+                return true;
+        }
+        return false;
+    };
+
+    // 1. If the session request contained any required features or optional features (besides 'viewer') and the request was not made
     //    while the global object has transient activation or when launching a web application, return false.
-    bool sessionRequestContainedAnyFeature = !init.optionalFeatures.isEmpty() || !init.requiredFeatures.isEmpty();
+    bool sessionRequestContainedAnyFeature = !isEmptyOrViewer(init.optionalFeatures) || !isEmptyOrViewer(init.requiredFeatures);
     if (sessionRequestContainedAnyFeature && !globalObject.hasTransientActivation() /* TODO: || !launching a web app */)
         return false;
 

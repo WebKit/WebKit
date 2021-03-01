@@ -35,12 +35,12 @@
 namespace WebCore {
 
 class TelephoneInputType final : public BaseTextInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
+    explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(Type::Telephone, element) { }
 
 private:
     const AtomString& formControlType() const override;
-    bool isTelephoneField() const override;
 };
 
 } // namespace WebCore

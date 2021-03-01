@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class TimeInputType final : public BaseDateAndTimeInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit TimeInputType(HTMLInputElement&);
 
@@ -47,7 +48,6 @@ private:
     StepRange createStepRange(AnyStepHandling) const override;
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
-    bool isTimeField() const override;
     void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,25 +64,28 @@ void MediaMetadata::resetMediaSession()
 
 void MediaMetadata::setTitle(const String& title)
 {
-    if (m_title == title)
+    if (m_metadata.title == title)
         return;
-    m_title = title;
+
+    m_metadata.title = title;
     metadataUpdated();
 }
 
 void MediaMetadata::setArtist(const String& artist)
 {
-    if (m_artist == artist)
+    if (m_metadata.artist == artist)
         return;
-    m_artist = artist;
+
+    m_metadata.artist = artist;
     metadataUpdated();
 }
 
 void MediaMetadata::setAlbum(const String& album)
 {
-    if (m_album == album)
+    if (m_metadata.album == album)
         return;
-    m_album = album;
+
+    m_metadata.album = album;
     metadataUpdated();
 }
 
@@ -97,7 +100,7 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
         resolvedArtwork.uncheckedAppend(MediaImage { resolvedSrc.string(), image.sizes, image.type });
     }
 
-    m_artwork = WTFMove(resolvedArtwork);
+    m_metadata.artwork = WTFMove(resolvedArtwork);
     metadataUpdated();
     return { };
 }

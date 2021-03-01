@@ -36,8 +36,9 @@
 namespace WebCore {
 
 class RadioInputType final : public BaseCheckableInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
+    explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(Type::Radio, element) { }
 
 private:
     const AtomString& formControlType() const final;
@@ -50,7 +51,6 @@ private:
     bool shouldSendChangeEventAfterCheckedChanged() final;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
-    bool isRadioButton() const final;
     bool matchesIndeterminatePseudoClass() const final;
 };
 

@@ -60,13 +60,13 @@ private:
     MediaTime m_presentationTime;
     MediaTime m_decodeTime;
     MediaTime m_duration;
+    ByteRange m_byteRange;
+    uint64_t m_trackID;
     size_t m_sizeInBytes;
     FloatSize m_presentationSize;
-    SampleFlags m_flags;
-    uint64_t m_trackID;
-    Optional<ByteRange> m_byteRange;
     RetainPtr<MTPluginByteSourceRef> m_byteSource;
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+    SampleFlags m_flags;
 };
 
 } // namespace WebKit

@@ -197,7 +197,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    DocumentIdentifier hostingDocumentIdentifier() const final { return document().identifier(); }
+    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
 // DOM API
 // error state
@@ -402,7 +402,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
     void wirelessRoutesAvailableDidChange() override;
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
@@ -660,6 +660,7 @@ private:
     void mediaPlayerEngineUpdated() final;
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
+    void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
@@ -699,8 +700,6 @@ private:
     String mediaPlayerReferrer() const override;
     String mediaPlayerUserAgent() const override;
 
-    void mediaPlayerEnterFullscreen() override;
-    void mediaPlayerExitFullscreen() override;
     bool mediaPlayerIsFullscreen() const override;
     bool mediaPlayerIsFullscreenPermitted() const override;
     bool mediaPlayerIsVideo() const override;

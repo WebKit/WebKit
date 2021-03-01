@@ -342,6 +342,12 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXActiveDescendantChanged:
         stream << "AXActiveDescendantChanged";
         break;
+    case AXObjectCache::AXNotification::AXAriaAttributeChanged:
+        stream << "AXAriaAttributeChanged";
+        break;
+    case AXObjectCache::AXNotification::AXAriaRoleChanged:
+        stream << "AXAriaRoleChanged";
+        break;
     case AXObjectCache::AXNotification::AXAutocorrectionOccured:
         stream << "AXAutocorrectionOccured";
         break;
@@ -351,8 +357,8 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXChildrenChanged:
         stream << "AXChildrenChanged";
         break;
-    case AXObjectCache::AXNotification::AXCurrentChanged:
-        stream << "AXCurrentChanged";
+    case AXObjectCache::AXNotification::AXCurrentStateChanged:
+        stream << "AXCurrentStateChanged";
         break;
     case AXObjectCache::AXNotification::AXDisabledStateChanged:
         stream << "AXDisabledStateChanged";
@@ -438,11 +444,11 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXRequiredStatusChanged:
         stream << "AXRequiredStatusChanged";
         break;
+    case AXObjectCache::AXNotification::AXSortDirectionChanged:
+        stream << "AXSortDirectionChanged";
+        break;
     case AXObjectCache::AXNotification::AXTextChanged:
         stream << "AXTextChanged";
-        break;
-    case AXObjectCache::AXNotification::AXAriaAttributeChanged:
-        stream << "AXAriaAttributeChanged";
         break;
     case AXObjectCache::AXNotification::AXElementBusyChanged:
         stream << "AXElementBusyChanged";

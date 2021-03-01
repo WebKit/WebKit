@@ -111,6 +111,12 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
         m_globalScope = createGlobalScope();
 
+        // When running out of memory, createGlobalScope() may return null because we could not allocate a JSC::VM.
+        if (!m_globalScope) {
+            WTFLogAlways("Error: Failed to create a WorkerOrWorkerGlobalScope.");
+            return;
+        }
+
         scriptController = m_globalScope->script();
 
         if (m_runLoop.terminated()) {

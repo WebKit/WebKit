@@ -114,6 +114,7 @@ WI.ConsoleMessage.MessageSource = {
     WebRTC: "webrtc",
     ITPDebug: "itp-debug",
     PrivateClickMeasurement: "private-click-measurement",
+    PaymentRequest: "payment-request",
     Other: "other",
 
     // COMPATIBILITY (iOS 14.0): `Console.ChannelSource.AdClickAttribution` was renamed to `Console.ChannelSource.PrivateClickMeasurement`.

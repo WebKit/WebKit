@@ -53,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html

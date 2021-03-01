@@ -1289,10 +1289,15 @@ static void runTest(const string& inputLine)
         request->setAllowsAnyHTTPSCertificate();
     frame->loadRequest(request.get());
 
-    while (!done) {
+    while (true) {
 #if USE(CF)
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
 #endif
+        if (done) {
+            // Post WM_QUIT to ensure that all deferred tasks are dispatched before quitting the run loop.
+            PostQuitMessage(0);
+        }
+
         if (!::GetMessage(&msg, 0, 0, 0))
             break;
 

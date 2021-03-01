@@ -50,15 +50,15 @@ function runTest(url, expectSyncSuccess, expectAsyncSuccess, triggerPreflight)
 
 var tests = [
     // No preflight, hence ok
-    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
     true, true, false],
     // Preflight receiving redirection hence failing at preflight step, which should be shown by console log message.
-    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+    ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
     false, false, true],
     // Receiving a 404, no preflight, hence ok
-    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php", true, true, false],
+    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py", true, true, false],
     // Receiving a 404 as preflight response, hence ko at preflight step, which should be shown by console log message.
-    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php", false, false, true],
+    ["http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py", false, false, true],
 ]
 
 var currentTest = 0;

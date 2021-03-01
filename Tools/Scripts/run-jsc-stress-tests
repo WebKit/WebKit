@@ -133,6 +133,7 @@ $buildType = "release"
 $forceCollectContinuously = false
 $reportExecutionTime = false
 $ldd = nil
+$artifact_exec_wrapper = nil
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -153,6 +154,7 @@ def usage
     puts "--force-architecture        Override the architecture to run tests with."
     puts "                            e.g. x86, x86_64, arm."
     puts "--ldd                       Use alternate ldd"
+    puts "--artifact-exec-wrapper     Wrapper for executing a build artifact"
     puts "--os                        Specify os instead of determining from JavaScriptCore build."
     puts "                            e.g. darwin, linux & windows."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
@@ -195,6 +197,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--arch', GetoptLong::REQUIRED_ARGUMENT],
                ['--force-architecture', GetoptLong::REQUIRED_ARGUMENT],
                ['--ldd', GetoptLong::REQUIRED_ARGUMENT],
+               ['--artifact-exec-wrapper', GetoptLong::REQUIRED_ARGUMENT],
                ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
@@ -270,6 +273,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $forceArchitecture = arg
     when '--ldd'
         $ldd = arg
+    when '--artifact-exec-wrapper'
+        $artifact_exec_wrapper = arg
     when '--os'
         $hostOS = arg
     when '--model'
@@ -582,11 +587,14 @@ def pathToVM
 end
 
 def vmCommand
-    if ($forceArchitecture)
-        ["/usr/bin/arch", "-" + $forceArchitecture,  pathToVM.to_s]
-    else
-        [pathToVM.to_s]
+    cmd = [pathToVM.to_s]
+    if not $artifact_exec_wrapper.nil?
+        cmd.unshift($artifact_exec_wrapper)
     end
+    if ($forceArchitecture)
+        cmd = ["/usr/bin/arch", "-" + $forceArchitecture] + cmd
+    end
+    return cmd
 end
 
 def pathToHelpers
@@ -758,7 +766,7 @@ def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
     end
 
     options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
-    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s, fileTemplate.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, fileTemplate.to_s, *vmCommand, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
 end
 
 def runBytecodeCache(*optionalTestSpecificOptions)
@@ -1003,7 +1011,7 @@ def runProfiler
 
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, *vmCommand, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
     else
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "--useConcurrentJIT=false", "-p", profilerOutput.to_s)
@@ -1216,7 +1224,7 @@ def runHarnessTest(kind, *options)
     wasmFiles.each {
         | file |
         basename = file.basename.to_s
-        addRunCommand("(" + basename + ")-" + kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("(" + basename + ")-" + kind, vmCommand + $testSpecificRequiredOptions + options + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
     }
 end
 
@@ -1289,7 +1297,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
 end
 
 def runWebAssemblySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness")
+    runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyReferences=false")
 end
 
 def runWebAssemblyReferenceSpecTest(mode)

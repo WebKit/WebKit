@@ -38,15 +38,14 @@ PASS changeEventsFired is 11
 PASS inputEventsFired is 11
 
 Advance field keys
-PASS input.value is "2020-06-02T16:27"
 PASS input.value is "2020-06-03T16:27"
 PASS input.value is "2020-06-04T16:27"
 PASS input.value is "2020-06-05T16:27"
 PASS input.value is "2020-06-06T16:27"
 PASS input.value is "2020-06-07T16:27"
 PASS input.value is "2020-06-08T16:27"
-PASS changeEventsFired is 7
-PASS inputEventsFired is 7
+PASS changeEventsFired is 6
+PASS inputEventsFired is 6
 
 Up/Down arrow keys
 PASS input.value is "2020-01-20T23:59"

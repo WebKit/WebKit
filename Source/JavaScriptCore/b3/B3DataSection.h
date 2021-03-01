@@ -27,7 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3OpaqueByproduct.h"
+#include "JITOpaqueByproduct.h"
 
 namespace JSC { namespace B3 {
 

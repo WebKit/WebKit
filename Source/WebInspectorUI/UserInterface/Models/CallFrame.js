@@ -25,7 +25,7 @@
 
 WI.CallFrame = class CallFrame
 {
-    constructor(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted)
+    constructor(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted, blackboxed)
     {
         console.assert(target instanceof WI.Target);
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WI.SourceCodeLocation);
@@ -47,6 +47,7 @@ WI.CallFrame = class CallFrame
         this._nativeCode = nativeCode || false;
         this._programCode = programCode || false;
         this._isTailDeleted = isTailDeleted || false;
+        this._blackboxed = blackboxed || false;
     }
 
     // Public
@@ -60,6 +61,7 @@ WI.CallFrame = class CallFrame
     get thisObject() { return this._thisObject; }
     get scopeChain() { return this._scopeChain; }
     get isTailDeleted() { return this._isTailDeleted; }
+    get blackboxed() { return this._blackboxed; }
     get isConsoleEvaluation() { return this._isConsoleEvaluation; }
 
     saveIdentityToCookie()
@@ -209,7 +211,8 @@ WI.CallFrame = class CallFrame
         let nativeCode = false;
         let programCode = WI.CallFrame.programCodeFromPayload(payload);
         let isTailDeleted = payload.isTailDeleted;
-        return new WI.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
+        let blackboxed = sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.sourceCode);
+        return new WI.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted, blackboxed);
     }
 
     static fromPayload(target, payload)
@@ -253,6 +256,7 @@ WI.CallFrame = class CallFrame
         const thisObject = null;
         const scopeChain = null;
         const isTailDeleted = false;
-        return new WI.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
+        let blackboxed = sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.sourceCode);
+        return new WI.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted, blackboxed);
     }
 };

@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass)
+void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, InvalidationScope invalidationScope)
 {
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
@@ -54,8 +54,24 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
     if (auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(pseudoClass)) {
-        for (auto& invalidationRuleSet : *invalidationRuleSets)
+        for (auto& invalidationRuleSet : *invalidationRuleSets) {
+            // For focus/hover we flip the whole ancestor chain. We only need to do deep invalidation traversal in the change root.
+            auto shouldInvalidate = [&] {
+                switch (invalidationScope) {
+                case InvalidationScope::All:
+                    return true;
+                case InvalidationScope::SelfChildrenAndSiblings:
+                    return invalidationRuleSet.matchElement != MatchElement::Ancestor;
+                case InvalidationScope::Descendants:
+                    return invalidationRuleSet.matchElement == MatchElement::Ancestor;
+                }
+                ASSERT_NOT_REACHED();
+                return true;
+            }();
+            if (!shouldInvalidate)
+                continue;
             Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
+        }
     }
 }
 

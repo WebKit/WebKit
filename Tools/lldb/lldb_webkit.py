@@ -467,12 +467,22 @@ class WebCoreColorProvider:
     def _to_string_extended(self):
         extended_color = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('extendedColor').Dereference()
         profile = extended_color.GetChildMemberWithName('m_colorSpace').GetValue()
-        if profile == 'SRGB':
-            profile = 'srgb'
-        elif profile == 'LinearRGB':
-            profile = 'linear-rgb'
+        if profile == 'A98RGB':
+            profile = 'a98-rgb'
         elif profile == 'DisplayP3':
             profile = 'display-p3'
+        elif profile == 'Lab':
+            profile = 'lab'
+        elif profile == 'LinearSRGB':
+            profile = 'linear-srgb'
+        elif profile == 'ProPhotoRGB':
+            profile = 'prophoto-rgb'
+        elif profile == 'Rec2020':
+            profile = 'rec2020'
+        elif profile == 'SRGB':
+            profile = 'srgb'
+        elif profile == 'XYZ_D50':
+            profile = 'xyz-d50'
         else:
             profile = 'unknown'
 

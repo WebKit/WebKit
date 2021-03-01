@@ -193,7 +193,8 @@ public:
     Node* modalNode();
 
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
-    void recomputeIsIgnored(RenderObject* renderer);
+    void recomputeIsIgnored(RenderObject*);
+    void recomputeIsIgnored(Node*);
 
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
@@ -272,10 +273,12 @@ public:
 
     enum AXNotification {
         AXActiveDescendantChanged,
+        AXAriaAttributeChanged,
+        AXAriaRoleChanged,
         AXAutocorrectionOccured,
         AXCheckedStateChanged,
         AXChildrenChanged,
-        AXCurrentChanged,
+        AXCurrentStateChanged,
         AXDisabledStateChanged,
         AXFocusedUIElementChanged,
         AXFrameLoadComplete,
@@ -304,8 +307,8 @@ public:
         AXPressedStateChanged,
         AXReadOnlyStatusChanged,
         AXRequiredStatusChanged,
+        AXSortDirectionChanged,
         AXTextChanged,
-        AXAriaAttributeChanged,
         AXElementBusyChanged,
         AXDraggingStarted,
         AXDraggingEnded,
@@ -380,6 +383,7 @@ private:
 #endif
 
 protected:
+    static String notificationPlatformName(AXNotification);
     void postPlatformNotification(AXCoreObject*, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 

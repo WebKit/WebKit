@@ -94,9 +94,6 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
 #endif
-#if ENABLE(SERVICE_CONTROLS)
-    virtual String imageControlsStyleSheet() const { return String(); }
-#endif
 #if ENABLE(DATALIST_ELEMENT)
     String dataListStyleSheet() const;
 #endif
@@ -247,11 +244,6 @@ public:
 
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual void paintFileUploadIconDecorations(const RenderObject& /*inputRenderer*/, const RenderObject& /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { }
-
-#if ENABLE(SERVICE_CONTROLS)
-    virtual IntSize imageControlsButtonSize(const RenderObject&) const { return IntSize(); }
-    virtual IntSize imageControlsButtonPositionOffset() const { return IntSize(); }
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
@@ -405,10 +397,6 @@ protected:
     virtual bool paintMediaTimeRemaining(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaFullScreenVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaFullScreenVolumeSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-
-#if ENABLE(SERVICE_CONTROLS)
-    virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-#endif
 
 public:
     void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;

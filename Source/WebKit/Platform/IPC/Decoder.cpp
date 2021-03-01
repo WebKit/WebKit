@@ -64,14 +64,20 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDealloca
         return;
     }
 
-    if (!decode(m_messageFlags))
+    if (!decode(m_messageFlags)) {
+        markInvalid();
         return;
+    }
 
-    if (!decode(m_messageName))
+    if (!decode(m_messageName)) {
+        markInvalid();
         return;
+    }
 
-    if (!decode(m_destinationID))
+    if (!decode(m_destinationID)) {
+        markInvalid();
         return;
+    }
 }
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeaderTag)

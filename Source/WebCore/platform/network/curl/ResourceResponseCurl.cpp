@@ -95,8 +95,6 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
         setHTTPVersion("HTTP/1.1");
         break;
     case CURL_HTTP_VERSION_2_0:
-    case CURL_HTTP_VERSION_2TLS:
-    case CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE:
         setHTTPVersion("HTTP/2");
         break;
     case CURL_HTTP_VERSION_NONE:

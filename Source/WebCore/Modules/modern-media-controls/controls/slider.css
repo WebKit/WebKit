@@ -47,32 +47,46 @@
 .slider > .custom-slider > .fill {
     top: 0;
     height: 100%;
-    border-radius: 4.5px;
     mix-blend-mode: plus-lighter;
 }
 
-.slider > .custom-slider > .track {
+.slider > .custom-slider > .fill.primary {
     left: 0;
-    width: 100%;
+    background-color: rgba(255, 255, 255, 0.45);
+    border-top-left-radius: 4.5px;
+    border-bottom-left-radius: 4.5px;
+}
+
+.slider > .custom-slider > .fill.track {
+    right: 0;
     background-color: rgba(255, 255, 255, 0.1);
+    border-top-right-radius: 4.5px;
+    border-bottom-right-radius: 4.5px;
 }
 
-.slider > .custom-slider > .primary {
-    left: 0;
-    background-color: rgba(255, 255, 255, 0.35);
-}
-
-.slider > .custom-slider > .secondary {
+.slider > .custom-slider > .fill.secondary {
     background-color: rgba(255, 255, 255, 0.08);
+    border-top-right-radius: 4.5px;
+    border-bottom-right-radius: 4.5px;
 }
 
 .slider > .custom-slider > .knob {
+    background-color: white;
+    transform: translateX(-50%);
+}
+
+.slider > .custom-slider > .knob.circle {
     top: -2px;
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background-color: white;
-    transform: translateX(-50%);
+}
+
+.slider > .custom-slider > .knob.bar {
+    top: -6px;
+    width: 4px;
+    height: 17px;
+    border-radius: 4px;
 }
 
 .slider > input {

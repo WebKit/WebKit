@@ -2,7 +2,7 @@ var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
 /* A range and default value for a single variation axis of a font. */
-localizedStrings[" (Range: %d-%d, Default: %d) @ Font Details Sidebar"] = " (Range: %d-%d, Default: %d)";
+localizedStrings[" (Range: %s-%s, Default: %s) @ Font Details Sidebar"] = " (Range: %s-%s, Default: %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["%.0f B"] = "%.0f B";
@@ -50,7 +50,6 @@ localizedStrings["%d redirect"] = "%d redirect";
 localizedStrings["%d redirects"] = "%d redirects";
 localizedStrings["%d resource"] = "%d resource";
 localizedStrings["%d resources"] = "%d resources";
-localizedStrings["%d%%"] = "%d%%";
 localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
@@ -76,6 +75,8 @@ localizedStrings["%s interval"] = "%s interval";
 localizedStrings["%s requests do not have a body"] = "%s requests do not have a body";
 localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
+/* A single value expressed as a percentage where the value has already been converted from a number to a string. */
+localizedStrings["%s%% @ Font Details Sidebar"] = "%s%%";
 localizedStrings["%s:"] = "%s:";
 localizedStrings["(%s)"] = "(%s)";
 localizedStrings["(Action %s)"] = "(Action %s)";
@@ -152,6 +153,8 @@ localizedStrings["All items in \u0022%s\u0022 must be error objects"] = "All ite
 localizedStrings["All items in \u0022%s\u0022 must be non-empty strings"] = "All items in \u0022%s\u0022 must be non-empty strings";
 localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All items in \u0022%s\u0022 must be valid DOM nodes";
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
+/* Property title for `font-variant-alternates`. */
+localizedStrings["Alternate Glyphs @ Font Details Sidebar Property"] = "Alternate Glyphs";
 localizedStrings["An error occurred trying to load the resource."] = "An error occurred trying to load the resource.";
 localizedStrings["An error occurred trying to read the \u201C%s\u201D table."] = "An error occurred trying to read the \u201C%s\u201D table.";
 localizedStrings["An unexpected error %s occurred."] = "An unexpected error %s occurred.";
@@ -216,6 +219,8 @@ localizedStrings["Binding"] = "Binding";
 localizedStrings["Blackbox"] = "Blackbox";
 localizedStrings["Blackbox Script"] = "Blackbox Script";
 localizedStrings["Blackbox script to ignore it when debugging"] = "Blackbox script to ignore it when debugging";
+/* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["Blackboxed @ Debugger Call Stack"] = "Blackboxed";
 localizedStrings["Block Variables"] = "Block Variables";
 /* Input label for the blur radius of a CSS box shadow */
 localizedStrings["Blur @ Box Shadow Editor"] = "Blur";
@@ -321,6 +326,8 @@ localizedStrings["Closure Variables"] = "Closure Variables";
 localizedStrings["Closure Variables (%s)"] = "Closure Variables (%s)";
 localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
+/* Setting to collapse blackboxed call frames in the debugger. */
+localizedStrings["Collapse blackboxed call frames @ Experimental Settings"] = "Collapse blackboxed call frames";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
 localizedStrings["Comment"] = "Comment";
@@ -417,6 +424,8 @@ localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Stat
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
 localizedStrings["Debugging:"] = "Debugging:";
+/* Category label for experimental settings related to debugging. */
+localizedStrings["Debugging: @ Experimental Settings"] = "Debugging:";
 localizedStrings["Debugs"] = "Debugs";
 localizedStrings["Decoded"] = "Decoded";
 localizedStrings["Default"] = "Default";
@@ -735,8 +744,6 @@ localizedStrings["High @ Timeline Energy Impact"] = "High";
 localizedStrings["Highest: %s"] = "Highest: %s";
 /* Property value for `font-variant-ligatures: historical-ligatures`. */
 localizedStrings["Historical @ Font Details Sidebar Property Value"] = "Historical";
-/* Property title for `font-variant-alternates`. */
-localizedStrings["Historical Figures @ Font Details Sidebar Property"] = "Historical Figures";
 /* Property value for `font-variant-alternates: historical-forms`. */
 localizedStrings["Historical Forms @ Font Details Sidebar Property Value"] = "Historical Forms";
 localizedStrings["Host"] = "Host";
@@ -821,6 +828,8 @@ localizedStrings["Layers"] = "Layers";
 /* Name of Layers Tab */
 localizedStrings["Layers Tab Name"] = "Layers";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
+/* Title of the CSS style panel. */
+localizedStrings["Layout @ Styles Sidebar"] = "Layout";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";
 localizedStrings["Layout Invalidated"] = "Layout Invalidated";
@@ -1292,6 +1301,7 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
+localizedStrings["Show Layout panel"] = "Show Layout panel";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
@@ -1685,6 +1695,10 @@ localizedStrings["\u0022%s\u0022 must be an %s"] = "\u0022%s\u0022 must be an %s
 localizedStrings["\u0022%s\u0022 threw an error"] = "\u0022%s\u0022 threw an error";
 localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
+/* Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["call frame @ Debugger Call Stack"] = "%d call frame";
+/* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
+localizedStrings["call frames @ Debugger Call Stack"] = "%d call frames";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
 localizedStrings["default prevented"] = "default prevented";

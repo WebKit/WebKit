@@ -38,7 +38,7 @@ class ImageBuffer : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer::baseTransform;
 
 public:
-    static auto create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+    static auto create(const FloatSize& size, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
     {
         return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
     }

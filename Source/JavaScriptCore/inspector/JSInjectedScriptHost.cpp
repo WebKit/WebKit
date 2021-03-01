@@ -228,7 +228,9 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
             || object->inherits<JSUint16Array>(vm)
             || object->inherits<JSUint32Array>(vm)
             || object->inherits<JSFloat32Array>(vm)
-            || object->inherits<JSFloat64Array>(vm))
+            || object->inherits<JSFloat64Array>(vm)
+            || object->inherits<JSBigInt64Array>(vm)
+            || object->inherits<JSBigUint64Array>(vm))
             return jsNontrivialString(vm, "array"_s);
     }
 
@@ -468,7 +470,7 @@ JSValue JSInjectedScriptHost::weakMapEntries(JSGlobalObject* globalObject, CallF
         return jsUndefined();
 
     MarkedArgumentBuffer buffer;
-    auto fetchCount = callFrame->argument(1).toInteger(globalObject);
+    auto fetchCount = callFrame->argument(1).toIntegerOrInfinity(globalObject);
     weakMap->takeSnapshot(buffer, fetchCount >= 0 ? static_cast<unsigned>(fetchCount) : 0);
     ASSERT(!buffer.hasOverflowed());
 
@@ -512,7 +514,7 @@ JSValue JSInjectedScriptHost::weakSetEntries(JSGlobalObject* globalObject, CallF
         return jsUndefined();
 
     MarkedArgumentBuffer buffer;
-    auto fetchCount = callFrame->argument(1).toInteger(globalObject);
+    auto fetchCount = callFrame->argument(1).toIntegerOrInfinity(globalObject);
     weakSet->takeSnapshot(buffer, fetchCount >= 0 ? static_cast<unsigned>(fetchCount) : 0);
     ASSERT(!buffer.hasOverflowed());
 
@@ -590,7 +592,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(JSGlobalObject* globalObject, Call
 
     unsigned numberToFetch = 5;
     JSValue numberToFetchArg = callFrame->argument(1);
-    double fetchDouble = numberToFetchArg.toInteger(globalObject);
+    double fetchDouble = numberToFetchArg.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (fetchDouble >= 0)
         numberToFetch = static_cast<unsigned>(fetchDouble);

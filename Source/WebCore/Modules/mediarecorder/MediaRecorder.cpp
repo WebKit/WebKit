@@ -311,33 +311,38 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
     });
 }
 
-void MediaRecorder::stopRecordingInternal()
+void MediaRecorder::stopRecordingInternal(CompletionHandler<void()>&& completionHandler)
 {
-    if (state() != RecordingState::Recording)
+    if (state() != RecordingState::Recording) {
+        completionHandler();
         return;
+    }
 
     for (auto& track : m_tracks)
         track->removeObserver(*this);
 
     m_state = RecordingState::Inactive;
-    m_private->stop();
+    m_private->stop(WTFMove(completionHandler));
 }
 
 void MediaRecorder::handleTrackChange()
 {
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-        if (!m_isActive || state() == RecordingState::Inactive)
-            return;
-        stopRecordingInternal();
-        dispatchError(Exception { InvalidModificationError, "Track cannot be added to or removed from the MediaStream while recording"_s });
-        if (!m_isActive)
-            return;
+        stopRecordingInternal([this, pendingActivity = makePendingActivity(*this)] {
+            queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+                if (!m_isActive)
+                    return;
+                dispatchError(Exception { InvalidModificationError, "Track cannot be added to or removed from the MediaStream while recording"_s });
 
-        dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), { }, { }, 0));
+                if (!m_isActive)
+                    return;
+                dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), { }, { }, 0));
 
-        if (!m_isActive)
-            return;
-        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                if (!m_isActive)
+                    return;
+                dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            });
+        });
     });
 }
 
@@ -357,14 +362,17 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
         return;
 
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-        if (!m_isActive || state() == RecordingState::Inactive)
-            return;
+        stopRecordingInternal([this, pendingActivity = makePendingActivity(*this)] {
+            queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+                if (!m_isActive)
+                    return;
+                dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), { }, { }, 0));
 
-        stopRecordingInternal();
-        dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), { }, { }, 0));
-        if (!m_isActive)
-            return;
-        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                if (!m_isActive)
+                    return;
+                dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            });
+        });
     });
 }
 

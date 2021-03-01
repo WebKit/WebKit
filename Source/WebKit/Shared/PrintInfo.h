@@ -71,7 +71,7 @@ struct PrintInfo {
 #if PLATFORM(GTK)
     GRefPtr<GtkPrintSettings> printSettings;
     GRefPtr<GtkPageSetup> pageSetup;
-    PrintMode printMode;
+    PrintMode printMode { PrintModeAsync };
 #endif
 
     void encode(IPC::Encoder&) const;

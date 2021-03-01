@@ -81,6 +81,10 @@ OBJC_CLASS WebPlaybackControlsManager;
 OBJC_CLASS WKPDFHUDView;
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsBefore.h>
+#endif
+
 namespace API {
 class HitTestResult;
 class Object;
@@ -89,6 +93,10 @@ class PageConfiguration;
 
 namespace WebCore {
 struct ShareDataWithParsedURL;
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
 }
 
 @protocol WebViewImplDelegate
@@ -486,7 +494,7 @@ public:
 
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
-    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName);
+    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
     void provideDataForPasteboard(NSPasteboard *, NSString *type);
     NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
@@ -574,6 +582,10 @@ public:
 
     void forceRequestCandidatesForTesting();
     bool shouldRequestCandidates() const;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+#endif
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 
@@ -831,6 +843,10 @@ private:
     RetainPtr<NSMenu> m_domPasteMenu;
     RetainPtr<WKDOMPasteMenuDelegate> m_domPasteMenuDelegate;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> m_domPasteRequestHandler;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsAfter.h>
+#endif
 };
     
 } // namespace WebKit

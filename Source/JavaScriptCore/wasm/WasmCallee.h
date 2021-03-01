@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
+#include "JITCompilation.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
@@ -42,7 +42,9 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 class OMGForOSREntryCallee;
+#endif
 
 class Callee : public ThreadSafeRefCounted<Callee> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,10 +59,12 @@ public:
     virtual RegisterAtOffsetList* calleeSaveRegisters() = 0;
     virtual std::tuple<void*, void*> range() const = 0;
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
     virtual void setOSREntryCallee(Ref<OMGForOSREntryCallee>&&)
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
+#endif
 
     void dump(PrintStream&) const;
 
@@ -95,6 +99,7 @@ private:
     Wasm::Entrypoint m_entrypoint;
 };
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 class OMGCallee final : public JITCallee {
 public:
     static Ref<OMGCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
@@ -130,6 +135,7 @@ private:
     unsigned m_osrEntryScratchBufferSize;
     uint32_t m_loopIndex;
 };
+#endif
 
 class EmbedderEntrypointCallee final : public JITCallee {
 public:
@@ -145,6 +151,7 @@ private:
     }
 };
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 class BBQCallee final : public JITCallee {
 public:
     static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
@@ -181,6 +188,7 @@ private:
     std::unique_ptr<TierUpCount> m_tierUpCount;
     bool m_didStartCompilingOSREntryCallee { false };
 };
+#endif
 
 class LLIntCallee final : public Callee {
     friend LLIntOffsetsExtractor;
@@ -196,6 +204,7 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() final;
     JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
     JITCallee* replacement() { return m_replacement.get(); }
     void setReplacement(Ref<JITCallee>&& replacement)
     {
@@ -209,6 +218,7 @@ public:
     }
 
     LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
+#endif
 
 private:
     LLIntCallee(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
@@ -218,8 +228,10 @@ private:
         RELEASE_ASSERT(m_codeBlock);
     }
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
     RefPtr<JITCallee> m_replacement;
     RefPtr<OMGForOSREntryCallee> m_osrEntryCallee;
+#endif
     std::unique_ptr<FunctionCodeBlock> m_codeBlock;
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
 };

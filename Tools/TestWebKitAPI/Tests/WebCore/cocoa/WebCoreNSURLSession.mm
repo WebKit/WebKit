@@ -126,7 +126,7 @@ public:
         delegate = [[TestNSURLSessionDataDelegate alloc] init];
         frame = [view _mainCoreFrame];
         mediaElement = HTMLVideoElement::create(*frame->document());
-        loader = adoptRef(new MediaResourceLoader(*frame->document(), *mediaElement.get(), emptyString()));
+        loader = adoptRef(new MediaResourceLoader(*frame->document(), *mediaElement.get(), emptyString(), FetchOptions::Destination::Video));
     }
 
     virtual void TearDown()

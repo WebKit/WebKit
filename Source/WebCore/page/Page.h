@@ -29,7 +29,9 @@
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
 #include "LengthBox.h"
+#include "LoadSchedulingMode.h"
 #include "MediaProducer.h"
+#include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include "RTCController.h"
@@ -609,6 +611,7 @@ public:
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
 
+    WEBCORE_EXPORT Color themeColor() const;
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
 
     bool isCountingRelevantRepaintedObjects() const;
@@ -694,6 +697,7 @@ public:
     WEBCORE_EXPORT void setMuted(MediaProducer::MutedStateFlags);
     WEBCORE_EXPORT void stopMediaCapture();
 
+    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();
     WEBCORE_EXPORT bool mediaPlaybackIsPaused();
     WEBCORE_EXPORT void pauseAllMediaPlayback();
@@ -828,8 +832,11 @@ public:
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
-    bool textInteractionEnabled() { return m_textInteractionEnabled; }
+    bool textInteractionEnabled() const { return m_textInteractionEnabled; }
     void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
+
+    LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
+    void setLoadSchedulingMode(LoadSchedulingMode);
 
 private:
     struct Navigation {
@@ -870,6 +877,7 @@ private:
     void renderingUpdateCompleted();
     void computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
     void scheduleRenderingUpdateInternal();
+    void prioritizeVisibleResources();
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
 
@@ -1132,11 +1140,13 @@ private:
     bool m_loadsFromNetwork { true };
     bool m_canUseCredentialStorage { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
+    LoadSchedulingMode m_loadSchedulingMode { LoadSchedulingMode::Direct };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
     
     bool m_textInteractionEnabled { true };
+    mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 };
 
 inline PageGroup& Page::group()

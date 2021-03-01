@@ -1,0 +1,9 @@
+This test checks that by default, using the mouse to focus a generic element does not show a focus ring (because it does not trigger :focus-visible matching).
+
+Your user-agent does not support :focus-visible pseudo-class, please SKIP this test.
+
+Click me.
+
+FAIL ":focus-visible" should be a valid selector The string did not match the expected pattern.
+FAIL Mouse focus does not show a focus ring by default assert_equals: outline-style for DIV#target should be none expected "none" but got "auto"
+

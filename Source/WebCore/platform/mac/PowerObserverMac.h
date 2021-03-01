@@ -37,8 +37,8 @@ class PowerObserver {
     WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    PowerObserver(WTF::Function<void()>&& powerOnHander);
-    ~PowerObserver();
+    WEBCORE_EXPORT PowerObserver(WTF::Function<void()>&& powerOnHander);
+    WEBCORE_EXPORT ~PowerObserver();
 
 private:
     void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);

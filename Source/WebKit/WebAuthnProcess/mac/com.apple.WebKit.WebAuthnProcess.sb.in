@@ -212,8 +212,6 @@
     (subpath "/Library/Speech/Synthesizers")
     (regex #"^/private/etc/(hosts|group|passwd)$")
 
-    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
-
     ;; System and user preferences
     (home-literal "/.CFUserTextEncoding")
 
@@ -357,7 +355,11 @@
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
 
-(allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(with-filter (uid 0)
+    (allow file-write*
+        (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+)
 
 (allow file-read*
        (subpath "/private/var/db/mds")

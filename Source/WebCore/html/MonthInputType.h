@@ -37,9 +37,10 @@
 namespace WebCore {
 
 class MonthInputType final : public BaseDateAndTimeInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit MonthInputType(HTMLInputElement& element)
-        : BaseDateAndTimeInputType(element)
+        : BaseDateAndTimeInputType(Type::Month, element)
     {
     }
 
@@ -53,7 +54,6 @@ private:
     StepRange createStepRange(AnyStepHandling) const override;
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
-    bool isMonthField() const override;
     void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;

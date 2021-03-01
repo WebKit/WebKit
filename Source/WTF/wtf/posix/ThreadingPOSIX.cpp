@@ -180,8 +180,14 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 
 void Thread::initializePlatformThreading()
 {
-    if (!g_wtfConfig.isUserSpecifiedThreadSuspendResumeSignalConfigured)
+    if (!g_wtfConfig.isUserSpecifiedThreadSuspendResumeSignalConfigured) {
         g_wtfConfig.sigThreadSuspendResume = SIGUSR1;
+        if (const char* string = getenv("JSC_SIGNAL_FOR_GC")) {
+            int32_t value = 0;
+            if (sscanf(string, "%d", &value) == 1)
+                g_wtfConfig.sigThreadSuspendResume = value;
+        }
+    }
     g_wtfConfig.isThreadSuspendResumeSignalConfigured = true;
 
 #if !OS(DARWIN)

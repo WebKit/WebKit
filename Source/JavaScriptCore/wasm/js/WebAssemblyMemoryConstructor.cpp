@@ -117,16 +117,16 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     }
 
     Wasm::MemorySharingMode sharingMode = Wasm::MemorySharingMode::Default;
-    JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    bool shared = sharedValue.toBoolean(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (shared) {
-        if (!maximumPageCount)
-            return throwVMTypeError(globalObject, throwScope, "'maximum' page count must be defined if 'shared' is true"_s);
-        if (!Options::useSharedArrayBuffer())
-            return throwVMTypeError(globalObject, throwScope, "Shared WebAssembly.Memory and SharedArrayBuffer are not enabled"_s);
-        sharingMode = Wasm::MemorySharingMode::Shared;
+    if (Options::useSharedArrayBuffer()) {
+        JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"));
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        bool shared = sharedValue.toBoolean(globalObject);
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        if (shared) {
+            if (!maximumPageCount)
+                return throwVMTypeError(globalObject, throwScope, "'maximum' page count must be defined if 'shared' is true"_s);
+            sharingMode = Wasm::MemorySharingMode::Shared;
+        }
     }
 
     auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, webAssemblyMemoryStructure);

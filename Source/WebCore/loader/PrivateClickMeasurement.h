@@ -41,6 +41,8 @@ class PrivateClickMeasurement {
 public:
     using PriorityValue = uint32_t;
 
+    enum class PcmDataCarried : bool { NonPersonallyIdentifiable, PersonallyIdentifiable };
+
     struct SourceID {
         static constexpr uint32_t MaxEntropy = 255;
 

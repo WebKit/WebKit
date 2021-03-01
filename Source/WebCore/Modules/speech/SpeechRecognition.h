@@ -41,6 +41,9 @@ class SpeechRecognition : public SpeechRecognitionConnectionClient, public Activ
 public:
     static Ref<SpeechRecognition> create(Document&);
 
+    using SpeechRecognitionConnectionClient::weakPtrFactory;
+    using WeakValueType = SpeechRecognitionConnectionClient::WeakValueType;
+
     const String& lang() const { return m_lang; }
     void setLang(String&& lang) { m_lang = WTFMove(lang); }
 
@@ -85,8 +88,9 @@ private:
     void didEnd() final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const;
-    void suspend(ReasonForSuspension);
+    const char* activeDOMObjectName() const final;
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

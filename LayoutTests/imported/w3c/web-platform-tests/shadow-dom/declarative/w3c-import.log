@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.html

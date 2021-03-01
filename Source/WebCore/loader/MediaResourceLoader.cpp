@@ -34,8 +34,8 @@
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "Element.h"
 #include "FrameLoaderClient.h"
-#include "HTMLMediaElement.h"
 #include "InspectorInstrumentation.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
@@ -49,11 +49,12 @@ void MediaResourceLoader::recordResponsesForTesting()
     shouldRecordResponsesForTesting = true;
 }
 
-MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& mediaElement, const String& crossOriginMode)
+MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination)
     : ContextDestructionObserver(&document)
     , m_document(makeWeakPtr(document))
-    , m_mediaElement(makeWeakPtr(mediaElement))
+    , m_element(makeWeakPtr(element))
     , m_crossOriginMode(crossOriginMode)
+    , m_destination(destination)
 {
 }
 
@@ -66,7 +67,7 @@ void MediaResourceLoader::contextDestroyed()
 {
     ContextDestructionObserver::contextDestroyed();
     m_document = nullptr;
-    m_mediaElement = nullptr;
+    m_element = nullptr;
 }
 
 void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
@@ -88,8 +89,8 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
 
     request.setRequester(ResourceRequest::Requester::Media);
 
-    if (m_mediaElement)
-        request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*m_mediaElement));
+    if (m_element)
+        request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*m_element));
 
 #if PLATFORM(MAC)
     // FIXME: Workaround for <rdar://problem/26071607>. We are not able to do CORS checking on 304 responses because they are usually missing the headers we need.
@@ -97,7 +98,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         request.makeUnconditional();
 #endif
 
-    ContentSecurityPolicyImposition contentSecurityPolicyImposition = m_mediaElement && m_mediaElement->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    ContentSecurityPolicyImposition contentSecurityPolicyImposition = m_element && m_element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     ResourceLoaderOptions loaderOptions {
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::DoNotSniffContent,
@@ -111,10 +112,10 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         contentSecurityPolicyImposition,
         DefersLoadingPolicy::AllowDefersLoading,
         cachingPolicy };
-    loaderOptions.destination = m_mediaElement && !m_mediaElement->isVideo() ? FetchOptions::Destination::Audio : FetchOptions::Destination::Video;
+    loaderOptions.destination = m_destination;
     auto cachedRequest = createPotentialAccessControlRequest(WTFMove(request), WTFMove(loaderOptions), *m_document, m_crossOriginMode);
-    if (m_mediaElement)
-        cachedRequest.setInitiator(*m_mediaElement);
+    if (m_element)
+        cachedRequest.setInitiator(*m_element);
 
     auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cachedRequest)).value_or(nullptr);
     if (!resource)

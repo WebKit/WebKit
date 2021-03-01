@@ -1942,6 +1942,38 @@ JSC_DEFINE_JIT_OPERATION(operationNewFloat64ArrayWithOneArgument, char*, (JSGlob
     return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSBigInt64Array>(globalObject, vm, structure, length, vector);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithOneArgument, char*, (JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigInt64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSBigUint64Array>(globalObject, vm, structure, length, vector);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithOneArgument, char*, (JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigUint64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM* vmPointer, Structure* structure))
 {
     VM& vm = *vmPointer;
@@ -3548,15 +3580,13 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (CallLinkInfo* callLinkI
 
     JSScope* scope = callee->scopeUnchecked();
 
+    // FIXME: Support wasm IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=220339
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
-    if (executable->isHostFunction()) {
-        // jsToWasmICCodePtr assumes that callee is always the same since DirectCall does not check callee.
-        // But for wasm functions, we already ensured that callee is constant when emitting DirectCall.
-        codePtr = jsToWasmICCodePtr(vm, kind, callee);
-        if (!codePtr)
-            codePtr = executable->entrypointFor(kind, MustCheckArity);
-    } else {
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
@@ -3785,7 +3815,16 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
         return nullptr;
     }
 
-    auto failedOSREntry = [&] (CodeBlock* entryBlock) {
+    auto failedOSREntry = [&] (JITCode* jitCode) {
+        CodeBlock* entryBlock = jitCode->osrEntryBlock();
+        if (!entryBlock) {
+            CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry code is already invalidated"));
+            codeBlock->baselineVersion()->countReoptimization();
+            // clearOSREntryBlockAndResetThresholds is already called in FTL::prepareOSREntry and because of that,
+            // jitCode->osrEntryBlock() is nullptr.
+            return nullptr;
+        }
+
         FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
         entryCode->countEntryFailure();
         if (entryCode->entryFailureCount() <
@@ -3816,7 +3855,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
                     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
                 }
 
-                return failedOSREntry(entryBlock);
+                return failedOSREntry(jitCode);
             }
         }
     }
@@ -3849,7 +3888,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     } else
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("avoiding replacement compile"));
 
-    if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
+    if (jitCode->osrEntryBlock()) {
         if (jitCode->osrEntryRetry < Options::ftlOSREntryRetryThreshold()) {
             CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed, OSR entry threshold not met"));
             jitCode->osrEntryRetry++;
@@ -3858,7 +3897,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
             return nullptr;
         }
 
-        return failedOSREntry(entryBlock);
+        return failedOSREntry(jitCode);
     }
 
     // It's time to try to compile code for OSR entry.
@@ -3955,7 +3994,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     ASSERT(canOSREnterHere);
     void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
-        return failedOSREntry(jitCode->osrEntryBlock());
+        return failedOSREntry(jitCode);
     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
 }
 

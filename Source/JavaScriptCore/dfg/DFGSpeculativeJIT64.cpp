@@ -2648,6 +2648,8 @@ void SpeculativeJIT::compile(Node* node)
             jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
             break;
         }
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(node)) {
                 if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
@@ -2980,6 +2982,8 @@ void SpeculativeJIT::compile(Node* node)
         case Array::ForceExit:
             DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
         case Array::Generic: {
             DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal || node->op() == PutByValDirect, node->op());
 
@@ -3210,6 +3214,8 @@ void SpeculativeJIT::compile(Node* node)
         case Array::SelectUsingPredictions:
         case Array::Undecided:
         case Array::Unprofiled:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             RELEASE_ASSERT_NOT_REACHED();
         }
         break;
@@ -3237,43 +3243,43 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg argGPRs[2];
         GPRReg resultGPR;
 
-        auto callSlowPath = [&] () {
-            auto globalObjectImmPtr = TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic));
-            switch (node->op()) {
-            case AtomicsAdd:
-                callOperation(operationAtomicsAdd, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsAnd:
-                callOperation(operationAtomicsAnd, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsCompareExchange:
-                callOperation(operationAtomicsCompareExchange, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0], argGPRs[1]);
-                break;
-            case AtomicsExchange:
-                callOperation(operationAtomicsExchange, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsLoad:
-                callOperation(operationAtomicsLoad, resultGPR, globalObjectImmPtr, baseGPR, indexGPR);
-                break;
-            case AtomicsOr:
-                callOperation(operationAtomicsOr, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsStore:
-                callOperation(operationAtomicsStore, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsSub:
-                callOperation(operationAtomicsSub, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            case AtomicsXor:
-                callOperation(operationAtomicsXor, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-        };
-        
         if (!storageEdge) {
+            auto callSlowPath = [&] () {
+                auto globalObjectImmPtr = TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic));
+                switch (node->op()) {
+                case AtomicsAdd:
+                    callOperation(operationAtomicsAdd, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsAnd:
+                    callOperation(operationAtomicsAnd, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsCompareExchange:
+                    callOperation(operationAtomicsCompareExchange, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0], argGPRs[1]);
+                    break;
+                case AtomicsExchange:
+                    callOperation(operationAtomicsExchange, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsLoad:
+                    callOperation(operationAtomicsLoad, resultGPR, globalObjectImmPtr, baseGPR, indexGPR);
+                    break;
+                case AtomicsOr:
+                    callOperation(operationAtomicsOr, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsStore:
+                    callOperation(operationAtomicsStore, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsSub:
+                    callOperation(operationAtomicsSub, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                case AtomicsXor:
+                    callOperation(operationAtomicsXor, resultGPR, globalObjectImmPtr, baseGPR, indexGPR, argGPRs[0]);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            };
+
             // We are in generic mode!
             JSValueOperand base(this, baseEdge);
             JSValueOperand index(this, indexEdge);
@@ -3307,11 +3313,9 @@ void SpeculativeJIT::compile(Node* node)
         
         GPRTemporary args[2];
         
-        JITCompiler::JumpList slowPathCases;
-        
         bool ok = true;
         for (unsigned i = numExtraArgs; i--;) {
-            if (!getIntTypedArrayStoreOperand(args[i], indexGPR, argEdges[i], slowPathCases)) {
+            if (!getIntTypedArrayStoreOperandForAtomics(args[i], indexGPR, argEdges[i])) {
                 noResult(node);
                 ok = false;
             }
@@ -3411,21 +3415,26 @@ void SpeculativeJIT::compile(Node* node)
         }
         m_jit.jump().linkTo(loop, &m_jit);
         
-        if (!slowPathCases.empty()) {
-            slowPathCases.link(&m_jit);
-            silentSpillAllRegisters(resultGPR);
-            // Since we spilled, we can do things to registers.
-            m_jit.boxCell(baseGPR, JSValueRegs(baseGPR));
-            m_jit.boxInt32(indexGPR, JSValueRegs(indexGPR));
-            for (unsigned i = numExtraArgs; i--;)
-                m_jit.boxInt32(argGPRs[i], JSValueRegs(argGPRs[i]));
-            callSlowPath();
-            silentFillAllRegisters();
-            m_jit.exceptionCheck();
-        }
-        
         success.link(&m_jit);
-        setIntTypedArrayLoadResult(node, resultGPR, type);
+
+        if (node->op() == AtomicsStore) {
+            Edge operand = argEdges[0];
+            switch (operand.useKind()) {
+            case Int32Use:
+                m_jit.zeroExtend32ToWord(resultGPR, resultGPR);
+                strictInt32Result(resultGPR, node);
+                break;
+            case Int52RepUse:
+                strictInt52Result(resultGPR, node);
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Bad result type");
+                break;
+            }
+            break;
+        }
+        constexpr bool canSpeculate = false;
+        setIntTypedArrayLoadResult(node, resultGPR, type, canSpeculate);
         break;
     }
         
@@ -3449,6 +3458,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
         m_jit.move(TrustedImm32(JSValue::ValueTrue), resultGPR);
         JITCompiler::JumpList done;
+        done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(8)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(4)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(1)));
         done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(2)));
@@ -5071,8 +5081,14 @@ void SpeculativeJIT::compile(Node* node)
 
     case LoopHint:
         if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
-            CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-            if (baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn()) {
+            bool emitEarlyReturn = true;
+            node->origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
+                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(origin);
+                if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+                    emitEarlyReturn = false;
+            });
+            if (emitEarlyReturn) {
+                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
                 BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
                 const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
 

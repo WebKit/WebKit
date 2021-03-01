@@ -119,6 +119,10 @@ public:
     void setTimingFunctions(const Vector<const WebCore::TimingFunction*>&, bool reverse = false) override;
     void copyTimingFunctionsFrom(const WebCore::PlatformCAAnimation&) override;
 
+    // Animation group properties.
+    void setAnimations(const Vector<RefPtr<PlatformCAAnimation>>&) final;
+    void copyAnimationsFrom(const PlatformCAAnimation&) final;
+
     AnimationType animationType() const { return m_properties.animationType; }
     void setHasExplicitBeginTime(bool hasExplicitBeginTime) { m_properties.hasExplicitBeginTime = hasExplicitBeginTime; }
     bool hasExplicitBeginTime() const { return m_properties.hasExplicitBeginTime; }
@@ -289,6 +293,8 @@ public:
         Vector<KeyframeValue> keyValues;
         Vector<float> keyTimes;
         Vector<RefPtr<WebCore::TimingFunction>> timingFunctions;
+
+        Vector<Properties> animations;
     };
 
     const Properties& properties() const { return m_properties; }

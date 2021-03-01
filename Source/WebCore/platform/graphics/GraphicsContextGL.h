@@ -749,11 +749,6 @@ public:
         NumFormats
     };
 
-    enum class Destination : uint8_t {
-        Offscreen,
-        DirectlyToHostWindow,
-    };
-
     enum class ChannelBits : uint8_t {
         Red = 1,
         Green = 2,
@@ -915,13 +910,13 @@ public:
     // HostWindow might affect the decision which backend is to be used.
     static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
 
-    GraphicsContextGL(GraphicsContextGLAttributes, Destination = Destination::Offscreen, GraphicsContextGL* sharedContext = nullptr);
+    GraphicsContextGL(GraphicsContextGLAttributes, GraphicsContextGL* sharedContext = nullptr);
     virtual ~GraphicsContextGL() = default;
 
     void addClient(Client& client) { m_clients.add(&client); }
     void removeClient(Client& client) { m_clients.remove(&client); }
 
-    // WebGL functions.
+    // ========== WebGL 1 entry points.
     virtual void activeTexture(GCGLenum texture) = 0;
     virtual void attachShader(PlatformGLObject program, PlatformGLObject shader) = 0;
     virtual void bindAttribLocation(PlatformGLObject, GCGLuint index, const String& name) = 0;
@@ -1229,7 +1224,15 @@ public:
 
     virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) = 0;
 
-    // Other functions.
+    // ========== Extension related entry points.
+
+    // GL_ANGLE_multi_draw
+    virtual void multiDrawArraysANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLsizei drawcount) = 0;
+    virtual void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) = 0;
+    virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) = 0;
+    virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) = 0;
+
+    // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);
     GCGLint getInteger(GCGLenum pname);
@@ -1254,8 +1257,6 @@ public:
     virtual void reshape(int width, int height) = 0;
 
     virtual void setContextVisibility(bool) = 0;
-
-    virtual GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const = 0;
 
     virtual bool isGLES2Compliant() const = 0;
 
@@ -1353,8 +1354,6 @@ public:
     // Returns true upon success.
     static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
-    Destination destination() const { return m_destination; }
-
 protected:
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
@@ -1362,7 +1361,6 @@ protected:
 
 private:
     GraphicsContextGLAttributes m_attrs;
-    Destination m_destination;
 };
 
 inline GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)

@@ -118,6 +118,8 @@ class MediaControls extends LayoutNode
     {
         this.needsLayout = this.usesLTRUserInterfaceLayoutDirection !== flag;
         this.element.classList.toggle("uses-ltr-user-interface-layout-direction", flag);
+
+        this.muteButton.usesLTRUserInterfaceLayoutDirection = this.usesLTRUserInterfaceLayoutDirection;
     }
 
     get scaleFactor()

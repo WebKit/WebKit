@@ -2597,7 +2597,8 @@ void FrameView::updateLayerPositionsAfterScrolling()
     if (!layoutContext().isLayoutNested() && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView()) {
             updateWidgetPositions();
-            renderView->layer()->updateLayerPositionsAfterDocumentScroll();
+            if (auto* scrollableArea = renderView->layer()->scrollableArea())
+                scrollableArea->updateLayerPositionsAfterDocumentScroll();
         }
     }
 }
@@ -2665,10 +2666,8 @@ bool FrameView::isRubberBandInProgress() const
     if (scrollbarsSuppressed())
         return false;
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
-        if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
-            return scrollingCoordinator->isRubberBandInProgress(scrollingNodeID());
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->isRubberBandInProgress(scrollingNodeID());
 
     if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isRubberBandInProgress();
@@ -4332,8 +4331,10 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         renderer = renderer->parent();
 
     rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, eventRegionContext);
-    if (rootLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)
-        rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
+    if (auto* scrollableRootLayer = rootLayer->scrollableArea()) {
+        if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)
+            scrollableRootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
+    }
 
     didPaintContents(context, dirtyRect, paintingState);
 }
@@ -5544,6 +5545,28 @@ float FrameView::pageScaleFactor() const
     return frame().frameScaleFactor();
 }
 
+void FrameView::updateScrollbarSteps()
+{
+    auto* documentElement = frame().document() ? frame().document()->documentElement() : nullptr;
+    auto* renderer = documentElement ? documentElement->renderBox() : nullptr;
+    if (!renderer) {
+        ScrollView::updateScrollbarSteps();
+        return;
+    }
+
+    LayoutRect paddedViewRect(LayoutPoint(), visibleSize());
+    paddedViewRect.contract(renderer->scrollPaddingForViewportRect(paddedViewRect));
+
+    if (horizontalScrollbar()) {
+        int pageStep = Scrollbar::pageStep(paddedViewRect.width());
+        horizontalScrollbar()->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+
+    }
+    if (verticalScrollbar()) {
+        int pageStep = Scrollbar::pageStep(paddedViewRect.height());
+        verticalScrollbar()->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+    }
+}
 } // namespace WebCore
 
 #undef PAGE_ID

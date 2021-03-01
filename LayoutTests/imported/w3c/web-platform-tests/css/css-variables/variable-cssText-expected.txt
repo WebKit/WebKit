@@ -1,0 +1,12 @@
+
+FAIL target1 assert_equals: expected "--var: var1;" but got "--var:  var1;"
+PASS target2
+PASS target3
+PASS target4
+PASS target5
+FAIL target6 assert_equals: expected "background: green;" but got "background-color: green;"
+PASS target7
+PASS target8
+FAIL target9 assert_equals: expected "margin-right: ; margin-bottom: ; margin-left: ; margin-top: 10px;" but got "margin: var(--prop);"
+PASS target10
+

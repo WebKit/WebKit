@@ -13,7 +13,7 @@ mediaControls.usesLTRUserInterfaceLayoutDirection = true;
 
 document.body.appendChild(mediaControls.element);
 
-shouldBecomeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px", () => {
+shouldBecomeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "40px", () => {
     shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "0px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).width", "60px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).height", "16px");

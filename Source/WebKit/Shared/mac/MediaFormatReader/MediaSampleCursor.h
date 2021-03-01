@@ -34,10 +34,9 @@
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 
-// FIXME: Remove this once kMTPluginSampleCursor_ClassVersion_4 is available in SDKs.
-#if defined(HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON)
-#undef HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON
-#endif
+namespace WTF {
+class Logger;
+}
 
 namespace WebCore {
 class MediaSample;
@@ -47,36 +46,41 @@ namespace WebKit {
 
 class MediaTrackReader;
 
-class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor> {
+class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, ThreadSafeIdentified<MediaSampleCursor> {
 public:
     using DecodeOrderIterator = DecodeOrderSampleMap::iterator;
     using PresentationOrderIterator = PresentationOrderSampleMap::iterator;
+    using Locator = Variant<MediaTime, DecodeOrderIterator, PresentationOrderIterator>;
+
+    struct Timing {
+        MediaTime decodeTime;
+        MediaTime presentationTime;
+        MediaTime duration;
+    };
 
     static constexpr WrapperClass wrapperClass();
     static CMBaseClassID wrapperClassID();
     static CoreMediaWrapped<MediaSampleCursor>* unwrap(CMBaseObjectRef);
 
-    enum class DecodedSample {
-        First,
-        Last,
-    };
-
     static RefPtr<MediaSampleCursor> copy(Allocator&&, const MediaSampleCursor&);
-    static RefPtr<MediaSampleCursor> createAtDecodedSample(Allocator&&, MediaTrackReader&, DecodedSample);
     static RefPtr<MediaSampleCursor> createAtPresentationTime(Allocator&&, MediaTrackReader&, MediaTime);
 
 private:
     using CoreMediaWrapped<MediaSampleCursor>::unwrap;
-    using Locator = Variant<MediaTime, DecodedSample, DecodeOrderIterator, PresentationOrderIterator>;
 
     MediaSampleCursor(Allocator&&, MediaTrackReader&, Locator);
     MediaSampleCursor(Allocator&&, const MediaSampleCursor&);
 
-    WebCore::MediaSample* locateMediaSample() const;
-    OSStatus getMediaSample(CompletionHandler<void(WebCore::MediaSample&)>&&) const;
-    template<typename Iterator> Optional<Iterator> locateIterator(SampleMap&, bool hasAllSamples) const;
+    template<typename OrderedMap> Optional<typename OrderedMap::iterator> locateIterator(OrderedMap&, bool hasAllSamples) const;
+    WebCore::MediaSample* locateMediaSample(WebCore::SampleMap&, bool hasAllSamples) const;
+    Timing locateTiming(WebCore::SampleMap&, bool hasAllSamples) const;
 
-    template<typename OrderedMap, typename Step> Step stepInOrderedMap(Step);
+    template<typename Function> OSStatus getSampleMap(Function&&) const;
+    template<typename Function> OSStatus getMediaSample(Function&&) const;
+    template<typename Function> OSStatus getTiming(Function&&) const;
+
+    template<typename OrderedMap> OSStatus stepInOrderedMap(int64_t, int64_t&);
+    OSStatus stepInPresentationTime(const MediaTime&, Boolean& wasPinned);
 
     // CoreMediaWrapped
     String debugDescription() const final { return "WebKit::MediaSampleCursor"_s; }
@@ -95,9 +99,16 @@ private:
     OSStatus copySampleLocation(MTPluginSampleCursorStorageRange*, MTPluginByteSourceRef*) const;
     OSStatus getPlayableHorizon(CMTime*) const;
 
+    const WTF::Logger& logger() const { return m_logger; }
+    const char* logClassName() const { return "MediaSampleCursor"; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const;
+
     Ref<MediaTrackReader> m_trackReader;
     mutable Locator m_locator;
     mutable Lock m_locatorLock;
+    Ref<const WTF::Logger> m_logger;
+    const void* m_logIdentifier;
 };
 
 constexpr MediaSampleCursor::WrapperClass MediaSampleCursor::wrapperClass()

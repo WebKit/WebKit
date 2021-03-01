@@ -48,7 +48,7 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     int g = (backdropG * backdropA * (0xFF - sourceA) + 0xFF * sourceA * sourceG) / d;
     int b = (backdropB * backdropA * (0xFF - sourceA) + 0xFF * sourceA * sourceB) / d;
 
-    return clampToComponentBytes<SRGBA>(r, g, b, a);
+    return makeFromComponentsClamping<SRGBA<uint8_t>>(r, g, b, a);
 }
 
 Color blendWithWhite(const Color& color)
@@ -78,7 +78,7 @@ Color blendWithWhite(const Color& color)
         int g = blendComponent(existingG, alpha);
         int b = blendComponent(existingB, alpha);
 
-        result = clampToComponentBytes<SRGBA>(r, g, b, alpha);
+        result = makeFromComponentsClamping<SRGBA<uint8_t>>(r, g, b, alpha);
 
         if (r >= 0 && g >= 0 && b >= 0)
             break;
@@ -100,7 +100,7 @@ Color blend(const Color& from, const Color& to, double progress)
     auto premultipliedFrom = premultipliedCeiling(from.toSRGBALossy<uint8_t>());
     auto premultipliedTo = premultipliedCeiling(to.toSRGBALossy<uint8_t>());
 
-    auto premultipliedBlended = clampToComponentBytes<SRGBA>(
+    auto premultipliedBlended = makeFromComponentsClamping<SRGBA<uint8_t>>(
         WebCore::blend(premultipliedFrom.red, premultipliedTo.red, progress),
         WebCore::blend(premultipliedFrom.green, premultipliedTo.green, progress),
         WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, progress),
@@ -120,7 +120,7 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     auto fromSRGB = from.toSRGBALossy<uint8_t>();
     auto toSRGB = to.toSRGBALossy<uint8_t>();
 
-    return clampToComponentBytes<SRGBA>(
+    return makeFromComponentsClamping<SRGBA<uint8_t>>(
         WebCore::blend(fromSRGB.red, toSRGB.red, progress),
         WebCore::blend(fromSRGB.green, toSRGB.green, progress),
         WebCore::blend(fromSRGB.blue, toSRGB.blue, progress),

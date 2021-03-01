@@ -635,6 +635,9 @@
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-color/color-resolving-hwb.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html": [
         "slow"
     ],

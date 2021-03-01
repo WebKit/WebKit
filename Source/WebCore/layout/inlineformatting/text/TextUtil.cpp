@@ -54,11 +54,11 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned 
 
 InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
-    auto& style = inlineTextBox.style();
-    auto& font = style.fontCascade();
-    if (!font.size() || from == to)
+    if (from == to)
         return 0;
 
+    auto& style = inlineTextBox.style();
+    auto& font = style.fontCascade();
     auto text = inlineTextBox.content();
     ASSERT(to <= text.length());
     auto hasKerningOrLigatures = font.enableKerning() || font.requiresShaping();
@@ -160,8 +160,16 @@ unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIte
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
 {
+    // https://www.w3.org/TR/css-text-3/#white-space-property
     auto whitespace = layoutBox.style().whiteSpace();
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+}
+
+bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
+{
+    auto whitespace = layoutBox.style().whiteSpace();
+    // https://www.w3.org/TR/css-text-3/#white-space-property
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces || whitespace == WhiteSpace::PreLine; 
 }
 
 }

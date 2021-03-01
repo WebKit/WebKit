@@ -1,0 +1,6 @@
+This div should have green text and a green shadow.
+
+PASS box-shadow
+PASS --alpha
+PASS color
+

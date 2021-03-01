@@ -174,6 +174,14 @@ void Table::visitAggregate(SlotVisitor& visitor)
         visitor.append(m_jsValues.get()[i]);
 }
 
+Type Table::wasmType() const
+{
+    if (isExternrefTable())
+        return Type::Externref;
+    ASSERT(isFuncrefTable());
+    return Type::Funcref;
+}
+
 FuncRefTable* Table::asFuncrefTable()
 {
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;

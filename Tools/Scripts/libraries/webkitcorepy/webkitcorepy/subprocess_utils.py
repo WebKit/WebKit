@@ -34,6 +34,7 @@ if sys.version_info > (3, 0):
     # Allows native integration with the Timeout context
     def run(*popenargs, **kwargs):
         timeout = kwargs.pop('timeout', None)
+        capture_output = kwargs.pop('capture_output', False)
 
         with Timeout.DisableAlarm():
             current_time = time.time()
@@ -42,6 +43,11 @@ if sys.version_info > (3, 0):
 
             if difference:
                 timeout = min(timeout or sys.maxsize, int(math.ceil(difference)))
+            if capture_output:
+                if ('stdout' in kwargs) or ('stderr' in kwargs):
+                    raise ValueError('stdout and stderr arguments may not be used with capture_output.')
+                kwargs['stdout'] = subprocess.PIPE
+                kwargs['stderr'] = subprocess.PIPE
             return subprocess.run(*popenargs, timeout=timeout, **kwargs)
 
 else:

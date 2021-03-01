@@ -321,8 +321,8 @@ public:
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
     bool hasFocusWithin() const { return hasNodeFlag(NodeFlag::HasFocusWithin); };
 
-    virtual void setActive(bool = true, bool pause = false);
-    virtual void setHovered(bool = true);
+    virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
+    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setFocus(bool);
     void setBeingDragged(bool);
     void setHasFocusWithin(bool);
@@ -727,6 +727,8 @@ private:
     void ownerDocument() const = delete;
     
     void attachAttributeNodeIfNeeded(Attr&);
+    
+    void didChangeRenderer(RenderObject*) final;
 
 #if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;

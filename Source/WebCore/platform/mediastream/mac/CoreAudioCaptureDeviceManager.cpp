@@ -125,6 +125,11 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
         return false;
     }
 
+    if (device.label().contains("WebexMediaAudioDevice")) {
+        RELEASE_LOG(WebRTC, "Ignoring webex audio device");
+        return false;
+    }
+
     return true;
 }
 

@@ -28,9 +28,11 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "MessageReceiver.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class IntRect;
@@ -77,6 +79,7 @@ public:
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);
+    void closeWithCallback(CompletionHandler<void()>&&);
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
@@ -84,6 +87,7 @@ private:
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
+    void callCloseCompletionHandlers();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
@@ -91,6 +95,7 @@ private:
     WebPageProxy& m_page;
     WebFullScreenManagerProxyClient& m_client;
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
+    Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 };
 
 } // namespace WebKit

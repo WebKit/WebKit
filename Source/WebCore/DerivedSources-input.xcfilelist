@@ -227,6 +227,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionIceEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionInternals.js
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPriorityType.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtcpParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecCapability.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecParameters.idl
@@ -700,6 +701,7 @@ $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl
 $(PROJECT_DIR)/dom/AbstractRange.idl
+$(PROJECT_DIR)/dom/AddEventListenerOptions.idl
 $(PROJECT_DIR)/dom/AnimationEvent.idl
 $(PROJECT_DIR)/dom/Attr.idl
 $(PROJECT_DIR)/dom/BeforeLoadEvent.idl
@@ -760,6 +762,7 @@ $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
 $(PROJECT_DIR)/dom/EventInit.idl
 $(PROJECT_DIR)/dom/EventListener.idl
+$(PROJECT_DIR)/dom/EventListenerOptions.idl
 $(PROJECT_DIR)/dom/EventModifierInit.idl
 $(PROJECT_DIR)/dom/EventNames.in
 $(PROJECT_DIR)/dom/EventTarget.idl
@@ -1018,6 +1021,7 @@ $(PROJECT_DIR)/html/canvas/WebGLDepthTexture.idl
 $(PROJECT_DIR)/html/canvas/WebGLDrawBuffers.idl
 $(PROJECT_DIR)/html/canvas/WebGLFramebuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLLoseContext.idl
+$(PROJECT_DIR)/html/canvas/WebGLMultiDraw.idl
 $(PROJECT_DIR)/html/canvas/WebGLProgram.idl
 $(PROJECT_DIR)/html/canvas/WebGLQuery.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderbuffer.idl
@@ -1034,7 +1038,7 @@ $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObject.idl
 $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObjectOES.idl
 $(PROJECT_DIR)/html/parser/HTMLEntityNames.in
 $(PROJECT_DIR)/html/parser/create-html-entity-table
-$(PROJECT_DIR)/html/shadow/mac/imageControlsMac.css
+$(PROJECT_DIR)/html/shadow/imageOverlay.css
 $(PROJECT_DIR)/html/shadow/meterElementShadow.css
 $(PROJECT_DIR)/html/track/AudioTrack.idl
 $(PROJECT_DIR)/html/track/AudioTrackList.idl
@@ -1141,6 +1145,7 @@ $(PROJECT_DIR)/plugins/DOMMimeType.idl
 $(PROJECT_DIR)/plugins/DOMMimeTypeArray.idl
 $(PROJECT_DIR)/plugins/DOMPlugin.idl
 $(PROJECT_DIR)/plugins/DOMPluginArray.idl
+$(PROJECT_DIR)/preprocess-localizable-strings.pl
 $(PROJECT_DIR)/storage/Storage.idl
 $(PROJECT_DIR)/storage/StorageEvent.idl
 $(PROJECT_DIR)/svg/Document+SVG.idl

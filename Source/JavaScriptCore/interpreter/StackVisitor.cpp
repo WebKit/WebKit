@@ -161,30 +161,28 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_callerEntryFrame);
     m_frame.m_callerIsEntryFrame = m_frame.m_callerEntryFrame != m_frame.m_entryFrame;
     m_frame.m_isWasmFrame = false;
+    m_frame.m_callee = callFrame->callee();
+#if ENABLE(DFG_JIT)
+    m_frame.m_inlineCallFrame = nullptr;
+#endif
 
-    CalleeBits callee = callFrame->callee();
-    m_frame.m_callee = callee;
-
+#if ENABLE(WEBASSEMBLY)
     if (callFrame->isAnyWasmCallee()) {
         m_frame.m_isWasmFrame = true;
         m_frame.m_codeBlock = nullptr;
         m_frame.m_bytecodeIndex = BytecodeIndex();
-#if ENABLE(WEBASSEMBLY)
-        CalleeBits bits = callFrame->callee();
-        if (bits.isWasm())
-            m_frame.m_wasmFunctionIndexOrName = bits.asWasmCallee()->indexOrName();
-#endif
-    } else {
-        m_frame.m_codeBlock = callFrame->codeBlock();
-        m_frame.m_bytecodeIndex = !m_frame.codeBlock() ? BytecodeIndex(0)
-            : codeOrigin ? codeOrigin->bytecodeIndex()
-            : callFrame->bytecodeIndex();
 
+        if (m_frame.m_callee.isWasm())
+            m_frame.m_wasmFunctionIndexOrName = m_frame.m_callee.asWasmCallee()->indexOrName();
+
+        return;
     }
-
-#if ENABLE(DFG_JIT)
-    m_frame.m_inlineCallFrame = nullptr;
 #endif
+    m_frame.m_codeBlock = callFrame->codeBlock();
+    m_frame.m_bytecodeIndex = !m_frame.codeBlock() ? BytecodeIndex(0)
+        : codeOrigin ? codeOrigin->bytecodeIndex()
+        : callFrame->bytecodeIndex();
+
 }
 
 #if ENABLE(DFG_JIT)

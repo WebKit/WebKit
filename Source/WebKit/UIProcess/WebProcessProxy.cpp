@@ -1722,13 +1722,13 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
     ASSERT(!m_speechRecognitionServerMap.contains(identifier));
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
-    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& lang, auto& origin, auto&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& request, auto&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
         }
 
-        weakPage->requestSpeechRecognitionPermission(lang, origin, WTFMove(completionHandler));
+        weakPage->requestSpeechRecognitionPermission(request, WTFMove(completionHandler));
     };
     auto checkIfMockCaptureDevicesEnabled = [weakPage = makeWeakPtr(targetPage)]() {
         return weakPage && weakPage->preferences().mockCaptureDevicesEnabled();
@@ -1790,8 +1790,13 @@ void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, 
 
 void WebProcessProxy::pageIsBecomingInvisible(WebCore::PageIdentifier identifier)
 {
-    if (auto server = m_speechRecognitionServerMap.get(identifier))
-        server->abortForPageIsBecomingInvisible();
+#if ENABLE(MEDIA_STREAM)
+    if (!RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange())
+        return;
+#endif
+
+    if (auto speechRecognitionServer = m_speechRecognitionServerMap.get(identifier))
+        speechRecognitionServer->mute();
 }
 
 #if PLATFORM(WATCHOS)
@@ -1925,7 +1930,7 @@ static Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleList
 }
 #endif
 
-void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
+void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier& userContentControllerIdentifier)
 {
     ASSERT(m_registrableDomain && !m_registrableDomain->isEmpty());
     ASSERT(!m_serviceWorkerInformation);

@@ -255,10 +255,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
         return adjustMeterStyle(style, element);
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-        break;
-#endif
     case CapsLockIndicatorPart:
         return adjustCapsLockIndicatorStyle(style, element);
 #if ENABLE(APPLE_PAY)
@@ -415,10 +411,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
     case SearchFieldResultsButtonPart:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-        return paintImageControlsButton(box, paintInfo, integralSnappedRect);
-#endif
     case CapsLockIndicatorPart:
         return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
 #if ENABLE(APPLE_PAY)
@@ -481,9 +473,6 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-#endif
     default:
         break;
     }
@@ -555,9 +544,6 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-#endif
     default:
         break;
     }
@@ -1433,13 +1419,15 @@ constexpr float datePlaceholderColorLightnessAdjustmentFactor = 0.66f;
 
 Color RenderTheme::datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const
 {
-    auto hsla = toHSLA(textColor.toSRGBALossy<float>());
+    // FIXME: Consider using LCHA<float> rather than HSLA<float> for better perceptual results and to avoid clamping to sRGB gamut, which is what HSLA does.
+    auto hsla = textColor.toColorTypeLossy<HSLA<float>>();
     if (textColor.luminance() < backgroundColor.luminance())
         hsla.lightness += datePlaceholderColorLightnessAdjustmentFactor * (1.0f - hsla.lightness);
     else
         hsla.lightness *= datePlaceholderColorLightnessAdjustmentFactor;
 
-    return toSRGBA(hsla);
+    // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.
+    return convertColor<SRGBA<float>>(hsla);
 }
 
 void RenderTheme::setCustomFocusRingColor(const Color& color)

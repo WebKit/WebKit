@@ -806,3 +806,29 @@ TEST(EvaluateJavaScript, JavaScriptInMissingFrameAfterNavigationError)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 }
+
+TEST(EvaluateJavaScript, WindowPersistency)
+{
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    __block bool didFinishNavigation = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadTestPageNamed:@"simple"];
+    [webView stringByEvaluatingJavaScript:@""];
+
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.caches ? 'PASS': 'FAIL'" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(error == nil);
+        EXPECT_WK_STREQ(@"PASS", (NSString *)result);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}

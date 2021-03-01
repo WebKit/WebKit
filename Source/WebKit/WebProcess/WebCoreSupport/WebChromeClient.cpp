@@ -40,6 +40,7 @@
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "SharedBufferCopy.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
@@ -908,7 +909,7 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 #if ENABLE(GPU_PROCESS)
 
 
-RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat) const
+RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat) const
 {
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return nullptr;
@@ -1139,13 +1140,14 @@ Color WebChromeClient::underlayColor() const
     return m_page.underlayColor();
 }
 
-void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
+void WebChromeClient::themeColorChanged(Color /* themeColor */) const
 {
-#if PLATFORM(MAC)
-    m_page.send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(backgroundColor));
-#else
-    UNUSED_PARAM(backgroundColor);
-#endif
+    m_page.themeColorChanged();
+}
+
+void WebChromeClient::pageExtendedBackgroundColorDidChange(Color /* backgroundColor */) const
+{
+    m_page.pageExtendedBackgroundColorDidChange();
 }
 
 void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)
@@ -1236,6 +1238,14 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
     return succeeded;
 }
 
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+{
+    auto buffer = IPC::SharedBufferCopy(data);
+    m_page.send(Messages::WebPageProxy::UpdateAppHighlightsStorage(buffer));
+}
 #endif
 
 String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
@@ -1419,6 +1429,15 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 {
     m_page.send(Messages::WebPageProxy::ChangeUniversalAccessZoomFocus(viewRect, selectionRect));
 }
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+void WebChromeClient::requestImageExtraction(Element& element)
+{
+    m_page.requestImageExtraction(element);
+}
+
 #endif
 
 } // namespace WebKit

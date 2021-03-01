@@ -193,6 +193,11 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                 return nullptr;
             }
 
+            if (contentType(object->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType) {
+                throwTypeError(globalObject, scope, "Content types of source and new typed array are different"_s);
+                return nullptr;
+            }
+
             length = view->length();
         } else {
             // This getPropertySlot operation should not be observed by the Proxy.

@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 ImageInputType::ImageInputType(HTMLInputElement& element)
-    : BaseButtonInputType(element)
+    : BaseButtonInputType(Type::Image, element)
 {
 }
 
@@ -75,11 +75,6 @@ bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
         formData.append(name, value);
 
     return true;
-}
-
-bool ImageInputType::supportsValidation() const
-{
-    return false;
 }
 
 void ImageInputType::handleDOMActivateEvent(Event& event)
@@ -169,16 +164,6 @@ bool ImageInputType::shouldRespectAlignAttribute()
 bool ImageInputType::canBeSuccessfulSubmitButton()
 {
     return true;
-}
-
-bool ImageInputType::isImageButton() const
-{
-    return true;
-}
-
-bool ImageInputType::isEnumeratable()
-{
-    return false;
 }
 
 bool ImageInputType::shouldRespectHeightAndWidthAttributes()

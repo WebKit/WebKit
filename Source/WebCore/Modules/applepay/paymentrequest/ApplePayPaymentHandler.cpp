@@ -218,17 +218,21 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     ApplePaySessionPaymentRequest request = validatedRequest.releaseReturnValue();
     request.setRequester(ApplePaySessionPaymentRequest::Requester::PaymentRequest);
 
-    String expectedCurrency = m_paymentRequest->paymentDetails().total.amount.currency;
+    auto& details = m_paymentRequest->paymentDetails();
+
+    String expectedCurrency = details.total.amount.currency;
     request.setCurrencyCode(expectedCurrency);
 
-    auto total = convertAndValidate(m_paymentRequest->paymentDetails().total, expectedCurrency);
+    auto total = convertAndValidate(details.total, expectedCurrency);
     ASSERT(!total.hasException());
     request.setTotal(total.releaseReturnValue());
 
-    auto convertedLineItems = convertAndValidate(m_paymentRequest->paymentDetails().displayItems, expectedCurrency);
-    if (convertedLineItems.hasException())
-        return convertedLineItems.releaseException();
-    request.setLineItems(convertedLineItems.releaseReturnValue());
+    if (details.displayItems) {
+        auto convertedLineItems = convertAndValidate(*details.displayItems, expectedCurrency);
+        if (convertedLineItems.hasException())
+            return convertedLineItems.releaseException();
+        request.setLineItems(convertedLineItems.releaseReturnValue());
+    }
 
     mergePaymentOptions(m_paymentRequest->paymentOptions(), request);
 
@@ -260,20 +264,21 @@ void ApplePayPaymentHandler::canMakePayment(Document& document, Function<void(bo
 ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> ApplePayPaymentHandler::computeShippingMethods()
 {
     auto& details = m_paymentRequest->paymentDetails();
-    auto& currency = details.total.amount.currency;
-    auto& shippingOptions = details.shippingOptions;
 
-    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
-    shippingMethods.reserveInitialCapacity(shippingOptions.size());
+    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingOptions;
+    if (details.shippingOptions) {
+        auto& currency = details.total.amount.currency;
 
-    for (auto& shippingOption : shippingOptions) {
-        auto shippingMethod = convertAndValidate(shippingOption, currency);
-        if (shippingMethod.hasException())
-            return shippingMethod.releaseException();
-        shippingMethods.uncheckedAppend(shippingMethod.releaseReturnValue());
+        shippingOptions.reserveInitialCapacity(details.shippingOptions->size());
+        for (auto& shippingOption : *details.shippingOptions) {
+            auto shippingMethod = convertAndValidate(shippingOption, currency);
+            if (shippingMethod.hasException())
+                return shippingMethod.releaseException();
+            shippingOptions.uncheckedAppend(shippingMethod.releaseReturnValue());
+        }
     }
 
-    return WTFMove(shippingMethods);
+    return WTFMove(shippingOptions);
 }
 
 ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHandler::computeTotalAndLineItems() const
@@ -286,54 +291,60 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
         return convertedTotal.releaseException();
     auto total = convertedTotal.releaseReturnValue();
 
-    auto convertedLineItems = convertAndValidate(details.displayItems, currency);
-    if (convertedLineItems.hasException())
-        return convertedLineItems.releaseException();
-    auto lineItems = convertedLineItems.releaseReturnValue();
+    Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
+    if (details.displayItems) {
+        auto convertedLineItems = convertAndValidate(*details.displayItems, currency);
+        if (convertedLineItems.hasException())
+            return convertedLineItems.releaseException();
+        lineItems = convertedLineItems.releaseReturnValue();
+    }
 
     if (!m_selectedPaymentMethodType)
         return ApplePaySessionPaymentRequest::TotalAndLineItems { WTFMove(total), WTFMove(lineItems) };
 
-    auto& modifiers = details.modifiers;
-    auto& serializedModifierData = m_paymentRequest->serializedModifierData();
-    ASSERT(modifiers.size() == serializedModifierData.size());
-    for (size_t i = 0; i < modifiers.size(); ++i) {
-        auto convertedIdentifier = convertAndValidatePaymentMethodIdentifier(modifiers[i].supportedMethods);
-        if (!convertedIdentifier || !handlesIdentifier(*convertedIdentifier))
-            continue;
+    if (details.modifiers) {
+        auto& serializedModifierData = m_paymentRequest->serializedModifierData();
+        ASSERT(details.modifiers->size() == serializedModifierData.size());
+        for (size_t i = 0; i < details.modifiers->size(); ++i) {
+            auto& modifier = details.modifiers->at(i);
 
-        if (serializedModifierData[i].isEmpty())
-            continue;
+            auto convertedIdentifier = convertAndValidatePaymentMethodIdentifier(modifier.supportedMethods);
+            if (!convertedIdentifier || !handlesIdentifier(*convertedIdentifier))
+                continue;
 
-        auto& lexicalGlobalObject = *document().globalObject();
-        auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-        JSC::JSValue data;
-        {
-            auto lock = JSC::JSLockHolder { &lexicalGlobalObject };
-            data = JSONParse(&lexicalGlobalObject, serializedModifierData[i]);
+            if (serializedModifierData[i].isEmpty())
+                continue;
+
+            auto& lexicalGlobalObject = *document().globalObject();
+            auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+            JSC::JSValue data;
+            {
+                auto lock = JSC::JSLockHolder { &lexicalGlobalObject };
+                data = JSONParse(&lexicalGlobalObject, serializedModifierData[i]);
+                if (scope.exception())
+                    return Exception { ExistingExceptionError };
+            }
+
+            auto applePayModifier = convertDictionary<ApplePayModifier>(lexicalGlobalObject, WTFMove(data));
             if (scope.exception())
                 return Exception { ExistingExceptionError };
+
+            if (applePayModifier.paymentMethodType != *m_selectedPaymentMethodType)
+                continue;
+
+            if (modifier.total) {
+                auto totalOverride = convertAndValidate(*modifier.total, currency);
+                if (totalOverride.hasException())
+                    return totalOverride.releaseException();
+                total = totalOverride.releaseReturnValue();
+            }
+
+            auto additionalDisplayItems = convertAndValidate(modifier.additionalDisplayItems, currency);
+            if (additionalDisplayItems.hasException())
+                return additionalDisplayItems.releaseException();
+            lineItems.appendVector(additionalDisplayItems.releaseReturnValue());
+            break;
         }
-
-        auto applePayModifier = convertDictionary<ApplePayModifier>(lexicalGlobalObject, WTFMove(data));
-        if (scope.exception())
-            return Exception { ExistingExceptionError };
-
-        if (applePayModifier.paymentMethodType != *m_selectedPaymentMethodType)
-            continue;
-
-        if (modifiers[i].total) {
-            auto totalOverride = convertAndValidate(*modifiers[i].total, currency);
-            if (totalOverride.hasException())
-                return totalOverride.releaseException();
-            total = totalOverride.releaseReturnValue();
-        }
-
-        auto additionalDisplayItems = convertAndValidate(modifiers[i].additionalDisplayItems, currency);
-        if (additionalDisplayItems.hasException())
-            return additionalDisplayItems.releaseException();
-        lineItems.appendVector(additionalDisplayItems.releaseReturnValue());
-        break;
     }
 
     return ApplePaySessionPaymentRequest::TotalAndLineItems { WTFMove(total), WTFMove(lineItems) };
@@ -349,7 +360,9 @@ Vector<PaymentError> ApplePayPaymentHandler::computeErrors(String&& error, Addre
 {
     Vector<PaymentError> errors;
 
-    if (m_paymentRequest->paymentDetails().shippingOptions.isEmpty())
+    auto& details = m_paymentRequest->paymentDetails();
+
+    if (!details.shippingOptions || details.shippingOptions->isEmpty())
         computeAddressErrors(WTFMove(error), WTFMove(addressErrors), errors);
 
     computePayerErrors(WTFMove(payerErrors), errors);

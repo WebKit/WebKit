@@ -219,7 +219,7 @@ bool Connection::open()
         
         // Send the initialize message, which contains a send right for the server to use.
         auto encoder = makeUnique<Encoder>(MessageName::InitializeConnection, 0);
-        encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
+        *encoder << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
 
         initializeSendSource();
 

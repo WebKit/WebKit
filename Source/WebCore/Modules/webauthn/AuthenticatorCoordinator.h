@@ -57,6 +57,8 @@ public:
     void discoverFromExternalSource(const Document&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
     void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
 
+    void resetUserGestureRequirement();
+
 private:
     AuthenticatorCoordinator() = default;
 

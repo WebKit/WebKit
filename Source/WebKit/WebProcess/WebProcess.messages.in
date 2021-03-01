@@ -128,6 +128,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     BacklightLevelDidChange(float backlightLevel)
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    ColorPreferencesDidChange()
+#endif
+
     IsJITEnabled() -> (bool enabled) Async
 
 #if PLATFORM(COCOA)
@@ -190,5 +194,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     DisplayWasRefreshed(uint32_t displayID)
+#endif
+
+#if PLATFORM(MAC)
+    SystemWillPowerOn()
 #endif
 }

@@ -31,7 +31,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #if PLATFORM(COCOA)
 #include "SharedRingBufferStorage.h"
@@ -39,7 +38,6 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
-#include <wtf/cocoa/MachSemaphore.h>
 #endif
 
 namespace WebKit {
@@ -52,9 +50,9 @@ class RemoteAudioDestination
 {
 public:
     static Ref<RemoteAudioDestination> create(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier identifier,
-        const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate)
+        const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
     {
-        return adoptRef(*new RemoteAudioDestination(connection, identifier, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate));
+        return adoptRef(*new RemoteAudioDestination(connection, identifier, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore)));
     }
 
     virtual ~RemoteAudioDestination() = default;
@@ -68,8 +66,6 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    MachSendRight createRenderSemaphoreSendRight() { return m_renderSemaphore.createSendRight(); }
-
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
         m_ringBuffer = makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
@@ -104,12 +100,13 @@ public:
     bool isPlaying() const { return m_isPlaying; }
 
 private:
-    RemoteAudioDestination(GPUConnectionToWebProcess&, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate)
+    RemoteAudioDestination(GPUConnectionToWebProcess&, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>())
 #endif
+        , m_renderSemaphore(WTFMove(renderSemaphore))
     {
 #if PLATFORM(COCOA)
         m_audioOutputUnitAdaptor.configure(hardwareSampleRate, numberOfOutputChannels);
@@ -148,9 +145,9 @@ private:
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 
     UniqueRef<WebCore::CARingBuffer> m_ringBuffer;
-    MachSemaphore m_renderSemaphore;
     uint64_t m_startFrame { 0 };
 #endif
+    IPC::Semaphore m_renderSemaphore;
 
     bool m_isPlaying { false };
 };
@@ -162,16 +159,12 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
-void RemoteAudioDestinationManager::createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, CreationCompletionHandler&& completionHandler)
+void RemoteAudioDestinationManager::createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&& completionHandler)
 {
     auto newID = RemoteAudioDestinationIdentifier::generateThreadSafe();
-    auto destination = RemoteAudioDestination::create(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate);
+    auto destination = RemoteAudioDestination::create(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
     m_audioDestinations.add(newID, destination.copyRef());
-#if PLATFORM(COCOA)
-    completionHandler(newID, destination->createRenderSemaphoreSendRight());
-#else
     completionHandler(newID);
-#endif
 }
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void()>&& completionHandler)

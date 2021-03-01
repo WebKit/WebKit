@@ -119,6 +119,7 @@ macro checkSwitchToJIT(increment, action)
 end
 
 macro checkSwitchToJITForPrologue(codeBlockRegister)
+    if WEBASSEMBLY_B3JIT
     checkSwitchToJIT(
         5,
         macro()
@@ -148,9 +149,11 @@ macro checkSwitchToJITForPrologue(codeBlockRegister)
         .recover:
             notFunctionCodeBlockGetter(codeBlockRegister)
         end)
+    end
 end
 
 macro checkSwitchToJITForLoop()
+    if WEBASSEMBLY_B3JIT
     checkSwitchToJIT(
         1,
         macro()
@@ -174,14 +177,17 @@ macro checkSwitchToJITForLoop()
         .recover:
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
         end)
+    end
 end
 
 macro checkSwitchToJITForEpilogue()
+    if WEBASSEMBLY_B3JIT
     checkSwitchToJIT(
         10,
         macro ()
             callWasmSlowPath(_slow_path_wasm_epilogue_osr)
         end)
+    end
 end
 
 # Wasm specific helpers

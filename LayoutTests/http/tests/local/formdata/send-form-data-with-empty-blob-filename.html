@@ -18,7 +18,7 @@ function runTest()
     var formData = new FormData;
     formData.append("blob", new Blob([""]), "");
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo-filenames.php", true);
+    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo-filenames.py", true);
     xhr.onload = function() {
         filename = xhr.responseText;
         shouldBe("filename", "''");

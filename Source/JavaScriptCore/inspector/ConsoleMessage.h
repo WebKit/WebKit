@@ -84,6 +84,8 @@ public:
 
     void clear();
 
+    String toString() const;
+
 private:
     void autogenerateMetadata(JSC::JSGlobalObject* = nullptr);
 

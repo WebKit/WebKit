@@ -1,3 +1,187 @@
+2021-02-08  Brady Eidson  <beidson@apple.com>
+
+        Make the UserContentController for ServiceWorker pages be non-optional.
+        <rdar://problem/71434565> and https://bugs.webkit.org/show_bug.cgi?id=221503
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2021-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Unreviewed build fix for macCatalyst.
+
+        * WebCoreSupport/WebMediaKeySystemClient.h: Add a check for ENABLE(ENCRYPTED_MEDIA).
+
+2021-01-29  Darin Adler  <darin@apple.com>
+
+        Check activeDocumentLoader() for null consistently everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=221167
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::cancelLoadWithError): Added null check before calling
+        isLoadingMainResource.
+
+2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Remove support for image controls
+        https://bugs.webkit.org/show_bug.cgi?id=221156
+
+        Reviewed by Tim Horton.
+
+        Turn these legacy WebKit SPI methods into empty stubs.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences imageControlsEnabled]):
+        (-[WebPreferences setImageControlsEnabled:]):
+
+2021-01-26  BJ Burg  <bburg@apple.com>
+
+        REGRESSION(r267641): WebKitDeveloperExtras preference has no effect for WebKitLegacy clients
+        https://bugs.webkit.org/show_bug.cgi?id=220996
+        <rdar://72173139>
+
+        Reviewed by Sam Weinig.
+
+        Read back this preference when propagating it, because the value depends on
+        more than just the preference key. For example, it allows Debug builds to act
+        as if the preference is always enabled.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2021-01-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Finish introduction of RenderLayerScrollableArea: remove remaining glue code from RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=220851
+
+        Reviewed by Simon Fraser.
+
+        Remove the last remaining glue code from RenderLayer, that was added
+        in r271559 to minimize the patch size. After this patch all call sites
+        use RenderLayerScrollableArea directly, removing the need for proxy
+        methods in RenderLayer that forward to RenderLayerScrollableArea.
+
+        The decade old bug 60305 (Separate scrolling code out of RenderLayer)
+        is finally closed.
+
+        Covered by existing tests.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement scrollXOffset]):
+        (-[DOMHTMLElement scrollYOffset]):
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Minor build fixes.
+
+        * DOM/DOMNode.mm:
+
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
+        https://bugs.webkit.org/show_bug.cgi?id=220810
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        Add a new `PaymentRequest` value to the `ChannelSource` enum.
+
+2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Include an origin identifier when writing promised image data to the drag pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220782
+
+        Reviewed by Megan Gardner.
+
+        See WebKit ChangeLog for more details.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+
+2021-01-19  Keith Rollin  <krollin@apple.com>
+
+        Modularize WebKitLegacy.framework
+        https://bugs.webkit.org/show_bug.cgi?id=220026
+        <rdar://57173237>
+
+        Reviewed by Darin Adler.
+
+        Add .modulemap files to WebKitLegacy to help speed up client builds.
+
+        In WebKitLegacy.xcconfig, enable module creation for macOS and iOS.
+        Add the associated umbrella header files, and enable the validation of
+        the module files.
+
+        For WebHTMLViewPrivate.h, ensure that ENABLE_NETSCAPE_PLUGIN_API is
+        defined before checking its value, thereby avoiding a compiler
+        warning-turned-error that an uninitialized symbol is being used.
+
+        For WebBackForwardListPrivate.h, make the parameter name in a function
+        comment match the actual parameter name, thereby avoiding a
+        warning-turned-error from the tool that processes headers into built
+        modules.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * History/WebBackForwardListPrivate.h:
+        * Misc/WebKitLegacy_Private.h: Added.
+        * Misc/WebKitLegacy_iOS_Private.h: Added.
+        * Misc/WebKitLegacy_macOS_Private.h: Copied from Source/WebKitLegacy/mac/History/WebBackForwardListPrivate.h.
+        * WebView/WebHTMLViewPrivate.h:
+
+2021-01-18  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Remove recently added glue code: RenderLayer::(setAdjustForIOSCaretWhenScrolling / setScrollShouldClearLatchedState / setConstrainsScrollingToContentEdge)
+        https://bugs.webkit.org/show_bug.cgi?id=220708
+
+        Reviewed by Adrian Perez de Castro.
+
+        Follow-up on patch adressing the removal of the glue code that
+        forwards calls from RenderLayer to RenderLayerScrollableArea (see
+        webkit.org/b/60305).
+
+        Covered by existing tests.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+
+2021-01-18  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Remove recently added glue code: RenderLayer::(scrollToOffset / scrollToXOffset / scrollToYOffset)
+        https://bugs.webkit.org/show_bug.cgi?id=220705
+
+        Reviewed by Adrian Perez de Castro.
+
+        Follow-up on patch adressing the removal of the glue code that
+        forwards calls from RenderLayer to RenderLayerScrollableArea (see
+        webkit.org/b/60305).
+
+        Covered by existing tests.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+
 2021-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Removed most uses of dispatch_async(dispatch_get_main_queue(), ...)

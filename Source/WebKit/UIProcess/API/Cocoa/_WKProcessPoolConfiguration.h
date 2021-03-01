@@ -32,7 +32,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSURL *injectedBundleURL;
-@property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) NSUInteger maximumProcessCount WK_API_DEPRECATED("It is no longer possible to limit the number of processes", macos(10.0, 10.15), ios(1.0, 13.0));
 @property (nonatomic) BOOL usesSingleWebProcess WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic, nullable, copy) NSString *customWebContentServiceBundleIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
@@ -52,7 +52,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) NSInteger diskCacheSizeOverride WK_API_DEPRECATED("Use [WKWebsiteDataStore nonPersistentDataStore] to limit disk cache size to 0", macos(10.11, 10.14.4), ios(9.0, 12.2));
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
 @property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macos(10.12), ios(10.0));
-@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.networkCacheSpeculativeValidationEnabled", macos(10.12, WK_MAC_TBA), ios(10.0, WK_IOS_TBA));
+@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.networkCacheSpeculativeValidationEnabled", macos(10.12, 10.15.4), ios(10.0, 13.4));
 @property (nonatomic, nullable, copy) NSString *sourceApplicationBundleIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.sourceApplicationBundleIdentifier", macos(10.12.3, 10.14.4), ios(10.3, 12.2));
 @property (nonatomic, nullable, copy) NSString *sourceApplicationSecondaryIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.sourceApplicationSecondaryIdentifier", macos(10.12.3, 10.14.4), ios(10.3, 12.2));
 @property (nonatomic) BOOL shouldCaptureAudioInUIProcess WK_API_AVAILABLE(macos(10.13), ios(11.0));
@@ -70,7 +70,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, getter=isJITEnabled) BOOL JITEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, nullable, copy, setter=setHSTSStorageDirectory:) NSURL *hstsStorageDirectory WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.hstsStorageDirectory", macos(10.15, WK_MAC_TBA), ios(13.0, WK_IOS_TBA));
 
-@property (nonatomic) BOOL configureJSCForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL configureJSCForTesting WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 @end
 

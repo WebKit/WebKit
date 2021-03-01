@@ -93,6 +93,7 @@ inline RectEdges<float> borderWidths(const RectEdges<BorderEdge>& edges)
 }
 
 // Per-box data with pixel-snapped geometry for background images and border-radius.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxDecorationData);
 class BoxDecorationData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxDecorationData);
 public:

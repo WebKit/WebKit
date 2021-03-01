@@ -50,7 +50,7 @@ private:
         , m_red(createWrapper(owner, m_color.red))
         , m_green(createWrapper(owner, m_color.green))
         , m_blue(createWrapper(owner, m_color.blue))
-        , m_alpha(createWrapper(owner, convertToComponentFloat(m_color.alpha)))
+        , m_alpha(createWrapper(owner, color.alphaAsFloat()))
     {
     }
 

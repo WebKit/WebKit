@@ -265,17 +265,29 @@
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
 
+    ;; <rdar://problem/47268166>
     (allow mach-lookup
-       ;; <rdar://problem/47268166>
-       (xpc-service-name "com.apple.MTLCompilerService"))
-    
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (xpc-service-name "com.apple.MTLCompilerService")
+        )
+    )
+    ;; This is just for logging. Remove when GPU process is enabled by default.
+    (allow mach-lookup
+        (with telemetry)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (xpc-service-name "com.apple.MTLCompilerService")
+        )
+    )
+
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
         "com.apple.opengl" ;; <rdar://problem/23321675>
     )
 )
 
-(define-once (debugging-support)
+(define-once (internal-debugging-support)
         (allow file-read* file-map-executable
                (subpath "/Developer"))
 
@@ -314,8 +326,10 @@
            (literal "/dev/null")
            (literal "/dev/zero"))
 
-    (allow file-read* file-write-data file-ioctl
-           (literal "/dev/dtracehelper"))
+    (with-filter (system-attribute apple-internal)
+        (allow file-read* file-write-data file-ioctl
+            (literal "/dev/dtracehelper"))
+    )
 
     (allow file-read*
            (literal "/dev/random")
@@ -575,7 +589,9 @@
                   (front-user-home-prefix "/Library/Caches/"))))
 )
 
-(debugging-support)
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support)
+)
 
 (allow file-read*
     required-etc-files
@@ -635,13 +651,10 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
-(allow network-outbound
-       (literal "/private/var/run/syslog"))
-
-;; Confirm this is unused:
-(allow file-read-metadata
-       (with report) (with telemetry-backtrace)
-       (literal "/private/var/run/syslog"))
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+        (literal "/private/var/run/syslog"))
+)
 
 (allow mach-lookup
        (global-name "com.apple.system.notification_center"))
@@ -999,7 +1012,6 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
-            "IOMobileFramebufferUserClient"
             "AGXDeviceUserClient"
             "AppleJPEGDriverUserClient"
             "IOSurfaceAcceleratorClient"
@@ -1374,6 +1386,7 @@
                 mach_exception_raise
                 (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
+                mach_memory_entry_ownership
                 mach_port_get_context_from_user
                 mach_port_request_notification
                 mach_port_set_attributes

@@ -1688,7 +1688,7 @@ public:
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
 
     static Length initialScrollMargin() { return Length(Fixed); }
-    static Length initialScrollPadding() { return Length(Fixed); }
+    static Length initialScrollPadding() { return Length(Auto); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();

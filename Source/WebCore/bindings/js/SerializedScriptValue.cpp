@@ -199,7 +199,9 @@ enum ArrayBufferViewSubtag {
     Int32ArrayTag = 6,
     Uint32ArrayTag = 7,
     Float32ArrayTag = 8,
-    Float64ArrayTag = 9
+    Float64ArrayTag = 9,
+    BigInt64ArrayTag = 10,
+    BigUint64ArrayTag = 11,
 };
 
 static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
@@ -218,6 +220,8 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
     case Float32ArrayTag:
         return 4;
     case Float64ArrayTag:
+    case BigInt64ArrayTag:
+    case BigUint64ArrayTag:
         return 8;
     default:
         return 0;
@@ -925,6 +929,10 @@ private:
             write(Float32ArrayTag);
         else if (obj->inherits<JSFloat64Array>(vm))
             write(Float64ArrayTag);
+        else if (obj->inherits<JSBigInt64Array>(vm))
+            write(BigInt64ArrayTag);
+        else if (obj->inherits<JSBigUint64Array>(vm))
+            write(BigUint64ArrayTag);
         else
             return false;
 
@@ -2400,6 +2408,12 @@ private:
             return true;
         case Float64ArrayTag:
             arrayBufferView = toJS(m_lexicalGlobalObject, m_globalObject, Float64Array::tryCreate(WTFMove(arrayBuffer), byteOffset, length).get());
+            return true;
+        case BigInt64ArrayTag:
+            arrayBufferView = toJS(m_lexicalGlobalObject, m_globalObject, BigInt64Array::tryCreate(WTFMove(arrayBuffer), byteOffset, length).get());
+            return true;
+        case BigUint64ArrayTag:
+            arrayBufferView = toJS(m_lexicalGlobalObject, m_globalObject, BigUint64Array::tryCreate(WTFMove(arrayBuffer), byteOffset, length).get());
             return true;
         default:
             return false;

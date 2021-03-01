@@ -29,16 +29,16 @@ namespace WebCore {
 
 class SwitchingGPUClient {
 public:
-    WEBCORE_EXPORT static SwitchingGPUClient* singletonIfExists();
     WEBCORE_EXPORT static void setSingleton(SwitchingGPUClient&);
 
     virtual ~SwitchingGPUClient() = default;
-
+private:
+    WEBCORE_EXPORT static SwitchingGPUClient* singletonIfExists();
     virtual void requestHighPerformanceGPU() = 0;
     virtual void releaseHighPerformanceGPU() = 0;
-    
-private:
+
     static SwitchingGPUClient* m_singleton;
+    friend class ScopedHighPerformanceGPURequest;
 };
 
 }

@@ -382,6 +382,10 @@ public:
     virtual bool shouldEnableInAppBrowserPrivacyProtections() const { return false; }
     virtual void notifyPageOfAppBoundBehavior() { }
 #endif
+
+#if ENABLE(PDFKIT_PLUGIN)
+    virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
+#endif
 };
 
 } // namespace WebCore

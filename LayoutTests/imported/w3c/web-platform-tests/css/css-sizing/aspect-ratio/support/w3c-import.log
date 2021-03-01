@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/support/100x100-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/support/200x200-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/support/20x50-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/support/2x2-green.ogv

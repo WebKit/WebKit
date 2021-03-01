@@ -31,7 +31,7 @@
         "es6": true,
     },
     "parserOptions": {
-        "ecmaVersion": 2018,
+        "ecmaVersion": 2020,
     },
     "globals": {
         // Namespace
@@ -143,6 +143,7 @@
         "dot-notation": 0,
         "eol-last": 2,
         "eqeqeq": 2,
+        "indent": ["error", 4],
         "func-call-spacing": [2, "never"],
         "key-spacing": [2, {"beforeColon": false, "afterColon": true}],
         "keyword-spacing": [2, {"before": true, "after": true}],
@@ -160,6 +161,7 @@
         "no-proto": 0,
         "no-redeclare": 0,
         "no-return-assign": 2,
+        "no-return-await": 2,
         "no-self-compare": 2,
         "no-shadow": 0,
         "no-trailing-spaces": 2,

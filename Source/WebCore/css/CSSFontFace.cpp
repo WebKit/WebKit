@@ -90,11 +90,19 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
 }
 
 CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
-    : m_fontSelector(makeWeakPtr(fontSelector))
-    , m_cssConnection(cssConnection)
+    : CSSFontFace(fontSelector && fontSelector->document() ? &fontSelector->document()->settings() : nullptr, cssConnection, wrapper, isLocalFallback)
+{
+    m_fontSelector = makeWeakPtr(fontSelector); // FIXME: Ideally this data member would go away (https://bugs.webkit.org/show_bug.cgi?id=208351).
+}
+
+CSSFontFace::CSSFontFace(const Settings* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
+    : m_cssConnection(cssConnection)
     , m_wrapper(makeWeakPtr(wrapper))
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
+    , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions())
+    , m_fontLoadTimingOverride(settings ? settings->fontLoadTimingOverride() : FontLoadTimingOverride::None)
+    , m_allowUserInstalledFonts(settings && !settings->shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::No : AllowUserInstalledFonts::Yes)
     , m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
 {
 }
@@ -452,24 +460,9 @@ Document* CSSFontFace::document() const
     return m_fontSelector ? m_fontSelector->document() : nullptr;
 }
 
-AllowUserInstalledFonts CSSFontFace::allowUserInstalledFonts() const
-{
-    if (m_fontSelector && m_fontSelector->document())
-        return m_fontSelector->document()->settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    return AllowUserInstalledFonts::Yes;
-}
-
-static FontLoadTimingOverride fontLoadTimingOverride(CSSFontSelector* fontSelector)
-{
-    auto overrideValue = FontLoadTimingOverride::None;
-    if (fontSelector && fontSelector->document())
-        overrideValue = fontSelector->document()->settings().fontLoadTimingOverride();
-    return overrideValue;
-}
-
 auto CSSFontFace::fontLoadTiming() const -> FontLoadTiming
 {
-    switch (fontLoadTimingOverride(m_fontSelector.get())) {
+    switch (m_fontLoadTimingOverride) {
     case FontLoadTimingOverride::None:
         switch (m_loadingBehavior) {
         case FontLoadingBehavior::Auto:
@@ -557,13 +550,6 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
     Ref<CSSFontFace> protectedThis(*this);
     
     fontLoadEventOccurred();
-}
-
-bool CSSFontFace::shouldIgnoreFontLoadCompletions() const
-{
-    if (m_fontSelector && m_fontSelector->document())
-        return m_fontSelector->document()->settings().shouldIgnoreFontLoadCompletions();
-    return false;
 }
 
 void CSSFontFace::opportunisticallyStartFontDataURLLoading(CSSFontSelector& fontSelector)

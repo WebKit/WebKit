@@ -32,6 +32,7 @@
 namespace WebCore {
 namespace Display {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ContainerBox);
 class ContainerBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContainerBox);
 public:

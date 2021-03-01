@@ -104,6 +104,7 @@ private:
         Vector<char> data;
     };
     Optional<SyncLoadResult> tryLoadingSynchronouslyUsingURLSchemeHandler(WebCore::FrameLoader&, ResourceLoadIdentifier, const WebCore::ResourceRequest&);
+    SyncLoadResult loadDataURLSynchronously(const WebCore::ResourceRequest&);
 
     WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
     Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
@@ -113,6 +114,9 @@ private:
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
 
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
+
+    void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
+    void prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>&) final;
 
     Vector<uint64_t> ongoingLoads() const final
     {

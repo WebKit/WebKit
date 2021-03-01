@@ -118,7 +118,7 @@ public:
         void operator++() { advance(); }
 
         struct Value {
-            ItemHandle item;
+            Optional<ItemHandle> item;
             Optional<FloatRect> extent;
             size_t itemSizeInBuffer { 0 };
         };
@@ -126,9 +126,9 @@ public:
         Value operator*() const
         {
             return {
-                ItemHandle { m_currentBufferForItem },
+                m_isValid ? makeOptional(ItemHandle { m_currentBufferForItem }) : WTF::nullopt,
                 m_currentExtent,
-                m_currentItemSizeInBuffer
+                m_currentItemSizeInBuffer,
             };
         }
 
@@ -152,6 +152,7 @@ public:
         uint8_t* m_currentBufferForItem { nullptr };
         Optional<FloatRect> m_currentExtent;
         size_t m_currentItemSizeInBuffer { 0 };
+        bool m_isValid { true };
     };
 
     iterator begin() const { return { *this }; }

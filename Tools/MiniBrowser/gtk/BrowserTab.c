@@ -60,6 +60,7 @@ struct _BrowserTab {
 };
 
 static GHashTable *userMediaPermissionGrantedOrigins;
+static GHashTable *mediaKeySystemPermissionGrantedOrigins;
 struct _BrowserTabClass {
     GtkBoxClass parent;
 };
@@ -264,12 +265,16 @@ static void permissionRequestDialogResponse(GtkWidget *dialog, gint response, Pe
     case GTK_RESPONSE_YES:
         if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(requestData->request))
             g_hash_table_add(userMediaPermissionGrantedOrigins, g_strdup(requestData->origin));
+        if (WEBKIT_IS_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(requestData->request))
+            g_hash_table_add(mediaKeySystemPermissionGrantedOrigins, g_strdup(requestData->origin));
 
         webkit_permission_request_allow(requestData->request);
         break;
     default:
         if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(requestData->request))
             g_hash_table_remove(userMediaPermissionGrantedOrigins, requestData->origin);
+        if (WEBKIT_IS_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(requestData->request))
+            g_hash_table_remove(mediaKeySystemPermissionGrantedOrigins, requestData->origin);
 
         webkit_permission_request_deny(requestData->request);
         break;
@@ -340,6 +345,16 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         const gchar *currentDomain = webkit_website_data_access_permission_request_get_current_domain(websiteDataAccessRequest);
         text = g_strdup_printf("Do you want to allow \"%s\" to use cookies while browsing \"%s\"? This will allow \"%s\" to track your activity",
             requestingDomain, currentDomain, requestingDomain);
+    } else if (WEBKIT_IS_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(request)) {
+        char *origin = getWebViewOrigin(webView);
+        if (g_hash_table_contains(mediaKeySystemPermissionGrantedOrigins, origin)) {
+            webkit_permission_request_allow(request);
+            g_free(origin);
+            return TRUE;
+        }
+        g_free(origin);
+        title = "DRM system access request";
+        text = g_strdup_printf("Allow to use a CDM providing access to %s?", webkit_media_key_system_permission_get_name(WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(request)));
     } else {
         g_print("%s request not handled\n", G_OBJECT_TYPE_NAME(request));
         return FALSE;
@@ -654,6 +669,9 @@ static void browser_tab_class_init(BrowserTabClass *klass)
 
     if (!userMediaPermissionGrantedOrigins)
         userMediaPermissionGrantedOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+    if (!mediaKeySystemPermissionGrantedOrigins)
+        mediaKeySystemPermissionGrantedOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
     g_object_class_install_property(
         gobjectClass,

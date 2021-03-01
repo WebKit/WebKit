@@ -34,7 +34,7 @@
 
       run_test("non ascii response header value",
         function(client){
-            client.open("GET", "resources/headers.php")
+            client.open("GET", "resources/headers.py")
         },function(client){
             assert_equals(client.getResponseHeader("x-custom-header-bytes"), "\xE2\x80\xA6")
         }
@@ -42,7 +42,7 @@
 
       run_test("non ascii statusText",
         function(client){
-            client.open("GET", "resources/not-ascii-status.php")
+            client.open("GET", "resources/not-ascii-status.py")
         },function(client){
             assert_equals(client.statusText, "OK\xE2\x80\xA6")
         }

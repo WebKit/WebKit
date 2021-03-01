@@ -27,11 +27,11 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "B3OpaqueByproducts.h"
 #include "DFGCommonData.h"
 #include "FTLLazySlowPath.h"
 #include "FTLOSRExit.h"
 #include "JITCode.h"
+#include "JITOpaqueByproducts.h"
 
 namespace JSC {
 
@@ -52,7 +52,7 @@ public:
     bool contains(void*) override;
 
     void initializeB3Code(CodeRef<JSEntryPtrTag>);
-    void initializeB3Byproducts(std::unique_ptr<B3::OpaqueByproducts>);
+    void initializeB3Byproducts(std::unique_ptr<OpaqueByproducts>);
     void initializeAddressForCall(CodePtr<JSEntryPtrTag>);
     void initializeArityCheckEntrypoint(CodeRef<JSEntryPtrTag>);
     
@@ -77,7 +77,7 @@ public:
 private:
     CodePtr<JSEntryPtrTag> m_addressForCall;
     CodeRef<JSEntryPtrTag> m_b3Code;
-    std::unique_ptr<B3::OpaqueByproducts> m_b3Byproducts;
+    std::unique_ptr<OpaqueByproducts> m_b3Byproducts;
     CodeRef<JSEntryPtrTag> m_arityCheckEntrypoint;
 };
 

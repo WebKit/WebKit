@@ -159,54 +159,6 @@ public:
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
-    // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
-    ScrollType currentScrollType() const;
-    WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
-    WEBCORE_EXPORT ScrollOffset scrollOffset() const;
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
-    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
-    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
-    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
-    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
-    void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true);
-#if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT void setAdjustForIOSCaretWhenScrolling(bool);
-#endif
-    void setScrollShouldClearLatchedState(bool);
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
-    bool containsDirtyOverlayScrollbars() const;
-    bool hasScrollableOrRubberbandableAncestor();
-    RenderMarquee* marquee() const;
-    void updateLayerPositionsAfterDocumentScroll();
-    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
-    void paintOverflowControls(GraphicsContext&, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
-    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
-    void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
-    IntSize reachableTotalContentsSize() const;
-    bool horizontalScrollbarHiddenByStyle() const;
-    bool verticalScrollbarHiddenByStyle() const;
-    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
-    void panScrollFromPoint(const IntPoint&);
-    ScrollPosition scrollPosition() const;
-    GraphicsLayer* layerForHorizontalScrollbar() const;
-    GraphicsLayer* layerForVerticalScrollbar() const;
-    Scrollbar* horizontalScrollbar() const;
-    Scrollbar* verticalScrollbar() const;
-    bool scrollingMayRevealBackground() const;
-    bool hasScrollableHorizontalOverflow() const;
-    bool hasScrollableVerticalOverflow() const;
-    bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
-    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
-    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
-    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
-    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
-    void setConstrainsScrollingToContentEdge(bool);
-    // End of temporary glue code
-
 #if PLATFORM(IOS_FAMILY)
     // Called before the renderer's widget (if any) has been nulled out.
     void willBeDestroyed();
@@ -509,6 +461,7 @@ public:
     IntSize offsetFromResizeCorner(const IntPoint& localPoint) const;
 
     void updateScrollInfoAfterLayout();
+    void updateScrollbarSteps();
 
     void autoscroll(const IntPoint&);
 

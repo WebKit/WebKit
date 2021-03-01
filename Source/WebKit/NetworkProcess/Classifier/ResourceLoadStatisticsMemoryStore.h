@@ -118,7 +118,6 @@ public:
     String privateClickMeasurementToString() override { return String(); };
     void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) override { };
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override { };
-    void updateTimerLastFired() override { };
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;

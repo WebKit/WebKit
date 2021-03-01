@@ -74,6 +74,15 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     }
 
     RetainPtr<NSObject <WKFormControl>> control;
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if ([view _formControlRefreshEnabled]) {
+        // FIXME: Add implementation for multi-select picker.
+        control = adoptNS([[WKSelectPicker alloc] initWithView:view]);
+        return [super initWithView:view control:WTFMove(control)];
+    }
+#endif
+
     if (currentUserInterfaceIdiomIsPadOrMac())
         control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
     else if (view.focusedElementInformation.isMultiSelect || hasGroups)

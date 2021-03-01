@@ -150,7 +150,8 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     if (substituteData.isValid() && !substituteData.failingURL().isEmpty()) {
         bool shouldContinue = true;
 #if ENABLE(CONTENT_FILTERING)
-        shouldContinue = ContentFilter::continueAfterSubstituteDataRequest(*m_frame.loader().activeDocumentLoader(), substituteData);
+        if (auto loader = m_frame.loader().activeDocumentLoader())
+            shouldContinue = ContentFilter::continueAfterSubstituteDataRequest(*loader, substituteData);
 #endif
         if (isBackForwardLoadType(m_loadType))
             m_loadType = FrameLoadType::Reload;

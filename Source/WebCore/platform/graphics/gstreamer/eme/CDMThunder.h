@@ -73,7 +73,7 @@ private:
 class CDMPrivateThunder final : public CDMPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMPrivateThunder(const String& keySystem) : m_keySystem(keySystem) { };
+    CDMPrivateThunder(const String& keySystem);
     virtual ~CDMPrivateThunder() = default;
 
     Vector<AtomString> supportedInitDataTypes() const final;
@@ -101,6 +101,7 @@ public:
 
 private:
     String m_keySystem;
+    Thunder::UniqueThunderSystem m_thunderSystem;
 };
 
 class CDMInstanceThunder final : public CDMInstanceProxy {

@@ -53,6 +53,10 @@
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
 
+#if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
+#import <AVFoundation/AVPlayerInterstitialEventController.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerItem ()
 @property (nonatomic, readonly) NSTimeInterval seekableTimeRangesLastModifiedTime NS_AVAILABLE(10_13, 11_0);
@@ -413,5 +417,12 @@ NS_ASSUME_NONNULL_END
 @interface AVSampleBufferDisplayLayer (VideoOutput)
 @property (nonatomic, nullable) AVSampleBufferVideoOutput *output;
 @end
+
+#if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
+@interface AVPlayerItem (AVPlayerInterstitialSupport)
+@property (nonatomic) BOOL automaticallyHandlesInterstitialEvents;
+@end
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)

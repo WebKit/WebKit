@@ -31,12 +31,12 @@
             xhr.onloadend = function(e)
             {
                 if (count++ < 1) {
-                    xhr.open("POST", "./resources/content.php", true);
+                    xhr.open("POST", "./resources/content.py", true);
                     xhr.send("test");
                 }                    
             }
 
-            xhr.open("POST", "./resources/content.php", true);
+            xhr.open("POST", "./resources/content.py", true);
             xhr.send("test");
         });
     </script>

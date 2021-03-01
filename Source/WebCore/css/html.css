@@ -834,6 +834,7 @@ input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-medi
     box-sizing: border-box;
     display: flex;
     align-contents: center;
+    min-width: 0;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {

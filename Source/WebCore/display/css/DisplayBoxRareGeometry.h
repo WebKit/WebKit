@@ -36,6 +36,7 @@ namespace WebCore {
 namespace Display {
 
 // Storage for box geometry which is only used on boxes with rare style, like transforms or border-radius.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxRareGeometry);
 class BoxRareGeometry {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxRareGeometry);
 public:

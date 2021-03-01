@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -773,6 +773,17 @@ void GraphicsLayerCA::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
     setNeedsDisplay();
     GraphicsLayer::setUsesDisplayListDrawing(usesDisplayListDrawing);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+void GraphicsLayerCA::setSeparated(bool separated)
+{
+    if (separated == m_separated)
+        return;
+
+    GraphicsLayer::setSeparated(separated);
+    noteLayerPropertyChanged(SeparatedChanged);
+}
+#endif
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
 {
@@ -1908,6 +1919,11 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & CustomAppearanceChanged)
         updateCustomAppearance();
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (m_uncommittedChanges & SeparatedChanged)
+        updateSeparated();
+#endif
+
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
@@ -2348,6 +2364,13 @@ void GraphicsLayerCA::updateWindRule()
 {
     m_layer->setShapeWindRule(m_shapeLayerWindRule);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+void GraphicsLayerCA::updateSeparated()
+{
+    m_layer->setSeparated(m_separated);
+}
+#endif
 
 bool GraphicsLayerCA::updateStructuralLayer()
 {
@@ -2865,81 +2888,108 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& repli
 
 void GraphicsLayerCA::updateAnimations()
 {
-    auto baseTransformAnimationBeginTime = 1_s;
+    // In order to guarantee that transform animations are applied in the expected order (translate, rotate, scale and transform),
+    // we need to have them wrapped individually in an animation group because Core Animation sorts animations first by their begin
+    // time, and then by the order in which they were added (for those with the same begin time). Since a rotate animation can have
+    // an earlier begin time than a translate animation, we cannot rely on adding the animations in the correct order.
+    //
+    // Having an animation group wrapping each animation means that we can guarantee the order in which animations are applied by
+    // ensuring they each have the same begin time. We set this begin time to be the smallest value possible, ensuring that base
+    // transform animations are applied continuously. We'll then set the begin time of interpolating animations to be local to the
+    // animation group, which means subtracting the group's begin time.
+
+    // We use 1_s here because 0_s would have special meaning in Core Animation, meaning that the animation would have its begin
+    // time set to the current time when it's committed.
+    auto animationGroupBeginTime = 1_s;
+    auto infiniteDuration = std::numeric_limits<double>::max();
     auto currentTime = Seconds(CACurrentMediaTime());
-    auto updateBeginTimes = [&](LayerPropertyAnimation& animation)
-    {
-        if (animation.m_pendingRemoval)
-            return;
 
-        // In case we have an offset, and we haven't set an explicit begin time previously,
-        // we need to record the beginTime now.
-        if (animation.m_timeOffset && !animation.m_beginTime)
-            animation.m_beginTime = currentTime;
+    auto addAnimationGroup = [&](AnimatedPropertyID property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
+        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, "");
+        caAnimationGroup->setDuration(infiniteDuration);
+        caAnimationGroup->setAnimations(animations);
 
-        // Now check if we have a resolved begin time and ensure the begin time we'll use for
-        // base transform animations matches the smallest known begin time to guarantee that
-        // such animations can combine with other explicit transform animations correctly.
-        if (auto computedBeginTime = animation.computedBeginTime())
-            baseTransformAnimationBeginTime = std::min(baseTransformAnimationBeginTime, *computedBeginTime);
+        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), "group-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
+        animationGroup.m_beginTime = animationGroupBeginTime;
+
+        setAnimationOnLayer(animationGroup);
+        m_animationGroups.append(WTFMove(animationGroup));
     };
 
     enum class Additive { Yes, No };
-    auto addAnimation = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
-        animation.m_animation->setAdditive(additive == Additive::Yes);
-        setAnimationOnLayer(animation);
+    auto prepareAnimationForAddition = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
+        auto caAnim = animation.m_animation;
+        caAnim->setAdditive(additive == Additive::Yes);
+        if (auto beginTime = animation.computedBeginTime())
+            caAnim->setBeginTime(beginTime->seconds());
+
         if (animation.m_playState == PlayState::PausePending || animation.m_playState == PlayState::Paused) {
-            pauseCAAnimationOnLayer(animation);
+            caAnim->setSpeed(0);
+            caAnim->setTimeOffset(animation.m_timeOffset.seconds());
             animation.m_playState = PlayState::Paused;
         } else
             animation.m_playState = PlayState::Playing;
     };
 
+    auto addAnimation = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
+        prepareAnimationForAddition(animation, additive);
+        addAnimationGroup(animation.m_property, { animation.m_animation });
+    };
+
     enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
-    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient) {
+    auto makeBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) -> LayerPropertyAnimation* {
         // A base value transform animation can either be set to the identity matrix or to read the underlying
         // value from the GraphicsLayerClient. If we didn't explicitly ask for an identity matrix, we can skip
         // the addition of this base value transform animation since it will be a no-op.
         auto matrix = matrixSource == TransformationMatrixSource::UseIdentityMatrix ? TransformationMatrix() : client().transformMatrixForProperty(property);
         if (matrixSource == TransformationMatrixSource::AskClient && matrix.isIdentity())
-            return;
+            return nullptr;
 
-        // A base value transform animation needs to last forever and use the same value for its from and to values.
+        auto delay = beginTimeOfEarliestPropertyAnimation > currentTime ? beginTimeOfEarliestPropertyAnimation - currentTime : 0_s;
+
+        // A base value transform animation needs to last forever and use the same value for its from and to values,
+        // unless we're just filling until an animation for this property starts, in which case it must last for duration
+        // of the delay until that animation.
         auto caAnimation = createPlatformCAAnimation(PlatformCAAnimation::Basic, propertyIdToString(property));
-        caAnimation->setDuration(Seconds::infinity().seconds());
+        caAnimation->setDuration(delay ? delay.seconds() : infiniteDuration);
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
         auto animation = LayerPropertyAnimation(WTFMove(caAnimation), "base-transform-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
-        // To ensure the base value transform is applied along with all the interpolating animations, we set it to have started
-        // as early as possible, which combined with the infinite duration ensures it's current for any given CA media time.
-        animation.m_beginTime = baseTransformAnimationBeginTime;
+        if (delay)
+            animation.m_beginTime = currentTime - animationGroupBeginTime;
 
+        m_baseValueTransformAnimations.append(WTFMove(animation));
+        return &m_baseValueTransformAnimations.last();
+    };
+
+    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
         // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
         // is the initial base value transform animation and must override the current transform value for this layer.
         // Otherwise, it is meant to apply the underlying value for one specific transform-related property and be additive
         // to be combined with the other base value transform animations and interpolating animations.
-        addAnimation(animation, matrixSource == TransformationMatrixSource::AskClient ? Additive::Yes : Additive::No);
-        m_baseValueTransformAnimations.append(WTFMove(animation));
+        if (auto* animation = makeBaseValueTransformAnimation(property, matrixSource, beginTimeOfEarliestPropertyAnimation))
+            addAnimation(*animation, matrixSource == TransformationMatrixSource::AskClient ? Additive::Yes : Additive::No);
     };
 
-    // Iterate through all animations to update each animation's begin time, if necessary,
-    // compute the base transform animation begin times and remove all running CA animations.
+    // Iterate through all animations to set the begin time of any new animations.
     for (auto& animation : m_animations) {
-        updateBeginTimes(animation);
-        if (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused)
-            removeCAAnimationFromLayer(animation);
+        if (!animation.m_pendingRemoval && !animation.m_beginTime)
+            animation.m_beginTime = currentTime - animationGroupBeginTime;
     }
 
-    // Also remove all the base value transform CA animations.
-    for (auto& animation : m_baseValueTransformAnimations)
-        removeCAAnimationFromLayer(animation);
+    // Now, remove all animation groups from the layer so that we no longer have any layer animations.
+    for (auto& animationGroup : m_animationGroups)
+        removeCAAnimationFromLayer(animationGroup);
 
-    // Now remove all the animations marked as pending removal and all base value transform animations.
+    // We can remove all previously-created base value transform animations and animation groups.
+    m_baseValueTransformAnimations.clear();
+    m_animationGroups.clear();
+
+    // Now remove all the animations marked as pending removal.
     m_animations.removeAllMatching([&](LayerPropertyAnimation animation) {
         return animation.m_pendingRemoval;
     });
-    m_baseValueTransformAnimations.clear();
 
     // Now that our list of animations is current, we can separate animations by property so that
     // we can apply them in order. We only need to apply the last animation applied for a given
@@ -2950,6 +3000,9 @@ void GraphicsLayerCA::updateAnimations()
     LayerPropertyAnimation* translateAnimation = nullptr;
     LayerPropertyAnimation* scaleAnimation = nullptr;
     LayerPropertyAnimation* rotateAnimation = nullptr;
+    Vector<LayerPropertyAnimation*> translateAnimations;
+    Vector<LayerPropertyAnimation*> scaleAnimations;
+    Vector<LayerPropertyAnimation*> rotateAnimations;
     Vector<LayerPropertyAnimation*> transformAnimations;
 
     for (auto& animation : m_animations) {
@@ -2987,55 +3040,95 @@ void GraphicsLayerCA::updateAnimations()
         }
     }
 
+    if (translateAnimation)
+        translateAnimations.append(translateAnimation);
+    if (scaleAnimation)
+        scaleAnimations.append(scaleAnimation);
+    if (rotateAnimation)
+        rotateAnimations.append(rotateAnimation);
+
     // Now we can apply the transform-related animations, taking care to add them in the right order
     // (translate/scale/rotate/transform) and generate non-interpolating base value transform animations
     // for each property that is not otherwise interpolated.
-    if (translateAnimation || scaleAnimation || rotateAnimation || !transformAnimations.isEmpty()) {
+    if (!translateAnimations.isEmpty() || !scaleAnimations.isEmpty() || !rotateAnimations.isEmpty() || !transformAnimations.isEmpty()) {
         // Start with a base identity transform to override the transform applied to the layer and have a
         // sound base to add animations on top of with additivity enabled.
         addBaseValueTransformAnimation(AnimatedPropertyTransform, TransformationMatrixSource::UseIdentityMatrix);
 
         // Core Animation might require additive animations to be applied in the reverse order.
 #if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
-        if (translateAnimation)
-            addAnimation(*translateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
+            if (animations.isEmpty()) {
+                addBaseValueTransformAnimation(property);
+                return;
+            }
 
-        if (rotateAnimation)
-            addAnimation(*rotateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+            Seconds earliestBeginTime = 0_s;
+            for (auto* animation : animations) {
+                if (auto beginTime = animation->computedBeginTime()) {
+                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
+                        earliestBeginTime = *beginTime;
+                }
+            }
 
-        if (scaleAnimation)
-            addAnimation(*scaleAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyScale);
+            if (earliestBeginTime)
+                earliestBeginTime += animationGroupBeginTime;
 
-        for (auto* animation : transformAnimations)
-            addAnimation(*animation);
-        if (transformAnimations.isEmpty())
-            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+            Vector<RefPtr<PlatformCAAnimation>> caAnimations;
+            if (earliestBeginTime > currentTime) {
+                if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
+                    prepareAnimationForAddition(*baseValueTransformAnimation);
+                    caAnimations.append(baseValueTransformAnimation->m_animation);
+                }
+            }
+
+            for (auto* animation : animations) {
+                prepareAnimationForAddition(*animation);
+                caAnimations.append(animation->m_animation);
+            }
+
+            addAnimationGroup(property, caAnimations);
+        };
+
+        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
+        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
+        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
+        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
 #else
-        for (auto* animation : WTF::makeReversedRange(transformAnimations))
-            addAnimation(*animation);
-        if (transformAnimations.isEmpty())
-            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
+            if (animations.isEmpty()) {
+                addBaseValueTransformAnimation(property);
+                return;
+            }
 
-        if (scaleAnimation)
-            addAnimation(*scaleAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyScale);
+            Seconds earliestBeginTime = 0_s;
+            Vector<RefPtr<PlatformCAAnimation>> caAnimations;
+            for (auto* animation : WTF::makeReversedRange(animations)) {
+                if (auto beginTime = animation->computedBeginTime()) {
+                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
+                        earliestBeginTime = *beginTime;
+                }
+                prepareAnimationForAddition(*animation);
+                caAnimations.append(animation->m_animation);
+            }
 
-        if (rotateAnimation)
-            addAnimation(*rotateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+            if (earliestBeginTime)
+                earliestBeginTime += animationGroupBeginTime;
 
-        if (translateAnimation)
-            addAnimation(*translateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+            if (earliestBeginTime > currentTime) {
+                if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
+                    prepareAnimationForAddition(*baseValueTransformAnimation);
+                    caAnimations.append(baseValueTransformAnimation->m_animation);
+                }
+            }
+
+            addAnimationGroup(property, caAnimations);
+        };
+
+        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
+        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
+        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
+        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
 #endif
     }
 }
@@ -4392,8 +4485,10 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     Vector<std::pair<String, double>> animations;
 
     for (auto& animation : m_animations) {
-        auto caAnimation = animatedLayer(animation.m_property)->animationForKey(animation.animationIdentifier());
-        animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed() });
+        if (auto caAnimation = animatedLayer(animation.m_property)->animationForKey(animation.animationIdentifier()))
+            animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed() });
+        else
+            animations.append({ animatedPropertyIDAsString(animation.m_property), (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::PlayPending) ? 1 : 0 });
     }
 
     return animations;

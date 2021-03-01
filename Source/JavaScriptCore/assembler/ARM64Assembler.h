@@ -2501,17 +2501,17 @@ public:
     AssemblerLabel labelForWatchpoint()
     {
         AssemblerLabel result = m_buffer.label();
-        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+        if (static_cast<int>(result.offset()) != m_indexOfLastWatchpoint)
             result = label();
-        m_indexOfLastWatchpoint = result.m_offset;
-        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        m_indexOfLastWatchpoint = result.offset();
+        m_indexOfTailOfLastWatchpoint = result.offset() + maxJumpReplacementSize();
         return result;
     }
 
     AssemblerLabel label()
     {
         AssemblerLabel result = m_buffer.label();
-        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+        while (UNLIKELY(static_cast<int>(result.offset()) < m_indexOfTailOfLastWatchpoint)) {
             nop();
             result = m_buffer.label();
         }
@@ -2529,12 +2529,12 @@ public:
     static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
         ASSERT(label.isSet());
-        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + label.m_offset);
+        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + label.offset());
     }
     
     static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
     {
-        return b.m_offset - a.m_offset;
+        return b.offset() - a.offset();
     }
 
     size_t codeSize() const { return m_buffer.codeSize(); }
@@ -2542,7 +2542,7 @@ public:
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {
         ASSERT(call.isSet());
-        return call.m_offset;
+        return call.offset();
     }
 
     // Linking & patching:
@@ -2557,21 +2557,21 @@ public:
     {
         ASSERT(to.isSet());
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.m_offset, to.m_offset, type, condition));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), to.offset(), type, condition));
     }
 
     void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type, Condition condition, bool is64Bit, RegisterID compareRegister)
     {
         ASSERT(to.isSet());
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.m_offset, to.m_offset, type, condition, is64Bit, compareRegister));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), to.offset(), type, condition, is64Bit, compareRegister));
     }
 
     void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type, Condition condition, unsigned bitNumber, RegisterID compareRegister)
     {
         ASSERT(to.isSet());
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.m_offset, to.m_offset, type, condition, bitNumber, compareRegister));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), to.offset(), type, condition, bitNumber, compareRegister));
     }
 
     static void linkJump(void* code, AssemblerLabel from, void* to)
@@ -3203,7 +3203,7 @@ protected:
 
     static int* addressOf(void* code, AssemblerLabel label)
     {
-        return reinterpret_cast<int*>(static_cast<char*>(code) + label.m_offset);
+        return reinterpret_cast<int*>(static_cast<char*>(code) + label.offset());
     }
 
     static RegisterID disassembleXOrSp(int reg) { return reg == 31 ? ARM64Registers::sp : static_cast<RegisterID>(reg); }

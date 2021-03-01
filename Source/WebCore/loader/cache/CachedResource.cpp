@@ -105,6 +105,10 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
     case Type::TextTrackResource:
         return ResourceLoadPriority::Low;
 #endif
+#if ENABLE(MODEL_ELEMENT)
+    case Type::ModelResource:
+        return ResourceLoadPriority::Medium;
+#endif
 #if ENABLE(APPLICATION_MANIFEST)
     case Type::ApplicationManifest:
         return ResourceLoadPriority::Low;

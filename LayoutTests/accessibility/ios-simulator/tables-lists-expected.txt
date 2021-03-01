@@ -8,13 +8,10 @@ This test makes sure that items in lists, tables and landmarks have different tr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS listItem.traits != initialItem.traits is true
-PASS listItem.traits != tableItem.traits is true
-PASS listItem.traits != landmarkItem.traits is true
-PASS tableItem.traits != initialItem.traits is true
-PASS tableItem.traits != landmarkItem.traits is true
-PASS landmarkItem.traits != initialItem.traits is true
-PASS nonTableItem.traits != tableItem.traits is true
+PASS listItem.isInList is true
+PASS tableItem.isInTable is true
+PASS landmarkItem.isInLandmark is true
+PASS nonTableItem.isInTable is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

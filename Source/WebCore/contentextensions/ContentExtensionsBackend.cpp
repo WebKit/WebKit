@@ -53,7 +53,15 @@
 namespace WebCore {
 
 namespace ContentExtensions {
-    
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ContentRuleListAdditions.mm>
+#else
+static void makeSecureIfNecessary(ContentRuleListResults&, const URL&)
+{
+}
+#endif
+
 void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
     ASSERT(!identifier.isEmpty());
@@ -155,20 +163,17 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
 
 ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
 {
-    if (m_contentExtensions.isEmpty())
-        return { };
-
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
 
-    if (Frame* frame = initiatingDocumentLoader.frame()) {
+    if (auto* frame = initiatingDocumentLoader.frame()) {
         currentDocument = frame->document();
 
         if (initiatingDocumentLoader.isLoadingMainResource()
             && frame->isMainFrame()
             && resourceType == ResourceType::Document)
             mainDocumentURL = url;
-        else if (Document* mainDocument = frame->mainFrame().document())
+        else if (auto* mainDocument = frame->mainFrame().document())
             mainDocumentURL = mainDocument->url();
     }
 
@@ -176,6 +181,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
+    makeSecureIfNecessary(results, url);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
@@ -250,13 +256,11 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 
 ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL)
 {
-    if (m_contentExtensions.isEmpty())
-        return { };
-
     ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Raw };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
+    makeSecureIfNecessary(results, url);
     for (const auto& actionsFromContentRuleList : actions) {
         for (const auto& action : actionsFromContentRuleList.actions) {
             switch (action.type()) {

@@ -70,6 +70,7 @@ public:
     float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
 
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
+    void setHasImageOverlay() { m_hasImageOverlay = true; }
     
     bool isShowingMissingOrImageError() const;
     bool isShowingAltText() const;
@@ -120,8 +121,6 @@ private:
 
     bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const final;
 
-    virtual bool shadowControlsNeedCustomLayoutMetrics() const { return false; }
-
     IntSize imageSizeForError(CachedImage*) const;
     void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
     void updateIntrinsicSizeIfNeeded(const LayoutSize&);
@@ -130,7 +129,9 @@ private:
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
     
-    void layoutShadowControls(const LayoutSize& oldSize);
+    void layoutShadowContent(const LayoutSize& oldSize);
+
+    bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
     LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const override;
@@ -143,6 +144,7 @@ private:
     bool m_needsToSetSizeForAltText { false };
     bool m_isGeneratedContent { false };
     bool m_hasShadowControls { false };
+    bool m_hasImageOverlay { false };
     float m_imageDevicePixelRatio { 1 };
 
     friend class RenderImageScaleObserver;

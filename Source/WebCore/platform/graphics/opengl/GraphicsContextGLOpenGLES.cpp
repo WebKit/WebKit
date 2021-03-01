@@ -267,7 +267,7 @@ void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 }
 
 #if !PLATFORM(GTK)
-ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
         m_extensions = makeUnique<ExtensionsGLOpenGLES>(this, isGLES2Compliant());
@@ -276,12 +276,8 @@ ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 #endif
 
 #if PLATFORM(WIN) && USE(CA)
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow, GraphicsContextGLOpenGL::Destination destination)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow)
 {
-    // This implementation doesn't currently support rendering directly to the HostWindow.
-    if (destination == Destination::DirectlyToHostWindow)
-        return nullptr;
-    
     static bool initialized = false;
     static bool success = true;
     if (!initialized) {
@@ -296,10 +292,10 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     return adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow, renderStyle));
 }
 
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, sharedContext)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_COMPATIBILITY_OUTPUT)
-    , m_private(makeUnique<GraphicsContextGLOpenGLPrivate>(this, destination))
+    , m_private(makeUnique<GraphicsContextGLOpenGLPrivate>(this))
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
     if (!makeContextCurrent())
@@ -309,33 +305,31 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
 
-    if (destination == Destination::Offscreen) {
-        // Create a texture to render into.
-        ::glGenTextures(1, &m_texture);
-        ::glBindTexture(GL_TEXTURE_2D, m_texture);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        ::glBindTexture(GL_TEXTURE_2D, 0);
+    // Create a texture to render into.
+    ::glGenTextures(1, &m_texture);
+    ::glBindTexture(GL_TEXTURE_2D, m_texture);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ::glBindTexture(GL_TEXTURE_2D, 0);
         
-        // Create an FBO.
-        ::glGenFramebuffers(1, &m_fbo);
-        ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    // Create an FBO.
+    ::glGenFramebuffers(1, &m_fbo);
+    ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         
-        m_state.boundDrawFBO = m_state.boundReadFbo = m_fbo;
-        if (!attributes.antialias && (attributes.stencil || attributes.depth))
-            ::glGenRenderbuffers(1, &m_depthStencilBuffer);
-        
-        // Create a multisample FBO.
-        if (attributes.antialias) {
-            ::glGenFramebuffers(1, &m_multisampleFBO);
-            ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-            ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (attributes.stencil || attributes.depth)
-                ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        }
+    m_state.boundDrawFBO = m_state.boundReadFbo = m_fbo;
+    if (!attributes.antialias && (attributes.stencil || attributes.depth))
+        ::glGenRenderbuffers(1, &m_depthStencilBuffer);
+
+    // Create a multisample FBO.
+    if (attributes.antialias) {
+        ::glGenFramebuffers(1, &m_multisampleFBO);
+        ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
+        ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
     }
     
     // ANGLE initialization.

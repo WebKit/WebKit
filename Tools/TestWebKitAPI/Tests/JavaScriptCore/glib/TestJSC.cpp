@@ -2805,11 +2805,11 @@ static void testJSCExceptions()
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 4);
         g_assert_null(jsc_exception_get_source_uri(exception));
-        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "global code");
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "global code@");
         GUniquePtr<char> errorString(jsc_exception_to_string(exception));
         g_assert_cmpstr(errorString.get(), ==, "ReferenceError: Can't find variable: foo");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
-        g_assert_cmpstr(reportString.get(), ==, ":1:4 ReferenceError: Can't find variable: foo\n  global code\n");
+        g_assert_cmpstr(reportString.get(), ==, ":1:4 ReferenceError: Can't find variable: foo\n  global code@\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2902,11 +2902,11 @@ static void testJSCExceptions()
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 24);
         g_assert_null(jsc_exception_get_source_uri(exception));
-        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createError@[native code]\nglobal code");
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createError@[native code]\nglobal code@");
         GUniquePtr<char> errorString(jsc_exception_to_string(exception));
         g_assert_cmpstr(errorString.get(), ==, "Error: API exception");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
-        g_assert_cmpstr(reportString.get(), ==, ":1:24 Error: API exception\n  createError@[native code]\n  global code\n");
+        g_assert_cmpstr(reportString.get(), ==, ":1:24 Error: API exception\n  createError@[native code]\n  global code@\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2933,11 +2933,11 @@ static void testJSCExceptions()
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 30);
         g_assert_null(jsc_exception_get_source_uri(exception));
-        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomError@[native code]\nglobal code");
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomError@[native code]\nglobal code@");
         GUniquePtr<char> errorString(jsc_exception_to_string(exception));
         g_assert_cmpstr(errorString.get(), ==, "CustomAPIError: API custom exception");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
-        g_assert_cmpstr(reportString.get(), ==, ":1:30 CustomAPIError: API custom exception\n  createCustomError@[native code]\n  global code\n");
+        g_assert_cmpstr(reportString.get(), ==, ":1:30 CustomAPIError: API custom exception\n  createCustomError@[native code]\n  global code@\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2964,11 +2964,11 @@ static void testJSCExceptions()
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 33);
         g_assert_null(jsc_exception_get_source_uri(exception));
-        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createFormattedError@[native code]\nglobal code");
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createFormattedError@[native code]\nglobal code@");
         GUniquePtr<char> errorString(jsc_exception_to_string(exception));
         g_assert_cmpstr(errorString.get(), ==, "Error: API exception: error details");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
-        g_assert_cmpstr(reportString.get(), ==, ":1:33 Error: API exception: error details\n  createFormattedError@[native code]\n  global code\n");
+        g_assert_cmpstr(reportString.get(), ==, ":1:33 Error: API exception: error details\n  createFormattedError@[native code]\n  global code@\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2995,11 +2995,11 @@ static void testJSCExceptions()
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 39);
         g_assert_null(jsc_exception_get_source_uri(exception));
-        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomFormattedError@[native code]\nglobal code");
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomFormattedError@[native code]\nglobal code@");
         GUniquePtr<char> errorString(jsc_exception_to_string(exception));
         g_assert_cmpstr(errorString.get(), ==, "CustomFormattedAPIError: API custom exception: error details");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
-        g_assert_cmpstr(reportString.get(), ==, ":1:39 CustomFormattedAPIError: API custom exception: error details\n  createCustomFormattedError@[native code]\n  global code\n");
+        g_assert_cmpstr(reportString.get(), ==, ":1:39 CustomFormattedAPIError: API custom exception: error details\n  createCustomFormattedError@[native code]\n  global code@\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));

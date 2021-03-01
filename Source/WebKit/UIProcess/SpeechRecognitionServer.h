@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "SpeechRecognitionPermissionRequest.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SpeechRecognitionError.h>
 #include <WebCore/SpeechRecognitionRequest.h>
@@ -45,7 +46,7 @@ namespace WebKit {
 class WebProcessProxy;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
-using SpeechRecognitionPermissionChecker = Function<void(const String&, const WebCore::ClientOrigin&, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&&)>;
+using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
@@ -58,16 +59,15 @@ public:
     SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&);
 #endif
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void mute();
-    void abortForPageIsBecomingInvisible();
 
 private:
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
-    void handleRequest(WebCore::SpeechRecognitionRequest&);
+    void handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, Optional<WebCore::SpeechRecognitionError> = WTF::nullopt, Optional<Vector<WebCore::SpeechRecognitionResultData>> = WTF::nullopt);
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
 

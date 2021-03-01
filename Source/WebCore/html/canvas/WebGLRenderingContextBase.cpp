@@ -97,6 +97,7 @@
 #include "WebGLDrawBuffers.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
+#include "WebGLMultiDraw.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"
@@ -642,7 +643,7 @@ private:
 
 static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 {
-    return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
+    return context->contextAttributes().powerPreference == WebGLPowerPreference::HighPerformance;
 }
 
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
@@ -734,10 +735,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         }
         return nullptr;
     }
-
-    auto& extensions = context->getExtensions();
-    if (extensions.supports("GL_EXT_debug_marker"_s))
-        extensions.pushGroupMarkerEXT("WebGLRenderingContext"_s);
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
 #if ENABLE(WEBGL2)
@@ -3779,6 +3776,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extFloatBlend, "EXT_float_blend");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
+    CHECK_EXTENSION(m_webglMultiDraw, "WEBGL_multi_draw");
     return false;
 }
 

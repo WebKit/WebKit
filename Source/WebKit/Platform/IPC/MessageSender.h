@@ -44,7 +44,7 @@ public:
         static_assert(!U::isSync, "Message is sync!");
 
         auto encoder = makeUnique<Encoder>(U::name(), destinationID);
-        encoder->encode(message.arguments());
+        *encoder << message.arguments();
         
         return sendMessage(WTFMove(encoder), sendOptions);
     }
@@ -92,8 +92,8 @@ public:
 
         auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        encoder->encode(listenerID);
-        encoder->encode(message.arguments());
+        *encoder << listenerID;
+        *encoder << message.arguments();
         sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
             if (decoder && decoder->isValid())
                 T::callReply(*decoder, WTFMove(completionHandler));

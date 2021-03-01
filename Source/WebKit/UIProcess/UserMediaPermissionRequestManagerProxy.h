@@ -97,6 +97,8 @@ public:
     void setMockCaptureDevicesEnabledOverride(Optional<bool>);
     bool hasPendingCapture() const { return m_hasPendingCapture; }
 
+    void checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, const WebCore::CaptureDevice&, CompletionHandler<void(bool)>&&);
+
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;

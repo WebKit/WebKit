@@ -743,4 +743,14 @@ bool CachedImage::canSkipRevalidation(const CachedResourceLoader& loader, const 
     return m_skippingRevalidationDocument && loader.document() == m_skippingRevalidationDocument;
 }
 
+bool CachedImage::isVisibleInViewport(const Document& document) const
+{
+    CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+    while (auto* client = walker.next()) {
+        if (client->imageVisibleInViewport(document) == VisibleInViewportState::Yes)
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore

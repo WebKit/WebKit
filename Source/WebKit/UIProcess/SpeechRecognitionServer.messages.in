@@ -24,7 +24,7 @@
  */
  
  messages -> SpeechRecognitionServer NotRefCounted {
-    Start(WebCore::SpeechRecognitionConnectionClientIdentifier identifier, String lang, bool continuous, bool interimResults, uint64_t maxAlternatives, struct WebCore::ClientOrigin origin)
+    Start(WebCore::SpeechRecognitionConnectionClientIdentifier identifier, String lang, bool continuous, bool interimResults, uint64_t maxAlternatives, struct WebCore::ClientOrigin origin, WebCore::FrameIdentifier frameIdentifier)
     Stop(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)
     Abort(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)
     Invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)

@@ -64,7 +64,20 @@ static const size_t attachmentMaxAmount = 254;
 class AttachmentInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AttachmentInfo() = default;
+    AttachmentInfo()
+    {
+        // The entire AttachmentInfo is passed to write(), so we have to zero our
+        // padding bytes to avoid writing uninitialized memory.
+        memset(static_cast<void*>(this), 0, sizeof(*this));
+    }
+
+    AttachmentInfo(const AttachmentInfo& info)
+    {
+        memset(static_cast<void*>(this), 0, sizeof(*this));
+        *this = info;
+    }
+
+    AttachmentInfo& operator=(const AttachmentInfo&) = default;
 
     void setType(Attachment::Type type) { m_type = type; }
     Attachment::Type type() const { return m_type; }
@@ -85,9 +98,10 @@ public:
     bool isNull() const { return m_isNull; }
 
 private:
-    Attachment::Type m_type { Attachment::Uninitialized };
-    bool m_isNull { false };
-    size_t m_size { 0 };
+    // The AttachmentInfo will be copied using memcpy, so all members must be trivially copyable.
+    Attachment::Type m_type;
+    bool m_isNull;
+    size_t m_size;
 };
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
@@ -138,7 +152,7 @@ bool Connection::processMessage()
 
     uint8_t* messageData = m_readBuffer.data();
     MessageInfo messageInfo;
-    memcpy(&messageInfo, messageData, sizeof(messageInfo));
+    memcpy(static_cast<void*>(&messageInfo), messageData, sizeof(messageInfo));
     messageData += sizeof(messageInfo);
 
     if (messageInfo.attachmentCount() > attachmentMaxAmount || (!messageInfo.isBodyOutOfLine() && messageInfo.bodySize() > messageMaxSize)) {
@@ -155,7 +169,7 @@ bool Connection::processMessage()
     Vector<AttachmentInfo> attachmentInfo(attachmentCount);
 
     if (attachmentCount) {
-        memcpy(attachmentInfo.data(), messageData, sizeof(AttachmentInfo) * attachmentCount);
+        memcpy(static_cast<void*>(attachmentInfo.data()), messageData, sizeof(AttachmentInfo) * attachmentCount);
         messageData += sizeof(AttachmentInfo) * attachmentCount;
 
         for (size_t i = 0; i < attachmentCount; ++i) {

@@ -69,7 +69,7 @@ class TouchEvent;
 
 using NodeOrString = Variant<RefPtr<Node>, String>;
 
-class Node : public CanMakeWeakPtr<Node>, public EventTarget {
+class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
@@ -206,10 +206,6 @@ public:
     bool isCharacterDataNode() const { return hasNodeFlag(NodeFlag::IsCharacterData); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
-#if ENABLE(SERVICE_CONTROLS)
-    virtual bool isImageControlsRootElement() const { return false; }
-    virtual bool isImageControlsButtonElement() const { return false; }
-#endif
 
     bool isDocumentNode() const { return hasNodeFlag(NodeFlag::IsDocumentNode); }
     bool isTreeScope() const { return hasNodeFlag(NodeFlag::IsDocumentNode) || hasNodeFlag(NodeFlag::IsShadowRoot); }
@@ -447,7 +443,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
@@ -710,6 +706,8 @@ private:
     static void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
+    
+    virtual void didChangeRenderer(RenderObject*) { };
 
     struct NodeRareDataDeleter {
         void operator()(NodeRareData*) const;

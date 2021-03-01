@@ -12,28 +12,30 @@
     <video id="video3" controls></video>
     <canvas id="canvas3" width="320" height="240"></canvas>
     <script>
-if (window.internals)
-    window.internals.setUseGPUProcessForWebRTC(false);
+function setupAudioContext(context, streamOrVideo)
+{
+    var sourceNode = streamOrVideo instanceof MediaStream ? context.createMediaStreamSource(streamOrVideo) : context.createMediaElementSource(streamOrVideo);
 
-function analyseAudio(streamOrVideo, duration, context)
+    var analyser = context.createAnalyser();
+    var gain = context.createGain();
+
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
+    analyser.minDecibels = -100;
+    analyser.maxDecibels = 0;
+    gain.gain.value = 0;
+
+    sourceNode.connect(analyser);
+    analyser.connect(gain);
+    gain.connect(context.destination);
+
+    return analyser;
+}
+
+function analyseAudio(analyser, duration, context)
 {
     return new Promise((resolve, reject) => {
-        var sourceNode = streamOrVideo instanceof MediaStream ? context.createMediaStreamSource(streamOrVideo) : context.createMediaElementSource(streamOrVideo);
-
-        var analyser = context.createAnalyser();
-        var gain = context.createGain();
-
-        var results = { heardHum: false, heardBip: false, heardBop: false, heardNoise: false };
-
-        analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0;
-        analyser.minDecibels = -100;
-        analyser.maxDecibels = 0;
-        gain.gain.value = 0;
-
-        sourceNode.connect(analyser);
-        analyser.connect(gain);
-        gain.connect(context.destination);
+       var results = { heardHum: false, heardBip: false, heardBop: false, heardNoise: false };
 
        function analyse() {
            var freqDomain = new Uint8Array(analyser.frequencyBinCount);
@@ -80,11 +82,14 @@ function waitFor(duration)
 
 async function doHumAnalysis(streamOrVideo, expected)
 {
-    var context = new AudioContext();
+    let context = new AudioContext();
+    let analyser = setupAudioContext(context, streamOrVideo);
     for (var cptr = 0; cptr < 20; cptr++) {
-        var results = await analyseAudio(streamOrVideo, 200, context);
-        if (results.heardHum === expected)
+        const results = await analyseAudio(analyser, 200, context);
+        if (results.heardHum === expected) {
+            await context.close();
             return true;
+        }
         await waitFor(50);
     }
     await context.close();
@@ -121,7 +126,7 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
 
     if (counter === undefined)
         counter = 0;
-    if (counter > 400) {
+    if (counter > 100) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;
         return Promise.reject(errorMessage);
@@ -155,7 +160,7 @@ promise_test(async (test) => {
     assert_true(results, "Should not hear hum");
 
     URL.revokeObjectURL(url);
-}, "Recording a muted audio track should prodcue silence");
+}, "Recording a muted audio track should produce silence");
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });

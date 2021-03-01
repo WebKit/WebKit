@@ -651,4 +651,22 @@ inline void JSObject::definePrivateField(JSGlobalObject* globalObject, PropertyN
     putDirect(vm, propertyName, value, putSlot);
 }
 
+ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
+{
+    if (staticPropertiesReified(vm))
+        return;
+
+    // Add properties from the static hashtables of properties
+    for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
+        const HashTable* table = info->staticPropHashTable;
+        if (!table)
+            continue;
+
+        for (auto iter = table->begin(); iter != table->end(); ++iter) {
+            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
+                propertyNames.add(Identifier::fromString(vm, iter.key()));
+        }
+    }
+}
+
 } // namespace JSC

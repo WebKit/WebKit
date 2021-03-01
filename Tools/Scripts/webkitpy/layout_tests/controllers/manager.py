@@ -422,7 +422,7 @@ class Manager(object):
         _log.debug("Restarting helper")
         self._port.stop_helper()
         self._options.pixel_tests = True
-        return self._port.start_helper()
+        return self._port.start_helper(prefer_integrated_gpu=self._options.prefer_integrated_gpu)
 
     def _look_for_new_crash_logs(self, run_results, start_time):
         """Since crash logs can take a long time to be written out if the system is

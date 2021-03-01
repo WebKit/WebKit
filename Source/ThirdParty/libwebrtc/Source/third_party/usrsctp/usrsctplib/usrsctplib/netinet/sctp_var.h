@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_var.h 363323 2020-07-19 12:34:19Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_var.h 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #ifndef _NETINET_SCTP_VAR_H_
@@ -47,7 +47,6 @@ __FBSDID("$FreeBSD: head/sys/netinet/sctp_var.h 363323 2020-07-19 12:34:19Z tuex
 #if !defined(__Userspace__)
 extern struct pr_usrreqs sctp_usrreqs;
 #endif
-
 
 #define sctp_feature_on(inp, feature)  (inp->sctp_features |= feature)
 #define sctp_feature_off(inp, feature) (inp->sctp_features &= ~feature)
@@ -187,7 +186,6 @@ extern struct pr_usrreqs sctp_usrreqs;
 }
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
-
 #define sctp_free_remote_addr(__net) { \
 	if ((__net)) {  \
 		if (SCTP_DECREMENT_AND_CHECK_REFCOUNT(&(__net)->ref_count)) { \
@@ -227,9 +225,7 @@ extern struct pr_usrreqs sctp_usrreqs;
 	    SCTP_BUF_TYPE(m) != MT_OOBDATA) \
 		atomic_add_int(&(sb)->sb_ctl,SCTP_BUF_LEN((m))); \
 }
-
 #else				/* FreeBSD Version <= 500000 or non-FreeBSD */
-
 #define sctp_free_remote_addr(__net) { \
 	if ((__net)) { \
 		if (SCTP_DECREMENT_AND_CHECK_REFCOUNT(&(__net)->ref_count)) { \
@@ -366,7 +362,6 @@ struct sctp_nets;
 struct sctp_inpcb;
 struct sctp_tcb;
 struct sctphdr;
-
 
 #if defined(__FreeBSD__) || defined(_WIN32) || defined(__Userspace__)
 void sctp_close(struct socket *so);

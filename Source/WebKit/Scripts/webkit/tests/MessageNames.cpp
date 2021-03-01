@@ -72,6 +72,10 @@ const char* description(MessageName name)
         return "TestWithLegacyReceiver_TestParameterAttributes";
     case MessageName::TestWithLegacyReceiver_TouchEvent:
         return "TestWithLegacyReceiver_TouchEvent";
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return "TestWithSemaphore_ReceiveSemaphore";
+    case MessageName::TestWithSemaphore_SendSemaphore:
+        return "TestWithSemaphore_SendSemaphore";
     case MessageName::TestWithSuperclass_LoadURL:
         return "TestWithSuperclass_LoadURL";
     case MessageName::TestWithSuperclass_TestAsyncMessage:
@@ -181,6 +185,9 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
     case MessageName::TestWithLegacyReceiver_TouchEvent:
         return ReceiverName::TestWithLegacyReceiver;
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+    case MessageName::TestWithSemaphore_SendSemaphore:
+        return ReceiverName::TestWithSemaphore;
     case MessageName::TestWithSuperclass_LoadURL:
     case MessageName::TestWithSuperclass_TestAsyncMessage:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
@@ -299,6 +306,10 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TouchEvent)
         return true;
 #endif
+    if (messageName == IPC::MessageName::TestWithSemaphore_ReceiveSemaphore)
+        return true;
+    if (messageName == IPC::MessageName::TestWithSemaphore_SendSemaphore)
+        return true;
     if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
         return true;
 #if ENABLE(TEST_FEATURE)

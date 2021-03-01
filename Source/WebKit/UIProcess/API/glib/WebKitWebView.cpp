@@ -71,12 +71,11 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <jsc/JSCContextPrivate.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
+#include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
@@ -3020,8 +3019,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    GUniquePtr<SoupURI> soupURI(soup_uri_new(uri));
-    getPage(webView).loadRequest(soupURIToURL(soupURI.get()));
+    getPage(webView).loadRequest(URL({ }, String::fromUTF8(uri)));
 }
 
 /**

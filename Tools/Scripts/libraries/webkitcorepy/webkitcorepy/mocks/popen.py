@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@ from webkitcorepy.mocks import Subprocess
 
 class PopenBase(object):
     NEXT_PID = os.getpid() + 1
+    SIGTERM = getattr(signal, 'SIGTERM', 1)
+    SIGKILL = getattr(signal, 'SIGKILL', 2)
 
     def __init__(self, args, bufsize=None, cwd=None, stdin=None, stdout=None, stderr=None):
         self._completion = None
@@ -102,16 +104,16 @@ class PopenBase(object):
         if self.returncode is not None:
             return
 
-        if sig not in [signal.SIGTERM, signal.SIGKILL]:
+        if sig not in [self.SIGTERM, self.SIGKILL]:
             raise ValueError('Mock Popen object cannot handle signal {}'.format(sig))
         log.critical('Mock process {} send signal {}'.format(self.pid, sig))
         self.returncode = -1
 
     def terminate(self):
-        self.send_signal(signal.SIGTERM)
+        self.send_signal(self.SIGTERM)
 
     def kill(self):
-        self.send_signal(signal.SIGKILL)
+        self.send_signal(self.SIGKILL)
 
 
 if sys.version_info > (3, 0):

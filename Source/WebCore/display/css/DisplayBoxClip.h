@@ -46,6 +46,7 @@ class BoxGeometry;
 
 namespace Display {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxClip);
 class BoxClip : public RefCounted<BoxClip> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxClip);
 public:

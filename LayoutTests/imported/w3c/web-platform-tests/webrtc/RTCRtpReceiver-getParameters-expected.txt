@@ -1,5 +1,5 @@
 
-FAIL getParameters() with audio receiver assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
-FAIL getParameters() with video receiver assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
-FAIL getParameters() with simulcast video receiver assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+PASS getParameters() with audio receiver
+PASS getParameters() with video receiver
+FAIL getParameters() with simulcast video receiver assert_greater_than: expected a number greater than 0 but got 0
 

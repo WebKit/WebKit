@@ -176,16 +176,11 @@ static Symbol* createSymbolForEntryPointModule(VM& vm)
     return Symbol::create(vm, privateName.uid());
 }
 
-static JSInternalPromise* rejectPromise(JSGlobalObject* globalObject)
+static JSInternalPromise* rejectPromise(ThrowScope& scope, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    scope.assertNoException();
-    JSValue exception = scope.exception()->value();
-    scope.clearException();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-    promise->reject(globalObject, exception);
-    return promise;
+    return promise->rejectWithCaughtException(globalObject, scope);
 }
 
 JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, Symbol* moduleId, JSValue parameters, JSValue scriptFetcher)
@@ -220,9 +215,8 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Sou
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     globalObject->moduleLoader()->provideFetch(globalObject, key, source);
-    RETURN_IF_EXCEPTION(scope, rejectPromise(globalObject));
-
-    return globalObject->moduleLoader()->loadAndEvaluateModule(globalObject, key, jsUndefined(), scriptFetcher);
+    RETURN_IF_EXCEPTION(scope, rejectPromise(scope, globalObject));
+    RELEASE_AND_RETURN(scope, globalObject->moduleLoader()->loadAndEvaluateModule(globalObject, key, jsUndefined(), scriptFetcher));
 }
 
 JSInternalPromise* loadModule(JSGlobalObject* globalObject, const String& moduleName, JSValue parameters, JSValue scriptFetcher)
@@ -248,9 +242,8 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const SourceCode& so
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
     globalObject->moduleLoader()->provideFetch(globalObject, key, source);
-    RETURN_IF_EXCEPTION(scope, rejectPromise(globalObject));
-
-    return globalObject->moduleLoader()->loadModule(globalObject, key, jsUndefined(), scriptFetcher);
+    RETURN_IF_EXCEPTION(scope, rejectPromise(scope, globalObject));
+    RELEASE_AND_RETURN(scope, globalObject->moduleLoader()->loadModule(globalObject, key, jsUndefined(), scriptFetcher));
 }
 
 JSValue linkAndEvaluateModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue scriptFetcher)

@@ -35,8 +35,10 @@ struct PublicKeyCredentialRequestOptions;
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebAuthenticationPanel (WKTesting)
 
-// FIXME: <rdar://problem/71509714> Introduces mock testing.
 + (WebCore::PublicKeyCredentialCreationOptions)convertToCoreCreationOptionsWithOptions:(_WKPublicKeyCredentialCreationOptions *)options WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (WebCore::PublicKeyCredentialRequestOptions)convertToCoreRequestOptionsWithOptions:(_WKPublicKeyCredentialRequestOptions *)options WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+// For details of configuration, refer to MockWebAuthenticationConfiguration.h.
+@property (nonatomic, copy) NSDictionary *mockConfiguration;
 
 @end

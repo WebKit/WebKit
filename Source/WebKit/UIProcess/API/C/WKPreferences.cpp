@@ -1435,14 +1435,15 @@ bool WKPreferencesGetServiceControlsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->serviceControlsEnabled();
 }
 
-void WKPreferencesSetImageControlsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetImageControlsEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setImageControlsEnabled(enabled);
+    // Image controls are no longer supported.
 }
 
-bool WKPreferencesGetImageControlsEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetImageControlsEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->imageControlsEnabled();
+    // Image controls are no longer supported.
+    return false;
 }
 
 void WKPreferencesSetGamepadsEnabled(WKPreferencesRef preferencesRef, bool enabled)

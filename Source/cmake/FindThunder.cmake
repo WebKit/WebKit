@@ -41,23 +41,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_library(THUNDER_LIBRARY
-  NAMES libocdm.so
-)
+# The libocdm provided by RDK's Thunder framework is not discoverable with pkg-config because the
+# framework doesn't provide a .pc file. But alternate (swap-in) implementations might, so try with
+# pkg-config first.
+
+find_package(PkgConfig)
+pkg_check_modules(PC_THUNDER QUIET thunder)
+
 find_path(THUNDER_INCLUDE_DIR
-  NAMES open_cdm.h
-  PATH_SUFFIXES "WPEFramework/ocdm/"
+    NAMES open_cdm.h
+    HINTS ${PC_THUNDER_INCLUDEDIR}
+          ${PC_THUNDER_INCLUDE_DIRS}
+    PATH_SUFFIXES "WPEFramework/ocdm/"
+)
+
+find_library(THUNDER_LIBRARY
+    NAMES ocdm
+    HINTS ${PC_THUNDER_LIBDIR}
+          ${PC_THUNDER_LIBRARY_DIRS}
 )
 
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Thunder
-    FOUND_VAR THUNDER_FOUND
-    REQUIRED_VARS THUNDER_LIBRARY THUNDER_INCLUDE_DIR
+  FOUND_VAR THUNDER_FOUND
+  REQUIRED_VARS THUNDER_LIBRARY THUNDER_INCLUDE_DIR
 )
+
 if (THUNDER_FOUND)
-    set(THUNDER_LIBRARIES ${THUNDER_LIBRARY})
-    set(THUNDER_INCLUDE_DIRS ${THUNDER_INCLUDE_DIR})
+  set(THUNDER_LIBRARIES ${THUNDER_LIBRARY})
+  set(THUNDER_INCLUDE_DIRS ${THUNDER_INCLUDE_DIR})
+  set(THUNDER_VERSION ${PC_THUNDER_VERSION})
 endif ()
 
 mark_as_advanced(THUNDER_LIBRARY THUNDER_INCLUDE_DIR)
@@ -65,5 +79,4 @@ mark_as_advanced(THUNDER_LIBRARY THUNDER_INCLUDE_DIR)
 include(FeatureSummary)
 set_package_properties(Thunder PROPERTIES
     DESCRIPTION "Thunder DRM framework"
-    URL "https://github.com/rdkcentral/Thunder"
 )

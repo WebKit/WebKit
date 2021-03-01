@@ -337,7 +337,7 @@ void DocumentLoader::stopLoading()
     // Always cancel multipart loaders
     cancelAll(m_multipartSubresourceLoaders);
 
-    if (auto* document = m_frame->document())
+    if (auto* document = this->document())
         document->fontSelector().suspendFontLoadingTimer();
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
@@ -1137,6 +1137,9 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
         bool hasBegun = m_writer.begin(documentURL(), false);
+        if (!hasBegun)
+            return;
+
         m_writer.setDocumentWasLoadedAsPartOfNavigation();
 
         auto* documentOrNull = m_frame ? m_frame->document() : nullptr;
@@ -1204,8 +1207,6 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         }
 
         m_writer.setEncoding(encoding, userChosen);
-
-        RELEASE_ASSERT(hasBegun);
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -1819,7 +1820,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
         case Document::AboutToEnterBackForwardCache: {
             // A page about to enter the BackForwardCache should only be able to start ping loads.
             auto* cachedResource = MemoryCache::singleton().resourceForRequest(loader->request(), loader->frameLoader()->frame().page()->sessionID());
-            ASSERT(cachedResource && CachedResource::shouldUsePingLoad(cachedResource->type()));
+            ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->options().keepAlive));
             break;
         }
         case Document::InBackForwardCache:

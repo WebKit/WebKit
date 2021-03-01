@@ -27,10 +27,11 @@
 
 #include "ExtensionsGLOpenGLCommon.h"
 
-#include "GraphicsContextGLOpenGL.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+class GraphicsContextGLOpenGL;
 
 class ExtensionsGLOpenGL : public ExtensionsGLOpenGLCommon {
     WTF_MAKE_FAST_ALLOCATED;
@@ -40,16 +41,10 @@ public:
     virtual ~ExtensionsGLOpenGL();
 
     // ExtensionsGL methods.
-    void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) override;
-    void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
-
     PlatformGLObject createVertexArrayOES() override;
     void deleteVertexArrayOES(PlatformGLObject) override;
     GCGLboolean isVertexArrayOES(PlatformGLObject) override;
     void bindVertexArrayOES(PlatformGLObject) override;
-    void insertEventMarkerEXT(const String&) override;
-    void pushGroupMarkerEXT(const String&) override;
-    void popGroupMarkerEXT(void) override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
 
     void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;

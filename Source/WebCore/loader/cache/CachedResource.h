@@ -73,6 +73,9 @@ public:
         FontResource,
         SVGFontResource,
         MediaResource,
+#if ENABLE(MODEL_ELEMENT)
+        ModelResource,
+#endif
         RawResource,
         Icon,
         Beacon,
@@ -178,7 +181,7 @@ public:
 
     bool isImage() const { return type() == Type::ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
-    bool isMainOrMediaOrIconOrRawResource() const { return type() == Type::MainResource || type() == Type::MediaResource || type() == Type::Icon || type() == Type::RawResource || type() == Type::Beacon || type() == Type::Ping; }
+    bool isMainOrMediaOrIconOrRawResource() const;
 
     // Whether this request should impact request counting and delay window.onload.
     bool ignoreForRequestCount() const
@@ -405,6 +408,19 @@ private:
     CachedResourceClient& m_client;
     Timer m_timer;
 };
+
+inline bool CachedResource::isMainOrMediaOrIconOrRawResource() const
+{
+    return type() == Type::MainResource
+        || type() == Type::MediaResource
+#if ENABLE(MODEL_ELEMENT)
+        || type() == Type::ModelResource
+#endif
+        || type() == Type::Icon
+        || type() == Type::RawResource
+        || type() == Type::Beacon
+        || type() == Type::Ping;
+}
 
 } // namespace WebCore
 

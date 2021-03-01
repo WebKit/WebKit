@@ -220,13 +220,12 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
             return;
         if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
             return;
-        RefPtr<CSSPrimitiveValue> denominatorValue = CSSPropertyParserHelpers::consumePositiveInteger(range);
+        auto denominatorValue = CSSPropertyParserHelpers::consumePositiveIntegerRaw(range);
         if (!denominatorValue)
             return;
 
         unsigned numerator = clampTo<unsigned>(firstValue->doubleValue());
-        unsigned denominator = clampTo<unsigned>(denominatorValue->doubleValue());
-        m_value = CSSAspectRatioValue::create(numerator, denominator);
+        m_value = CSSAspectRatioValue::create(numerator, *denominatorValue);
         m_isValid = true;
         return;
     }

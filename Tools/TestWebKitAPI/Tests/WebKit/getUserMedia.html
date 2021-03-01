@@ -61,9 +61,13 @@
                 navigator.mediaDevices.getUserMedia({video: true}).then(s => video.srcObject = s);
             }
 
-            function captureAudioAndVideo()
+            function captureAudioAndVideo(notifySuccess)
             {
-                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => stream = s);
+                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => {
+                    if (notifySuccess)
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                    stream = s;
+                });
             }
 
             function notifyEndedEvent()
@@ -89,9 +93,106 @@
             }
 
             function checkGetCapabilities() {
-                window.webkit.messageHandlers.gum.postMessage(RTCRtpSender.getCapabilities('video') != null ? "PASS" : "FAIL");
+                window.webkit.messageHandlers.gum.postMessage(RTCRtpSender.getCapabilities('video') != null ? "PASS" : "FAIL checkGetCapabilities");
             }
 
+            function getStats(connection, type, kind)
+            {
+                return connection.getStats().then((report) => {
+                    var stats;
+                    report.forEach((statItem) => {
+                        if (statItem.type === type && statItem.kind === kind) {
+                            stats = statItem;
+                        }
+                    });
+                    return stats;
+                });
+            }
+
+            var pc1, pc2;
+            function createConnection() {
+                pc1 = new RTCPeerConnection();
+                pc2 = new RTCPeerConnection();
+
+                pc1.onicecandidate = (e) => { if (e.candidate) pc2.addIceCandidate(e.candidate) }
+                pc2.onicecandidate = (e) => { if (e.candidate) pc1.addIceCandidate(e.candidate) }
+
+                stream.getTracks().forEach(track => pc1.addTrack(track, stream));
+
+                pc1.createOffer()
+                    .then((o) => pc1.setLocalDescription(o))
+                    .then(() => pc2.setRemoteDescription(pc1.localDescription))
+                    .then(() => pc2.createAnswer())
+                    .then((a) => pc2.setLocalDescription(a))
+                    .then((a) => pc1.setRemoteDescription(pc2.localDescription))
+                    .then(() => {
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                    });
+            }
+
+            function checkVideoStatus(counter) {
+                if (!counter)
+                    counter = 0;
+                else if (counter > 100) {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkVideoStatus");
+                    return;
+                }
+                getStats(pc1, "outbound-rtp", "video").then((stats) => {
+                    if (stats && stats.framesEncoded) {
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                        return;
+                    }
+                    setTimeout(() => checkVideoStatus(++counter), 50);
+                });
+            }
+
+            function checkDecodingVideoCounterIncreases(counter, framesDecoded) {
+                if (!counter)
+                    counter = 0;
+                getStats(pc2, "inbound-rtp", "video").then((stats) => {
+                    if (stats && stats.framesDecoded > framesDecoded) {
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                        return;
+                    }
+                    if (counter > 100) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideoCounterIncreases " + framesDecoded + " " + JSON.stringify(stats));
+                        return;
+                    }
+                    setTimeout(() => checkDecodingVideoCounterIncreases(++counter, framesDecoded), 50);
+                });
+            }
+
+            function checkDecodingVideo(counter) {
+                if (!counter)
+                    counter = 0;
+                getStats(pc2, "inbound-rtp", "video").then((stats) => {
+                    if (stats && stats.framesDecoded > 0) {
+                        checkDecodingVideoCounterIncreases(counter, stats.framesDecoded);
+                        return;
+                    }
+                    if (counter > 100) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideo " + JSON.stringify(stats));
+                        return;
+                    }
+                    setTimeout(() => checkDecodingVideo(++counter), 50);
+                });
+            }
+
+            function checkAudioStatus(counter) {
+                if (!counter)
+                    counter = 0;
+                else if (counter > 100) {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkAudioStatus");
+                    return;
+                }
+                getStats(pc2, "inbound-rtp", "audio").then((stats) => {
+                    if (stats && stats.audioLevel > 0) {
+                        window.webkit.messageHandlers.gum.postMessage("PASS");
+                        return;
+                    }
+                    setTimeout(() => checkAudioStatus(++counter), 50);
+                });
+            }
         </script>
     <head>
 

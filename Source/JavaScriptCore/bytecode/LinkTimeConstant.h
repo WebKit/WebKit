@@ -44,12 +44,12 @@ class JSGlobalObject;
     v(setBucketNext, nullptr) \
     v(setBucketKey, nullptr) \
     v(setPrototypeDirect, nullptr) \
-    v(propertyIsEnumerable, nullptr) \
     v(copyDataProperties, nullptr) \
     v(enqueueJob, nullptr) \
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
+    v(typedArrayContentType, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
     v(typedArraySort, nullptr) \
     v(isTypedArrayView, nullptr) \
@@ -75,7 +75,6 @@ class JSGlobalObject;
     v(concatMemcpy, nullptr) \
     v(appendMemcpy, nullptr) \
     v(hostPromiseRejectionTracker, nullptr) \
-    v(InspectorInstrumentation, nullptr) \
     v(Set, nullptr) \
     v(thisTimeValue, nullptr) \
     v(isConstructor, nullptr) \

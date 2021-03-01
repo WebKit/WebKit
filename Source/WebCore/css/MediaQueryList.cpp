@@ -20,6 +20,7 @@
 #include "config.h"
 #include "MediaQueryList.h"
 
+#include "AddEventListenerOptions.h"
 #include "EventNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -66,7 +67,7 @@ void MediaQueryList::addListener(RefPtr<EventListener>&& listener)
     if (!listener)
         return;
 
-    addEventListener(eventNames().changeEvent, listener.releaseNonNull());
+    addEventListener(eventNames().changeEvent, listener.releaseNonNull(), { });
 }
 
 void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
@@ -74,7 +75,7 @@ void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
     if (!listener)
         return;
 
-    removeEventListener(eventNames().changeEvent, *listener);
+    removeEventListener(eventNames().changeEvent, *listener, { });
 }
 
 void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notificationNeeded)

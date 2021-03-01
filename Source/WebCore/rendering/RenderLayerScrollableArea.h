@@ -125,6 +125,7 @@ public:
     void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
 
     void updateScrollInfoAfterLayout();
+    void updateScrollbarSteps();
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
 

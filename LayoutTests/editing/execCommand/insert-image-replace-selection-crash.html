@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+summary { -webkit-user-modify: read-write; }
+</style>
+<script src="../editing.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function focushandler() {
+    document.activeElement.replaceWith("foo");
+}
+
+function runTest() {
+    window.getSelection().selectAllChildren(optgroup);
+    select.autofocus = true;
+    document.execCommand("insertImage", "#foo");
+    document.write("PASS. WebKit didn't crash.");
+}
+</script>
+</head>
+<body onload="runTest()">
+<details border="1px">
+<summary>
+<select id="select" onfocus="focushandler()">
+    <optgroup id="optgroup">content</optgroup>
+</select>
+<body>

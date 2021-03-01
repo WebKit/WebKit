@@ -59,8 +59,8 @@ void createPartition(const char *filePath)
     const char* targetFile = "resources/CrossPartitionFileSchemeAccess.html";
     
     const char* createDirCmd  = "mkdir resources";
-    const char* createDiskImage = "hdiutil create otherVolume.dmg -srcfolder resources/ -ov > /dev/null";
-    const char* attachDiskImage = "hdiutil attach otherVolume.dmg > /dev/null";
+    const char* createDiskImage = "hdiutil create otherVolume.dmg -srcfolder resources/ -ov";
+    const char* attachDiskImage = "hdiutil attach otherVolume.dmg";
     
     std::string createFileCmd = "echo ";
     createFileCmd.append(fileContent);

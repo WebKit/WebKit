@@ -511,6 +511,10 @@ private:
     void displayWasRefreshed(uint32_t displayID);
 #endif
 
+#if PLATFORM(MAC)
+    void systemWillPowerOn();
+#endif
+    
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client
@@ -528,11 +532,17 @@ private:
 
 #if PLATFORM(COCOA)
     void setScreenProperties(const WebCore::ScreenProperties&);
-    void updateProcessName();
+
+    enum class IsInProcessInitialization : bool { No, Yes };
+    void updateProcessName(IsInProcessInitialization);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     void backlightLevelDidChange(float backlightLevel);
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    void colorPreferencesDidChange();
 #endif
 
 #if PLATFORM(IOS_FAMILY)

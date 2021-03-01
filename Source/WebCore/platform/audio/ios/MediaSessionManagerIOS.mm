@@ -77,6 +77,7 @@ void MediaSessionManageriOS::resetRestrictions()
     }
 
     addRestriction(PlatformMediaSession::MediaType::Video, BackgroundProcessPlaybackRestricted);
+    addRestriction(PlatformMediaSession::MediaType::WebAudio, BackgroundProcessPlaybackRestricted);
     addRestriction(PlatformMediaSession::MediaType::VideoAudio, ConcurrentPlaybackNotPermitted | BackgroundProcessPlaybackRestricted | SuspendedUnderLockPlaybackRestricted);
 }
 #endif

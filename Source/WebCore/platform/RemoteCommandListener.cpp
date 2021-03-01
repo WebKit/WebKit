@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,5 +36,26 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
 }
 
 #endif
+
+void RemoteCommandListener::scheduleSupportedCommandsUpdate()
+{
+    if (!m_updateCommandsTask.hasPendingTask()) {
+        m_updateCommandsTask.scheduleTask([this] ()  {
+            updateSupportedCommands();
+        });
+    }
+}
+
+void RemoteCommandListener::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    m_registeredCommands.add(command);
+    scheduleSupportedCommandsUpdate();
+}
+
+void RemoteCommandListener::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    m_registeredCommands.remove(command);
+    scheduleSupportedCommandsUpdate();
+}
 
 }

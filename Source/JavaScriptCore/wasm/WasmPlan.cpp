@@ -123,6 +123,7 @@ void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
     complete(locker);
 }
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     HashMap<void*, CodeLocationLabel<WasmEntryPtrTag>> stagedCalls;
@@ -187,6 +188,7 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
     }
 
 }
+#endif
 
 Plan::~Plan() { }
 

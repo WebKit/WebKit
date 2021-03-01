@@ -38,6 +38,8 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
@@ -239,7 +241,37 @@ TEST(WebKit2, CaptureIndicatorDelay)
 
     // One additional second should allow us to go back to no capture being reported.
     EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+}
 
+TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    webView._mediaCaptureReportingDelayForTesting = 2;
+
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    wasPrompted = false;
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+
+    TestWebKitAPI::Util::run(&wasPrompted);
+    wasPrompted = false;
+
+    [webView _close];
+
+    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateNone);
 }
 
 TEST(WebKit2, GetCapabilities)
@@ -268,6 +300,46 @@ TEST(WebKit2, GetCapabilities)
     done = false;
     [webView stringByEvaluatingJavaScript:@"checkGetCapabilities()"];
 
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, InterruptionBetweenSameProcessPages)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    done = false;
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView1.get().UIDelegate = delegate.get();
+    [webView1 loadTestPageNamed:@"getUserMedia2"];
+    TestWebKitAPI::Util::run(&done);
+
+    configuration.get()._relatedWebView = webView1.get();
+
+    done = false;
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    webView2.get().UIDelegate = delegate.get();
+    [webView2 loadTestPageNamed:@"getUserMedia2"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+#if PLATFORM(IOS)
+    [webView1 stringByEvaluatingJavaScript:@"checkIsNotPlaying()"];
+#else
+    [webView1 stringByEvaluatingJavaScript:@"checkIsPlaying()"];
+#endif
     TestWebKitAPI::Util::run(&done);
 }
 
@@ -301,6 +373,160 @@ TEST(WebKit, WebAudioAndGetUserMedia)
     done = false;
 }
 #endif
+
+#if ENABLE(GPU_PROCESS)
+TEST(WebKit2, CrashGPUProcessWhileCapturing)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
+            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+        if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+    }
+
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
+    TestWebKitAPI::Util::run(&done);
+
+    auto webViewPID = [webView _webProcessIdentifier];
+
+    // The GPU process should get launched.
+    auto* processPool = configuration.get().processPool;
+    unsigned timeout = 0;
+    while (![processPool _gpuProcessIdentifier] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    if (![processPool _gpuProcessIdentifier])
+        return;
+    auto gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Kill the GPU Process.
+    kill(gpuProcessPID, 9);
+
+    // GPU Process should get relaunched.
+    timeout = 0;
+    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Make sure the WebProcess did not crash.
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"createConnection()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkVideoStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkAudioStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+}
+
+TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
+            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+        if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+    }
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"WebRTCPlatformCodecsInGPUProcessEnabled"])
+            [preferences _setEnabled:YES forFeature:feature];
+    }
+
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"createConnection()"];
+    TestWebKitAPI::Util::run(&done);
+
+    auto webViewPID = [webView _webProcessIdentifier];
+
+    // The GPU process should get launched.
+    auto* processPool = configuration.get().processPool;
+    unsigned timeout = 0;
+    while (![processPool _gpuProcessIdentifier] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    if (![processPool _gpuProcessIdentifier])
+        return;
+    auto gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Kill the GPU Process.
+    kill(gpuProcessPID, 9);
+
+    // GPU Process should get relaunched.
+    timeout = 0;
+    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Make sure the WebProcess did not crash.
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+}
+#endif // ENABLE(GPU_PROCESS)
 
 } // namespace TestWebKitAPI
 

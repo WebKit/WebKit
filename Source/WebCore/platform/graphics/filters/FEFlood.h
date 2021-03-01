@@ -40,8 +40,8 @@ public:
 #if !USE(CG)
     // feFlood does not perform color interpolation of any kind, so the result is always in the current
     // color space regardless of the value of color-interpolation-filters.
-    void setOperatingColorSpace(ColorSpace) override { FilterEffect::setResultColorSpace(ColorSpace::SRGB); }
-    void setResultColorSpace(ColorSpace) override { FilterEffect::setResultColorSpace(ColorSpace::SRGB); }
+    void setOperatingColorSpace(DestinationColorSpace) override { FilterEffect::setResultColorSpace(DestinationColorSpace::SRGB); }
+    void setResultColorSpace(DestinationColorSpace) override { FilterEffect::setResultColorSpace(DestinationColorSpace::SRGB); }
 #endif
 
 private:

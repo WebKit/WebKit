@@ -2687,6 +2687,30 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
     auto webEventModifiers = toWebKitModifiers(modifiers);
 
     if (type != KeyEventType::Release) {
+        // Modifier masks are set different in X than other platforms. This code makes WebKitGTK
+        // to behave similar to other platforms and other browsers under X (see http://crbug.com/127142#c8).
+        switch (keyval) {
+        case GDK_KEY_Control_L:
+        case GDK_KEY_Control_R:
+            webEventModifiers.add(WebEvent::Modifier::ControlKey);
+            break;
+        case GDK_KEY_Shift_L:
+        case GDK_KEY_Shift_R:
+            webEventModifiers.add(WebEvent::Modifier::ShiftKey);
+            break;
+        case GDK_KEY_Alt_L:
+        case GDK_KEY_Alt_R:
+            webEventModifiers.add(WebEvent::Modifier::AltKey);
+            break;
+        case GDK_KEY_Meta_L:
+        case GDK_KEY_Meta_R:
+            webEventModifiers.add(WebEvent::Modifier::MetaKey);
+            break;
+        case GDK_KEY_Caps_Lock:
+            webEventModifiers.add(WebEvent::Modifier::CapsLockKey);
+            break;
+        }
+
         auto filterResult = priv->inputMethodFilter.filterKeyEvent(GDK_KEY_PRESS, keyval, keycode, modifiers);
         if (!filterResult.handled) {
             priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(

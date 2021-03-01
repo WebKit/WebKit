@@ -40,5 +40,11 @@ enum class InvalidationMode {
     RecompositeLayer
 };
 
+enum class InvalidationScope {
+    All,
+    SelfChildrenAndSiblings,
+    Descendants
+};
+
 }
 }

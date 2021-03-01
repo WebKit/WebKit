@@ -58,7 +58,6 @@ public:
     void willRemoveAllChildren(ShadowRoot&);
 
     void didChangeSlot(const AtomString&, ShadowRoot&);
-    void enqueueSlotChangeEvent(const AtomString&, ShadowRoot&);
 
     const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
 

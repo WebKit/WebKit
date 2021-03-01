@@ -29,9 +29,11 @@
 
 import logging
 import os
+import sys
 import re
 import time
 
+from webkitcorepy import string_utils
 from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
 
@@ -50,7 +52,13 @@ class XvfbDriver(Driver):
         return xvfb_found
 
     def _xvfb_pipe(self):
-        return os.pipe()
+        read_fd, write_fd = os.pipe()
+
+        # By default, python3 creates file descriptors as non-inheritable
+        if sys.version_info.major == 3:
+            os.set_inheritable(write_fd, True)
+
+        return (read_fd, write_fd)
 
     def _xvfb_read_display_id(self, read_fd):
         import errno
@@ -67,7 +75,7 @@ class XvfbDriver(Driver):
 
             if read_fd in fd_list:
                 # We only expect a number, so first read should be enough.
-                display_id = os.read(read_fd, 256).strip('\n')
+                display_id = os.read(read_fd, 256).strip(string_utils.encode('\n'))
                 fd_set = []
 
         return int(display_id)
@@ -82,7 +90,8 @@ class XvfbDriver(Driver):
         if self._port._should_use_jhbuild():
             run_xvfb = self._port._jhbuild_wrapper + run_xvfb
         with open(os.devnull, 'w') as devnull:
-            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment)
+            # python3 will try to close the file descriptors by default
+            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment, close_fds=False)
             display_id = self._xvfb_read_display_id(read_fd)
 
         self._xvfb_close_pipe((read_fd, write_fd))

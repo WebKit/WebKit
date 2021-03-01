@@ -42,7 +42,7 @@ class TimingFunction;
 
 class PlatformCAAnimation : public RefCounted<PlatformCAAnimation> {
 public:
-    enum AnimationType { Basic, Keyframe, Spring };
+    enum AnimationType { Basic, Group, Keyframe, Spring };
     enum FillModeType { NoFillMode, Forwards, Backwards, Both };
     enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
 
@@ -119,6 +119,10 @@ public:
     virtual void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) = 0;
     virtual void copyTimingFunctionsFrom(const PlatformCAAnimation&) = 0;
 
+    // Animation group properties.
+    virtual void setAnimations(const Vector<RefPtr<PlatformCAAnimation>>&) = 0;
+    virtual void copyAnimationsFrom(const PlatformCAAnimation&) = 0;
+
     void setActualStartTimeIfNeeded(CFTimeInterval t)
     {
         if (beginTime() <= 0)
@@ -126,7 +130,7 @@ public:
     }
 
     bool isBasicAnimation() const;
-    
+
 protected:
     PlatformCAAnimation(AnimationType type = Basic)
         : m_type(type)
@@ -156,6 +160,7 @@ template<> struct EnumTraits<WebCore::PlatformCAAnimation::AnimationType> {
     using values = EnumValues<
         WebCore::PlatformCAAnimation::AnimationType,
         WebCore::PlatformCAAnimation::AnimationType::Basic,
+        WebCore::PlatformCAAnimation::AnimationType::Group,
         WebCore::PlatformCAAnimation::AnimationType::Keyframe,
         WebCore::PlatformCAAnimation::AnimationType::Spring
     >;

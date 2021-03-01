@@ -26,12 +26,14 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "TypedArrayAdaptors.h"
 
 namespace JSC {
 
 template<typename Adaptor>
 typename Adaptor::Type toNativeFromValue(JSValue value)
 {
+    ASSERT(!value.isBigInt());
     if (value.isInt32())
         return Adaptor::toNativeFromInt32(value.asInt32());
     return Adaptor::toNativeFromDouble(value.asDouble());
@@ -40,21 +42,37 @@ typename Adaptor::Type toNativeFromValue(JSValue value)
 template<typename Adaptor>
 typename Adaptor::Type toNativeFromValue(JSGlobalObject* globalObject, JSValue value)
 {
-    if (value.isInt32())
-        return Adaptor::toNativeFromInt32(value.asInt32());
-    if (value.isNumber())
-        return Adaptor::toNativeFromDouble(value.asDouble());
-    return Adaptor::toNativeFromDouble(value.toNumber(globalObject));
+    if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor> || std::is_same_v<Adaptor, BigUint64Adaptor>) {
+        if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor>)
+            return value.toBigInt64(globalObject);
+        else
+            return value.toBigUInt64(globalObject);
+    } else {
+        if (value.isInt32())
+            return Adaptor::toNativeFromInt32(value.asInt32());
+        if (value.isNumber())
+            return Adaptor::toNativeFromDouble(value.asDouble());
+        return Adaptor::toNativeFromDouble(value.toNumber(globalObject));
+    }
 }
 
 template<typename Adaptor>
 Optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue value)
 {
-    if (!value.isNumber())
-        return WTF::nullopt;
-    if (value.isInt32())
-        return Adaptor::toNativeFromInt32WithoutCoercion(value.asInt32());
-    return Adaptor::toNativeFromDoubleWithoutCoercion(value.asDouble());
+    if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor> || std::is_same_v<Adaptor, BigUint64Adaptor>) {
+        if (!value.isBigInt())
+            return WTF::nullopt;
+        if constexpr (std::is_same_v<Adaptor, BigInt64Adaptor>)
+            return JSBigInt::toBigInt64(value);
+        else
+            return JSBigInt::toBigUInt64(value);
+    } else {
+        if (!value.isNumber())
+            return WTF::nullopt;
+        if (value.isInt32())
+            return Adaptor::toNativeFromInt32WithoutCoercion(value.asInt32());
+        return Adaptor::toNativeFromDoubleWithoutCoercion(value.asDouble());
+    }
 }
 
 } // namespace JSC

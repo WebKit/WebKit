@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,10 @@ WebKitBuildbot = function()
         "Apple-BigSur-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-BigSur-Release-WK1-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-BigSur-Release-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-BigSur JSC": {platform: Dashboard.Platform.macOSBigSur, heading: "JavaScript", combinedQueues: {
+            "Apple-BigSur-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
+            "Apple-BigSur-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
+        }},
         "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
@@ -43,15 +47,7 @@ WebKitBuildbot = function()
             "Apple-Catalina-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
             "Apple-Catalina-Debug-JSC-Tests": {heading: "Debug JSC (Tests)"},
             "Apple-Catalina-Release-JSC-Tests": {heading: "Release JSC (Tests)"},
-            "Apple-Catalina-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
-            "Apple-Catalina-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
         }},
-        "Apple-Mojave-Debug-Build": {platform: Dashboard.Platform.macOSMojave, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-Mojave-Release-Build": {platform: Dashboard.Platform.macOSMojave, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-Mojave-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSMojave, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple-Mojave-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSMojave, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Mojave-Release-WK1-Tests": {platform: Dashboard.Platform.macOSMojave, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple-Mojave-Release-WK2-Tests": {platform: Dashboard.Platform.macOSMojave, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-14-Release-Build": {platform: Dashboard.Platform.iOS14Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-14-Simulator-Release-Build": {platform: Dashboard.Platform.iOS14Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-14-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, heading:"iOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
@@ -99,7 +95,7 @@ WebKitBuildbot = function()
         }},
     };
 
-    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : true});
+    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : false, "baseURLForResults": "https://s3-us-west-2.amazonaws.com/build.webkit.org-results/"});
 };
 
 BaseObject.addConstructorFunctions(WebKitBuildbot);

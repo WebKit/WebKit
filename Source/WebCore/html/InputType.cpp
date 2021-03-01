@@ -166,21 +166,6 @@ bool InputType::themeSupportsDataListUI(InputType* type)
     return RenderTheme::singleton().supportsDataListUI(type->formControlType());
 }
 
-bool InputType::isTextField() const
-{
-    return false;
-}
-
-bool InputType::isTextType() const
-{
-    return false;
-}
-
-bool InputType::isRangeControl() const
-{
-    return false;
-}
-
 bool InputType::shouldSaveAndRestoreFormControlState() const
 {
     return true;
@@ -241,11 +226,6 @@ ExceptionOr<void> InputType::setValueAsDecimal(const Decimal&, TextFieldEventBeh
     return Exception { InvalidStateError };
 }
 
-bool InputType::supportsValidation() const
-{
-    return true;
-}
-
 bool InputType::typeMismatchFor(const String&) const
 {
     return false;
@@ -299,6 +279,82 @@ bool InputType::rangeOverflow(const String& value) const
         return false;
 
     return numericValue > createStepRange(AnyStepHandling::Reject).maximum();
+}
+
+bool InputType::isInvalid(const String& value) const
+{
+    switch (m_type) {
+    case Type::Button:
+        return isInvalidInputType<ButtonInputType>(*this, value);
+    case Type::Checkbox:
+        return isInvalidInputType<CheckboxInputType>(*this, value);
+    case Type::Color:
+#if ENABLE(INPUT_TYPE_COLOR)
+        return isInvalidInputType<ColorInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::Date:
+#if ENABLE(INPUT_TYPE_DATE)
+        return isInvalidInputType<DateInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::DateTimeLocal:
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+        return isInvalidInputType<DateTimeLocalInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::Email:
+        return isInvalidInputType<EmailInputType>(*this, value);
+    case Type::File:
+        return isInvalidInputType<FileInputType>(*this, value);
+    case Type::Hidden:
+        return isInvalidInputType<HiddenInputType>(*this, value);
+    case Type::Image:
+        return isInvalidInputType<ImageInputType>(*this, value);
+    case Type::Month:
+#if ENABLE(INPUT_TYPE_MONTH)
+        return isInvalidInputType<MonthInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::Number:
+        return isInvalidInputType<NumberInputType>(*this, value);
+    case Type::Password:
+        return isInvalidInputType<PasswordInputType>(*this, value);
+    case Type::Radio:
+        return isInvalidInputType<RadioInputType>(*this, value);
+    case Type::Range:
+        return isInvalidInputType<RangeInputType>(*this, value);
+    case Type::Reset:
+        return isInvalidInputType<ResetInputType>(*this, value);
+    case Type::Search:
+        return isInvalidInputType<SearchInputType>(*this, value);
+    case Type::Submit:
+        return isInvalidInputType<SubmitInputType>(*this, value);
+    case Type::Telephone:
+        return isInvalidInputType<TelephoneInputType>(*this, value);
+    case Type::Time:
+#if ENABLE(INPUT_TYPE_TIME)
+        return isInvalidInputType<TimeInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::URL:
+        return isInvalidInputType<URLInputType>(*this, value);
+    case Type::Week:
+#if ENABLE(INPUT_TYPE_WEEK)
+        return isInvalidInputType<WeekInputType>(*this, value);
+#else
+        return false;
+#endif
+    case Type::Text:
+        return isInvalidInputType<TextInputType>(*this, value);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 Decimal InputType::defaultValueForStepUp() const
@@ -492,7 +548,7 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
-void InputType::createShadowSubtree()
+void InputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
 {
 }
 
@@ -740,129 +796,19 @@ bool InputType::shouldRespectListAttribute()
     return false;
 }
 
-bool InputType::isTextButton() const
-{
-    return false;
-}
-
-bool InputType::isRadioButton() const
-{
-    return false;
-}
-
-bool InputType::isSearchField() const
-{
-    return false;
-}
-
-bool InputType::isHiddenType() const
-{
-    return false;
-}
-
-bool InputType::isPasswordField() const
-{
-    return false;
-}
-
-bool InputType::isCheckbox() const
-{
-    return false;
-}
-
-bool InputType::isEmailField() const
-{
-    return false;
-}
-
-bool InputType::isFileUpload() const
-{
-    return false;
-}
-
-bool InputType::isImageButton() const
-{
-    return false;
-}
-
 bool InputType::isInteractiveContent() const
 {
-    return true;
+    return m_type != Type::Hidden;
 }
 
 bool InputType::supportLabels() const
 {
-    return true;
+    return m_type != Type::Hidden;
 }
 
-bool InputType::isNumberField() const
+bool InputType::isEnumeratable() const
 {
-    return false;
-}
-
-bool InputType::isSubmitButton() const
-{
-    return false;
-}
-
-bool InputType::isTelephoneField() const
-{
-    return false;
-}
-
-bool InputType::isURLField() const
-{
-    return false;
-}
-
-bool InputType::isDateField() const
-{
-    return false;
-}
-
-bool InputType::isDateTimeField() const
-{
-    return false;
-}
-
-bool InputType::isDateTimeLocalField() const
-{
-    return false;
-}
-
-bool InputType::isMonthField() const
-{
-    return false;
-}
-
-bool InputType::isTimeField() const
-{
-    return false;
-}
-
-bool InputType::isWeekField() const
-{
-    return false;
-}
-
-bool InputType::isEnumeratable()
-{
-    return true;
-}
-
-bool InputType::isCheckable()
-{
-    return false;
-}
-
-bool InputType::isSteppable() const
-{
-    return false;
-}
-
-bool InputType::isColorControl() const
-{
-    return false;
+    return m_type != Type::Image;
 }
 
 bool InputType::shouldRespectHeightAndWidthAttributes()

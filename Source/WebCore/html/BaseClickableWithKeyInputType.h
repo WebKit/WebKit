@@ -43,7 +43,7 @@ public:
     static bool accessKeyAction(HTMLInputElement&, bool sendMouseEvents);
     
 protected:
-    explicit BaseClickableWithKeyInputType(HTMLInputElement& element) : InputType(element) { }
+    explicit BaseClickableWithKeyInputType(Type type, HTMLInputElement& element) : InputType(type, element) { }
 
 private:
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;

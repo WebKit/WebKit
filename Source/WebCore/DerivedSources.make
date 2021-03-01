@@ -251,6 +251,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCPriorityType.idl \
+    $(WebCore)/Modules/mediastream/RTCRtcpParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpCapabilities.idl \
     $(WebCore)/Modules/mediastream/RTCRtpCodecCapability.idl \
     $(WebCore)/Modules/mediastream/RTCRtpCodecParameters.idl \
@@ -659,6 +660,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/AbstractRange.idl \
+    $(WebCore)/dom/AddEventListenerOptions.idl \
     $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
@@ -717,6 +719,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventInit.idl \
     $(WebCore)/dom/EventListener.idl \
+    $(WebCore)/dom/EventListenerOptions.idl \
     $(WebCore)/dom/EventModifierInit.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
@@ -962,6 +965,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLDrawBuffers.idl \
     $(WebCore)/html/canvas/WebGLFramebuffer.idl \
     $(WebCore)/html/canvas/WebGLLoseContext.idl \
+    $(WebCore)/html/canvas/WebGLMultiDraw.idl \
     $(WebCore)/html/canvas/WebGLProgram.idl \
     $(WebCore)/html/canvas/WebGLQuery.idl \
     $(WebCore)/html/canvas/WebGLRenderbuffer.idl \
@@ -1317,9 +1321,12 @@ ADDITIONAL_EVENT_TARGET_FACTORY =
 
 IDL_PATHS := $(sort $(foreach IDL_FILE, $(JS_BINDING_IDLS), $(realpath $(dir $(IDL_FILE)))))
 
-ADDITIONAL_BINDING_IDLS_PATHS = \
+ADDITIONS_PATHS = \
     $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions \
-    $(SDKROOT)/usr/local/include/WebKitAdditions \
+    $(SDKROOT)/usr/local/include/WebKitAdditions
+
+ADDITIONAL_BINDING_IDLS_PATHS = \
+    $(ADDITIONS_PATHS) \
     $(IDL_PATHS)
 
 JS_BINDING_IDLS += \
@@ -1366,6 +1373,7 @@ all : \
     JSMathMLElementWrapperFactory.h \
     JSSVGElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.h \
+    LocalizableAdditions.strings.out \
     PlugInsResources.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
@@ -1495,6 +1503,17 @@ ColorData.cpp : $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.p
 
 # --------
 
+# .strings files
+
+POSSIBLE_LOCALIZABLE_STRINGS_FILES := $(wildcard $(foreach ADDITIONS_PATH,$(ADDITIONS_PATHS),$(ADDITIONS_PATH)/LocalizableAdditions.strings.txt))
+
+LOCALIZABLE_STRINGS_FILE = $(word 1,$(POSSIBLE_LOCALIZABLE_STRINGS_FILES))
+
+LocalizableAdditions.strings.out : $(WebCore)/preprocess-localizable-strings.pl $(WebCore)/bindings/scripts/preprocessor.pm $(LOCALIZABLE_STRINGS_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ LocalizableAdditions.strings.txt $(LOCALIZABLE_STRINGS_FILE)
+
+# --------
+
 # user agent style sheets
 
 USER_AGENT_STYLE_SHEETS = \
@@ -1507,7 +1526,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/plugIns.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/svg.css \
-    $(WebCore)/html/shadow/mac/imageControlsMac.css \
+    $(WebCore)/html/shadow/imageOverlay.css \
     $(WebCore)/html/shadow/meterElementShadow.css \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css \
 #

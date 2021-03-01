@@ -51,6 +51,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
@@ -489,8 +490,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         FloatPoint containerLocationRelativeToScrollingAncestor = containerRectRelativeToScrollingAncestor.location() -
             FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
             enclosingClippingBox.borderTop() + enclosingClippingBox.paddingTop());
-        if (&enclosingClippingBox != containingBlock)
-            containerLocationRelativeToScrollingAncestor += enclosingClippingLayer->scrollOffset();
+        if (&enclosingClippingBox != containingBlock) {
+            if (auto* scrollableArea = enclosingClippingLayer->scrollableArea())
+                containerLocationRelativeToScrollingAncestor += scrollableArea->scrollOffset();
+        }
         containerRectRelativeToScrollingAncestor.setLocation(containerLocationRelativeToScrollingAncestor);
     }
     constraints.setContainingBlockRect(containerRectRelativeToScrollingAncestor);
@@ -507,8 +510,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     if (enclosingClippingLayer) {
         stickyLocationRelativeToScrollingAncestor -= FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
             enclosingClippingBox.borderTop() + enclosingClippingBox.paddingTop());
-        if (&enclosingClippingBox != containingBlock)
-            stickyLocationRelativeToScrollingAncestor += enclosingClippingLayer->scrollOffset();
+        if (&enclosingClippingBox != containingBlock) {
+            if (auto* scrollableArea = enclosingClippingLayer->scrollableArea())
+                stickyLocationRelativeToScrollingAncestor += scrollableArea->scrollOffset();
+        }
     }
     // FIXME: For now, assume that |this| is not transformed.
     stickyBoxRelativeToScrollingAnecstor.setLocation(stickyLocationRelativeToScrollingAncestor);
@@ -547,11 +552,14 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 
         FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 
-        FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();
+        auto* scrollableArea = enclosingClippingLayer->scrollableArea();
+        FloatPoint scrollOffset;
+        if (scrollableArea)
+            scrollOffset = FloatPoint() + scrollableArea->scrollOffset();
 
         float scrollbarOffset = 0;
-        if (enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceBlockDirectionScrollbarOnLeft())
-            scrollbarOffset = enclosingClippingBox.layer()->verticalScrollbarWidth(IgnoreOverlayScrollbarSize);
+        if (enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceBlockDirectionScrollbarOnLeft() && scrollableArea)
+            scrollbarOffset = scrollableArea->verticalScrollbarWidth(IgnoreOverlayScrollbarSize);
 
         constrainingRect.setLocation(FloatPoint(scrollOffset.x() + scrollbarOffset, scrollOffset.y()));
         return constrainingRect;
@@ -870,7 +878,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskRect.intersect(snappedIntRect(paintInfo.rect));
 
         // Now create the mask.
-        maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), ColorSpace::SRGB, context);
+        maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), DestinationColorSpace::SRGB, context);
         if (!maskImage)
             return;
         paintMaskForTextFillBox(maskImage.get(), maskRect, box, scrolledPaintRect);

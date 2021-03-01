@@ -525,12 +525,16 @@ void CurlHandle::setHttpCustomRequest(const String& method)
 void CurlHandle::enableAcceptEncoding()
 {
     // enable all supported built-in compressions (gzip and deflate) through Accept-Encoding:
-    curl_easy_setopt(m_handle, CURLOPT_ENCODING, "");
+    curl_easy_setopt(m_handle, CURLOPT_ACCEPT_ENCODING, "");
 }
 
 void CurlHandle::enableAllowedProtocols()
 {
-    static const long allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
+    static const long allowedProtocols = CURLPROTO_FILE |
+#if ENABLE(FTPDIR)
+        CURLPROTO_FTP | CURLPROTO_FTPS |
+#endif
+        CURLPROTO_HTTP | CURLPROTO_HTTPS;
 
     curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
 }

@@ -387,11 +387,13 @@ private:
 
     void hoverTimerFired();
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void imageExtractionTimerFired();
+#endif
+
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
     bool shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const;
-    
-    bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 
     static bool isKeyboardOptionTab(KeyboardEvent&);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent&);
@@ -524,12 +526,14 @@ private:
     bool shouldSendMouseEventsToInactiveWindows() const;
 
     bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
-
-    bool mouseDownMayStartSelect();
+    bool mouseDownMayStartSelect() const;
     
     Frame& m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
+#if ENABLE(IMAGE_EXTRACTION)
+    DeferrableOneShotTimer m_imageExtractionTimer;
+#endif
     std::unique_ptr<AutoscrollController> m_autoscrollController;
     RenderLayer* m_resizeLayer { nullptr };
 

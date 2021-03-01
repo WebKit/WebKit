@@ -101,11 +101,6 @@ bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
 #endif
 }
 
-bool ColorInputType::isColorControl() const
-{
-    return true;
-}
-
 bool ColorInputType::isPresentingAttachedView() const
 {
     return !!m_chooser;
@@ -140,7 +135,7 @@ Color ColorInputType::valueAsColor() const
     return parseSimpleColorValue(element()->value()).value();
 }
 
-void ColorInputType::createShadowSubtree()
+void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
     ASSERT(element()->shadowRoot());
@@ -153,8 +148,8 @@ void ColorInputType::createShadowSubtree()
     wrapperElement->setPseudo(webkitColorSwatchWrapperName);
     auto colorSwatch = HTMLDivElement::create(document);
     colorSwatch->setPseudo(webkitColorSwatchName);
-    wrapperElement->appendChild(colorSwatch);
-    element()->userAgentShadowRoot()->appendChild(wrapperElement);
+    wrapperElement->appendChild(source, colorSwatch);
+    element()->userAgentShadowRoot()->appendChild(source, wrapperElement);
 
     updateColorSwatch();
 }

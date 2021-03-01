@@ -66,10 +66,10 @@ namespace JSC {
     macro(create) \
     macro(defineProperty) \
     macro(defaultPromiseThen) \
-    macro(getOwnPropertyNames) \
     macro(Set) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
+    macro(typedArrayContentType) \
     macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \
     macro(typedArraySubarrayCreate) \
@@ -84,7 +84,6 @@ namespace JSC {
     macro(repeatCharacter) \
     macro(starDefault) \
     macro(starNamespace) \
-    macro(InspectorInstrumentation) \
     macro(keys) \
     macro(values) \
     macro(get) \
@@ -99,6 +98,8 @@ namespace JSC {
     macro(Uint32Array) \
     macro(Float32Array) \
     macro(Float64Array) \
+    macro(BigInt64Array) \
+    macro(BigUint64Array) \
     macro(exec) \
     macro(generator) \
     macro(generatorNext) \
@@ -167,14 +168,15 @@ namespace JSC {
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(importModule) \
-    macro(propertyIsEnumerable) \
     macro(copyDataProperties) \
     macro(meta) \
     macro(webAssemblyCompileStreamingInternal) \
     macro(webAssemblyInstantiateStreamingInternal) \
     macro(instanceFieldInitializer) \
     macro(hasOwnPropertyFunction) \
-    macro(createPrivateSymbol)
+    macro(createPrivateSymbol) \
+    macro(entries) \
+
 
 namespace Symbols {
 #define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;

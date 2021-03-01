@@ -226,6 +226,11 @@ public:
     {
         return state() != IsInvalidated;
     }
+    // Fast way of testing isStillValid(), which only works from the main thread.
+    bool isStillValidOnJSThread() const
+    {
+        return stateOnJSThread() != IsInvalidated;
+    }
     // Like isStillValid(), may be called from another thread.
     bool hasBeenInvalidated() const { return !isStillValid(); }
     

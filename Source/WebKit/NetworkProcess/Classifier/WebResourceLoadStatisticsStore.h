@@ -316,7 +316,6 @@ struct ThirdPartyData {
     void clearExpiredPrivateClickMeasurement();
     void privateClickMeasurementToString(CompletionHandler<void(String)>&&);
     void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&);
-    void updateTimerLastFired();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 private:

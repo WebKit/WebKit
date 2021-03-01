@@ -87,7 +87,9 @@ using namespace JSC::LLInt;
 // Define the opcode dispatch mechanism when using the C loop:
 //
 
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 using WebConfig::g_config;
+#endif
 
 // These are for building a C Loop interpreter:
 #define OFFLINE_ASM_BEGIN

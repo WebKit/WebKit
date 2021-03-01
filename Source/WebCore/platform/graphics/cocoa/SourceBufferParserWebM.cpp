@@ -41,6 +41,7 @@
 #include "VideoTrackPrivateWebM.h"
 #include "WebMAudioUtilitiesCocoa.h"
 #include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
 #include <wtf/LoggerHelper.h>
@@ -598,7 +599,6 @@ static SourceBufferParserWebM::CallOnClientThreadCallback callOnMainThreadCallba
 
 SourceBufferParserWebM::SourceBufferParserWebM()
     : m_reader(WTF::makeUniqueRef<StreamingVectorReader>())
-    , m_initializationSegmentIsHandledSemaphore(Box<BinarySemaphore>::create())
     , m_callOnClientThreadCallback(callOnMainThreadCallback())
 {
     if (isWebmParserAvailable())
@@ -607,13 +607,14 @@ SourceBufferParserWebM::SourceBufferParserWebM()
 
 SourceBufferParserWebM::~SourceBufferParserWebM()
 {
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
-void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
+void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags appendFlags)
 {
-    if (!m_parser)
+    if (!m_parser) {
+        completionHandler();
         return;
+    }
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -627,6 +628,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
+            completionHandler();
             return;
         }
 
@@ -657,11 +659,12 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(code);
     });
+
+    completionHandler();
 }
 
 void SourceBufferParserWebM::flushPendingMediaData()
 {
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::setShouldProvideMediaDataForTrackID(bool, uint64_t)
@@ -686,15 +689,11 @@ void SourceBufferParserWebM::resetParserState()
     m_initializationSegment = nullptr;
     m_initializationSegmentEncountered = false;
     m_currentBlock.reset();
-
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::invalidate()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-
-    m_initializationSegmentIsHandledSemaphore->signal();
 
     m_parser = nullptr;
     m_tracks.clear();
@@ -716,7 +715,6 @@ auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> Tr
     }
     return nullptr;
 }
-
 
 Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, Action* action)
 {
@@ -773,6 +771,27 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
         m_state = State::ReadingTracks;
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
+
+    if (metadata.id == Id::kTracks) {
+        if (!m_keyIds.isEmpty() && !m_didProvideContentKeyRequestInitializationDataForTrackIDCallback) {
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered encrypted content without an key request callback");
+            return Status(Status::Code(ErrorCode::ContentEncrypted));
+        }
+
+        if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
+            m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
+                m_didParseInitializationDataCallback(WTFMove(initializationSegment));
+            });
+        }
+        m_initializationSegmentEncountered = false;
+        m_initializationSegment = nullptr;
+
+        if (!m_keyIds.isEmpty()) {
+            for (auto& keyIdPair : m_keyIds)
+                m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(keyIdPair.second), keyIdPair.first);
+        }
+        m_keyIds.clear();
+    }
 
     return Status(Status::kOkCompleted);
 }
@@ -835,19 +854,6 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
     if (!action)
         return Status(Status::kNotEnoughMemory);
 
-    if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
-        m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
-            m_didParseInitializationDataCallback(WTFMove(initializationSegment), [this, protectedThis = makeRef(*this)] {
-                m_initializationSegmentIsHandledSemaphore->signal();
-            });
-        });
-
-        // Wait until the initialization segment is handled
-        m_initializationSegmentIsHandledSemaphore->wait();
-    }
-    m_initializationSegmentEncountered = false;
-    m_initializationSegment = nullptr;
-
     if (cluster.timecode.is_present())
         m_currentTimecode = cluster.timecode.value();
 
@@ -887,6 +893,25 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
         if (m_logger)
             track->setLogger(*m_logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
         m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+    }
+
+    if (trackEntry.content_encodings.is_present() && !trackEntry.content_encodings.value().encodings.empty()) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "content_encodings detected:");
+        for (auto& encoding : trackEntry.content_encodings.value().encodings) {
+            if (!encoding.is_present())
+                continue;
+
+            auto& encryption = encoding.value().encryption;
+            if (!encryption.is_present())
+                continue;
+
+            auto& keyIdElement = encryption.value().key_id;
+            if (!keyIdElement.is_present())
+                continue;
+
+            auto& keyId = keyIdElement.value();
+            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), Uint8Array::create(keyId.data(), keyId.size())));
+        }
     }
 
     StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
@@ -1169,14 +1194,14 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     m_currentBlockBuffer = nullptr;
     m_currentBlockBufferPosition = 0;
 
-    if (!isKey) {
-        auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
-        ASSERT(attachmentsArray);
-        if (!attachmentsArray) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
-            return;
-        }
+    auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    ASSERT(attachmentsArray);
+    if (!attachmentsArray) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
+        return;
+    }
 
+    if (!isKey) {
         for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
             CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
             CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
@@ -1316,14 +1341,7 @@ const HashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
 
 const HashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
 {
-    static auto codecs = makeNeverDestroyed<HashSet<String>>({
-#if ENABLE(VORBIS)
-        "A_VORBIS",
-#endif
-#if ENABLE(OPUS)
-        "A_OPUS",
-#endif
-    });
+    static auto codecs = makeNeverDestroyed<HashSet<String>>({ "A_VORBIS", "A_OPUS" });
     return codecs;
 }
 

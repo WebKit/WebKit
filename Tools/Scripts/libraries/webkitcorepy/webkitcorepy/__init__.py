@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,8 +34,9 @@ from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
+from webkitcorepy.task_pool import TaskPool
 
-version = Version(0, 4, 26)
+version = Version(0, 5, 2)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -55,6 +56,7 @@ AutoInstall.register(Package('requests', Version(2, 24)))
 AutoInstall.register(Package('setuptools', Version(44, 1,  1)))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 15, 0)))
+AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
 

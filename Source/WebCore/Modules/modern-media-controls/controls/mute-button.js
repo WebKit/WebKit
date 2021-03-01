@@ -30,15 +30,31 @@ class MuteButton extends Button
     {
         super({
             cssClassName: "mute",
-            iconName: Icons.Volume,
+            iconName: Icons.VolumeMutedRTL,
             layoutDelegate
         });
 
-        this._muted = false;
-        this._usesRTLIconVariant = false;
+        this._volume = 1;
+        this._muted = true;
+
+        this._usesLTRUserInterfaceLayoutDirection = undefined;
     }
 
     // Public
+
+    get volume()
+    {
+        return this._volume;
+    }
+
+    set volume(volume)
+    {
+        if (this._volume === volume)
+            return;
+
+        this._volume = volume;
+        this.needsLayout = true;
+    }
 
     get muted()
     {
@@ -54,12 +70,13 @@ class MuteButton extends Button
         this.needsLayout = true;
     }
 
-    set usesRTLIconVariant(flag)
+    set usesLTRUserInterfaceLayoutDirection(usesLTRUserInterfaceLayoutDirection)
     {
-        if (this._usesRTLIconVariant === flag)
+        if (usesLTRUserInterfaceLayoutDirection === this._usesLTRUserInterfaceLayoutDirection)
             return;
 
-        this._usesRTLIconVariant = flag;
+        this._usesLTRUserInterfaceLayoutDirection = usesLTRUserInterfaceLayoutDirection;
+
         this.needsLayout = true;
     }
 
@@ -67,10 +84,15 @@ class MuteButton extends Button
 
     layout()
     {
-        if (this._usesRTLIconVariant)
-            this.iconName = this._muted ? Icons.VolumeMutedRTL : Icons.VolumeRTL;
+        if (this._muted || this._volume < 0)
+            this.iconName = this._usesLTRUserInterfaceLayoutDirection ? Icons.VolumeMuted : Icons.VolumeMutedRTL;
+        else if (this._volume < 0.25)
+            this.iconName = this._usesLTRUserInterfaceLayoutDirection ? Icons.Volume0 : Icons.Volume0RTL;
+        else if (this._volume < 0.5)
+            this.iconName = this._usesLTRUserInterfaceLayoutDirection ? Icons.Volume1 : Icons.Volume1RTL;
+        else if (this._volume < 0.75)
+            this.iconName = this._usesLTRUserInterfaceLayoutDirection ? Icons.Volume2 : Icons.Volume2RTL;
         else
-            this.iconName = this._muted ? Icons.VolumeMuted : Icons.Volume;
+            this.iconName = this._usesLTRUserInterfaceLayoutDirection ? Icons.Volume3 : Icons.Volume3RTL;
     }
-
 }

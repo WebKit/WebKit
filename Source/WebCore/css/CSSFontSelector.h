@@ -48,7 +48,7 @@ class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFaceSetClient, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
+class CSSFontSelector final : public FontSelector, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -98,7 +98,7 @@ private:
 
     void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 
-    void fontModified() final;
+    void fontModified();
 
     void fontLoadingTimerFired();
 
@@ -122,6 +122,8 @@ private:
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
+
+    CSSFontFaceSet::FontModifiedObserver m_fontModifiedObserver;
 
     Timer m_fontLoadingTimer;
     bool m_isFontLoadingSuspended { false };

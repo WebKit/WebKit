@@ -38,6 +38,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxModelBox);
+
 BoxModelBox::BoxModelBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : Box(tree, borderBox, WTFMove(displayStyle), flags | TypeFlags::BoxModelBox)
 {

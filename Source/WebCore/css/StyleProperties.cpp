@@ -289,8 +289,16 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return get2Values(gapShorthand());
     case CSSPropertyScrollMargin:
         return get4Values(scrollMarginShorthand());
+    case CSSPropertyScrollMarginBlock:
+        return get2Values(scrollMarginBlockShorthand());
+    case CSSPropertyScrollMarginInline:
+        return get2Values(scrollMarginInlineShorthand());
     case CSSPropertyScrollPadding:
         return get4Values(scrollPaddingShorthand());
+    case CSSPropertyScrollPaddingBlock:
+        return get2Values(scrollPaddingBlockShorthand());
+    case CSSPropertyScrollPaddingInline:
+        return get2Values(scrollPaddingInlineShorthand());
     default:
         return String();
     }
@@ -1178,11 +1186,27 @@ String StyleProperties::asText() const
             case CSSPropertyScrollMarginLeft:
                 shorthandPropertyID = CSSPropertyScrollMargin;
                 break;
+            case CSSPropertyScrollMarginBlockStart:
+            case CSSPropertyScrollMarginBlockEnd:
+                shorthandPropertyID = CSSPropertyScrollMarginBlock;
+                break;
+            case CSSPropertyScrollMarginInlineStart:
+            case CSSPropertyScrollMarginInlineEnd:
+                shorthandPropertyID = CSSPropertyScrollMarginInline;
+                break;
             case CSSPropertyScrollPaddingTop:
             case CSSPropertyScrollPaddingRight:
             case CSSPropertyScrollPaddingBottom:
             case CSSPropertyScrollPaddingLeft:
                 shorthandPropertyID = CSSPropertyScrollPadding;
+                break;
+            case CSSPropertyScrollPaddingBlockStart:
+            case CSSPropertyScrollPaddingBlockEnd:
+                shorthandPropertyID = CSSPropertyScrollPaddingBlock;
+                break;
+            case CSSPropertyScrollPaddingInlineStart:
+            case CSSPropertyScrollPaddingInlineEnd:
+                shorthandPropertyID = CSSPropertyScrollPaddingInline;
                 break;
             case CSSPropertyTransitionProperty:
             case CSSPropertyTransitionDuration:

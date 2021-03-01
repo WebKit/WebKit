@@ -118,7 +118,7 @@ namespace JSC {
 
 const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinPromiseRejectPromiseCodeConstructorKind = JSC::ConstructorKind::None;
-const int s_builtinPromiseRejectPromiseCodeLength = 413;
+const int s_builtinPromiseRejectPromiseCodeLength = 337;
 static const JSC::Intrinsic s_builtinPromiseRejectPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseRejectPromiseCode =
     "(function (promise, reason)\n" \
@@ -131,15 +131,13 @@ const char* const s_builtinPromiseRejectPromiseCode =
     "    promise.@promiseRejectReactions = undefined;\n" \
     "    promise.@promiseState = @promiseRejected;\n" \
     "\n" \
-    "    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);\n" \
-    "\n" \
     "    @triggerPromiseReactions(reactions, reason);\n" \
     "})\n" \
 ;
 
 const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorKind = JSC::ConstructorKind::None;
-const int s_builtinPromiseFulfillPromiseCodeLength = 412;
+const int s_builtinPromiseFulfillPromiseCodeLength = 336;
 static const JSC::Intrinsic s_builtinPromiseFulfillPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseFulfillPromiseCode =
     "(function (promise, value)\n" \
@@ -151,8 +149,6 @@ const char* const s_builtinPromiseFulfillPromiseCode =
     "    promise.@promiseFulfillReactions = undefined;\n" \
     "    promise.@promiseRejectReactions = undefined;\n" \
     "    promise.@promiseState = @promiseFulfilled;\n" \
-    "\n" \
-    "    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);\n" \
     "\n" \
     "    @triggerPromiseReactions(reactions, value);\n" \
     "})\n" \

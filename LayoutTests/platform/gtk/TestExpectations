@@ -25,8 +25,6 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
-imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
@@ -56,6 +54,8 @@ css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pass ]
+
+fast/events/keyboardevent-modifier.html [ Pass ]
 
 # permessage-deflate WebSocket extension
 
@@ -136,8 +136,7 @@ webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
-# aria-braille* attributes are not implemented:
-accessibility/braille-label-role.html
+
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
@@ -1332,6 +1331,7 @@ webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pa
 webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
+
 webkit.org/b/182761 accessibility/gtk/aria-current-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-disabled-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-expanded-changed-notification.html [ Pass Failure ]
@@ -2564,8 +2564,6 @@ webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
 webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
-
-webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Failure ]
 
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 

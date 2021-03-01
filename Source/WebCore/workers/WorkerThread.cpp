@@ -111,7 +111,7 @@ Ref<Thread> WorkerThread::createThread()
     }, ThreadType::JavaScript);
 }
 
-Ref<WorkerOrWorkletGlobalScope> WorkerThread::createGlobalScope()
+RefPtr<WorkerOrWorkletGlobalScope> WorkerThread::createGlobalScope()
 {
     return createWorkerGlobalScope(m_startupData->params, WTFMove(m_startupData->origin), WTFMove(m_startupData->topOrigin));
 }

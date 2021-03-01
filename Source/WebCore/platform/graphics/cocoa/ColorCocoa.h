@@ -33,11 +33,11 @@ namespace WebCore {
 class Color;
 
 #if USE(APPKIT)
-NSColor *platformColor(const Color&);
+WEBCORE_EXPORT NSColor *platformColor(const Color&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-UIColor *platformColor(const Color&);
+WEBCORE_EXPORT UIColor *platformColor(const Color&);
 #endif
 
 } // namespace WebCore

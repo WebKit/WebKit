@@ -331,7 +331,7 @@ function replace(strArg, replace)
             nCaptures = 0;
         var matched = @toString(result[0]);
         var matchLength = matched.length;
-        var position = @toInteger(result.index);
+        var position = @toIntegerOrInfinity(result.index);
         position = (position > stringLength) ? stringLength : position;
         position = (position < 0) ? 0 : position;
 

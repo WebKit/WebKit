@@ -95,7 +95,7 @@ CanvasStyle::CanvasStyle(Color color)
 }
 
 CanvasStyle::CanvasStyle(const SRGBA<float>& colorComponents)
-    : m_style(convertToComponentBytes(colorComponents))
+    : m_style(convertColor<SRGBA<uint8_t>>(colorComponents))
 {
 }
 
@@ -148,7 +148,7 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
 
 bool CanvasStyle::isEquivalent(const SRGBA<float>& components) const
 {
-    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == convertToComponentBytes(components);
+    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == convertColor<SRGBA<uint8_t>>(components);
 }
 
 void CanvasStyle::applyStrokeColor(GraphicsContext& context) const

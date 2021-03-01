@@ -105,6 +105,7 @@ class ViewGestureController;
 
 @protocol _WKTextManipulationDelegate;
 @protocol _WKInputDelegate;
+@protocol _WKAppHighlightDelegate;
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
@@ -119,6 +120,7 @@ class ViewGestureController;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
+    WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
 
     RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
 
@@ -231,7 +233,7 @@ class ViewGestureController;
     RetainPtr<WKPasswordView> _passwordView;
 
     BOOL _hasScheduledVisibleRectUpdate;
-    BOOL _visibleContentRectUpdateScheduledFromScrollViewInStableState;
+    OptionSet<WebKit::ViewStabilityFlag> _viewStabilityWhenVisibleContentRectUpdateScheduled;
 
     Optional<WebCore::WheelScrollGestureState> _currentScrollGestureState;
     uint64_t _wheelEventCountInCurrentScrollGesture;
@@ -256,6 +258,10 @@ class ViewGestureController;
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 - (void)_didInvalidateDataForAttachment:(API::Attachment&)attachment;
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+- (void)_updateAppHighlightsStorage:(NSData *)data;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

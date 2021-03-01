@@ -29,6 +29,7 @@
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "CacheStorageProvider.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -272,7 +273,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
     , m_pluginInfoProvider(*WTFMove(pageConfiguration.pluginInfoProvider))
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
-    , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
+    , m_userContentProvider(WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(pageConfiguration.sessionID)
 #if ENABLE(VIDEO)
@@ -1232,6 +1233,9 @@ void Page::didStartProvisionalLoad()
 {
     if (m_performanceMonitor)
         m_performanceMonitor->didStartProvisionalLoad();
+
+    if (m_settings->resourceLoadSchedulingEnabled())
+        setLoadSchedulingMode(LoadSchedulingMode::Prioritized);
 }
 
 void Page::didCommitLoad()
@@ -1249,6 +1253,8 @@ void Page::didFinishLoad()
 
     if (m_performanceMonitor)
         m_performanceMonitor->didFinishLoad();
+
+    setLoadSchedulingMode(LoadSchedulingMode::Direct);
 }
 
 bool Page::isOnlyNonUtilityPage() const
@@ -1607,6 +1613,8 @@ void Page::doAfterUpdateRendering()
     });
 #endif
 
+    prioritizeVisibleResources();
+
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::EventRegionUpdate);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1674,6 +1682,44 @@ void Page::renderingUpdateCompleted()
         scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
+}
+
+void Page::prioritizeVisibleResources()
+{
+    if (loadSchedulingMode() == LoadSchedulingMode::Direct)
+        return;
+    if (!mainFrame().document())
+        return;
+
+    Vector<CachedResource*> toPrioritize;
+
+    forEachDocument([&] (Document& document) {
+        toPrioritize.appendVector(document.cachedResourceLoader().visibleResourcesToPrioritize());
+    });
+
+    if (toPrioritize.isEmpty()) {
+        if (!mainFrame().document()->parsing()) {
+            // All visible resources have been loaded and we are done with parsing. Stop scheduling.
+            setLoadSchedulingMode(LoadSchedulingMode::Direct);
+        }
+        return;
+    }
+
+    auto resourceLoaders = toPrioritize.map([](auto* resource) {
+        return resource->loader();
+    });
+
+    platformStrategies()->loaderStrategy()->prioritizeResourceLoads(resourceLoaders);
+}
+
+void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
+{
+    if (m_loadSchedulingMode == mode)
+        return;
+
+    m_loadSchedulingMode = mode;
+
+    platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
 
 void Page::suspendScriptedAnimations()
@@ -2077,37 +2123,26 @@ void Page::stopMediaCapture()
 bool Page::mediaPlaybackExists()
 {
 #if ENABLE(VIDEO)
-    bool mediaPlaybackExists = false;
-    forEachDocument([&mediaPlaybackExists] (Document& document) {
-        if (document.mediaPlaybackExists())
-            mediaPlaybackExists = true;
-    });
-    return mediaPlaybackExists;
-#else
-    return false;
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        return !platformMediaSessionManager->hasNoSession();
 #endif
+    return false;
 }
 
 bool Page::mediaPlaybackIsPaused()
 {
 #if ENABLE(VIDEO)
-    bool mediaPlaybackIsPaused = false;
-    forEachDocument([&mediaPlaybackIsPaused] (Document& document) {
-        if (document.mediaPlaybackIsPaused())
-            mediaPlaybackIsPaused = true;
-    });
-    return mediaPlaybackIsPaused;
-#else
-    return false;
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        return platformMediaSessionManager->mediaPlaybackIsPaused(mediaSessionGroupIdentifier());
 #endif
+    return false;
 }
 
 void Page::pauseAllMediaPlayback()
 {
 #if ENABLE(VIDEO)
-    forEachDocument([] (Document& document) {
-        document.pauseAllMediaPlayback();
-    });
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->pauseAllMediaPlaybackForGroup(mediaSessionGroupIdentifier());
 #endif
 }
 
@@ -2118,12 +2153,21 @@ void Page::suspendAllMediaPlayback()
     if (m_mediaPlaybackIsSuspended)
         return;
 
-    forEachDocument([] (Document& document) {
-        document.suspendAllMediaPlayback();
-    });
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->suspendAllMediaPlaybackForGroup(mediaSessionGroupIdentifier());
 
+    // FIXME: We cannot set m_mediaPlaybackIsSuspended before, see https://bugs.webkit.org/show_bug.cgi?id=192829#c7.
     m_mediaPlaybackIsSuspended = true;
 #endif
+}
+
+MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
+{
+    if (!m_mediaSessionGroupIdentifier) {
+        if (auto identifier = m_mainFrame->loader().pageID())
+            m_mediaSessionGroupIdentifier = makeObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+    }
+    return m_mediaSessionGroupIdentifier;
 }
 
 void Page::resumeAllMediaPlayback()
@@ -2134,9 +2178,8 @@ void Page::resumeAllMediaPlayback()
         return;
     m_mediaPlaybackIsSuspended = false;
 
-    forEachDocument([] (Document& document) {
-        document.resumeAllMediaPlayback();
-    });
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->resumeAllMediaPlaybackForGroup(mediaSessionGroupIdentifier());
 #endif
 }
 
@@ -2148,9 +2191,8 @@ void Page::suspendAllMediaBuffering()
         return;
     m_mediaBufferingIsSuspended = true;
 
-    forEachDocument([] (Document& document) {
-        document.suspendAllMediaBuffering();
-    });
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->suspendAllMediaBufferingForGroup(mediaSessionGroupIdentifier());
 #endif
 }
 
@@ -2161,9 +2203,8 @@ void Page::resumeAllMediaBuffering()
         return;
     m_mediaBufferingIsSuspended = false;
 
-    forEachDocument([] (Document& document) {
-        document.resumeAllMediaBuffering();
-    });
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->resumeAllMediaBufferingForGroup(mediaSessionGroupIdentifier());
 #endif
 }
 
@@ -2433,6 +2474,15 @@ void Page::addLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 void Page::removeLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 {
     m_requestedLayoutMilestones.remove(milestones);
+}
+
+Color Page::themeColor() const
+{
+    auto* document = mainFrame().document();
+    if (!document)
+        return { };
+
+    return document->themeColor();
 }
 
 Color Page::pageExtendedBackgroundColor() const

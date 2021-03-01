@@ -63,6 +63,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTableCell.h"
@@ -319,10 +320,12 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
     if (hasOverflowClip() && layer() && oldStyle && oldStyle->effectiveZoom() != newStyle.effectiveZoom()) {
-        ScrollPosition scrollPosition = layer()->scrollPosition();
-        float zoomScaleFactor = newStyle.effectiveZoom() / oldStyle->effectiveZoom();
-        scrollPosition.scale(zoomScaleFactor);
-        layer()->setPostLayoutScrollPosition(scrollPosition);
+        if (auto* scrollableArea = layer()->scrollableArea()) {
+            ScrollPosition scrollPosition = scrollableArea->scrollPosition();
+            float zoomScaleFactor = newStyle.effectiveZoom() / oldStyle->effectiveZoom();
+            scrollPosition.scale(zoomScaleFactor);
+            scrollableArea->setPostLayoutScrollPosition(scrollPosition);
+        }
     }
 
     // Our opaqueness might have changed without triggering layout.
@@ -571,12 +574,14 @@ int RenderBox::scrollHeight() const
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollPosition().x() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    return (hasOverflowClip() && scrollableArea) ? scrollableArea->scrollPosition().x() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollPosition().y() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    return (hasOverflowClip() && scrollableArea) ? scrollableArea->scrollPosition().y() : 0;
 }
 
 void RenderBox::resetLogicalHeightBeforeLayoutIfNeeded()
@@ -585,36 +590,42 @@ void RenderBox::resetLogicalHeightBeforeLayoutIfNeeded()
         setLogicalHeight(0_lu);
 }
 
-static void setupWheelEventMonitor(RenderLayer& layer)
+static void setupWheelEventMonitor(RenderLayerScrollableArea& scrollableArea)
 {
-    Page& page = layer.renderer().page();
+    Page& page = scrollableArea.layer().renderer().page();
     if (!page.isMonitoringWheelEvents())
         return;
-    layer.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
+    scrollableArea.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
 }
 
 void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->scrollToXPosition(newLeft, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->scrollToXPosition(newLeft, options);
 }
 
 void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->scrollToYPosition(newTop, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->scrollToYPosition(newTop, options);
 }
 
 void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->setScrollPosition(position, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->setScrollPosition(position, options);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -645,9 +656,8 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
     const RenderStyle& styleToUse = style();
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
-        LayoutUnit logicalMinWidth, logicalMaxWidth;
-        std::tie(logicalMinWidth, logicalMaxWidth) = computeMinMaxLogicalWidthFromAspectRatio();
-        logicalWidth = std::max(logicalMinWidth, std::min(logicalWidth, logicalMaxWidth));
+        auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+        logicalWidth = std::clamp(logicalWidth, logicalMinWidth, logicalMaxWidth);
     }
 
     if (!styleToUse.logicalMaxWidth().isUndefined())
@@ -833,12 +843,18 @@ bool RenderBox::includeHorizontalScrollbarSize() const
 
 int RenderBox::verticalScrollbarWidth() const
 {
-    return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (!scrollableArea)
+        return 0;
+    return includeVerticalScrollbarSize() ? scrollableArea->verticalScrollbarWidth() : 0;
 }
 
 int RenderBox::horizontalScrollbarHeight() const
 {
-    return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (!scrollableArea)
+        return 0;
+    return includeHorizontalScrollbarSize() ? scrollableArea->horizontalScrollbarHeight() : 0;
 }
 
 int RenderBox::intrinsicScrollbarLogicalWidth() const
@@ -847,12 +863,12 @@ int RenderBox::intrinsicScrollbarLogicalWidth() const
         return 0;
 
     if (isHorizontalWritingMode() && (style().overflowY() == Overflow::Scroll && !canUseOverlayScrollbars())) {
-        ASSERT(layer() && layer()->hasVerticalScrollbar());
+        ASSERT(layer() && layer()->scrollableArea() && layer()->scrollableArea()->hasVerticalScrollbar());
         return verticalScrollbarWidth();
     }
 
     if (!isHorizontalWritingMode() && (style().overflowX() == Overflow::Scroll && !canUseOverlayScrollbars())) {
-        ASSERT(layer() && layer()->hasHorizontalScrollbar());
+        ASSERT(layer() && layer()->scrollableArea() && layer()->scrollableArea()->hasHorizontalScrollbar());
         return horizontalScrollbarHeight();
     }
 
@@ -861,8 +877,8 @@ int RenderBox::intrinsicScrollbarLogicalWidth() const
 
 bool RenderBox::scrollLayer(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderLayer* boxLayer = layer();
-    if (boxLayer && boxLayer->scroll(direction, granularity, multiplier)) {
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (scrollableArea && scrollableArea->scroll(direction, granularity, multiplier)) {
         if (stopElement)
             *stopElement = element();
 
@@ -892,14 +908,13 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
 {
     bool scrolled = false;
     
-    RenderLayer* l = layer();
-    if (l) {
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
 #if PLATFORM(COCOA)
         // On Mac only we reset the inline direction position when doing a document scroll (e.g., hitting Home/End).
         if (granularity == ScrollByDocument)
-            scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
+            scrolled = scrollableArea->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
 #endif
-        if (l->scroll(logicalToPhysical(direction, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
+        if (scrollableArea->scroll(logicalToPhysical(direction, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
             scrolled = true;
         
         if (scrolled) {
@@ -935,7 +950,7 @@ bool RenderBox::requiresLayerWithScrollableArea() const
         return true;
 
     // Overflow handling needs RenderLayerScrollableArea.
-    if (scrollsOverflow() || hasHorizontalOverflow() || hasVerticalOverflow())
+    if (scrollsOverflow() || hasOverflowClip() || hasHorizontalOverflow() || hasVerticalOverflow())
         return true;
 
     // Resize handling needs RenderLayerScrollableArea.
@@ -1025,8 +1040,8 @@ RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 
 void RenderBox::panScroll(const IntPoint& source)
 {
-    if (layer())
-        layer()->panScrollFromPoint(source);
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr)
+        scrollableArea->panScrollFromPoint(source);
 }
 
 bool RenderBox::canUseOverlayScrollbars() const
@@ -1055,7 +1070,11 @@ ScrollPosition RenderBox::scrollPosition() const
         return { 0, 0 };
 
     ASSERT(hasLayer());
-    return layer()->scrollPosition();
+    auto* scrollableArea = layer()->scrollableArea();
+    if (!scrollableArea)
+        return { 0, 0 };
+
+    return scrollableArea->scrollPosition();
 }
 
 LayoutSize RenderBox::cachedSizeForOverflowClip() const
@@ -1619,9 +1638,10 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOff
     if (!getBackgroundPaintedExtent(paintOffset, backgroundRect))
         return false;
 
-    if (hasLayer() && layer()->scrollingMayRevealBackground())
-        return false;
-
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
+        if (scrollableArea->scrollingMayRevealBackground())
+            return false;
+    }
     return foregroundIsKnownToBeOpaqueInRect(backgroundRect, backgroundObscurationTestMaxDepth);
 }
 
@@ -1938,10 +1958,10 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderFragme
     clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
 
     // Subtract out scrollbars if we have them.
-    if (layer()) {
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
         if (shouldPlaceBlockDirectionScrollbarOnLeft())
-            clipRect.move(layer()->verticalScrollbarWidth(relevancy), 0);
-        clipRect.contract(layer()->verticalScrollbarWidth(relevancy), layer()->horizontalScrollbarHeight(relevancy));
+            clipRect.move(scrollableArea->verticalScrollbarWidth(relevancy), 0);
+        clipRect.contract(scrollableArea->verticalScrollbarWidth(relevancy), scrollableArea->horizontalScrollbarHeight(relevancy));
     }
 
     return clipRect;
@@ -2528,10 +2548,10 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
     // Width calculations
-    if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {
-        computedValues.m_extent = computeLogicalWidthFromAspectRatio(fragment);
-    } else if (treatAsReplaced) {
+    if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
+    } else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {
+        computedValues.m_extent = computeLogicalWidthFromAspectRatio(fragment);
     } else {
         LayoutUnit preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
         computedValues.m_extent = constrainLogicalWidthInFragmentByMinMax(preferredWidth, containerWidthInInlineDirection, cb, fragment);
@@ -3199,6 +3219,24 @@ static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
     return false;
 }
 
+void RenderBox::computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding)
+{
+    if (maxWidth.isFixed()) {
+        auto adjustContentBoxLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(maxWidth);
+        m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidth);
+        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidth);
+    }
+
+    if (minWidth.isFixed() && minWidth.value() > 0) {
+        auto adjustContentBoxLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(minWidth);
+        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidth);
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidth);
+    }
+
+    m_minPreferredLogicalWidth += borderAndPadding;
+    m_maxPreferredLogicalWidth += borderAndPadding;
+}
+
 bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) const
 {
     ASSERT(sizeType == MinSize || sizeType == MaxSize);
@@ -3209,6 +3247,9 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
     if (logicalHeight == initialLogicalHeight)
         return true;
     
+    if (logicalHeight.isPercentOrCalculated() && hasOverridingContainingBlockContentLogicalHeight())
+        return overridingContainingBlockContentLogicalHeight() == LayoutUnit(-1);
+
     // Make sure % min-height and % max-height resolve to none if the containing block has auto height.
     // Note that the "height" case for replaced elements was handled by hasReplacedLogicalHeight, which is why
     // min and max-height are the only ones handled here.
@@ -5040,7 +5081,7 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
         return false;
 
     auto h = style().logicalHeight();
-    return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && percentageLogicalHeightIsResolvable());
+    return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
 }
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
@@ -5059,7 +5100,7 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets() const
     if (!isOutOfFlowPositioned())
         return false;
     // FIXME: see if this can become a helper on RenderStyle.
-    if (style().width().isAuto() && style().height().isAuto() && !style().top().isAuto() && !style().bottom().isAuto() && (style().left().isAuto() || style().right().isAuto()))
+    if (style().width().isAuto() && style().height().isAuto() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto() && (style().logicalLeft().isAuto() || style().logicalRight().isAuto()))
         return true;
     return false;
 }
@@ -5158,6 +5199,16 @@ LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) cons
     anchorRect.expand(margin);
 
     return anchorRect;
+}
+
+LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)
+{
+    // We are using minimumValueForLength here, because scroll-padding values might be "auto". WebKit currently
+    // interprets "auto" as 0. See: https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-padding
+    const auto& padding = style().scrollPadding();
+    return LayoutBoxExtent(
+        minimumValueForLength(padding.top(), viewportRect.height()), minimumValueForLength(padding.right(), viewportRect.width()),
+        minimumValueForLength(padding.bottom(), viewportRect.height()), minimumValueForLength(padding.left(), viewportRect.width()));
 }
 
 } // namespace WebCore

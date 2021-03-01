@@ -220,6 +220,32 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Array.prototype.groupBy",
+        test() {
+            function log(input, output) {
+                InspectorTest.log(JSON.stringify(input) + " => " + JSON.stringify(output));
+            }
+
+            let arr = [0, 1, 0, 1, 1, 0, 1, 1, 1, 0];
+            let isOne = (x) => { return x === 1 };
+
+            log(arr, arr.groupBy(isOne, 1));
+            log(arr, arr.groupBy(isOne, 2));
+            log(arr, arr.groupBy(isOne, 3));
+            log(arr, arr.groupBy(isOne, 4));
+
+            let arr2 = [0, 1, 0, 1, 1, 0, 1, 1, 1];
+
+            log(arr2, arr2.groupBy(isOne, 1));
+            log(arr2, arr2.groupBy(isOne, 2));
+            log(arr2, arr2.groupBy(isOne, 3));
+            log(arr2, arr2.groupBy(isOne, 4));
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.prototype.remove",
         test() {
             let arr1 = [1, 2, 3, 1];

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
+#include "JITCompilation.h"
 #include "WasmBinding.h"
 #include "WasmEmbedder.h"
 #include <wtf/Bag.h>

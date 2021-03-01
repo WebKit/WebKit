@@ -30,13 +30,13 @@
 #include "AirSpecial.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3BasicBlockInlines.h"
-#include "B3Compilation.h"
-#include "B3Procedure.h"
 #include "B3PatchpointSpecial.h"
 #include "B3PatchpointValue.h"
+#include "B3Procedure.h"
 #include "B3StackmapGenerationParams.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
+#include "JITCompilation.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
 #include "PureNaN.h"
@@ -85,21 +85,21 @@ Lock crashLock;
         CRASH();                                                        \
     } while (false)
 
-std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
+std::unique_ptr<Compilation> compile(B3::Procedure& proc)
 {
     prepareForGeneration(proc.code());
     CCallHelpers jit;
     generate(proc.code(), jit);
     LinkBuffer linkBuffer(jit, nullptr);
 
-    return makeUnique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "testair compilation"), proc.releaseByproducts());
+    return makeUnique<Compilation>(
+        FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "testair compilation"), proc.releaseByproducts());
 }
 
 template<typename T, typename... Arguments>
-T invoke(const B3::Compilation& code, Arguments... arguments)
+T invoke(const Compilation& code, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr<B3CompilationPtrTag>(code.code().executableAddress());
+    void* executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }

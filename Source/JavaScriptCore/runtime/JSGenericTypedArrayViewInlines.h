@@ -162,6 +162,9 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     JSGlobalObject* globalObject, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>* other,
     unsigned otherOffset, unsigned length, CopyType type)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Handle the hilarious case: the act of getting the length could have resulted
     // in detaching. Well, no. That'll never happen because there cannot be
     // side-effects on getting the length of a typed array. But predicting where there
@@ -171,8 +174,15 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     length = std::min(length, other->length());
 
     RELEASE_ASSERT(other->canAccessRangeQuickly(otherOffset, length));
-    if (!validateRange(globalObject, offset, length))
+    bool success = validateRange(globalObject, offset, length);
+    EXCEPTION_ASSERT(!scope.exception() == success);
+    if (!success)
         return false;
+
+    if constexpr (Adaptor::contentType != OtherAdaptor::contentType) {
+        throwTypeError(globalObject, scope, "Content types of source and destination typed arrays are different"_s);
+        return false;
+    }
     
     // This method doesn't support copying between the same array. Note that
     // set() will only call this if the types differ, which implicitly guarantees
@@ -289,6 +299,12 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     case TypeFloat64:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Float64Adaptor>(
             globalObject, offset, jsCast<JSFloat64Array*>(object), objectOffset, length, type));
+    case TypeBigInt64:
+        RELEASE_AND_RETURN(scope, setWithSpecificType<BigInt64Adaptor>(
+            globalObject, offset, jsCast<JSBigInt64Array*>(object), objectOffset, length, type));
+    case TypeBigUint64:
+        RELEASE_AND_RETURN(scope, setWithSpecificType<BigUint64Adaptor>(
+            globalObject, offset, jsCast<JSBigUint64Array*>(object), objectOffset, length, type));
     case NotTypedArray:
     case TypeDataView: {
         bool success = validateRange(globalObject, offset, length);
@@ -433,14 +449,24 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
-    JSObject* object, JSGlobalObject*, unsigned propertyName, PropertySlot& slot)
+    JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
-    if (thisObject->isDetached() || !thisObject->canGetIndexQuickly(propertyName))
+    if (thisObject->isDetached() || !thisObject->inBounds(propertyName))
         return false;
 
-    slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), thisObject->getIndexQuickly(propertyName));
+    JSValue value;
+    if constexpr (Adaptor::canConvertToJSQuickly)
+        value = thisObject->getIndexQuickly(propertyName);
+    else {
+        auto nativeValue = thisObject->getIndexQuicklyAsNativeValue(propertyName);
+        value = Adaptor::toJSValue(globalObject, nativeValue);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+    slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
     return true;
 }
 

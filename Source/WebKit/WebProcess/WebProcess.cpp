@@ -566,7 +566,7 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
         m_processType = ProcessType::WebContent;
     }
 
-    updateProcessName();
+    updateProcessName(IsInProcessInitialization::No);
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
@@ -578,7 +578,7 @@ void WebProcess::markIsNoLongerPrewarmed()
     ASSERT(m_processType == ProcessType::PrewarmedWebContent);
     m_processType = ProcessType::WebContent;
 
-    updateProcessName();
+    updateProcessName(IsInProcessInitialization::No);
 #endif
 }
 

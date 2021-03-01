@@ -66,7 +66,6 @@ static BOOL themeWindowHasKeyAppearance;
 {
     return themeWindowHasKeyAppearance;
 }
-
 @end
 
 @implementation WebCoreThemeView
@@ -76,7 +75,7 @@ static BOOL themeWindowHasKeyAppearance;
     // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
     // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
     static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100)
-        styleMask:NSWindowStyleMaskTitled backing:NSBackingStoreBuffered defer:YES];
+        styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
     return window;
 }
 
@@ -727,7 +726,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
 
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
-        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpace::SRGB, context);
+        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, DestinationColorSpace::SRGB, context);
         if (!imageBuffer)
             return needsRepaint;
         {

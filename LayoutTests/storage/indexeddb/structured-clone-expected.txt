@@ -810,6 +810,29 @@ PASS is(test_data[4], result[4]) is true
 PASS is(test_data[5], result[5]) is true
 PASS is(test_data[6], result[6]) is true
 PASS is(test_data[7], result[7]) is true
+value = new BigInt64Array([0x7fffffffffffffffn, 1n, 0n, -1n, -0x8000000000000000n])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+PASS is(test_data[4], result[4]) is true
+value = new BigUint64Array([0n, 0xffffffffffffffffn])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
 
 Testing Arrays
 test_data = []

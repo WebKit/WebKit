@@ -30,6 +30,7 @@
 #include "DOMEventsClasses.h"
 #include "DOMHTMLClasses.h"
 #include "WebKitGraphics.h"
+#include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/Attr.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>

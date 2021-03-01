@@ -1684,8 +1684,13 @@ void AXObjectCache::handleAriaRoleChanged(Node* node)
     stopCachingComputedObjectAttributes();
 
     // Don't make an AX object unless it's needed
-    if (AccessibilityObject* obj = get(node)) {
+    if (auto* obj = get(node)) {
         obj->updateAccessibilityRole();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(obj, AXObjectCache::AXAriaRoleChanged);
+#endif
+
         obj->notifyIfIgnoredValueChanged();
     }
 }
@@ -1768,7 +1773,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == aria_modalAttr)
         deferModalChange(element);
     else if (attrName == aria_currentAttr)
-        postNotification(element, AXObjectCache::AXCurrentChanged);
+        postNotification(element, AXObjectCache::AXCurrentStateChanged);
     else if (attrName == aria_disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == aria_pressedAttr)
@@ -1777,6 +1782,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXObjectCache::AXReadOnlyStatusChanged);
     else if (attrName == aria_requiredAttr)
         postNotification(element, AXObjectCache::AXRequiredStatusChanged);
+    else if (attrName == aria_sortAttr)
+        postNotification(element, AXObjectCache::AXSortDirectionChanged);
     else
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }
@@ -1819,6 +1826,12 @@ void AXObjectCache::labelChanged(Element* element)
 void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
 {
     if (AccessibilityObject* obj = get(renderer))
+        obj->notifyIfIgnoredValueChanged();
+}
+
+void AXObjectCache::recomputeIsIgnored(Node* node)
+{
+    if (AccessibilityObject* obj = get(node))
         obj->notifyIfIgnoredValueChanged();
 }
 
@@ -3146,8 +3159,12 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleAttributeChange(deferredAttributeChangeContext.value, deferredAttributeChangeContext.key);
     m_deferredAttributeChange.clear();
     
-    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange)
+    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
+        // Recompute isIgnored after a focus change in case that altered visibility.
+        recomputeIsIgnored(deferredFocusedChangeContext.first);
+        recomputeIsIgnored(deferredFocusedChangeContext.second);
+    }
     m_deferredFocusedNodeChange.clear();
 
     for (auto& deferredModalChangedElement : m_deferredModalChangedList)
@@ -3176,8 +3193,14 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     }
 
     switch (notification) {
+    case AXAriaRoleChanged:
+        tree->updateNode(object);
+        break;
     case AXCheckedStateChanged:
         tree->updateNodeProperty(object, AXPropertyName::IsChecked);
+        break;
+    case AXSortDirectionChanged:
+        tree->updateNodeProperty(object, AXPropertyName::SortDirection);
         break;
     case AXIdAttributeChanged:
         tree->updateNodeProperty(object, AXPropertyName::IdentifierAttribute);
@@ -3242,8 +3265,14 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             continue;
 
         switch (notification.second) {
+        case AXAriaRoleChanged:
+            tree->updateNode(*notification.first);
+            break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
+            break;
+        case AXSortDirectionChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
         case AXIdAttributeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
@@ -3337,6 +3366,10 @@ bool isNodeAriaVisible(Node* node)
 {
     if (!node)
         return false;
+
+    // If an element is focused, it should not be hidden.
+    if (is<Element>(*node) && downcast<Element>(*node).focused())
+        return true;
 
     // ARIA Node visibility is controlled by aria-hidden
     //  1) if aria-hidden=true, the whole subtree is hidden

@@ -4,7 +4,7 @@
  * Copyright (C) 2000 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Allan Sandfeld Jensen <kde@carewolf.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
@@ -45,14 +45,14 @@ RenderImageResourceStyleImage::RenderImageResourceStyleImage(StyleImage& styleIm
 void RenderImageResourceStyleImage::initialize(RenderElement& renderer)
 {
     RenderImageResource::initialize(renderer, m_styleImage->hasCachedImage() ? m_styleImage.get().cachedImage() : nullptr);
-    m_styleImage->addClient(this->renderer());
+    m_styleImage->addClient(renderer);
 }
 
 void RenderImageResourceStyleImage::shutdown()
 {
     RenderImageResource::shutdown();
-    if (renderer())
-        m_styleImage->removeClient(renderer());
+    if (auto renderer = this->renderer())
+        m_styleImage->removeClient(*renderer);
 }
 
 RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
@@ -67,8 +67,8 @@ RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
 
 void RenderImageResourceStyleImage::setContainerContext(const IntSize& size, const URL&)
 {
-    ASSERT(renderer());
-    m_styleImage->setContainerContextForRenderer(*renderer(), size, renderer()->style().effectiveZoom());
+    if (auto renderer = this->renderer())
+        m_styleImage->setContainerContextForRenderer(*renderer, size, renderer->style().effectiveZoom());
 }
 
 } // namespace WebCore

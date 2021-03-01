@@ -93,6 +93,7 @@ TextStream& operator<<(TextStream& ts, AspectRatioType aspectRatioType)
     case AspectRatioType::Auto: ts << "auto"; break;
     case AspectRatioType::Ratio: ts << "ratio"; break;
     case AspectRatioType::AutoAndRatio: ts << "autoandratio"; break;
+    case AspectRatioType::AutoZero: ts << "autozero"; break;
     }
     return ts;
 }

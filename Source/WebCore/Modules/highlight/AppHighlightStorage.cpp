@@ -28,6 +28,7 @@
 #include "AppHighlightStorage.h"
 
 #include "AppHighlightListData.h"
+#include "Chrome.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "HTMLBodyElement.h"
@@ -209,12 +210,15 @@ AppHighlightStorage::AppHighlightStorage(Document& document)
 {
 }
 
-AppHighlightListData AppHighlightStorage::createAppHighlightListData()
+void AppHighlightStorage::updateAppHighlightsStorage()
 {
     Vector<AppHighlightRangeData> data;
 
     if (!m_document)
-        return { WTFMove(data) };
+        return;
+
+    if (!m_document->page())
+        return;
 
     if (auto appHighlightRegister = m_document->appHighlightRegisterIfExists()) {
         for (auto& highlight : appHighlightRegister->map()) {
@@ -222,18 +226,19 @@ AppHighlightListData AppHighlightStorage::createAppHighlightListData()
                 data.append(createAppHighlightRangeData(rangeData->range));
         }
     }
+    AppHighlightListData listData { WTFMove(data) };
 
-    return { WTFMove(data) };
+    m_document->page()->chrome().updateAppHighlightsStorage(listData.toSharedBuffer());
 }
 
-Vector<AppHighlightRangeData> AppHighlightStorage::restoreAppHighlights(Ref<SharedBuffer>&& buffer)
+void AppHighlightStorage::restoreAppHighlights(Ref<SharedBuffer>&& buffer)
 {
     auto appHighlightListData = AppHighlightListData::create(buffer);
     Vector<AppHighlightRangeData> unrestoredRanges;
     Vector<AppHighlightRangeData> restoredRanges;
 
     if (!m_document)
-        return unrestoredRanges;
+        return;
 
     auto strongDocument = m_document.get();
 
@@ -247,7 +252,6 @@ Vector<AppHighlightRangeData> AppHighlightStorage::restoreAppHighlights(Ref<Shar
         restoredRanges.append(appHighlightListData);
         strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     }
-    return unrestoredRanges;
 }
 
 #endif

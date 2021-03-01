@@ -42,8 +42,6 @@ class ListAttributeTargetObserver;
 class RadioButtonGroups;
 class StepRange;
 
-struct DateTimeChooserParameters;
-
 struct InputElementClickState {
     bool stateful { false };
     bool checked { false };
@@ -326,10 +324,6 @@ public:
 
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     HTMLImageLoader& ensureImageLoader();
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
-#endif
 
     void capsLockStateMayHaveChanged();
 

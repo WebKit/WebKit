@@ -3693,10 +3693,10 @@ public:
     AssemblerLabel labelForWatchpoint()
     {
         AssemblerLabel result = m_formatter.label();
-        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+        if (static_cast<int>(result.offset()) != m_indexOfLastWatchpoint)
             result = label();
-        m_indexOfLastWatchpoint = result.m_offset;
-        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        m_indexOfLastWatchpoint = result.offset();
+        m_indexOfTailOfLastWatchpoint = result.offset() + maxJumpReplacementSize();
         return result;
     }
     
@@ -3708,7 +3708,7 @@ public:
     AssemblerLabel label()
     {
         AssemblerLabel result = m_formatter.label();
-        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+        while (UNLIKELY(static_cast<int>(result.offset()) < m_indexOfTailOfLastWatchpoint)) {
             nop();
             result = m_formatter.label();
         }
@@ -3737,29 +3737,29 @@ public:
         ASSERT(to.isSet());
 
         char* code = reinterpret_cast<char*>(m_formatter.data());
-        ASSERT(!WTF::unalignedLoad<int32_t>(bitwise_cast<int32_t*>(code + from.m_offset) - 1));
-        setRel32(code + from.m_offset, code + to.m_offset);
+        ASSERT(!WTF::unalignedLoad<int32_t>(bitwise_cast<int32_t*>(code + from.offset()) - 1));
+        setRel32(code + from.offset(), code + to.offset());
     }
     
     static void linkJump(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
 
-        setRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
+        setRel32(reinterpret_cast<char*>(code) + from.offset(), to);
     }
 
     static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
 
-        setRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
+        setRel32(reinterpret_cast<char*>(code) + from.offset(), to);
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
         ASSERT(where.isSet());
 
-        setPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
+        setPointer(reinterpret_cast<char*>(code) + where.offset(), value);
     }
 
     static void relinkJump(void* from, void* to)
@@ -3939,18 +3939,18 @@ public:
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {
         ASSERT(call.isSet());
-        return call.m_offset;
+        return call.offset();
     }
 
     static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
         ASSERT(label.isSet());
-        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + label.m_offset);
+        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + label.offset());
     }
     
     static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
     {
-        return b.m_offset - a.m_offset;
+        return b.offset() - a.offset();
     }
     
     unsigned debugOffset() { return m_formatter.debugOffset(); }

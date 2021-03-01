@@ -69,11 +69,11 @@ void MediaRecorderPrivate::checkTrackState(const MediaStreamTrackPrivate& track)
         m_shouldMuteVideo = track.muted() || !track.enabled();
 }
 
-void MediaRecorderPrivate::stop()
+void MediaRecorderPrivate::stop(CompletionHandler<void()>&& completionHandler)
 {
     setAudioSource(nullptr);
     setVideoSource(nullptr);
-    stopRecording();
+    stopRecording(WTFMove(completionHandler));
 }
 
 void MediaRecorderPrivate::pause(CompletionHandler<void()>&& completionHandler)

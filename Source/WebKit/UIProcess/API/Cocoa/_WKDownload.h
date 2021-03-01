@@ -43,6 +43,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKDownload", macos(10.10, WK_MAC_TBA), ios
 @property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 @end

@@ -48,6 +48,7 @@
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/DataURLDecoder.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/Document.h>
@@ -138,6 +139,9 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::FontResource:
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
+#endif
+#if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::ModelResource:
 #endif
         return Seconds::infinity();
     case CachedResource::Type::ImageResource:
@@ -527,6 +531,26 @@ static bool shouldClearReferrerOnHTTPSToHTTPRedirect(Frame* frame)
     return true;
 }
 
+WebLoaderStrategy::SyncLoadResult WebLoaderStrategy::loadDataURLSynchronously(const ResourceRequest& request)
+{
+    auto mode = DataURLDecoder::Mode::Legacy;
+    if (request.requester() == ResourceRequest::Requester::Fetch)
+        mode = DataURLDecoder::Mode::ForgivingBase64;
+
+    SyncLoadResult result;
+    auto decodeResult = DataURLDecoder::decode(request.url(), mode);
+    if (!decodeResult) {
+        RELEASE_LOG_IF_ALLOWED("loadDataURLSynchronously: decoding of data failed");
+        result.error = internalError(request.url());
+        return result;
+    }
+
+    result.response = ResourceResponse::dataURLResponse(request.url(), decodeResult.value());
+    result.data = WTFMove(decodeResult->data);
+
+    return result;
+}
+
 Optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler(FrameLoader& frameLoader, ResourceLoadIdentifier identifier, const ResourceRequest& request)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
@@ -567,6 +591,15 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     if (!document) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED("loadResourceSynchronously: no document");
         error = internalError(request.url());
+        return;
+    }
+
+    if (request.url().protocolIsData()) {
+        WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED("loadResourceSynchronously: URL will be loaded as data");
+        auto syncLoadResult = loadDataURLSynchronously(request);
+        error = WTFMove(syncLoadResult.error);
+        response = WTFMove(syncLoadResult.response);
+        data = WTFMove(syncLoadResult.data);
         return;
     }
 
@@ -849,6 +882,22 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void WebLoaderStrategy::setResourceLoadSchedulingMode(WebCore::Page& page, WebCore::LoadSchedulingMode mode)
+{
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.send(Messages::NetworkConnectionToWebProcess::SetResourceLoadSchedulingMode(WebPage::fromCorePage(page).identifier(), mode), 0);
+}
+
+void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>& resources)
+{
+    auto identifiers = resources.map([](auto* loader) -> ResourceLoadIdentifier {
+        return loader->identifier();
+    });
+
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.send(Messages::NetworkConnectionToWebProcess::PrioritizeResourceLoads(identifiers), 0);
 }
 
 } // namespace WebKit

@@ -8,10 +8,10 @@ req.readyState = 1: responseURL =
 PASS req.responseURL is ""
 req.readyState = 1: responseURL =
 PASS req.responseURL is ""
-req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async
-req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async
-req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async
-PASS req.responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async"
+req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.py?uid=async
+req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.py?uid=async
+req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.py?uid=async
+PASS req.responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.py?uid=async"
 PASS successfullyParsed is true
 
 TEST COMPLETE

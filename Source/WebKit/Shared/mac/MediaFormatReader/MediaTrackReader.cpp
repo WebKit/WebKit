@@ -38,6 +38,7 @@
 #include <WebCore/SampleMap.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/LoggerHelper.h>
 
 #include <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -135,13 +136,10 @@ const char* MediaTrackReader::mediaTypeString() const
     switch (m_mediaType) {
     case kCMMediaType_Video:
         return "video";
-        break;
     case kCMMediaType_Audio:
         return "audio";
-        break;
     case kCMMediaType_Text:
         return "text";
-        break;
     }
     ASSERT_NOT_REACHED();
     return "unknown";
@@ -221,19 +219,26 @@ OSStatus MediaTrackReader::createCursorAtPresentationTimeStamp(CMTime time, MTPl
 
 OSStatus MediaTrackReader::createCursorAtFirstSampleInDecodeOrder(MTPluginSampleCursorRef* sampleCursor)
 {
-    *sampleCursor = MediaSampleCursor::createAtDecodedSample(allocator(), *this, MediaSampleCursor::DecodedSample::First).leakRef()->wrapper();
+    *sampleCursor = MediaSampleCursor::createAtPresentationTime(allocator(), *this, MediaTime::negativeInfiniteTime()).leakRef()->wrapper();
     return noErr;
 }
 
 OSStatus MediaTrackReader::createCursorAtLastSampleInDecodeOrder(MTPluginSampleCursorRef* sampleCursor)
 {
-    *sampleCursor = MediaSampleCursor::createAtDecodedSample(allocator(), *this, MediaSampleCursor::DecodedSample::Last).leakRef()->wrapper();
+    *sampleCursor = MediaSampleCursor::createAtPresentationTime(allocator(), *this, MediaTime::positiveInfiniteTime()).leakRef()->wrapper();
     return noErr;
 }
 
 WTFLogChannel& MediaTrackReader::logChannel() const
 {
     return WebCore::LogMedia;
+}
+
+const void* MediaTrackReader::nextSampleCursorLogIdentifier(uint64_t cursorID) const
+{
+    uint64_t trackID = reinterpret_cast<uint64_t>(m_logIdentifier) & 0xffffull;
+    uint64_t trackAndCursorID = trackID << 8 | (cursorID & 0xffull);
+    return LoggerHelper::childLogIdentifier(m_logIdentifier, trackAndCursorID);
 }
 
 } // namespace WebKit

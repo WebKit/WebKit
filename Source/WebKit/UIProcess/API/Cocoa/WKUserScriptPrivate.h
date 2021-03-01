@@ -32,10 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKUserScript (WKPrivate)
 
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly includeMatchPatternStrings:(nullable NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(nullable NSArray<NSString *> *)excludeMatchPatternStrings associatedURL:(nullable NSURL *)associatedURL contentWorld:(nullable WKContentWorld *)contentWorld deferRunningUntilNotification:(BOOL)deferRunningUntilNotification WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly includeMatchPatternStrings:(nullable NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(nullable NSArray<NSString *> *)excludeMatchPatternStrings associatedURL:(nullable NSURL *)associatedURL contentWorld:(nullable WKContentWorld *)contentWorld deferRunningUntilNotification:(BOOL)deferRunningUntilNotification WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-@property (nonatomic, readonly) _WKUserContentWorld *_userContentWorld WK_API_DEPRECATED_WITH_REPLACEMENT("_contentWorld", macos(10.12, WK_MAC_TBA), ios(10.0, WK_IOS_TBA));
-@property (nonatomic, readonly) WKContentWorld *_contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) _WKUserContentWorld *_userContentWorld WK_API_DEPRECATED_WITH_REPLACEMENT("_contentWorld", macos(10.12, 11.0), ios(10.0, 14.0));
+@property (nonatomic, readonly) WKContentWorld *_contentWorld WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 

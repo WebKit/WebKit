@@ -80,7 +80,7 @@ struct ItemHandle {
         return *reinterpret_cast<T*>(&data[sizeof(uint64_t)]);
     }
 
-    void copyTo(ItemHandle destination) const;
+    bool safeCopy(ItemHandle destination) const;
 };
 
 enum class DidChangeItemBuffer : bool { No, Yes };

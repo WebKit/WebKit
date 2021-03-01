@@ -62,8 +62,8 @@ protected:
     {
     }
 
-    UIEventWithKeyState(const AtomString& type, const EventModifierInit& initializer)
-        : UIEvent(type, initializer)
+    UIEventWithKeyState(const AtomString& type, const EventModifierInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+        : UIEvent(type, initializer, isTrusted)
         , m_modifiers(modifiersFromInitializer(initializer))
     {
     }

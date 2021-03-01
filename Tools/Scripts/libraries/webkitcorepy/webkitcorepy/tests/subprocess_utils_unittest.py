@@ -40,11 +40,13 @@ class SubprocessUtils(unittest.TestCase):
         self.assertEqual(result.stdout, None)
         self.assertEqual(result.stderr, None)
 
-    def test_run_timeout(self):
-        with OutputCapture(), self.assertRaises(TimeoutExpired):
-            run([sys.executable, '-c', 'import time;time.sleep(2)'], timeout=1)
+    # Without signal.alarm, the timeout argument will not work in Python 2
+    if Timeout.SIGALRM or sys.version_info > (3, 0):
+        def test_run_timeout(self):
+            with OutputCapture(), self.assertRaises(TimeoutExpired):
+                run([sys.executable, '-c', 'import time;time.sleep(2)'], timeout=1)
 
-    def test_run_timeout_context(self):
-        with OutputCapture(), self.assertRaises(TimeoutExpired):
-            with Timeout(1):
-                run([sys.executable, '-c', 'import time;time.sleep(2)'])
+        def test_run_timeout_context(self):
+            with OutputCapture(), self.assertRaises(TimeoutExpired):
+                with Timeout(1):
+                    run([sys.executable, '-c', 'import time;time.sleep(2)'])

@@ -495,6 +495,11 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             case TypeFloat64:
                 accessType = AccessCase::IndexedTypedArrayFloat64Load;
                 break;
+            // FIXME: Optimize BigInt64Array / BigUint64Array in IC
+            // https://bugs.webkit.org/show_bug.cgi?id=221183
+            case TypeBigInt64:
+            case TypeBigUint64:
+                return GiveUpOnCache;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }

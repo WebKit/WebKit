@@ -436,8 +436,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
     inputViewBounds:(CGRect)inputViewBounds
     scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale
-    inStableState:(BOOL)isStableState
-    isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
+    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
     enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
     sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged
 {
@@ -447,7 +446,8 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
     MonotonicTime timestamp = MonotonicTime::now();
     WebCore::VelocityData velocityData;
-    if (!isStableState)
+    bool inStableState = viewStability.isEmpty();
+    if (!inStableState)
         velocityData = _historicalKinematicData.velocityForNewData(visibleContentRect.origin, zoomScale, timestamp);
     else {
         _historicalKinematicData.clear();
@@ -467,9 +467,8 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         floatBoxExtent(obscuredInsets),
         floatBoxExtent(unobscuredSafeAreaInsets),
         zoomScale,
-        isStableState,
+        viewStability,
         _sizeChangedSinceLastVisibleContentRectUpdate,
-        isChangingObscuredInsetsInteractively,
         self.webView._allowsViewportShrinkToFit,
         enclosedInScrollableAncestorView,
         velocityData,
@@ -490,7 +489,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     
     [self updateFixedClippingView:layoutViewport];
 
-    if (wasStableState && !isStableState)
+    if (wasStableState && !inStableState)
         [self _didExitStableState];
 }
 

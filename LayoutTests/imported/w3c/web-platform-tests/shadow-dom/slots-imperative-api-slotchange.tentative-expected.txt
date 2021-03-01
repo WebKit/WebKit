@@ -6,11 +6,6 @@ FAIL Fire slotchange event when slot's assigned nodes changes. tTree.s1.assign i
 FAIL Fire slotchange event on previous slot and new slot when node is reassigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
 FAIL Fire slotchange event on node assignment and when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
 FAIL Fire slotchange event when order of assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2])', 'tTree.s1.assign' is undefined)
-FAIL Fire slotchange event when slot's fallback content changes. assert_array_equals: lengths differ, expected array [Element node <div id="fb">fallback</div>] length 1, got [Text node "
-    ", Text node "
-    ", Element node <div id="c1"></div>, Text node "
-    ", Element node <div id="c2"></div>, Text node "
-  "] length 6
 FAIL Fire slotchange event when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
 FAIL Fire slotchange event when removing a slot from Shadows Root that changes its assigned nodes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
 FAIL No slotchange event when adding or removing an empty slot. assert_equals: expected 0 but got 1

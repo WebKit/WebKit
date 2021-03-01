@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {

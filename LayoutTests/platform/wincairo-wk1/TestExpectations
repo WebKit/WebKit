@@ -310,3 +310,5 @@ http/tests/is-logged-in/ [ Skip ]
 
 # Skip ResourceLoadStatistics
 http/tests/resourceLoadStatistics [ Skip ]
+
+webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]

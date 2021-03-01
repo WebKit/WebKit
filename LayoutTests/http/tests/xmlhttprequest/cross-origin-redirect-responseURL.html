@@ -48,7 +48,7 @@ runTest('/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resour
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', '');
 
-    return runTest('resources/redirect-cors.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt', 'text');
+    return runTest('resources/redirect-cors.py?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt', 'text');
 }).then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/get.txt');

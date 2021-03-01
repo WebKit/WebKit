@@ -84,7 +84,7 @@ public:
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 
-    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace, PixelFormat) const override;
+    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, DestinationColorSpace, PixelFormat) const override;
 
 #if ENABLE(WEBGL)
     RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const override;
@@ -162,6 +162,10 @@ public:
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const;
 #endif
 
     void runOpenPanel(Frame&, FileChooser&);

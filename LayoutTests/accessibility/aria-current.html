@@ -34,7 +34,6 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests that aria-current causes the right attribute to be returned.");
 
     function verify(value, expectation, element) {
@@ -50,13 +49,11 @@
             var el = examples[i];
             el.focus();
             var expectation = el.getAttribute("data-expected");
-            var value = accessibilityController.focusedElement.stringAttributeValue('AXARIACurrent');
+            var value = accessibilityController.focusedElement.currentStateValue;
             verify(value, expectation, el);
         }
     }
-
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

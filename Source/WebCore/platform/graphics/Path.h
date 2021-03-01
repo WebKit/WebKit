@@ -63,13 +63,6 @@ class PlatformContextDirect2D;
 class BShape;
 typedef BShape PlatformPath;
 
-#elif USE(WINGDI)
-
-namespace WebCore {
-class PlatformPath;
-}
-typedef WebCore::PlatformPath PlatformPath;
-
 #else
 
 typedef void PlatformPath;

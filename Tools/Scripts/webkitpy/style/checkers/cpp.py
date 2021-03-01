@@ -3487,6 +3487,10 @@ def _does_primary_header_exist(filename):
     return os.path.isfile(primary_header)
 
 
+def _is_javascriptcore_file(filename):
+    return filename.startswith('Source/JavaScriptCore/')
+
+
 def check_include_line(filename, file_extension, clean_lines, line_number, include_state, error):
     """Check rules that are applicable to #include lines.
 
@@ -3516,6 +3520,12 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
 
     include = matched.group(2)
     is_system = (matched.group(1) == '<')
+
+    # FIXME: Remove once JavaScriptCore builds with ARC enabled (Bug 221117).
+    if _is_javascriptcore_file(filename) and include == 'wtf/BlockPtr.h':
+        error(line_number, 'security/javascriptcore_wtf_blockptr', 5,
+              'Replace WTF::BlockPtr with WTF::Function. '
+              'WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.')
 
     # Look for any of the stream classes that are part of standard C++.
     if match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
@@ -3719,6 +3729,12 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
             error(line_number, 'security/assertion', 5,
                 'Please replace ASSERT_WITH_SECURITY_IMPLICATION() with '
                 'RELEASE_ASSERT_WITH_SECURITY_IMPLICATION().')
+
+    # FIXME: Remove once JavaScriptCore builds with ARC enabled (Bug 221117).
+    if _is_javascriptcore_file(filename) and search(r'\b(WTF::)?BlockPtr\s*<', line):
+        error(line_number, 'security/javascriptcore_wtf_blockptr', 5,
+              'Replace WTF::BlockPtr with WTF::Function. '
+              'WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.')
 
     # Check if some verboten C functions are being used.
     if search(r'\bsprintf\b', line):
@@ -4010,7 +4026,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
         modified_identifier = sub(r'(^|(?<=::))[ms]_', '', identifier)
         if not file_state.is_objective_c_or_objective_cpp() and modified_identifier.find('_') >= 0:
             # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
-            if (not (filename.find('JavaScriptCore') >= 0 and (modified_identifier.find('op_') >= 0 or modified_identifier.find('intrinsic_') >= 0))
+            if (not (_is_javascriptcore_file(filename) and (modified_identifier.find('op_') >= 0 or modified_identifier.find('intrinsic_') >= 0))
                 and not (('gtk' in filename or 'glib' in filename or 'wpe' in filename or 'atk' in filename) and modified_identifier.startswith('webkit_'))
                 and not ('glib' in filename and modified_identifier.startswith('jsc_'))
                 and not modified_identifier.startswith('tst_')
@@ -4561,6 +4577,7 @@ class CppChecker(object):
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',
         'security/assertion',
+        'security/javascriptcore_wtf_blockptr',
         'security/missing_warn_unused_return',
         'security/printf',
         'security/temp_file',

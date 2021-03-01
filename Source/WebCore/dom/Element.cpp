@@ -92,6 +92,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
@@ -678,12 +679,12 @@ bool Element::isUserActionElementDragged() const
     return document().userActionElements().isBeingDragged(*this);
 }
 
-void Element::setActive(bool flag, bool pause)
+void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalidationScope)
 {
     if (flag == active())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, invalidationScope);
         document().userActionElements().setActive(*this, flag);
     }
 
@@ -755,12 +756,12 @@ void Element::setHasFocusWithin(bool flag)
     }
 }
 
-void Element::setHovered(bool flag)
+void Element::setHovered(bool flag, Style::InvalidationScope invalidationScope)
 {
     if (flag == hovered())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, invalidationScope);
         document().userActionElements().setHovered(*this, flag);
     }
 
@@ -1336,7 +1337,7 @@ void Element::setScrollLeft(int newLeft)
     if (auto* renderer = renderBox()) {
         int clampedLeft = clampToInteger(newLeft * renderer->style().effectiveZoom());
         renderer->setScrollLeft(clampedLeft, options);
-        if (auto* scrollableArea = renderer->layer())
+        if (auto* scrollableArea = renderer->layer() ? renderer->layer()->scrollableArea() : nullptr)
             scrollableArea->setScrollShouldClearLatchedState(true);
     }
 }
@@ -1359,7 +1360,7 @@ void Element::setScrollTop(int newTop)
     if (auto* renderer = renderBox()) {
         int clampedTop = clampToInteger(newTop * renderer->style().effectiveZoom());
         renderer->setScrollTop(clampedTop, options);
-        if (auto* scrollableArea = renderer->layer())
+        if (auto* scrollableArea = renderer->layer() ? renderer->layer()->scrollableArea() : nullptr)
             scrollableArea->setScrollShouldClearLatchedState(true);
     }
 }
@@ -2214,12 +2215,13 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
+    
+    if (auto* page = document().page()) {
 #if ENABLE(POINTER_LOCK)
-    if (document().page())
-        document().page()->pointerLockController().elementRemoved(*this);
+        page->pointerLockController().elementWasRemoved(*this);
 #endif
-    if (document().page())
-        document().page()->pointerCaptureController().elementWasRemoved(*this);
+        page->pointerCaptureController().elementWasRemoved(*this);
+    }
 
     setSavedLayerScrollPosition(ScrollPosition());
 
@@ -3219,7 +3221,6 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     return { };
 }
 
-
 ExceptionOr<void> Element::setInnerHTML(const String& html)
 {
     auto fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent);
@@ -3386,6 +3387,8 @@ bool Element::hasValidStyle() const
 
 bool Element::isVisibleWithoutResolvingFullStyle() const
 {
+    document().styleScope().flushPendingUpdate();
+
     if (renderStyle() || hasValidStyle())
         return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
 
@@ -4544,6 +4547,11 @@ ElementIdentifier Element::createElementIdentifier()
     ASSERT(!hasNodeFlag(NodeFlag::HasElementIdentifier));
     setNodeFlag(NodeFlag::HasElementIdentifier);
     return ElementIdentifier::generate();
+}
+
+void Element::didChangeRenderer(RenderObject* oldRenderer)
+{
+    InspectorInstrumentation::nodeLayoutContextChanged(*this, oldRenderer);
 }
 
 #if ENABLE(CSS_TYPED_OM)

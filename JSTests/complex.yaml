@@ -40,3 +40,6 @@
 
 - path: complex/timezone-range-cache-with-dst.js
   cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"
+
+- path: complex/date-parse-milliseconds.js
+  cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"

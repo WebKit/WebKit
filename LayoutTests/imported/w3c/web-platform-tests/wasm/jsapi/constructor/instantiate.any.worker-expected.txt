@@ -13,6 +13,16 @@ FAIL getter order for imports object: BufferSource argument assert_array_equals:
 FAIL getter order for imports object: Module argument assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
 PASS imports: BufferSource argument
 PASS imports: Module argument
+PASS imports with empty module names: BufferSource argument
+PASS imports with empty module names: Module argument
+PASS imports with empty names: BufferSource argument
+PASS imports with empty names: Module argument
+PASS exports with empty name: function: BufferSource argument
+PASS exports with empty name: function: Module argument
+PASS exports with empty name: table: BufferSource argument
+PASS exports with empty name: table: Module argument
+PASS exports with empty name: global: BufferSource argument
+PASS exports with empty name: global: Module argument
 PASS No imports: BufferSource argument
 PASS No imports: Module argument
 PASS exports and imports: BufferSource argument

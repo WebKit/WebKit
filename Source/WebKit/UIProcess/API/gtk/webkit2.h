@@ -32,6 +32,7 @@
 #include <webkit2/WebKitAutomationSession.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitBackForwardListItem.h>
+#include <webkit2/WebKitColorChooserRequest.h>
 #include <webkit2/WebKitContextMenu.h>
 #include <webkit2/WebKitContextMenuActions.h>
 #include <webkit2/WebKitContextMenuItem.h>
@@ -45,7 +46,6 @@
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>
 #include <webkit2/WebKitFaviconDatabase.h>
-#include <webkit2/WebKitColorChooserRequest.h>
 #include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitFormSubmissionRequest.h>
@@ -55,6 +55,7 @@
 #include <webkit2/WebKitInputMethodContext.h>
 #include <webkit2/WebKitInstallMissingMediaPluginsPermissionRequest.h>
 #include <webkit2/WebKitJavascriptResult.h>
+#include <webkit2/WebKitMediaKeySystemPermissionRequest.h>
 #include <webkit2/WebKitMimeInfo.h>
 #include <webkit2/WebKitNavigationAction.h>
 #include <webkit2/WebKitNavigationPolicyDecision.h>

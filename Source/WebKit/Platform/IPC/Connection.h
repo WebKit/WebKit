@@ -505,7 +505,7 @@ bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption>
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = makeUnique<Encoder>(T::name(), destinationID);
-    encoder->encode(message.arguments());
+    *encoder << message.arguments();
     
     return sendMessage(WTFMove(encoder), sendOptions);
 }
@@ -527,8 +527,8 @@ void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t
         else
             T::cancelReply(WTFMove(completionHandler));
     }, CompletionHandlerCallThread::MainThread));
-    encoder->encode(listenerID);
-    encoder->encode(message.arguments());
+    *encoder << listenerID;
+    *encoder << message.arguments();
     sendMessage(WTFMove(encoder), sendOptions);
 }
 
@@ -565,7 +565,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     }
 
     // Encode the rest of the input arguments.
-    encoder->encode(message.arguments());
+    *encoder << message.arguments();
 
     // Now send the message and wait for a reply.
     std::unique_ptr<Decoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);

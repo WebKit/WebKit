@@ -238,7 +238,7 @@
         (iokit-user-client-class "AppleKeyStoreUserClient") ;; Needed by NSURLCache
 ))
 
-(define-once (debugging-support)
+(define-once (internal-debugging-support)
         ;; <rdar://problem/8379706>
         ;; <rdar://problem/12868101>
         ;; <rdar://problem/22766887>
@@ -400,7 +400,9 @@
                (sysctl-name-prefix "kern.proc.")
                (sysctl-name-prefix "kern.procargs2."))))
 
-(debugging-support)
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support)
+)
 
 (allow file-read*
     required-etc-files
@@ -656,6 +658,14 @@
     (literal "/dev/aes_0")
     (literal "/dev/random")
     (literal "/dev/urandom"))
+
+(if (system-attribute apple-internal)
+    (allow file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper"))
+; else
+    (deny (with no-log) file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper"))
+)
 
 ;; Access to MobileGestalt
 (allow mach-lookup

@@ -24,6 +24,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/contact-picker/ContactsRequestData.h
 
     Modules/encryptedmedia/CDMClient.h
+    Modules/encryptedmedia/MediaKeySystemClient.h
+    Modules/encryptedmedia/MediaKeySystemController.h
+    Modules/encryptedmedia/MediaKeySystemRequest.h
 
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
@@ -103,6 +106,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackConstraints.h
     Modules/mediastream/RTCController.h
+    Modules/mediastream/STUNMessageParsing.h
     Modules/mediastream/UserMediaClient.h
     Modules/mediastream/UserMediaController.h
     Modules/mediastream/UserMediaRequest.h
@@ -396,9 +400,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     display/css/DisplayReplacedBox.h
     display/css/DisplayStyle.h
 
+    dom/AbortSignal.h
     dom/AbstractRange.h
     dom/ActiveDOMCallback.h
     dom/ActiveDOMObject.h
+    dom/AddEventListenerOptions.h
     dom/Attr.h
     dom/Attribute.h
     dom/BoundaryPoint.h
@@ -444,6 +450,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventInit.h
     dom/EventListener.h
     dom/EventListenerMap.h
+    dom/EventListenerOptions.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h
@@ -689,6 +696,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/LinkIconType.h
     html/LinkRelAttribute.h
     html/MediaControllerInterface.h
+    html/MediaDocument.h
     html/MediaElementSession.h
     html/MediaError.h
     html/PluginDocument.h
@@ -772,6 +780,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ImageLoader.h
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
+    loader/LoadSchedulingMode.h
     loader/LoadTiming.h
     loader/LoaderStrategy.h
     loader/MediaResourceLoader.h
@@ -1022,6 +1031,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MediaDescription.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
+    platform/MediaSessionGroupIdentifier.h
     platform/MediaSessionIdentifier.h
     platform/MediaStrategy.h
     platform/NowPlayingManager.h
@@ -1149,8 +1159,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorConversion.h
     platform/graphics/ColorHash.h
     platform/graphics/ColorMatrix.h
+    platform/graphics/ColorModels.h
     platform/graphics/ColorSerialization.h
     platform/graphics/ColorSpace.h
+    platform/graphics/ColorTransferFunctions.h
     platform/graphics/ColorTypes.h
     platform/graphics/ColorUtilities.h
     platform/graphics/ComplexTextController.h
@@ -1176,6 +1188,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontCascadeFonts.h
     platform/graphics/FontDescription.h
     platform/graphics/FontFamilySpecificationNull.h
+    platform/graphics/FontGenericFamilies.h
     platform/graphics/FontMetrics.h
     platform/graphics/FontPlatformData.h
     platform/graphics/FontRanges.h
@@ -1385,6 +1398,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/CredentialStorage.h
     platform/network/DNS.h
     platform/network/DNSResolveQueue.h
+    platform/network/DataURLDecoder.h
     platform/network/FormData.h
     platform/network/HTTPCookieAcceptPolicy.h
     platform/network/HTTPHeaderMap.h

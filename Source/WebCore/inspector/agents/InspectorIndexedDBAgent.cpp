@@ -34,6 +34,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "AddEventListenerOptions.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "DOMWindowIndexedDatabase.h"

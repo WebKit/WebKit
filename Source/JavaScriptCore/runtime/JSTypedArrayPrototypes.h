@@ -39,5 +39,7 @@ typedef JSGenericTypedArrayViewPrototype<JSUint16Array> JSUint16ArrayPrototype;
 typedef JSGenericTypedArrayViewPrototype<JSUint32Array> JSUint32ArrayPrototype;
 typedef JSGenericTypedArrayViewPrototype<JSFloat32Array> JSFloat32ArrayPrototype;
 typedef JSGenericTypedArrayViewPrototype<JSFloat64Array> JSFloat64ArrayPrototype;
+typedef JSGenericTypedArrayViewPrototype<JSBigInt64Array> JSBigInt64ArrayPrototype;
+typedef JSGenericTypedArrayViewPrototype<JSBigUint64Array> JSBigUint64ArrayPrototype;
 
 } // namespace JSC

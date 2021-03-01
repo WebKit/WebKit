@@ -37,9 +37,10 @@
 namespace WebCore {
 
 class WeekInputType final : public BaseDateAndTimeInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit WeekInputType(HTMLInputElement& element)
-        : BaseDateAndTimeInputType(element)
+        : BaseDateAndTimeInputType(Type::Week, element)
     {
     }
 
@@ -49,7 +50,6 @@ private:
     StepRange createStepRange(AnyStepHandling) const override;
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
-    bool isWeekField() const override;
     void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;

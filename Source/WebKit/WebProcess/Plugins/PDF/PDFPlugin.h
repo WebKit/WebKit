@@ -27,11 +27,13 @@
 
 #if ENABLE(PDFKIT_PLUGIN)
 
+#include "DataReference.h"
 #include "PDFKitImports.h"
 #include "PDFPluginIdentifier.h"
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
+#include "WebMouseEvent.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>

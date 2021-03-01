@@ -431,7 +431,7 @@ class Worker(object):
         thread.join(thread_timeout_sec)
         result = thread.result
         failures = []
-        if thread.isAlive():
+        if thread.is_alive():
             # If join() returned with the thread still running, the
             # DumpRenderTree is completely hung and there's nothing
             # more we can do with it.  We have to kill all the

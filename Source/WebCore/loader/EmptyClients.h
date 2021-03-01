@@ -145,6 +145,10 @@ class EmptyChromeClient : public ChromeClient {
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const final;
+#endif
+
     void runOpenPanel(Frame&, FileChooser&) final;
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }

@@ -80,13 +80,8 @@ static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimu
 }
 
 RangeInputType::RangeInputType(HTMLInputElement& element)
-    : InputType(element)
+    : InputType(Type::Range, element)
 {
-}
-
-bool RangeInputType::isRangeControl() const
-{
-    return true;
 }
 
 const AtomString& RangeInputType::formControlType() const
@@ -131,11 +126,6 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 
     const Decimal step = StepRange::parseStep(anyStepHandling, rangeStepDescription, element()->attributeWithoutSynchronization(stepAttr));
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
-}
-
-bool RangeInputType::isSteppable() const
-{
-    return true;
 }
 
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
@@ -252,7 +242,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     return ShouldCallBaseEventHandler::Yes;
 }
 
-void RangeInputType::createShadowSubtree()
+void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
 {
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
@@ -261,10 +251,10 @@ void RangeInputType::createShadowSubtree()
     Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
     track->setPseudo(webkitSliderRunnableTrackName);
-    track->appendChild(SliderThumbElement::create(document));
+    track->appendChild(source, SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
-    container->appendChild(track);
-    element()->userAgentShadowRoot()->appendChild(container);
+    container->appendChild(source, track);
+    element()->userAgentShadowRoot()->appendChild(source, container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const

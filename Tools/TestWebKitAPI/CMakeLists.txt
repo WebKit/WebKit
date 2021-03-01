@@ -137,6 +137,7 @@ if (ENABLE_JAVASCRIPTCORE)
         WTFStringUtilities.cpp
 
         Tests/JavaScriptCore/DisallowVMEntry.cpp
+        Tests/JavaScriptCore/InspectorConsoleMessage.cpp
         Tests/JavaScriptCore/PropertySlot.cpp
     )
 
@@ -145,13 +146,14 @@ if (ENABLE_JAVASCRIPTCORE)
     )
     set(TestJavaScriptCore_FRAMEWORKS
         JavaScriptCore
+        WTF
     )
 
     set(TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
         ${TESTWEBKITAPI_DIR}
         ${THIRDPARTY_DIR}/gtest/include
-        ${JavaScriptCoreCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     )
 
     WEBKIT_EXECUTABLE_DECLARE(TestJavaScriptCore)
@@ -299,6 +301,7 @@ if (ENABLE_WEBKIT)
 
     set(TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
+        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
         ${TESTWEBKITAPI_DIR}
         ${THIRDPARTY_DIR}/gtest/include
         ${PAL_FRAMEWORK_HEADERS_DIR}

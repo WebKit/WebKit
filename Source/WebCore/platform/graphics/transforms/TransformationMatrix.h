@@ -119,6 +119,8 @@ public:
 
     WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
 
+    static TransformationMatrix fromQuaternion(double qx, double qy, double qz, double qw);
+
     static const TransformationMatrix identity;
 
     void setMatrix(double a, double b, double c, double d, double e, double f)

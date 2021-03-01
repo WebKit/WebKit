@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Color 4: Specifying Lab and LCH</title>
+<link rel="help" href="https://drafts.csswg.org/css-color-4/#specifying-lab-lch">
+<link rel="match" href="lab-008-ref.html">
+<meta name="assert" content="lab() outside the sRGB gamut">
+<style>
+    .test { background-color: red; width: 12em; height: 6em; margin-top:0}
+    .ref { background-color: color(display-p3 0 1 0); width: 12em; height: 6em; margin-bottom: 0; }
+    .test { background-color: lab(86.6146% -106.5599 102.8717); }
+</style>
+<body>
+    <p>Test passes if you see a single square, and not two rectangles of different colors.</p>
+    <p class="ref"> </p>
+    <p class="test"> </p>
+</body>

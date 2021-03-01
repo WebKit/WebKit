@@ -32,7 +32,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "ImageDataReference.h"
 #include "PlatformRemoteImageBufferProxy.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SharedMemory.h"
@@ -67,12 +66,7 @@ void RemoteRenderingBackendProxy::connectToGPUProcess()
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
     connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend({
-        m_renderingBackendIdentifier,
-#if PLATFORM(COCOA)
-        m_resumeDisplayListSemaphore.createSendRight(),
-#endif
-    }), 0);
+    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier, m_resumeDisplayListSemaphore), 0);
 }
 
 void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
@@ -124,7 +118,7 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat)
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat)
 {
     RefPtr<ImageBuffer> imageBuffer;
 

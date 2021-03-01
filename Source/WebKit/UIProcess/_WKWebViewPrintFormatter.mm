@@ -91,8 +91,11 @@
 
 - (void)drawInRect:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
 {
-    if (!_printedDocument)
+    if (!_printedDocument) {
         _printedDocument = self._webView._printProvider._wk_printedDocument;
+        if (!_printedDocument)
+            return;
+    }
 
     NSInteger offsetFromStartPage = pageIndex - self.startPage;
     if (offsetFromStartPage < 0)

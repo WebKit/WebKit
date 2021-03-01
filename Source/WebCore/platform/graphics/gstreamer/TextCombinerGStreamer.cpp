@@ -64,6 +64,7 @@ void webKitTextCombinerHandleCapsEvent(WebKitTextCombiner* combiner, GstPad* pad
     GRefPtr<GstPad> internalPad;
     g_object_get(combinerPad, "inner-combiner-pad", &internalPad.outPtr(), nullptr);
 
+    auto cea608Caps = adoptGRef(gst_caps_new_empty_simple("closedcaption/x-cea-608"));
     auto textCaps = adoptGRef(gst_caps_new_empty_simple("text/x-raw"));
     if (gst_caps_can_intersect(textCaps.get(), caps)) {
         // Caps are plain text, we want a WebVTT encoder between the ghostpad and the combinerElement.
@@ -87,12 +88,48 @@ void webKitTextCombinerHandleCapsEvent(WebKitTextCombiner* combiner, GstPad* pad
 
             gst_pad_link(srcPad.get(), internalPad.get());
         } // Else: pipeline is already correct.
+    } else if (gst_caps_can_intersect(cea608Caps.get(), caps)) {
+        if (!isGStreamerPluginAvailable("rsclosedcaption") || !isGStreamerPluginAvailable("closedcaption")) {
+            WTFLogAlways("GStreamer closedcaption plugins are missing. Please install gst-plugins-bad and gst-plugins-rs");
+            return;
+        }
+
+        GST_DEBUG_OBJECT(combiner, "Converting CEA-608 closed captions to WebVTT.");
+        auto* encoder = gst_bin_new(nullptr);
+        auto* queue = gst_element_factory_make("queue", nullptr);
+        auto* converter = gst_element_factory_make("ccconverter", nullptr);
+        auto* rawCapsFilter = gst_element_factory_make("capsfilter", nullptr);
+        auto* webvttEncoder = gst_element_factory_make("cea608tott", nullptr);
+        auto* vttCapsFilter = gst_element_factory_make("capsfilter", nullptr);
+
+        auto rawCaps = adoptGRef(gst_caps_new_simple("closedcaption/x-cea-608", "format", G_TYPE_STRING, "raw", nullptr));
+        g_object_set(rawCapsFilter, "caps", rawCaps.get(), nullptr);
+        auto vttCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
+        g_object_set(vttCapsFilter, "caps", vttCaps.get(), nullptr);
+
+        gst_bin_add_many(GST_BIN_CAST(encoder), queue, converter, rawCapsFilter, webvttEncoder, vttCapsFilter, nullptr);
+        gst_element_link_many(queue, converter, rawCapsFilter, webvttEncoder, vttCapsFilter, nullptr);
+
+        auto encoderSinkPad = adoptGRef(gst_element_get_static_pad(queue, "sink"));
+        auto* ghostSinkPad = gst_ghost_pad_new("sink", encoderSinkPad.get());
+        gst_element_add_pad(encoder, ghostSinkPad);
+
+        auto encoderSrcPad = adoptGRef(gst_element_get_static_pad(vttCapsFilter, "src"));
+        auto* ghostSrcPad = gst_ghost_pad_new("src", encoderSrcPad.get());
+        gst_element_add_pad(encoder, ghostSrcPad);
+
+        gst_bin_add(GST_BIN_CAST(combiner), encoder);
+        gst_element_sync_state_with_parent(encoder);
+
+        gst_ghost_pad_set_target(GST_GHOST_PAD(pad), ghostSinkPad);
+        gst_pad_link(ghostSrcPad, internalPad.get());
     } else {
-        // Caps are not plain text, we assume it's WebVTT.
+        // Caps are not plain text or CEA-608, we assume it's WebVTT.
 
         // Remove the WebVTT encoder if present.
-        if (target && gstElementFactoryEquals(targetParent.get(), "webvttenc"_s)) {
+        if (target && targetParent) {
             GST_DEBUG_OBJECT(combiner, "Removing WebVTT encoder");
+            gst_element_set_state(targetParent.get(), GST_STATE_NULL);
             gst_bin_remove(GST_BIN_CAST(combiner), targetParent.get());
             target = nullptr;
             targetParent = nullptr;
@@ -131,7 +168,7 @@ static void webkitTextCombinerReleasePad(GstElement* element, GstPad* pad)
     if (auto target = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD(pad)))) {
         auto parent = adoptGRef(gst_pad_get_parent_element(target.get()));
         ASSERT(parent);
-        if (gstElementFactoryEquals(parent.get(), "webvttenc"_s)) {
+        if (parent) {
             gst_element_set_state(parent.get(), GST_STATE_NULL);
             gst_bin_remove(GST_BIN_CAST(combiner), parent.get());
         }
@@ -150,9 +187,9 @@ static void webKitTextCombinerConstructed(GObject* object)
     auto* combiner = WEBKIT_TEXT_COMBINER(object);
     auto* priv = combiner->priv;
 
-    // For now a funnel is used, but a better combiner, compatible with playbin3 use-cases, would be concat.
-    priv->combinerElement = gst_element_factory_make("funnel", nullptr);
+    priv->combinerElement = gst_element_factory_make("concat", nullptr);
     ASSERT(priv->combinerElement);
+    g_object_set(priv->combinerElement.get(), "adjust-base", FALSE, nullptr);
 
     gst_bin_add(GST_BIN_CAST(combiner), priv->combinerElement.get());
 

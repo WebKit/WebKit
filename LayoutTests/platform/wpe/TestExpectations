@@ -131,9 +131,6 @@ http/tests/cookies/same-site [ Pass ]
 # Passing since added in r258661.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ ImageOnlyFailure Pass ]
 
-# WebXR: Sometimes the test reports Syntax Error: Can't create duplicate variable isChromiumBased.
-imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ DumpJSConsoleLogInStdErr ]
-
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html
 
@@ -164,15 +161,19 @@ webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ Imag
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/reference-mutated.html [ ImageOnlyFailure ]
 
+# CSS transitions
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Timeout ]
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Timeout ]
+webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Timeout ]
+
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
 
-# Focus-visible
-webkit.org/b/220578 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Failure ]
-webkit.org/b/220578 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Failure ]
+# Hyphenation
+webkit.org/b/221377 [ Debug ] fast/text/hyphenation-unknown-locale.html [ Skip ]
 
 # Link target
 webkit.org/b/218553 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
@@ -186,6 +187,10 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
 webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
 webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
+
+# Nicosia
+webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
+webkit.org/b/213228 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
 
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
@@ -204,6 +209,7 @@ webkit.org/b/220614 imported/w3c/web-platform-tests/svg/linking/reftests/url-ref
 
 # WebGL
 webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
+webkit.org/b/220720 fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
 
 # Workers
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
@@ -620,7 +626,41 @@ webkit.org/b/213131 http/tests/misc/gamepads-insecure.html [ Skip ]
 
 # WebXR
 webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
-webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Failure Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
+webkit.org/b/209859 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass Failure ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_viewer_availability.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrRigidTransform_matrix.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+http/wpt/webxr/xrSession_end_device_reports_shutdown.https.html [ Pass ]
+http/wpt/webxr/xrSession_ended_by_system.https.html [ Pass ]
+http/wpt/webxr/xrSession_reject_multiple_end.https.html [ Pass ]
+
+# WebXR: Sometimes the test reports Syntax Error: Can't create duplicate variable isChromiumBased.
+imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ DumpJSConsoleLogInStdErr ]
 
 # LFC/IFC.
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
@@ -632,6 +672,8 @@ webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 webkit.org/b/213131 compositing/ [ Skip ]
 webkit.org/b/213131 editing/ [ Skip ]
 webkit.org/b/213131 inspector/ [ Skip ]
+# This one below programatically opens the inspector.
+webkit.org/b/213131 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Skip ]
 webkit.org/b/213131 media/ [ Skip ]
 
 Bug(WPE) fast/autoresize [ Skip ]
@@ -770,8 +812,6 @@ webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure 
 
 webkit.org/b/212959 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass Timeout ]
 
-webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
-
 webkit.org/b/213230 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213231 fast/block/float/float-with-anonymous-previous-sibling.html [ ImageOnlyFailure Pass ]
@@ -828,7 +868,7 @@ webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-tran
 webkit.org/b/207711 [ Debug ] fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Timeout ]
 
-webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
+webkit.org/b/208000 [ Release ] http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
 
 webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout Pass ]
 
@@ -966,9 +1006,6 @@ webkit.org/b/201983 accessibility/w3c-svg-name-calculation.html [ Missing ]
 webkit.org/b/201983 accessibility/w3c-svg-presentational-role.html [ Missing ]
 webkit.org/b/201983 accessibility/w3c-svg-roles.html [ Missing ]
 
-# WPT: cors
-# =========
-webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Skip ]
 
 # WPT: css
 # ========

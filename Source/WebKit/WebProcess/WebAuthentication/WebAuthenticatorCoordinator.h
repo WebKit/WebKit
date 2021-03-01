@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/AuthenticatorCoordinatorClient.h>
+#include <WebCore/FrameIdentifier.h>
 
 namespace WebKit {
 
@@ -42,8 +43,12 @@ private:
     void makeCredential(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
     void getAssertion(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&&) final;
+    void resetUserGestureRequirement() final { m_requireUserGesture = false; }
+
+    bool processingUserGesture(const WebCore::Frame&, const WebCore::FrameIdentifier&);
 
     WebPage& m_webPage;
+    bool m_requireUserGesture { false };
 };
 
 } // namespace WebKit

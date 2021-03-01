@@ -321,6 +321,9 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
+#if ENABLE(IMAGE_EXTRACTION)
+    , m_imageExtractionTimer(*this, &EventHandler::imageExtractionTimerFired, 250_ms)
+#endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
@@ -360,6 +363,9 @@ void EventHandler::clear()
 #endif
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
+#endif
+#if ENABLE(IMAGE_EXTRACTION)
+    m_imageExtractionTimer.stop();
 #endif
     m_resizeLayer = nullptr;
     m_elementUnderMouse = nullptr;
@@ -428,10 +434,8 @@ static inline bool dispatchSelectStart(Node* node)
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
-#if ENABLE(USERSELECT_ALL)
     if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
         return rootUserSelectAll;
-#endif
 
     if (targetNode.shouldSelectOnMouseDown())
         return &targetNode;
@@ -697,9 +701,9 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
 }
 
-bool EventHandler::mouseDownMayStartSelect()
+bool EventHandler::mouseDownMayStartSelect() const
 {
-    Page* page = m_frame.page();
+    auto* page = m_frame.page();
     if (page && !page->textInteractionEnabled())
         return false;
 
@@ -932,6 +936,9 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!target)
         return;
 
+    if (!HTMLElement::shouldUpdateSelectionForMouseDrag(*target, m_frame.selection().selection()))
+        return;
+
     VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame.selection().selection(), hitTestResult.localPoint(), target);
 
     // Don't modify the selection if we're not on a node.
@@ -965,7 +972,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection = VisibleSelection(targetPosition);
     }
 
-#if ENABLE(USERSELECT_ALL)
     Node* rootUserSelectAllForMousePressNode = Position::rootUserSelectAllForNode(m_mousePressNode.get());
     if (rootUserSelectAllForMousePressNode && rootUserSelectAllForMousePressNode == Position::rootUserSelectAllForNode(target)) {
         newSelection.setBase(positionBeforeNode(rootUserSelectAllForMousePressNode).upstream(CanCrossEditingBoundary));
@@ -983,9 +989,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         else
             newSelection.setExtent(targetPosition);
     }
-#else
-    newSelection.setExtent(targetPosition);
-#endif
 
     if (m_frame.selection().granularity() != TextGranularity::CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame.selection().granularity());
@@ -1499,11 +1502,10 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
         bool inResizer = false;
         if (renderer && renderer->hasLayer()) {
             // FIXME: With right-aligned text in a box, the renderer here is usually a RenderText, which prevents showing the resize cursor: webkit.org/b/210935.
-            if (auto* layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
-                inResizer = layer->isPointInResizeControl(roundedIntPoint(result.localPoint()));
-                if (inResizer)
-                    return layer->shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
-            }
+            auto& layerRenderer = downcast<RenderLayerModelObject>(*renderer);
+            inResizer = layerRenderer.layer()->isPointInResizeControl(roundedIntPoint(result.localPoint()));
+            if (inResizer)
+                return layerRenderer.shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
         }
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
@@ -1879,6 +1881,12 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 
     hitTestResult.setToNonUserAgentShadowAncestor();
     page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifierFlags());
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (event.syntheticClickType() == NoTap && m_imageExtractionTimer.isActive())
+        m_imageExtractionTimer.restart();
+#endif
+
     return result;
 }
 
@@ -2506,6 +2514,15 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 
     m_elementUnderMouse = targetElement;
 
+#if ENABLE(IMAGE_EXTRACTION)
+    if (platformMouseEvent.syntheticClickType() == NoTap) {
+        if (m_elementUnderMouse && is<RenderImage>(m_elementUnderMouse->renderer()))
+            m_imageExtractionTimer.restart();
+        else
+            m_imageExtractionTimer.stop();
+    }
+#endif
+
     ASSERT_IMPLIES(m_elementUnderMouse, &m_elementUnderMouse->document() == m_frame.document());
     ASSERT_IMPLIES(m_lastElementUnderMouse, &m_lastElementUnderMouse->document() == m_frame.document());
 
@@ -2561,8 +2578,12 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
         }
 
         // Event handling may have moved the element to a different document.
-        if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document())
+        if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document()) {
+#if ENABLE(IMAGE_EXTRACTION)
+            m_imageExtractionTimer.stop();
+#endif
             m_elementUnderMouse = nullptr;
+        }
 
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
@@ -3328,6 +3349,19 @@ void EventHandler::hoverTimerFired()
         }
     }
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+void EventHandler::imageExtractionTimerFired()
+{
+    if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
+        return;
+
+    if (auto* page = m_frame.page())
+        page->chrome().client().requestImageExtraction(*m_elementUnderMouse);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& event)
 {

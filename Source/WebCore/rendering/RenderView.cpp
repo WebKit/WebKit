@@ -24,7 +24,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "FloatingObjects.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

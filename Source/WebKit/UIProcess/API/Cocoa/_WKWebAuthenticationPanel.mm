@@ -44,6 +44,7 @@
 #import "_WKPublicKeyCredentialUserEntity.h"
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/MockWebAuthenticationConfiguration.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
@@ -347,7 +348,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
     };
-    _panel->handleRequest({ vectorFromNSData(hash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String() }, WTFMove(callback));
+    _panel->handleRequest({ vectorFromNSData(hash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
 #endif
 }
 
@@ -394,7 +395,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
     };
-    _panel->handleRequest({ vectorFromNSData(hash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String() }, WTFMove(callback));
+    _panel->handleRequest({ vectorFromNSData(hash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
 #endif
 }
 
@@ -404,6 +405,21 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     return WebKit::LocalService::isAvailable();
 #else
     return NO;
+#endif
+}
+
+- (void)setMockConfiguration:(NSDictionary *)configuration
+{
+#if ENABLE(WEB_AUTHN)
+    WebCore::MockWebAuthenticationConfiguration::LocalConfiguration localConfiguration;
+    localConfiguration.userVerification = WebCore::MockWebAuthenticationConfiguration::UserVerification::Yes;
+    if (configuration[@"privateKeyBase64"])
+        localConfiguration.privateKeyBase64 = configuration[@"privateKeyBase64"];
+
+    WebCore::MockWebAuthenticationConfiguration mockConfiguration;
+    mockConfiguration.local = WTFMove(localConfiguration);
+
+    _panel->setMockConfiguration(WTFMove(mockConfiguration));
 #endif
 }
 

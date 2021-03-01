@@ -476,6 +476,20 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
 
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
+void IOSurface::setOwnership(task_t newOwner)
+{
+#if HAVE(IOSURFACE_SET_OWNERSHIP)
+    if (!m_surface)
+        return;
+
+    auto result = IOSurfaceSetOwnership(m_surface.get(), newOwner, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    if (result != kIOReturnSuccess)
+        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnership: Failed to claim ownership of IOSurface %p. Error: %d", m_surface.get(), result);
+#else
+    UNUSED_PARAM(newOwner);
+#endif
+}
+
 void IOSurface::migrateColorSpaceToProperties()
 {
     auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.get()));

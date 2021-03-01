@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+            description("Test the maximum ImageBitmap sizes of Cairo port");
+            onload = async () => {
+                var data = new ImageData(32768, 1);
+                imageBitmap = await createImageBitmap(data, { resizeWidth: 1 });
+                shouldBe("imageBitmap.width", "1");
+                data = new ImageData(1, 32769);
+                imageBitmap = await createImageBitmap(data, { resizeWidth: 1 });
+                shouldBe("imageBitmap.width", "1");
+                data = new ImageData(1, 32768);
+                imageBitmap = await createImageBitmap(data, { resizeHeight: 1 });
+                shouldBe("imageBitmap.height", "1");
+                data = new ImageData(1, 32769);
+                imageBitmap = await createImageBitmap(data, { resizeHeight: 1 });
+                shouldBe("imageBitmap.height", "1");
+            }
+        </script>
+    </head>
+</html>

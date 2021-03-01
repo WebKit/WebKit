@@ -28,6 +28,8 @@
  
 #pragma once
 
+#include "JSExportMacros.h"
+
 namespace JSC {
 
 JS_EXPORT_PRIVATE void initialize();

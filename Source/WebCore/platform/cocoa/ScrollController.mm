@@ -81,11 +81,6 @@ static float scrollWheelMultiplier()
 }
 #endif
 
-static ScrollEventAxis otherScrollEventAxis(ScrollEventAxis axis)
-{
-    return axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
-}
-
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
 {
@@ -252,7 +247,14 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                     } else
                         m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
                 }
-                shouldStretch = true;
+
+                if (!m_client.allowsHorizontalStretching(wheelEvent))
+                    deltaX = 0;
+
+                if (!m_client.allowsVerticalStretching(wheelEvent))
+                    deltaY = 0;
+
+                shouldStretch = deltaX || deltaY;
             }
         }
 
@@ -823,45 +825,32 @@ void ScrollController::scrollSnapTimerFired()
 
 void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
 {
-    if (auto* snapOffsets = scrollableArea.horizontalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.horizontalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Horizontal, { }, { });
+    const auto* snapOffsetInfo = scrollableArea.snapOffsetInfo();
+    if (!snapOffsetInfo) {
+        m_scrollSnapState = nullptr;
+        return;
+    }
 
-    if (auto* snapOffsets = scrollableArea.verticalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.verticalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Vertical, { }, { });
-
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState for " << scrollableArea << " new state " << ValueOrNull(m_scrollSnapState.get()));
+    updateScrollSnapPoints(*snapOffsetInfo);
 }
 
-void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
+void ScrollController::updateScrollSnapPoints(const ScrollSnapOffsetsInfo<LayoutUnit>& snapOffsetInfo)
 {
-    bool shouldComputeCurrentSnapIndices = false;
-    if (!m_scrollSnapState) {
-        if (snapPoints.isEmpty())
-            return;
-
-        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
-        shouldComputeCurrentSnapIndices = true;
-    }
-
-    if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())
+    if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;
-    else {
-        m_scrollSnapState->setSnapOffsetsAndPositionRangesForAxis(axis, snapPoints, snapRanges);
-        if (shouldComputeCurrentSnapIndices) {
-            setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
-            LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController::updateScrollSnapPoints - computed initial snap indices: x " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal) << ", y " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical));
-        }
+        return;
     }
+
+    bool shouldComputeCurrentSnapIndices = !m_scrollSnapState;
+    if (!m_scrollSnapState)
+        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
+
+    m_scrollSnapState->setSnapOffsetInfo(snapOffsetInfo);
+
+    if (shouldComputeCurrentSnapIndices)
+        setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState new state: " << ValueOrNull(m_scrollSnapState.get()));
 }
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
@@ -894,9 +883,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
 
     LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapOffsets.first()), snapOffsets.last());
 
-    unsigned activeIndex = 0;
-    closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), clampedOffset, 0, activeIndex);
-
+    unsigned activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, clampedOffset, 0).second;
     if (activeIndex == activeScrollSnapIndexForAxis(axis))
         return;
 
@@ -914,11 +901,10 @@ float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float dest
     if (!snapOffsets.size())
         return destinationOffset;
 
-    unsigned snapIndex;
     Optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset.hasValue())
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / m_client.pageScaleFactor());
-    LayoutUnit offset = closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, snapIndex, originalOffsetInLayoutUnits);
+    LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, originalOffsetInLayoutUnits).first;
     return offset * m_client.pageScaleFactor();
 }
 

@@ -28,7 +28,7 @@ messages -> RemoteMediaRecorder NotRefCounted {
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
     VideoSampleAvailable(WebCore::RemoteVideoSample sample)
     FetchData() -> (IPC::DataReference buffer, double timeCode) Async
-    StopRecording()
+    StopRecording() -> () Async
     Pause() -> () Async
     Resume() -> () Async
 }

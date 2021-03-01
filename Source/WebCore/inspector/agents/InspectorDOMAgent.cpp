@@ -33,6 +33,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityNodeObject.h"
+#include "AddEventListenerOptions.h"
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
@@ -92,6 +93,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PseudoElement.h"
+#include "RenderGrid.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptState.h"
@@ -115,6 +117,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -128,26 +131,26 @@ using namespace HTMLNames;
 static const size_t maxTextSize = 10000;
 static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
-static Color parseColor(RefPtr<JSON::Object>&& colorObject)
+static Optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
     if (!colorObject)
-        return Color::transparentBlack;
+        return WTF::nullopt;
 
     auto r = colorObject->getInteger(Protocol::DOM::RGBAColor::rKey);
     auto g = colorObject->getInteger(Protocol::DOM::RGBAColor::gKey);
     auto b = colorObject->getInteger(Protocol::DOM::RGBAColor::bKey);
     if (!r || !g || !b)
-        return Color::transparentBlack;
+        return WTF::nullopt;
 
     auto a = colorObject->getDouble(Protocol::DOM::RGBAColor::aKey);
     if (!a)
-        return clampToComponentBytes<SRGBA>(*r, *g, *b);
-    return clampToComponentBytes<SRGBA>(*r, *g, *b, convertToComponentByte(*a));
+        return { makeFromComponentsClamping<SRGBA<uint8_t>>(*r, *g, *b) };
+    return { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a)) };
 }
 
 static Color parseConfigColor(const String& fieldName, JSON::Object& configObject)
 {
-    return parseColor(configObject.getObject(fieldName));
+    return parseColor(configObject.getObject(fieldName)).valueOr(Color::transparentBlack);
 }
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
@@ -1290,8 +1293,8 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseColor(WTFMove(color));
-    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor));
+    highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
+    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(WTFMove(quad), *highlightConfig);
 }
@@ -1457,8 +1460,8 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Protocol::
     if (frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTFMove(color));
-        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor));
+        highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
+        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
         m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 
@@ -1468,6 +1471,46 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Protocol::
 Protocol::ErrorStringOr<void> InspectorDOMAgent::hideHighlight()
 {
     m_overlay->hideHighlight();
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, Optional<bool>&& showLineNames, Optional<bool>&& showLineNumbers, Optional<bool>&& showExtendedGridlines, Optional<bool>&& showTrackSizes, Optional<bool>&& showAreaNames)
+{
+    Protocol::ErrorString errorString;
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    auto parsedColor = parseColor(WTFMove(gridColor));
+    if (!parsedColor)
+        return makeUnexpected("Invalid color could not be parsed.");
+
+    InspectorOverlay::Grid::Config config;
+    config.gridColor = *parsedColor;
+    config.showLineNames = showLineNames.valueOr(false);
+    config.showLineNumbers = showLineNumbers.valueOr(false);
+    config.showExtendedGridlines = showExtendedGridlines.valueOr(false);
+    config.showTrackSizes = showTrackSizes.valueOr(false);
+    config.showAreaNames = showAreaNames.valueOr(false);
+
+    m_overlay->setGridOverlayForNode(*node, config);
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(Optional<Protocol::DOM::NodeId>&& nodeId)
+{
+    if (nodeId) {
+        Protocol::ErrorString errorString;
+        auto node = assertNode(errorString, *nodeId);
+        if (!node)
+            return makeUnexpected(errorString);
+
+        return m_overlay->clearGridOverlayForNode(*node);
+}
+
+    m_overlay->clearAllGridOverlays();
 
     return { };
 }
@@ -1714,6 +1757,9 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
         if (children->length() > 0)
             value->setChildren(WTFMove(children));
     }
+    
+    if (auto layoutContextType = InspectorCSSAgent::layoutContextTypeForRenderer(node->renderer()))
+        value->setLayoutContextType(layoutContextType.value());
 
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {

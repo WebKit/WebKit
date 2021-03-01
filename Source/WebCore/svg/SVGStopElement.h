@@ -50,7 +50,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final;
 
     PropertyRegistry m_propertyRegistry { *this };
-    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(0) };
+    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
 };
 
 } // namespace WebCore

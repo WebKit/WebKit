@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -826,37 +826,32 @@ static URL absolutePath(const String& fileName)
 JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* moduleNameValue, JSValue parameters, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    auto reject = [&] (JSValue rejectionReason) {
-        catchScope.clearException();
-        promise->reject(globalObject, rejectionReason);
-        catchScope.clearException();
+    auto rejectWithError = [&](JSValue error) {
+        promise->reject(globalObject, error);
         return promise;
     };
 
     auto referrer = sourceOrigin.url();
     auto specifier = moduleNameValue->value(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception()->value());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     if (!referrer.isLocalFile())
-        return reject(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'."))));
 
     if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
-        return reject(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, referrer.fileSystemPath())));
+        RELEASE_AND_RETURN(scope, rejectWithError(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, referrer.fileSystemPath()))));
 
     URL moduleURL(referrer, specifier);
     if (!moduleURL.isLocalFile())
-        return reject(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file."))));
 
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, moduleURL.string()), parameters, jsUndefined());
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception()->value());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
     return result;
 }
 
@@ -1174,17 +1169,15 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    auto reject = [&] (JSValue rejectionReason) {
-        catchScope.clearException();
-        promise->reject(globalObject, rejectionReason);
-        catchScope.clearException();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto rejectWithError = [&](JSValue error) {
+        promise->reject(globalObject, error);
         return promise;
     };
 
     String moduleKey = key.toWTFString(globalObject);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception()->value());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
     ASSERT(moduleURL.isLocalFile());
@@ -1193,27 +1186,25 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
-        return reject(createError(globalObject, makeString("Could not open file '", moduleKey, "'.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'."))));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
     if (buffer.size() >= 4) {
         if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
             auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey)));
-            catchScope.releaseAssertNoException();
+            scope.releaseAssertNoException();
             auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
-            catchScope.releaseAssertNoException();
+            scope.release();
             promise->resolve(globalObject, sourceCode);
-            catchScope.clearException();
             return promise;
         }
     }
 #endif
 
     auto sourceCode = JSSourceCode::create(vm, jscSource(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey), TextPosition(), SourceProviderSourceType::Module));
-    catchScope.releaseAssertNoException();
+    scope.release();
     promise->resolve(globalObject, sourceCode);
-    catchScope.clearException();
     return promise;
 }
 
@@ -1774,7 +1765,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsOMGCompiled, (JSGlobalObject* globalObj
 
     CallerFunctor wasmToJSFrame;
     StackVisitor::visit(callFrame, vm, wasmToJSFrame);
-    if (!wasmToJSFrame.callerFrame()->isAnyWasmCallee())
+    if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isAnyWasmCallee())
         return throwVMError(globalObject, scope, "caller is not a wasm->js import function");
 
     // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
@@ -2351,13 +2342,10 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
 
     // FIXME: We don't look at the timeout parameter because we don't have a schedule work later API.
     vm.deferredWorkTimer->addPendingWork(vm, callback, { });
-    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback] {
+    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) {
         JSGlobalObject* globalObject = callback->globalObject();
-        VM& vm = globalObject->vm();
-
         MarkedArgumentBuffer args;
         call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
-        vm.deferredWorkTimer->cancelPendingWork(callback);
     });
     return JSValue::encode(jsUndefined());
 }
@@ -2999,8 +2987,8 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             if (!promise) {
                 // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
                 promise = loadAndEvaluateModule(globalObject, jscSource(stringFromUTF(scriptBuffer), sourceOrigin, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
+                RETURN_IF_EXCEPTION(scope, void());
             }
-            scope.clearException();
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](JSGlobalObject* globalObject, CallFrame* callFrame) {
                 checkException(jsCast<GlobalObject*>(globalObject), isLastFile, false, callFrame->argument(0), options, success);
@@ -3164,6 +3152,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
+    Options::useAtMethod() = true;
     
 #if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;

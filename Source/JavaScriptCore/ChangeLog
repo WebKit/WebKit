@@ -1,3 +1,1558 @@
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
+        Add ConsoleMessage::toString()
+        https://bugs.webkit.org/show_bug.cgi?id=221539
+
+        Reviewed by Eric Carlson.
+
+        Currently ConsoleMessage doesn't have a publicly API to retrieve the
+        stored JSON values into a string for printing.
+
+        The closest equivalent is message(), but it doesn't return any JSON
+        objects attached. This makes it an ill fit when printing
+        ConsoleMessage's to the system terminal, since these JSON values often
+        contain information that is important for debugging, e.g.:
+
+        SourceBufferPrivateGStreamer::removeCodedFrames(126493C320000001) removing sample (notice: no sample)
+        SourceBufferPrivateGStreamer::removeCodedFrames(126493C320000001) the range in removeCodedFrames() includes already enqueued samples, reenqueueing from (notice: no time)
+
+        This patch adds a new ConsoleMessage::toString() method that
+        constructs a String containing these JSON values, and makes use of it
+        when printing messages to the system terminal, giving more useful
+        output, e.g:
+
+        CONSOLE MEDIASOURCE DEBUG MediaSourcePrivateGStreamer::addSourceBuffer(D4447A9F1F483EEF) {"containerType":"video/webm","codecs":"codecs","profiles":"profiles"}
+        CONSOLE MEDIA LOG HTMLMediaElement::mediaPlayerDurationChanged(D4447A9F1F483EEF) duration = {"invalid":true,"numerator":-1,"denominator":1,"flags":0}, current time = {"value":0,"numerator":0,"denominator":10000000,"flags":1}
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::toString const):
+        * inspector/ConsoleMessage.h:
+
+2021-02-08  Alicia Boya García  <aboya@igalia.com>
+
+        ConsoleMessage: Don't encode string JSONLogValue's as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=221421
+
+        Reviewed by Eric Carlson.
+
+        JSONLogValue's have two tagged types: String and JSON. Despite this,
+        the ConsoleMessage constructor was converting the string values to
+        JSON while coalescing them.
+
+        This also added quotes on the return value of message() for
+        ConsoleMessage's created with this constructor, but not with others.
+
+        This patch removes that behavior, keeping strings as strings and using
+        wrapObject() instead of wrapJSONString() for them.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        (Inspector::ConsoleMessage::addToFrontend):
+
+2021-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Replace toInteger with toIntegerOrInfinity
+        https://bugs.webkit.org/show_bug.cgi?id=218642
+
+        Reviewed by Alexey Shvayka.
+
+        In ECMA262 spec, ToInteger abstract operation is replaced with ToIntegerOrInfinity.
+        This patch renames toInteger to toIntegerOrInfinity in JSC.
+
+        * builtins/ArrayPrototype.js:
+        (fill):
+        (includes):
+        (copyWithin):
+        (flat):
+        (at):
+        * builtins/FunctionPrototype.js:
+        (bind):
+        * builtins/GlobalOperations.js:
+        (globalPrivate.toIntegerOrInfinity):
+        (globalPrivate.toLength):
+        (globalPrivate.toInteger): Deleted.
+        * builtins/RegExpPrototype.js:
+        (overriddenName.string_appeared_here.replace):
+        * builtins/StringPrototype.js:
+        (repeat):
+        (at):
+        * builtins/TypedArrayPrototype.js:
+        (subarray):
+        (at):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::containing):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toIntegerOrInfinity const):
+        (JSC::JSValue::toLength const):
+        (JSC::JSValue::toInteger const): Deleted.
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        * runtime/NumberPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::extractToStringRadixArgument):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::getRegExpObjectLastIndexAsUnsigned):
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::stringIndexOfImpl):
+        (JSC::stringIncludesImpl):
+
+2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=221494
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch brings back exception check after sameValue(), which was accidentally
+        removed in r264574. sameValue() may throw OOM when comparing rope strings.
+
+        Even though this case was unreachable because of PropertyDescriptor::equalTo()
+        fast path, we should maintain consistent exception checks.
+
+        For the same reason, sameValue() in protoFuncFinalizationRegistryRegister() is
+        replaced with pointer comparison, which is safe & unobservable because `target`
+        is a known JSObject.
+
+        * runtime/FinalizationRegistryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::validateAndApplyPropertyDescriptor):
+
+2021-02-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement backend support for maintaining a list of Grid layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221228
+
+        Reviewed by Devin Rousso.
+
+        Added `CSS.LayoutContextType` property to `DOM.Node` and added `CSS.nodeLayoutContextTypeChanged` event.
+
+        * inspector/protocol/CSS.json:
+        - Added `CSS.LayoutContextType` type.
+        - Added `DOM.nodeLayoutContextTypeChanged` event.
+        * inspector/protocol/DOM.json:
+        - Added `layoutContextType` property to `DOM.Node` type.
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up change after r272428
+        https://bugs.webkit.org/show_bug.cgi?id=221454
+
+        isPropertyNameExcluded can invoke GC etc. Structure::forEachProperty can miss PropertyTable and Structure
+        reference when it is highly optimized, so that it can crash if GC happens in the middle of Structure::forEachProperty.
+
+        1. Insert ensureStillAliveHere in Structure::forEachProperty to ensure liveness of PropertyTable
+        2. We should not perform side-effectful operation including GC in Structure::forEachProperty. So we moved isPropertyNameExcluded.
+
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachProperty):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] globalFuncCopyDataProperties should not perform GC-sensitive operation in the middle of Structure::forEachProperty
+        https://bugs.webkit.org/show_bug.cgi?id=221454
+
+        Reviewed by Mark Lam.
+
+        isPropertyNameExcluded can invoke GC etc. And running Structure::forEachProperty
+        is fragile state against any side-effect including GC.
+        We should not perform GC-sensitive operation during Structure::forEachProperty.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Object.assign should throw for property creation on non-extensible `target`
+        https://bugs.webkit.org/show_bug.cgi?id=220712
+
+        Reviewed by Ross Kirsling.
+
+        This performance-neutral change precludes Object.assign from taking the
+        fast path if `target` is a non-extensible JSFinalObject, which ensures
+        a TypeError is thrown for property creation via [[Set]].
+
+        Aligns JSC with the spec [1], V8, and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor (step 2.a)
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSImmutableButterfly's toString cache should not happen for generic join
+        https://bugs.webkit.org/show_bug.cgi?id=221444
+        <rdar://problem/73972862>
+
+        Reviewed by Mark Lam.
+
+        We should not cache Array#toString results with JSImmutableButterfly if
+        its join operation becomes generic join: including objects in array, since
+        this can invoke object.toString(), and it isn't side-effect free.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::fastJoin):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics.store in DFG / FTL should return ToNumber(input) value
+        https://bugs.webkit.org/show_bug.cgi?id=221438
+        <rdar://problem/73973264>
+
+        Reviewed by Filip Pizlo.
+
+        Atomics.store is different from the other ReadModifyWrite atomics. It returns the input value without truncating it into TypedArray's requirement.
+        For example,
+
+            var u8 = new Uint8Array(8);
+            Atomics.store(u8, 0, 0xffff) === 0xffff // Not 0xff.
+
+        However DFG and FTL implementations do not handle it correctly.
+        This patch fixes AI, fixup, and code generations to handle this.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::getIntTypedArrayStoreOperandForAtomics):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::setIntTypedArrayLoadResult):
+        (JSC::FTL::DFG::LowerDFGToB3::toIntegerOrInfinity):
+
+2021-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Object.entries in C++
+        https://bugs.webkit.org/show_bug.cgi?id=221380
+
+        Reviewed by Alexey Shvayka.
+
+        This patch implements Object.entries in C++ because it is more efficient.
+        It is not using dynamic feature (like, calling a callback). And in C++,
+        we can avoid JSArray allocations for @Object.@getOwnPropertyNames.
+
+        This patch also removes unnecessary JS private functions, @propertyIsEnumerable,
+        and @getOwnPropertyNames.
+
+        * builtins/BuiltinNames.h:
+        * builtins/ObjectConstructor.js:
+        (entries): Deleted.
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Insert PhantomLocal just before SetLocal for |this| to ensure liveness
+        https://bugs.webkit.org/show_bug.cgi?id=221353
+        <rdar://problem/70373862>
+
+        Reviewed by Saam Barati.
+
+        Let's consider the following case before SSA conversion.
+
+            BB#0:
+                SetArgumentDefinitely(this)
+                ...
+            @a: SomethingFun()
+                MoveHint(@a, this)
+                SetLocal(@a, this)
+                Jump #1
+
+            BB#1:
+                ...
+                ExitOK (this point)
+                ...
+            @b: SomethingFun()
+                MoveHint(@b, this)
+                SetLocal(@b, this)
+                ...
+
+            BB#2: (Catch entry point)
+                ...
+            @c: SetArgumentDefinitely(this)
+                ...
+                Jump #1
+
+        We have two entry points. And BB#0 sets @a to |this| while BB#2 does not update |this|, so it is using @c.
+        We have several patterns we can store |this|: arrow functions' |this| loading, derived constructors' |this| update. So we can see
+        SetLocal(@x, this) at arbitrary code points in CodeBlocks having them.
+
+        The problem is that DFG strongly assumed that |this| is initialized in the root basic block only once. So usually, we do not insert Flush/PhantomLocal for |this|.
+        But this is problematic when we can store |this| at arbitrary basic blocks since we do not properly insert Flush/PhantomLocal(this) in BB#1's just before Store.
+
+        Not inserting that in the above case makes |this| dead in BB#1's head liveness. Then we do not properly insert Phi(BB#0, BB#2) for |this|.
+        This is OK for non |this| locals since literally that local is not used at all in BB#1. But |this| is special since it is always live in bytecode.
+        So, OSR availability will be broken in the above graph: at ExitOK place, |this| must be live in bytecode. But |this| is pointing ConflictingFlush since
+        BB#0 says @a and BB#2 says @c while we do not have Phi.
+
+        The problem is that we do not keep liveness of |this| properly in BB#1. When setting a new |this|, we insert PhantomLocal to keep liveness so that appropriate Phi
+        will be inserted when two predecessors have different DFG nodes for |this|, and this graph can appear in arrow functions, derived constructors, and code with catch.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setArgument):
+        * dfg/DFGVariableAccessDataDump.cpp:
+        (JSC::DFG::VariableAccessDataDump::dump const):
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Atomics should support BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=221245
+
+        Reviewed by Keith Miller.
+
+        This patch adds BigInt64Array / BigUint64Array support for Atomics.
+
+        1. Atomics.store should be rewritten since it returns non-type-coerced result, so we cannot use atomicReadModifyWrite.
+           The spec also describes Atomics.store without using AtomicReadModifyWrite[1].
+        2. Extend Atomics.isLockFree to also accept a size of 8.
+        3. Currently, DFG / FTL handle Atomics + BigInt64Array/BigUint64Array as Array::Generic.
+
+        [1]: https://tc39.es/ecma262/#sec-atomics.store
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsIsLockFree):
+        * runtime/AtomicsObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::atomicsWaitImpl):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValue):
+
+2021-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [AppleWin 32bit][LLInt] LLIntData.h(104) : warning C4172: returning address of local variable or temporary: id
+        https://bugs.webkit.org/show_bug.cgi?id=220714
+
+        Reviewed by Mark Lam.
+
+        This patch fixes LLInt build when ENABLE(COMPUTED_GOTO_OPCODES) is false.
+
+        * llint/LLIntData.h:
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getOpcodeWide16):
+        (JSC::LLInt::getOpcodeWide32):
+        (JSC::LLInt::getOpcodeAddress):
+        (JSC::LLInt::getOpcodeWide16Address):
+        (JSC::LLInt::getOpcodeWide32Address):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+
+2021-02-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Completion value of a finally block should not be ignored if completion is abrupt
+        https://bugs.webkit.org/show_bug.cgi?id=221238
+
+        Reviewed by Yusuke Suzuki.
+
+        Per https://tc39.es/ecma262/#sec-try-statement-runtime-semantics-evaluation,
+        the completion value of a finally block is ignored *just* when it is a normal completion,
+        but we've been ignoring it in all cases.
+
+        This patch ensures that when a finally block is exited with a break or continue statement,
+        its completion value is used as the completion value for the entire TryStatement.
+
+        (Note: This behavior will be important for the upcoming "do expressions" proposal,
+        as it is effectively a reification of completion values.)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        1. Don't throw away the result of evaluating the finally block.
+        2. Only use the try or catch block result if we make it all the way to the end of the finally block.
+
+2021-02-02  Don Olmstead <don.olmstead@sony.com>
+
+        REGRESSION(r269309): [Cocoa] RemoteInspectorCocoa files are being compiled twice
+        https://bugs.webkit.org/show_bug.cgi?id=220951
+        <rdar://problem/73848263>
+
+        Reviewed by BJ Burg.
+
+        Refactor our SourcesCocoa files in JavaScriptCore to avoid double-listing
+        or double-building remote inspection-related files. Properly track
+        inspector/remote/SourcesCocoa.txt as a build dependency.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generate-unified-sources.sh:
+        * SourcesCocoa.txt:
+
+2021-02-02  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Small cleanup in StackVisitor::readNonInlinedFrame
+        https://bugs.webkit.org/show_bug.cgi?id=221259
+
+        Reviewed by Yusuke Suzuki.
+
+        isAnyWasmCallee() will never be true if WebAssembly is disabled at
+        compile time, so we can move a good chunk of code inside the
+        USE(WEBASSEMBLY) check. Also move all constant initializations at
+        the beginning of the method, and remove an unnecessary extra
+        variable.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+
+2021-02-02  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: implement the basics for showing/hiding grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221062
+
+        Reviewed by Devin Rousso.
+
+        Add new commands to show and hide CSS grid overlays:
+
+            - DOM.showGridOverlay
+            - DOM.hideGridOverlay
+
+        * inspector/protocol/DOM.json:
+
+2021-02-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=221044
+
+        Unreviewed non-unified build fixes.
+
+        * wasm/WasmStreamingCompiler.cpp: Add missing WasmWorklist.h header.
+        * wasm/WasmStreamingCompiler.h: Add missing JSCJSValue.h header and forwars declarations
+        for JSGlobalObject, JSObject, and VM.
+        * wasm/WasmStreamingPlan.cpp: Add missing WasmLLIntPlan.h header.
+        * wasm/js/WebAssemblyGlobalConstructor.cpp: Add missing JSWebAssemblyHelpers.h and
+        JSWebAssemblyRuntimeError.h headers.
+
+2021-02-01  Saam Barati  <sbarati@apple.com>
+
+        Sign m_offset in AssemblerLabel
+        https://bugs.webkit.org/show_bug.cgi?id=221237
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::labelForWatchpoint):
+        (JSC::ARM64Assembler::label):
+        (JSC::ARM64Assembler::getRelocatedAddress):
+        (JSC::ARM64Assembler::getDifferenceBetweenLabels):
+        (JSC::ARM64Assembler::getCallReturnOffset):
+        (JSC::ARM64Assembler::linkJump):
+        (JSC::ARM64Assembler::addressOf):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::labelForWatchpoint):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::getRelocatedAddress):
+        (JSC::ARMv7Assembler::getDifferenceBetweenLabels):
+        (JSC::ARMv7Assembler::getCallReturnOffset):
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::linkCall):
+        (JSC::ARMv7Assembler::linkPointer):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::link const):
+        (JSC::AbstractMacroAssembler::Jump::linkTo const):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerLabel::AssemblerLabel):
+        (JSC::AssemblerLabel::operator=):
+        (JSC::AssemblerLabel::isSet const):
+        (JSC::AssemblerLabel::labelAtOffset const):
+        (JSC::AssemblerLabel::operator== const):
+        (JSC::AssemblerLabel::offset const):
+        (JSC::AssemblerLabel::setOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::offsetOf):
+        (JSC::LinkBuffer::applyOffset):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::labelForWatchpoint):
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::getRelocatedAddress):
+        (JSC::MIPSAssembler::getDifferenceBetweenLabels):
+        (JSC::MIPSAssembler::getCallReturnOffset):
+        (JSC::MIPSAssembler::linkJump):
+        (JSC::MIPSAssembler::linkCall):
+        (JSC::MIPSAssembler::linkPointer):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::labelForWatchpoint):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::linkCall):
+        (JSC::X86Assembler::linkPointer):
+        (JSC::X86Assembler::getCallReturnOffset):
+        (JSC::X86Assembler::getRelocatedAddress):
+        (JSC::X86Assembler::getDifferenceBetweenLabels):
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray#fill should be implemented in C++
+        https://bugs.webkit.org/show_bug.cgi?id=221182
+
+        Reviewed by Ross Kirsling.
+
+        Since TypedArray#fill does not invoke callbacks, implementing it in C++ is better.
+        This removes several utility functions exposed in JS for TypedArray#fill implementation,
+        and makes TypedArray#fill simple.
+
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArrayClampArgumentToStartOrEnd): Deleted.
+        (fill): Deleted.
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::validateTypedArray):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.h:
+
+2021-02-01  Saam Barati  <sbarati@apple.com>
+
+        Lazily create m_windowCloseWatchpoints so we don't mistakenly think we have a frame when re-associating a document to a given cached frame
+        https://bugs.webkit.org/show_bug.cgi?id=221098
+        <rdar://72894454>
+
+        Reviewed by Ryosuke Niwa and Mark Lam.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::commit):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::isStillValidOnJSThread const):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setWatchpointSet):
+
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement BigInt64Array and BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=190800
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements BigInt64Array and BigUint64Array.
+
+            1. In this patch, we do not support BigInt64Array/BigUint64Array + Atomics yet.
+            2. We make canGetIndexQuickly false for BigInt64Array and BigUint64Array. And we
+               use generic path for getting values from BigInt64Array and BigUint64Array. We
+               will optimize it in [1] and [2]. But possibly, this does not have super large
+               impact on performance since getting value from BigInt64Array and BigUint64Array
+               are already costly since we always need to allocate BigInt for results.
+            3. DFG / FTL GetByVal etc. are using Array::Generic for BigInt64Array and BigUint64Array.
+            4. But GetArrayLength, CheckArray, byteLength getter etc. are using Array::BigInt64Array / Array::BigUint64Array
+               for optimization.
+            5. Extend ArrayProfile's ArrayMode for BigInt64Array and BigUint64Array so that ArrayProfile
+               can record BigInt64Array and BigUint64Array information.
+            6. Implement DataView#{setBigInt64,setBigUint64,getBigInt64,getBigUint64}.
+            7. Extend JSC APIs to support BigInt64Array and BigUint64Array.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=221181
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=221183
+
+        * API/JSTypedArray.cpp:
+        (toJSTypedArrayType):
+        (toTypedArrayType):
+        (createTypedArray):
+        * API/JSValueRef.h:
+        * API/tests/TypedArrayCTest.cpp:
+        (forEachTypedArrayType):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (fill):
+        (map):
+        (filter):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        * bytecode/ArrayProfile.h:
+        * bytecode/ByValInfo.h:
+        (JSC::jitArrayModeForClassInfo):
+        (JSC::jitArrayModePermitsPut):
+        (JSC::typedArrayTypeForJITArrayMode):
+        * bytecode/LinkTimeConstant.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromTypedArrayType):
+        (JSC::typedArrayTypeFromSpeculation):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        (JSC::isBigInt64ArraySpeculation):
+        (JSC::isBigUint64ArraySpeculation):
+        (JSC::isDirectArgumentsSpeculation):
+        (JSC::isScopedArgumentsSpeculation):
+        (JSC::isActionableIntMutableArraySpeculation): Deleted.
+        (JSC::isActionableFloatMutableArraySpeculation): Deleted.
+        (JSC::isActionableTypedMutableArraySpeculation): Deleted.
+        (JSC::isActionableMutableArraySpeculation): Deleted.
+        (JSC::isActionableArraySpeculation): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine const):
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+        (JSC::DFG::arrayTypeToString):
+        (JSC::DFG::toTypedArrayType):
+        (JSC::DFG::toArrayType):
+        (JSC::DFG::permitsBoundsCheckLowering):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::supportsSelfLength const):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        (JSC::DFG::operationNewTypedArrayWithOneArgumentForType):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheArrayGetByVal):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/AtomicsObject.cpp:
+        * runtime/AtomicsObject.h:
+        * runtime/BigInt64Array.h: Copied from Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp.
+        * runtime/BigUint64Array.h: Copied from Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp.
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::elementSize):
+        (JSC::validateTypedArray):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSBigInt.h:
+        * runtime/JSCell.h:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/JSTypedArrayConstructors.cpp:
+        * runtime/JSTypedArrayConstructors.h:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrayPrototypes.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/JSTypedArrays.cpp:
+        * runtime/JSTypedArrays.h:
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValue):
+        (JSC::toNativeFromValueWithoutCoercion):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        (JSC::FloatTypedArrayAdaptor::toJSValue):
+        (JSC::BigIntTypedArrayAdaptor::toJSValue):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromInt32):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromUint32):
+        (JSC::BigIntTypedArrayAdaptor::toNativeFromDouble):
+        (JSC::BigIntTypedArrayAdaptor::convertTo):
+        (JSC::Uint8ClampedAdaptor::toJSValue):
+        (JSC::IntegralTypedArrayAdaptor::toDouble): Deleted.
+        (JSC::FloatTypedArrayAdaptor::toDouble): Deleted.
+        (JSC::Uint8ClampedAdaptor::toDouble): Deleted.
+        * runtime/TypedArrayType.cpp:
+        (JSC::constructorClassInfoForType):
+        (WTF::printInternal):
+        * runtime/TypedArrayType.h:
+        (JSC::isBigIntTypedView):
+        (JSC::logElementSize):
+        (JSC::isBigInt):
+        (JSC::isSigned):
+        (JSC::contentType):
+        * runtime/TypedArrays.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
+2021-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @ in Error.stack if URL exists
+        https://bugs.webkit.org/show_bug.cgi?id=221184
+
+        Reviewed by Keith Miller.
+
+        Append '@' if URL exists even if function name does not exist to make the
+        format simple for parsing in JS (splitting with '@' to extract URL and function name).
+
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::toString const):
+
+2021-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix after r272071
+        https://bugs.webkit.org/show_bug.cgi?id=220914
+
+        Since WebAssembly.Global can be "immutable", we cannot use Wasm::Global::set when setting an initial value.
+
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adjust property order of host JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=221168
+
+        Reviewed by Darin Adler.
+
+        We should first define "length" before "name".
+        This will be included in upcoming test262 update[1].
+
+        [1]: https://github.com/tc39/test262/pull/2921
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+
+2021-01-29  Keith Miller  <keith_miller@apple.com>
+
+        SourceParseMode should be a member of the JSC::Parser
+        https://bugs.webkit.org/show_bug.cgi?id=221149
+
+        Reviewed by Ross Kirsling.
+
+        Right now we pass the SourceParseMode as a argument to many of the
+        functions in the parser. This patch move it into a member on the
+        class. This will make it available deeper in the parser, which is
+        important for implementing top level await.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Parser::sourceParseMode const):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, internal build fix after r272082
+        https://bugs.webkit.org/show_bug.cgi?id=221147
+
+        * runtime/Options.cpp:
+        (JSC::canUseJITCage):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add com.apple.private.securejit entitlement for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=221147
+
+        Reviewed by Keith Miller.
+
+        Add com.apple.private.securejit only for iOS, used for JITCage.
+
+        * entitlements.plist:
+        * runtime/Options.cpp:
+        (JSC::canUseJITCage):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        Since it accepts "anyfunc" and "externref", we should update the error message.
+        And we should support "funcref" too.
+
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Enable reference types by default
+        https://bugs.webkit.org/show_bug.cgi?id=220890
+
+        Reviewed by Yusuke Suzuki.
+
+        Enable wasm reference types by default.
+
+        * runtime/OptionsList.h:
+
+2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [JSC] WebAssembly.Global should support Funcref and Externref
+        https://bugs.webkit.org/show_bug.cgi?id=220914
+
+        Reviewed by Yusuke Suzuki.
+
+        Allow using reference types in ctor of WebAssembly.Global
+        according to the spec
+        https://webassembly.github.io/reference-types/js-api/index.html#dom-global-global.
+
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: warn about WTF::BlockPtr use in JavaScriptCore until ARC is enabled
+        <https://webkit.org/b/221108>
+        <rdar://problem/73726640>
+
+        Reviewed by Joseph Pecoraro.
+
+        * API/JSVirtualMachine.mm:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        - Remove or replace unused <wtf/BlockPtr.h> headers.
+
+2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JSPromise::rejectedPromise
+        https://bugs.webkit.org/show_bug.cgi?id=221077
+
+        Reviewed by Mark Lam.
+
+        This patch adds JSPromise::rejectedPromise static function which can return newly created rejected promise.
+        The benefit of this function is that it avoids calling JS functions internally. It is efficient, fast, plus,
+        we can ensure that no JS related error happens (stack-overflow, terminated-execution errors).
+
+        * builtins/PromiseOperations.js:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectedPromise):
+        * runtime/JSPromise.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        This patch implements WebAssembly.{compileStreaming,instantiateStreaming}. JavaScriptCore offers Wasm::StreamingCompiler interface to WebCore,
+        so that WebCore can feed FetchResponse and compile wasm code in a streaming fashion.
+
+        Wasm::StreamingCompiler drives Wasm::LLIntPlan while it does not use Wasm::Worklist since currently Wasm::Worklist is not suitable abstraction for
+        streaming compilation which generates compilation tasks incrementally. Instead, Wasm::StreamingCompiler generates Wasm::StreamingPlan and enqueues
+        them to Wasm::Worklist, and each StreamingPlan compiles one function at a time. And we gather these compiled functions into the one LLIntPlan and
+        finally Wasm::StreamingCompiler completes Wasm::LLIntPlan.
+
+        We already have Wasm::StreamingParser, which is designed for streaming compilation. We can pass bytes to this parser, and this parser invokes a callback
+        when a new wasm function is found. Then, Wasm::StreamingCompiler generates Wasm::StreamingPlan for that.
+
+        We add WasmStreamingCompiler JS objects to JSC shell to test streaming compilation easily.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/WebAssembly.js:
+        (compileStreaming):
+        (instantiateStreaming):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::cancelPendingWork):
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/OptionsList.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::EntryPlan):
+        * wasm/WasmEntryPlan.h:
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::LLIntPlan):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        (JSC::Wasm::LLIntPlan::completeInStreaming):
+        (JSC::Wasm::LLIntPlan::didCompileFunctionInStreaming):
+        (JSC::Wasm::LLIntPlan::didFailInStreaming):
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        * wasm/WasmStreamingCompiler.cpp: Added.
+        (JSC::Wasm::StreamingCompiler::StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::~StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::create):
+        (JSC::Wasm::StreamingCompiler::didReceiveFunctionData):
+        (JSC::Wasm::StreamingCompiler::didCompileFunction):
+        (JSC::Wasm::StreamingCompiler::didFinishParsing):
+        (JSC::Wasm::StreamingCompiler::completeIfNecessary):
+        (JSC::Wasm::StreamingCompiler::didComplete):
+        (JSC::Wasm::StreamingCompiler::finalize):
+        (JSC::Wasm::StreamingCompiler::fail):
+        (JSC::Wasm::StreamingCompiler::cancel):
+        * wasm/WasmStreamingCompiler.h: Added.
+        * wasm/WasmStreamingParser.cpp:
+        * wasm/WasmStreamingParser.h:
+        * wasm/WasmStreamingPlan.cpp: Copied from Source/JavaScriptCore/builtins/WebAssembly.js.
+        (JSC::Wasm::StreamingPlan::StreamingPlan):
+        (JSC::Wasm::StreamingPlan::work):
+        * wasm/WasmStreamingPlan.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssembly.h.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::finishCreation):
+        (JSC::JSWebAssembly::instantiateForStreaming):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssembly.h:
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid using DirectCall when executable is wasm function
+        https://bugs.webkit.org/show_bug.cgi?id=221055
+
+        Reviewed by Keith Miller.
+
+        This is a partial patch from https://bugs.webkit.org/show_bug.cgi?id=220339, which is reverted because of Facebook crash.
+        For now, we just avoid using DirectCall to wasm functions so that normal Call will be used, and it is efficient. This
+        patch avoids JetStream2 regression.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * jit/JITOperations.cpp:
+        (JSC::virtualForWithFunction):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rebaselining builtin generator test result files
+        https://bugs.webkit.org/show_bug.cgi?id=221028
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+
+2021-01-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r271186.
+        https://bugs.webkit.org/show_bug.cgi?id=221051
+
+        Breaks Facebook on arm64e devices
+
+        Reverted changeset:
+
+        "[JSC] DFG/FTL DirectCall need to respect Wasm IC"
+        https://bugs.webkit.org/show_bug.cgi?id=220339
+        https://trac.webkit.org/changeset/271186
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove InspectorInstrumentation object
+        https://bugs.webkit.org/show_bug.cgi?id=221028
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove InspectorInstrumentation since it is not used. We would like to clean up Promise's rejection path.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Combined.js:
+        (rejectPromise):
+        (fulfillPromise):
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Separate.js:
+        (rejectPromise):
+        (fulfillPromise):
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * builtins/InspectorInstrumentationObject.js: Removed.
+        * builtins/PromiseOperations.js:
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        * bytecode/LinkTimeConstant.h:
+        * runtime/InspectorInstrumentationObject.cpp: Removed.
+        * runtime/InspectorInstrumentationObject.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2021-01-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Change default value for externref's tables from null to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=220918
+
+        Reviewed by Yusuke Suzuki.
+
+        Update reference types tests to satisfy the spec:
+        Externref's tables default value should be undefined.
+
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::defaultValueForTable):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash when remote inspecting in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=220956
+        <rdar://73379637>
+
+        Reviewed by Devin Rousso.
+
+        Convert RemoteConnectionToTarget from using BlockPtr<> to Function<> because BlockPtr<> 
+        was triggering crashes which seem to be related to mixing ARC and non-ARC code.
+
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::queueTaskOnPrivateRunLoop):
+        (Inspector::RemoteConnectionToTarget::takeQueue):
+
+2021-01-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r270874): Some React Native apps are reported broken on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=220809
+
+        Reviewed by Saam Barati.
+
+        r270874 fixed for/in shadowing issue by introducing an invariant: a property
+        returned by getOwn*PropertyNames() in DontEnumPropertiesMode::Exclude should be
+        reported as [[Enumerable]] by getOwnPropertySlot(). Otherwise, for/in skips the
+        property, which causes RN apps to break.
+
+        Since there is no way to enforce this invariant for opaque API objects like
+        JSCallbackObject, this change skips [[Enumerable]] check for them by introducing
+        GetOwnPropertySlotMayBeWrongAboutDontEnum out of line type info flag.
+
+        Also, this patch reverts JSCallbackObject::getOwnPropertySlot() changes of r270874
+        that are no longer necessary and observable (via Object.getOwnPropertyDescriptor).
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        * API/tests/testapiScripts/testapi.js:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasEnumerableProperty const):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::getOwnPropertySlotMayBeWrongAboutDontEnum const):
+
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Update availability annotations to match the macOS 11.0 and iOS 14.0 GM SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=220874
+        <rdar://73474368>
+
+        Reviewed by Darin Adler.
+
+        * API/JSContextPrivate.h:
+        * API/JSContextRefPrivate.h:
+
+2021-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DeferredWorkTimer should clear pending task after running
+        https://bugs.webkit.org/show_bug.cgi?id=220888
+
+        Reviewed by Mark Lam.
+
+        Wasm code assumes that scheduleWorkSoon clears pending dependencies. But DeferredWorkTimer is not clearing it, and instead, FinalizationRegistry etc. is clearing
+        it explicitly. This semantics is problematic. We are putting cancelPendingWork in JSPromise::resolve / JSPromise::reject. But they do not work since this is C++
+        version of them, and JSPromise has JS version of them. And if JS version is called, cancelPendingWork is not called. And we do not want to complicate JSPromise's
+        reject / resolve path since this is super hot, and we should keep them in JS.
+        Instead, we should always clear pending task if it is called.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve): Remove this work-around, and instead, we must call scheduleWorkSoon if addPendingWork is called.
+        (JSC::JSPromise::reject): Ditto.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::webAssemblyModuleValidateAsync):
+        (JSC::instantiate): Use instance for Ticket instead of promise to disambiguate the ticket scheduling from compileAndInstantiate's one easily.
+        (JSC::compileAndInstantiate): There are path that we do not call scheduleWorkSoon while we call addPendingWork, this is wrong, and JSPromise's workaround is added to
+        alleviate this situation. We should not do that: we must call scheduleWorkSoon at some point if addPendingWork is called.
+        (JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync):
+
+2021-01-23  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Allow to build WebAssembly without B3
+        https://bugs.webkit.org/show_bug.cgi?id=220365
+
+        Reviewed by Yusuke Suzuki.
+
+        Make all the B3 related code in WebAssembly a compile-time
+        option. When disabled WebAssembly will only use its LLInt tier.
+
+        * llint/LLIntOfflineAsmConfig.h: define WEBASSEMBLY_B3JIT for the
+        offline assembler.
+        * llint/WebAssembly.asm: guard B3 code inside WEBASSEMBLY_B3JTI ifdefs.
+        * wasm/WasmAirIRGenerator.cpp: ditto.
+        * wasm/WasmAirIRGenerator.h: ditto.
+        * wasm/WasmB3IRGenerator.cpp: ditto.
+        * wasm/WasmB3IRGenerator.h: ditto.
+        * wasm/WasmBBQPlan.cpp: ditto.
+        * wasm/WasmBBQPlan.h: ditto.
+        * wasm/WasmCallee.h: ditto.
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock): ditto.
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace): ditto.
+        * wasm/WasmLLIntGenerator.h: ditto.
+        * wasm/WasmLLIntPlan.cpp: ditto.
+        * wasm/WasmOMGForOSREntryPlan.cpp: ditto.
+        * wasm/WasmOMGForOSREntryPlan.h: ditto.
+        * wasm/WasmOMGPlan.cpp: ditto.
+        * wasm/WasmOMGPlan.h: ditto.
+        * wasm/WasmOSREntryData.h: ditto.
+        * wasm/WasmOperations.cpp: ditto.
+        * wasm/WasmOperations.h: ditto.
+        * wasm/WasmPlan.cpp: ditto.
+        * wasm/WasmPlan.h: ditto.
+        * wasm/WasmSlowPaths.cpp: ditto.
+        * wasm/WasmSlowPaths.h: ditto.
+        * wasm/WasmThunks.cpp: ditto.
+        * wasm/WasmThunks.h: ditto.
+        * wasm/WasmTierUpCount.cpp: ditto.
+        * wasm/WasmTierUpCount.h: ditto.
+        * wasm/generateWasmOpsHeader.py: ditto.
+
+2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should SharedArrayBuffer/WebAssembly.Memory really throw?
+        https://bugs.webkit.org/show_bug.cgi?id=220364
+
+        Reviewed by Mark Lam.
+
+        Not accessing "shared" field if Options::useSharedArrayBuffer() is false.
+
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-22  Keith Miller  <keith_miller@apple.com>
+
+        Obj-C API should do correct type checks when using a 32-bit address space
+        https://bugs.webkit.org/show_bug.cgi?id=220880
+        <rdar://72370334>
+
+        Reviewed by Tadeu Zagallo.
+
+        * API/JSValue.mm:
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+
+2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r271731): Unchecked JS exception under GlobalObject::moduleLoaderFetch
+        https://bugs.webkit.org/show_bug.cgi?id=220868
+
+        Reviewed by Mark Lam.
+
+        Because TerminatedExecutionError needs to be uncaught, CatchScope's semantics does not work well.
+        So, we extend ThrowScope to implement CatchScope's feature, and use ThrowScope etc.
+        We also add JSPromise::rejectWithCaughtException since this pattern is common enough.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::rejectWithCaughtException):
+        * runtime/JSInternalPromise.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::reject): Deleted.
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectWithCaughtException):
+        * runtime/JSPromise.h:
+        * runtime/ThrowScope.h:
+        (JSC::ThrowScope::clearException):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::resolve):
+        (JSC::JSWebAssembly::webAssemblyModuleValidateAsync):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync):
+        (JSC::reject): Deleted.
+        (JSC::webAssemblyModuleValidateAsyncInternal): Deleted.
+        (JSC::webAssemblyModuleInstantinateAsyncInternal): Deleted.
+
+2021-01-22  Mark Lam  <mark.lam@apple.com>
+
+        Disable Options:useAtMethod because of compatibility issue.
+        https://bugs.webkit.org/show_bug.cgi?id=220788
+        rdar://72933608
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        See https://github.com/tc39/proposal-relative-indexing-method/issues/41.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        - enable Options::useAtMethod by default for the jsc shell for testing.
+        * runtime/OptionsList.h:
+
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
+        https://bugs.webkit.org/show_bug.cgi?id=220810
+
+        Reviewed by Andy Estes.
+
+        * inspector/protocol/Console.json:
+        * runtime/ConsoleTypes.h:
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageSourceValue):
+        * runtime/ConsoleClient.cpp:
+        (JSC::appendMessagePrefix):
+        Add a new `PaymentRequest` value to the `ChannelSource` enum.
+
+2021-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSPromise should not propagate TerminatedExecutionError
+        https://bugs.webkit.org/show_bug.cgi?id=220820
+        <rdar://problem/72929399>
+
+        Reviewed by Mark Lam.
+
+        TerminatedExecutionError is uncatcheable exception to finish JS execution as soon as possible.
+        We should not propagate TerminatedExecutionError in JSPromise's rejection.
+        In this patch, we do not reject promise if exception is TerminatedExecutionError.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSContext.mm:
+        (-[JSContext evaluateJSScript:]):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        (runWithOptions):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::reject):
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::reject):
+
+2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix GCC warnings
+        https://bugs.webkit.org/show_bug.cgi?id=220718
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::tierUpCommon):
+
+2021-01-19  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
+        https://bugs.webkit.org/show_bug.cgi?id=220730
+
+        Reviewed by Philippe Normand.
+
+        No new behavior. No new tests.
+
+        * PlatformGTK.cmake: Expose --sources-top-dirs only if available.
+
+2021-01-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=220725
+
+        Unreviewed non-unified build fixes.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames): Remove inline function from here,
+        as it is used in JSPropertyNameEnumerator.cpp and the compiler needs to see the function
+        body to be able to inline it, otherwise linking fails.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames): Moved inline function here.
+        * wasm/WasmInstance.cpp: Add missing JSWebAssemblyHelpers.h header.
+        * wasm/js/WebAssemblyModuleRecord.cpp: Add missing ObjectConstructor.h header.
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL::prepareOSREntry can clear OSR entry CodeBlock if it is already invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=220718
+        <rdar://problem/70527068>
+
+        Reviewed by Mark Lam.
+
+        FTL::prepareOSREntry can clear OSR entry CodeBlock if it is already invalidated. However, the caller is not assuming that,
+        and it calls clearOSREntryBlockAndResetThresholds again. And clearOSREntryBlockAndResetThresholds's assertion hit.
+        This patch correctly handles the invalidated case.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::tierUpCommon):
+
+2021-01-18  Xan López  <xan@igalia.com>
+
+        [JSC] Implement a B3::Compilation replacement for wasm-llint
+        https://bugs.webkit.org/show_bug.cgi?id=220585
+
+        Reviewed by Yusuke Suzuki.
+
+        Move B3Compilation, B3OpaqueByproducts and B3OpaqueByproduct to
+        jit/. They are used by non-B3 code and they are not really B3
+        specific. Also rename B3CompilationPtrTag to JITCompilationPtrTag.
+
+        * CMakeLists.txt: add new source files.
+        * JavaScriptCore.xcodeproj/project.pbxproj: ditto.
+        * Sources.txt: ditto.
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile): use JITCompilationPtrTag.
+        * b3/B3Compile.h: change includes.
+        * b3/B3DataSection.h: ditto.
+        * b3/B3Procedure.cpp: ditto.
+        * b3/B3Procedure.h: ditto.
+        * b3/air/testair.cpp: use JITCompilationPtrTag.
+        * b3/testb3.h: change includes.
+        (invoke):
+        * b3/testb3_6.cpp:
+        (testInterpreter): use JITCompilationPtrTag.
+        (testEntrySwitchSimple): ditto.
+        (testEntrySwitchNoEntrySwitch): ditto.
+        (testEntrySwitchWithCommonPaths): ditto.
+        (testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint): ditto.
+        (testEntrySwitchLoop): ditto.
+        * ftl/FTLJITCode.h: use JSC::OpaqueByproducts.
+        * ftl/FTLOutput.h: change includes.
+        * jit/JITCompilation.cpp: Renamed from Source/JavaScriptCore/b3/B3Compilation.cpp.
+        (JSC::Compilation::Compilation):
+        * jit/JITCompilation.h: Renamed from Source/JavaScriptCore/b3/B3Compilation.h.
+        (JSC::Compilation::code const):
+        (JSC::Compilation::codeRef const):
+        * jit/JITOpaqueByproduct.h: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproduct.h.
+        * jit/JITOpaqueByproducts.cpp: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproducts.cpp.
+        * jit/JITOpaqueByproducts.h: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproducts.h.
+        * runtime/JSCPtrTag.h: rename B3CompilationPtrTag to JITCompilationPtrTag.
+        * wasm/WasmB3IRGenerator.h: use JSC::OpaqueByproducts.
+        * wasm/WasmBBQPlan.cpp: use JSC::Compilation.
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmBinding.h: change includes.
+        * wasm/WasmCallee.h: ditto.
+        * wasm/WasmFormat.h: use JSC::Compilation.
+        * wasm/WasmLLIntPlan.cpp: ditto.
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmLLIntPlan.h: use JITCompilationPtrTag.
+        * wasm/WasmModule.h: ditto.
+        * wasm/WasmOMGForOSREntryPlan.cpp: use JSC::Compilation.
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp: ditto.
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmParser.h: change includes.
+        * wasm/js/WasmToJS.h: ditto.
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] earlyReturnFromInfiniteLoopsLimit should check all caller functions when emitting
+        https://bugs.webkit.org/show_bug.cgi?id=220700
+        <rdar://problem/71229150>
+
+        Reviewed by Mark Lam.
+
+        earlyReturnFromInfiniteLoopsLimit does not return when the function is builtin. But this does not consider about the case that
+        the caller is inlining and the caller is builtin. Since this returns from entire DFG / FTL functions, we should check any of
+        callers are not builtin functions too.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoopHint):
+
+2021-01-18  Mark Lam  <mark.lam@apple.com>
+
+        [AppleWin 32bit] LLInt C Loop: LowLevelInterpreter.cpp(90,7): error C2653: 'WebConfig': is not a class or namespace name
+        https://bugs.webkit.org/show_bug.cgi?id=220405
+
+        Reviewed by Fujii Hironori.
+
+        Add a missing #if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD).
+
+        * llint/LowLevelInterpreter.cpp:
+
+2021-01-18  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Multilib conflicts in gir files
+        https://bugs.webkit.org/show_bug.cgi?id=220636
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake:
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] callerIsOMGCompiled should be robust
+        https://bugs.webkit.org/show_bug.cgi?id=220697
+
+        Reviewed by Mark Lam.
+
+        This function did not work if this function is called from microtask / unhandled rejection since there is no caller frame.
+        This patch makes this function more robust against such usage.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG/FTL Atomics should not accept Float32/Float64 typed arrays
+        https://bugs.webkit.org/show_bug.cgi?id=220692
+        <rdar://problem/73238369>
+
+        Reviewed by Mark Lam.
+
+        We accidentally accept Float32/Float64 typed arrays. We should accept only integer TypedArrays (Int8, Uint8, ... etc.)
+        as specified in [1]. If the other types come, we just make it Array::Generic and call slow path which can handle them.
+
+        [1]: https://tc39.es/ecma262/#sec-validateintegertypedarray
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isOneOfTypedArrayView const): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL OSR entry FlushFormat array is reversed
+        https://bugs.webkit.org/show_bug.cgi?id=220695
+        <rdar://problem/72930932>
+
+        Reviewed by Mark Lam.
+
+        After r268783, FlushFormat array is erroneously sorted in reversed order.
+        This patch fixes that.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] GenericArguments<Type>::defineOwnProperty's assumption about error is not correct
+        https://bugs.webkit.org/show_bug.cgi?id=220693
+        <rdar://problem/72929171>
+
+        Reviewed by Mark Lam.
+
+        Any function taking JSGlobalObject* can cause out-of-memory error potentially. And we have a way to invoke it.
+        But GenericArguments<Type>::defineOwnProperty didn't assume OutOfMemory error. This patch fixes it.
+
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add some more exception checks in globalFuncCopyDataProperties
+        https://bugs.webkit.org/show_bug.cgi?id=220691
+
+        Reviewed by Mark Lam.
+
+        This patch add some missing exception checks in globalFuncCopyDataProperties to fix tests attached in this patch.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add JSC API configuring GC signals in Linux

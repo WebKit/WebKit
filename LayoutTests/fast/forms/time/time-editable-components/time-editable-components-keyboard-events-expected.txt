@@ -30,15 +30,14 @@ PASS changeEventsFired is 5
 PASS inputEventsFired is 5
 
 Advance field keys
-PASS input.value is "01:02"
 PASS input.value is "01:03"
 PASS input.value is "01:04"
 PASS input.value is "01:05"
 PASS input.value is "01:06"
 PASS input.value is "01:07"
 PASS input.value is "01:08"
-PASS changeEventsFired is 7
-PASS inputEventsFired is 7
+PASS changeEventsFired is 6
+PASS inputEventsFired is 6
 
 Up/Down arrow keys
 PASS input.value is "12:59"

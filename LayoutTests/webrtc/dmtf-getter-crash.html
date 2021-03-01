@@ -1,0 +1,8 @@
+<script>
+  if (window.testRunner) 
+    testRunner.dumpAsText();
+  internals.useMockRTCPeerConnectionFactory('');
+  let track = new AudioContext().createMediaStreamDestination().stream.getAudioTracks()[0];
+  new RTCPeerConnection().addTrack(track).dtmf;
+</script>
+<body>This test passes if it doesn't crash.</body>

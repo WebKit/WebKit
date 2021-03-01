@@ -37,6 +37,7 @@ namespace Display {
 
 class Style;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBox);
 class ImageBox : public ReplacedBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageBox);
 public:

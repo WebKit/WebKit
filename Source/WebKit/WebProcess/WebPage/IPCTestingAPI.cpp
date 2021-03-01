@@ -651,7 +651,7 @@ JSValueRef JSIPC::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thi
     bool hasReply = !!messageReplyArgumentDescriptions(messageName);
     if (hasReply) {
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        encoder->encode(listenerID);
+        *encoder << listenerID;
 
         JSObjectRef resolve;
         JSObjectRef reject;

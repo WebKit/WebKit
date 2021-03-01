@@ -179,13 +179,8 @@ public:
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool nodeIsUserSelectNone(Node*);
-#if ENABLE(USERSELECT_ALL)
     static bool nodeIsUserSelectAll(const Node*);
     static Node* rootUserSelectAllForNode(Node*);
-#else
-    static bool nodeIsUserSelectAll(const Node*) { return false; }
-    static Node* rootUserSelectAllForNode(Node*) { return 0; }
-#endif
 
     void debugPosition(const char* msg = "") const;
 

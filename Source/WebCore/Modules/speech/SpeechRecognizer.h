@@ -27,6 +27,8 @@
 
 #include "SpeechRecognitionCaptureSource.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
+#include "SpeechRecognitionError.h"
+#include <wtf/UniqueRef.h>
 
 #if HAVE(SPEECHRECOGNIZER)
 #include <wtf/RetainPtr.h>
@@ -35,27 +37,34 @@ OBJC_CLASS WebSpeechRecognizerTask;
 
 namespace WebCore {
 
+class SpeechRecognitionRequest;
 class SpeechRecognitionUpdate;
 
 class SpeechRecognizer : public CanMakeWeakPtr<SpeechRecognizer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using DelegateCallback = Function<void(const SpeechRecognitionUpdate&)>;
-    WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&);
-    WEBCORE_EXPORT ~SpeechRecognizer() = default;
+    WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&, UniqueRef<SpeechRecognitionRequest>&&);
 
 #if ENABLE(MEDIA_STREAM)
-    WEBCORE_EXPORT void start(SpeechRecognitionConnectionClientIdentifier, Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t maxAlternatives);
+    WEBCORE_EXPORT void start(Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled);
 #endif
-    WEBCORE_EXPORT void reset();
-    WEBCORE_EXPORT void abort();
+    WEBCORE_EXPORT void abort(Optional<SpeechRecognitionError>&& = WTF::nullopt);
     WEBCORE_EXPORT void stop();
+    WEBCORE_EXPORT void prepareForDestruction();
 
-    Optional<SpeechRecognitionConnectionClientIdentifier> currentClientIdentifier() const { return m_clientIdentifier; }
+    WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier clientIdentifier() const;
     SpeechRecognitionCaptureSource* source() { return m_source.get(); }
 
+    void setInactive() { m_state = State::Inactive; }
+
 private:
-    void stopInternal();
+    enum class State {
+        Inactive,
+        Running,
+        Stopping,
+        Aborting
+    };
 
 #if ENABLE(MEDIA_STREAM)
     void startCapture(Ref<RealtimeMediaSource>&&);
@@ -65,11 +74,11 @@ private:
     bool startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives);
     void abortRecognition();
     void stopRecognition();
-    void resetRecognition();
 
-    Optional<SpeechRecognitionConnectionClientIdentifier> m_clientIdentifier;
     DelegateCallback m_delegateCallback;
+    UniqueRef<SpeechRecognitionRequest> m_request;
     std::unique_ptr<SpeechRecognitionCaptureSource> m_source;
+    State m_state { State::Inactive };
 
 #if HAVE(SPEECHRECOGNIZER)
     RetainPtr<WebSpeechRecognizerTask> m_task;

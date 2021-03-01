@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,17 +33,42 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
-        ts << "sRGB";
-        break;
-    case ColorSpace::LinearRGB:
-        ts << "LinearRGB";
+    case ColorSpace::A98RGB:
+        ts << "a98-rgb";
         break;
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
         break;
     case ColorSpace::Lab:
         ts << "L*a*b";
+        break;
+    case ColorSpace::LinearSRGB:
+        ts << "LinearSRGB";
+        break;
+    case ColorSpace::ProPhotoRGB:
+        ts << "ProPhotoRGB";
+        break;
+    case ColorSpace::Rec2020:
+        ts << "Rec2020";
+        break;
+    case ColorSpace::SRGB:
+        ts << "sRGB";
+        break;
+    case ColorSpace::XYZ_D50:
+        ts << "XYZ";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, DestinationColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::LinearSRGB:
+        ts << "LinearSRGB";
+        break;
+    case DestinationColorSpace::SRGB:
+        ts << "sRGB";
         break;
     }
     return ts;

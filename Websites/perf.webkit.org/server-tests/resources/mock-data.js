@@ -128,6 +128,25 @@ MockData = {
             db.insert('build_requests', {id: 903, status: statusList[7], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 701, order: 1, commit_set: 601}),
         ]);
     },
+    async addMockBuildRequestsForTwoTriggerablesUnderOneAnalysisTask(db, statusList)
+    {
+        await Promise.all([
+            this.addMockBuildRequestsWithRoots(db, statusList),
+            this.addAnotherTriggerable(db),
+            db.insert('commit_sets', {id: 700}),
+            db.insert('commit_set_items', {set: 700, commit: 87832}),
+            db.insert('commit_set_items', {set: 700, commit: 93116}),
+            db.insert('commit_set_items', {set: 700, commit: 11797}),
+            db.insert('commit_sets', {id: 701}),
+            db.insert('commit_set_items', {set: 701, commit: 87832}),
+            db.insert('commit_set_items', {set: 701, commit: 96336}),
+            db.insert('commit_set_items', {set: 701, commit: 11797}),
+
+            db.insert('analysis_test_groups', {id: 702, task: 600, name: 'test macos webkit jsc', initial_repetition_count: 1, needs_notification: true}),
+            db.insert('build_requests', {id: 1000, status: 'running', triggerable: 2345, repository_group: 4002, platform: 101, test: 200, group: 702, order: 0, commit_set: 700}),
+            db.insert('build_requests', {id: 1001, status: 'pending', triggerable: 2345, repository_group: 4002, platform: 101, test: 200, group: 702, order: 1, commit_set: 701}),
+        ])
+    },
     addAnotherTriggerable(db) {
         return Promise.all([
             db.insert('build_triggerables', {id: 2345, name: 'build-webkit-jsc'}),

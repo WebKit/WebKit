@@ -60,10 +60,6 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(SERVICE_CONTROLS)
-#include "ImageControlsRootElement.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
@@ -77,7 +73,6 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_formSetByParser(makeWeakPtr(form))
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
-    , m_experimentalImageMenuEnabled(false)
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
@@ -281,11 +276,6 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         BlendMode blendOp = BlendMode::Normal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeOperator::SourceOver;
-#if ENABLE(SERVICE_CONTROLS)
-    } else if (name == webkitimagemenuAttr) {
-        m_experimentalImageMenuEnabled = !value.isNull();
-        updateImageControls();
-#endif
     } else if (name == loadingAttr) {
         // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(value))
@@ -353,10 +343,6 @@ void HTMLImageElement::didAttachRenderers()
         return;
     if (m_imageLoader->hasPendingBeforeLoadEvent())
         return;
-
-#if ENABLE(SERVICE_CONTROLS)
-    updateImageControls();
-#endif
 
     auto& renderImage = downcast<RenderImage>(*renderer());
     RenderImageResource& renderImageResource = renderImage.imageResource();
@@ -722,76 +708,6 @@ const String& HTMLImageElement::attachmentIdentifier() const
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
-#if ENABLE(SERVICE_CONTROLS)
-void HTMLImageElement::updateImageControls()
-{
-    // If this image element is inside a shadow tree then it is part of an image control.
-    if (isInShadowTree())
-        return;
-
-    if (!document().settings().imageControlsEnabled())
-        return;
-
-    bool hasControls = hasImageControls();
-    if (!m_experimentalImageMenuEnabled && hasControls)
-        destroyImageControls();
-    else if (m_experimentalImageMenuEnabled && !hasControls)
-        tryCreateImageControls();
-}
-
-void HTMLImageElement::tryCreateImageControls()
-{
-    ASSERT(m_experimentalImageMenuEnabled);
-    ASSERT(!hasImageControls());
-
-    auto imageControls = ImageControlsRootElement::tryCreate(document());
-    if (!imageControls)
-        return;
-
-    ensureUserAgentShadowRoot().appendChild(*imageControls);
-
-    auto* renderObject = renderer();
-    if (!renderObject)
-        return;
-
-    downcast<RenderImage>(*renderObject).setHasShadowControls(true);
-}
-
-void HTMLImageElement::destroyImageControls()
-{
-    auto shadowRoot = userAgentShadowRoot();
-    if (!shadowRoot)
-        return;
-
-    if (RefPtr<Node> node = shadowRoot->firstChild()) {
-        ASSERT_WITH_SECURITY_IMPLICATION(node->isImageControlsRootElement());
-        shadowRoot->removeChild(*node);
-    }
-
-    auto* renderObject = renderer();
-    if (!renderObject)
-        return;
-
-    downcast<RenderImage>(*renderObject).setHasShadowControls(false);
-}
-
-bool HTMLImageElement::hasImageControls() const
-{
-    if (auto shadowRoot = userAgentShadowRoot()) {
-        RefPtr<Node> node = shadowRoot->firstChild();
-        ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isImageControlsRootElement());
-        return node;
-    }
-
-    return false;
-}
-
-bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
-{
-    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
-}
-#endif // ENABLE(SERVICE_CONTROLS)
 
 #if PLATFORM(IOS_FAMILY)
 // FIXME: We should find a better place for the touch callout logic. See rdar://problem/48937767.

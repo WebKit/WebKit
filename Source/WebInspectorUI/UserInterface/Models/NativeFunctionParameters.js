@@ -1875,6 +1875,14 @@ WI.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    WebGLMultiDraw: {
+        multiDrawArraysWebGL: "mode, firstsList, firstsOffset, countsList, countsOffset, drawcount",
+        multiDrawArraysInstancedWebGL: "mode, firstsList, firstsOffset, countsList, countsOffset, instanceCountsList, instanceCountsOffset, drawcount",
+        multiDrawElementsWebGL: "mode, countsList, countsOffset, type, offsetsList, offsetsOffset, drawcount",
+        multiDrawElementsInstancedWebGL: "mode, countsList, countsOffset, type, offsetsList, offsetsOffset, instanceCountsList, instanceCountsOffset, drawcount",
+        __proto__: null,
+    },
+
     WebGLRenderingContextBase: {
         activeTexture: "texture",
         attachShader: "program, shader",

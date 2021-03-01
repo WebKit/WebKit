@@ -26,7 +26,6 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
-#include "CatchScope.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "IntlDateTimeFormat.h"
@@ -798,46 +797,22 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    auto reject = [&] (JSValue rejectionReason) {
-        catchScope.clearException();
-        promise->reject(globalObject, rejectionReason);
-        catchScope.clearException();
-        return JSValue::encode(promise);
-    };
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto sourceOrigin = callFrame->callerSourceOrigin(vm);
     RELEASE_ASSERT(callFrame->argumentCount() == 1);
     auto* specifier = callFrame->uncheckedArgument(0).toString(globalObject);
-    if (Exception* exception = catchScope.exception())
-        return reject(exception->value());
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
     // We always specify parameters as undefined. Once dynamic import() starts accepting fetching parameters,
     // we should retrieve this from the arguments.
     JSValue parameters = jsUndefined();
     auto* internalPromise = globalObject->moduleLoader()->importModule(globalObject, specifier, parameters, sourceOrigin);
-    if (Exception* exception = catchScope.exception())
-        return reject(exception->value());
-    promise->resolve(globalObject, internalPromise);
-
-    catchScope.clearException();
-    return JSValue::encode(promise);
-}
-
-JSC_DEFINE_HOST_FUNCTION(globalFuncPropertyIsEnumerable, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    RELEASE_ASSERT(callFrame->argumentCount() == 2);
-    JSObject* object = jsCast<JSObject*>(callFrame->uncheckedArgument(0));
-    auto propertyName = callFrame->uncheckedArgument(1).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
     scope.release();
-    PropertyDescriptor descriptor;
-    bool enumerable = object->getOwnPropertyDescriptor(globalObject, propertyName, descriptor) && descriptor.enumerable();
-    return JSValue::encode(jsBoolean(enumerable));
+    promise->resolve(globalObject, internalPromise);
+    return JSValue::encode(promise);
 }
 
 static bool canPerformFastPropertyEnumerationForCopyDataProperties(Structure* structure)
@@ -910,10 +885,6 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             if (propertyName.isPrivateName())
                 return true;
 
-            bool excluded = isPropertyNameExcluded(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
-            if (excluded)
-                return true;
             if (entry.attributes & PropertyAttribute::DontEnum)
                 return true;
 
@@ -927,6 +898,10 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         for (size_t i = 0; i < properties.size(); ++i) {
             // FIXME: We could put properties in a batching manner to accelerate CopyDataProperties more.
             // https://bugs.webkit.org/show_bug.cgi?id=185358
+            bool excluded = isPropertyNameExcluded(globalObject, properties[i].get());
+            RETURN_IF_EXCEPTION(scope, { });
+            if (excluded)
+                continue;
             target->putDirect(vm, properties[i].get(), values.at(i));
         }
     } else {
@@ -936,7 +911,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
 
         for (const auto& propertyName : propertyNames) {
             bool excluded = isPropertyNameExcluded(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
+            RETURN_IF_EXCEPTION(scope, { });
             if (excluded)
                 continue;
 
@@ -956,6 +931,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             RETURN_IF_EXCEPTION(scope, { });
 
             target->putDirectMayBeIndex(globalObject, propertyName, value);
+            RETURN_IF_EXCEPTION(scope, { });
         }
     }
 

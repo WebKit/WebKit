@@ -36,24 +36,24 @@ testComputedScrollSnapRule("strictness following axis", "scroll-snap-type", "inl
 
 // Test the scroll-snap-align property
 // Invalid declarations
-testComputedScrollSnapRule("invalid snap align", "scroll-snap-align", "potato", "none none");
-testComputedScrollSnapRule("empty string", "scroll-snap-align", "", "none none");
-testComputedScrollSnapRule("too many values", "scroll-snap-align", "start center end", "none none");
-testComputedScrollSnapRule("invalid second value", "scroll-snap-align", "start wut", "none none");
-testComputedScrollSnapRule("invalid first value", "scroll-snap-align", "wat center", "none none");
-testComputedScrollSnapRule("one length", "scroll-snap-align", "10px", "none none");
-testComputedScrollSnapRule("two lengths", "scroll-snap-align", "10px 50px", "none none");
+testComputedScrollSnapRule("invalid snap align", "scroll-snap-align", "potato", "none");
+testComputedScrollSnapRule("empty string", "scroll-snap-align", "", "none");
+testComputedScrollSnapRule("too many values", "scroll-snap-align", "start center end", "none");
+testComputedScrollSnapRule("invalid second value", "scroll-snap-align", "start wut", "none");
+testComputedScrollSnapRule("invalid first value", "scroll-snap-align", "wat center", "none");
+testComputedScrollSnapRule("one length", "scroll-snap-align", "10px", "none");
+testComputedScrollSnapRule("two lengths", "scroll-snap-align", "10px 50px", "none");
 // Valid declarations
-testComputedScrollSnapRule("initial value", "scroll-snap-align", "initial", "none none");
-testComputedScrollSnapRule("single value", "scroll-snap-align", "start", "start start");
+testComputedScrollSnapRule("initial value", "scroll-snap-align", "initial", "none");
+testComputedScrollSnapRule("single value", "scroll-snap-align", "start", "start");
 testComputedScrollSnapRule("two values", "scroll-snap-align", "start end", "start end");
 
 // Test the scroll-padding property
 // Invalid declarations
-testComputedScrollSnapRule("invalid scroll padding", "scroll-padding", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("empty string", "scroll-padding", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("too many values", "scroll-padding", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("attempt to use auto", "scroll-padding", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("invalid scroll padding", "scroll-padding", "potato", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("empty string", "scroll-padding", "", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("too many values", "scroll-padding", "1px 2px 3px 4px 5px", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("attempt to use auto", "scroll-padding", "auto auto", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
 // Valid declarations
 testComputedScrollSnapRule("single length", "scroll-padding", "10px", "10px", { top: "10px", left: "10px", right: "10px", bottom: "10px" });
 testComputedScrollSnapRule("two percentages", "scroll-padding", "10% 20%", "10% 20%", { top: "10%", left: "20%", right: "20%", bottom: "10%" });
@@ -65,7 +65,7 @@ testComputedScrollSnapRule("subpixel values", "scroll-padding", "10.4375px 6.5px
 
 // Test the scroll-snap-margin property
 // Invalid declarations
-testComputedScrollSnapRule("invalid scroll padding", "scroll-snap-margin", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("invalid scroll margin", "scroll-snap-margin", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("empty string", "scroll-snap-margin", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("too many values", "scroll-snap-margin", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("attempt to use auto", "scroll-snap-margin", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });

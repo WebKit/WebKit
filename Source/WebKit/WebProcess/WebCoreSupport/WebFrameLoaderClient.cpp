@@ -77,6 +77,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -1155,7 +1156,7 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load.
     // FIXME: This code should be shared across all ports. <http://webkit.org/b/48762>.
-    if (m_frame->coreFrame()->document()->isMediaDocument())
+    if (is<MediaDocument>(m_frame->coreFrame()->document()))
         loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
 
     // Calling commitData did not create the plug-in view.
@@ -1953,6 +1954,14 @@ void WebFrameLoaderClient::notifyPageOfAppBoundBehavior()
         return;
 
     webPage->notifyPageOfAppBoundBehavior();
+}
+#endif
+
+#if ENABLE(PDFKIT_PLUGIN)
+bool WebFrameLoaderClient::shouldUsePDFPlugin(const String& contentType, StringView path) const
+{
+    auto* page = m_frame->page();
+    return page && page->shouldUsePDFPlugin(contentType, path);
 }
 #endif
 

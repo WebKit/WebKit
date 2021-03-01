@@ -233,7 +233,7 @@ public:
         return OBJECT_OFFSETOF(JSCell, m_cellState);
     }
     
-    static const TypedArrayType TypedArrayStorageType = NotTypedArray;
+    static constexpr TypedArrayType TypedArrayStorageType = NotTypedArray;
 
     void setPerCellBit(bool);
     bool perCellBit() const;

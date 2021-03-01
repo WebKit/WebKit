@@ -1,0 +1,14 @@
+
+PASS Simple substitution test
+PASS You can't build up a single token where part of it is provided by a variable
+PASS Multiple variable references in a single property
+PASS Multiple variable references in a single property (no spaces)
+PASS Fallback value
+PASS Fallback value which is also a variable reference
+PASS Multiple var references in fallback value
+PASS Multiple nested fallbacks
+PASS Bad variable reference that should inherit by default
+PASS Test that var reference doesnâ€™t overwrite !important
+PASS Test that !important on a property that has a variable reference can overwrite !important
+PASS Test that !important inside of var reference can't overwrite !important on property
+

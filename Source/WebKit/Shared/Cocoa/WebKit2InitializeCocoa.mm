@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebKit2Initialize.h"
 
-#import "WebKitJITOperations.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreJITOperations.h>
@@ -58,7 +57,6 @@ static void runInitializationCode(void* = nullptr)
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
     WebCore::populateJITOperations();
-    WebKit::populateJITOperations();
 }
 
 void InitializeWebKit2()

@@ -166,17 +166,10 @@ PlatformGraphicsContextGL GCGLANGLELayer::ANGLEContext::platformContext() const
     return m_context;
 }
 
-GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLOpenGL& context)
     : GCGLLayer(context)
+    , m_angleContext(ANGLEContext::createContext())
 {
-    switch (destination) {
-    case GraphicsContextGLOpenGL::Destination::Offscreen:
-        m_angleContext = ANGLEContext::createContext();
-        break;
-    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
-        ASSERT_NOT_REACHED();
-        break;
-    }
 }
 
 GCGLANGLELayer::~GCGLANGLELayer()

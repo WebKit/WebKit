@@ -69,7 +69,7 @@ endif ()
 
 option(sctp_werror "Treat warning as error" 1)
 
-option(sctp_link_programs_static "Link example programs static" 0)
+option(sctp_build_shared_lib "Build USRSCTP as shared library" 0)
 
 option(sctp_build_programs "Build example programs" 1)
 
@@ -81,12 +81,6 @@ option(sctp_build_fuzzer "Compile in clang fuzzing mode" 0)
 
 if (sctp_sanitizer_address AND sctp_sanitizer_memory)
 	message(FATAL_ERROR "Can not compile with both sanitizer options")
-endif ()
-
-if (sctp_link_programs_static OR WIN32)
-	set(programs_link_library "usrsctp-static")
-else ()
-	set(programs_link_library "usrsctp")
 endif ()
 
 
@@ -259,9 +253,9 @@ elseif (CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID MATCHES "Appl
 	endif ()
 
 	if (sctp_build_fuzzer)
-		set(CMAKE_BUILD_TYPE "DEBUG")
+		set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 		add_definitions(-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -fsanitize=fuzzer-no-link")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=fuzzer-no-link")
 	endif ()
 endif ()
 

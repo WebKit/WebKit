@@ -1,0 +1,15 @@
+
+FAIL i32, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL i32, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL i64, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL i64, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL f32, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL f32, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL f64, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL f64, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL anyref, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL anyref, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL funcref, mutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL funcref, immutable undefined is not an object (evaluating 'myglobal.type.value')
+FAIL key ordering undefined is not an object (evaluating 'Object.getOwnPropertyNames(myglobal.type)')
+

@@ -38,7 +38,9 @@ class WebProcessProxy;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (void)start;
+- (void)startWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)stop;
+- (void)stopWithCompletionHandler:(void (^)(void))completionHandler;
 
 @property (nonatomic, readonly) BOOL hasMouseDevice;
 

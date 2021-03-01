@@ -35,15 +35,6 @@
 
 namespace JSC {
 
-// ECMA 9.4
-double JSValue::toInteger(JSGlobalObject* globalObject) const
-{
-    if (isInt32())
-        return asInt32();
-    double d = toNumber(globalObject);
-    return std::isnan(d) ? 0.0 : trunc(d);
-}
-
 double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())
@@ -55,7 +46,7 @@ double JSValue::toLength(JSGlobalObject* globalObject) const
 {
     // ECMA 7.1.15
     // http://www.ecma-international.org/ecma-262/6.0/#sec-tolength
-    double d = toInteger(globalObject);
+    double d = toIntegerOrInfinity(globalObject);
     if (d <= 0)
         return 0.0;
     if (std::isinf(d))

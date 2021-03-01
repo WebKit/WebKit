@@ -340,6 +340,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/FloatPointMac.mm
     platform/graphics/mac/FloatSizeMac.mm
     platform/graphics/mac/FontCustomPlatformData.cpp
+    platform/graphics/mac/GraphicsChecksMac.cpp
     platform/graphics/mac/IconMac.mm
     platform/graphics/mac/ImageMac.mm
     platform/graphics/mac/IntPointMac.mm
@@ -357,7 +358,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/KeyEventMac.mm
     platform/mac/LocalCurrentGraphicsContextMac.mm
     platform/mac/LoggingMac.mm
-    platform/mac/MediaRemoteSoftLink.cpp
+    platform/mac/MediaRemoteSoftLink.mm
     platform/mac/NSScrollerImpDetails.mm
     platform/mac/PasteboardMac.mm
     platform/mac/PasteboardWriter.mm

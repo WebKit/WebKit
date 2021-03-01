@@ -1,3 +1,498 @@
+2021-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs should have an opaque origin
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+
+        Reviewed by Geoff Garen.
+
+        * wtf/URL.h:
+
+2021-02-04  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::dynamic_cf_cast<> should not assert in Debug builds
+        <https://webkit.org/b/221428>
+        <rdar://problem/73451079>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/cf/TypeCastsCF.h:
+        (WTF::dynamic_cf_cast):
+        - Remove ASSERT_WITH_SECURITY_IMPLICATION().
+        (WTF::checked_cf_cast):
+        - Add comments about how to use these template functions
+          correctly.
+
+2021-02-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Catalyst build after r272228
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+        <rdar://problem/73940814>
+
+        * wtf/PlatformHave.h:
+        Turn off our use of UIEventAttribution on Catalyst until we update our internal bots.
+
+2021-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Add fraud prevention experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=221292
+        <rdar://problem/73581064>
+
+        Reviewed by John Wilander.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MachSemaphore does not work well with IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=220919
+        <rdar://problem/73826848>
+
+        Reviewed by Sam Weinig.
+
+        Move WTF::MachSemaphore to WebKit IPC::Semaphore. Currently the
+        MachSemaphore is useful only in cross-process IPC, implemented by the
+        IPC::.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+2021-02-02  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS] Force loading the HEIF reader symbols before transcoding any HEIF image
+        https://bugs.webkit.org/show_bug.cgi?id=221191
+        <rdar://problem/70942158>
+
+        Reviewed by Tim Horton.
+
+        Add a HAVE macro for the fix of <rdar://problem/59589723>.
+
+        * wtf/PlatformHave.h:
+
+2021-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt UIEventAttribution instead of _UIEventAttribution
+        https://bugs.webkit.org/show_bug.cgi?id=220683
+
+        Reviewed by John Wilander.
+
+        * wtf/PlatformHave.h:
+
+2021-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Migrate WebKitTestServer to libsoup 2.48 API
+        https://bugs.webkit.org/show_bug.cgi?id=219160
+        <rdar://problem/71620310>
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h: Bump libsoup minimum required version to 2.54.
+
+2021-02-01  Mark Lam  <mark.lam@apple.com>
+
+        ConcurrentPtrHashSet::contains() should be const.
+        https://bugs.webkit.org/show_bug.cgi?id=221241
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/ConcurrentPtrHashSet.h:
+
+2021-02-01  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Disable interstitial events on AVPlayerItem.
+        https://bugs.webkit.org/show_bug.cgi?id=221215
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
+2021-02-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        clang Linux build cannot link because of __builtin_mul_overflow
+        https://bugs.webkit.org/show_bug.cgi?id=190208
+
+        Since r183319, __builtin_mul_overflow is used with gcc or clang in WTF/wtf/CheckedArithmetic.h
+
+        This leads to a link failure when WebKit is built on Linux with clang and the libgcc runtime,
+        because of an undefined reference to the __mulodi4 symbol.
+
+        This is because clang generates code using the __mulodi4 symbol for __builtin_mul_overflow.
+        But this symbol is available only in compiler-rt, and not in the libgcc runtime used by most
+        Linux distributions of clang.
+
+        See also this upstream clang bug: https://bugs.llvm.org/show_bug.cgi?id=28629
+
+        Reviewed by Mark Lam.
+
+        * wtf/CheckedArithmetic.h: Do not use __builtin_mul_overflow with clang on Linux for ARM
+
+2021-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Date.parse returns non-integral time value
+        https://bugs.webkit.org/show_bug.cgi?id=220687
+
+        Reviewed by Ross Kirsling.
+
+        Use milliseconds instead of seconds as a base unit to avoid floating point rounding for milliseconds.
+
+        * wtf/DateMath.cpp:
+        (WTF::ymdhmsToMilliseconds):
+        (WTF::parseES5TimePortion):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (WTF::ymdhmsToSeconds): Deleted.
+
+2021-01-30  Antti Koivisto  <antti@apple.com>
+
+        Enable visibility aware resource load scheduling
+        https://bugs.webkit.org/show_bug.cgi?id=221032
+
+        Reviewed by Zalan Bujtas.
+
+        Performance testing indicates this is a significant speedup in competetive PLT.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Remove support for image controls
+        https://bugs.webkit.org/show_bug.cgi?id=221156
+
+        Reviewed by Tim Horton.
+
+        Remove this unused WebKit setting.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-01-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Make check for full HashTables opt-in
+        https://bugs.webkit.org/show_bug.cgi?id=221166
+        <rdar://problem/70902458>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        Having the check always on was a regression on Speedometer2, so we only keep it for
+        the HashMaps in the MetaAllocator.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        * wtf/HashTraits.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        * wtf/MetaAllocator.h:
+
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WebKit doesn't automatically right-align Adlam
+        https://bugs.webkit.org/show_bug.cgi?id=220885
+
+        Reviewed by Alex Christensen.
+
+        If we want to iterate across code points, we have to actually
+        iterate across code points instead of iterating across code units.
+
+        Test: fast/text/adlam-dir-auto.html
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::defaultWritingDirection):
+
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-stretch is not applied to system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=221103
+        <rdar://problem/73719139>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+
+2021-01-28  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Policy for warning about or killing processes using too much memory triggers too easily
+        https://bugs.webkit.org/show_bug.cgi?id=221104
+        <rdar://73625621>
+
+        Reviewed by Geoff Garen.
+
+        The policy for warning about or killing processes using too much memory was triggering too
+        easily. I made the following changes to the policy to address this:
+        1. We no longer kill WebProcesses associated with a visible (parented) view under any
+           circumstances. We used to kill active WebProcesses when they reached 4GB. We would
+           also kill visible WebProcesses when they reached 2GB if there were visible but not
+           active / focused.
+        2. For background WebProcesses (associated with non visible / parented views), I have
+           raised the kill limit from 2GB to 4GB.
+        3. For foreground WebProcesses (associated with visible / parent views), I have also
+           raised the limit to show the excessive memory usage banner from 2GB to 4GB.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillOfInactiveProcess):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        * wtf/MemoryPressureHandler.h:
+
+2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JSC_SIGNAL_FOR_GC environment variable for Linux / FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=221081
+
+        Reviewed by Mark Lam.
+
+        This patch adds JSC_SIGNAL_FOR_GC environment variable,
+        which changes signal number used for GC suspension.
+
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::initializePlatformThreading):
+
+2021-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        * wtf/PlatformEnable.h:
+
+2021-01-27  Per Arne  <pvollan@apple.com>
+
+        [macOS] Re-enable ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=221039
+        <rdar://problem/73665061>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-01-27  Antti Koivisto  <antti@apple.com>
+
+        Implement visibility based resource load scheduling for low priority resources
+        https://bugs.webkit.org/show_bug.cgi?id=220728
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+        Add an internal setting, default to off for now.
+
+2021-01-26  BJ Burg  <bburg@apple.com>
+
+        REGRESSION(r267641): WebKitDeveloperExtras preference has no effect for WebKitLegacy clients
+        https://bugs.webkit.org/show_bug.cgi?id=220996
+        <rdar://72173139>
+
+        Reviewed by Sam Weinig.
+
+        This preference should use custom bindings for WebKitLegacy.
+
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+
+2021-01-26  Saam Barati  <sbarati@apple.com>
+
+        Revive the build when MALLOC_HEAP_BREAKDOWN is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=220999
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Bag.cpp:
+        * wtf/BitVector.cpp:
+        * wtf/ConcurrentBuffer.cpp:
+        * wtf/FastBitVector.cpp:
+        * wtf/HashTable.cpp:
+        * wtf/MetaAllocator.cpp:
+        * wtf/RefCountedArray.cpp:
+        * wtf/SegmentedVector.cpp:
+        * wtf/SmallPtrSet.cpp:
+        * wtf/UniqueArray.cpp:
+        * wtf/Vector.cpp:
+        * wtf/text/CString.cpp:
+        * wtf/text/StringBuffer.cpp:
+
+2021-01-26  Per Arne  <pvollan@apple.com>
+
+        [macOS] Disable ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=221006
+
+        Unreviewed crash fix.
+
+        Enabling this is causing a crash. Disable while investigating.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Forbid '|' in URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=220778
+
+        Reviewed by Youenn Fablet.
+
+        This is one of the proposed solutions to https://github.com/whatwg/url/issues/559
+        and RFC 3986 and 3987 forbid such characters, so let's try forbidding it.
+
+        * wtf/URLParser.cpp:
+        (WTF::isC0Control):
+        (WTF::isForbiddenHostCodePoint):
+
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Add initializeWeakPtrFactory() protection function to CanMakeWeakPtr so that a subclass
+        can eagerly initialize the WeakPtrFactory even if it does not subclass
+        WeakPtrFactory<T, WeakPtrFactoryInitialization::Eager>. MessagePort used to subclass
+        WeakPtrFactory<T, WeakPtrFactoryInitialization::Eager> for thread-safety reason but it
+        now subclasses WeakPtrFactory<T, WeakPtrFactoryInitialization::Lazy> via EventTarget.
+
+        * wtf/WeakPtr.h:
+        (WTF::CanMakeWeakPtr::initializeWeakPtrFactory):
+
+2021-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix OS version check for ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=219534
+        <rdar://problem/71973149>
+
+        Reviewed by Brent Fulgham.
+
+        The OS version check for ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS is incorrect.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-01-23  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Allow to build WebAssembly without B3
+        https://bugs.webkit.org/show_bug.cgi?id=220365
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformEnable.h: Disable WebAssembly on 32bit platforms,
+        enable WebAssembly B3JIT on PLATFORM(COCOA).
+
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix WatchOS build after r271673.
+
+        This feature is not available in the simulator for any of the
+        IOS_FAMILY platforms.
+
+        * wtf/PlatformHave.h:
+
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r271727.
+
+        Fix is wrong
+
+        Reverted changeset:
+
+        "Unreviewed attempt to fix WatchOS build after r271673."
+        https://trac.webkit.org/changeset/271727
+
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix WatchOS build after r271673.
+
+        * wtf/PlatformHave.h:
+
+2021-01-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Unreviewed build fix.
+
+        * wtf/PlatformHave.h: Remove watchOS and tvOS.
+
+2021-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add experimental feature to use network loader
+        https://bugs.webkit.org/show_bug.cgi?id=220521
+        <rdar://problem/69394713>
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformHave.h:
+
+2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, reverting r271691.
+        https://bugs.webkit.org/show_bug.cgi?id=220812
+
+        Introduced crash, and failing API tests.
+
+        Reverted changeset:
+
+        "[macOS] Titlebar separator doesn't show when WKWebView is scrolled"
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        https://trac.webkit.org/changeset/271691
+
+2021-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_USERSELECT_ALL macro which is enabled for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=100424
+
+        Reviewed by Don Olmstead.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h:
+        Define HAVE_CORE_ANIMATION_SEPARATED_LAYERS for supported configurations.
+
+2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Titlebar separator doesn't show when WKWebView is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        <rdar://problem/71094055>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h: Defined HAVE_NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER.
+
+2021-01-20  Youenn Fablet  <youenn@apple.com>
+
+        Enable WebRTC VP9 profile 0 by default
+        https://bugs.webkit.org/show_bug.cgi?id=219390
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] StringImpl::removeCharacters should be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=220742
+
+        Reviewed by Saam Barati.
+
+        removeCharacters is used in WebCore's HTMLInputElement's critical path. And since String relatively has many elements (characters),
+        non-inlined StringImpl::removeCharacters causes significant number of indirect function calls of `findMatch` argument since it is
+        passed function pointer. We should make them templatized function to allow inlining of `findMatch` function to avoid repeated indirect calls.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::removeCharacters): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::removeCharactersImpl):
+        (WTF::StringImpl::removeCharacters):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::removeCharacters const): Deleted.
+        * wtf/text/WTFString.h:
+        (WTF::String::removeCharacters const):
+
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add JSC API configuring GC signals in Linux

@@ -74,7 +74,6 @@ private:
     void clearExpired();
     bool featureEnabled() const;
     bool debugModeEnabled() const;
-    void updateTimerLastFired();
 
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };

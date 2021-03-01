@@ -100,6 +100,11 @@ protected:
 
     static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
+#if ENABLE(WEBASSEMBLY)
+    static JSC::JSPromise* compileStreaming(JSC::JSGlobalObject*, JSC::JSValue);
+    static JSC::JSPromise* instantiateStreaming(JSC::JSGlobalObject*, JSC::JSValue, JSC::JSObject*);
+#endif
+
     JSDOMStructureMap m_structures;
     JSDOMConstructorMap m_constructors;
     DOMGuardedObjectSet m_guardedObjects;

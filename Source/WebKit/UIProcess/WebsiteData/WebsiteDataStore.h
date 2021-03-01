@@ -122,6 +122,7 @@ public:
     
     NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();
+    NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
 
     static WebsiteDataStore* existingDataStoreForSessionID(PAL::SessionID);
 
@@ -268,6 +269,8 @@ public:
 #if PLATFORM(COCOA)
     void sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy&);
     void sendNetworkProcessXPCEndpointToAllWebProcesses();
+    
+    static bool useNetworkLoader();
 #endif
 
 #if USE(CURL)

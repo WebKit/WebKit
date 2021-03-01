@@ -136,8 +136,12 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsW
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
         if (distinguishingArg.isUndefined())
             RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructorsWithSequence1(lexicalGlobalObject, callFrame)));
-        if (hasIteratorMethod(lexicalGlobalObject, distinguishingArg))
-            RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructorsWithSequence1(lexicalGlobalObject, callFrame)));
+        {
+            bool success = hasIteratorMethod(lexicalGlobalObject, distinguishingArg);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            if (success)
+                RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructorsWithSequence1(lexicalGlobalObject, callFrame)));
+        }
         RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructorsWithSequence2(lexicalGlobalObject, callFrame)));
     }
     return throwVMTypeError(lexicalGlobalObject, throwScope);

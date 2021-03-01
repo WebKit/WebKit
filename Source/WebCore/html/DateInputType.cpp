@@ -50,7 +50,7 @@ static const int dateStepScaleFactor = 86400000;
 static const StepRange::StepDescription dateStepDescription { dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
 
 DateInputType::DateInputType(HTMLInputElement& element)
-    : BaseDateAndTimeInputType(element)
+    : BaseDateAndTimeInputType(Type::Date, element)
 {
 }
 
@@ -82,11 +82,6 @@ Optional<DateComponents> DateInputType::parseToDateComponents(const StringView& 
 Optional<DateComponents> DateInputType::setMillisecondToDateComponents(double value) const
 {
     return DateComponents::fromMillisecondsSinceEpochForDate(value);
-}
-
-bool DateInputType::isDateField() const
-{
-    return true;
 }
 
 bool DateInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const

@@ -164,7 +164,7 @@ void AVVideoCaptureSource::verifyIsCapturing()
 
 void AVVideoCaptureSource::updateVerifyCapturingTimer()
 {
-    if (!m_isRunning) {
+    if (!m_isRunning || m_interrupted) {
         m_verifyCapturingTimer.stop();
         return;
     }
@@ -570,13 +570,14 @@ void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
 void AVVideoCaptureSource::captureDeviceSuspendedDidChange()
 {
 #if !PLATFORM(IOS_FAMILY)
-    scheduleDeferredTask([this] {
-        auto isSuspended = [m_device isSuspended];
-        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, !!isSuspended);
-        if (isSuspended == muted())
-            return;
+    scheduleDeferredTask([this, logIdentifier = LOGIDENTIFIER] {
+        m_interrupted = [m_device isSuspended];
+        ALWAYS_LOG_IF(loggerPtr(), logIdentifier, !!m_interrupted);
 
-        notifyMutedChange(isSuspended);
+        updateVerifyCapturingTimer();
+
+        if (m_interrupted != muted())
+            notifyMutedChange(m_interrupted);
     });
 #endif
 }

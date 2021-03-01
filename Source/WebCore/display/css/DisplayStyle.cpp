@@ -37,6 +37,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Style);
+
 static RefPtr<FillLayer> deepCopy(const FillLayer& layer)
 {
     RefPtr<FillLayer> firstLayer;

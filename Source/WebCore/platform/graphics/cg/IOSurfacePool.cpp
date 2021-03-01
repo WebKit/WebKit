@@ -34,11 +34,6 @@
 
 static const Seconds collectionInterval { 500_ms };
 static const Seconds surfaceAgeBeforeMarkingPurgeable { 2_s };
-const size_t defaultMaximumBytesCached = 1024 * 1024 * 64;
-
-// We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
-// they can't be immediately returned when requested (but will be freed up in the future).
-const size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
 
 #define ENABLE_IOSURFACE_POOL_STATISTICS 0
 #if ENABLE_IOSURFACE_POOL_STATISTICS
@@ -50,16 +45,17 @@ const size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
 namespace WebCore {
 
 IOSurfacePool::IOSurfacePool()
-    : m_collectionTimer(*this, &IOSurfacePool::collectionTimerFired)
-    , m_bytesCached(0)
-    , m_inUseBytesCached(0)
-    , m_maximumBytesCached(defaultMaximumBytesCached)
+    : m_collectionTimer(RunLoop::main(), this, &IOSurfacePool::collectionTimerFired)
 {
 }
 
 IOSurfacePool& IOSurfacePool::sharedPool()
 {
-    static NeverDestroyed<IOSurfacePool> pool;
+    static LazyNeverDestroyed<IOSurfacePool> pool;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [] {
+        pool.construct();
+    });
     return pool;
 }
 
@@ -108,6 +104,7 @@ void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
 
 std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpaceRef colorSpace, IOSurface::Format format)
 {
+    auto locker = holdLock(m_lock);
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);
 
     if (mapIter == m_cachedSurfaces.end()) {
@@ -173,6 +170,7 @@ bool IOSurfacePool::shouldCacheSurface(const IOSurface& surface) const
 
 void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
 {
+    auto locker = holdLock(m_lock);
     if (!shouldCacheSurface(*surface))
         return;
 
@@ -205,6 +203,7 @@ void IOSurfacePool::insertSurfaceIntoPool(std::unique_ptr<IOSurface> surface)
 
 void IOSurfacePool::setPoolSize(size_t poolSizeInBytes)
 {
+    auto locker = holdLock(m_lock);
     m_maximumBytesCached = poolSizeInBytes;
     evict(0);
 }
@@ -242,7 +241,7 @@ void IOSurfacePool::evict(size_t additionalSize)
     DUMP_POOL_STATISTICS("before evict");
 
     if (additionalSize >= m_maximumBytesCached) {
-        discardAllSurfaces();
+        discardAllSurfacesInternal();
         DUMP_POOL_STATISTICS("after evict all");
         return;
     }
@@ -307,6 +306,7 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
 
 void IOSurfacePool::collectionTimerFired()
 {
+    auto locker = holdLock(m_lock);
     collectInUseSurfaces();
     bool markedAllSurfaces = markOlderSurfacesPurgeable();
 
@@ -324,6 +324,12 @@ void IOSurfacePool::scheduleCollectionTimer()
 }
 
 void IOSurfacePool::discardAllSurfaces()
+{
+    auto locker = holdLock(m_lock);
+    discardAllSurfacesInternal();
+}
+
+void IOSurfacePool::discardAllSurfacesInternal()
 {
     m_bytesCached = 0;
     m_inUseBytesCached = 0;

@@ -50,6 +50,7 @@ class Document;
 class Element;
 class Node;
 class NodeList;
+class RenderObject;
 class StyleRule;
 
 namespace Style {
@@ -81,6 +82,7 @@ public:
     };
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
+    static Optional<Inspector::Protocol::CSS::LayoutContextType> layoutContextTypeForRenderer(RenderObject*);
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
@@ -113,6 +115,7 @@ public:
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
+    void nodeLayoutContextTypeChanged(Node&, RenderObject*);
 
     // InspectorDOMAgent hooks
     void didRemoveDOMNode(Node&, Inspector::Protocol::DOM::NodeId);

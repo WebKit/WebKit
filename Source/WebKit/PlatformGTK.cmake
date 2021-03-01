@@ -50,6 +50,7 @@ endif ()
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
+    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitDirectoryInputStreamData.cpp
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.c
 
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
@@ -63,6 +64,19 @@ if (ENABLE_WAYLAND_TARGET)
         ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/relative-pointer-unstable-v1-protocol.c
     )
 endif ()
+
+set(WebKit_DirectoryInputStream_DATA
+    ${WEBKIT_DIR}/NetworkProcess/soup/Resources/directory.css
+    ${WEBKIT_DIR}/NetworkProcess/soup/Resources/directory.js
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitDirectoryInputStreamData.cpp ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitDirectoryInputStreamData.h
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/make-css-file-arrays.pl
+    DEPENDS ${WebKit_DirectoryInputStream_DATA}
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/make-css-file-arrays.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitDirectoryInputStreamData.h ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitDirectoryInputStreamData.cpp ${WebKit_DirectoryInputStream_DATA}
+    VERBATIM
+)
 
 if (USE_GTK4)
     set(GTK_API_VERSION 4)
@@ -105,6 +119,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitJavascriptResult.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitMediaKeySystemPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
@@ -650,6 +665,10 @@ if (ENABLE_INTROSPECTION)
     string(REGEX MATCHALL "-L[^ ]*"
         INTROSPECTION_ADDITIONAL_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
 
+    if (${INTROSPECTION_HAVE_SOURCES_TOP_DIRS})
+        set(GIR_SOURCES_TOP_DIRS "--sources-top-dirs=${CMAKE_BINARY_DIR}")
+    endif ()
+
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
         DEPENDS WebKit
@@ -677,6 +696,7 @@ if (ENABLE_INTROSPECTION)
             --pkg=libsoup-2.4
             --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+            ${GIR_SOURCES_TOP_DIRS}
             --c-include="webkit2/webkit2.h"
             -DBUILDING_WEBKIT
             -DWEBKIT2_COMPILATION
@@ -724,6 +744,7 @@ if (ENABLE_INTROSPECTION)
             --pkg=libsoup-2.4
             --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+            ${GIR_SOURCES_TOP_DIRS}
             --c-include="webkit2/webkit-web-extension.h"
             -DBUILDING_WEBKIT
             -DWEBKIT2_COMPILATION

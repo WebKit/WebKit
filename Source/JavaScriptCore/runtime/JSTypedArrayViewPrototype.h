@@ -57,6 +57,7 @@ JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncDefaultComparator);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncSort);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncLength);
+JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncContentType);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncGetOriginalConstructor);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncSubarrayCreate);
     

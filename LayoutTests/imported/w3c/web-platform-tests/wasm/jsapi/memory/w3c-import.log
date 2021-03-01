@@ -21,3 +21,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/grow.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/toString.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/type.tentative.any.js

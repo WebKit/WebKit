@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@ namespace WebCore {
 
 struct NowPlayingInfo {
     String title;
+    String artist;
+    String album;
     String sourceApplicationIdentifier;
     double duration { 0 };
     double currentTime { 0 };
@@ -46,13 +48,21 @@ struct NowPlayingInfo {
 
 template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
 {
-    encoder << title << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility;
+    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility;
 }
 
 template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
 {
     String title;
     if (!decoder.decode(title))
+        return { };
+
+    String artist;
+    if (!decoder.decode(artist))
+        return { };
+
+    String album;
+    if (!decoder.decode(album))
         return { };
 
     String sourceApplicationIdentifier;
@@ -83,7 +93,7 @@ template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(D
     if (!decoder.decode(allowsNowPlayingControlsVisibility))
         return { };
 
-    return NowPlayingInfo { WTFMove(title), WTFMove(sourceApplicationIdentifier), duration, currentTime, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility };
+    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility };
 }
 
 } // namespace WebCore

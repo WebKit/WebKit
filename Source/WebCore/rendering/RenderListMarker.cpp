@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2010 Daniel Bates (dbates@intudata.com)
  *
@@ -1082,7 +1082,7 @@ RenderListMarker::~RenderListMarker()
 void RenderListMarker::willBeDestroyed()
 {
     if (m_image)
-        m_image->removeClient(this);
+        m_image->removeClient(*this);
     RenderBox::willBeDestroyed();
 }
 
@@ -1100,10 +1100,10 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 
     if (m_image != style().listStyleImage()) {
         if (m_image)
-            m_image->removeClient(this);
+            m_image->removeClient(*this);
         m_image = style().listStyleImage();
         if (m_image)
-            m_image->addClient(this);
+            m_image->addClient(*this);
     }
 }
 

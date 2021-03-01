@@ -34,6 +34,7 @@
 #include "AudioUtilities.h"
 #include "Logging.h"
 #include "MediaStreamAudioSourceOptions.h"
+#include "WebAudioSourceProvider.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
 
@@ -49,17 +50,16 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     if (audioTracks.isEmpty())
         return Exception { InvalidStateError, "Media stream has no audio tracks"_s };
 
-    MediaStreamTrack* providerTrack = nullptr;
+    RefPtr<WebAudioSourceProvider> provider;
     for (auto& track : audioTracks) {
-        if (track->audioSourceProvider()) {
-            providerTrack = track.get();
+        provider = track->createAudioSourceProvider();
+        if (provider)
             break;
-        }
     }
-    if (!providerTrack)
+    if (!provider)
         return Exception { InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 
-    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, *providerTrack));
+    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, provider.releaseNonNull()));
     node->setFormat(2, context.sampleRate());
 
     // Context keeps reference until node is disconnected.
@@ -68,15 +68,12 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     return node;
 }
 
-MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
+MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, Ref<WebAudioSourceProvider>&& provider)
     : AudioNode(context, NodeTypeMediaStreamAudioSource)
     , m_mediaStream(mediaStream)
-    , m_audioTrack(audioTrack)
+    , m_provider(provider)
 {
-    AudioSourceProvider* audioSourceProvider = m_audioTrack->audioSourceProvider();
-    ASSERT(audioSourceProvider);
-
-    audioSourceProvider->setClient(this);
+    m_provider->setClient(this);
     
     // Default to stereo. This could change depending on the format of the MediaStream's audio track.
     addOutput(2);
@@ -86,9 +83,7 @@ MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context
 
 MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
 {
-    AudioSourceProvider* audioSourceProvider = m_audioTrack->audioSourceProvider();
-    ASSERT(audioSourceProvider);
-    audioSourceProvider->setClient(nullptr);
+    m_provider->setClient(nullptr);
     uninitialize();
 }
 
@@ -132,10 +127,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
 
 void MediaStreamAudioSourceNode::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    if (auto* provider = m_audioTrack->audioSourceProvider())
-        provider->provideInput(bus, framesToProcess);
-    else
-        bus->zero();
+    m_provider->provideInput(bus, framesToProcess);
 }
 
 void MediaStreamAudioSourceNode::process(size_t numberOfFrames)

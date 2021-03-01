@@ -214,6 +214,8 @@ public:
 
     bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
     void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { m_privateClickMeasurementDebugModeEnabled = isEnabled; }
+    bool privateClickMeasurementFraudPreventionEnabled() const { return m_privateClickMeasurementFraudPreventionEnabled; }
+    void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
 
 #if ENABLE(TOUCH_EVENTS)
     bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
@@ -372,6 +374,7 @@ private:
     bool m_lineHeightUnitsEnabled { false };
 
     bool m_privateClickMeasurementDebugModeEnabled { false };
+    bool m_privateClickMeasurementFraudPreventionEnabled { false };
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };

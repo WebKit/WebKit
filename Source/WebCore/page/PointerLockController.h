@@ -48,7 +48,7 @@ public:
 
     void requestPointerUnlock();
     void requestPointerUnlockAndForceCursorVisible();
-    void elementRemoved(Element&);
+    void elementWasRemoved(Element&);
     void documentDetached(Document&);
     bool isLocked() const;
     WEBCORE_EXPORT bool lockPending() const;

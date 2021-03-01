@@ -156,7 +156,7 @@ public:
     void setShouldLogMemoryMemoryPressureEvents(bool shouldLog) { m_shouldLogMemoryMemoryPressureEvents = shouldLog; }
 
 private:
-    size_t thresholdForMemoryKill();
+    Optional<size_t> thresholdForMemoryKill();
     void memoryPressureStatusChanged();
 
     void uninstall();
@@ -171,7 +171,7 @@ private:
     void platformInitialize();
 
     void measurementTimerFired();
-    void shrinkOrDie();
+    void shrinkOrDie(size_t killThreshold);
     void setMemoryUsagePolicyBasedOnFootprint(size_t);
     void doesExceedInactiveLimitWhileActive();
     void doesNotExceedInactiveLimitWhileActive();

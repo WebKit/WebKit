@@ -107,6 +107,7 @@ class WebPageProxy;
 @class WKDateTimeInputControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
+@class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
@@ -245,6 +246,9 @@ private:
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
 #endif
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
@@ -394,7 +398,6 @@ private:
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
     BOOL _textInteractionDidChangeFocusedElement;
-    BOOL _textInteractionIsHappening;
     BOOL _treatAsContentEditableUntilNextEditorStateUpdate;
     bool _isWaitingOnPositionInformation;
 
@@ -421,6 +424,7 @@ private:
 
     BOOL _hasSetUpInteractions;
     NSUInteger _ignoreSelectionCommandFadeCount;
+    NSUInteger _activeTextInteractionCount;
     NSInteger _suppressNonEditableSingleTapTextInteractionCount;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
     BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
@@ -544,6 +548,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures;
+- (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures;
 #endif
 - (void)_commitPotentialTapFailed;
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
@@ -667,6 +672,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
 
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+- (BOOL)_formControlRefreshEnabled;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
@@ -688,6 +697,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
+@property (nonatomic, readonly) WKFormSelectControl *selectControl;
 
 @end
 

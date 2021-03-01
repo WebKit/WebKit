@@ -49,6 +49,10 @@ public:
 
     void pageClosed() override;
 
+    void themeColorWillChange() final;
+    void themeColorDidChange() final;
+    void pageExtendedBackgroundColorWillChange() final;
+    void pageExtendedBackgroundColorDidChange() final;
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 
@@ -66,6 +70,10 @@ public:
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
     NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
+
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) final;
+#endif
 
 protected:
     WeakObjCPtr<WKWebView> m_webView;

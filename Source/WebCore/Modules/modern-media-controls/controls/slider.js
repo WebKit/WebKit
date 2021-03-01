@@ -26,16 +26,16 @@
 class Slider extends LayoutNode
 {
 
-    constructor(cssClassName = "")
+    constructor(cssClassName = "", knobStyle = Slider.KnobStyle.Circle)
     {
         super(`<div class="slider ${cssClassName}"></div>`);
 
         this._container = new LayoutNode(`<div class="custom-slider"></div>`);
-        this._track = new LayoutNode(`<div class="track fill"></div>`);
         this._primaryFill = new LayoutNode(`<div class="primary fill"></div>`);
+        this._trackFill = new LayoutNode(`<div class="track fill"></div>`);
         this._secondaryFill = new LayoutNode(`<div class="secondary fill"></div>`);
-        this._knob = new LayoutNode(`<div class="knob"></div>`);
-        this._container.children = [this._track, this._primaryFill, this._secondaryFill, this._knob];
+        this._knob = new LayoutNode(`<div class="knob ${knobStyle}"></div>`);
+        this._container.children = [this._primaryFill, this._trackFill, this._secondaryFill, this._knob];
 
         this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
         this._input.element.addEventListener("pointerdown", this);
@@ -48,6 +48,7 @@ class Slider extends LayoutNode
         this.isActive = false;
         this._secondaryValue = 0;
         this._disabled = false;
+        this._knobStyle = knobStyle;
 
         this.children = [this._container, this._input];
     }
@@ -142,10 +143,12 @@ class Slider extends LayoutNode
     {
         super.commit();
 
-        const scrubberRadius = 4.5;
-        const scrubberCenterX = scrubberRadius + Math.round((this.width - (scrubberRadius * 2)) * this.value);
-        this._primaryFill.element.style.width = `${scrubberCenterX}px`;
-        this._secondaryFill.element.style.left = `${scrubberCenterX}px`;
+        let scrubberWidth = this._knobStyle === Slider.KnobStyle.Bar ? 4 : 9;
+        let scrubberBorder = this._knobStyle === Slider.KnobStyle.Bar ? 1 : (-1 * scrubberWidth / 2);
+        let scrubberCenterX = (scrubberWidth / 2) + Math.round((this.width - scrubberWidth) * this.value);
+        this._primaryFill.element.style.width = `${scrubberCenterX - (scrubberWidth / 2) - scrubberBorder}px`;
+        this._trackFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
+        this._secondaryFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
         this._secondaryFill.element.style.right = `${(1 - this._secondaryValue) * 100}%`;
         this._knob.element.style.left = `${scrubberCenterX}px`;
     }
@@ -203,3 +206,8 @@ class Slider extends LayoutNode
         this._valueDidStopChanging();
     }
 }
+
+Slider.KnobStyle = {
+    Circle: "circle",
+    Bar: "bar",
+};

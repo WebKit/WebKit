@@ -408,4 +408,7 @@ interface TestRunner {
 
     // SpeechRecognition
     undefined setIsSpeechRecognitionPermissionGranted(boolean value);
+
+    // MediaKeySystem
+    undefined setIsMediaKeySystemPermissionGranted(boolean value);
 };

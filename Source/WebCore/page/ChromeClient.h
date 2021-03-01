@@ -101,7 +101,6 @@ class HTMLMediaElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
-class MediaSessionMetadata;
 class NavigationAction;
 class Node;
 class Page;
@@ -226,6 +225,7 @@ public:
 
     virtual Color underlayColor() const { return Color(); }
 
+    virtual void themeColorChanged(Color) const { }
     virtual void pageExtendedBackgroundColorDidChange(Color) const { }
 
     virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
@@ -302,6 +302,10 @@ public:
     virtual std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const = 0;
+#endif
+
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(const ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback) { callback(WTF::nullopt); }
@@ -323,7 +327,7 @@ public:
 
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
 
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, ColorSpace, PixelFormat) const { return nullptr; }
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, DestinationColorSpace, PixelFormat) const { return nullptr; }
 
 #if ENABLE(WEBGL)
     virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&, WebCore::PlatformDisplayID) const { return nullptr; }
@@ -547,6 +551,10 @@ public:
 
 #if PLATFORM(MAC)
     virtual void changeUniversalAccessZoomFocus(const IntRect&, const IntRect&) { }
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    virtual void requestImageExtraction(Element&) { }
 #endif
 
 protected:

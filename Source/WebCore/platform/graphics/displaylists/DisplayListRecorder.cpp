@@ -430,7 +430,7 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
     append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }
 
-void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
+void Recorder::clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
     // The initial CTM matches ImageBuffer's initial CTM.
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);

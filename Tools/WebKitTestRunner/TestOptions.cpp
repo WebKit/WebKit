@@ -31,6 +31,14 @@
 
 namespace WTR {
 
+#if PLATFORM(COCOA)
+static constexpr bool captureAudioInGPUProcessEnabledValue = true;
+static constexpr bool captureVideoInGPUProcessEnabledValue = true;
+#else
+static constexpr bool captureAudioInGPUProcessEnabledValue = false;
+static constexpr bool captureVideoInGPUProcessEnabledValue = false;
+#endif
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -44,9 +52,9 @@ const TestFeatures& TestOptions::defaults()
             { "AllowUniversalAccessFromFileURLs", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
-            { "CaptureAudioInGPUProcessEnabled", false },
+            { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureAudioInUIProcessEnabled", false },
-            { "CaptureVideoInGPUProcessEnabled", false },
+            { "CaptureVideoInGPUProcessEnabled", captureVideoInGPUProcessEnabledValue },
             { "CaptureVideoInUIProcessEnabled", false },
             { "DOMPasteAllowed", true },
             { "FrameFlatteningEnabled", false },

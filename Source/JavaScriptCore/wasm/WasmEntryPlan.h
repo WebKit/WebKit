@@ -44,11 +44,10 @@ namespace Wasm {
 class EntryPlan : public Plan, public StreamingParserClient {
 public:
     using Base = Plan;
-    enum AsyncWork : uint8_t { FullCompile, Validation };
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    EntryPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
-    JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    EntryPlan(Context*, Ref<ModuleInformation>, CompilerMode, CompletionTask&&);
+    JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
 
     ~EntryPlan() override = default;
 
@@ -121,7 +120,7 @@ protected:
     StreamingParser m_streamingParser;
     State m_state;
 
-    const AsyncWork m_asyncWork;
+    const CompilerMode m_compilerMode;
     uint8_t m_numberOfActiveThreads { 0 };
     uint32_t m_currentIndex { 0 };
     uint32_t m_numberOfFunctions { 0 };

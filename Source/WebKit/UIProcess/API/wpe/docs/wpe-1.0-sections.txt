@@ -809,6 +809,25 @@ webkit_user_media_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitMediaKeySystemPermissionRequest</FILE>
+WebKitMediaKeySystemPermissionRequest
+webkit_media_key_system_permission_get_name
+
+<SUBSECTION Standard>
+WebKitMediaKeySystemPermissionRequestClass
+WEBKIT_TYPE_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST
+WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST
+WEBKIT_IS_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST
+WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST_CLASS
+WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitMediaKeySystemPermissionRequestPrivate
+webkit_media_key_system_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitNotification</FILE>
 WebKitNotification
 webkit_notification_get_id

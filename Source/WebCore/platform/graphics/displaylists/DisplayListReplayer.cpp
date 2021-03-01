@@ -141,16 +141,21 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
             continue;
         }
 
-        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
-
-        if (item.is<MetaCommandChangeDestinationImageBuffer>()) {
-            result.numberOfBytesRead += itemSizeInBuffer;
-            result.reasonForStopping = StopReplayReason::ChangeDestinationImageBuffer;
-            result.nextDestinationImageBuffer = item.get<MetaCommandChangeDestinationImageBuffer>().identifier();
+        if (!item) {
+            result.reasonForStopping = StopReplayReason::InvalidItem;
             break;
         }
 
-        if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(item); reasonForStopping) {
+        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
+
+        if (item->is<MetaCommandChangeDestinationImageBuffer>()) {
+            result.numberOfBytesRead += itemSizeInBuffer;
+            result.reasonForStopping = StopReplayReason::ChangeDestinationImageBuffer;
+            result.nextDestinationImageBuffer = item->get<MetaCommandChangeDestinationImageBuffer>().identifier();
+            break;
+        }
+
+        if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(*item); reasonForStopping) {
             result.reasonForStopping = *reasonForStopping;
             result.missingCachedResourceIdentifier = WTFMove(missingCachedResourceIdentifier);
             break;
@@ -159,8 +164,8 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         result.numberOfBytesRead += itemSizeInBuffer;
 
         if (UNLIKELY(trackReplayList)) {
-            replayList->append(item);
-            if (item.isDrawingItem())
+            replayList->append(*item);
+            if (item->isDrawingItem())
                 replayList->addDrawingItemExtent(WTFMove(extent));
         }
     }

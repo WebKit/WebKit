@@ -113,11 +113,7 @@ addEventListener("load", async () => {
     shouldBe("inputEventsFired", "2");
 
     beginTest("Advance field keys", "2020-06");            // [06]/2020
-    UIHelper.keyDown(" ");                                 // -> 06/[2020]
-    UIHelper.keyDown("2");                                 // -> 06/[0002]
-    shouldBeEqualToString("input.value", "0002-06");
-    UIHelper.keyDown("leftArrow");                         // -> [06]/0002
-    UIHelper.keyDown("/");                                 // -> 06/[0002]
+    UIHelper.keyDown("/");                                 // -> 06/[2020]
     UIHelper.keyDown("3");                                 // -> 06/[0003]
     shouldBeEqualToString("input.value", "0003-06");
     UIHelper.keyDown("leftArrow");                         // -> [06]/0003
@@ -140,8 +136,8 @@ addEventListener("load", async () => {
     UIHelper.keyDown(",");                                 // -> 06/[0007]
     UIHelper.keyDown("8");                                 // -> 06/[0008]
     shouldBeEqualToString("input.value", "0008-06");
-    shouldBe("changeEventsFired", "7");
-    shouldBe("inputEventsFired", "7");
+    shouldBe("changeEventsFired", "6");
+    shouldBe("inputEventsFired", "6");
 
     beginTest("Up/Down arrow keys", "2020-12");            // [12]/2020
     UIHelper.keyDown("upArrow");                           // [01]/2020

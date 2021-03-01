@@ -148,11 +148,9 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm)
     if (!vm.deferredWorkTimer->hasPendingWork(this) && (readiedCell || deadCount(locker))) {
         vm.deferredWorkTimer->addPendingWork(vm, this, { });
         ASSERT(vm.deferredWorkTimer->hasPendingWork(this));
-        vm.deferredWorkTimer->scheduleWorkSoon(this, [this] {
+        vm.deferredWorkTimer->scheduleWorkSoon(this, [this](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) {
             JSGlobalObject* globalObject = this->globalObject();
-            VM& vm = globalObject->vm();
             this->runFinalizationCleanup(globalObject);
-            vm.deferredWorkTimer->cancelPendingWork(this);
         });
     }
 }

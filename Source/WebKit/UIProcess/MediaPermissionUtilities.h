@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 
@@ -57,7 +58,7 @@ bool checkSandboxRequirementForType(MediaPermissionType);
 bool checkUsageDescriptionStringForType(MediaPermissionType);
 bool checkUsageDescriptionStringForSpeechRecognition();
 
-void alertForPermission(WebPageProxy&, MediaPermissionReason, OptionSet<MediaPermissionType>, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+void alertForPermission(WebPageProxy&, MediaPermissionReason, OptionSet<MediaPermissionType>, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if HAVE(AVCAPTUREDEVICE)

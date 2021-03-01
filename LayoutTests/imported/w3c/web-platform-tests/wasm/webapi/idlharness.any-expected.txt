@@ -8,6 +8,6 @@ PASS WebAssembly namespace: operation validate(BufferSource)
 PASS WebAssembly namespace: operation compile(BufferSource)
 PASS WebAssembly namespace: operation instantiate(BufferSource, optional object)
 PASS WebAssembly namespace: operation instantiate(Module, optional object)
-FAIL WebAssembly namespace: operation compileStreaming(Promise<Response>) assert_own_property: namespace object missing operation "compileStreaming" expected property "compileStreaming" missing
-FAIL WebAssembly namespace: operation instantiateStreaming(Promise<Response>, optional object) assert_own_property: namespace object missing operation "instantiateStreaming" expected property "instantiateStreaming" missing
+PASS WebAssembly namespace: operation compileStreaming(Promise<Response>)
+PASS WebAssembly namespace: operation instantiateStreaming(Promise<Response>, optional object)
 

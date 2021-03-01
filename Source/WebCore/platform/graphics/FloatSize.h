@@ -168,7 +168,7 @@ public:
 #endif
 
     String toJSONString() const;
-    Ref<JSON::Object> toJSONObject() const;
+    WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
 private:
     float m_width { 0 };

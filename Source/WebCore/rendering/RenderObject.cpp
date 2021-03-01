@@ -1230,6 +1230,10 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
 void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
 {
     outputRenderObject(stream, markedObject == this, depth);
+
+    if (is<RenderBlockFlow>(*this))
+        downcast<RenderBlockFlow>(*this).outputFloatingObjects(stream, depth + 1);
+
     if (is<RenderBlockFlow>(*this))
         downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
 

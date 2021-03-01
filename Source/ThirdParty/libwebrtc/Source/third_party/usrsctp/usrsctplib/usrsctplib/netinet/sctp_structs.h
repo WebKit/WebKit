@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_structs.h 364268 2020-08-16 11:50:37Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_structs.h 365071 2020-09-01 21:19:14Z mjg $");
 #endif
 
 #ifndef _NETINET_SCTP_STRUCTS_H_
@@ -65,14 +65,12 @@ struct sctp_timer {
 	uint32_t stopped_from;
 };
 
-
 struct sctp_foo_stuff {
 	struct sctp_inpcb *inp;
 	uint32_t        lineno;
 	uint32_t        ticks;
 	int             updown;
 };
-
 
 /*
  * This is the information we track on each interface that we know about from
@@ -162,7 +160,6 @@ struct sctp_iterator {
 /* iterator_flags values */
 #define SCTP_ITERATOR_DO_ALL_INP	0x00000001
 #define SCTP_ITERATOR_DO_SINGLE_INP	0x00000002
-
 
 TAILQ_HEAD(sctpiterators, sctp_iterator);
 
@@ -292,7 +289,6 @@ struct rtcc_cc {
 	uint8_t  rtt_set_this_sack; /* Flag saying this sack had RTT calc on it */
 	uint8_t  last_inst_ind; /* Last saved inst indication */
 };
-
 
 struct sctp_nets {
 	TAILQ_ENTRY(sctp_nets) sctp_next;	/* next link */
@@ -436,7 +432,6 @@ struct sctp_nets {
 #endif
 };
 
-
 struct sctp_data_chunkrec {
 	uint32_t tsn;		/* the TSN of this transmit */
 	uint32_t mid;		/* the message identifier of this transmit */
@@ -474,7 +469,6 @@ struct chk_id {
 	uint8_t id;
 	uint8_t can_take_data;
 };
-
 
 struct sctp_tmit_chunk {
 	union {
@@ -603,7 +597,6 @@ struct sctp_stream_in {
 
 TAILQ_HEAD(sctpwheel_listhead, sctp_stream_out);
 TAILQ_HEAD(sctplist_listhead, sctp_stream_queue_pending);
-
 
 /* Round-robin schedulers */
 struct ss_rr {
@@ -921,7 +914,6 @@ struct sctp_association {
 	/* last place I got a control from */
 	struct sctp_nets *last_control_chunk_from;
 
-
 	/*
 	 * wait to the point the cum-ack passes req->send_reset_at_tsn for
 	 * any req on the list.
@@ -984,7 +976,6 @@ struct sctp_association {
 
 	/* Original seq number I used ??questionable to keep?? */
 	uint32_t init_seq_number;
-
 
 	/* The Advanced Peer Ack Point, as required by the PR-SCTP */
 	/* (A1 in Section 4.2) */

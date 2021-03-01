@@ -66,6 +66,13 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         }
     }
 
+    // We need to pass our full environment to the subprocess.
+    GUniquePtr<char*> environ(g_get_environ());
+    for (char** variable = environ.get(); variable && *variable; variable++) {
+        GUniquePtr<char> arg(g_strconcat("--env=", *variable, nullptr));
+        flatpakArgs.append(arg.get());
+    }
+
     char** newArgv = g_newa(char*, g_strv_length(argv) + flatpakArgs.size() + 1);
     size_t i = 0;
 

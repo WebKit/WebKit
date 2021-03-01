@@ -33,6 +33,7 @@
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
 #include "CSSFontSelector.h"
+#include "CSSParser.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -161,6 +162,7 @@
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
 #include "Quirks.h"
 #include "Range.h"
@@ -208,6 +210,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SocketProvider.h"
+#include "SpeechRecognition.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
 #include "StyleAdjuster.h"
@@ -261,7 +264,6 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(APP_HIGHLIGHTS)
-#include "AppHighlightListData.h"
 #include "AppHighlightStorage.h"
 #endif
 
@@ -587,13 +589,22 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
+static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
+{
+    if (frame) {
+        if (auto loader = frame->loader().activeDocumentLoader())
+            return loader->cachedResourceLoader();
+    }
+    return CachedResourceLoader::create(nullptr);
+}
+
 Document::Document(Frame* frame, const Settings& settings, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
     , m_settings(settings)
     , m_quirks(makeUniqueRef<Quirks>(*this))
-    , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))
+    , m_cachedResourceLoader(createCachedResourceLoader(frame))
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_extensionStyleSheets(makeUnique<ExtensionStyleSheets>(*this))
@@ -754,10 +765,6 @@ Document::~Document()
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
     if (m_cachedResourceLoader->document() == this)
         m_cachedResourceLoader->setDocument(nullptr);
-
-#if ENABLE(VIDEO)
-    pauseAllMediaPlayback();
-#endif
 
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
@@ -1678,14 +1685,8 @@ void Document::updateTitle(const StringWithDirection& title)
     m_title.string = canonicalizedTitle(*this, title.string);
     m_title.direction = title.direction;
 
-    if (!m_updateTitleTaskScheduled) {
-        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = makeRef(*this), this]() mutable {
-            m_updateTitleTaskScheduled = false;
-            if (auto documentLoader = makeRefPtr(loader()))
-                documentLoader->setTitle(m_title);
-        });
-        m_updateTitleTaskScheduled = true;
-    }
+    if (auto* loader = this->loader())
+        loader->setTitle(m_title);
 }
 
 void Document::updateTitleFromTitleElement()
@@ -1857,50 +1858,6 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
         elements.append(*element);
     for (auto& element : elements)
         function(element);
-}
-
-bool Document::mediaPlaybackExists()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        return !platformMediaSessionManager->hasNoSession();
-    return false;
-}
-
-bool Document::mediaPlaybackIsPaused()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        return platformMediaSessionManager->mediaPlaybackIsPaused(identifier());
-    return false;
-}
-
-void Document::pauseAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->pauseAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::suspendAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::resumeAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::suspendAllMediaBuffering()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaBufferingForDocument(identifier());
-}
-
-void Document::resumeAllMediaBuffering()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaBufferingForDocument(identifier());
 }
 
 #endif
@@ -3850,6 +3807,20 @@ void Document::updateViewportArguments()
     }
 }
 
+void Document::processThemeColor(const String& themeColorString)
+{
+    auto themeColor = CSSParser::parseColor(themeColorString);
+    if (themeColor == m_themeColor)
+        return;
+
+    m_themeColor = WTFMove(themeColor);
+
+    scheduleRenderingUpdate({ });
+
+    if (auto* page = this->page())
+        page->chrome().client().themeColorChanged(m_themeColor);
+}
+
 #if ENABLE(DARK_MODE_CSS)
 static void processColorSchemeString(StringView colorScheme, const WTF::Function<void(StringView key)>& callback)
 {
@@ -4253,6 +4224,15 @@ void Document::removeAudioProducer(MediaProducer& audioProducer)
     updateIsPlayingMedia();
 }
 
+void Document::setActiveSpeechRecognition(SpeechRecognition* speechRecognition)
+{
+    if (m_activeSpeechRecognition == speechRecognition)
+        return;
+
+    m_activeSpeechRecognition = makeWeakPtr(speechRecognition);
+    updateIsPlayingMedia();
+}
+
 void Document::noteUserInteractionWithMediaElement()
 {
     if (m_userHasInteractedWithMediaElement)
@@ -4274,6 +4254,8 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 
 #if ENABLE(MEDIA_STREAM)
     state |= MediaStreamTrack::captureState(*this);
+    if (m_activeSpeechRecognition)
+        state |= MediaProducer::HasActiveAudioCaptureDevice;
 #endif
 
     if (m_userHasInteractedWithMediaElement)
@@ -7128,6 +7110,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 {
     ASSERT(!request.readOnly());
 
+    Vector<RefPtr<Element>, 32> elementsToClearActive;
+    Vector<RefPtr<Element>, 32> elementsToSetActive;
+    Vector<RefPtr<Element>, 32> elementsToClearHover;
+    Vector<RefPtr<Element>, 32> elementsToSetHover;
+
     Element* innerElementInDocument = innerElement;
     while (innerElementInDocument && &innerElementInDocument->document() != this) {
         innerElementInDocument->document().updateHoverActiveState(request, innerElementInDocument);
@@ -7137,8 +7124,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     Element* oldActiveElement = m_activeElement.get();
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
-        for (Element* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
-            currentElement->setActive(false);
+        for (auto* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
+            elementsToClearActive.append(currentElement);
             m_userActionElements.setInActiveChain(*currentElement, false);
         }
         m_activeElement = nullptr;
@@ -7183,15 +7170,13 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     auto* commonAncestor = findNearestCommonComposedAncestor(oldHoveredElement.get(), newHoveredElement);
 
-    Vector<RefPtr<Element>, 32> elementsToRemoveFromChain;
-    Vector<RefPtr<Element>, 32> elementsToAddToChain;
-
     if (oldHoveredElement != newHoveredElement) {
         for (auto* element = oldHoveredElement.get(); element; element = element->parentElementInComposedTree()) {
             if (element == commonAncestor)
                 break;
-            if (!mustBeInActiveChain || element->isInActiveChain())
-                elementsToRemoveFromChain.append(element);
+            if (mustBeInActiveChain && !element->isInActiveChain())
+                continue;
+            elementsToClearHover.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (is<HTMLFrameOwnerElement>(oldHoveredElement)) {
@@ -7200,24 +7185,37 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         }
     }
 
-    for (auto* element = newHoveredElement; element; element = element->parentElementInComposedTree()) {
-        if (!mustBeInActiveChain || element->isInActiveChain())
-            elementsToAddToChain.append(element);
-    }
-
-    for (auto& element : elementsToRemoveFromChain)
-        element->setHovered(false);
-
     bool sawCommonAncestor = false;
-    for (auto& element : elementsToAddToChain) {
+    for (auto* element = newHoveredElement; element; element = element->parentElementInComposedTree()) {
+        if (mustBeInActiveChain && !element->isInActiveChain())
+            continue;
         if (allowActiveChanges)
-            element->setActive(true);
+            elementsToSetActive.append(element);
         if (element == commonAncestor)
             sawCommonAncestor = true;
-        if (!sawCommonAncestor) {
-            // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.
-            element->setHovered(true);
-        }
+        if (!sawCommonAncestor)
+            elementsToSetHover.append(element);
+    }
+
+    if (!elementsToClearActive.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToClearActive)
+            element->setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToSetActive.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToSetActive)
+            element->setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToClearHover.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToClearHover)
+            element->setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToSetHover.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToSetHover)
+            element->setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
     }
 }
 
@@ -7999,6 +7997,7 @@ void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
     ASSERT(shadowRoot.isConnected());
     ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.add(&shadowRoot);
+    shadowRoot.styleScope().insertedInDocument();
 }
 
 void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)

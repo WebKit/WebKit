@@ -140,6 +140,9 @@ struct LineCandidate {
         bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
         bool hasInlineLevelBox() const { return m_hasInlineLevelBox; }
 
+        void setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
+        bool hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
+
     private:
         bool m_ignoreTrailingLetterSpacing { false };
 
@@ -147,6 +150,7 @@ struct LineCandidate {
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
         bool m_hasInlineLevelBox { false };
+        bool m_hasTrailingSoftWrapOpportunity { false };
     };
 
     // Candidate content is a collection of inline content or a float box.
@@ -321,6 +325,9 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
             }
             if (inlineContent.trailingLineBreak()) {
                 // Fully committed (or empty) content followed by a line break means "end of line".
+                // FIXME: This will put the line break box at the end of the line while in case of some inline boxes, the line break
+                // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
+                // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
                 m_line.append(*inlineContent.trailingLineBreak(), { });
                 ++committedInlineItemCount;
                 isEndOfLine = true;
@@ -385,7 +392,6 @@ Optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineRect& 
     auto lineLogicalLeft = lineLogicalRect.left();
     auto lineLogicalRight = lineLogicalRect.right();
     if (constraints.left && constraints.right) {
-        ASSERT(constraints.left->x <= constraints.right->x);
         lineLogicalRight = constraints.right->x;
         lineLogicalLeft = constraints.left->x;
     } else if (constraints.left) {
@@ -486,20 +492,55 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             currentLogicalRight += logicalWidth;
             continue;
         }
-        if (inlineItem.isWordBreakOpportunity()) {
-            // Since <wbr> is an explicit word break opportunity it has to be a trailing item in this candidate run list.
-            ASSERT(index == softWrapOpportunityIndex - 1);
-            lineCandidate.inlineContent.appendtrailingWordBreakOpportunity(inlineItem);
-            continue;
-        }
-        if (inlineItem.isLineBreak()) {
-            // Since <br> is an forced break opportunity it has to be a trailing item in this candidate run list.
-            ASSERT(index == softWrapOpportunityIndex - 1);
-            lineCandidate.inlineContent.appendTrailingLineBreak(inlineItem);
+        if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
+            // Since both <br> and <wbr> are explicit word break opportunities they have to be trailing items in this candidate run list unless they are embedded in inline boxes.
+            // e.g. <span><wbr></span>
+#if ASSERT_ENABLED
+            for (auto i = index + 1; i < softWrapOpportunityIndex; ++i)
+                ASSERT(m_inlineItems[i].isInlineBoxEnd());
+#endif
+            inlineItem.isLineBreak() ? lineCandidate.inlineContent.appendTrailingLineBreak(inlineItem) : lineCandidate.inlineContent.appendtrailingWordBreakOpportunity(inlineItem);
             continue;
         }
         ASSERT_NOT_REACHED();
     }
+    auto inlineContentEndsInSoftWrapOpportunity = [&] {
+        if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRange.end) {
+            // This candidate inline content ends because the entire content ends and not because there's a soft wrap opportunity.
+            return false;
+        }
+        if (m_inlineItems[softWrapOpportunityIndex - 1].isFloat()) {
+            // While we stop at floats, they are not considered real soft wrap opportunities. 
+            return false;
+        }
+        // See https://www.w3.org/TR/css-text-3/#line-break-details
+        auto& trailingInlineItem = m_inlineItems[softWrapOpportunityIndex - 1];
+        if (trailingInlineItem.isBox() || trailingInlineItem.isLineBreak() || trailingInlineItem.isWordBreakOpportunity() || trailingInlineItem.isInlineBoxEnd()) {
+            // For Web-compatibility there is a soft wrap opportunity before and after each replaced element or other atomic inline.
+            return true;
+        }
+        if (trailingInlineItem.isText()) {
+            auto& inlineTextItem = downcast<InlineTextItem>(trailingInlineItem);
+            if (inlineTextItem.isWhitespace())
+                return true;
+            // Now in case of non-whitespace trailing content, we need to check if the actual soft wrap opportunity belongs to the next set.
+            // e.g. "this_is_the_trailing_run<span> <-but_this_space_here_is_the_soft_wrap_opportunity"
+            // When there's an inline box start(<span>)/end(</span>) between the trailing and the (next)leading run, while we break before the inline box start (<span>)
+            // the actual soft wrap position is after the inline box start (<span>) but in terms of line breaking continuity the inline box start (<span>) and the whitespace run belong together.
+            RELEASE_ASSERT(layoutRange.end <= m_inlineItems.size());
+            for (auto index = softWrapOpportunityIndex; index < layoutRange.end; ++index) {
+                if (m_inlineItems[index].isInlineBoxStart() || m_inlineItems[index].isInlineBoxEnd())
+                    continue;
+                // FIXME: Check if [non-whitespace][inline-box][no-whitespace] content has rules about it.
+                // For now let's say the soft wrap position belongs to the next set of runs when [non-whitespace][inline-box][whitespace], [non-whitespace][inline-box][box] etc.
+                return m_inlineItems[index].isText() && !downcast<InlineTextItem>(m_inlineItems[index]).isWhitespace();
+            }
+            return true;
+        }
+        ASSERT_NOT_REACHED();
+        return true;
+    };
+    lineCandidate.inlineContent.setHasTrailingSoftWrapOpportunity(inlineContentEndsInSoftWrapOpportunity());
 }
 
 size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const
@@ -516,11 +557,14 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
     for (auto index = startIndex; index < layoutRange.end; ++index) {
         auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
-            // We always stop at explicit wrapping opportunities e.g. <br>. The wrap position is after the opportunity position.
-            return ++index;
+            // We always stop at explicit wrapping opportunities e.g. <br>. However the wrap position may be at later position.
+            // e.g. <span><span><br></span></span> <- wrap position is after the second </span>
+            // but in case of <span><br><span></span></span> <- wrap position is right after <br>.
+            for (++index; index < layoutRange.end && m_inlineItems[index].isInlineBoxEnd(); ++index) { }
+            return index;
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
-            // There's no wrapping opportunity between <span>text, <span></span> or </span>text. 
+            // Need to see what comes next to decide.
             continue;
         }
         ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isFloat());
@@ -528,11 +572,14 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             previousInlineItemIndex = index;
             continue;
         }
+        // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
         auto& previousItem = m_inlineItems[*previousInlineItemIndex];
         auto& currentItem = m_inlineItems[index];
         if (isAtSoftWrapOpportunity(m_inlineFormattingContext, previousItem, currentItem)) {
-            if (!previousItem.isText() || !currentItem.isText())
+            if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
+                // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
                 return index;
+            }
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][container start][container end][ample]
@@ -623,16 +670,22 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto lineHasContent = !m_line.runs().isEmpty() || m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent };
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent, !m_wrapOpportunityList.isEmpty() };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
-    if (result.lastWrapOpportunityItem)
-        m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
     auto& candidateRuns = continuousInlineContent.runs();
     if (result.action == InlineContentBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
         m_lineLogicalRect = lineLogicalRectForCandidateContent;
         for (auto& run : candidateRuns)
             m_line.append(run.inlineItem, run.logicalWidth);
+        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity()) {
+            // Check if we are allowed to wrap at this position.
+            auto& trailingItem = candidateRuns.last().inlineItem;
+            // FIXME: There must be a way to decide if the trailing run actually ended up on the line.
+            // Let's just deal with collapsed leading whitespace for now.
+            if (!m_line.runs().isEmpty() && InlineContentBreaker::isWrappingAllowed(trailingItem))
+                m_wrapOpportunityList.append(&trailingItem);
+        }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
     if (result.action == InlineContentBreaker::Result::Action::Wrap) {

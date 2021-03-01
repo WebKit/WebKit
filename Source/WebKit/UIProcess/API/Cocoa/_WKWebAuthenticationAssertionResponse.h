@@ -28,12 +28,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@class LAContext;
+
+WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @interface _WKWebAuthenticationAssertionResponse : NSObject
 
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *displayName;
 @property (nonatomic, readonly, copy) NSData *userHandle;
+
+- (void)setLAContext:(LAContext *)context WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

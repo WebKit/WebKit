@@ -375,8 +375,9 @@ unsigned gProxyServerPort;
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, void*)
 {
+    unsigned port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS((soup_client_context_get_local_address(context))));
     if (message->method == SOUP_METHOD_CONNECT) {
-        g_assert_cmpuint(soup_server_get_port(server), ==, gProxyServerPort);
+        g_assert_cmpuint(port, ==, gProxyServerPort);
         auto tunnel = makeUnique<Tunnel>(server, message);
         auto* tunnelPtr = tunnel.get();
         tunnelPtr->connect([tunnel = WTFMove(tunnel)](const char* errorMessage) {
@@ -399,7 +400,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     if (g_str_has_suffix(path, "/auth-test.html") || g_str_has_suffix(path, "/empty-realm.html")) {
         bool isProxy = g_str_has_prefix(path, "/proxy");
         if (isProxy)
-            g_assert_cmpuint(soup_server_get_port(server), ==, gProxyServerPort);
+            g_assert_cmpuint(port, ==, gProxyServerPort);
 
         const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
         // Require authentication.

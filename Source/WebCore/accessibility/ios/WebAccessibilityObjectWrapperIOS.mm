@@ -335,6 +335,14 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axTextAreaTrait { return (1 << 24); }
 - (uint64_t)_axUpdatesFrequentlyTrait { return (1 << 25); }
 
+- (NSString *)accessibilityDOMIdentifier
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return self.axBackingObject->identifierAttribute();
+}
+
 - (BOOL)accessibilityCanFuzzyHitTest
 {
     if (![self _prepareAccessibilityCall])
@@ -611,7 +619,14 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (AccessibilityObjectWrapper*)_accessibilityTableAncestor
 {
     if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::Table;
+        switch (object.roleValue()) {
+        case AccessibilityRole::Table:
+        case AccessibilityRole::TreeGrid:
+        case AccessibilityRole::Grid:
+            return true;
+        default:
+            return false;
+        }
     }))
         return parent->wrapper();
     return nil;
@@ -680,15 +695,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             [self setAccessibilityValue:[wrapper accessibilityValue]];
             break;
         }
-        case AccessibilityRole::ListBox:
-        case AccessibilityRole::List:
-            traits |= [self _axContainedByListTrait];
-            break;
-        case AccessibilityRole::Grid:
-        case AccessibilityRole::Table:
-        case AccessibilityRole::TreeGrid:
-            traits |= [self _axContainedByTableTrait];
-            break;
         default:
             if ([self _accessibilityIsLandmarkRole:parentRole])
                 traits |= [self _axContainedByLandmarkTrait];
@@ -1447,7 +1453,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
 
     if (self.axBackingObject->isColorWell()) {
-        auto color = convertToComponentFloats(self.axBackingObject->colorValue());
+        auto color = convertColor<SRGBA<float>>(self.axBackingObject->colorValue());
         return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
     }
 
@@ -2002,6 +2008,16 @@ static RenderObject* rendererForView(WAKView* view)
 }
 
 - (void)postScrollStatusChangeNotification
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.
+}
+
+- (void)postCurrentStateChangedNotification
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.
+}
+
+- (void)postNotification:(NSString *)notificationName
 {
     // The UIKit accessibility wrapper will override and post appropriate notification.
 }
@@ -3033,44 +3049,26 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return self.axBackingObject->invalidStatus();
 }
 
-- (NSString *)accessibilityARIACurrentStatus
+- (NSString *)accessibilityCurrentState
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
-    switch (self.axBackingObject->currentState()) {
-    case AccessibilityCurrentState::False:
-        return @"false";
-    case AccessibilityCurrentState::Page:
-        return @"page";
-    case AccessibilityCurrentState::Step:
-        return @"step";
-    case AccessibilityCurrentState::Location:
-        return @"location";
-    case AccessibilityCurrentState::Time:
-        return @"time";
-    case AccessibilityCurrentState::Date:
-        return @"date";
-    case AccessibilityCurrentState::True:
-        return @"true";
-    }
+
+    return self.axBackingObject->currentValue();
 }
 
 - (NSString *)accessibilitySortDirection
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
+
     switch (self.axBackingObject->sortDirection()) {
     case AccessibilitySortDirection::Ascending:
-        return @"ascending";
+        return @"AXAscendingSortDirection";
     case AccessibilitySortDirection::Descending:
-        return @"descending";
-    case AccessibilitySortDirection::Other:
-        return @"other";
-    case AccessibilitySortDirection::Invalid:
-    case AccessibilitySortDirection::None:
-        return nil;
+        return @"AXDescendingSortDirection";
+    default:
+        return @"AXUnknownSortDirection";
     }
 }
 

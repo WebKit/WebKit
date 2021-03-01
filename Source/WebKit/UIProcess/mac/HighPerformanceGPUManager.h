@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #include <OpenGL/CGLTypes.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -44,13 +45,13 @@ public:
     void removeProcessRequiringHighPerformance(WebProcessProxy*);
 
 private:
-    HighPerformanceGPUManager() = default;
+    HighPerformanceGPUManager();
     ~HighPerformanceGPUManager();
-
     void updateState();
 
     HashSet<WebProcessProxy*> m_processesRequiringHighPerformance;
     CGLPixelFormatObj m_pixelFormatObj { nullptr };
+    WebCore::Timer m_updateStateTimer;
 };
 
 }

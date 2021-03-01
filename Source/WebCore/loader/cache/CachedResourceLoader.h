@@ -165,6 +165,8 @@ public:
 
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
 
+    Vector<CachedResource*> visibleResourcesToPrioritize();
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
@@ -202,7 +204,7 @@ private:
     WeakPtr<Document> m_document;
     DocumentLoader* m_documentLoader;
 
-    int m_requestCount;
+    int m_requestCount { 0 };
 
     std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
     Timer m_unusedPreloadsTimer;
@@ -212,10 +214,9 @@ private:
     ResourceTimingInformation m_resourceTimingInfo;
     KeepaliveRequestTracker m_keepaliveRequestTracker;
 
-    // 29 bits left
-    bool m_autoLoadImages : 1;
-    bool m_imagesEnabled : 1;
-    bool m_allowStaleResources : 1;
+    bool m_autoLoadImages { true };
+    bool m_imagesEnabled { true };
+    bool m_allowStaleResources { false };
 };
 
 class ResourceCacheValidationSuppressor {

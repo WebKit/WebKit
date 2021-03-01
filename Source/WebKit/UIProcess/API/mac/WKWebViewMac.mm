@@ -1285,11 +1285,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->setRubberBandingEnabled(state);
 }
 
-- (NSColor *)_pageExtendedBackgroundColor
-{
-    return _impl->pageExtendedBackgroundColor();
-}
-
 - (NSColor *)_backgroundColor
 {
     return _impl->backgroundColor();

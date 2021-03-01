@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "MediaMetadataInit.h"
 #include "MediaSession.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -34,10 +35,9 @@
 
 namespace WebCore {
 
-class Document;
-class MediaSession;
 struct MediaImage;
-struct MediaMetadataInit;
+
+using MediaSessionMetadata = MediaMetadataInit;
 
 class MediaMetadata : public RefCounted<MediaMetadata> {
 public:
@@ -47,27 +47,26 @@ public:
     void setMediaSession(MediaSession&);
     void resetMediaSession();
 
-    const String& title() const { return m_title; }
+    const String& title() const { return m_metadata.title; }
     void setTitle(const String&);
 
-    const String& artist() const { return m_artist; }
+    const String& artist() const { return m_metadata.artist; }
     void setArtist(const String&);
 
-    const String& album() const { return m_album; }
+    const String& album() const { return m_metadata.album; }
     void setAlbum(const String&);
 
-    const Vector<MediaImage>& artwork() const { return m_artwork; }
+    const Vector<MediaImage>& artwork() const { return m_metadata.artwork; }
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
+
+    const MediaSessionMetadata& metadata() const { return m_metadata; }
 
 private:
     MediaMetadata();
     void metadataUpdated();
 
     WeakPtr<MediaSession> m_session;
-    String m_title;
-    String m_artist;
-    String m_album;
-    Vector<MediaImage> m_artwork;
+    MediaSessionMetadata m_metadata;
 };
 
 }

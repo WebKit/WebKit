@@ -31,6 +31,13 @@
 #include <stdint.h>
 #include <type_traits>
 
+/* On Linux with clang, libgcc is usually used instead of compiler-rt, and it does
+ * not provide the __mulodi4 symbol used by clang for __builtin_mul_overflow
+ */
+#if COMPILER(GCC) || (COMPILER(CLANG) && !(CPU(ARM) && OS(LINUX)))
+#define USE_MUL_OVERFLOW 1
+#endif
+
 /* Checked<T>
  *
  * This class provides a mechanism to perform overflow-safe integer arithmetic
@@ -360,7 +367,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_COMPATIBLE)
+#if USE(MUL_OVERFLOW)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;
@@ -442,7 +449,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_COMPATIBLE)
+#if USE(MUL_OVERFLOW)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;
@@ -514,7 +521,7 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
 
     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
     {
-#if COMPILER(GCC_COMPATIBLE)
+#if USE(MUL_OVERFLOW)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;

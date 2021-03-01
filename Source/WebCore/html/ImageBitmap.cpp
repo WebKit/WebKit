@@ -84,7 +84,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
         auto& document = downcast<Document>(scriptExecutionContext);
         if (document.view() && document.view()->root()) {
             auto hostWindow = document.view()->root()->hostWindow();
-            return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::Canvas, resolutionScale, ColorSpace::SRGB, PixelFormat::BGRA8, hostWindow);
+            return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::Canvas, resolutionScale, DestinationColorSpace::SRGB, PixelFormat::BGRA8, hostWindow);
         }
     }
 
@@ -820,6 +820,10 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
     //      source rectangle with formatting.
     auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode);
+    if (!tempBitmapData) {
+        resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
+        return;
+    }
     tempBitmapData->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });

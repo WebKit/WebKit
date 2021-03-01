@@ -143,6 +143,22 @@ JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue valu
     return jsCast<JSPromise*>(result);
 }
 
+// Keep in sync with @rejectPromise in JS.
+JSPromise* JSPromise::rejectedPromise(JSGlobalObject* globalObject, JSValue value)
+{
+    // Because we create a promise in this function, we know that no promise reactions are registered.
+    // We can skip triggering them, which completely avoids calling JS functions.
+    VM& vm = globalObject->vm();
+    JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+    promise->internalField(Field::ReactionsOrResult).set(vm, promise, value);
+    promise->internalField(Field::Flags).set(vm, promise, jsNumber(promise->flags() | isFirstResolvingFunctionCalledFlag | static_cast<unsigned>(Status::Rejected)));
+    if (globalObject->globalObjectMethodTable()->promiseRejectionTracker)
+        globalObject->globalObjectMethodTable()->promiseRejectionTracker(globalObject, promise, JSPromiseRejectionOperation::Reject);
+    else
+        vm.promiseRejected(promise);
+    return promise;
+}
+
 static inline void callFunction(JSGlobalObject* globalObject, JSValue function, JSPromise* promise, JSValue value)
 {
     auto callData = getCallData(globalObject->vm(), function);
@@ -168,7 +184,6 @@ void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)
         callFunction(lexicalGlobalObject, globalObject->resolvePromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    vm.deferredWorkTimer->cancelPendingWork(this);
 }
 
 void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
@@ -183,7 +198,6 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
         callFunction(lexicalGlobalObject, globalObject->rejectPromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    vm.deferredWorkTimer->cancelPendingWork(this);
 }
 
 void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, JSValue value)
@@ -204,6 +218,21 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, Exception* reason)
 void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, Exception* reason)
 {
     rejectAsHandled(lexicalGlobalObject, reason->value());
+}
+
+JSPromise* JSPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    VM& vm = globalObject->vm();
+    Exception* exception = scope.exception();
+    ASSERT(exception);
+    if (UNLIKELY(isTerminatedExecutionException(vm, exception))) {
+        scope.release();
+        return this;
+    }
+    scope.clearException();
+    scope.release();
+    reject(globalObject, exception->value());
+    return this;
 }
 
 } // namespace JSC

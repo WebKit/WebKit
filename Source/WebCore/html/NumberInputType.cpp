@@ -210,11 +210,6 @@ float NumberInputType::decorationWidth() const
     return width;
 }
 
-bool NumberInputType::isSteppable() const
-{
-    return true;
-}
-
 auto NumberInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     handleKeydownEventForSpinButton(event);
@@ -288,11 +283,6 @@ String NumberInputType::badInputText() const
 }
 
 bool NumberInputType::supportsPlaceholder() const
-{
-    return true;
-}
-
-bool NumberInputType::isNumberField() const
 {
     return true;
 }

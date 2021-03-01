@@ -52,7 +52,7 @@ class WebXRReferenceSpace;
 class WebXRSystem;
 struct XRRenderStateInit;
 
-class WebXRSession final : public RefCounted<WebXRSession>, public EventTargetWithInlineData, public ActiveDOMObject {
+class WebXRSession final : public RefCounted<WebXRSession>, public EventTargetWithInlineData, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
     WTF_MAKE_ISO_ALLOCATED(WebXRSession);
 public:
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
@@ -63,6 +63,9 @@ public:
 
     using RefCounted<WebXRSession>::ref;
     using RefCounted<WebXRSession>::deref;
+
+    using TrackingAndRenderingClient::weakPtrFactory;
+    using WeakValueType = TrackingAndRenderingClient::WeakValueType;
 
     XREnvironmentBlendMode environmentBlendMode() const;
     XRInteractionMode interactionMode() const;
@@ -82,7 +85,7 @@ public:
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    void end(EndPromise&&);
+    ExceptionOr<void> end(EndPromise&&);
     bool ended() const { return m_ended; }
 
     XRSessionMode mode() const { return m_mode; }
@@ -99,7 +102,12 @@ private:
     const char* activeDOMObjectName() const override;
     void stop() override;
 
-    void shutdown();
+    // PlatformXR::TrackingAndRenderingClient
+    void sessionDidEnd() final;
+
+    enum class InitiatedBySystem : bool { No, Yes };
+    void shutdown(InitiatedBySystem);
+    void didCompleteShutdown();
 
     void animationTimerFired();
     void scheduleAnimation();
@@ -111,6 +119,7 @@ private:
     XRVisibilityState m_visibilityState;
     Ref<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
+    Optional<EndPromise> m_endPromise;
 
     WebXRSystem& m_xrSystem;
     XRSessionMode m_mode;

@@ -43,12 +43,19 @@ WebSwitchingGPUClient& WebSwitchingGPUClient::singleton()
 
 void WebSwitchingGPUClient::requestHighPerformanceGPU()
 {
+    m_requests++;
+    if (m_requests != 1)
+        return;
     LOG(WebGL, "WebSwitchingGPUClient::requestHighPerformanceGPU() from WebProcess");
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::RequestHighPerformanceGPU(), 0);
 }
 
 void WebSwitchingGPUClient::releaseHighPerformanceGPU()
 {
+    ASSERT(m_requests);
+    m_requests--;
+    if (m_requests)
+        return;
     LOG(WebGL, "WebSwitchingGPUClient::releaseHighPerformanceGPU() from WebProcess");
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::ReleaseHighPerformanceGPU(), 0);
 }

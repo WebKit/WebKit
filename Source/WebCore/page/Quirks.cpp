@@ -150,8 +150,8 @@ bool Quirks::shouldAutoplayForArbitraryUserGesture() const
     if (!needsQuirks())
         return false;
 
-    auto host = m_document->url().host();
-    return equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com");
+    auto domain = RegistrableDomain { m_document->topDocument().url() };
+    return domain == "twitter.com"_s || domain == "facebook.com"_s;
 #endif
 }
 
@@ -864,7 +864,11 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
     if (!needsQuirks())
         return false;
 
-    return m_document->url().protocolIs("https") && equalLettersIgnoringASCIICase(m_document-> url().host(), "www.baidu.com");
+    if (!m_shouldEnableLegacyGetUserMediaQuirk) {
+        auto host = m_document->securityOrigin().host();
+        m_shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com" || host == "www.warbyparker.com";
+    }
+    return m_shouldEnableLegacyGetUserMediaQuirk.value();
 }
 #endif
 
@@ -1056,6 +1060,11 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     }
 
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
+        if (storageAccessGranted == StorageAccessWasGranted::No) {
+            completionHandler(storageAccessGranted);
+            return;
+        }
+
         ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [storageAccessGranted, completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(storageAccessGranted);
         });
@@ -1261,16 +1270,42 @@ bool Quirks::needsBlackFullscreenBackgroundQuirk() const
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
-    // Facebook will naively pause a <video> element that has scrolled out of the viewport, regardless of whether that element is currently in PiP mode.
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // Facebook and Twitter will naively pause a <video> element that has scrolled out of the viewport,
+    // regardless of whether that element is currently in PiP mode.
+    // We should remove the quirk once <rdar://problem/67273166> and <rdar://problem/73369869> have been fixed.
     if (!needsQuirks())
         return false;
 
     if (!m_requiresUserGestureToPauseInPictureInPicture) {
-        auto domain = RegistrableDomain(m_document->topDocument().url());
-        m_requiresUserGestureToPauseInPictureInPicture = domain.string() == "facebook.com"_s;
+        auto domain = RegistrableDomain(m_document->topDocument().url()).string();
+        m_requiresUserGestureToPauseInPictureInPicture = domain == "facebook.com"_s || domain == "twitter.com"_s;
     }
 
     return *m_requiresUserGestureToPauseInPictureInPicture;
+#else
+    return false;
+#endif
+}
+
+bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // Twitter will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
+    // load the <video> element with an empty "src" regardless of whether that element is currently in PiP mode.
+    // We should remove the quirk once <rdar://problem/73369869> has been fixed.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_requiresUserGestureToLoadInPictureInPicture) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_requiresUserGestureToLoadInPictureInPicture = domain.string() == "twitter.com"_s;
+    }
+
+    return *m_requiresUserGestureToLoadInPictureInPicture;
+#else
+    return false;
+#endif
 }
 
 bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
@@ -1313,5 +1348,31 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
     return false;
 #endif
 }
+
+#if ENABLE(WEB_AUTHN)
+bool Quirks::shouldBypassUserGestureRequirementForWebAuthn() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    if (equalLettersIgnoringASCIICase(host, "dropbox.com") || host.endsWithIgnoringASCIICase(".dropbox.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "microsoft.com") || host.endsWithIgnoringASCIICase(".microsoft.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "facebook.com") || host.endsWithIgnoringASCIICase(".facebook.com"))
+        return true;
+
+    return false;
+}
+#endif
 
 }

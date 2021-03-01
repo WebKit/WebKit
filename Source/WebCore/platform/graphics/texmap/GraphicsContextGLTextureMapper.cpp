@@ -69,12 +69,8 @@ static Deque<GraphicsContextGLOpenGL*, MaxActiveContexts>& activeContexts()
     return s_activeContexts;
 }
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow, GraphicsContextGLOpenGL::Destination destination)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow)
 {
-    // This implementation doesn't currently support rendering directly to the HostWindow.
-    if (destination == Destination::DirectlyToHostWindow)
-        return nullptr;
-
     static bool initialized = false;
     static bool success = true;
     if (!initialized) {
@@ -96,7 +92,7 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
         return nullptr;
 
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
-    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow, destination));
+    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow));
 
 #if USE(LIBEPOXY) && USE(OPENGL_ES) && ENABLE(WEBGL2)
     // Bail if GLES3 was requested but cannot be provided.
@@ -109,17 +105,17 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
 }
 
 #if USE(ANGLE)
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if ENABLE(WEBGL2)
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
 #if USE(NICOSIA)
-    m_nicosiaLayer = WTF::makeUnique<Nicosia::GCGLANGLELayer>(*this, destination);
+    m_nicosiaLayer = WTF::makeUnique<Nicosia::GCGLANGLELayer>(*this);
 #else
-    m_texmapLayer = WTF::makeUnique<TextureMapperGCGLPlatformLayer>(*this, destination);
+    m_texmapLayer = WTF::makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
@@ -127,68 +123,66 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
 
-    if (destination == Destination::Offscreen) {
-        GLenum textureTarget = drawingBufferTextureTarget();
-        // Create a texture to render into.
-        gl::GenTextures(1, &m_texture);
-        gl::BindTexture(textureTarget, m_texture);
-        gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        gl::BindTexture(textureTarget, 0);
+    GLenum textureTarget = drawingBufferTextureTarget();
+    // Create a texture to render into.
+    gl::GenTextures(1, &m_texture);
+    gl::BindTexture(textureTarget, m_texture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::BindTexture(textureTarget, 0);
 
-        // Create an FBO.
-        gl::GenFramebuffers(1, &m_fbo);
-        gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    // Create an FBO.
+    gl::GenFramebuffers(1, &m_fbo);
+    gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
 #if USE(COORDINATED_GRAPHICS)
-        gl::GenTextures(1, &m_compositorTexture);
-        gl::BindTexture(texureType, m_compositorTexture);
-        gl::TexParameterf(texureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(texureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::GenTextures(1, &m_compositorTexture);
+    gl::BindTexture(textureTarget, m_compositorTexture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        gl::GenTextures(1, &m_intermediateTexture);
-        gl::BindTexture(texureType, m_intermediateTexture);
-        gl::TexParameterf(texureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(texureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::GenTextures(1, &m_intermediateTexture);
+    gl::BindTexture(textureTarget, m_intermediateTexture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        gl::BindTexture(texureType, 0);
+    gl::BindTexture(textureTarget, 0);
 #endif
 
-        // Create a multisample FBO.
-        ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
-        if (attributes.antialias) {
-            gl::GenFramebuffers(1, &m_multisampleFBO);
-            gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-            gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (attributes.stencil || attributes.depth)
-                gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        } else {
-            // Bind canvas FBO.
-            gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-            m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-            if (attributes.stencil || attributes.depth)
-                gl::GenRenderbuffers(1, &m_depthStencilBuffer);
-        }
+    // Create a multisample FBO.
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attributes.antialias) {
+        gl::GenFramebuffers(1, &m_multisampleFBO);
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
+        gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+    } else {
+        // Bind canvas FBO.
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
+        if (attributes.stencil || attributes.depth)
+            gl::GenRenderbuffers(1, &m_depthStencilBuffer);
     }
 
     gl::ClearColor(0, 0, 0, 0);
 }
 #else
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
-    m_nicosiaLayer = makeUnique<Nicosia::GCGLLayer>(*this, destination);
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLLayer>(*this);
 #else
-    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this, destination);
+    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
 
     bool success = makeContextCurrent();
@@ -197,60 +191,58 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
 
-    if (destination == Destination::Offscreen) {
-        // Create a texture to render into.
-        ::glGenTextures(1, &m_texture);
-        ::glBindTexture(GL_TEXTURE_2D, m_texture);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        ::glBindTexture(GL_TEXTURE_2D, 0);
+    // Create a texture to render into.
+    ::glGenTextures(1, &m_texture);
+    ::glBindTexture(GL_TEXTURE_2D, m_texture);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ::glBindTexture(GL_TEXTURE_2D, 0);
 
-        // Create an FBO.
-        ::glGenFramebuffers(1, &m_fbo);
-        ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    // Create an FBO.
+    ::glGenFramebuffers(1, &m_fbo);
+    ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
 #if USE(COORDINATED_GRAPHICS)
-        ::glGenTextures(1, &m_compositorTexture);
-        ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ::glGenTextures(1, &m_compositorTexture);
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        ::glGenTextures(1, &m_intermediateTexture);
-        ::glBindTexture(GL_TEXTURE_2D, m_intermediateTexture);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ::glGenTextures(1, &m_intermediateTexture);
+    ::glBindTexture(GL_TEXTURE_2D, m_intermediateTexture);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        ::glBindTexture(GL_TEXTURE_2D, 0);
+    ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
-        // Create a multisample FBO.
-        ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
-        if (attributes.antialias) {
-            ::glGenFramebuffers(1, &m_multisampleFBO);
-            ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-            ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (attributes.stencil || attributes.depth)
-                ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        } else {
-            // Bind canvas FBO.
-            glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_fbo);
-            m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
+    // Create a multisample FBO.
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attributes.antialias) {
+        ::glGenFramebuffers(1, &m_multisampleFBO);
+        ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
+        ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+    } else {
+        // Bind canvas FBO.
+        glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_fbo);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
 #if USE(OPENGL_ES)
-            if (attributes.depth)
-                glGenRenderbuffers(1, &m_depthBuffer);
-            if (attributes.stencil)
-                glGenRenderbuffers(1, &m_stencilBuffer);
+        if (attributes.depth)
+            glGenRenderbuffers(1, &m_depthBuffer);
+        if (attributes.stencil)
+            glGenRenderbuffers(1, &m_stencilBuffer);
 #endif
-            if (attributes.stencil || attributes.depth)
-                glGenRenderbuffers(1, &m_depthStencilBuffer);
-        }
+        if (attributes.stencil || attributes.depth)
+            glGenRenderbuffers(1, &m_depthStencilBuffer);
     }
 
 #if !USE(OPENGL_ES)
@@ -450,7 +442,7 @@ GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
 #endif
 
 #if PLATFORM(GTK) && !USE(ANGLE)
-ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions) {
 #if USE(OPENGL_ES)

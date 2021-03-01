@@ -29,6 +29,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderMarquee.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -175,7 +176,10 @@ RenderMarquee* HTMLMarqueeElement::renderMarquee() const
 {
     if (!renderer() || !renderer()->hasLayer())
         return nullptr;
-    return renderBoxModelObject()->layer()->marquee();
+    auto* scrollableArea = renderBoxModelObject()->layer()->scrollableArea();
+    if (!scrollableArea)
+        return nullptr;
+    return scrollableArea->marquee();
 }
 
 } // namespace WebCore

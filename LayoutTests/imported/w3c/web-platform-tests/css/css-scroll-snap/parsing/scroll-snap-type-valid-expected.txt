@@ -8,6 +8,6 @@ PASS e.style['scroll-snap-type'] = "both" should set the property value
 PASS e.style['scroll-snap-type'] = "y mandatory" should set the property value
 PASS e.style['scroll-snap-type'] = "block mandatory" should set the property value
 PASS e.style['scroll-snap-type'] = "both mandatory" should set the property value
-FAIL e.style['scroll-snap-type'] = "inline proximity" should set the property value assert_equals: serialization should be canonical expected "inline" but got "inline proximity"
-FAIL e.style['scroll-snap-type'] = "x proximity" should set the property value assert_equals: serialization should be canonical expected "x" but got "x proximity"
+PASS e.style['scroll-snap-type'] = "inline proximity" should set the property value
+PASS e.style['scroll-snap-type'] = "x proximity" should set the property value
 

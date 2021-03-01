@@ -253,12 +253,12 @@ public:
 
     uint32_t offsetOf(Label label)
     {
-        return applyOffset(label.m_label).m_offset;
+        return applyOffset(label.m_label).offset();
     }
 
     unsigned offsetOf(PatchableJump jump)
     {
-        return applyOffset(jump.m_jump.m_label).m_offset;
+        return applyOffset(jump.m_jump.m_label).offset();
     }
 
     // Upon completion of all patching 'FINALIZE_CODE()' should be called once to
@@ -318,7 +318,7 @@ private:
     template <typename T> T applyOffset(T src)
     {
 #if ENABLE(BRANCH_COMPACTION)
-        src.m_offset -= executableOffsetFor(src.m_offset);
+        src = src.labelAtOffset(-executableOffsetFor(src.offset()));
 #endif
         return src;
     }

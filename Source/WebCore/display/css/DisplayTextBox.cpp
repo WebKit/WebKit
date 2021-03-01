@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
+
 TextBox::TextBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
     : Box(tree, borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
     , m_expansion(lineRun.expansion())

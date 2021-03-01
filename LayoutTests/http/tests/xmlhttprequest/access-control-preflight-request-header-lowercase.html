@@ -10,7 +10,7 @@ if (window.testRunner) {
 function sendRequest()
 {
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-request-header-lowercase.php");
+    xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-request-header-lowercase.py");
     xhr.setRequestHeader("X-Custom-Header", "foobar");
     xhr.onerror = function() {
         document.body.appendChild(document.createTextNode("FAIL: onerror called"));

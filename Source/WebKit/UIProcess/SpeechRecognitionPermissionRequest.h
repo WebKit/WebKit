@@ -27,16 +27,26 @@
 
 #include "APIObject.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SpeechRecognitionError.h>
+#include <WebCore/SpeechRecognitionRequest.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
+using SpeechRecognitionPermissionRequestCallback = CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>;
+
 class SpeechRecognitionPermissionRequest : public RefCounted<SpeechRecognitionPermissionRequest> {
 public:
-    static Ref<SpeechRecognitionPermissionRequest> create(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&& completionHandler)
+    static Ref<SpeechRecognitionPermissionRequest> create(WebCore::SpeechRecognitionRequest& request, SpeechRecognitionPermissionRequestCallback&& completionHandler)
     {
-        return adoptRef(*new SpeechRecognitionPermissionRequest(lang, origin, WTFMove(completionHandler)));
+        return adoptRef(*new SpeechRecognitionPermissionRequest(request, WTFMove(completionHandler)));
+    }
+
+    ~SpeechRecognitionPermissionRequest()
+    {
+        if (m_completionHandler)
+            m_completionHandler(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Request is cancelled"_s });
     }
 
     void complete(Optional<WebCore::SpeechRecognitionError>&& error)
@@ -45,19 +55,17 @@ public:
         completionHandler(WTFMove(error));
     }
 
-    const WebCore::ClientOrigin& origin() const { return m_origin; }
-    const String& lang() const { return m_lang; }
+    WebCore::SpeechRecognitionRequest* request() { return m_request.get(); }
 
 private:
-    SpeechRecognitionPermissionRequest(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&& completionHandler)
-        : m_lang(lang)
-        , m_origin(origin)
+    SpeechRecognitionPermissionRequest(WebCore::SpeechRecognitionRequest& request, SpeechRecognitionPermissionRequestCallback&& completionHandler)
+        : m_request(makeWeakPtr(request))
         , m_completionHandler(WTFMove(completionHandler))
     { }
 
-    String m_lang;
-    WebCore::ClientOrigin m_origin;
-    CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)> m_completionHandler;
+
+    WeakPtr<WebCore::SpeechRecognitionRequest> m_request;
+    SpeechRecognitionPermissionRequestCallback m_completionHandler;
 };
 
 class SpeechRecognitionPermissionCallback : public API::ObjectImpl<API::Object::Type::SpeechRecognitionPermissionCallback> {

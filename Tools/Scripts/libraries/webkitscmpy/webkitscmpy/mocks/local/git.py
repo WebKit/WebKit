@@ -147,12 +147,6 @@ class Git(mocks.Subprocess):
 
         super(Git, self).__init__(
             mocks.Subprocess.Route(
-                '/usr/bin/which', 'git',
-                completion=mocks.ProcessCompletion(
-                    returncode=0,
-                    stdout='{}\n'.format(self.executable),
-                ),
-            ), mocks.Subprocess.Route(
                 self.executable, 'status',
                 cwd=self.path,
                 generator=lambda *args, **kwargs:

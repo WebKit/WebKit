@@ -27,7 +27,6 @@
 #include "WebKit2Initialize.h"
 
 #include "LogInitialization.h"
-#include "WebKitJITOperations.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/WebCoreJITOperations.h>
@@ -53,7 +52,6 @@ void InitializeWebKit2()
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
     WebCore::populateJITOperations();
-    WebKit::populateJITOperations();
 }
 
 #endif // !PLATFORM(COCOA)

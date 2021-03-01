@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Logging.h"
 #include "SpeechRecognitionRealtimeMediaSourceManagerMessages.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h"
 #include "WebProcess.h"
@@ -157,9 +158,9 @@ private:
     RealtimeMediaSourceIdentifier m_identifier;
     Ref<RealtimeMediaSource> m_source;
     Ref<IPC::Connection> m_connection;
-    uint64_t m_numberOfFrames { 0 };
 
 #if PLATFORM(COCOA)
+    uint64_t m_numberOfFrames { 0 };
     CARingBuffer m_ringBuffer;
     CAAudioStreamDescription m_description { };
 #endif
@@ -182,13 +183,13 @@ void SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions(Sandbox
 {
     m_sandboxExtensionForTCCD = SandboxExtension::create(WTFMove(sandboxHandleForTCCD));
     if (!m_sandboxExtensionForTCCD)
-        LOG_ERROR("Failed to create sandbox extension for tccd");
+        RELEASE_LOG_ERROR(Media, "Failed to create sandbox extension for tccd");
     else
         m_sandboxExtensionForTCCD->consume();
 
     m_sandboxExtensionForMicrophone = SandboxExtension::create(WTFMove(sandboxHandleForMicrophone));
     if (!m_sandboxExtensionForMicrophone)
-        LOG_ERROR("Failed to create sandbox extension for microphone");
+        RELEASE_LOG_ERROR(Media, "Failed to create sandbox extension for microphone");
     else
         m_sandboxExtensionForMicrophone->consume();
 }
@@ -212,7 +213,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSour
 {
     auto result = SpeechRecognitionCaptureSource::createRealtimeMediaSource(device);
     if (!result) {
-        LOG_ERROR("Failed to create realtime source");
+        RELEASE_LOG_ERROR(Media, "Failed to create realtime source");
         send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteCaptureFailed(identifier), 0);
         return;
     }

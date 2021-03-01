@@ -52,6 +52,8 @@ public:
 
     void release() { m_isReleased = true; }
 
+    void clearException() { m_vm.clearException(); }
+
     JS_EXPORT_PRIVATE void printIfNeedCheck(const char* functionName, const char* file, unsigned line);
 
 private:
@@ -80,6 +82,8 @@ public:
     ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, JSValue value) { return m_vm.throwException(globalObject, value); }
 
     ALWAYS_INLINE void release() { }
+
+    ALWAYS_INLINE void clearException() { m_vm.clearException(); }
 };
 
 #define DECLARE_THROW_SCOPE(vm__) \

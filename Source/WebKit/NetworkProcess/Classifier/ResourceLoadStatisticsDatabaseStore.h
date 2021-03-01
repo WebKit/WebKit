@@ -140,9 +140,7 @@ public:
     void clearExpiredPrivateClickMeasurement() override;
     String privateClickMeasurementToString() override;
     void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) override;
-    void updateTimerLastFired() override;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override;
-    void updatePrivateClickMeasurementAttributionTimes();
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
@@ -193,7 +191,7 @@ private:
     Vector<DomainData> domains() const;
     bool hasHadUnexpiredRecentUserInteraction(const DomainData&, OperatingDatesWindow);
     void clearGrandfathering(Vector<unsigned>&&);
-    WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&) const;
+    WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&);
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
 
     void reclassifyResources();
@@ -237,7 +235,6 @@ private:
     WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
     String attributionToString(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
     std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&);
-    WallTime timerLastFired();
 
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;
@@ -288,8 +285,6 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_allAttributedPrivateClickMeasurementStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_findUnattributedStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_findAttributedStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_updateTimerLastFiredStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_timerLastFiredStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_updateAttributionsEarliestTimeToSendStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_removeUnattributedStatement;
     

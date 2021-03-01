@@ -2440,12 +2440,14 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)imageControlsEnabled
 {
-    return [self _boolValueForKey:WebKitImageControlsEnabledPreferenceKey];
+    // Image controls are no longer supported.
+    return NO;
 }
 
 - (void)setImageControlsEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitImageControlsEnabledPreferenceKey];
+    // Image controls are no longer supported.
+    UNUSED_PARAM(enabled);
 }
 
 - (BOOL)serviceControlsEnabled

@@ -45,7 +45,7 @@ COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), Float
 
 FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(makeWeakPtr(renderer))
-    , m_shouldPaint(true)
+    , m_paintsFloat(true)
     , m_isDescendant(false)
     , m_isPlaced(false)
 #if ASSERT_ENABLED
@@ -65,7 +65,7 @@ FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect&
     , m_frameRect(frameRect)
     , m_marginOffset(marginOffset)
     , m_type(type)
-    , m_shouldPaint(shouldPaint)
+    , m_paintsFloat(shouldPaint)
     , m_isDescendant(isDescendant)
     , m_isPlaced(true)
 #if ASSERT_ENABLED
@@ -77,7 +77,6 @@ FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect&
 std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
 {
     auto object = makeUnique<FloatingObject>(renderer);
-    object->setShouldPaint(!renderer.hasSelfPaintingLayer()); // If a layer exists, the float will paint itself. Otherwise someone else will.
     object->setIsDescendant(true);
     return object;
 }
@@ -89,10 +88,18 @@ std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize of
 
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
-    auto cloneObject = makeUnique<FloatingObject>(renderer(), type(), m_frameRect, m_marginOffset, m_shouldPaint, m_isDescendant);
+    auto cloneObject = makeUnique<FloatingObject>(renderer(), type(), m_frameRect, m_marginOffset, m_paintsFloat, m_isDescendant);
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
+}
+
+bool FloatingObject::shouldPaint() const
+{
+    if (!m_renderer)
+        return false;
+
+    return !m_renderer->hasSelfPaintingLayer() && m_paintsFloat;
 }
 
 LayoutSize FloatingObject::translationOffsetToAncestor() const
@@ -104,7 +111,7 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 {
-    return stream << &object << " (" << object.frameRect().x().toInt() << 'x' << object.frameRect().y().toInt() << ' ' << object.frameRect().maxX().toInt() << 'x' << object.frameRect().maxY().toInt() << ')';
+    return stream << &object << " renderer " << &object.renderer() << " " << object.frameRect() << " paintsFloat " << object.paintsFloat() << " shouldPaint " << object.shouldPaint();
 }
 
 #endif
@@ -257,9 +264,7 @@ LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit l
 }
 
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
-    : m_leftObjectsCount(0)
-    , m_rightObjectsCount(0)
-    , m_horizontalWritingMode(renderer.isHorizontalWritingMode())
+    : m_horizontalWritingMode(renderer.isHorizontalWritingMode())
     , m_renderer(makeWeakPtr(renderer))
 {
 }

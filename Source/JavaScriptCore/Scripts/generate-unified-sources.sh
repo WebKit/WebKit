@@ -18,7 +18,7 @@ UnifiedSourceCppFileCount=145
 UnifiedSourceMmFileCount=5
 
 if [ $# -eq 0 ]; then
-    echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"
+    echo "Using unified source list files: Sources.txt, SourcesCocoa.txt, inspector/remote/SourcesCocoa.txt"
 fi
 
-/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" --derived-sources-path "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" --source-tree-path "${SRCROOT}" --max-cpp-bundle-count ${UnifiedSourceCppFileCount} --max-obj-c-bundle-count ${UnifiedSourceMmFileCount} Sources.txt SourcesCocoa.txt "${ARGS[@]}" > /dev/null
+/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" --derived-sources-path "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" --source-tree-path "${SRCROOT}" --max-cpp-bundle-count ${UnifiedSourceCppFileCount} --max-obj-c-bundle-count ${UnifiedSourceMmFileCount} Sources.txt SourcesCocoa.txt inspector/remote/SourcesCocoa.txt "${ARGS[@]}" > /dev/null

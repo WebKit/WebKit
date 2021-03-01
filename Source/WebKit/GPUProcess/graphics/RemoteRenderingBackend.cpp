@@ -33,32 +33,44 @@
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/cocoa/MachSemaphore.h>
-#endif
+
+#define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
+    RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
+    m_gpuConnectionToWebProcess->terminateWebProcess();
+
+#define MESSAGE_CHECK(assertion, message) do { \
+    if (UNLIKELY(!(assertion))) { \
+        TERMINATE_WEB_PROCESS_WITH_MESSAGE(message); \
+        return; \
+    } \
+} while (0)
+
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue, message) do { \
+    if (UNLIKELY(!(assertion))) { \
+        TERMINATE_WEB_PROCESS_WITH_MESSAGE(message); \
+        return (returnValue); \
+    } \
+} while (0)
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(parameters)));
+    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
     : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_renderingBackendIdentifier(parameters.identifier)
-#if PLATFORM(COCOA)
-    , m_resumeDisplayListSemaphore(makeUnique<MachSemaphore>(WTFMove(parameters.sendRightForResumeDisplayListSemaphore)))
-#endif
+    , m_renderingBackendIdentifier(identifier)
+    , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
     gpuConnectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
@@ -115,7 +127,7 @@ void RemoteRenderingBackend::didFlush(DisplayList::FlushIdentifier flushIdentifi
     send(Messages::RemoteRenderingBackendProxy::DidFlush(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
@@ -173,30 +185,21 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
     while (destination) {
         auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
-        if (UNLIKELY(!displayList)) {
-            // FIXME: Add a message check to terminate the web process.
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        MESSAGE_CHECK_WITH_RETURN_VALUE(displayList, nullptr, "Failed to map display list from shared memory");
 
         auto result = submit(*displayList, *destination);
-        sizeToRead = handle.advance(result.numberOfBytesRead);
+        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItem, nullptr, "Detected invalid display list item");
+
+        auto advanceResult = handle.advance(result.numberOfBytesRead);
+        MESSAGE_CHECK_WITH_RETURN_VALUE(advanceResult, nullptr, "Failed to advance display list reader handle");
+        sizeToRead = *advanceResult;
 
         CheckedSize checkedOffset = offset;
         checkedOffset += result.numberOfBytesRead;
-        if (UNLIKELY(checkedOffset.hasOverflowed())) {
-            // FIXME: Add a message check to terminate the web process.
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        MESSAGE_CHECK_WITH_RETURN_VALUE(!checkedOffset.hasOverflowed(), nullptr, "Overflowed when advancing shared display list handle offset");
 
         offset = checkedOffset.unsafeGet();
-
-        if (UNLIKELY(offset > handle.sharedMemory().size())) {
-            // FIXME: Add a message check to terminate the web process.
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        MESSAGE_CHECK_WITH_RETURN_VALUE(offset <= handle.sharedMemory().size(), nullptr, "Out-of-bounds offset into shared display list handle");
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
@@ -222,7 +225,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
             handle.startWaiting();
 #if PLATFORM(COCOA)
-            m_resumeDisplayListSemaphore->waitFor(30_us);
+            m_resumeDisplayListSemaphore.waitFor(30_us);
 #else
             sleep(30_us);
 #endif
@@ -232,26 +235,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
                 break;
 
             sizeToRead = handle.unreadBytes();
-            if (UNLIKELY(!sizeToRead)) {
-                // FIXME: Add a message check to terminate the web process.
-                ASSERT_NOT_REACHED();
-                break;
-            }
+            MESSAGE_CHECK_WITH_RETURN_VALUE(sizeToRead, nullptr, "No unread bytes when resuming display list processing");
 
             auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
-            if (UNLIKELY(!newDestinationIdentifier)) {
-                // FIXME: Add a message check to terminate the web process.
-                ASSERT_NOT_REACHED();
-                break;
-            }
+            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier, nullptr, "Invalid image buffer destination when resuming display list processing");
 
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier));
-
-            if (UNLIKELY(!destination)) {
-                // FIXME: Add a message check to terminate the web process.
-                ASSERT_NOT_REACHED();
-                break;
-            }
+            MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
 
             offset = resumeReadingInfo->offset;
 
@@ -272,24 +262,14 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
     auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier));
-    if (UNLIKELY(!destinationImageBuffer)) {
-        // FIXME: Add a message check to terminate the web process.
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
 
     auto initialHandle = m_sharedDisplayListHandles.get(arguments.itemBufferIdentifier);
-    if (UNLIKELY(!initialHandle)) {
-        // FIXME: Add a message check to terminate the web process.
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    MESSAGE_CHECK(initialHandle, "Missing initial shared display list handle");
 
     destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
-    if (!destinationImageBuffer) {
-        RELEASE_ASSERT(m_pendingWakeupInfo);
+    if (!destinationImageBuffer)
         return;
-    }
 
     while (m_pendingWakeupInfo) {
         if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
@@ -305,20 +285,13 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         // Otherwise, continue reading the next display list item buffer from the start.
         auto arguments = std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments;
         destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
-        if (!destinationImageBuffer) {
-            RELEASE_ASSERT(m_pendingWakeupInfo);
+        if (!destinationImageBuffer)
             break;
-        }
     }
 }
 
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
-    if (UNLIKELY(m_pendingWakeupInfo)) {
-        // FIXME: Add a message check to terminate the web process.
-        ASSERT_NOT_REACHED();
-        return;
-    }
     m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
 }
 
@@ -405,12 +378,7 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
 {
     ASSERT(!RunLoop::isMain());
-
-    if (UNLIKELY(m_sharedDisplayListHandles.contains(identifier))) {
-        // FIXME: Add a message check to terminate the web process.
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(identifier), "Duplicate shared display list handle");
 
     if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite))
         m_sharedDisplayListHandles.set(identifier, DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull()));

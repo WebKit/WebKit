@@ -186,6 +186,7 @@ function resolvePromise(promise, resolution)
     @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctions(promise));
 }
 
+// Keep in sync with JSPromise::rejectedPromise.
 @globalPrivate
 function rejectPromise(promise, reason)
 {
@@ -198,8 +199,6 @@ function rejectPromise(promise, reason)
     var reactions = @getPromiseInternalField(promise, @promiseFieldReactionsOrResult);
     @putPromiseInternalField(promise, @promiseFieldReactionsOrResult, reason);
     @putPromiseInternalField(promise, @promiseFieldFlags, flags | @promiseStateRejected);
-
-    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
 
     if (!(flags & @promiseFlagsIsHandled))
         @hostPromiseRejectionTracker(promise, @promiseRejectionReject);
@@ -219,8 +218,6 @@ function fulfillPromise(promise, value)
     var reactions = @getPromiseInternalField(promise, @promiseFieldReactionsOrResult);
     @putPromiseInternalField(promise, @promiseFieldReactionsOrResult, value);
     @putPromiseInternalField(promise, @promiseFieldFlags, flags | @promiseStateFulfilled);
-
-    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
 
     @triggerPromiseReactions(@promiseStateFulfilled, reactions, value);
 }

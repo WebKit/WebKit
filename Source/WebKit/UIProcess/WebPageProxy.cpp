@@ -2892,10 +2892,15 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         didReleaseAllTouchPoints();
     });
 
+    bool isTouchStart = event.type() == WebEvent::TouchStart;
+    bool isTouchEnd = event.type() == WebEvent::TouchEnd;
+
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking) {
-        if (!isHandlingPreventableTouchStart())
+        if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchEnd)
+            pageClient().doneDeferringTouchEnd(false);
         return;
     }
 
@@ -2909,18 +2914,30 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         event.setCanPreventNativeGestures(false);
         handleUnpreventableTouchEvent(event);
         didReceiveEvent(event.type(), false);
-        if (!isHandlingPreventableTouchStart())
+        if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchEnd)
+            pageClient().doneDeferringTouchEnd(false);
         return;
     }
 
-    if (event.type() == WebEvent::TouchStart) {
-        ++m_handlingPreventableTouchStartCount;
+    if (isTouchStart || isTouchEnd) {
+        if (isTouchStart)
+            ++m_handlingPreventableTouchStartCount;
+
+        if (isTouchEnd)
+            ++m_handlingPreventableTouchEndCount;
+
         Function<void(bool, CallbackBase::Error)> completionHandler = [this, protectedThis = makeRef(*this), event](bool handled, CallbackBase::Error error) {
             bool didFinishDeferringTouchStart = false;
             ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
             if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
                 didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
+
+            bool didFinishDeferringTouchEnd = false;
+            ASSERT_IMPLIES(event.type() == WebEvent::TouchEnd, m_handlingPreventableTouchEndCount);
+            if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
+                didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
 
             bool handledOrFailedWithError = handled || error != CallbackBase::Error::None || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
             if (!isHandlingPreventableTouchStart())
@@ -2934,6 +2951,9 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
 
             if (didFinishDeferringTouchStart)
                 pageClient().doneDeferringTouchStart(handledOrFailedWithError);
+
+            if (didFinishDeferringTouchEnd)
+                pageClient().doneDeferringTouchEnd(handledOrFailedWithError);
         };
 
         auto callbackID = m_callbacks.put(WTFMove(completionHandler), m_process->throttler().backgroundActivity("WebPageProxy::handlePreventableTouchEvent"_s));
@@ -5972,7 +5992,7 @@ void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(WebKit::Medi
     sendWithAsyncReply(Messages::WebPage::RequestMediaPlaybackState(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler();
@@ -5982,7 +6002,7 @@ void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void(void)>&& complet
     sendWithAsyncReply(Messages::WebPage::PauseAllMediaPlayback(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_suspendMediaPlaybackCounter++;
     if (m_mediaPlaybackIsSuspended) {
@@ -5999,7 +6019,7 @@ void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void(void)>&& compl
     sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     if (m_suspendMediaPlaybackCounter > 0)
         m_suspendMediaPlaybackCounter--;
@@ -7739,13 +7759,38 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
         "AGXDeviceUserClient"_s,
         "AppleJPEGDriverUserClient"_s,
         "IOGPU"_s,
-        "IOMobileFramebufferUserClient"_s,
-        "IOSurfaceAcceleratorClient"_s,
         "IOSurfaceRootUserClient"_s,
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        "AGPMClient"_s,
+        "AppleGraphicsControlClient"_s,
+        "AppleGraphicsPolicyClient"_s,
         "AppleIntelMEUserClient"_s,
+        "AppleMGPUPowerControlClient"_s,
         "AppleSNBFBUserClient"_s,
+        "AppleUpstreamUserClient"_s,
+        "AudioAUUC"_s,
+        "IOAccelerationUserClient"_s,
+        "IOAccelerator"_s,
+        "IOAudioControlUserClient"_s,
+        "IOAudioEngineUserClient"_s,
+        "IOSurfaceRootUserClient"_s,
+#endif
+#if (PLATFORM(MAC) && CPU(ARM64)) || PLATFORM(IOS_FAMILY)
+        "IOMobileFramebufferUserClient"_s,
+        "IOSurfaceAcceleratorClient"_s,
+#endif
+    });
+    return services;
+}
+
+static const Vector<ASCIILiteral>& gpuMachServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.MTLCompilerService"_s,
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        "com.apple.cvmsServ"_s,
 #endif
     });
     return services;
@@ -7782,7 +7827,7 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.audio.audiohald"_s, "com.apple.audio.SandboxHelper"_s, "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
         "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
-        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s, "com.apple.BluetoothServices"_s,
+        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s,
 #endif
     });
     return services;
@@ -7901,9 +7946,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())
         || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
         || !preferences().useGPUProcessForCanvasRenderingEnabled()
-        || !preferences().useGPUProcessForDOMRenderingEnabled()
-        || !preferences().useGPUProcessForWebGLEnabled())
+        || !preferences().useGPUProcessForWebGLEnabled()) {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
+        parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), WTF::nullopt);
+    }
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = pageClient().accentColor();
@@ -7924,6 +7970,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());
+    parameters.urlSchemesWithLegacyCustomProtocolHandlers = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
 
 #if ENABLE(WEB_RTC)
     parameters.iceCandidateFilteringEnabled = m_preferences->iceCandidateFilteringEnabled();
@@ -8245,6 +8292,27 @@ void WebPageProxy::clearUserMediaState()
 #endif
 }
 
+void WebPageProxy::requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
+{
+#if ENABLE(MEDIA_STREAM)
+    MESSAGE_CHECK(m_process, m_process->webFrame(frameID));
+
+    auto origin = API::SecurityOrigin::create(topLevelDocumentOriginData.securityOrigin());
+    auto request = mediaKeySystemPermissionRequestManager().createRequestForFrame(mediaKeySystemID, frameID, topLevelDocumentOriginData.securityOrigin(), keySystem);
+    m_uiClient->decidePolicyForMediaKeySystemPermissionRequest(*this, origin, keySystem, [request = WTFMove(request)](bool allowed) {
+        if (allowed)
+            request->allow();
+        else
+            request->deny();
+    });
+#else
+    UNUSED_PARAM(mediaKeySystemID);
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(topLevelDocumentOriginData);
+    UNUSED_PARAM(keySystem);
+#endif
+}
+
 #if ENABLE(DEVICE_ORIENTATION)
 void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameID, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
@@ -8252,6 +8320,25 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
     MESSAGE_CHECK(m_process, frame);
 
     websiteDataStore().deviceOrientationAndMotionAccessController().shouldAllowAccess(*this, *frame, WTFMove(frameInfo), mayPrompt, WTFMove(completionHandler));
+}
+#endif
+
+
+#if ENABLE(IMAGE_EXTRACTION)
+void WebPageProxy::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
+{
+    pageClient().requestImageExtraction(imageData, WTFMove(completionHandler));
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermissionRequestManager()
+{
+    if (m_mediaKeySystemPermissionRequestManager)
+        return *m_mediaKeySystemPermissionRequestManager;
+
+    m_mediaKeySystemPermissionRequestManager = makeUnique<MediaKeySystemPermissionRequestManagerProxy>(*this);
+    return *m_mediaKeySystemPermissionRequestManager;
 }
 #endif
 
@@ -8370,9 +8457,24 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
     m_pageCount = pageCount;
 }
 
-void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& backgroundColor)
+void WebPageProxy::themeColorChanged(const Color& themeColor)
 {
-    m_pageExtendedBackgroundColor = backgroundColor;
+    if (m_themeColor == themeColor)
+        return;
+
+    pageClient().themeColorWillChange();
+    m_themeColor = themeColor;
+    pageClient().themeColorDidChange();
+}
+
+void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtendedBackgroundColor)
+{
+    if (m_pageExtendedBackgroundColor == pageExtendedBackgroundColor)
+        return;
+
+    pageClient().pageExtendedBackgroundColorWillChange();
+    m_pageExtendedBackgroundColor = pageExtendedBackgroundColor;
+    pageClient().pageExtendedBackgroundColorDidChange();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -9033,13 +9135,26 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
 #endif
 
     if (!m_isClosed)
-        updatePlayingMediaDidChange(newState);
+        updatePlayingMediaDidChange(newState, CanDelayNotification::Yes);
 }
 
-void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
+void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState, CanDelayNotification canDelayNotification)
 {
-    if (newState == m_mediaState)
+#if ENABLE(MEDIA_STREAM)
+    auto updateMediaCaptureStateImmediatelyIfNeeded = [&] {
+        if (canDelayNotification == CanDelayNotification::No && m_updateReportedMediaCaptureStateTimer.isActive()) {
+            m_updateReportedMediaCaptureStateTimer.stop();
+            updateReportedMediaCaptureState();
+        }
+    };
+#endif
+
+    if (newState == m_mediaState) {
+#if ENABLE(MEDIA_STREAM)
+        updateMediaCaptureStateImmediatelyIfNeeded();
+#endif
         return;
+    }
 
 #if PLATFORM(MACCATALYST)
     // When the page starts playing media for the first time, make sure we register with
@@ -9074,6 +9189,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
         if (m_userMediaPermissionRequestManager)
             m_userMediaPermissionRequestManager->captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
     }
+    updateMediaCaptureStateImmediatelyIfNeeded();
 #endif
 
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
@@ -9102,6 +9218,8 @@ void WebPageProxy::updateReportedMediaCaptureState()
 
     if (!haveReportedCapture && willReportCapture)
         m_updateReportedMediaCaptureStateTimer.startOneShot(m_mediaCaptureReportingDelay);
+
+    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState, activeCaptureState);
 
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
@@ -9855,6 +9973,15 @@ void WebPageProxy::getApplicationManifest(Function<void(const Optional<WebCore::
 }
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void WebPageProxy::updateAppHighlightsStorage(const IPC::SharedBufferCopy& data)
+{
+    MESSAGE_CHECK(m_process, data.buffer());
+
+    pageClient().updateAppHighlightsStorage(*data.buffer());
+}
+#endif
+
 namespace {
 enum class CompletionCondition {
     Cancellation,
@@ -10275,6 +10402,16 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 void WebPageProxy::gpuProcessCrashed()
 {
     pageClient().gpuProcessCrashed();
+
+#if ENABLE(MEDIA_STREAM)
+    bool shouldAllowAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();
+    bool shouldAllowVideoCapture = isCapturingVideo() && preferences().captureVideoInGPUProcessEnabled();
+    bool shouldAllowDisplayCapture = false;
+    if (shouldAllowAudioCapture || shouldAllowVideoCapture) {
+        auto& gpuProcess = process().processPool().ensureGPUProcess();
+        gpuProcess.updateCaptureAccess(shouldAllowAudioCapture, shouldAllowVideoCapture, shouldAllowDisplayCapture, m_process->coreProcessIdentifier(), [] { });
+    }
+#endif
 }
 #endif
 
@@ -10301,15 +10438,15 @@ void WebPageProxy::dispatchActivityStateUpdateForTesting()
     });
 }
 
-void WebPageProxy::requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(Optional<SpeechRecognitionError>&&)>&& completionHandler)
+void WebPageProxy::requestSpeechRecognitionPermission(WebCore::SpeechRecognitionRequest& request, CompletionHandler<void(Optional<SpeechRecognitionError>&&)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager)
         m_speechRecognitionPermissionManager = makeUnique<SpeechRecognitionPermissionManager>(*this);
 
-    m_speechRecognitionPermissionManager->request(lang, clientOrigin, WTFMove(completionHandler));
+    m_speechRecognitionPermissionManager->request(request, WTFMove(completionHandler));
 }
 
-void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager) {
         completionHandler(false);
@@ -10319,16 +10456,34 @@ void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCo
     m_speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
 }
 
+void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(MEDIA_STREAM)
+    auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
+    if (!captureDevice)
+        completionHandler(false);
+
+    userMediaPermissionRequestManager().checkUserMediaPermissionForSpeechRecognition(frameIdentifier, requestingOrigin, topOrigin, *captureDevice, WTFMove(completionHandler));
+#else
+    completionHandler(false);
+#endif
+}
+
+void WebPageProxy::requestMediaKeySystemPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(true);
+}
+
 #if ENABLE(MEDIA_STREAM)
 
 WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRecognition()
 {
-    if (preferences().captureAudioInGPUProcessEnabled())
-        return CaptureSourceOrError { "Not implemented for GPU process" };
-
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
     if (!captureDevice)
         return CaptureSourceOrError { "No device is available for capture" };
+
+    if (preferences().captureAudioInGPUProcessEnabled())
+        return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice) };
 
 #if PLATFORM(IOS_FAMILY)
     return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice) };

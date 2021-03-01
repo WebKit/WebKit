@@ -1493,8 +1493,13 @@ void JIT::privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo* byValInfo
         TypedArrayType type = typedArrayTypeForJITArrayMode(arrayMode);
         if (isInt(type))
             slowCases = emitIntTypedArrayPutByVal(bytecode, badType, type);
-        else 
+        else {
+            // FIXME: Optimize BigInt64Array / BigUint64Array in IC
+            // Currently, BigInt64Array / BigUint64Array never comes here.
+            // https://bugs.webkit.org/show_bug.cgi?id=221183
+            ASSERT(isFloat(type));
             slowCases = emitFloatTypedArrayPutByVal(bytecode, badType, type);
+        }
         break;
     }
     

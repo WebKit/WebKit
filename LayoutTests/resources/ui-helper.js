@@ -423,8 +423,8 @@ window.UIHelper = class UIHelper {
     {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    
-    static immediateScrollTo(x, y)
+
+    static scrollTo(x, y, unconstrained)
     {
         if (!this.isWebKit2()) {
             window.scrollTo(x, y);
@@ -433,11 +433,29 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => {
             testRunner.runUIScript(`
-                uiController.immediateScrollToOffset(${x}, ${y});`, resolve);
+                (function() {
+                    uiController.didEndScrollingCallback = function() {
+                        uiController.uiScriptComplete();
+                    }
+                    uiController.scrollToOffset(${x}, ${y}, { unconstrained: ${unconstrained} });
+                })()`, resolve);
+        });
+    }
+    
+    static immediateScrollTo(x, y, unconstrained)
+    {
+        if (!this.isWebKit2()) {
+            window.scrollTo(x, y);
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.immediateScrollToOffset(${x}, ${y}, { unconstrained: ${unconstrained} });`, resolve);
         });
     }
 
-    static immediateUnstableScrollTo(x, y)
+    static immediateUnstableScrollTo(x, y, unconstrained)
     {
         if (!this.isWebKit2()) {
             window.scrollTo(x, y);
@@ -447,7 +465,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 uiController.stableStateOverride = false;
-                uiController.immediateScrollToOffset(${x}, ${y});`, resolve);
+                uiController.immediateScrollToOffset(${x}, ${y}, { unconstrained: ${unconstrained} });`, resolve);
         });
     }
 
@@ -644,6 +662,22 @@ window.UIHelper = class UIHelper {
                 (function() {
                     if (uiController.isShowingPopover)
                         uiController.didDismissPopoverCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static waitForContextMenuToShow()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (!uiController.isShowingContextMenu)
+                        uiController.didShowContextMenuCallback = () => uiController.uiScriptComplete();
                     else
                         uiController.uiScriptComplete();
                 })()`, resolve);
@@ -904,6 +938,16 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`(() => {
                 uiController.uiScriptComplete(uiController.dateTimePickerValue);
             })()`, valueAsString => resolve(parseFloat(valueAsString)));
+        });
+    }
+
+    static chooseDateTimePickerValue()
+    {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.chooseDateTimePickerValue();
+                uiController.uiScriptComplete();
+            `, resolve);
         });
     }
 

@@ -52,35 +52,35 @@ function doTest(testName, testURL, simpleRequest, changeOrigin)
 var simpleRequest = true;
 
 doTest("Check headers after same-origin redirection to same-origin resource (simple request)",
-        "resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
         simpleRequest);
 
 doTest("Check headers after same-origin redirection to same-origin resource (not simple request)",
-        "resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
         !simpleRequest);
 
 doTest("Check headers after same origin redirection to cross-origin resource (simple request)",
-        "resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
         simpleRequest);
 
 doTest("Check headers after same origin redirection to cross-origin resource (not simple request)",
-        "resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
         !simpleRequest);
 
 doTest("Check headers after cross-origin redirection to same-origin resource (simple request)",
-        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
         simpleRequest);
 
 doTest("Check headers after cross-origin redirection to same-origin resource (not simple request)",
-        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
         !simpleRequest);
 
 doTest("Check headers after cross-origin redirection to cross-origin resource (simple request)",
-        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
         simpleRequest);
 
 doTest("Check headers after cross-origin redirection to cross-origin resource (not simple request)",
-        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.php",
+        "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
         !simpleRequest);
 
     </script>

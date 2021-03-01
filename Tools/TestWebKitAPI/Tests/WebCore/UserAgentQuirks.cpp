@@ -123,6 +123,10 @@ TEST(UserAgentTest, Quirks)
 
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
 
+#if ENABLE(THUNDER)
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.netflix.com/");
+#endif
+
     assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://accounts.youtube.com/");
     assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://docs.google.com/");
     assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://drive.google.com/");

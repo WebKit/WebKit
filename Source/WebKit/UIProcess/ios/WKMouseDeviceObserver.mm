@@ -29,12 +29,15 @@
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
 
 #import "WebProcessProxy.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKMouseDeviceObserver {
     BOOL _hasMouseDevice;
     size_t _startCount;
     RetainPtr<id<BSInvalidatable>> _token;
+    OSObjectPtr<dispatch_queue_t> _deviceObserverTokenQueue;
 }
 
 + (WKMouseDeviceObserver *)sharedInstance
@@ -45,26 +48,54 @@
     return instance;
 }
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _deviceObserverTokenQueue = adoptOSObject(dispatch_queue_create("WKMouseDeviceObserver _deviceObserverTokenQueue", DISPATCH_QUEUE_SERIAL));
+
+    return self;
+}
+
 #pragma mark - BKSMousePointerDeviceObserver state
 
 - (void)start
 {
+    [self startWithCompletionHandler:^{ }];
+}
+
+- (void)startWithCompletionHandler:(void (^)(void))completionHandler
+{
     if (++_startCount > 1)
         return;
 
-    ASSERT(!_token);
-    _token = [[BKSMousePointerService sharedInstance] addPointerDeviceObserver:self];
+    dispatch_async(_deviceObserverTokenQueue.get(), [strongSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
+        ASSERT(!strongSelf->_token);
+        strongSelf->_token = [[BKSMousePointerService sharedInstance] addPointerDeviceObserver:strongSelf.get()];
+
+        completionHandler();
+    });
 }
 
 - (void)stop
+{
+    [self stopWithCompletionHandler:^{ }];
+}
+
+- (void)stopWithCompletionHandler:(void (^)(void))completionHandler
 {
     ASSERT(_startCount);
     if (!_startCount || --_startCount)
         return;
 
-    ASSERT(_token);
-    [_token invalidate];
-    _token = nil;
+    dispatch_async(_deviceObserverTokenQueue.get(), [strongSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
+        ASSERT(strongSelf->_token);
+        [strongSelf->_token invalidate];
+        strongSelf->_token = nil;
+
+        completionHandler();
+    });
 }
 
 #pragma mark - BKSMousePointerDeviceObserver handlers

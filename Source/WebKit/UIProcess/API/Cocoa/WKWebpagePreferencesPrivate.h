@@ -60,7 +60,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
     // Indirect pointing devices will always synthesize touch events and behave as if touch input is being used.
     _WKWebsiteMouseEventPolicySynthesizeTouchEvents,
 #endif
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @class _WKCustomHeaderFields;
 @class WKUserContentController;
@@ -74,7 +74,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
 @property (nonatomic, copy, setter=_setCustomHeaderFields:) NSArray<_WKCustomHeaderFields *> *_customHeaderFields;
 @property (nonatomic, setter=_setPopUpPolicy:) _WKWebsitePopUpPolicy _popUpPolicy;
 @property (nonatomic, strong, setter=_setWebsiteDataStore:) WKWebsiteDataStore *_websiteDataStore;
-@property (nonatomic, strong, setter=_setUserContentController:) WKUserContentController *_userContentController WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, strong, setter=_setUserContentController:) WKUserContentController *_userContentController WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 @property (nonatomic, copy, setter=_setCustomUserAgentAsSiteSpecificQuirks:) NSString *_customUserAgentAsSiteSpecificQuirks;
 @property (nonatomic, copy, setter=_setCustomNavigatorPlatform:) NSString *_customNavigatorPlatform;
@@ -83,6 +83,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
 
 @property (nonatomic, copy, setter=_setApplicationNameForUserAgentWithModernCompatibility:) NSString *_applicationNameForUserAgentWithModernCompatibility;
 
-@property (nonatomic, setter=_setMouseEventPolicy:) _WKWebsiteMouseEventPolicy _mouseEventPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setMouseEventPolicy:) _WKWebsiteMouseEventPolicy _mouseEventPolicy WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end

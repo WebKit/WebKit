@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBox);
+
 ImageBox::ImageBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Image>&& image)
     : ReplacedBox(tree, borderBox, WTFMove(displayStyle), { TypeFlags::ImageBox })
     , m_image(WTFMove(image))

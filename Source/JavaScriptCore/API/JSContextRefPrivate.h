@@ -136,7 +136,7 @@ JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(
 @param function The callback function to set, which receives the promise and rejection reason as arguments.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 */
-JS_EXPORT void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObjectRef function, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObjectRef function, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 #ifdef __cplusplus
 }

@@ -69,12 +69,12 @@ void WebAuthnConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& c
 
 void WebAuthnConnectionToWebProcess::makeCredential(Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String() }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::getAssertion(Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String() }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)

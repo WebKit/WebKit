@@ -287,7 +287,7 @@ static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* global
     if (value.isUndefined())
         return undefinedValue;
 
-    double indexDouble = value.toInteger(globalObject);
+    double indexDouble = value.toIntegerOrInfinity(globalObject);
     if (indexDouble < 0) {
         indexDouble += length;
         return indexDouble < 0 ? 0 : static_cast<uint64_t>(indexDouble);
@@ -449,7 +449,7 @@ inline bool containsHole(T* data, unsigned length)
     return false;
 }
 
-inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length, bool* sawHoles = nullptr)
+inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length, bool& sawHoles, bool& genericCase)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -468,8 +468,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
             if (LIKELY(value))
                 joiner.appendNumber(vm, value.asInt32());
             else {
-                if (sawHoles)
-                    *sawHoles = true;
+                sawHoles = true;
                 if (!holesKnownToBeOK) {
                     if (holesMustForwardToPrototype(vm, thisObject))
                         goto generalCase;
@@ -494,8 +493,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
                     goto generalCase;
                 RETURN_IF_EXCEPTION(scope, { });
             } else {
-                if (sawHoles)
-                    *sawHoles = true;
+                sawHoles = true;
                 if (!holesKnownToBeOK) {
                     if (holesMustForwardToPrototype(vm, thisObject))
                         goto generalCase;
@@ -519,8 +517,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
             if (LIKELY(!isHole(value)))
                 joiner.appendNumber(vm, value);
             else {
-                if (sawHoles)
-                    *sawHoles = true;
+                sawHoles = true;
                 if (!holesKnownToBeOK) {
                     if (holesMustForwardToPrototype(vm, thisObject))
                         goto generalCase;
@@ -568,6 +565,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
     }
 
 generalCase:
+    genericCase = true;
     JSStringJoiner joiner(globalObject, separator, length);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < length; ++i) {
@@ -577,6 +575,13 @@ generalCase:
         RETURN_IF_EXCEPTION(scope, { });
     }
     RELEASE_AND_RETURN(scope, joiner.join(globalObject));
+}
+
+ALWAYS_INLINE JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length)
+{
+    bool sawHoles = false;
+    bool genericCase = false;
+    return fastJoin(globalObject, thisObject, separator, length, sawHoles, genericCase);
 }
 
 inline bool canUseDefaultArrayJoinForToString(VM& vm, JSObject* thisObject)
@@ -650,10 +655,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
         }
 
         bool sawHoles = false;
-        JSValue result = fastJoin(globalObject, thisArray, { &comma, 1 }, length, &sawHoles);
+        bool genericCase = false;
+        JSValue result = fastJoin(globalObject, thisArray, { &comma, 1 }, length, sawHoles, genericCase);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!sawHoles && result && isJSString(result) && isCoW) {
+        if (!sawHoles && !genericCase && result && isJSString(result) && isCoW) {
             ASSERT(JSImmutableButterfly::fromButterfly(thisArray->butterfly()) == immutableButterfly);
             vm.heap.immutableButterflyToStringCache.add(immutableButterfly, jsCast<JSString*>(result));
         }
@@ -1161,7 +1167,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
 
     uint64_t actualDeleteCount = length - actualStart;
     if (callFrame->argumentCount() > 1) {
-        double deleteCount = callFrame->uncheckedArgument(1).toInteger(globalObject);
+        double deleteCount = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (deleteCount < 0)
             actualDeleteCount = 0;
@@ -1421,7 +1427,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
     uint64_t index = length - 1;
     if (callFrame->argumentCount() >= 2) {
         JSValue fromValue = callFrame->uncheckedArgument(1);
-        double fromDouble = fromValue.toInteger(globalObject);
+        double fromDouble = fromValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (fromDouble < 0) {
             fromDouble += length;

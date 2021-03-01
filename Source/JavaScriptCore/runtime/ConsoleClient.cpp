@@ -108,6 +108,9 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
     case MessageSource::PrivateClickMeasurement:
         sourceString = "PRIVATECLICKMEASUREMENT"_s;
         break;
+    case MessageSource::PaymentRequest:
+        sourceString = "PAYMENTREQUEST"_s;
+        break;
     case MessageSource::Other:
         sourceString = "OTHER"_s;
         break;

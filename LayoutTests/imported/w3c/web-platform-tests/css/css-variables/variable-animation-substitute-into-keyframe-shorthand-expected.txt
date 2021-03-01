@@ -1,0 +1,5 @@
+The border around this text should animate from blue to green over a period of 1 second.
+
+PASS Verify border-bottom-color before animation
+PASS Verify border-bottom-color after animation
+

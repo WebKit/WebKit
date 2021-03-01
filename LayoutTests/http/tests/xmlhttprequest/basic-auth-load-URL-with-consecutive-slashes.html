@@ -8,21 +8,21 @@ if (window.testRunner)
 function sendWithCredentials()
 {
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "resources/remember-bad-password/count-failures.php", false, "foo", "bar");
+    xhr.open("GET", "resources/remember-bad-password/count-failures.py", false, "foo", "bar");
     xhr.send("");
 }
 
 function sendWithoutCredentials()
 {
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "resources/remember-bad-password//count-failures.php", false);
+    xhr.open("GET", "resources/remember-bad-password//count-failures.py", false);
     xhr.send("");
 }
 
 function reset()
 {
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "resources/remember-bad-password/count-failures.php?command=reset", false);
+    xhr.open("GET", "resources/remember-bad-password/count-failures.py?command=reset", false);
     xhr.send("");
 }
 

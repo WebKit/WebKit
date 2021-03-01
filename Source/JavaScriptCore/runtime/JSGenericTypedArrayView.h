@@ -40,6 +40,8 @@ JS_EXPORT_PRIVATE const ClassInfo* getUint16ArrayClassInfo();
 JS_EXPORT_PRIVATE const ClassInfo* getUint32ArrayClassInfo();
 JS_EXPORT_PRIVATE const ClassInfo* getFloat32ArrayClassInfo();
 JS_EXPORT_PRIVATE const ClassInfo* getFloat64ArrayClassInfo();
+JS_EXPORT_PRIVATE const ClassInfo* getBigInt64ArrayClassInfo();
+JS_EXPORT_PRIVATE const ClassInfo* getBigUint64ArrayClassInfo();
 
 // A typed array view is our representation of a typed array object as seen
 // from JavaScript. For example:
@@ -79,7 +81,6 @@ JS_EXPORT_PRIVATE const ClassInfo* getFloat64ArrayClassInfo();
 //     static int8_t toNativeFromUint32(uint32_t);
 //     static int8_t toNativeFromDouble(double);
 //     static JSValue toJSValue(int8_t);
-//     static double toDouble(int8_t);
 //     template<T> static T::Type convertTo(uint8_t);
 // };
 
@@ -90,11 +91,13 @@ enum class CopyType {
 
 extern const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage;
 
-template<typename Adaptor>
+template<typename PassedAdaptor>
 class JSGenericTypedArrayView final : public JSArrayBufferView {
 public:
     using Base = JSArrayBufferView;
-    typedef typename Adaptor::Type ElementType;
+    using Adaptor = PassedAdaptor;
+    using ElementType = typename Adaptor::Type;
+    static constexpr TypedArrayContentType contentType = Adaptor::contentType;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
@@ -119,15 +122,20 @@ public:
         return bitwise_cast<typename Adaptor::Type*>(vector());
     }
 
+    bool inBounds(unsigned i) const
+    {
+        return i < m_length;
+    }
+
     // These methods are meant to match indexed access methods that JSObject
     // supports - hence the slight redundancy.
     bool canGetIndexQuickly(unsigned i) const
     {
-        return i < m_length;
+        return inBounds(i) && Adaptor::canConvertToJSQuickly;
     }
     bool canSetIndexQuickly(unsigned i, JSValue value) const
     {
-        return i < m_length && value.isNumber();
+        return i < m_length && value.isNumber() && Adaptor::canConvertToJSQuickly;
     }
     
     typename Adaptor::Type getIndexQuicklyAsNativeValue(unsigned i) const
@@ -136,25 +144,15 @@ public:
         return typedVector()[i];
     }
     
-    double getIndexQuicklyAsDouble(unsigned i)
-    {
-        return Adaptor::toDouble(getIndexQuicklyAsNativeValue(i));
-    }
-    
     JSValue getIndexQuickly(unsigned i) const
     {
-        return Adaptor::toJSValue(getIndexQuicklyAsNativeValue(i));
+        return Adaptor::toJSValue(nullptr, getIndexQuicklyAsNativeValue(i));
     }
     
     void setIndexQuicklyToNativeValue(unsigned i, typename Adaptor::Type value)
     {
         ASSERT(i < m_length);
         typedVector()[i] = value;
-    }
-    
-    void setIndexQuicklyToDouble(unsigned i, double value)
-    {
-        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(jsNumber(value)));
     }
     
     void setIndexQuickly(unsigned i, JSValue value)
@@ -247,6 +245,10 @@ public:
             return getFloat32ArrayClassInfo();
         case TypeFloat64:
             return getFloat64ArrayClassInfo();
+        case TypeBigInt64:
+            return getBigInt64ArrayClassInfo();
+        case TypeBigUint64:
+            return getBigUint64ArrayClassInfo();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -275,6 +277,10 @@ public:
             return vm.float32ArraySpace<mode>();
         case TypeFloat64:
             return vm.float64ArraySpace<mode>();
+        case TypeBigInt64:
+            return vm.bigInt64ArraySpace<mode>();
+        case TypeBigUint64:
+            return vm.bigUint64ArraySpace<mode>();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -283,7 +289,7 @@ public:
     
     ArrayBuffer* existingBuffer();
 
-    static const TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
+    static constexpr TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
 
     // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
     static RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);

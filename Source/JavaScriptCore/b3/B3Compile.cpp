@@ -46,7 +46,7 @@ Compilation compile(Procedure& proc)
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
 
-    return Compilation(FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "B3::Compilation"), proc.releaseByproducts());
+    return Compilation(FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Compilation"), proc.releaseByproducts());
 }
 
 } } // namespace JSC::B3

@@ -38,8 +38,8 @@ namespace WebCore {
 class AbortAlgorithm;
 class ScriptExecutionContext;
 
-class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWithInlineData, public CanMakeWeakPtr<AbortSignal>, private ContextDestructionObserver {
-    WTF_MAKE_ISO_ALLOCATED(AbortSignal);
+class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWithInlineData, private ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext&);
 

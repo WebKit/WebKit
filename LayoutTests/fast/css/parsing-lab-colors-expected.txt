@@ -46,6 +46,12 @@ PASS computedStyle("background-color", "color(lab 50% -200 200)") is "lab(50% -2
 PASS computedStyle("background-color", "color(lab 0% 0 0 / -10%)") is "lab(0% 0 0 / 0)"
 PASS computedStyle("background-color", "color(lab 0% 0 0 / 110%)") is "lab(0% 0 0)"
 PASS computedStyle("background-color", "color(lab 0% 0 0 / 300%)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -200)") is "lab(50% -200 0)"
+PASS computedStyle("background-color", "color(lab 50%)") is "lab(50% 0 0)"
+PASS computedStyle("background-color", "color(lab)") is "lab(0% 0 0)"
+PASS computedStyle("background-color", "color(lab 50% -200 / 0.5)") is "lab(50% -200 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab 50% / 0.5)") is "lab(50% 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(lab / 0.5)") is "lab(0% 0 0 / 0.5)"
 
 Test invalid values
 PASS computedStyle("background-color", "lab(0 0 0)") is "rgba(0, 0, 0, 0)"

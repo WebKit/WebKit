@@ -42,7 +42,7 @@ enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
     ChangeDestinationImageBuffer,
-    DecodingFailure // FIXME: Propagate decoding errors to display list replay clients through this enum as well.
+    InvalidItem
 };
 
 struct ReplayResult {

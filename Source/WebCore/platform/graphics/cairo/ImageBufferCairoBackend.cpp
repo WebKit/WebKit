@@ -33,7 +33,7 @@
 #include "BitmapImage.h"
 #include "CairoOperations.h"
 #include "Color.h"
-#include "ColorConversion.h"
+#include "ColorTransferFunctions.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
@@ -89,33 +89,33 @@ void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const Flo
         Cairo::clipToImageBuffer(*destContext.platformContext(), image->platformImage().get(), destRect);
 }
 
-void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace)
+void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColorSpace, DestinationColorSpace destColorSpace)
 {
     if (srcColorSpace == destColorSpace)
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != ColorSpace::LinearRGB && srcColorSpace != ColorSpace::SRGB)
-        || (destColorSpace != ColorSpace::LinearRGB && destColorSpace != ColorSpace::SRGB))
+    if ((srcColorSpace != DestinationColorSpace::LinearSRGB && srcColorSpace != DestinationColorSpace::SRGB)
+        || (destColorSpace != DestinationColorSpace::LinearSRGB && destColorSpace != DestinationColorSpace::SRGB))
         return;
 
-    if (destColorSpace == ColorSpace::LinearRGB) {
+    if (destColorSpace == DestinationColorSpace::LinearSRGB) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
-                color = rgbToLinearColorComponent(color);
+                color = SRGBTransferFunction<float, TransferFunctionMode::Clamped>::toLinear(color);
                 array[i] = static_cast<uint8_t>(round(color * 255));
             }
             return array;
         }();
         platformTransformColorSpace(linearRgbLUT);
-    } else if (destColorSpace == ColorSpace::SRGB) {
+    } else if (destColorSpace == DestinationColorSpace::SRGB) {
         static const std::array<uint8_t, 256> deviceRgbLUT= [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
-                color = linearToRGBColorComponent(color);
+                color = SRGBTransferFunction<float, TransferFunctionMode::Clamped>::toGammaEncoded(color);
                 array[i] = static_cast<uint8_t>(round(color * 255));
             }
             return array;

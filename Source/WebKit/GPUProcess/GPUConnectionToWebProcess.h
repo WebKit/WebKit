@@ -65,7 +65,6 @@ class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct RemoteAudioSessionConfiguration;
-struct RemoteRenderingBackendCreationParameters;
 
 class GPUConnectionToWebProcess
     : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
@@ -112,6 +111,8 @@ public:
     RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
 
+    void terminateWebProcess();
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
 
@@ -125,7 +126,7 @@ private:
 #endif
 #endif
 
-    void createRenderingBackend(RemoteRenderingBackendCreationParameters&&);
+    void createRenderingBackend(RenderingBackendIdentifier, IPC::Semaphore&& resumeDisplayListSemaphore);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
 #if ENABLE(WEBGL)

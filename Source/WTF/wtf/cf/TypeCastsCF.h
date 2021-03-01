@@ -62,18 +62,20 @@ WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFString, CFMutableString);
 
 #undef WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT
 
+// Use this instead of checked_cf_cast<> when actively checking CF types,
+// similar to dynamic_cast<> in C++. Be sure to include a nullptr check.
 template<typename T> T dynamic_cf_cast(CFTypeRef object)
 {
     if (!object)
         return nullptr;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(CFGetTypeID(object) == CFTypeTrait<T>::typeID());
     if (CFGetTypeID(object) != CFTypeTrait<T>::typeID())
         return nullptr;
 
     return static_cast<T>(const_cast<CF_BRIDGED_TYPE(id) void*>(object));
 }
 
+// Use this instead of dynamic_cf_cast<> when a specifc CF type is required.
 template<typename T> T checked_cf_cast(CFTypeRef object)
 {
     if (!object)

@@ -28,8 +28,8 @@
 #include "config.h"
 #include "Attachment.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ArgumentCoder.h"
+
 
 // FIXME: This code is duplicated with SharedMemory::Handle implementation for Win
 

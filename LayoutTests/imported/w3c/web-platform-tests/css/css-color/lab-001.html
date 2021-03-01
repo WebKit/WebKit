@@ -6,12 +6,10 @@
 <link rel="match" href="greensquare-ref.html">
 <meta name="assert" content="lab() with no alpha">
 <style>
-    .test { background-color: red; width: 12em; height: 6em; margin-top:0}
-    .ref { background-color: #008000; width: 12em; height: 6em; margin-bottom: 0}
-    .test { background-color: lab(46.277% -47.562 48.583)} /* green (sRGB #008000) converted to Lab */
+    .test { background-color: red; width: 12em; height: 12em; }
+    .test { background-color: lab(46.2775% -47.5621 48.5837); } /* green (sRGB #008000) converted to Lab */
 </style>
 <body>
     <p>Test passes if you see a green square, and no red.</p>
-    <p class="ref"> </p>
-    <p class="test"> </p>
+    <div class="test"></div>
 </body>

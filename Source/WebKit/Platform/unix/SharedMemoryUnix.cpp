@@ -29,6 +29,7 @@
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include <errno.h>
@@ -47,6 +48,10 @@
 #if HAVE(LINUX_MEMFD_H)
 #include <linux/memfd.h>
 #include <sys/syscall.h>
+#endif
+
+#if PLATFORM(PLAYSTATION)
+#include "ArgumentCoders.h"
 #endif
 
 namespace WebKit {

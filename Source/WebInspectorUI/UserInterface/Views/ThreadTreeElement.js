@@ -56,12 +56,23 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         let activeCallFrame = WI.debuggerManager.activeCallFrame;
         let activeCallFrameTreeElement = null;
 
-        for (let callFrame of callFrames) {
-            let callFrameTreeElement = new WI.CallFrameTreeElement(callFrame);
-            if (callFrame === activeCallFrame)
-                activeCallFrameTreeElement = callFrameTreeElement;
-            this.appendChild(callFrameTreeElement);
-        }
+        let renderCallFrames = (callFrames, shouldSelectActiveFrame) => {
+            if (WI.settings.experimentalCollapseBlackboxedCallFrames.value)
+                callFrames = callFrames.groupBy((callFrame) => callFrame.blackboxed);
+
+            for (let callFrameOrBlackboxedGroup of callFrames) {
+                if (Array.isArray(callFrameOrBlackboxedGroup)) {
+                    this.appendChild(new WI.BlackboxedGroupTreeElement(callFrameOrBlackboxedGroup));
+                    continue;
+                }
+                let callFrameTreeElement = new WI.CallFrameTreeElement(callFrameOrBlackboxedGroup);
+                if (shouldSelectActiveFrame && callFrameOrBlackboxedGroup === activeCallFrame)
+                    activeCallFrameTreeElement = callFrameTreeElement;
+                this.appendChild(callFrameTreeElement);
+            }
+        };
+
+        renderCallFrames(callFrames, true);
 
         if (activeCallFrameTreeElement) {
             activeCallFrameTreeElement.select(true, true);
@@ -89,8 +100,7 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
             this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
 
             let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
-            for (let i = startIndex; i < currentStackTrace.callFrames.length; ++i)
-                this.appendChild(new WI.CallFrameTreeElement(currentStackTrace.callFrames[i]));
+            renderCallFrames(startIndex ? currentStackTrace.callFrames.slice(startIndex) : currentStackTrace.callFrames);
 
             if (currentStackTrace.truncated) {
                 let truncatedTreeElement = new WI.GeneralTreeElement("truncated-call-frames", WI.UIString("Call Frames Truncated"));

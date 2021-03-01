@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,23 +31,47 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
-WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef a98RGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef proPhotoRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef rec2020ColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef xyzD50ColorSpaceRef();
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return sRGBColorSpaceRef();
-    case ColorSpace::LinearRGB:
-        return linearRGBColorSpaceRef();
+    case ColorSpace::A98RGB:
+        return a98RGBColorSpaceRef();
     case ColorSpace::DisplayP3:
         return displayP3ColorSpaceRef();
     case ColorSpace::Lab:
         return labColorSpaceRef();
+    case ColorSpace::LinearSRGB:
+        return linearRGBColorSpaceRef();
+    case ColorSpace::ProPhotoRGB:
+        return proPhotoRGBColorSpaceRef();
+    case ColorSpace::Rec2020:
+        return rec2020ColorSpaceRef();
+    case ColorSpace::SRGB:
+        return sRGBColorSpaceRef();
+    case ColorSpace::XYZ_D50:
+        return xyzD50ColorSpaceRef();
+    }
+    ASSERT_NOT_REACHED();
+    return sRGBColorSpaceRef();
+}
+
+static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::LinearSRGB:
+        return linearRGBColorSpaceRef();
+    case DestinationColorSpace::SRGB:
+        return sRGBColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();

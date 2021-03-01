@@ -543,3 +543,9 @@ PASS: Should convert [-1,0,0] to [0,0,0].
 "color(display-p3 1 0 0)" is outside sRGB.
 "color(display-p3 0.93 0.353 0.353)" is outside sRGB.
 
+-- Running test case: WI.Color.toProtocol
+PASS: Should convert rgba(10,20,30,40) to {"r":10,"g":20,"b":30,"a":1}.
+PASS: Should convert rgb(10 20 30 / 40%) to {"r":10,"g":20,"b":30,"a":0.4}.
+PASS: Should convert #a0Aa0A to {"r":160,"g":170,"b":10,"a":1}.
+PASS: Should convert rgb(10% 20% 30% / 40%) to {"r":25.5,"g":51,"b":76.5,"a":0.4}.
+

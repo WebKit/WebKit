@@ -35,8 +35,9 @@
 namespace WebCore {
 
 class SubmitInputType final : public BaseButtonInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit SubmitInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
+    explicit SubmitInputType(HTMLInputElement& element) : BaseButtonInputType(Type::Submit, element) { }
 
 private:
     const AtomString& formControlType() const override;
@@ -45,8 +46,6 @@ private:
     void handleDOMActivateEvent(Event&) override;
     bool canBeSuccessfulSubmitButton() override;
     String defaultValue() const override;
-    bool isSubmitButton() const override;
-    bool isTextButton() const override;
 };
 
 } // namespace WebCore

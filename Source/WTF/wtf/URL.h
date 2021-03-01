@@ -199,6 +199,8 @@ public:
     template<typename Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, URL&);
     template<typename Decoder> static Optional<URL> decode(Decoder&);
 
+    WTF_EXPORT_PRIVATE bool hasSpecialScheme() const;
+
 private:
     friend class URLParser;
 
@@ -207,7 +209,6 @@ private:
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
     void parse(const String&);
-    bool hasSpecialScheme() const;
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 

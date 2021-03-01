@@ -173,6 +173,7 @@ my (
     $videoUsesElementFullscreenSupport,
     $webAPIStatisticsSupport,
     $webAssemblySupport,
+    $webAssemblyB3JITSupport,
     $webAudioSupport,
     $webAuthNSupport,
     $webCryptoSupport,
@@ -515,9 +516,6 @@ my @features = (
     { option => "unified-builds", desc => "Toggle unified builds",
       define => "ENABLE_UNIFIED_BUILDS", value => \$unifiedBuildsSupport },
 
-    { option => "userselect-all", desc => "Toggle user-select:all support",
-      define => "ENABLE_USERSELECT_ALL", value => \$userselectAllSupport },
-
     { option => "user-message-handlers", desc => "Toggle user script message handler support",
       define => "ENABLE_USER_MESSAGE_HANDLERS", value => \$userMessageHandlersSupport },
 
@@ -535,6 +533,9 @@ my @features = (
 
     { option => "webassembly", desc => "Toggle WebAssembly support",
       define => "ENABLE_WEBASSEMBLY", value => \$webAssemblySupport },
+
+    { option => "webassembly-b3jit", desc => "Toggle WebAssembly B3 JIT support",
+      define => "ENABLE_WEBASSEMBLY_B3JIT", value => \$webAssemblyB3JITSupport },
 
     { option => "webassembly-streaming-api", desc => "Toggle WebAssembly streaming api support.",
       define => "ENABLE_WEBASSEMBLY_STREAMING_API", value => \$webassemblyStreamingAPISupport },

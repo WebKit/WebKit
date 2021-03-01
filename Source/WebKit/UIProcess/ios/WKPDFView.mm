@@ -617,8 +617,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
     auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
-    if (!CGPDFDocumentIsUnlocked(pdfDocument.get()))
-        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), _passwordForPrinting.data());
+    if (!CGPDFDocumentIsUnlocked(pdfDocument.get())) {
+        if (!CGPDFDocumentUnlockWithPassword(pdfDocument.get(), _passwordForPrinting.data()))
+            return nullptr;
+    }
+
+    if (!CGPDFDocumentAllowsPrinting(pdfDocument.get()))
+        return nullptr;
 
     _documentForPrinting = WTFMove(pdfDocument);
     return _documentForPrinting.get();
@@ -627,7 +632,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
     CGPDFDocumentRef documentForPrinting = [self _ensureDocumentForPrinting];
-    if (!CGPDFDocumentAllowsPrinting(documentForPrinting))
+    if (!documentForPrinting)
         return 0;
 
     size_t pageCount = CGPDFDocumentGetNumberOfPages(documentForPrinting);

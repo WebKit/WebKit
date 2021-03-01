@@ -67,10 +67,16 @@ void DeferredWorkTimer::doWork(VM& vm)
             suspendedTasks.append(std::make_tuple(ticket, WTFMove(task)));
             continue;
         case ScriptExecutionStatus::Stopped:
+            m_pendingTickets.remove(pendingTicket);
             continue;
         case ScriptExecutionStatus::Running:
             break;
         }
+
+        // Remove ticket from m_pendingTickets since we are going to run it.
+        // But we want to keep ticketData while running task since it ensures dependencies are strongly held.
+        auto ticketData = WTFMove(pendingTicket->value);
+        m_pendingTickets.remove(pendingTicket);
 
         // Allow tasks we are about to run to schedule work.
         m_currentlyRunningTask = true;
@@ -81,7 +87,7 @@ void DeferredWorkTimer::doWork(VM& vm)
             vm.finalizeSynchronousJSExecution();
 
             auto scope = DECLARE_CATCH_SCOPE(vm);
-            task();
+            task(ticket, WTFMove(ticketData));
             if (Exception* exception = scope.exception()) {
                 auto* globalObject = ticket->globalObject();
                 scope.clearException();
@@ -146,6 +152,14 @@ bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* depend
     return result.dependencies.contains(dependency);
 }
 
+void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
+{
+    LockHolder locker(m_taskLock);
+    m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
+    if (!isScheduled() && !m_currentlyRunningTask)
+        setTimeUntilFire(0_s);
+}
+
 bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
@@ -155,14 +169,6 @@ bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
         dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
 
     return result;
-}
-
-void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
-{
-    LockHolder locker(m_taskLock);
-    m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
-    if (!isScheduled() && !m_currentlyRunningTask)
-        setTimeUntilFire(0_s);
 }
 
 void DeferredWorkTimer::didResumeScriptExecutionOwner()

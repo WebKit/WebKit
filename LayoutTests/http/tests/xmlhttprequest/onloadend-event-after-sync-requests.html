@@ -64,7 +64,7 @@ function testError()
     xhr.onload = logUnexpectedProgressEvent;
     xhr.onloadend = logProgressEvent;
 
-    xhr.open("GET", "resources/infinite-loop.php", false); 
+    xhr.open("GET", "resources/infinite-loop.py", false); 
     try {
         xhr.send();
     }

@@ -266,6 +266,11 @@ class TestGit(unittest.TestCase):
             with mock:
                 self.assertIsNone(local.Git(self.path).commit(identifier='4@main', include_log=False).message)
 
+    def test_alternative_default_branch(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                self.assertEqual(str(local.Git(self.path).find('4@trunk')), '4@main')
+                self.assertEqual(str(local.Git(self.path).find('4@master')), '4@main')
 
 class TestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/webkit'
@@ -368,3 +373,8 @@ class TestGitHub(unittest.TestCase):
     def test_no_log(self):
         with mocks.remote.GitHub():
             self.assertIsNone(remote.GitHub(self.remote).commit(identifier='4@main', include_log=False).message)
+
+    def test_alternative_default_branch(self):
+        with mocks.remote.GitHub():
+            self.assertEqual(str(remote.GitHub(self.remote).find('4@trunk')), '4@main')
+            self.assertEqual(str(remote.GitHub(self.remote).find('4@master')), '4@main')

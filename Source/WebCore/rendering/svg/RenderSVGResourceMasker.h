@@ -58,7 +58,7 @@ private:
 
     const char* renderName() const override { return "RenderSVGResourceMasker"; }
 
-    bool drawContentIntoMaskImage(MaskerData*, ColorSpace, RenderObject*);
+    bool drawContentIntoMaskImage(MaskerData*, DestinationColorSpace, RenderObject*);
     void calculateMaskContentRepaintRect();
 
     FloatRect m_maskContentBoundaries;

@@ -4449,11 +4449,16 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     // NOTE: The catch and finally blocks must be labeled explicitly, so the
     // optimizer knows they may be jumped to from anywhere.
-
-    if (generator.shouldBeConcernedWithCompletionValue() && m_tryBlock->hasEarlyBreakOrContinue())
-        generator.emitLoad(dst, jsUndefined());
-
     ASSERT(m_catchBlock || m_finallyBlock);
+
+    RefPtr<RegisterID> tryCatchDst = dst;
+    if (generator.shouldBeConcernedWithCompletionValue()) {
+        if (m_finallyBlock)
+            tryCatchDst = generator.newTemporary();
+
+        if (m_finallyBlock || m_tryBlock->hasEarlyBreakOrContinue())
+            generator.emitLoad(tryCatchDst.get(), jsUndefined());
+    }
 
     RefPtr<Label> catchLabel;
     RefPtr<Label> catchEndLabel;
@@ -4481,7 +4486,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (!m_catchBlock && m_finallyBlock)
         finallyTryData = tryData;
 
-    generator.emitNode(dst, m_tryBlock);
+    generator.emitNode(tryCatchDst.get(), m_tryBlock);
 
     if (m_finallyBlock)
         generator.emitJump(*finallyLabel);
@@ -4512,9 +4517,9 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
         if (m_finallyBlock)
-            generator.emitNode(dst, m_catchBlock);
+            generator.emitNode(tryCatchDst.get(), m_catchBlock);
         else
-            generator.emitNodeInTailPosition(dst, m_catchBlock);
+            generator.emitNodeInTailPosition(tryCatchDst.get(), m_catchBlock);
         generator.emitLoad(thrownValueRegister.get(), jsUndefined());
 
         if (m_catchPattern)
@@ -4541,8 +4546,21 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.restoreScopeRegister();
 
         int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() + 1 : m_tryBlock->endOffset() + 1;
-        generator.emitProfileControlFlow(finallyStartOffset);
-        generator.emitNodeInTailPosition(m_finallyBlock);
+        
+        // The completion value of a finally block is ignored *just* when it is a normal completion.
+        if (generator.shouldBeConcernedWithCompletionValue()) {
+            ASSERT(dst != tryCatchDst.get());
+            if (m_finallyBlock->hasEarlyBreakOrContinue())
+                generator.emitLoad(dst, jsUndefined());
+
+            generator.emitProfileControlFlow(finallyStartOffset);
+            generator.emitNodeInTailPosition(dst, m_finallyBlock);
+
+            generator.move(dst, tryCatchDst.get());
+        } else {
+            generator.emitProfileControlFlow(finallyStartOffset);
+            generator.emitNodeInTailPosition(m_finallyBlock);
+        }
 
         generator.emitFinallyCompletion(finallyContext.value(), *finallyEndLabel);
         generator.emitLabel(*finallyEndLabel);

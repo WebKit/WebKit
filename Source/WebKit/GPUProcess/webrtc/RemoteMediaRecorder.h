@@ -73,7 +73,7 @@ private:
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void videoSampleAvailable(WebCore::RemoteVideoSample&&);
     void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
-    void stopRecording();
+    void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
 

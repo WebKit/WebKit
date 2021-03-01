@@ -473,6 +473,7 @@ fast/events/fire-mousedown-while-pressing-mouse-button.html [ Skip ]
 fast/events/frame-click-focus.html [ Skip ]
 fast/events/frame-detached-in-mousedown.html [ Skip ]
 fast/events/frame-scroll-fake-mouse-move.html [ Skip ]
+fast/events/hittest-pointer-event-none-descendants.html [ Skip ]
 fast/events/iframe-onmousemove.html [ Skip ]
 fast/events/input-events-drag-and-drop.html [ Skip ]
 fast/events/input-events-insert-by-drop.html [ Skip ]
@@ -695,6 +696,7 @@ fast/selectors/active-hover-quirks.html [ Skip ]
 fast/selectors/active-hover-strict.html [ Skip ]
 fast/selectors/active-quirks.html [ Skip ]
 fast/selectors/active-strict.html [ Skip ]
+fast/selectors/hover-invalidation-descendant-clear.html [ Skip ]
 fast/selectors/hover-invalidation-descendant-dynamic.html [ Skip ]
 fast/selectors/hover-quirks.html [ Skip ]
 fast/selectors/hover-strict.html [ Skip ]
@@ -807,6 +809,10 @@ webkit.org/b/164888 fast/shadow-dom/focus-navigation-out-of-slot.html [ Skip ]
 webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-shadow-host.html [ Skip ]
 webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-svg-use-element.html [ Skip ]
 webkit.org/b/202497 imported/w3c/web-platform-tests/shadow-dom/focus/ [ Skip ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html [ Pass ]
 
 # This test needs to be rewritten to use runUIScript to work on iOS
 webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html [ Skip ]
@@ -2157,8 +2163,10 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 # Enable "phone number linkifying" test for iOS
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
-# Enable "aria-current" test for iOS
+# Enable "aria-current" tests for iOS.
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
+accessibility/aria-current-state-changed-notification.html [ Pass ]
+accessibility/aria-sort-changed-notification.html [ Pass ]
 
 # Enable "aria-table-attributes" test for iOS
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
@@ -2898,8 +2906,6 @@ media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
 media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
-media/modern-media-controls/volume-down-support [ Skip ]
-media/modern-media-controls/volume-up-support [ Skip ]
 
 # There is no focus state for on iOS
 media/modern-media-controls/button/button-focus-state.html [ Skip ]
@@ -3164,10 +3170,6 @@ fast/attachment/attachment-title-with-rtl.html [ ImageOnlyFailure ]
 
 fast/forms/textfield-no-linebreak.html [ ImageOnlyFailure ]
 
-# <rdar://problem/47855174> REGRESSION (iOS 13?): Layout tests http/wpt/mediarecorder/MediaRecorder-dataavailable.html and http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html are failing
-http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Failure ]
-http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html [ Failure ]
-
 # <rdar://problem/47897726> REGRESSION (iOS 13): Multiple media tests failing
 media/audio-controls-timeline-in-media-document.html [ Failure ]
 media/controls-strict.html [ Failure ]
@@ -3346,7 +3348,6 @@ webkit.org/b/207858 webgl/smell-test.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-backing-store-size-update.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-border.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-box-shadow.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/207858 fast/canvas/webgl/program-test.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-vertex-array-object.html [ Pass Failure ]
@@ -3354,7 +3355,6 @@ webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 webkit.org/b/207858 webgl/1.0.3/conformance/context/context-lost-restored.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
-webkit.org/b/207858 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
 
 # rdar://63506750 Now that float/half-float is supported, the video tests don't instantly fail.
 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
@@ -3384,6 +3384,7 @@ webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.h
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-001.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 
 # Certain versions of iOS use different text security characters.
@@ -3481,5 +3482,13 @@ fast/forms/defaultValue-clobbering.html [ Failure ]
 
 webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
 
-webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
+webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ]
 
+# The system font does not handle all the various width values on iOS.
+fast/text/system-font-width-4.html [ ImageOnlyFailure ]
+fast/text/system-font-width-6.html [ ImageOnlyFailure ]
+fast/text/system-font-width-7.html [ ImageOnlyFailure ]
+fast/text/system-font-width-8.html [ ImageOnlyFailure ]
+fast/text/system-font-width-9.html [ ImageOnlyFailure ]
+
+webkit.org/b/221486 imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash.html [ Skip ]

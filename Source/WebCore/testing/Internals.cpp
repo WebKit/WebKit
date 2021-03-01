@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "ActivityState.h"
+#include "AddEventListenerOptions.h"
 #include "AnimationTimeline.h"
 #include "ApplicationCacheStorage.h"
 #include "AudioSession.h"
@@ -320,7 +321,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "GraphicsContextGLOpenGLManager.h"
+#include "GraphicsChecksMac.h"
 #include "NSScrollerImpDetails.h"
 #include "ScrollbarThemeMac.h"
 #endif
@@ -1605,16 +1606,6 @@ void Internals::setUseDTLS10(bool useDTLS10)
 #endif
 }
 
-void Internals::setUseGPUProcessForWebRTC(bool useGPUProcess)
-{
-#if USE(LIBWEBRTC)
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-
-    document->page()->mediaRecorderProvider().setUseGPUProcess(useGPUProcess);
-#endif
-}
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1661,6 +1652,15 @@ Ref<DOMRect> Internals::boundingBox(Element& element)
     if (!renderer)
         return DOMRect::create();
     return DOMRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
+}
+
+ExceptionOr<unsigned> Internals::inspectorGridOverlayCount()
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { InvalidAccessError };
+
+    return document->page()->inspectorController().gridOverlayCount();
 }
 
 ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
@@ -4668,22 +4668,19 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     if (!scrollableArea)
         return Exception { InvalidAccessError };
 
+    auto* offsetInfo = scrollableArea->snapOffsetInfo();
     StringBuilder result;
-    if (auto* offsets = scrollableArea->horizontalSnapOffsets()) {
-        if (offsets->size()) {
-            result.appendLiteral("horizontal = ");
-            appendOffsets(result, *offsets);
-        }
+    if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
+        result.appendLiteral("horizontal = ");
+        appendOffsets(result, offsetInfo->horizontalSnapOffsets);
     }
 
-    if (auto* offsets = scrollableArea->verticalSnapOffsets()) {
-        if (offsets->size()) {
-            if (result.length())
-                result.appendLiteral(", ");
+    if (offsetInfo && !offsetInfo->verticalSnapOffsets.isEmpty()) {
+        if (result.length())
+            result.appendLiteral(", ");
 
-            result.appendLiteral("vertical = ");
-            appendOffsets(result, *offsets);
-        }
+        result.appendLiteral("vertical = ");
+        appendOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 
     return result.toString();

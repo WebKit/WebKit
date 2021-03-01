@@ -192,6 +192,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 class Page;
 class PrintContext;
 class Range;
+class RenderImage;
 class ResourceRequest;
 class ResourceResponse;
 class SelectionData;
@@ -246,6 +247,7 @@ class GamepadData;
 class GeolocationPermissionRequestManager;
 class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
+class MediaKeySystemPermissionRequestManager;
 class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
@@ -672,6 +674,10 @@ public:
     void captureDevicesChanged();
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    MediaKeySystemPermissionRequestManager& mediaKeySystemPermissionRequestManager() { return m_mediaKeySystemPermissionRequestManager; }
+#endif
+
     void elementDidFocus(WebCore::Element&);
     void elementDidRefocus(WebCore::Element&);
     void elementDidBlur(WebCore::Element&);
@@ -1083,7 +1089,6 @@ public:
     void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
 
 #if PLATFORM(COCOA)
-    bool shouldUsePDFPlugin() const;
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
 
@@ -1215,6 +1220,12 @@ public:
     Optional<double> cpuLimit() const { return m_cpuLimit; }
 
     static PluginView* pluginViewForFrame(WebCore::Frame*);
+
+    void themeColorChanged() { m_pendingThemeColorChange = true; }
+    void flushPendingThemeColorChange();
+
+    void pageExtendedBackgroundColorDidChange() { m_pendingPageExtendedBackgroundColorChange = true; }
+    void flushPendingPageExtendedBackgroundColorChange();
 
     void flushPendingEditorStateUpdate();
 
@@ -1361,6 +1372,10 @@ public:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(WebCore::Element&);
+#endif
+
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
@@ -1375,9 +1390,16 @@ public:
 
 #if ENABLE(APP_HIGHLIGHTS)
     bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
+    void restoreAppHighlights(const IPC::DataReference&);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+
+#if ENABLE(PDFKIT_PLUGIN)
+    bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
+#endif
+
+    RefPtr<ShareableBitmap> shareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt) const;
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -1657,14 +1679,18 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDeviceUID, WebCore::CaptureDevice&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
     void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint);
+#endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void mediaKeySystemWasGranted(uint64_t mediaKeySystemID, CompletionHandler<void()>&&);
+    void mediaKeySystemWasDenied(uint64_t mediaKeySystemID, String&& message);
 #endif
 
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
 
-    void pauseAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void suspendAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void resumeAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void pauseAllMediaPlayback(CompletionHandler<void()>&&);
+    void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void resumeAllMediaPlayback(CompletionHandler<void()>&&);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
@@ -1969,6 +1995,10 @@ private:
     UniqueRef<UserMediaPermissionRequestManager> m_userMediaPermissionRequestManager;
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    UniqueRef<MediaKeySystemPermissionRequestManager> m_mediaKeySystemPermissionRequestManager;
+#endif
+
     std::unique_ptr<WebCore::PrintContext> m_printContext;
 #if PLATFORM(GTK)
     RefPtr<WebPrintOperationGtk> m_printOperation;
@@ -2028,6 +2058,8 @@ private:
     RefPtr<WebCore::Element> m_focusedElement;
     RefPtr<WebCore::Element> m_recentlyBlurredElement;
     bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
+    bool m_pendingThemeColorChange { false };
+    bool m_pendingPageExtendedBackgroundColorChange { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -2196,6 +2228,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
 #endif
 };
 

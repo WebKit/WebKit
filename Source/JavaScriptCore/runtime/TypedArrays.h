@@ -39,5 +39,7 @@ typedef GenericTypedArrayView<Uint16Adaptor> Uint16Array;
 typedef GenericTypedArrayView<Uint32Adaptor> Uint32Array;
 typedef GenericTypedArrayView<Float32Adaptor> Float32Array;
 typedef GenericTypedArrayView<Float64Adaptor> Float64Array;
+typedef GenericTypedArrayView<BigInt64Adaptor> BigInt64Array;
+typedef GenericTypedArrayView<BigUint64Adaptor> BigUint64Array;
 
 } // namespace JSC

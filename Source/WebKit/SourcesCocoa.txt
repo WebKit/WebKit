@@ -84,10 +84,11 @@ Platform/foundation/LoggingFoundation.mm
 
 Platform/ios/AccessibilityIOS.mm
 Platform/ios/PaymentAuthorizationController.mm
-Platform/ios/UIKitSoftLink.mm
 
 Platform/IPC/cocoa/ConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp
+
+Platform/IPC/darwin/IPCSemaphoreDarwin.cpp
 
 Platform/mac/MachUtilities.cpp
 Platform/mac/MenuUtilities.mm
@@ -597,6 +598,7 @@ WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm
 WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm
 WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.mm
+WebProcess/GPU/webrtc/MediaRecorderPrivate.mm
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 

@@ -44,6 +44,8 @@ namespace WebCore {
 
 class DateComponents;
 
+struct DateTimeChooserParameters;
+
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
 protected:
@@ -58,7 +60,7 @@ protected:
         HasMeridiem = 1 << 7,
     };
 
-    BaseDateAndTimeInputType(HTMLInputElement& element) : InputType(element) { }
+    BaseDateAndTimeInputType(Type type, HTMLInputElement& element) : InputType(type, element) { }
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;
@@ -67,6 +69,9 @@ protected:
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
+    bool typeMismatchFor(const String&) const final;
+    bool typeMismatch() const final;
+    bool valueMissing(const String&) const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
@@ -96,11 +101,7 @@ private:
     ExceptionOr<void> setValueAsDate(double) const override;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
-    bool typeMismatchFor(const String&) const final;
-    bool typeMismatch() const final;
-    bool valueMissing(const String&) const final;
     Decimal defaultValueForStepUp() const override;
-    bool isSteppable() const final;
     String localizeValue(const String&) const final;
     bool supportsReadOnly() const final;
     bool shouldRespectListAttribute() final;
@@ -108,7 +109,7 @@ private:
     bool isMouseFocusable() const final;
 
     void handleDOMActivateEvent(Event&) override;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void destroyShadowSubtree() final;
     void updateInnerTextValue() final;
     bool hasCustomFocusLogic() const final;
@@ -134,6 +135,7 @@ private:
     void didChooseValue(StringView) final;
     void didEndChooser() final;
 
+    bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
     void closeDateTimeChooser();
 
     std::unique_ptr<DateTimeChooser> m_dateTimeChooser;

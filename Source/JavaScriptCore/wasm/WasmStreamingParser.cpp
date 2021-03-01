@@ -28,7 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmModuleInformation.h"
 #include "WasmOps.h"
+#include "WasmParser.h"
 #include "WasmSectionParser.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/Optional.h>

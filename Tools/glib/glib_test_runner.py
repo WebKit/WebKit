@@ -268,6 +268,28 @@ class GLibTestRunner(object):
             self._subtest_end(256)
             need_restart = True
 
+        # Check for errors before any test is run
+        if not self._results and p.returncode != 0:
+            errors = self._read_from_stderr(self._stderr_fd)
+            sys.stdout.write('Test program setup failed.\n')
+            self._subtest_stderr(errors)
+            self._results['beforeAll'] = 'CRASH'
+            return self._results
+
+        # Try to read errors from afterAll
+        if p.returncode != 0 and not need_restart:
+            errors = self._read_from_stderr(self._stderr_fd)
+            sys.stdout.write('Test program shutdown failed.')
+            self._subtest_stderr(errors)
+            self._results['afterAll'] = 'CRASH'
+            return self._results
+
+        if len(self._results) == 0:
+            # Normally stderr is checked after a subtest has been parsed. If no subtests have been parsed
+            # chances are something went wrong with the test executable itself and we should print stderr
+            # to the user.
+            sys.stderr.write(self._read_from_stderr(self._stderr_fd))
+
         self._stderr_fd = None
 
         if need_restart:

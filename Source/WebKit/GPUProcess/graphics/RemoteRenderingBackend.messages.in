@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderingBackend {
-    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     WakeUpAndApplyDisplayList(struct WebKit::GPUProcessWakeupMessageArguments arguments)
     GetImageData(enum:uint8_t WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (IPC::ImageDataReference imageData) Synchronous
     GetDataURLForImageBuffer(String mimeType, Optional<double> quality, enum:uint8_t WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (String urlString) Synchronous

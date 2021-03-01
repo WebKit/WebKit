@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef RemoteCommandListener_h
 #define RemoteCommandListener_h
 
+#include "DeferrableTask.h"
 #include "PlatformMediaSession.h"
 
 namespace WebCore {
@@ -45,12 +46,20 @@ public:
     RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { }
     virtual ~RemoteCommandListener() = default;
 
+    void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
+    void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
     virtual void updateSupportedCommands() { }
+    void scheduleSupportedCommandsUpdate();
 
     RemoteCommandListenerClient& client() const { return m_client; }
 
 protected:
     RemoteCommandListenerClient& m_client;
+
+    using RemoteCommandsSet = HashSet<PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
+    RemoteCommandsSet m_registeredCommands;
+
+    DeferrableTask<Timer> m_updateCommandsTask;
 };
 
 }

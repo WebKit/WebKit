@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Common.h"
-#include "B3Compilation.h"
+#include "JITCompilation.h"
 
 namespace JSC {
 

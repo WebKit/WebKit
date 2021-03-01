@@ -53,6 +53,8 @@ public:
     JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&, JSObject*);
     static JSValue instantiate(JSGlobalObject*, JSPromise*, const Identifier&, JSValue);
 
+    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*);
+
 private:
     JSWebAssembly(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
