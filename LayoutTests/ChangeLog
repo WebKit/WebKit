@@ -1,3 +1,18 @@
+2021-03-01  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Clean up LayoutTests/gpu-process/TestExpectations related to media tests
+        https://bugs.webkit.org/show_bug.cgi?id=222570
+
+        Reviewed by Eric Carlson.
+
+        Clean up test expectations.
+        - Remove duplicate test expectations.
+        - Move some media tests from gpu-process/TestExpectations to platform/wk2/TestExpectations.
+        - Remove tests which are passing consistently from gpu-process/TestExpectations.
+
+        * gpu-process/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-03-01  Truitt Savell  <tsavell@apple.com>
 
         [Big Sur] platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial.html is consistently failing

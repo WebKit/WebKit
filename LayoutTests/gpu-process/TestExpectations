@@ -17,27 +17,11 @@ fast/canvas/webgl/uniform-samplers-test.html [ Slow ]
 webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
 
-fast/images/animated-image-mp4-crash.html [ Timeout ]
-fast/images/animated-image-mp4.html [ Timeout ]
-
 fast/dom/navigator-detached-no-crash.html [ Failure ]
 fast/images/ordered-animated-image-frames.html [ ImageOnlyFailure ]
 
-fast/mediastream/captureStream/canvas3d.html [ Failure ]
-fast/mediastream/getUserMedia-webaudio.html [ Failure ]
-fast/mediastream/media-element-current-time.html [ Failure ]
-fast/mediastream/media-stream-track-interrupted.html [ Failure ]
-
 fast/repaint/canvas-object-fit.html [ Failure ]
 fast/repaint/canvas-putImageData.html [ Failure ]
-
-http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure Timeout ]
-http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure Timeout ]
-http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
-http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Failure ]
-http/tests/security/video-cross-origin-caching.html [ Timeout ]
-
-http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
 imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure ]
@@ -46,20 +30,12 @@ imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.2.html [ Crash ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
-imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
 
 inspector/canvas/memory.html [ Failure ]
 inspector/canvas/recording-2d-frameCount.html [ Crash ]
 inspector/canvas/recording-2d-full.html [ Crash ]
 inspector/canvas/recording-2d-memoryLimit.html [ Crash ]
 inspector/canvas/recording-html-2d.html [ Crash ]
-
-# webkit.org/b/220375
-media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Crash Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Crash ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Crash ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Crash ]
 
 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 
