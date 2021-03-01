@@ -1,3 +1,16 @@
+2021-03-01  Truitt Savell  <tsavell@apple.com>
+
+        [Big Sur] platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=222495
+
+        Unreviewed test gardening.
+
+        * media/media-source/content/test-48kHz-vorbis-manifest.json: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis-manifest.json.
+        * media/media-source/content/test-48kHz-vorbis.webm: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis.webm.
+        * media/media-source/media-source-webm-vorbis-partial-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial-expected.txt.
+        * media/media-source/media-source-webm-vorbis-partial.html: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial.html.
+        * platform/mac/TestExpectations:
+
 2021-03-01  Martin Robinson  <mrobinson@webkit.org>
 
         Scroll snapping doesn't kick in when dragging scrollbars

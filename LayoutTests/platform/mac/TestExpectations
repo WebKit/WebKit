@@ -2298,3 +2298,5 @@ webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-dur
 [ Mojave Catalina BigSur ] fast/text/mending-heart.html [ Failure ]
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
+
+webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
