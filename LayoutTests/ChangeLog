@@ -1,3 +1,92 @@
+2021-03-01  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/loading convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222198
+        <rdar://problem/74536576>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/loading/307-after-303-after-post-expected.txt:
+        * http/tests/loading/307-after-303-after-post.html:
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials-expected.txt:
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html:
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-1-redirect-to-auth.php: Removed.
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-1-redirect-to-auth.py: Added.
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-2-auth-then-redirect-to-finish.php: Removed.
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-2-auth-then-redirect-to-finish.py: Added.
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-3-output-credentials-then-finish.php: Removed.
+        * http/tests/loading/authentication-after-redirect-stores-wrong-credentials/resources/wrong-credential-3-output-credentials-then-finish.py: Added.
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html:
+        * http/tests/loading/basic-auth-remove-credentials-expected.txt:
+        * http/tests/loading/basic-auth-remove-credentials.html:
+        * http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+        * http/tests/loading/basic-auth-resend-wrong-credentials.html:
+        * http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+        * http/tests/loading/basic-credentials-sent-automatically.html:
+        * http/tests/loading/nested_bad_objects.php: Removed.
+        * http/tests/loading/nested_bad_objects.py: Added.
+        * http/tests/loading/oauth.html:
+        * http/tests/loading/post-in-iframe-with-back-navigation-expected.txt:
+        * http/tests/loading/post-in-iframe-with-back-navigation.html:
+        * http/tests/loading/preload-append-scan.php: Removed.
+        * http/tests/loading/preload-append-scan.py: Added.
+        * http/tests/loading/preload-slow-loading.php: Removed.
+        * http/tests/loading/preload-slow-loading.py: Added.
+        * http/tests/loading/redirect-with-no-location-crash.html:
+        * http/tests/loading/resourceLoadStatistics/resources/get-cookies.php: Removed.
+        * http/tests/loading/resourceLoadStatistics/resources/get-cookies.py: Added.
+        * http/tests/loading/resourceLoadStatistics/resources/set-cookie.php: Removed.
+        * http/tests/loading/resources/303-to-307-target.php: Removed.
+        * http/tests/loading/resources/303-to-307-target.py: Added.
+        * http/tests/loading/resources/307-post-output-target.php: Removed.
+        * http/tests/loading/resources/307-post-output-target.py: Added.
+        * http/tests/loading/resources/basic-auth-testing.php: Removed.
+        * http/tests/loading/resources/basic-auth-testing.py: Added.
+        * http/tests/loading/resources/cached-stylesheet-from-different-domain-frame.css.php: Removed.
+        * http/tests/loading/resources/cached-stylesheet-from-different-domain-frame.css.py: Added.
+        * http/tests/loading/resources/cached-stylesheet-from-different-domain-frame.html:
+        * http/tests/loading/resources/imported-stylesheet-varying-according-domain.css.php: Removed.
+        * http/tests/loading/resources/imported-stylesheet-varying-according-domain.css.py: Added.
+        * http/tests/loading/resources/oauth-subresource.php: Removed.
+        * http/tests/loading/resources/oauth-subresource.py: Added.
+        * http/tests/loading/resources/othersubresources/protected-resource.php: Removed.
+        * http/tests/loading/resources/othersubresources/protected-resource.py: Added.
+        * http/tests/loading/resources/page-with-slow-loading-subresource.html:
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-1.php: Removed.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-1.py: Added.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-2.php: Removed.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-2.py: Added.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-3.php: Removed.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-3.py: Added.
+        * http/tests/loading/resources/post-to-303-target.php: Removed.
+        * http/tests/loading/resources/post-to-303-target.py: Added.
+        * http/tests/loading/resources/protected-resource.php: Removed.
+        * http/tests/loading/resources/protected-resource.py: Added.
+        * http/tests/loading/resources/redirect-with-no-location-crash.php: Removed.
+        * http/tests/loading/resources/redirect-with-no-location-crash.py: Added.
+        * http/tests/loading/resources/resource-that-goes-back-while-still-loading.php: Removed.
+        * http/tests/loading/resources/resource-that-goes-back-while-still-loading.py: Added.
+        * http/tests/loading/resources/server-redirect-result.html:
+        * http/tests/loading/resources/server-redirect.php: Removed.
+        * http/tests/loading/resources/server-redirect.py: Added.
+        * http/tests/loading/resources/slowimage.php: Removed.
+        * http/tests/loading/resources/slowimage.py: Added.
+        * http/tests/loading/resources/subresources/protected-resource.php: Removed.
+        * http/tests/loading/resources/subresources/protected-resource.py: Added.
+        * http/tests/loading/resources/test2/basic-auth-testing.php: Removed.
+        * http/tests/loading/resources/test2/basic-auth-testing.py: Added.
+        * http/tests/loading/resources/test2/protected-resource.php: Removed.
+        * http/tests/loading/resources/test2/protected-resource.py: Added.
+        * http/tests/loading/server-redirect-for-provisional-load-caching-expected.txt:
+        * http/tests/loading/server-redirect-for-provisional-load-caching.html:
+        * http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html:
+        * platform/ios-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials-expected.txt:
+        * platform/wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+        * platform/wk2/http/tests/loading/server-redirect-for-provisional-load-caching-expected.txt:
+
 2021-03-01  Andres Gonzalez  <andresg_22@apple.com>
 
         WebAccessibilityObjectWrapper method to retrieve related error message elements should return not-ignored accessibility elements.
