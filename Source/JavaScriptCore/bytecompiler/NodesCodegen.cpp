@@ -2244,15 +2244,12 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                 {
                     Ref<Label> haveThis = generator.newLabel();
                     Ref<Label> end = generator.newLabel();
-                    RefPtr<RegisterID> compareResult = generator.newTemporary();
-                    RefPtr<RegisterID> indexZeroCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(nullptr, jsNumber(0)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
-                    generator.emitJumpIfFalse(indexZeroCompareResult.get(), haveThis.get());
+                    generator.emitJumpIfFalse(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), index.get(), generator.emitLoad(nullptr, jsNumber(0))), haveThis.get());
                     generator.move(thisRegister.get(), value);
                     generator.emitLoad(index.get(), jsNumber(1));
                     generator.emitJump(end.get());
                     generator.emitLabel(haveThis.get());
-                    RefPtr<RegisterID> indexOneCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(nullptr, jsNumber(1)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
-                    generator.emitJumpIfFalse(indexOneCompareResult.get(), end.get());
+                    generator.emitJumpIfFalse(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), index.get(), generator.emitLoad(nullptr, jsNumber(1))), end.get());
                     generator.move(argumentsRegister.get(), value);
                     generator.emitLoad(index.get(), jsNumber(2));
                     generator.emitLabel(end.get());
@@ -4212,7 +4209,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLabel(loopStart.get());
         generator.emitLoopHint();
 
-        RefPtr<RegisterID> result = generator.emitEqualityOp<OpLess>(generator.newTemporary(), i.get(), length.get());
+        RefPtr<RegisterID> result = generator.emitBinaryOp<OpLess>(generator.newTemporary(), i.get(), length.get());
         generator.emitJumpIfFalse(result.get(), loopEnd.get());
         generator.emitHasEnumerableIndexedProperty(result.get(), base.get(), i.get());
         generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
@@ -4618,17 +4615,17 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
         for (ClauseListNode* list = m_list1; list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.newTemporary();
             generator.emitNode(clauseVal.get(), list->getClause()->expr());
-            generator.emitBinaryOp<OpStricteq>(clauseVal.get(), clauseVal.get(), switchExpression, OperandTypes());
-            labelVector.append(generator.newLabel());
-            generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
+            Ref<Label> clauseLabel = generator.newLabel();
+            labelVector.append(clauseLabel);
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
         }
         
         for (ClauseListNode* list = m_list2; list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.newTemporary();
             generator.emitNode(clauseVal.get(), list->getClause()->expr());
-            generator.emitBinaryOp<OpStricteq>(clauseVal.get(), clauseVal.get(), switchExpression, OperandTypes());
-            labelVector.append(generator.newLabel());
-            generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
+            Ref<Label> clauseLabel = generator.newLabel();
+            labelVector.append(clauseLabel);
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
         }
         generator.emitJump(defaultLabel.get());
     }
@@ -4963,7 +4960,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.move(args.argumentRegister(argumentCount++), generator.generatorRegister());
         generator.move(args.argumentRegister(argumentCount++), generator.promiseRegister());
         generator.emitLoad(args.argumentRegister(argumentCount++), jsUndefined());
-        generator.emitLoad(args.argumentRegister(argumentCount++), jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode)));
+        generator.emitLoad(args.argumentRegister(argumentCount++), JSGenerator::ResumeMode::NormalMode);
         // JSTextPosition(int _line, int _offset, int _lineStartOffset)
         JSTextPosition divot(firstLine(), startOffset(), lineStartOffset());
 
@@ -4979,13 +4976,10 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     case SourceParseMode::GeneratorBodyMode: {
         Ref<Label> generatorBodyLabel = generator.newLabel();
         {
-            RefPtr<RegisterID> condition = generator.newTemporary();
-            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
-            generator.emitJumpIfTrue(condition.get(), generatorBodyLabel.get());
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), generatorBodyLabel.get());
 
             Ref<Label> throwLabel = generator.newLabel();
-            generator.emitEqualityOp<OpStricteq>(condition.get(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode))));
-            generator.emitJumpIfTrue(condition.get(), throwLabel.get());
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), generator.generatorResumeModeRegister(), generator.emitLoad(nullptr, JSGenerator::ResumeMode::ThrowMode)), throwLabel.get());
 
             generator.emitReturn(generator.generatorValueRegister());
 
@@ -5212,20 +5206,18 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         RefPtr<RegisterID> protoParent = generator.newTemporary();
         generator.emitLoad(protoParent.get(), jsNull());
 
-        RefPtr<RegisterID> tempRegister = generator.newTemporary();
-
         Ref<Label> superclassIsNullLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitIsNull(tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsNull(generator.newTemporary(), superclass.get()), superclassIsNullLabel.get());
 
         Ref<Label> superclassIsConstructorLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitIsConstructor(tempRegister.get(), superclass.get()), superclassIsConstructorLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsConstructor(generator.newTemporary(), superclass.get()), superclassIsConstructorLabel.get());
         generator.emitThrowTypeError("The superclass is not a constructor."_s);
         generator.emitLabel(superclassIsConstructorLabel.get());
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
 
         Ref<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitJumpIfTrue(generator.emitIsNull(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsObject(generator.newTemporary(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsNull(generator.newTemporary(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
         generator.emitThrowTypeError("The value of the superclass's prototype property is not an object or null."_s);
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 

@@ -1,3 +1,48 @@
+2021-03-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BytecodeGenerator::fuseCompareAndJump() fails for some language constructs
+        https://bugs.webkit.org/show_bug.cgi?id=221927
+
+        Reviewed by Yusuke Suzuki.
+
+        For BytecodeGenerator::fuseCompareAndJump() to merge two ops into one, condition's `dst`
+        register should not be referenced from elsewhere. This change tracks down and eliminates
+        all such cases, which reduces bytecode size for a few language constructs:
+          -1 per every `case` of a `switch`;
+          -2 per generator function, -2 per every `yield` / `yield*`;
+          -2 per `class extends`;
+          -2 per `finally`, -1 per every `break` / `continue` / `return` inside;
+          -3 per Function.prototype.apply() with `...spread` as a single argument.
+
+        Instead of mixing RefPtr with raw C++ pointers, single-line branches were preferred.
+        To keep them cleaner, this patch introduces emitLoad() override for JSGenerator::ResumeMode
+        enum, and tweaks existing override for CompletionType.
+
+        A few drive-by improvements:
+          * to enable future optimizations, replaces emitBinaryOp() with emitEqualityOp()
+            for OpEq / OpStricteq (adds an assert), and vice-versa for other comparison ops;
+          * removes OperandTypes for comparison ops as it was ignored
+            (let's re-introduce them consistently once supported);
+          * inlines too specific BytecodeGenerator::emitJumpIf();
+          * replaces `eq` with `stricteq` in ApplyFunctionCallDotNode.
+
+        No behavior change, no callee registers count grow.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::emitJumpIf): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+
 2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add gc and clearKeptObjects to $262

@@ -4767,13 +4767,10 @@ RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGenerator:
     emitYieldPoint(argument, result);
 
     Ref<Label> normalLabel = newLabel();
-    RefPtr<RegisterID> condition = newTemporary();
-    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
-    emitJumpIfTrue(condition.get(), normalLabel.get());
+    emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), normalLabel.get());
 
     Ref<Label> throwLabel = newLabel();
-    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode))));
-    emitJumpIfTrue(condition.get(), throwLabel.get());
+    emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::ThrowMode)), throwLabel.get());
     // Return.
     {
         RefPtr<RegisterID> returnRegister = generatorValueRegister();
@@ -4953,17 +4950,10 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                 emitYieldPoint(value.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
 
                 Ref<Label> normalLabel = newLabel();
+                emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), normalLabel.get());
+
                 Ref<Label> returnLabel = newLabel();
-                {
-                    RefPtr<RegisterID> condition = newTemporary();
-                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode))));
-                    emitJumpIfTrue(condition.get(), normalLabel.get());
-
-                    emitEqualityOp<OpStricteq>(condition.get(), generatorResumeModeRegister(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode))));
-                    emitJumpIfTrue(condition.get(), returnLabel.get());
-
-                    // Fallthrough to ThrowMode.
-                }
+                emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::ReturnMode)), returnLabel.get());
 
                 // Throw.
                 {
@@ -5131,7 +5121,7 @@ bool BytecodeGenerator::emitReturnViaFinallyIfNeeded(RegisterID* returnRegister)
 void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& normalCompletionLabel)
 {
     if (context.numberOfBreaksOrContinues() || context.handlesReturns()) {
-        emitJumpIf<OpStricteq>(context.completionTypeRegister(), CompletionType::Normal, normalCompletionLabel);
+        emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, CompletionType::Normal)), normalCompletionLabel);
 
         FinallyContext* outerContext = context.outerContext();
 
@@ -5142,7 +5132,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
         for (size_t i = 0; i < numberOfJumps; i++) {
             Ref<Label> nextLabel = newLabel();
             auto& jump = context.jumps(i);
-            emitJumpIf<OpNstricteq>(context.completionTypeRegister(), jump.jumpID, nextLabel.get());
+            emitJumpIfFalse(emitEqualityOp<OpStricteq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, jump.jumpID)), nextLabel.get());
 
             // This case is for Break / Continue completions from an inner finally context
             // with a jump target that is not beyond the next outer finally context:
@@ -5175,7 +5165,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
         if (outerContext) {
             if (context.handlesReturns()) {
                 Ref<Label> isNotReturnLabel = newLabel();
-                emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Return, isNotReturnLabel.get());
+                emitJumpIfFalse(emitEqualityOp<OpStricteq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, CompletionType::Return)), isNotReturnLabel.get());
 
                 // This case is for Return completion from an inner finally context:
                 //
@@ -5203,7 +5193,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
             bool hasBreaksOrContinuesThatEscapeCurrentFinally = context.numberOfBreaksOrContinues() > numberOfJumps;
             if (hasBreaksOrContinuesThatEscapeCurrentFinally) {
                 Ref<Label> isThrowOrNormalLabel = newLabel();
-                emitJumpIf<OpBeloweq>(context.completionTypeRegister(), CompletionType::Throw, isThrowOrNormalLabel.get());
+                emitJumpIfTrue(emitBinaryOp<OpBeloweq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, CompletionType::Throw)), isThrowOrNormalLabel.get());
 
                 // A completionType above Throw means we have a Break or Continue encoded as a jumpID.
                 // We already ruled out Return above.
@@ -5246,7 +5236,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
             // We are the outermost finally.
             if (context.handlesReturns()) {
                 Ref<Label> notReturnLabel = newLabel();
-                emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Return, notReturnLabel.get());
+                emitJumpIfFalse(emitEqualityOp<OpStricteq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, CompletionType::Return)), notReturnLabel.get());
 
                 // This case is for Return completion from the outermost finally context:
                 //
@@ -5270,7 +5260,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
     // By now, we've rule out all Break / Continue / Return completions above. The only remaining
     // possibilities are Normal or Throw.
 
-    emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Throw, normalCompletionLabel);
+    emitJumpIfFalse(emitEqualityOp<OpStricteq>(newTemporary(), context.completionTypeRegister(), emitLoad(nullptr, CompletionType::Throw)), normalCompletionLabel);
 
     // We get here because we entered this finally context with Throw completionType (i.e. we have
     // an exception that we need to rethrow), and we didn't encounter a different abrupt completion
@@ -5283,17 +5273,6 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
     // in its completionValue.
 
     emitThrow(context.completionValueRegister());
-}
-
-template<typename CompareOp>
-void BytecodeGenerator::emitJumpIf(RegisterID* completionTypeRegister, CompletionType type, Label& jumpTarget)
-{
-    RefPtr<RegisterID> tempRegister = newTemporary();
-    RegisterID* valueConstant = addConstantValue(jsNumber(static_cast<int>(type)));
-    OperandTypes operandTypes = OperandTypes(ResultType::numberTypeIsInt32(), ResultType::unknownType());
-
-    auto equivalenceResult = emitBinaryOp<CompareOp>(tempRegister.get(), completionTypeRegister, valueConstant, operandTypes);
-    emitJumpIfTrue(equivalenceResult, jumpTarget);
 }
 
 void BytecodeGenerator::pushOptionalChainTarget()
