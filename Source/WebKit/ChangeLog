@@ -1,3 +1,13 @@
+2021-03-01  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Building with ENABLE_SERVICE_WORKER=OFF fails
+        https://bugs.webkit.org/show_bug.cgi?id=222566
+
+        Unreviewed build fix.
+
+        * UIProcess/WebProcessPool.cpp: Only compile a method when service
+        worker is enabled.
+
 2021-03-01  Chris Dumez  <cdumez@apple.com>
 
         Have WebProcessPool::processForRegistrableDomain() return a Ref<WebProcessProxy>

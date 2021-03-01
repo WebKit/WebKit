@@ -1011,6 +1011,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
     return createNewWebProcess(&websiteDataStore);
 }
 
+#if ENABLE(SERVICE_WORKER)
 UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForServiceWorkers()
 {
     if (!m_userContentControllerForServiceWorker)
@@ -1018,6 +1019,7 @@ UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierF
 
     return m_userContentControllerForServiceWorker->identifier();
 }
+#endif
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
