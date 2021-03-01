@@ -71,37 +71,37 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @end
 
 @interface WebAVPlayerView : AVPlayerView
-@property (weak) id<WebAVPlayerViewDelegate> delegate;
+@property (weak) id<WebAVPlayerViewDelegate> webDelegate;
 @end
 
-static id<WebAVPlayerViewDelegate> WebAVPlayerView_delegate(id aSelf, SEL)
+static id<WebAVPlayerViewDelegate> WebAVPlayerView_webDelegate(id aSelf, SEL)
 {
-    void* delegate = nil;
-    object_getInstanceVariable(aSelf, "_webDelegate", &delegate);
-    return static_cast<id<WebAVPlayerViewDelegate>>(delegate);
+    void* webDelegate = nil;
+    object_getInstanceVariable(aSelf, "_webDelegate", &webDelegate);
+    return static_cast<id<WebAVPlayerViewDelegate>>(webDelegate);
 }
 
-static void WebAVPlayerView_setDelegate(id aSelf, SEL, id<WebAVPlayerViewDelegate> delegate)
+static void WebAVPlayerView_setWebDelegate(id aSelf, SEL, id<WebAVPlayerViewDelegate> webDelegate)
 {
-    object_setInstanceVariable(aSelf, "_webDelegate", delegate);
+    object_setInstanceVariable(aSelf, "_webDelegate", webDelegate);
 }
 
 static BOOL WebAVPlayerView_isFullScreen(id aSelf, SEL)
 {
     WebAVPlayerView *playerView = aSelf;
-    return [playerView.delegate playerViewIsFullScreen:playerView];
+    return [playerView.webDelegate playerViewIsFullScreen:playerView];
 }
 
 static void WebAVPlayerView_enterFullScreen(id aSelf, SEL, id sender)
 {
     WebAVPlayerView *playerView = aSelf;
-    [playerView.delegate playerViewRequestEnterFullscreen:playerView];
+    [playerView.webDelegate playerViewRequestEnterFullscreen:playerView];
 }
 
 static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
 {
     WebAVPlayerView *playerView = aSelf;
-    [playerView.delegate playerViewRequestExitFullscreen:playerView];
+    [playerView.webDelegate playerViewRequestExitFullscreen:playerView];
 }
 
 static WebAVPlayerView *allocWebAVPlayerViewInstance()
@@ -112,8 +112,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
         ASSERT(getAVPlayerViewClass());
         Class aClass = objc_allocateClassPair(getAVPlayerViewClass(), "WebAVPlayerView", 0);
         theClass = aClass;
-        class_addMethod(theClass, @selector(setDelegate:), (IMP)WebAVPlayerView_setDelegate, "v@:@");
-        class_addMethod(theClass, @selector(delegate), (IMP)WebAVPlayerView_delegate, "@@:");
+        class_addMethod(theClass, @selector(setWebDelegate:), (IMP)WebAVPlayerView_setWebDelegate, "v@:@");
+        class_addMethod(theClass, @selector(webDelegate), (IMP)WebAVPlayerView_webDelegate, "@@:");
         class_addMethod(theClass, @selector(isFullScreen), (IMP)WebAVPlayerView_isFullScreen, "B@:");
         class_addMethod(theClass, @selector(enterFullScreen:), (IMP)WebAVPlayerView_enterFullScreen, "v@:@");
         class_addMethod(theClass, @selector(exitFullScreen:), (IMP)WebAVPlayerView_exitFullScreen, "v@:@");
@@ -162,7 +162,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 {
     ASSERT(!_backgroundFullscreenWindow);
     ASSERT(!_fadeAnimation);
-    _playerView.delegate = nil;
+    _playerView.webDelegate = nil;
     _playbackModel = nil;
     [super dealloc];
 }
@@ -183,7 +183,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     _playerView.controlsStyle = AVPlayerViewControlsStyleNone;
     _playerView.showsFullScreenToggleButton = YES;
     _playerView.showsAudioOnlyIndicatorView = NO;
-    _playerView.delegate = self;
+    _playerView.webDelegate = self;
     window.contentView = _playerView;
     [_contentOverlay setFrame:_playerView.contentOverlayView.bounds];
     [_playerView.contentOverlayView addSubview:_contentOverlay.get()];

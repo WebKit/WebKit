@@ -1,3 +1,25 @@
+2021-03-01  Peng Liu  <peng.liu6@apple.com>
+
+        Rename the delegate property of WebAVPlayerView to webDelegate to fix a build failure with new SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=222560
+
+        Reviewed by Jer Noble.
+
+        We have to rename the `delegate` property of `WebAVPlayerView` because AVKit adds
+        a `delegate` property to `AVPlayerView` which will conflict with the one in WebKit.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (WebAVPlayerView_webDelegate):
+        (WebAVPlayerView_setWebDelegate):
+        (WebAVPlayerView_isFullScreen):
+        (WebAVPlayerView_enterFullScreen):
+        (WebAVPlayerView_exitFullScreen):
+        (allocWebAVPlayerViewInstance):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (WebAVPlayerView_delegate): Deleted.
+        (WebAVPlayerView_setDelegate): Deleted.
+
 2021-02-28  Darin Adler  <darin@apple.com>
 
         [iOS] Reduce use of retain/release in WAKWindow and remove unneeded methods from that class
