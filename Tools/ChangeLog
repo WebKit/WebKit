@@ -1,3 +1,15 @@
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()
+        https://bugs.webkit.org/show_bug.cgi?id=222574
+        <rdar://68340471>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-03-01  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for CSS Color 5 color-contrast()
