@@ -1,3 +1,30 @@
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://problem/74748353>
+
+        Reviewed by Simon Fraser.
+
+        Replace use of IOSurfaceSetOwnership() SPI with IOSurfaceSetOwnershipIdentity().
+        Both do the same thing but IOSurfaceSetOwnershipIdentity() only requires an identity token
+        for the new owner (instead of a control port). As a result, IOSurfaceSetOwnershipIdentity()
+        requires a lot less priviledges and can now be used directly in the GPUProcess instead of
+        the WebProcess.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::setProcessOwnership):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::setProcessOwnership):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+
 2021-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Timeout calculations are error-prone for compound IPC operations

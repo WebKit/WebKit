@@ -93,9 +93,6 @@ void RemoteGraphicsContextGLProxy::prepareForDisplay()
     }
     auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), sRGBColorSpaceRef());
     if (displayBuffer) {
-        // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
-        displayBuffer->setOwnership(mach_task_self());
-
         auto& sc = platformSwapChain();
         sc.recycleBuffer();
         sc.present({ WTFMove(displayBuffer), nullptr });

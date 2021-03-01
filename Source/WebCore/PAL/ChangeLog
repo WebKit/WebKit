@@ -1,3 +1,16 @@
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add declaration for new IOSurfaceSetOwnershipIdentity() SPI, for the open source
+        SDK.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2021-02-22  Per Arne  <pvollan@apple.com>
 
         [macOS] Disabling relaunch on login for the WebContent process is racy
