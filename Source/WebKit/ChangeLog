@@ -1,3 +1,21 @@
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Have WebProcessPool::processForRegistrableDomain() return a Ref<WebProcessProxy>
+        https://bugs.webkit.org/show_bug.cgi?id=222575
+
+        Reviewed by Geoffrey Garen.
+
+        Have WebProcessPool::processForRegistrableDomain() return a Ref<WebProcessProxy> instead of a WebProcessProxy&,
+        for extra safety. Returning a WebProcessProxy& is generally safe because the WebProcessPool is expected to hold
+        a reference to the WebProcessProxy it is returning (via WebProcessPool::m_processes). However, this is a bit
+        fragile and can lead to bad bugs as we've seen recently.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+
 2021-03-01  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Some DisplayList items may not be replayed back before calling getImageData()

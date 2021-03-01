@@ -637,7 +637,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
+Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
 #if PLATFORM(COCOA)
     m_tccPreferenceEnabled = doesAppHaveITPEnabled();
@@ -646,11 +646,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
 #endif
 
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
-    auto& process = processProxy.get();
-    initializeNewWebProcess(process, websiteDataStore, isPrewarmed);
-    m_processes.append(WTFMove(processProxy));
+    initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
+    m_processes.append(processProxy.copyRef());
 
-    return process;
+    return processProxy;
 }
 
 RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore& websiteDataStore)
@@ -966,16 +965,19 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     removeProcessFromOriginCacheSet(*process);
 }
 
-WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
+Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
 {
     if (!registrableDomain.isEmpty()) {
-        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore))
-            return *process;
+        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore)) {
+            ASSERT(m_processes.contains(process.get()));
+            return process.releaseNonNull();
+        }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
-            return *process;
+            ASSERT(m_processes.contains(process.get()));
+            return process.releaseNonNull();
         }
     }
 
@@ -983,28 +985,28 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
-        return *process;
+        ASSERT(m_processes.contains(process.get()));
+        return process.releaseNonNull();
     }
 
-    if (!usesSingleWebProcess())
-        return createNewWebProcess(&websiteDataStore);
-
+    if (usesSingleWebProcess()) {
 #if PLATFORM(COCOA)
-    bool mustMatchDataStore = WebKit::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != WebKit::WebsiteDataStore::defaultDataStore().ptr();
+        bool mustMatchDataStore = WebKit::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != WebKit::WebsiteDataStore::defaultDataStore().ptr();
 #else
-    bool mustMatchDataStore = false;
+        bool mustMatchDataStore = false;
 #endif
 
-    for (auto& process : m_processes) {
-        if (process == m_prewarmedProcess || process->isDummyProcessProxy())
-            continue;
+        for (auto& process : m_processes) {
+            if (process == m_prewarmedProcess || process->isDummyProcessProxy())
+                continue;
 #if ENABLE(SERVICE_WORKER)
-        if (process->isRunningServiceWorkers())
-            continue;
+            if (process->isRunningServiceWorkers())
+                continue;
 #endif
-        if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
-            continue;
-        return *process;
+            if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+                continue;
+            return *process;
+        }
     }
     return createNewWebProcess(&websiteDataStore);
 }
@@ -1051,7 +1053,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             m_processes.append(process.copyRef());
         }
     } else
-        process = &processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
+        process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
 
     RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
     
