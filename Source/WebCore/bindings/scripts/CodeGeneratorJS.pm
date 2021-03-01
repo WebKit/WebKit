@@ -3997,6 +3997,9 @@ sub GetSkipVTableValidationForInterface
 sub ToMethodName
 {
     my $param = shift;
+
+    return $param if $param =~ /^CSSOM/;
+
     my $ret = lcfirst($param);
     $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
     $ret =~ s/dOM/dom/ if $ret =~ /^dOM/;
@@ -5330,6 +5333,13 @@ sub GenerateAttributeGetterBodyDefinition
             AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+
+        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "impl.getPropertyValueInternal(CSSProperty${propertyID})", "*thisObject.globalObject()");
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, (${toJSExpression}));\n");
     } else {
         if ($attribute->extendedAttributes->{CachedAttribute}) {
             push(@$outputArray, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
@@ -5473,6 +5483,21 @@ sub GenerateAttributeSetterBodyDefinition
         }
         push(@$outputArray, "    vm.heap.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
+        push(@$outputArray, "    return true;\n");
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+
+        my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
+        my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", "*thisObject.globalObject()", $exceptionThrower);
+
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
+        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
+        push(@$outputArray, "        return impl.setPropertyValueInternal(CSSProperty${propertyID}, WTFMove(nativeValue));\n");
+        push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isConstructor) {
         my $constructorType = $attribute->type->name;

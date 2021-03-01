@@ -212,10 +212,26 @@ CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(co
     return propertyIDFromJavaScriptCSSPropertyName(propertyName, nullptr);
 }
 
+ExceptionOr<void> CSSStyleDeclaration::setPropertyValueInternal(CSSPropertyID propertyID, String value)
+{
+    bool important = false;
+    if (DeprecatedGlobalSettings::shouldRespectPriorityInCSSAttributeSetters()) {
+        auto importantIndex = value.findIgnoringASCIICase("!important");
+        if (importantIndex && importantIndex != notFound) {
+            important = true;
+            value = value.left(importantIndex - 1);
+        }
+    }
+
+    return setPropertyInternal(propertyID, WTFMove(value), important);
+}
+
 const Settings* CSSStyleDeclaration::settings() const
 {
     return parentElement() ? &parentElement()->document().settings() : nullptr;
 }
+
+#if !ENABLE(ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION)
 
 Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomString& propertyName)
 {
@@ -227,7 +243,7 @@ Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomStrin
     if (auto value = getPropertyCSSValueInternal(propertyID))
         return Variant<String, double> { value->cssText() };
 
-    // If the property is a shorthand property (such as "padding"), it can only be accessed using getPropertyValue.
+    // If the property is a shorthand property (such as "padding"), it can only be accessed using getPropertyValueInternal.
     return Variant<String, double> { getPropertyValueInternal(propertyID) };
 }
 
@@ -241,21 +257,7 @@ ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyNa
     }
 
     propertySupported = true;
-
-    bool important = false;
-    if (DeprecatedGlobalSettings::shouldRespectPriorityInCSSAttributeSetters()) {
-        auto importantIndex = value.findIgnoringASCIICase("!important");
-        if (importantIndex && importantIndex != notFound) {
-            important = true;
-            value = value.left(importantIndex - 1);
-        }
-    }
-
-    auto setPropertyInternalResult = setPropertyInternal(propertyID, value, important);
-    if (setPropertyInternalResult.hasException())
-        return setPropertyInternalResult.releaseException();
-
-    return { };
+    return setPropertyValueInternal(propertyID, WTFMove(value));
 }
 
 Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
@@ -283,6 +285,7 @@ Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
 
     return result;
 }
+#endif
 
 String CSSStyleDeclaration::cssFloat()
 {
@@ -291,10 +294,7 @@ String CSSStyleDeclaration::cssFloat()
 
 ExceptionOr<void> CSSStyleDeclaration::setCssFloat(const String& value)
 {
-    auto result = setPropertyInternal(CSSPropertyFloat, value, false /* important */);
-    if (result.hasException())
-        return result.releaseException();
-    return { };
+    return setPropertyInternal(CSSPropertyFloat, value, false /* important */);
 }
 
 }

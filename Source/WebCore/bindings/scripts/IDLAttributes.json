@@ -38,6 +38,10 @@
                 "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
             }
         },
+        "CSSProperty": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },

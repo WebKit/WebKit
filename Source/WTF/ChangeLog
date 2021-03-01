@@ -1,5 +1,17 @@
 2021-03-01  Sam Weinig  <weinig@apple.com>
 
+        Add alternate, non-named-getter based, implementation of CSSStyleDeclaration back into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=222517
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnable.h:
+        Add new off by default ENABLE flag ENABLE(ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION) which indicates
+        that we should use the new attribute based implementation of property getter/setters of CSSStyleDeclaration.
+        Once we remove the compile time and binary size regressions, we can enable this and remove the macro.
+
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
         Add experimental support for CSS Color 5 color-contrast()
         https://bugs.webkit.org/show_bug.cgi?id=222530
 

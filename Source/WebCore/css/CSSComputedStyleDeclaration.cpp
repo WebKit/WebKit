@@ -4278,7 +4278,7 @@ String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID prope
     return getPropertyValue(propertyID);
 }
 
-ExceptionOr<bool> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool)
+ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool)
 {
     return Exception { NoModificationAllowedError };
 }

@@ -1,6 +1,7 @@
 partial interface TestGlobalObject {
     attribute TestCEReactionsConstructor TestCEReactions;
     attribute TestCEReactionsStringifierConstructor TestCEReactionsStringifier;
+    attribute TestCSSPropertyConstructor TestCSSProperty;
     attribute TestCallTracerConstructor TestCallTracer;
     [Conditional=TEST_CONDITIONAL] attribute TestCallbackInterfaceConstructor TestCallbackInterface;
     attribute TestClassWithJSBuiltinConstructorConstructor TestClassWithJSBuiltinConstructor;
