@@ -8,13 +8,13 @@
     <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
     <script src="/js-test-resources/testharness.js"></script>
     <script src="/js-test-resources/testharnessreport.js"></script>
-    <link rel=preload as=fetch onload="startTests()" href="./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii">
+    <link rel=preload as=fetch onload="startTests()" href="./resources/redirect-with-cache.py?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii">
   </head>
   <body>
     <script>
 function startTests()
 {
-    var preloadUrl = "./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii";
+    var preloadUrl = "./resources/redirect-with-cache.py?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii";
 
     promise_test(function(test) {
         return fetch(preloadUrl, {redirect: "manual", mode: "cors", credentials: "include"}).then((response) => {
