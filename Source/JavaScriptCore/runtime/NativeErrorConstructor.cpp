@@ -52,12 +52,8 @@ inline EncodedJSValue NativeErrorConstructor<errorType>::constructImpl(JSGlobalO
     JSValue message = callFrame->argument(0);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* errorStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->errorStructure(errorType)
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->errorStructure(errorType));
+    Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructureWithErrorType<errorType>, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(errorStructure);
-
     RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, errorType, false)));
 }
 

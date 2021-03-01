@@ -70,9 +70,7 @@ JSC_DEFINE_HOST_FUNCTION(constructIntlLocale, (JSGlobalObject* globalObject, Cal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->localeStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->localeStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, localeStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     IntlLocale* locale = IntlLocale::create(vm, structure);

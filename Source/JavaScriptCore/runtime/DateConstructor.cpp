@@ -127,10 +127,13 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
         value = millisecondsFromComponents(globalObject, args, WTF::LocalTime);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Structure* dateStructure = !newTarget || newTarget == globalObject->dateConstructor()
-        ? globalObject->dateStructure()
-        : InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), getFunctionRealm(vm, asObject(newTarget))->dateStructure());
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    Structure* dateStructure = nullptr;
+    if (!newTarget)
+        dateStructure = globalObject->dateStructure();
+    else {
+        dateStructure = JSC_GET_DERIVED_STRUCTURE(vm, dateStructure, asObject(newTarget), globalObject->dateConstructor());
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
 
     return DateInstance::create(vm, dateStructure, value);
 }

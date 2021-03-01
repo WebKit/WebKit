@@ -98,6 +98,16 @@ protected:
     WriteBarrier<JSGlobalObject> m_globalObject;
 };
 
-JS_EXPORT_PRIVATE JSGlobalObject* getFunctionRealm(VM&, JSObject*);
+JS_EXPORT_PRIVATE JSGlobalObject* getFunctionRealm(JSGlobalObject*, JSObject*);
+
+#define JSC_GET_DERIVED_STRUCTURE(vm, structureMemberFunctionName, newTarget, constructor) \
+    ((newTarget) == (constructor) \
+        ? globalObject->structureMemberFunctionName() \
+        : ([&]() -> Structure* { \
+            auto scope = DECLARE_THROW_SCOPE((vm)); \
+            auto* functionGlobalObject = getFunctionRealm(globalObject, (newTarget)); \
+            RETURN_IF_EXCEPTION(scope, nullptr); \
+            RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, (newTarget), functionGlobalObject->structureMemberFunctionName())); \
+        }()))
 
 } // namespace JSC

@@ -1,3 +1,110 @@
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Throw TypeError when getFunctionRealm hits revoked Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=222523
+
+        Reviewed by Alexey Shvayka.
+
+        This patch throws TypeError when getFunctionRealm encounters revoked Proxy. However,
+        this makes derived structure creation code difficult to be written inlinely.
+        The fast path of derived structure creation must be inlined since this is critical
+        path of every builtin constructors.
+
+        So, this patch introduces JSC_GET_DERIVED_STRUCTURE macro which streamlines the derived
+        structure creation code while keeping the fast path inlined. And it inserts appropriate
+        error checks after this new getFunctionRealm call.
+
+        Then, we appropriately use getFunctionRealm in op_create_this implementation.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/FinalizationRegistryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/InternalFunction.cpp:
+        (JSC::getFunctionRealm):
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlLocaleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructImpl):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructCustomArrayBufferIfNeeded):
+        (JSC::constructGenericTypedArrayViewImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::errorStructureWithErrorType const):
+        (JSC::JSGlobalObject::arrayBufferStructureWithSharingMode const):
+        (JSC::JSGlobalObject::typedArrayStructureWithTypedArrayType const):
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation const):
+        * runtime/MapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        * runtime/NumberConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObjectWithNewTarget):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::create):
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        * runtime/SetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/StringConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-03-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         BytecodeGenerator::fuseCompareAndJump() fails for some language constructs

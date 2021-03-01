@@ -101,9 +101,7 @@ JSC_DEFINE_HOST_FUNCTION(constructNumberConstructor, (JSGlobalObject* globalObje
     }
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->numberObjectStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->numberObjectStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, numberObjectStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     NumberObject* object = NumberObject::create(vm, structure);

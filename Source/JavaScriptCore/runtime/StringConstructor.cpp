@@ -140,9 +140,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWithStringConstructor, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->stringObjectStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->stringObjectStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, stringObjectStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!callFrame->argumentCount())

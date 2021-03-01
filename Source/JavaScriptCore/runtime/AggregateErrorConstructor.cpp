@@ -72,9 +72,7 @@ JSC_DEFINE_HOST_FUNCTION(constructAggregateErrorConstructor, (JSGlobalObject* gl
     JSValue message = callFrame->argument(1);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* errorStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->errorStructure(ErrorType::AggregateError)
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->errorStructure(ErrorType::AggregateError));
+    Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructureWithErrorType<ErrorType::AggregateError>, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
     ASSERT(errorStructure);
 

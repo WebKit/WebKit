@@ -134,7 +134,9 @@ inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalO
         return nullptr;
     }
 
-    auto result = JSArrayBuffer::create(vm, getFunctionRealm(vm, asObject(species.value()))->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
+    JSGlobalObject* functionGlobalObject = getFunctionRealm(globalObject, asObject(species.value()));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    auto result = JSArrayBuffer::create(vm, functionGlobalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
     if (prototype.isObject())
         result->setPrototypeDirect(vm, prototype);
     return result;
@@ -260,9 +262,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType)
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->typedArrayStructure(ViewClass::TypedArrayStorageType));
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, typedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     size_t argCount = callFrame->argumentCount();

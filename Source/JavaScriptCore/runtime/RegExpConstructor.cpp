@@ -212,9 +212,10 @@ JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalO
 
 inline Structure* getRegExpStructure(JSGlobalObject* globalObject, JSValue newTarget)
 {
-    return !newTarget || newTarget == globalObject->regExpConstructor()
-        ? globalObject->regExpStructure()
-        : InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), getFunctionRealm(globalObject->vm(), asObject(newTarget))->regExpStructure());
+    if (!newTarget)
+        return globalObject->regExpStructure();
+    VM& vm = globalObject->vm();
+    return JSC_GET_DERIVED_STRUCTURE(vm, regExpStructure, asObject(newTarget), globalObject->regExpConstructor());
 }
 
 inline OptionSet<Yarr::Flags> toFlags(JSGlobalObject* globalObject, JSValue flags)

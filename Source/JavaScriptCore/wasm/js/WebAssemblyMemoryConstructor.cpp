@@ -58,9 +58,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* webAssemblyMemoryStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->webAssemblyMemoryStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyMemoryStructure());
+    Structure* webAssemblyMemoryStructure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyMemoryStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(throwScope, { });
 
     JSObject* memoryDescriptor;

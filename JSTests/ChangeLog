@@ -1,3 +1,12 @@
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Throw TypeError when getFunctionRealm hits revoked Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=222523
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/expectations.yaml:
+
 2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add gc and clearKeptObjects to $262

@@ -55,9 +55,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError, (JSGlobalObject* gl
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->webAssemblyRuntimeErrorStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyRuntimeErrorStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyRuntimeErrorStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(JSWebAssemblyRuntimeError::create(globalObject, vm, structure, WTFMove(messageString)));

@@ -43,7 +43,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-    void finishCreation(VM&, const char* name, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
     ProxyConstructor(VM&, Structure*);

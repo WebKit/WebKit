@@ -66,9 +66,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* global
         return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* instanceStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->webAssemblyInstanceStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyInstanceStructure());
+    Structure* instanceStructure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyInstanceStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);

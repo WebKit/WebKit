@@ -159,8 +159,12 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         return nullptr;
     }
 
+    JSGlobalObject* structureGlobalObject = globalObject;
     bool needsSubclassStructure = newTarget && newTarget != globalObject->functionConstructor();
-    JSGlobalObject* structureGlobalObject = needsSubclassStructure ? getFunctionRealm(vm, asObject(newTarget)) : globalObject;
+    if (needsSubclassStructure) {
+        structureGlobalObject = getFunctionRealm(globalObject, asObject(newTarget));
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
     Structure* structure = nullptr;
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:

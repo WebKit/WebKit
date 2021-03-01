@@ -64,9 +64,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakRef, (JSGlobalObject* globalObject, CallFr
         return throwVMTypeError(globalObject, scope, "First argument to WeakRef should be an object"_s);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* weakObjectRefStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->weakObjectRefStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->weakObjectRefStructure());
+    Structure* weakObjectRefStructure = JSC_GET_DERIVED_STRUCTURE(vm, weakObjectRefStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWeakObjectRef::create(vm, weakObjectRefStructure, callFrame->uncheckedArgument(0).getObject())));

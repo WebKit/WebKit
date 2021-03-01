@@ -786,6 +786,8 @@ public:
         ASSERT_NOT_REACHED();
         return nullptr;
     }
+    template<ErrorType errorType> Structure* errorStructureWithErrorType() const { return errorStructure(errorType); }
+
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* hostFunctionStructure() const { return m_hostFunctionStructure.get(); }
 
@@ -915,6 +917,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
+    template<ArrayBufferSharingMode sharingMode> Structure* arrayBufferStructureWithSharingMode() const { return arrayBufferStructure(sharingMode); }
     JSObject* arrayBufferConstructor(ArrayBufferSharingMode sharingMode) const
     {
         switch (sharingMode) {
@@ -978,6 +981,7 @@ public:
             return false;
         return typedArrayStructureConcurrently(type) == structure;
     }
+    template<TypedArrayType type> Structure* typedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type); }
 
     JSObject* typedArrayConstructor(TypedArrayType type) const
     {

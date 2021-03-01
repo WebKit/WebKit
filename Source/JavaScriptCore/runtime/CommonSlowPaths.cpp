@@ -246,13 +246,16 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
         }
     } else {
-        // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
+        // https://tc39.es/ecma262/#sec-getprototypefromconstructor
         JSValue proto = constructorAsObject->get(globalObject, vm.propertyNames->prototype);
         CHECK_EXCEPTION();
         if (proto.isObject())
             result = constructEmptyObject(globalObject, asObject(proto));
-        else
-            result = constructEmptyObject(globalObject);
+        else {
+            JSGlobalObject* functionGlobalObject = getFunctionRealm(globalObject, constructorAsObject);
+            CHECK_EXCEPTION();
+            result = constructEmptyObject(functionGlobalObject);
+        }
     }
     RETURN(result);
 }
@@ -265,15 +268,11 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_promise)
 
     JSPromise* result = nullptr;
     if (bytecode.m_isInternalPromise) {
-        Structure* structure = constructorAsObject == globalObject->internalPromiseConstructor()
-            ? globalObject->internalPromiseStructure()
-            : InternalFunction::createSubclassStructure(globalObject, constructorAsObject, getFunctionRealm(vm, constructorAsObject)->internalPromiseStructure());
+        Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, internalPromiseStructure, constructorAsObject, globalObject->internalPromiseConstructor());
         CHECK_EXCEPTION();
         result = JSInternalPromise::create(vm, structure);
     } else {
-        Structure* structure = constructorAsObject == globalObject->promiseConstructor()
-            ? globalObject->promiseStructure()
-            : InternalFunction::createSubclassStructure(globalObject, constructorAsObject, getFunctionRealm(vm, constructorAsObject)->promiseStructure());
+        Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, promiseStructure, constructorAsObject, globalObject->promiseConstructor());
         CHECK_EXCEPTION();
         result = JSPromise::create(vm, structure);
     }
