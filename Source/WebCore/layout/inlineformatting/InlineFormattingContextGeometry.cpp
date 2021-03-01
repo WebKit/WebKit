@@ -57,7 +57,7 @@ private:
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    bool m_inlineLevelBoxesNeedVerticalAlignment { false };
+    bool m_useSimplifiedVerticalAlignment { true };
 };
 
 struct HangingTrailingWhitespaceContent {
@@ -148,7 +148,7 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineLevelBoxesNeedVerticalAlignment(!inlineFormattingContext.layoutState().inStandardsMode())
+    , m_useSimplifiedVerticalAlignment(inlineFormattingContext.layoutState().inStandardsMode())
 {
 }
 
@@ -161,7 +161,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto lineBox = LineBox { rootBox(), lineContent.logicalTopLeft, lineLogicalWidth, horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), contentLogicalWidth, runs.size() };
 
     constructInlineLevelBoxes(lineBox, runs);
-    if (m_inlineLevelBoxesNeedVerticalAlignment)
+    if (!m_useSimplifiedVerticalAlignment)
         computeLineBoxHeightAndAlignInlineLevelBoxesVertically(lineBox);
     return lineBox;
 }
@@ -298,7 +298,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
             // Let's pre-compute the logical top so that we can avoid running the alignment on simple inline boxes.
             auto alignInlineBoxIfEligible = [&] {
-                if (m_inlineLevelBoxesNeedVerticalAlignment)
+                if (!m_useSimplifiedVerticalAlignment)
                     return;
                 // Baseline aligned, non-stretchy direct children are considered to be simple for now.
                 auto isConsideredSimple = &layoutBox.parent() == &rootBox()
@@ -307,7 +307,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
                     && !inlineLevelBoxGeometry.marginAfter()
                     && marginBoxHeight <= rootInlineBox.baseline();
                 if (!isConsideredSimple) {
-                    m_inlineLevelBoxesNeedVerticalAlignment = true;
+                    m_useSimplifiedVerticalAlignment = false;
                     return;
                 }
                 // Only baseline alignment for now.
@@ -325,7 +325,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // FIXME: Add support for simple inline boxes too.
         // We can do simplified vertical alignment with non-atomic inline boxes as long as the line has no content.
         // e.g. <div><span></span><span></span></div> is still okay.
-        m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || lineHasContent;
+        m_useSimplifiedVerticalAlignment = !lineHasContent;
         if (run.isInlineBoxStart()) {
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
@@ -371,13 +371,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     lineBox.setHasContent(lineHasContent);
     if (!lineHasContent) {
         // We should always be able to exercise the fast path when the line has no content at all.
-        m_inlineLevelBoxesNeedVerticalAlignment = false;
-    } else if (!m_inlineLevelBoxesNeedVerticalAlignment) {
+        m_useSimplifiedVerticalAlignment = true;
+    } else if (m_useSimplifiedVerticalAlignment) {
         // FIXME: Add fast path support for line-height content.
-        m_inlineLevelBoxesNeedVerticalAlignment = !rootBox().style().lineHeight().isNegative();
+        m_useSimplifiedVerticalAlignment = rootBox().style().lineHeight().isNegative();
     }
 
-    if (!m_inlineLevelBoxesNeedVerticalAlignment) {
+    if (m_useSimplifiedVerticalAlignment) {
         if (!lineHasContent) {
             simplifiedVerticalAlignment.rootInlineBoxTop = -rootInlineBox.baseline();
             simplifiedVerticalAlignment.lineBoxTop = { };
