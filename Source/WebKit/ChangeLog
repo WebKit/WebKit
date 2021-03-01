@@ -1,3 +1,23 @@
+2021-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        EventDispatcher::wheelEvent is accessing m_scrollingTrees without locking m_scrollingTreesMutex since r271235
+        https://bugs.webkit.org/show_bug.cgi?id=222529
+
+        Reviewed by Carlos Garcia Campos.
+
+        r271235 added a code to access m_scrollingTrees, but it didn't
+        lock m_scrollingTreesMutex. The code can be removed by moving it
+        into the above lambda expression.
+
+        EventDispatcher::wheelEvent was using a local lambda expression.
+        However the return value wasn't used. And, MSVC can't compile the
+        lambda expression because it has a bug that 'this' can't be used
+        in lambda expressions. Converted the lambda expression to a
+        do-while statement.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2021-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING which is always true for macOS
