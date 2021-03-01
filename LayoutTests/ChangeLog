@@ -1,3 +1,12 @@
+2021-03-01  Truitt Savell  <tsavell@apple.com>
+
+        media/media-fullscreen-pause-inline.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=222573
+
+        RUnreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-03-01  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/loading convert PHP to Python
