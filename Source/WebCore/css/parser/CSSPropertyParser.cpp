@@ -96,18 +96,6 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-#if PLATFORM(IOS_FAMILY)
-void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength)
-{
-    if (!strcmp(propertyName, "-webkit-hyphenate-locale")) {
-        // Worked in iOS 4.2.
-        static const char webkitLocale[] = "-webkit-locale";
-        propertyNameAlias = webkitLocale;
-        newLength = strlen(webkitLocale);
-    }
-}
-#endif
-
 template <typename CharacterType>
 static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned length)
 {
@@ -121,15 +109,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     }
     buffer[length] = '\0';
     
-    const char* name = buffer;
-    if (buffer[0] == '-') {
-#if PLATFORM(IOS_FAMILY)
-        cssPropertyNameIOSAliasing(buffer, name, length);
-#endif
-    }
-    
-    const Property* hashTableEntry = findProperty(name, length);
-    if (hashTableEntry) {
+    if (auto hashTableEntry = findProperty(buffer, length)) {
         auto propertyID = static_cast<CSSPropertyID>(hashTableEntry->id);
         // FIXME: Should take account for flags in settings().
         if (isEnabledCSSProperty(propertyID))

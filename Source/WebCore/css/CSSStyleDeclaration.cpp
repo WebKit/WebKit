@@ -184,10 +184,6 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
     *bufferPtr = '\0';
 
     unsigned outputLength = bufferPtr - buffer;
-#if PLATFORM(IOS_FAMILY)
-    cssPropertyNameIOSAliasing(buffer, name, outputLength);
-#endif
-
     auto hashTableEntry = findProperty(name, outputLength);
     if (!hashTableEntry)
         return CSSPropertyInvalid;
