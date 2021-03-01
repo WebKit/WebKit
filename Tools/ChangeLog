@@ -1,3 +1,16 @@
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 color-contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=222530
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update luminance values to account for more accurate conversion to
+        XYZ now that we are usuing the actual matrix values from SRGBADescriptor
+        and not a truncated copy.
+
 2021-03-01  Megan Gardner  <megan_gardner@apple.com>
 
         Restoring App Highlight crashes if no range is found.

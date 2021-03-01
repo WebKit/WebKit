@@ -1166,6 +1166,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorComponents.h
     platform/graphics/ColorConversion.h
     platform/graphics/ColorHash.h
+    platform/graphics/ColorLuminance.h
     platform/graphics/ColorMatrix.h
     platform/graphics/ColorModels.h
     platform/graphics/ColorSerialization.h

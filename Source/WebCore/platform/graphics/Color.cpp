@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Color.h"
 
+#include "ColorLuminance.h"
 #include "ColorSerialization.h"
-#include "ColorUtilities.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/TextStream.h>
 
@@ -111,15 +111,26 @@ Color Color::darkened() const
 
 float Color::lightness() const
 {
-    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
-    return WebCore::lightness(toSRGBALossy<float>());
+    // FIXME: Replace remaining uses with luminance.
+    auto [r, g, b, a] = toSRGBALossy<float>();
+    auto [min, max] = std::minmax({ r, g, b });
+    return 0.5f * (max + min);
 }
 
 float Color::luminance() const
 {
-    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms
-    // for luminance (e.g. convertToXYZ(c).yComponent()).
-    return WebCore::luminance(toSRGBALossy<float>());
+    return callOnUnderlyingType([&] (const auto& underlyingColor) {
+        return WebCore::relativeLuminance(underlyingColor);
+    });
+}
+
+float Color::contrastRatio(const Color& colorA, const Color& colorB)
+{
+    return colorA.callOnUnderlyingType([&] (const auto& underlyingColorA) {
+        return colorB.callOnUnderlyingType([&] (const auto& underlyingColorB) {
+            return WebCore::contrastRatio(underlyingColorA, underlyingColorB);
+        });
+    });
 }
 
 Color Color::colorWithAlpha(float alpha) const
@@ -144,9 +155,9 @@ Color Color::invertedColorWithAlpha(float alpha) const
         // better for non-invertible color types like Lab or consider removing this in favor
         // of alternatives.
         if constexpr (ColorType::Model::isInvertible)
-            return invertedcolorWithOverriddenAlpha(underlyingColor, alpha);
+            return invertedColorWithOverriddenAlpha(underlyingColor, alpha);
         else
-            return invertedcolorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
+            return invertedColorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
     });
 }
 
@@ -165,6 +176,20 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
     if (isExtended())
         return { asExtended().colorSpace(), asExtended().components() };
     return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline())) };
+}
+
+bool Color::isBlackColor(const Color& color)
+{
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isBlack(underlyingColor);
+    });
+}
+
+bool Color::isWhiteColor(const Color& color)
+{
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isWhite(underlyingColor);
+    });
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

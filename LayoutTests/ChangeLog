@@ -1,3 +1,14 @@
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 color-contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=222530
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/parsing-color-contrast-expected.txt: Added.
+        * fast/css/parsing-color-contrast.html: Added.
+        Add parsing and computed style computation tests for color-contast().
+
 2021-03-01  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Some DisplayList items may not be replayed back before calling getImageData()

@@ -105,6 +105,7 @@ public:
 
     WEBCORE_EXPORT float luminance() const;
     WEBCORE_EXPORT float lightness() const; // FIXME: Replace remaining uses with luminance.
+    WEBCORE_EXPORT static float contrastRatio(const Color&, const Color&);
 
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
@@ -492,20 +493,6 @@ inline void Color::setExtendedColor(Ref<ExtendedColor>&& color, OptionSet<FlagsI
     flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::Extended });
     m_colorAndFlags = encodedExtendedColor(WTFMove(color)) | encodedFlags(flags);
     ASSERT(isExtended());
-}
-
-inline bool Color::isBlackColor(const Color& color)
-{
-    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
-        return WebCore::isBlack(underlyingColor);
-    });
-}
-
-inline bool Color::isWhiteColor(const Color& color)
-{
-    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
-        return WebCore::isWhite(underlyingColor);
-    });
 }
 
 template<class Encoder> void Color::encode(Encoder& encoder) const

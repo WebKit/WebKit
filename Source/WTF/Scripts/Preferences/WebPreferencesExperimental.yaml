@@ -113,6 +113,18 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSSColorContrastEnabled:
+  type: bool
+  humanReadableName: "CSS color-contrast()"
+  humanReadableDescription: "Enable support for CSS color-contrast() defined in CSS Color 5"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSColorMixEnabled:
   type: bool
   humanReadableName: "CSS color-mix()"

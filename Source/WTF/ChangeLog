@@ -1,3 +1,14 @@
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 color-contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=222530
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add new experimental preference for CSS Color 5 color-contrast()
+        which is off by default.
+
 2021-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING which is always true for macOS

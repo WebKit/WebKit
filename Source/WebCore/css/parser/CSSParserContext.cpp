@@ -68,6 +68,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , aspectRatioEnabled { document.settings().aspectRatioEnabled() }
+    , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
@@ -106,6 +107,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isContentOpaque == b.isContentOpaque
         && a.useSystemAppearance == b.useSystemAppearance
         && a.aspectRatioEnabled == b.aspectRatioEnabled
+        && a.colorContrastEnabled == b.colorContrastEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled

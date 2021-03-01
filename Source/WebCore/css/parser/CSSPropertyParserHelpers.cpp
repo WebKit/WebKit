@@ -42,6 +42,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 #include "ColorConversion.h"
+#include "ColorLuminance.h"
 #include "Pair.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
@@ -1482,6 +1483,49 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     return color;
 }
 
+static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    ASSERT(range.peek().functionId() == CSSValueColorContrast);
+
+    if (!context.colorContrastEnabled)
+        return { };
+
+    auto args = consumeFunction(range);
+
+    auto originBackgroundColor = consumeOriginColor(args, context);
+    if (!originBackgroundColor.isValid())
+        return { };
+
+    if (!consumeIdentRaw<CSSValueVs>(args))
+        return { };
+
+    Vector<Color> colorsToCompareAgainst;
+    do {
+        auto colorToCompareAgainst = consumeOriginColor(args, context);
+        if (!colorToCompareAgainst.isValid())
+            return { };
+
+        colorsToCompareAgainst.append(WTFMove(colorToCompareAgainst));
+    } while (consumeCommaIncludingWhitespace(args));
+
+    if (colorsToCompareAgainst.size() == 1)
+        return { };
+
+    auto originBackgroundColorLuminance = originBackgroundColor.luminance();
+
+    size_t indexOfColorWithHigestContrastRatio = 0;
+    float highestContrastRatioSoFar = 0;
+    for (size_t i = 0; i < colorsToCompareAgainst.size(); ++i) {
+        auto contrastRatio = WebCore::contrastRatio(originBackgroundColorLuminance, colorsToCompareAgainst[i].luminance());
+        if (contrastRatio > highestContrastRatioSoFar) {
+            highestContrastRatioSoFar = contrastRatio;
+            indexOfColorWithHigestContrastRatio = i;
+        }
+    }
+
+    return colorsToCompareAgainst[indexOfColorWithHigestContrastRatio];
+}
+
 struct HueColorAdjuster {
     enum class Type {
         Shorter,
@@ -1924,6 +1968,9 @@ static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserConte
         break;
     case CSSValueColor:
         color = parseColorFunctionParameters(colorRange);
+        break;
+    case CSSValueColorContrast:
+        color = parseColorContrastFunctionParameters(colorRange, context);
         break;
     case CSSValueColorMix:
         color = parseColorMixFunctionParameters(colorRange, context);

@@ -34,10 +34,6 @@
 
 namespace WebCore {
 
-float lightness(const SRGBA<float>&);
-float luminance(const SRGBA<float>&);
-float contrastRatio(const SRGBA<float>&, const SRGBA<float>&);
-
 SRGBA<float> premultiplied(const SRGBA<float>&);
 SRGBA<float> unpremultiplied(const SRGBA<float>&);
 
@@ -55,8 +51,8 @@ template<typename ColorType, typename Functor> ColorType colorByModifingEachNonA
 template<typename ColorType> constexpr ColorType colorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
-template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
-template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
+template<typename ColorType> constexpr ColorType invertedColorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
+template<typename ColorType> ColorType invertedColorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
@@ -121,7 +117,7 @@ template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType&
     return copy;
 }
 
-template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
+template<typename ColorType> constexpr ColorType invertedColorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 
@@ -135,7 +131,7 @@ template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlph
     return makeFromComponents<ColorType>(copy);
 }
 
-template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
+template<typename ColorType> ColorType invertedColorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 
