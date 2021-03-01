@@ -3495,12 +3495,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     });
 }
 
-- (AXTextMarkerRangeRef)textMarkerRangeForNSRange:(const NSRange&)range
-{
-    auto* backingObject = self.updateObjectBackingStore;
-    return backingObject ? backingObject->textMarkerRangeForNSRange(range) : nil;
-}
-
 // FIXME: No reason for this to be a method instead of a function; can get document from range.
 - (NSRange)_convertToNSRange:(const SimpleRange&)range
 {
@@ -3877,6 +3871,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return convertToNSArray(results);
     }
 
+    // TextMarker attributes.
+
     if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
@@ -3910,6 +3906,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return (id)textMarkerForCharacterOffset(cache, characterOffset);
         });
     }
+
+    // TextMarkerRange attributes.
+    if ([attribute isEqualToString:@"AXTextMarkerRangeForNSRange"])
+        return (id)backingObject->textMarkerRangeForNSRange(range);
 
     if ([attribute isEqualToString:NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute])
         return (id)[self lineTextMarkerRangeForTextMarker:textMarker forUnit:TextUnit::Line];

@@ -1,5 +1,46 @@
 2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r273583. rdar://problem/74881429
+
+    Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.
+    https://bugs.webkit.org/show_bug.cgi?id=222477
+    Source/WebCore:
+    
+    <rdar://problem/74793445>
+    
+    Reviewed by Chris Fleizach.
+    
+    This is a follow up to: https://bugs.webkit.org/show_bug.cgi?id=222154.
+    As Chris Fleizach pointed out in the above review, it is necessary to
+    add a handler in accessibilityAttributeValue:forParameter: for a new AX
+    attribute in order for clients to access this functionality.
+    
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    (-[WebAccessibilityObjectWrapper textMarkerRangeForNSRange:]): Deleted.
+    
+    Tools:
+    
+    Reviewed by Chris Fleizach.
+    
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273583 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.
+            https://bugs.webkit.org/show_bug.cgi?id=222477
+
+            Reviewed by Chris Fleizach.
+
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+
+2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r273227. rdar://problem/74880937
 
     Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
