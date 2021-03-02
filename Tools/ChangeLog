@@ -1,3 +1,13 @@
+2021-03-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Move WebGL test bot to Big Sur (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=222501
+        rdar://73900538
+
+        Unreviewed infrastructure fix.
+
+        * CISupport/build-webkit-org/config.json: Fixed a typo.
+
 2021-03-01  Jonathan Bedard  <jbedard@apple.com>
 
         [wbkitscmpy] Add commits with colliding timestamps
