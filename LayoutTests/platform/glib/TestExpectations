@@ -995,6 +995,8 @@ webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ F
 
 webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
 
+webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1010,7 +1012,10 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Failure ]
+# Uncomment after 222451 is fixed
+# webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Failure ]
+webkit.org/b/222451 [ Release ] webrtc/video-h264.html [ Timeout ]
+webkit.org/b/222585 [ Debug ] webrtc/video-h264.html [ Crash ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
 webkit.org/b/212809 [ Release ] webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
@@ -1039,7 +1044,10 @@ webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash 
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 
-webkit.org/b/219825 webrtc/sframe-keys.html [ Failure ]
+# Release timing out.
+webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
+webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
+
 
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute2.html  [ Failure ]
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute.html  [ Failure Timeout ]

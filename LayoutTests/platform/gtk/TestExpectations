@@ -2364,8 +2364,6 @@ webkit.org/b/172811 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ Failure ]
 
-webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
-
 webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
