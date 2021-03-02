@@ -211,21 +211,10 @@ http/tests/images/loading-image-border.html
 http/tests/images/loading-image-no-border.html
 
 # webkit.org/b/221694
-http/tests/media/clearkey/clear-key-hls-aes128.html [ Failure ]
-http/tests/media/clearkey/collect-webkit-media-session.html [ Crash ]
 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
-http/tests/media/hls/video-controls-live-stream.html [ Timeout ]
-http/tests/media/hls/video-duration-accessibility.html [ Timeout ]
-http/tests/media/media-document-referer.html [ Failure ]
-http/tests/media/media-document.html [ Failure ]
-http/tests/media/media-play-stream-chunked-icy.html [ Failure ]
-http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Failure ]
-http/tests/media/video-auth.html [ Failure ]
-http/tests/media/video-no-content-length-stall.html [ Timeout ]
-http/tests/media/video-play-stall.html [ Timeout ]
-http/tests/media/video-query-url.html [ Failure ]
+http/tests/media/video-play-stall.html [ Failure ]
 
 # webkit.org/b/221697
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html [ Failure ]
