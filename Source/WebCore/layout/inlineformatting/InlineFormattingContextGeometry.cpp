@@ -148,7 +148,8 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_useSimplifiedVerticalAlignment(inlineFormattingContext.layoutState().inStandardsMode())
+    // FIXME: Add fast path support for line-height content.
+    , m_useSimplifiedVerticalAlignment(inlineFormattingContext.layoutState().inStandardsMode() && rootBox().style().lineHeight().isNegative())
 {
 }
 
@@ -206,6 +207,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         InlineLayoutUnit lineBoxTop { 0 };
         InlineLayoutUnit lineBoxBottom { 0 };
         InlineLayoutUnit rootInlineBoxTop { 0 };
+
+        InlineLayoutUnit lineBoxHeight() const { return lineBoxBottom - lineBoxTop; }
     };
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalGeometryForInlineBox(rootInlineBox);
@@ -369,22 +372,11 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     }
 
     lineBox.setHasContent(lineHasContent);
-    if (!lineHasContent) {
-        // We should always be able to exercise the fast path when the line has no content at all.
-        m_useSimplifiedVerticalAlignment = true;
-    } else if (m_useSimplifiedVerticalAlignment) {
-        // FIXME: Add fast path support for line-height content.
-        m_useSimplifiedVerticalAlignment = rootBox().style().lineHeight().isNegative();
-    }
-
+    // We should always be able to exercise the fast path when the line has no content at all, even in non-standards mode or with line-height set.
+    m_useSimplifiedVerticalAlignment = m_useSimplifiedVerticalAlignment || !lineHasContent;
     if (m_useSimplifiedVerticalAlignment) {
-        if (!lineHasContent) {
-            simplifiedVerticalAlignment.rootInlineBoxTop = -rootInlineBox.baseline();
-            simplifiedVerticalAlignment.lineBoxTop = { };
-            simplifiedVerticalAlignment.lineBoxBottom = { };
-        }
-        rootInlineBox.setLogicalTop(simplifiedVerticalAlignment.rootInlineBoxTop);
-        lineBox.setLogicalHeight(simplifiedVerticalAlignment.lineBoxBottom - simplifiedVerticalAlignment.lineBoxTop);
+        rootInlineBox.setLogicalTop(lineHasContent ? simplifiedVerticalAlignment.rootInlineBoxTop : -rootInlineBox.baseline());
+        lineBox.setLogicalHeight(lineHasContent ? simplifiedVerticalAlignment.lineBoxHeight() : InlineLayoutUnit());
     }
 }
 
