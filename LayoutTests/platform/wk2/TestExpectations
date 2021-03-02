@@ -247,18 +247,9 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Failure Pass ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Timeout Pass ]
-media/modern-media-controls/placard/placard-ltr.html [ Failure Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Timeout ]
-http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/1-to-10-hours.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/10-hours-or-more.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ Timeout ]
-http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html [ Timeout ]
 
 # webkit.org/b/221689
 media/picture-in-picture/picture-in-picture-api-pip-window.html [ Timeout Pass ]
