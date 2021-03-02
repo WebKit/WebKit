@@ -229,8 +229,6 @@ http/tests/media/video-query-url.html [ Failure ]
 
 # webkit.org/b/221697
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/preserves-pitch.html [ Failure ]
 
 # webkit.org/b/221688
 media/W3C/video/networkState/networkState_during_loadstart.html [ Failure Pass ]
