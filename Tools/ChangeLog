@@ -1,3 +1,53 @@
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273695. rdar://problem/74940739
+
+    Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()
+    https://bugs.webkit.org/show_bug.cgi?id=222574
+    <rdar://68340471>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    The issue was that when WebProcessProxy::requestTermination() was called (e.g. process is killed by WebKit
+    for using too much memory), we would fail to remove the process from the WebProcessCache. Because the
+    terminated would stay in the cache (even though WebProcessProxy::shutDown() was called), we could potentially
+    try and use it later on for a navigation to the same domain. This would lead to crashes because
+    WebProcessProxy::shutDown() has already been called.
+    
+    Note that we were previously correctly removing the process from the cache in case of a proper crash, inside
+    WebProcessProxy::processDidTerminateOrFailedToLaunch(). I have moved the logic to remove from the cache
+    from processDidTerminateOrFailedToLaunch() to shutDown() to avoid similar issues in the future.
+    
+    * UIProcess/API/Cocoa/WKProcessPool.mm:
+    (-[WKProcessPool _requestWebProcessTermination:]):
+    * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::shutDown):
+    (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273695 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()
+            https://bugs.webkit.org/show_bug.cgi?id=222574
+            <rdar://68340471>
+
+            Reviewed by Geoffrey Garen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r273590. rdar://problem/74881385

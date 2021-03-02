@@ -448,6 +448,11 @@ void WebProcessProxy::shutDown()
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
+    if (m_isInProcessCache) {
+        processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
+        ASSERT(!m_isInProcessCache);
+    }
+
     shutDownProcess();
 
     if (m_webConnection) {
@@ -864,11 +869,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
     for (auto& callback : isResponsiveCallbacks)
         callback(false);
-
-    if (m_isInProcessCache) {
-        processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
-        ASSERT(!m_isInProcessCache);
-    }
 
     if (isStandaloneServiceWorkerProcess())
         processPool().serviceWorkerProcessCrashed(*this);
