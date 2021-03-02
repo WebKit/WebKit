@@ -480,7 +480,10 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         if (members->isFlushing)
             return GST_FLOW_FLUSHING;
     }
-    RELEASE_ASSERT(members->player);
+    if (!members->player) {
+        GST_ERROR_OBJECT(src, "Couldn't obtain WebKitWebSrcPlayerContext, which is necessary to make network requests");
+        return GST_FLOW_ERROR;
+    }
 
     GST_TRACE_OBJECT(src, "readPosition = %" G_GUINT64_FORMAT " requestedPosition = %" G_GUINT64_FORMAT, members->readPosition, members->requestedPosition);
 
