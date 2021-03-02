@@ -1,3 +1,14 @@
+2021-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver announces grid as having "0 columns" and VoiceOver cannot enter the grid
+        https://bugs.webkit.org/show_bug.cgi?id=222440
+        <rdar://problem/74763792>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/aria-grid-with-aria-owns-rows-expected.txt: Added.
+        * accessibility/aria-grid-with-aria-owns-rows.html: Added.
+
 2021-03-01  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media related security tests time out when media in GPU Process is enabled

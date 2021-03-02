@@ -293,8 +293,28 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
     return headers;
 }
 
+AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
+{
+    AccessibilityChildrenVector ariaOwnedBy;
+    ariaOwnsReferencingElements(ariaOwnedBy);
+    if (ariaOwnedBy.size() == 1 && ariaOwnedBy[0]->isTableRow())
+        return downcast<AccessibilityTableRow>(ariaOwnedBy[0].get());
+
+    return nullptr;
+}
+
+AXCoreObject* AccessibilityTableCell::parentObjectUnignored() const
+{
+    if (auto ownerParent = ariaOwnedByParent())
+        return ownerParent;
+    return AccessibilityRenderObject::parentObjectUnignored();
+}
+
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 {
+    if (auto ownerParent = ariaOwnedByParent())
+        return ownerParent;
+    
     AXCoreObject* parent = parentObjectUnignored();
     if (!is<AccessibilityTableRow>(*parent))
         return nullptr;
