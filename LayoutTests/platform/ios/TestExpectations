@@ -1917,7 +1917,7 @@ fast/events/message-port-inactive-document.html
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-http/tests/uri/css-href.php [ Failure ]
+http/tests/uri/css-href.py [ Failure ]
 svg/hixie/intrinsic/003.html [ Failure ]
 svg/hixie/text/003.html [ Failure ]
 

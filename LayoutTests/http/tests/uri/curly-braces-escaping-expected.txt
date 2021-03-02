@@ -3,7 +3,7 @@ Test that curly braces are not escaped in request queries (bug 116887)
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS req.responseText is '/uri/resources/echo-uri.php?q={}'
+PASS req.responseText is '/uri/resources/echo-uri.py?q={}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

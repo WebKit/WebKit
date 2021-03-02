@@ -1,3 +1,23 @@
+2021-03-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/uri convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222599
+        <rdar://problem/74929709>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/uri/css-href.php: Removed.
+        * http/tests/uri/css-href.py: Added.
+        * http/tests/uri/curly-braces-escaping-expected.txt:
+        * http/tests/uri/curly-braces-escaping.html:
+        * http/tests/uri/intercept/.htaccess:
+        * http/tests/uri/resources/echo-uri.php: Removed.
+        * http/tests/uri/resources/echo-uri.py: Added.
+        * http/tests/uri/resources/print-uri.php: Removed.
+        * http/tests/uri/resources/print-uri.py: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-03-02  Youenn Fablet  <youenn@apple.com>
 
         Enable MEDIA_SOURCE in IOS Simulator

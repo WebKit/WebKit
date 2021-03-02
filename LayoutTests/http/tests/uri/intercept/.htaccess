@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^.* /uri/resources/print-uri.php [L,NS]
+RewriteRule ^.* /uri/resources/print-uri.py [L,NS]
