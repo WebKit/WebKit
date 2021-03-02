@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "UTIUtilities.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
