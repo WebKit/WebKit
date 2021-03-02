@@ -1,3 +1,14 @@
+2021-03-02  Said Abou-Hallawa  <said@apple.com>
+
+        The layout of SVGImage should force the layout for its clients
+        https://bugs.webkit.org/show_bug.cgi?id=221253
+        <rdar://problem/74138641>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/background-svg-image-loading-expected.html: Added.
+        * fast/css/background-svg-image-loading.html: Added.
+
 2021-03-02  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline and update expectations
