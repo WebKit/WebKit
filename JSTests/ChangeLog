@@ -1,5 +1,16 @@
 2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        REGRESSION: Object.defineProperties triggering a setter
+        https://bugs.webkit.org/show_bug.cgi?id=222538
+
+        Reviewed by Keith Miller.
+
+        * stress/dfg-put-by-val-string-or-symbol-should-check-direct.js: Added.
+        (test1):
+        (test2):
+
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Throw TypeError when getFunctionRealm hits revoked Proxy
         https://bugs.webkit.org/show_bug.cgi?id=222523
 

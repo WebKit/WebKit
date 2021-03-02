@@ -1,3 +1,18 @@
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION: Object.defineProperties triggering a setter
+        https://bugs.webkit.org/show_bug.cgi?id=222538
+
+        Reviewed by Keith Miller.
+
+        DFG's compilePutByValForCellWithString and compilePutByValForCellWithSymbol do not care about "Direct" flag.
+        This patch fixes that to call appropriate function if node is PutByValDirect.
+        FTL does not have this issue.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithSymbol):
+
 2021-03-01  Xan Lopez  <xan@igalia.com>
 
         [JSC] WebAssembly: make Wasm::Signature 32bit friendly
