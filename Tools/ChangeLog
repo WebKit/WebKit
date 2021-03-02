@@ -1,3 +1,13 @@
+2021-03-02  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Support sending key modifiers after r272572
+        https://bugs.webkit.org/show_bug.cgi?id=222615
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wpeKeySymForKeyRef):
+
 2021-03-02  Ricky Mondello  <rmondello@apple.com>
 
         Unconditionally return information in _autofillContext SPI when a field is focused

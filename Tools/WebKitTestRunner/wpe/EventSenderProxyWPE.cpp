@@ -234,6 +234,10 @@ static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32
         return WPE_KEY_Shift_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightShift"))
         return WPE_KEY_Shift_R;
+    if (WKStringIsEqualToUTF8CString(keyRef, "leftMeta"))
+        return WPE_KEY_Meta_L;
+    if (WKStringIsEqualToUTF8CString(keyRef, "rightMeta"))
+        return WPE_KEY_Meta_R;
     if (WKStringIsEqualToUTF8CString(keyRef, "leftAlt"))
         return WPE_KEY_Alt_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightAlt"))
