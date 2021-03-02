@@ -57,6 +57,8 @@ webrtc::Priority fromRTCPriorityType(RTCPriorityType priority)
     case RTCPriorityType::High:
         return webrtc::Priority::kHigh;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
@@ -71,6 +73,8 @@ RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
     case webrtc::Priority::kHigh:
         return RTCPriorityType::High;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static inline double toWebRTCBitRatePriority(RTCPriorityType priority)
@@ -85,6 +89,8 @@ static inline double toWebRTCBitRatePriority(RTCPriorityType priority)
     case RTCPriorityType::High:
         return 4;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static inline RTCPriorityType fromWebRTCBitRatePriority(double priority)
