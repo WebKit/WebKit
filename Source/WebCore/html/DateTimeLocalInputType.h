@@ -52,7 +52,6 @@ private:
     StepRange createStepRange(AnyStepHandling) const final;
     Optional<DateComponents> parseToDateComponents(const StringView&) const final;
     Optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    bool isDateTimeLocalField() const final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

@@ -51,7 +51,6 @@ private:
     bool shouldSendChangeEventAfterCheckedChanged() final;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
-    bool isRadioButton() const final;
     bool matchesIndeterminatePseudoClass() const final;
 };
 

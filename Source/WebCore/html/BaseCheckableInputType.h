@@ -51,7 +51,6 @@ private:
     String fallbackValue() const override;
     bool storesValueSeparateFromAttribute() override;
     void setValue(const String&, bool, TextFieldEventBehavior) override;
-    bool isCheckable() override;
 };
 
 } // namespace WebCore

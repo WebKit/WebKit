@@ -114,11 +114,6 @@ void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFi
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
-bool BaseCheckableInputType::isCheckable()
-{
-    return true;
-}
-
 void BaseCheckableInputType::fireInputAndChangeEvents()
 {
     if (!element()->isConnected())

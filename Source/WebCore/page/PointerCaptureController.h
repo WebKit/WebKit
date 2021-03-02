@@ -46,7 +46,7 @@ class PointerCaptureController {
 public:
     explicit PointerCaptureController(Page&);
 
-    Element* pointerCaptureElement(Document*, PointerID);
+    Element* pointerCaptureElement(Document*, PointerID) const;
     ExceptionOr<void> setPointerCapture(Element*, PointerID);
     ExceptionOr<void> releasePointerCapture(Element*, PointerID);
     bool hasPointerCapture(Element*, PointerID);
@@ -62,8 +62,8 @@ public:
 #endif
 
     WEBCORE_EXPORT void touchWithIdentifierWasRemoved(PointerID);
-    bool hasCancelledPointerEventForIdentifier(PointerID);
-    bool preventsCompatibilityMouseEventsForIdentifier(PointerID);
+    bool hasCancelledPointerEventForIdentifier(PointerID) const;
+    bool preventsCompatibilityMouseEventsForIdentifier(PointerID) const;
     void dispatchEvent(PointerEvent&, EventTarget*);
     WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&);
     void processPendingPointerCapture(PointerID);
@@ -75,6 +75,13 @@ private:
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
         RefPtr<Element> previousTarget;
 #endif
+        bool hasAnyElement() const {
+            return pendingTargetOverride || targetOverride
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+                || previousTarget
+#endif
+                ;
+        }
         String pointerType;
         bool cancelled { false };
         bool isPrimary { false };
@@ -86,6 +93,8 @@ private:
     CapturingData& ensureCapturingDataForPointerEvent(const PointerEvent&);
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
     void pointerEventWasDispatched(const PointerEvent&);
+    
+    void updateHaveAnyCapturingElement();
 
     Page& m_page;
     // While PointerID is defined as int32_t, we use int64_t here so that we may use a value outside of the int32_t range to have safe
@@ -93,6 +102,7 @@ private:
     using PointerIdToCapturingDataMap = HashMap<int64_t, CapturingData, WTF::IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>>;
     PointerIdToCapturingDataMap m_activePointerIdsToCapturingData;
     bool m_processingPendingPointerCapture { false };
+    bool m_haveAnyCapturingElement { false };
 };
 
 } // namespace WebCore

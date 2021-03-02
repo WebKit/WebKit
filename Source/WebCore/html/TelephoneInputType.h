@@ -41,7 +41,6 @@ public:
 
 private:
     const AtomString& formControlType() const override;
-    bool isTelephoneField() const override;
 };
 
 } // namespace WebCore

@@ -78,11 +78,6 @@ Optional<DateComponents> WeekInputType::setMillisecondToDateComponents(double va
     return DateComponents::fromMillisecondsSinceEpochForWeek(value);
 }
 
-bool WeekInputType::isWeekField() const
-{
-    return true;
-}
-
 void WeekInputType::handleDOMActivateEvent(Event&)
 {
 }
