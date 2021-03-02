@@ -1,3 +1,32 @@
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize getEnumerableLength
+        https://bugs.webkit.org/show_bug.cgi?id=222539
+
+        Reviewed by Alexey Shvayka.
+
+        Now getEnumerableLength is only overridden by JSProxy. And this is called in the critical path of propertyNameEnumerator.
+        We should not use indirect call for getEnumerableLength. We remove indirect functions for getEnumerableLength. For JSProxy,
+        any results is OK since anyway JSProxy does not utilize the result of this function since it cannot use fast index enumerator.
+
+        We also avoid calling holesMustForwardToPrototype in getEnumerableLength when it is meaningless. For example,
+        if the object is ALL_BLANK_INDEXING_TYPES, then regardless of the condition of holesMustForwardToPrototype, the result of
+        getEnumerableLength is zero.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCast.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getEnumerableLength): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::getEnumerableLength): Deleted.
+        * runtime/JSProxy.h:
+
 2021-03-02  BJ Burg  <bburg@apple.com>
 
         [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)

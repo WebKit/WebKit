@@ -118,12 +118,6 @@ bool JSProxy::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, 
     return thisObject->target()->methodTable(globalObject->vm())->deletePropertyByIndex(thisObject->target(), globalObject, propertyName);
 }
 
-uint32_t JSProxy::getEnumerableLength(JSGlobalObject* globalObject, JSObject* object)
-{
-    JSProxy* thisObject = jsCast<JSProxy*>(object);
-    return thisObject->target()->methodTable(globalObject->vm())->getEnumerableLength(globalObject, thisObject->target());
-}
-
 void JSProxy::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);

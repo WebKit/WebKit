@@ -79,6 +79,7 @@ struct JSTypeRange {
     macro(JSArrayBuffer, JSType::ArrayBufferType, JSType::ArrayBufferType) \
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
     macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \
+    macro(JSProxy, JSType::PureForwardingProxyType, JSType::ImpureProxyType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
     macro(JSMap, JSType::JSMapType, JSType::JSMapType) \
     macro(JSWeakSet, JSType::JSWeakSetType, JSType::JSWeakSetType) \

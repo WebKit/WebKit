@@ -245,12 +245,6 @@ bool JSCell::defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const P
     return false;
 }
 
-uint32_t JSCell::getEnumerableLength(JSGlobalObject*, JSObject*)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
-}
-
 bool JSCell::preventExtensions(JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();

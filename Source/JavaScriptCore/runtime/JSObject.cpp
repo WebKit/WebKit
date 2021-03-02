@@ -3754,37 +3754,45 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     setButterfly(vm, newButterfly);
 }
 
-uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject, JSObject* object)
+uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    Structure* structure = object->structure(vm);
-    if (structure->holesMustForwardToPrototype(vm, object))
-        return 0;
+    JSObject* object = this;
+
     switch (object->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
     case ALL_UNDECIDED_INDEXING_TYPES:
+        // Regardless of holesMustForwardToPrototype condition, it returns zero.
         return 0;
         
     case ALL_INT32_INDEXING_TYPES:
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
         Butterfly* butterfly = object->butterfly();
-        unsigned usedLength = butterfly->publicLength();
-        for (unsigned i = 0; i < usedLength; ++i) {
+        unsigned enumerableLength = butterfly->publicLength();
+        if (!enumerableLength)
+            return 0;
+        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+            return 0;
+        for (unsigned i = 0; i < enumerableLength; ++i) {
             if (!butterfly->contiguous().at(object, i))
                 return 0;
         }
-        return usedLength;
+        return enumerableLength;
     }
         
     case ALL_DOUBLE_INDEXING_TYPES: {
         Butterfly* butterfly = object->butterfly();
-        unsigned usedLength = butterfly->publicLength();
-        for (unsigned i = 0; i < usedLength; ++i) {
+        unsigned enumerableLength = butterfly->publicLength();
+        if (!enumerableLength)
+            return 0;
+        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+            return 0;
+        for (unsigned i = 0; i < enumerableLength; ++i) {
             double value = butterfly->contiguousDouble().at(object, i);
             if (value != value)
                 return 0;
         }
-        return usedLength;
+        return enumerableLength;
     }
         
     case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
@@ -3792,12 +3800,16 @@ uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject, JSObject* o
         if (storage->m_sparseMap.get())
             return 0;
         
-        unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
-        for (unsigned i = 0; i < usedVectorLength; ++i) {
+        unsigned enumerableLength = std::min(storage->length(), storage->vectorLength());
+        if (!enumerableLength)
+            return 0;
+        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+            return 0;
+        for (unsigned i = 0; i < enumerableLength; ++i) {
             if (!storage->m_vector[i])
                 return 0;
         }
-        return usedVectorLength;
+        return enumerableLength;
     }
         
     default:
