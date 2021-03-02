@@ -403,8 +403,11 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
             return false;
         };
 
-        if (index.value() >= thisObject->m_length)
-            return false;
+        if (thisObject->isDetached())
+            return typeError(globalObject, scope, shouldThrow, typedArrayBufferHasBeenDetachedErrorMessage);
+
+        if (!thisObject->inBounds(index.value()))
+            return throwTypeErrorIfNeeded("Attempting to store out-of-bounds property on a typed array at index: ");
 
         if (descriptor.isAccessorDescriptor())
             return throwTypeErrorIfNeeded("Attempting to store accessor property on a typed array at index: ");
@@ -418,14 +421,15 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
         if (descriptor.writablePresent() && !descriptor.writable())
             return throwTypeErrorIfNeeded("Attempting to store non-writable property on a typed array at index: ");
 
+        scope.release();
         if (descriptor.value())
-            RELEASE_AND_RETURN(scope, thisObject->setIndex(globalObject, index.value(), descriptor.value()));
+            thisObject->setIndex(globalObject, index.value(), descriptor.value());
 
         return true;
     }
 
     if (isCanonicalNumericIndexString(propertyName))
-        return false;
+        return typeError(globalObject, scope, shouldThrow, "Attempting to store canonical numeric string property on a typed array"_s);
 
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
 }

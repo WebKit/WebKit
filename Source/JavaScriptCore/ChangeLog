@@ -1,3 +1,22 @@
+2021-03-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        TypedArray's [[DefineOwnProperty]] should throw in case of failure
+        https://bugs.webkit.org/show_bug.cgi?id=220492
+
+        Reviewed by Darin Adler.
+
+        While web reality [1] requires failures of the most TypeArray internal methods to be
+        silent, [[DefineOwnProperty]] can fail loudly if called via Object.defineProperty.
+
+        With this patch, TypeError is thrown for detached buffer, out-of-bounds index, and
+        non-index canonical numeric string key. Aligns JSC with the spec [2], V8, and SM.
+
+        [1]: https://github.com/tc39/ecma262/pull/2164
+        [2]: https://tc39.es/ecma262/#sec-integer-indexed-exotic-objects-defineownproperty-p-desc (step 3.b)
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+
 2021-03-01  Keith Miller  <keith_miller@apple.com>
 
         Reduce promise reaction memory usage when there are multiple reactions

@@ -31,7 +31,9 @@ function shouldThrow(f, m) {
 }
 
 function test() {
-    foo.concat([1]);
+    shouldThrow(() => {
+        foo.concat([1]);
+    }, "TypeError: Attempting to store out-of-bounds property on a typed array at index: 0");
     foo = [1,2,3,4];
     foo.slice(0);
     foo = [1,2,3,4];
