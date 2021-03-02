@@ -1,3 +1,25 @@
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Use capture settings after recovering capture from GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=221126
+        <rdar://problem/73744819>
+
+        Reviewed by Eric Carlson.
+
+        When updating constraints, store the constraints so that, on crash recovery,
+        we recreate the remote source and reapply the last constraints.
+
+        Manually tested and partially covered by API test.
+
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::applyConstraints):
+        (WebKit::RemoteRealtimeAudioSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::setFrameRateWithPreset):
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+
 2021-03-02  Rob Buis  <rbuis@igalia.com>
 
         Null check platformData when decoding

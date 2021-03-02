@@ -193,11 +193,57 @@
                     setTimeout(() => checkAudioStatus(++counter), 50);
                 });
             }
+
+            function changeConstraints() {
+                async function doChangeConstraints() {
+                    const videoTrack = stream.getVideoTracks()[0];
+                    await videoTrack.applyConstraints({ width: 320, height: 240, frameRate: 5});
+
+                    const audioTrack = stream.getAudioTracks()[0];
+                    await audioTrack.applyConstraints({ echoCancellation: false });
+                }
+                doChangeConstraints().then(() => {
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                }, (e) => {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL doChangeConstraints: " + e);
+                });
+            }
+
+            function checkConstraintsStatus() {
+                async function doCheckConstraints() {
+                    video2.srcObject = stream;
+                    await video2.play();
+
+                    if (video2.videoWidth !== 320) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraints, width is not 320 but " + video.videoWidth);
+                        return;
+                    }
+                    if (video2.videoHeight !== 240) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraints, height is not 240 but " + video.videoHeight);
+                        return;
+                    }
+                    let settings = stream.getVideoTracks()[0].getSettings();
+                    if (settings.width !== 320 && settings.height !== 240) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraints, video settings are not correct");
+                        return;
+                    }
+                    settings = stream.getAudioTracks()[0].getSettings();
+                    if (settings.echoCancellation) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraints, audio settings are not correct");
+                        return;
+                    }
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                }
+                doCheckConstraints().catch(e => {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraintsStatus, " + e);
+                });
+            }
         </script>
     <head>
 
     <body onload="promptForCapture()">
-        <video id="video" controls></video>
+        <video id="video" controls playsinline autoplay></video>
+        <video id="video2" controls playsinline autoplay></video>
         <p>
         <button onclick="stop()">Stop</button>
         </p>

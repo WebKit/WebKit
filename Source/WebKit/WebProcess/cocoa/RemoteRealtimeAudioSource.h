@@ -79,7 +79,7 @@ private:
     bool isCaptureSource() const final { return true; }
     void beginConfiguration() final { }
     void commitConfiguration() final { }
-    void applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& callback) final { m_proxy.applyConstraints(constraints, WTFMove(callback)); }
+    void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&);
     void hasEnded() final;
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
@@ -96,6 +96,7 @@ private:
 
     RemoteRealtimeMediaSourceProxy m_proxy;
     UserMediaCaptureManager& m_manager;
+    Optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
 };

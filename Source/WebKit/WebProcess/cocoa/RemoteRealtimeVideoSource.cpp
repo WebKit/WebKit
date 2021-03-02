@@ -186,7 +186,8 @@ void RemoteRealtimeVideoSource::setFrameRateWithPreset(double frameRate, RefPtr<
         constraints.mandatoryConstraints.set(MediaConstraintType::Height, heightConstraint);
     }
 
-    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { identifier(), constraints }, 0);
+    m_sizeConstraints = constraints;
+    m_proxy.applyConstraints(constraints, [](auto) { });
 }
 
 bool RemoteRealtimeVideoSource::prefersPreset(VideoPreset&)
@@ -212,7 +213,10 @@ void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_proxy.resetReady();
     createRemoteMediaSource();
-    // FIXME: We should update the track according current settings.
+
+    if (m_sizeConstraints)
+        m_proxy.applyConstraints(*m_sizeConstraints, [](auto) { });
+
     if (isProducingData())
         startProducingData();
 }
