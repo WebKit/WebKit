@@ -175,7 +175,7 @@ def checkWorkersAndBuildersForConsistency(config, workers, builders):
                 raise Exception('Builder {} has worker {}, which is not defined in workers list!'.format(builder['name'], worker_name))
 
             if worker['platform'] != builder['platform'] and worker['platform'] != '*' and builder['platform'] != '*':
-                raise Exception('Builder {0} is for platform {1}, but has worker {2} for platform {3}!'.format(
+                raise Exception('Builder "{0}" is for platform "{1}", but has worker "{2}" for platform "{3}"!'.format(
                     builder['name'], builder['platform'], worker['name'], worker['platform']))
 
 

@@ -224,7 +224,7 @@ class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
     def test_checkWorkersAndBuildersForConsistency1(self):
         with self.assertRaises(Exception) as context:
             loadConfig.checkWorkersAndBuildersForConsistency({}, [self.ews101, self.ews102], [self.WK2Builder])
-        self.assertEqual(context.exception.args, ('Builder macOS-High-Sierra-WK2-EWS is for platform mac-sierra, but has worker ews102 for platform ios-11!',))
+        self.assertEqual(context.exception.args, ('Builder "macOS-High-Sierra-WK2-EWS" is for platform "mac-sierra", but has worker "ews102" for platform "ios-11"!',))
 
     def test_duplicate_worker(self):
         with self.assertRaises(Exception) as context:
