@@ -105,12 +105,12 @@ class TestGit(unittest.TestCase):
                         'Path': '.',
                         'Repository Root': 'git@example.org:/mock/repository',
                         'URL': 'git@example.org:/mock/repository/main',
-                        'Revision': '6',
+                        'Revision': '9',
                         'Node Kind': 'directory',
                         'Schedule': 'normal',
                         'Last Changed Author': 'jbedard@apple.com',
-                        'Last Changed Rev': '6',
-                        'Last Changed Date': datetime.fromtimestamp(1601665000).strftime('%Y-%m-%d %H:%M:%S'),
+                        'Last Changed Rev': '9',
+                        'Last Changed Date': datetime.fromtimestamp(1601668000).strftime('%Y-%m-%d %H:%M:%S'),
                     }, local.Git(dirname).info(),
                 )
         finally:
@@ -129,9 +129,9 @@ class TestGit(unittest.TestCase):
                 self.assertEqual('2.1@branch-a', str(local.Git(dirname).commit(revision=3)))
                 self.assertEqual('3@main', str(local.Git(dirname).commit(revision=4)))
                 self.assertEqual('2.2@branch-b', str(local.Git(dirname).commit(revision=5)))
-                self.assertEqual('4@main', str(local.Git(dirname).commit(revision=6)))
-                self.assertEqual('2.2@branch-a', str(local.Git(dirname).commit(revision=7)))
-                self.assertEqual('2.3@branch-b', str(local.Git(dirname).commit(revision=8)))
+                self.assertEqual('2.2@branch-a', str(local.Git(dirname).commit(revision=6)))
+                self.assertEqual('2.3@branch-b', str(local.Git(dirname).commit(revision=7)))
+                self.assertEqual('4@main', str(local.Git(dirname).commit(revision=8)))
 
                 # Out-of-bounds commit
                 with self.assertRaises(local.Git.Exception):
@@ -156,7 +156,7 @@ class TestGit(unittest.TestCase):
     def test_commit_from_branch(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock, MockTime, LoggerCapture():
-                self.assertEqual('4@main', str(local.Git(self.path).commit(branch='main')))
+                self.assertEqual('5@main', str(local.Git(self.path).commit(branch='main')))
                 self.assertEqual('2.2@branch-a', str(local.Git(self.path).commit(branch='branch-a')))
                 self.assertEqual('2.3@branch-b', str(local.Git(self.path).commit(branch='branch-b')))
 
@@ -251,7 +251,7 @@ class TestGit(unittest.TestCase):
                 mock.tags['tag-1'] = mock.commits['branch-a'][-1]
 
                 repository = local.Git(self.path)
-                self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', repository.commit().hash)
+                self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', repository.commit().hash)
                 self.assertEqual('3cd32e352410565bb543821fbf856a6d3caad1c4', repository.checkout('3cd32e3524').hash)
                 self.assertEqual('3cd32e352410565bb543821fbf856a6d3caad1c4', repository.commit().hash)
 
@@ -321,7 +321,7 @@ class TestGitHub(unittest.TestCase):
 
     def test_commit_from_branch(self):
         with mocks.remote.GitHub():
-            self.assertEqual('4@main', str(remote.GitHub(self.remote).commit(branch='main')))
+            self.assertEqual('5@main', str(remote.GitHub(self.remote).commit(branch='main')))
             self.assertEqual('2.2@branch-a', str(remote.GitHub(self.remote).commit(branch='branch-a')))
             self.assertEqual('2.3@branch-b', str(remote.GitHub(self.remote).commit(branch='branch-b')))
 
@@ -434,7 +434,7 @@ class TestBitBucket(unittest.TestCase):
 
     def test_commit_from_branch(self):
         with mocks.remote.BitBucket():
-            self.assertEqual('4@main', str(remote.BitBucket(self.remote).commit(branch='main')))
+            self.assertEqual('5@main', str(remote.BitBucket(self.remote).commit(branch='main')))
             self.assertEqual('2.2@branch-a', str(remote.BitBucket(self.remote).commit(branch='branch-a')))
             self.assertEqual('2.3@branch-b', str(remote.BitBucket(self.remote).commit(branch='branch-b')))
 

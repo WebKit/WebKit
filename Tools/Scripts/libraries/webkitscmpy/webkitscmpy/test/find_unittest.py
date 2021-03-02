@@ -40,7 +40,7 @@ class TestFind(unittest.TestCase):
                 args=('find', 'HEAD', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999 | 6th commit\n')
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c | Patch Series\n')
 
     def test_basic_git_svn(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
@@ -48,7 +48,7 @@ class TestFind(unittest.TestCase):
                 args=('find', 'HEAD', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6 | 6th commit\n')
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c, r9 | Patch Series\n')
 
     def test_basic_svn(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
@@ -104,7 +104,7 @@ class TestFind(unittest.TestCase):
                 args=('find', '790725a6', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '2.3@branch-b | 790725a6d79e | 8th commit\n')
+        self.assertEqual(captured.stdout.getvalue(), '2.3@branch-b | 790725a6d79e | 7th commit\n')
 
     def test_revision_svn(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
@@ -199,7 +199,7 @@ Hash: 1abe25b443e9
                 args=('find', 'tag-1', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '2.2@branch-a | 621652add7fc, r7 | 7th commit\n')
+        self.assertEqual(captured.stdout.getvalue(), '2.2@branch-a | 621652add7fc, r6 | 7th commit\n')
 
     def test_no_log_svn(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
@@ -215,7 +215,7 @@ Hash: 1abe25b443e9
                 args=('find', 'main', '--no-log', '-q'),
                 path=self.path,
             ))
-        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6\n')
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c, r9\n')
 
     def test_timezone_svn(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path, utc_offset='-0600'), MockTime:

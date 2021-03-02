@@ -1,3 +1,19 @@
+2021-03-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [wbkitscmpy] Add commits with colliding timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=222572
+        <rdar://problem/74887215>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/git-repo.json: Add commit with colliding timestamp.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+
 2021-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support rotated image overlay text for non-rectilinear text quads

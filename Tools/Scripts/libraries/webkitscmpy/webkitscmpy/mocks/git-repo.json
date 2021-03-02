@@ -50,11 +50,25 @@
                     "jbedard@apple.com"
                 ]
             }, 
-            "timestamp": 1601665000, 
+            "timestamp": 1601668000, 
             "branch": "main", 
-            "message": "6th commit\n", 
+            "message": "8th commit\n", 
             "identifier": "4@main", 
-            "revision": 6
+            "revision": 8
+        },
+        {
+            "hash": "d8bce26fa65c6fc8f39c17927abb77f69fab82fc", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668000, 
+            "branch": "main", 
+            "message": "Patch Series\n", 
+            "identifier": "5@main", 
+            "revision": 9
         }
     ], 
     "branch-b": [
@@ -96,9 +110,9 @@
             }, 
             "timestamp": 1601667000, 
             "branch": "branch-b", 
-            "message": "8th commit\n", 
+            "message": "7th commit\n", 
             "identifier": "2.3@branch-b", 
-            "revision": 8
+            "revision": 7
         }
     ], 
     "branch-a": [
@@ -128,7 +142,7 @@
             "branch": "branch-a", 
             "message": "7th commit\n", 
             "identifier": "2.2@branch-a", 
-            "revision": 7
+            "revision": 6
         }
     ]
 }

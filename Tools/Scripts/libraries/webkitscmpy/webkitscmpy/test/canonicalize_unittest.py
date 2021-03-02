@@ -56,7 +56,7 @@ class TestCanonicalize(unittest.TestCase):
                 branch=mock.default_branch,
                 author=Contributor('\u017dan Dober\u0161ek', emails=['zdobersek@igalia.com']),
                 identifier=mock.commits[mock.default_branch][-1].identifier + 1,
-                timestamp=1601668000,
+                timestamp=1601669000,
                 message='New commit\n',
             ))
 
@@ -69,7 +69,7 @@ class TestCanonicalize(unittest.TestCase):
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
             self.assertEqual(commit.author, contirbutors['zdobersek@igalia.com'])
-            self.assertEqual(commit.message, 'New commit\nCanonical link: https://commits.webkit.org/5@main')
+            self.assertEqual(commit.message, 'New commit\nCanonical link: https://commits.webkit.org/6@main')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -103,7 +103,7 @@ class TestCanonicalize(unittest.TestCase):
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
             self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
-            self.assertEqual(commit.message, 'New commit\nIdentifier: 5@main')
+            self.assertEqual(commit.message, 'New commit\nIdentifier: 6@main')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -138,7 +138,7 @@ class TestCanonicalize(unittest.TestCase):
             self.assertEqual(
                 commit.message,
                 'New commit\n'
-                'Identifier: 5@main\n'
+                'Identifier: 6@main\n'
                 'svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             )
 
