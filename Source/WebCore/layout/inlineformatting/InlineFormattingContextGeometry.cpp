@@ -201,18 +201,36 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
     inlineLevelBox.setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { floorf(ascent), ceil(descent) });
 }
 
+struct SimplifiedVerticalAlignment {
+    SimplifiedVerticalAlignment(const LineBox::InlineLevelBox& rootInlineBox)
+        : m_rootInlineBox(rootInlineBox)
+    {
+        adjust(rootInlineBox);
+    }
+
+    InlineLayoutUnit rootInlineBoxLogicalTop() const { return m_rootInlineBoxLogicalTop; }
+    InlineLayoutUnit lineBoxHeight() const { return m_lineBoxLogicalBottom - m_lineBoxLogicalTop; }
+
+    void adjust(const LineBox::InlineLevelBox& inlineLevelBox)
+    {
+        auto layoutBoundsLogicalTop = m_rootInlineBox.layoutBounds().ascent - inlineLevelBox.layoutBounds().ascent;
+        m_lineBoxLogicalTop = std::min(m_lineBoxLogicalTop, layoutBoundsLogicalTop);
+        m_lineBoxLogicalBottom = std::max(m_lineBoxLogicalBottom, layoutBoundsLogicalTop + inlineLevelBox.layoutBounds().height());
+        m_rootInlineBoxLogicalTop = std::max(m_rootInlineBoxLogicalTop, inlineLevelBox.layoutBounds().ascent - m_rootInlineBox.baseline());
+    }
+
+private:
+    const LineBox::InlineLevelBox& m_rootInlineBox;
+
+    InlineLayoutUnit m_lineBoxLogicalTop { 0 };
+    InlineLayoutUnit m_lineBoxLogicalBottom { 0 };
+    InlineLayoutUnit m_rootInlineBoxLogicalTop { 0 };
+};
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
-    struct SimplifiedVerticalAlignment {
-        InlineLayoutUnit lineBoxTop { 0 };
-        InlineLayoutUnit lineBoxBottom { 0 };
-        InlineLayoutUnit rootInlineBoxTop { 0 };
-
-        InlineLayoutUnit lineBoxHeight() const { return lineBoxBottom - lineBoxTop; }
-    };
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalGeometryForInlineBox(rootInlineBox);
-    auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { { } , rootInlineBox.layoutBounds().height(), rootInlineBox.layoutBounds().ascent - rootInlineBox.baseline() };
+    auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { rootInlineBox };
 
     auto createWrappedInlineBoxes = [&] {
         if (runs.isEmpty())
@@ -315,11 +333,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
                 }
                 // Only baseline alignment for now.
                 auto logicalTop = rootInlineBox.baseline() - ascent;
-                auto layoutBoundsTop = rootInlineBox.layoutBounds().ascent - ascent;
-                simplifiedVerticalAlignment.lineBoxTop = std::min(simplifiedVerticalAlignment.lineBoxTop, layoutBoundsTop);
-                simplifiedVerticalAlignment.lineBoxBottom = std::max(simplifiedVerticalAlignment.lineBoxBottom, layoutBoundsTop + marginBoxHeight);
-                simplifiedVerticalAlignment.rootInlineBoxTop = std::max(simplifiedVerticalAlignment.rootInlineBoxTop, ascent - rootInlineBox.baseline());
                 atomicInlineLevelBox->setLogicalTop(logicalTop);
+                simplifiedVerticalAlignment.adjust(*atomicInlineLevelBox);
             };
             alignInlineBoxIfEligible();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
@@ -375,7 +390,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     // We should always be able to exercise the fast path when the line has no content at all, even in non-standards mode or with line-height set.
     m_useSimplifiedVerticalAlignment = m_useSimplifiedVerticalAlignment || !lineHasContent;
     if (m_useSimplifiedVerticalAlignment) {
-        rootInlineBox.setLogicalTop(lineHasContent ? simplifiedVerticalAlignment.rootInlineBoxTop : -rootInlineBox.baseline());
+        rootInlineBox.setLogicalTop(lineHasContent ? simplifiedVerticalAlignment.rootInlineBoxLogicalTop() : -rootInlineBox.baseline());
         lineBox.setLogicalHeight(lineHasContent ? simplifiedVerticalAlignment.lineBoxHeight() : InlineLayoutUnit());
     }
 }
