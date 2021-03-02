@@ -265,11 +265,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interfa
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
 
-# webkit.org/b/221793
-http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Timeout ]
-http/tests/security/canvas-remote-read-remote-video-redirect.html [ Timeout ]
-http/tests/security/video-cross-origin-caching.html [ Timeout ]
-
 # webkit.org/b/221794
 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Timeout ]
 
