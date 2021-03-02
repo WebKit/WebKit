@@ -127,11 +127,6 @@ Optional<DateComponents> MonthInputType::setMillisecondToDateComponents(double v
     return DateComponents::fromMonthsSinceEpoch(value);
 }
 
-bool MonthInputType::isMonthField() const
-{
-    return true;
-}
-
 void MonthInputType::handleDOMActivateEvent(Event&)
 {
 }

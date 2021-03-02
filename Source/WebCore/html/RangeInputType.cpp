@@ -84,11 +84,6 @@ RangeInputType::RangeInputType(HTMLInputElement& element)
 {
 }
 
-bool RangeInputType::isRangeControl() const
-{
-    return true;
-}
-
 const AtomString& RangeInputType::formControlType() const
 {
     return InputTypeNames::range();
@@ -131,11 +126,6 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 
     const Decimal step = StepRange::parseStep(anyStepHandling, rangeStepDescription, element()->attributeWithoutSynchronization(stepAttr));
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
-}
-
-bool RangeInputType::isSteppableSlow() const
-{
-    return true;
 }
 
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)

@@ -47,7 +47,6 @@ private:
     bool shouldUseInputMethod() const override;
     bool shouldResetOnDocumentActivation() override;
     bool shouldRespectListAttribute() override;
-    bool isPasswordField() const override;
 };
 
 } // namespace WebCore

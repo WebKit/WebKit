@@ -44,7 +44,6 @@ private:
     bool typeMismatchFor(const String&) const override;
     bool typeMismatch() const override;
     String typeMismatchText() const override;
-    bool isURLField() const override;
     String sanitizeValue(const String&) const override;
 };
 

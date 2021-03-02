@@ -92,11 +92,6 @@ void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickSt
     event.setDefaultHandled();
 }
 
-bool CheckboxInputType::isCheckbox() const
-{
-    return true;
-}
-
 bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 {
     return shouldAppearIndeterminate();

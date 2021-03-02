@@ -97,11 +97,6 @@ const AtomString& SearchInputType::formControlType() const
     return InputTypeNames::search();
 }
 
-bool SearchInputType::isSearchField() const
-{
-    return true;
-}
-
 bool SearchInputType::needsContainer() const
 {
     return true;

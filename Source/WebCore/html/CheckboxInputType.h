@@ -46,7 +46,6 @@ private:
     void handleKeyupEvent(KeyboardEvent&) final;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
-    bool isCheckbox() const final;
     bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
 };

@@ -3220,7 +3220,6 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     return { };
 }
 
-
 ExceptionOr<void> Element::setInnerHTML(const String& html)
 {
     auto fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent);
