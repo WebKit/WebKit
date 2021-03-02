@@ -1,3 +1,21 @@
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Camera capture in iOS with GPUProcess enabled does not always handle orientation well at start up
+        https://bugs.webkit.org/show_bug.cgi?id=222167
+        <rdar://problem/74520496>
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, GPU process orientation monitors were only getting updates after creation of the web process connection.
+        The initial value was therefore sometimes wrong.
+        Update this by storing the orientation value in GPU process and initializing it for every web process connection.
+        Manually tested.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        (WebKit::GPUProcess::setOrientationForMediaCapture):
+        * GPUProcess/GPUProcess.h:
+
 2021-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web inspector related tests very slow or timeout in debug mode
