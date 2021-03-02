@@ -278,12 +278,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interfa
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
 
-# webkit.org/b/221792
-http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
-http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Failure ]
-
 # webkit.org/b/221793
 http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Timeout ]
 http/tests/security/canvas-remote-read-remote-video-redirect.html [ Timeout ]
