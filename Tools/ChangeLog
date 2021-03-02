@@ -1,3 +1,20 @@
+2021-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support rotated image overlay text for non-rectilinear text quads
+        https://bugs.webkit.org/show_bug.cgi?id=222535
+        <rdar://problem/74886200>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test file to exercise the new `rotatedBoundingRect` function, with tests to cover a few degenerate
+        cases such as a single point, line segments, and triangles.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FloatQuadTests.cpp: Added.
+        (TestWebKitAPI::areApproximatelyEqual):
+        (TestWebKitAPI::expectRotatedRect):
+        (TestWebKitAPI::TEST):
+
 2021-03-01  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()

@@ -1194,6 +1194,7 @@
 		F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */; };
 		F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A9202E1FEE34C800F59590 /* apple-data-url.html */; };
 		F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */; };
+		F4AD183825ED791500B1A19F /* FloatQuadTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */; };
 		F4B0168325AE060F00E445C4 /* DisableSpellcheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4B0168225AE060F00E445C4 /* DisableSpellcheck.mm */; };
 		F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4B0167F25AE02D600E445C4 /* DisableSpellcheckPlugIn.mm */; };
 		F4B825D81EF4DBFB006E417F /* compressed-files.zip in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4B825D61EF4DBD4006E417F /* compressed-files.zip */; };
@@ -2980,6 +2981,8 @@
 		F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-in-iframe.html"; sourceTree = "<group>"; };
 		F4A9202E1FEE34C800F59590 /* apple-data-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "apple-data-url.html"; sourceTree = "<group>"; };
 		F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-draggable-div.html"; sourceTree = "<group>"; };
+		F4AD183625ED791500B1A19F /* FloatQuadTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatQuadTests.h; sourceTree = "<group>"; };
+		F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuadTests.cpp; sourceTree = "<group>"; };
 		F4B0167F25AE02D600E445C4 /* DisableSpellcheckPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableSpellcheckPlugIn.mm; sourceTree = "<group>"; };
 		F4B0168225AE060F00E445C4 /* DisableSpellcheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableSpellcheck.mm; sourceTree = "<group>"; };
 		F4B825D61EF4DBD4006E417F /* compressed-files.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "compressed-files.zip"; sourceTree = "<group>"; };
@@ -3587,6 +3590,8 @@
 				572B40352176A029000AD43E /* FidoTestData.h */,
 				7A32D7491F02151500162C44 /* FileMonitor.cpp */,
 				7A909A701D877475007E10F8 /* FloatPointTests.cpp */,
+				F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */,
+				F4AD183625ED791500B1A19F /* FloatQuadTests.h */,
 				7A909A711D877475007E10F8 /* FloatRectTests.cpp */,
 				7A909A721D877475007E10F8 /* FloatSizeTests.cpp */,
 				8E4A85361E1D1AA100F53B0F /* GridPosition.cpp */,
@@ -5300,6 +5305,7 @@
 				118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm in Sources */,
 				7C83E0BC1D0A650700FEBCF3 /* FixedLayoutSize.mm in Sources */,
 				7A909A7E1D877480007E10F8 /* FloatPointTests.cpp in Sources */,
+				F4AD183825ED791500B1A19F /* FloatQuadTests.cpp in Sources */,
 				7A909A7F1D877480007E10F8 /* FloatRectTests.cpp in Sources */,
 				7A909A801D877480007E10F8 /* FloatSizeTests.cpp in Sources */,
 				F4BC0B142146C849002A0478 /* FocusPreservationTests.mm in Sources */,

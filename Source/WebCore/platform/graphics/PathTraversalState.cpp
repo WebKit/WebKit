@@ -21,17 +21,13 @@
 #include "config.h"
 #include "PathTraversalState.h"
 
+#include "GeometryUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 static const float kPathSegmentLengthTolerance = 0.00001f;
-
-static inline FloatPoint midPoint(const FloatPoint& first, const FloatPoint& second)
-{
-    return FloatPoint((first.x() + second.x()) / 2.0f, (first.y() + second.y()) / 2.0f);
-}
 
 static inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 {

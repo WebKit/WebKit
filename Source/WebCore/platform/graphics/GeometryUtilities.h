@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class FloatQuad;
+
 float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
@@ -57,4 +59,15 @@ FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 FloatRect boundsOfRotatingRect(const FloatRect&);
 
 bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
+
+FloatPoint midPoint(const FloatPoint&, const FloatPoint&);
+
+struct RotatedRect {
+    FloatPoint center;
+    FloatSize size;
+    float angleInRadians;
+};
+
+WEBCORE_EXPORT RotatedRect rotatedBoundingRect(const FloatQuad&, Optional<float> minRotationInRadians = WTF::nullopt);
+
 }
