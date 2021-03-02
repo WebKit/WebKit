@@ -211,6 +211,27 @@ struct SimplifiedVerticalAlignment {
     InlineLayoutUnit rootInlineBoxLogicalTop() const { return m_rootInlineBoxLogicalTop; }
     InlineLayoutUnit lineBoxHeight() const { return m_lineBoxLogicalBottom - m_lineBoxLogicalTop; }
 
+    bool alignInlineLevelBoxIfApplicable(LineBox::InlineLevelBox& inlineLevelBox, const BoxGeometry& inlineLevelBoxGeometry)
+    {
+        if (inlineLevelBox.isAtomicInlineLevelBox()) {
+            // Baseline aligned, non-stretchy direct children are considered to be simple for now.
+            auto& layoutBox = inlineLevelBox.layoutBox();
+            auto isConsideredSimple = &layoutBox.parent() == &m_rootInlineBox.layoutBox()
+                && layoutBox.style().verticalAlign() == VerticalAlign::Baseline
+                && !inlineLevelBoxGeometry.marginBefore()
+                && !inlineLevelBoxGeometry.marginAfter()
+                && inlineLevelBoxGeometry.marginBoxHeight() <= m_rootInlineBox.baseline();
+            if (!isConsideredSimple)
+                return false;
+            // Only baseline alignment for now.
+            inlineLevelBox.setLogicalTop(m_rootInlineBox.baseline() - inlineLevelBox.baseline());
+            adjust(inlineLevelBox);
+            return true;
+        }
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return false;
+    }
+private:
     void adjust(const LineBox::InlineLevelBox& inlineLevelBox)
     {
         auto layoutBoundsLogicalTop = m_rootInlineBox.layoutBounds().ascent - inlineLevelBox.layoutBounds().ascent;
@@ -219,13 +240,13 @@ struct SimplifiedVerticalAlignment {
         m_rootInlineBoxLogicalTop = std::max(m_rootInlineBoxLogicalTop, inlineLevelBox.layoutBounds().ascent - m_rootInlineBox.baseline());
     }
 
-private:
     const LineBox::InlineLevelBox& m_rootInlineBox;
 
     InlineLayoutUnit m_lineBoxLogicalTop { 0 };
     InlineLayoutUnit m_lineBoxLogicalBottom { 0 };
     InlineLayoutUnit m_rootInlineBoxLogicalTop { 0 };
 };
+
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
@@ -317,26 +338,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
-            // Let's pre-compute the logical top so that we can avoid running the alignment on simple inline boxes.
-            auto alignInlineBoxIfEligible = [&] {
-                if (!m_useSimplifiedVerticalAlignment)
-                    return;
-                // Baseline aligned, non-stretchy direct children are considered to be simple for now.
-                auto isConsideredSimple = &layoutBox.parent() == &rootBox()
-                    && layoutBox.style().verticalAlign() == VerticalAlign::Baseline
-                    && !inlineLevelBoxGeometry.marginBefore()
-                    && !inlineLevelBoxGeometry.marginAfter()
-                    && marginBoxHeight <= rootInlineBox.baseline();
-                if (!isConsideredSimple) {
-                    m_useSimplifiedVerticalAlignment = false;
-                    return;
-                }
-                // Only baseline alignment for now.
-                auto logicalTop = rootInlineBox.baseline() - ascent;
-                atomicInlineLevelBox->setLogicalTop(logicalTop);
-                simplifiedVerticalAlignment.adjust(*atomicInlineLevelBox);
-            };
-            alignInlineBoxIfEligible();
+            if (m_useSimplifiedVerticalAlignment) {
+                // Let's pre-compute the logical top so that we can avoid running the alignment on simple inline level boxes.
+                m_useSimplifiedVerticalAlignment = simplifiedVerticalAlignment.alignInlineLevelBoxIfApplicable(*atomicInlineLevelBox, inlineLevelBoxGeometry);
+            }
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
             continue;
         }

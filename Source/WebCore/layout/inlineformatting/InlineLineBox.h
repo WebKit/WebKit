@@ -39,6 +39,7 @@ namespace Layout {
 class BoxGeometry;
 class InlineFormattingContext;
 class LineBoxBuilder;
+struct SimplifiedVerticalAlignment;
 
 //   ____________________________________________________________ Line Box
 // |                                    --------------------
@@ -103,6 +104,7 @@ public:
         InlineLevelBox() = default;
 
     private:
+        friend struct SimplifiedVerticalAlignment;
         friend class LineBoxBuilder;
         friend class LineBox;
 
