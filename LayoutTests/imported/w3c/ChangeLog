@@ -1,3 +1,14 @@
+2021-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Take box-sizing into account in replaced element intrinsic sizing
+        https://bugs.webkit.org/show_bug.cgi?id=221671
+
+        Reviewed by Simon Fraser.
+
+        Sync test.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html:
+
 2021-02-28  Antoine Quint  <graouts@webkit.org>
 
         Blending of border-image-width should be discrete between "auto" values and other types

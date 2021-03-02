@@ -1,3 +1,14 @@
+2021-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Take box-sizing into account in replaced element intrinsic sizing
+        https://bugs.webkit.org/show_bug.cgi?id=221671
+
+        Reviewed by Simon Fraser.
+
+        Enable some tests that pass now.
+
+        * TestExpectations:
+
 2021-03-02  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/uri convert PHP to Python

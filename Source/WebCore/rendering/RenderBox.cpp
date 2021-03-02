@@ -2489,9 +2489,9 @@ void RenderBox::updateLogicalWidth()
 static LayoutUnit inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, LayoutUnit aspectRatio, BoxSizing boxSizing, LayoutUnit blockSize)
 {
     if (boxSizing == BoxSizing::BorderBox)
-        return blockSize * LayoutUnit(aspectRatio);
+        return blockSize * aspectRatio;
 
-    return ((blockSize - borderPaddingBlockSum) * LayoutUnit(aspectRatio)) + borderPaddingInlineSum;
+    return ((blockSize - borderPaddingBlockSum) * aspectRatio) + borderPaddingInlineSum;
 }
 
 void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& computedValues, RenderFragmentContainer* fragment) const
