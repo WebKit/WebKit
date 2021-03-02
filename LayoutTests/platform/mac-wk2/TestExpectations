@@ -1361,3 +1361,5 @@ imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Pass Failure ]
+
+webkit.org/b/222500 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout ]
