@@ -182,7 +182,7 @@ protected:
 #endif
     FloatPoint m_currentPosition;
 
-    std::unique_ptr<ScrollAnimation> m_animationProgrammaticScroll;
+    std::unique_ptr<ScrollAnimation> m_scrollAnimation;
 };
 
 } // namespace WebCore
