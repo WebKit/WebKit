@@ -110,9 +110,6 @@ http/tests/cookies/same-site [ Pass ]
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 
-# Passing since r260062.
-imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
-
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

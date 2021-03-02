@@ -1,3 +1,19 @@
+2021-03-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline and update expectations
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css1/text_properties/text_decoration-expected.txt: After r273554
+        * platform/gtk/fast/text/international/bidi-LDB-2-CSS-expected.txt: After r271110
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.txt: Ditto
+        * platform/gtk/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt: Ditto
+        * platform/wpe/css1/text_properties/text_decoration-expected.txt: After r273554
+        * platform/wpe/scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added. After r271651
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug89315-expected.txt: After r271616
+
 2021-03-02  Rob Buis  <rbuis@igalia.com>
 
         Take box-sizing into account in replaced element intrinsic sizing

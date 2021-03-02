@@ -38,7 +38,7 @@ layer at (0,0) size 785x649
         RenderText {#text} at (0,1) size 360x17
           text run at (0,1) width 360: "In each box, all the lines should be the same."
       RenderBlock (anonymous) at (0,221) size 769x233
-        RenderBlock {DIV} at (3,6) size 101x170 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,5) size 101x171 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 93x18
             RenderText {#text} at (0,0) size 93x17
               text run at (0,0) width 93: "ABCDEFGHI"
@@ -94,7 +94,7 @@ layer at (0,0) size 785x649
               text run at (64,0) width 29 RTL override: "\x{202E}IHG"
         RenderText {#text} at (107,81) size 5x17
           text run at (107,81) width 5: " "
-        RenderBlock {DIV} at (115,51) size 35x80 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (115,50) size 35x81 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 27x18
             RenderTableSection {TBODY} at (0,0) size 27x18
               RenderTableRow {TR} at (0,0) size 27x18
@@ -120,7 +120,7 @@ layer at (0,0) size 785x649
               text run at (27,0) width 0: "\x{202C}"
         RenderText {#text} at (153,81) size 5x17
           text run at (153,81) width 5: " "
-        RenderBlock {DIV} at (161,59) size 101x64 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (161,58) size 101x65 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 93x18
             RenderTableSection {TBODY} at (0,0) size 93x18
               RenderTableRow {TR} at (0,0) size 93x18
@@ -292,7 +292,7 @@ layer at (0,0) size 785x649
               text run at (128,1) width 32 RTL: "\x{5D6}\x{5D7}\x{5D8} "
         RenderText {#text} at (444,81) size 5x17
           text run at (444,81) width 5: " "
-        RenderBlock {DIV} at (452,68) size 202x45 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (452,68) size 202x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x18
             RenderTableSection {TBODY} at (0,0) size 194x18
               RenderTableRow {TR} at (0,0) size 194x18
@@ -375,7 +375,7 @@ layer at (0,0) size 785x649
         RenderText {#text} at (657,81) size 5x17
           text run at (657,81) width 5: " "
         RenderBR {BR} at (662,81) size 0x17
-        RenderBlock {DIV} at (3,185) size 202x44 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,184) size 202x44 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x18
             RenderTableSection {TBODY} at (0,0) size 194x18
               RenderTableRow {TR} at (0,0) size 194x18
