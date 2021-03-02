@@ -1,3 +1,22 @@
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Have WebProcessProxy::requestTermination() call processDidTerminateOrFailedToLaunch()
+        https://bugs.webkit.org/show_bug.cgi?id=222577
+
+        Reviewed by Geoffrey Garen.
+
+        Have WebProcessProxy::requestTermination() call processDidTerminateOrFailedToLaunch() instead of duplicating
+        the code. It was error-prone to have 2 separate code paths whether the process exited due to a crash or a
+        termination request. It led to Bug 222574 for example because we added some logic to remove the process from
+        the cache in processDidTerminateOrFailedToLaunch() but had failed to do so in requestTermination().
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::requestTermination):
+        * UIProcess/WebProcessProxy.h:
+
 2021-03-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r273655.

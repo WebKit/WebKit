@@ -479,7 +479,7 @@ private:
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     void updateBackgroundResponsivenessTimer();
 
-    void processDidTerminateOrFailedToLaunch();
+    void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     bool isReleaseLoggingAllowed() const;
 
