@@ -269,6 +269,7 @@ BWebPage::BWebPage(BWebView* webView, BUrlContext* context)
         SocketProvider::create(),
         makeUniqueRef<LibWebRTCProvider>(),
         CacheStorageProvider::create(),
+        viewGroup->userContentController(),
         BackForwardList::create(),
         CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<ProgressTrackerClientHaiku>(this),
@@ -289,7 +290,6 @@ BWebPage::BWebPage(BWebView* webView, BUrlContext* context)
     // pluginInClient
     pageClients.pluginInfoProvider = adoptRef(*new EmptyPluginInfoProvider);
     pageClients.storageNamespaceProvider = &viewGroup->storageNamespaceProvider();
-    pageClients.userContentProvider = &viewGroup->userContentController();
     // validationMessage *
     pageClients.visitedLinkStore = &viewGroup->visitedLinkStore();
     // webGLStateTracker *
