@@ -1422,7 +1422,6 @@ MediaPreloadingEnabled:
 
 MediaSourceEnabled:
   type: bool
-  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
       default: true

@@ -25,6 +25,7 @@
 
 [
     Conditional=MEDIA_SOURCE,
+    EnabledBySetting=MediaSource,
     ImplementedBy=VideoTrackMediaSource
 ] partial interface VideoTrack {
     readonly attribute SourceBuffer? sourceBuffer;

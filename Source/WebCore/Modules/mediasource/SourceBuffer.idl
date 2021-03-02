@@ -36,6 +36,7 @@
 [
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    EnabledBySetting=MediaSource,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface SourceBuffer : EventTarget {

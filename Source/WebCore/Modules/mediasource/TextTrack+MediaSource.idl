@@ -26,6 +26,7 @@
 // https://w3c.github.io/media-source/#text-track-extensions
 [
     Conditional=MEDIA_SOURCE,
+    EnabledBySetting=MediaSource,
     ImplementedBy=TextTrackMediaSource
 ] partial interface TextTrack {
     readonly attribute SourceBuffer? sourceBuffer;

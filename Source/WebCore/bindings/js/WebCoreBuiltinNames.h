@@ -254,6 +254,8 @@ namespace WebCore {
     macro(SpeechRecognitionEvent) \
     macro(SpeechRecognitionResult) \
     macro(SpeechRecognitionResultList) \
+    macro(SourceBuffer) \
+    macro(SourceBufferList) \
     macro(StaticRange) \
     macro(StereoPannerNode) \
     macro(StylePropertyMapReadOnly) \
@@ -369,6 +371,8 @@ namespace WebCore {
     macro(isDisturbed) \
     macro(isLoading) \
     macro(isSecureContext) \
+    macro(kind) \
+    macro(language) \
     macro(localStreams) \
     macro(location) \
     macro(makeDOMException) \

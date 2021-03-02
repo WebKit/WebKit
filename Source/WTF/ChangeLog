@@ -1,3 +1,14 @@
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Enable MEDIA_SOURCE in IOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Move this settings out of ENABLE(MEDIA_SOURCE) to allow existing binding code to compile.
+        * wtf/PlatformEnableCocoa.h:
+
 2021-03-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r273655.

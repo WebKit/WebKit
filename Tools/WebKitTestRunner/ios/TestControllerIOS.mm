@@ -150,6 +150,7 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesSetContentChangeObserverEnabled(preferences, false);
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
     WKPreferencesSetVP9DecoderEnabled(preferences, false);
+    WKPreferencesSetMediaSourceEnabled(preferences, false);
 #endif
 }
 

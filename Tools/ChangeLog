@@ -1,3 +1,15 @@
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Enable MEDIA_SOURCE in IOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+        <rdar://problem/74433510>
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        Disable MediaSource runtime flag on simulator since it lacks implementation of AVStreamDataParser.
+
 2021-03-02  Aakash Jain  <aakash_jain@apple.com>
 
         Move WebGL test bot to Big Sur (follow-up fix)
