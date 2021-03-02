@@ -36,13 +36,16 @@ JSValue jsDate(JSGlobalObject& lexicalGlobalObject, double value)
     return DateInstance::create(lexicalGlobalObject.vm(), lexicalGlobalObject.dateStructure(), value);
 }
 
-double valueToDate(VM& vm, JSValue value)
+double valueToDate(JSC::JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
+    auto& vm = lexicalGlobalObject.vm();
+    if (value.inherits<DateInstance>(vm))
+        return jsCast<DateInstance*>(value)->internalNumber();
     if (value.isNumber())
         return value.asNumber();
-    if (!value.inherits<DateInstance>(vm))
-        return std::numeric_limits<double>::quiet_NaN();
-    return jsCast<DateInstance*>(value)->internalNumber();
+    if (value.isString())
+        return vm.dateCache.parseDate(&lexicalGlobalObject, vm, value.getString(&lexicalGlobalObject));
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 } // namespace WebCore
