@@ -34,6 +34,6 @@ class Microtask;
 class JSArray;
 
 JS_EXPORT_PRIVATE Ref<Microtask> createJSMicrotask(VM&, JSValue job);
-JS_EXPORT_PRIVATE Ref<Microtask> createJSMicrotask(VM&, JSValue job, JSValue, JSValue, JSValue);
+JS_EXPORT_PRIVATE Ref<Microtask> createJSMicrotask(VM&, JSValue job, JSValue, JSValue, JSValue, JSValue);
 
 } // namespace JSC

@@ -177,7 +177,8 @@ namespace JSC {
     macro(privateClassBrand) \
     macro(hasOwnPropertyFunction) \
     macro(createPrivateSymbol) \
-    macro(entries)
+    macro(entries) \
+    macro(outOfLineReactionCounts)
 
 
 namespace Symbols {

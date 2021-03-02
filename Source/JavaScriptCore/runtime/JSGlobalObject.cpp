@@ -481,10 +481,11 @@ JSC_DEFINE_HOST_FUNCTION(enqueueJob, (JSGlobalObject* globalObject, CallFrame* c
     JSValue argument0 = callFrame->argument(1);
     JSValue argument1 = callFrame->argument(2);
     JSValue argument2 = callFrame->argument(3);
+    JSValue argument3 = callFrame->argument(4);
 
-    globalObject->queueMicrotask(createJSMicrotask(vm, job, argument0, argument1, argument2));
+    globalObject->queueMicrotask(createJSMicrotask(vm, job, argument0, argument1, argument2, argument3));
 
-    return JSValue::encode(jsUndefined());
+    return encodedJSUndefined();
 }
 
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)

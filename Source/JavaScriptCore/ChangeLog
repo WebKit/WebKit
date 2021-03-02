@@ -1,3 +1,49 @@
+2021-03-01  Keith Miller  <keith_miller@apple.com>
+
+        Reduce promise reaction memory usage when there are multiple reactions
+        https://bugs.webkit.org/show_bug.cgi?id=222533
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, we would store each reaction in a linked list. This
+        meant each reaction required 8 bytes to point to the next
+        reaction.  Instead, this patch makes it so the first reaction is
+        store inline an object and any additional reactions are store into
+        index storage for that object. This doesn't save memory for the
+        first reaction since we now need to have a count of all the out of
+        line reactions but extra reactions use 8 bytes less each.
+
+        * builtins/BuiltinNames.h:
+        * builtins/PromiseOperations.js:
+        (globalPrivate.pushNewPromiseReaction):
+        (globalPrivate.triggerPromiseReactions):
+        (globalPrivate.newPromiseReaction): Deleted.
+        (globalPrivate.resolvePromise): Deleted.
+        (globalPrivate.rejectPromise): Deleted.
+        (globalPrivate.fulfillPromise): Deleted.
+        (globalPrivate.resolvePromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.fulfillPromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.rejectPromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.createResolvingFunctions): Deleted.
+        (globalPrivate.promiseReactionJobWithoutPromise): Deleted.
+        (globalPrivate.resolveWithoutPromise): Deleted.
+        (globalPrivate.rejectWithoutPromise): Deleted.
+        (globalPrivate.fulfillWithoutPromise): Deleted.
+        (globalPrivate.createResolvingFunctionsWithoutPromise): Deleted.
+        (globalPrivate.promiseReactionJob): Deleted.
+        (globalPrivate.promiseResolveThenableJobFast): Deleted.
+        (globalPrivate.promiseResolveThenableJobWithoutPromiseFast): Deleted.
+        (globalPrivate.promiseResolveThenableJob): Deleted.
+        (globalPrivate.promiseResolveThenableJobWithDerivedPromise): Deleted.
+        (onFulfilled): Deleted.
+        (onRejected): Deleted.
+        (globalPrivate.performPromiseThen): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSMicrotask.cpp:
+        (JSC::createJSMicrotask):
+        * runtime/JSMicrotask.h:
+
 2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION: Object.defineProperties triggering a setter
