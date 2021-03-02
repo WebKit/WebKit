@@ -1596,7 +1596,7 @@ using namespace Inspector;
 + (void)_parsePrimaryColors:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolDatabasePrimaryColors> result = Inspector::fromProtocolString<TestProtocolDatabasePrimaryColors>(payload);
+    Optional<TestProtocolDatabasePrimaryColors> result = Inspector::fromProtocolString<TestProtocolDatabasePrimaryColors>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"PrimaryColors");
     *outValue = @(result.value());
 }

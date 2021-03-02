@@ -1325,7 +1325,7 @@ using namespace Inspector;
 + (void)_parseUncastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolTestUncastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>(payload);
+    Optional<TestProtocolTestUncastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"UncastedAnimals");
     *outValue = @(result.value());
 }
@@ -1333,7 +1333,7 @@ using namespace Inspector;
 + (void)_parseCastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolTestCastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>(payload);
+    Optional<TestProtocolTestCastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"CastedAnimals");
     *outValue = @(result.value());
 }

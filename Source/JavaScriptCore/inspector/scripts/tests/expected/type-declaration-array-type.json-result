@@ -918,7 +918,7 @@ using namespace Inspector;
 + (void)_parseReason:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolDebuggerReason> result = Inspector::fromProtocolString<TestProtocolDebuggerReason>(payload);
+    Optional<TestProtocolDebuggerReason> result = Inspector::fromProtocolString<TestProtocolDebuggerReason>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Reason");
     *outValue = @(result.value());
 }
