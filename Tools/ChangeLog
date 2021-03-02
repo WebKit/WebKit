@@ -1,3 +1,12 @@
+2021-03-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Enable grid view
+        https://bugs.webkit.org/show_bug.cgi?id=222369
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/master_buildbot2.cfg:
+
 2021-03-02  Youenn Fablet  <youenn@apple.com>
 
         Use capture settings after recovering capture from GPUProcess
