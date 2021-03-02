@@ -1,3 +1,19 @@
+2021-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web inspector related tests very slow or timeout in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=208000
+
+        Reviewed by Carlos Garcia Campos.
+
+        setTimeout was very slow in the inspector page because it was
+        throttled by 1 second due to that the page is hidden. Mac port
+        disables HiddenPageDOMTimerThrottlingEnabled for the inspector
+        page under testing. Do the same for GTK port.
+
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        setHiddenPageDOMTimerThrottlingEnabled(false) if under test.
+
 2021-03-01  Chris Dumez  <cdumez@apple.com>
 
         Have WebProcessProxy::requestTermination() call processDidTerminateOrFailedToLaunch()
