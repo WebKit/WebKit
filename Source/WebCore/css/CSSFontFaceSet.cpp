@@ -108,8 +108,8 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
         return;
 
     AllowUserInstalledFonts allowUserInstalledFonts = AllowUserInstalledFonts::Yes;
-    if (m_owningFontSelector->document())
-        allowUserInstalledFonts = m_owningFontSelector->document()->settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
+    if (m_owningFontSelector->scriptExecutionContext())
+        allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
     Vector<FontSelectionCapabilities> capabilities = FontCache::singleton().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;

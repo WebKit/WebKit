@@ -231,6 +231,14 @@ void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient& cli
     m_clients.remove(&client);
 }
 
+ScriptExecutionContext* CSSFontSelector::scriptExecutionContext() const
+{
+    // This class returns a ScriptExecutionContext despite holding a Document as preparation for a future
+    // where it will actually hold a ScriptExecutionContext (which would be either a Document or a
+    // WorkerGlobalScope, in the case of using fonts in OffscreenCanvas).
+    return m_document.get();
+}
+
 void CSSFontSelector::dispatchInvalidationCallbacks()
 {
     ++m_version;
@@ -261,8 +269,8 @@ void CSSFontSelector::fontModified()
 
 void CSSFontSelector::fontStyleUpdateNeeded(CSSFontFace&)
 {
-    if (document())
-        document()->updateStyleIfNeeded();
+    if (m_document)
+        m_document->updateStyleIfNeeded();
 }
 
 void CSSFontSelector::fontCacheInvalidated()

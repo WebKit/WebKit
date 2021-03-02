@@ -62,7 +62,7 @@ template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients,
         callback(client);
 }
 
-void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document* document, bool isInitiatingElementInUserAgentShadowTree)
+void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
 {
     for (auto& src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
@@ -74,11 +74,12 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
         foundSVGFont = item.isSVGFontFaceSrc() || item.svgFontFaceElement();
         fontFaceElement = item.svgFontFaceElement();
         if (!item.isLocal()) {
-            const Settings* settings = document ? &document->settings() : nullptr;
-            bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
-            if (allowDownloading && item.isSupportedFormat() && document) {
-                if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
-                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), document->fontSelector(), *cachedFont);
+            const auto* settings = context ? &context->settingsValues() : nullptr;
+            bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled);
+            if (allowDownloading && item.isSupportedFormat() && is<Document>(context)) {
+                auto& document = downcast<Document>(*context);
+                if (CachedFont* cachedFont = item.cachedFont(&document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
+                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), document.fontSelector(), *cachedFont);
             }
         } else
             source = (fontFaceElement ? makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement)
@@ -92,20 +93,22 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
 
 Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
 {
-    auto result = adoptRef(*new CSSFontFace((fontSelector && fontSelector->document()) ? &fontSelector->document()->settings() : nullptr, cssConnection, wrapper, isLocalFallback));
+    auto* context = fontSelector ? fontSelector->scriptExecutionContext() : nullptr;
+    const auto* settings = context ? &context->settingsValues() : nullptr;
+    auto result = adoptRef(*new CSSFontFace(settings, cssConnection, wrapper, isLocalFallback));
     if (fontSelector)
         result->addClient(*fontSelector);
     return result;
 }
 
-CSSFontFace::CSSFontFace(const Settings* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
+CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
     : m_cssConnection(cssConnection)
     , m_wrapper(makeWeakPtr(wrapper))
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
-    , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions())
-    , m_fontLoadTimingOverride(settings ? settings->fontLoadTimingOverride() : FontLoadTimingOverride::None)
-    , m_allowUserInstalledFonts(settings && !settings->shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::No : AllowUserInstalledFonts::Yes)
+    , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions)
+    , m_fontLoadTimingOverride(settings ? settings->fontLoadTimingOverride : FontLoadTimingOverride::None)
+    , m_allowUserInstalledFonts(settings && !settings->shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::No : AllowUserInstalledFonts::Yes)
     , m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
 {
 }

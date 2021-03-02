@@ -77,7 +77,7 @@ public:
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
 
-    Document* document() const { return m_document.get(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
     void beginLoadingFontSoon(CachedFont&);
     void suspendFontLoadingTimer();
