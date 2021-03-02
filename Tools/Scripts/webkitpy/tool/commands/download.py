@@ -81,18 +81,6 @@ class Build(AbstractSequencedCommand):
 
 
 @DeprecatedCommand
-class BuildAndTest(AbstractSequencedCommand):
-    name = "build-and-test"
-    help_text = "Update working copy, build, and run the tests"
-    steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.Build,
-        steps.RunTests,
-    ]
-
-
-@DeprecatedCommand
 class CheckPatchRelevance(AbstractSequencedCommand):
     name = "check-patch-relevance"
     help_text = "Check if this patch needs to be tested"
@@ -112,7 +100,6 @@ class Land(AbstractSequencedCommand):
         steps.ValidateReviewer,
         steps.ValidateChangeLogs,  # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
         steps.Build,
-        steps.RunTests,
         steps.Commit,
         steps.CloseBugForLandDiff,
     ]
@@ -140,7 +127,6 @@ class LandCowhand(AbstractSequencedCommand):
         steps.CheckStyle,
         steps.ConfirmDiff,
         steps.Build,
-        steps.RunTests,
         steps.Commit,
         steps.CloseBugForLandDiff,
     ]
@@ -286,20 +272,6 @@ class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     ]
 
 
-@DeprecatedCommand
-class BuildAndTestAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
-    name = "build-and-test-attachment"
-    help_text = "Apply, build, and test patches from bugzilla"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    main_steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.Build,
-        steps.RunTests,
-    ]
-
-
 class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
         steps.EnsureLocalCommitIfNeeded,
@@ -350,7 +322,6 @@ class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
         steps.ValidateChangeLogs,
         steps.ValidateReviewer,
         steps.Build,
-        steps.RunTests,
         steps.Commit,
         steps.ClosePatch,
         steps.CloseBug,

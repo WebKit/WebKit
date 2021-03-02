@@ -1,3 +1,37 @@
+2021-03-02  Sam Sneddon  <gsnedders@apple.com>
+
+        Remove the ability to run tests via webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=222617
+
+        Reviewed by Jonathan Bedard.
+
+        Also removes the build-and-test and build-and-test-attachment commands, as these are now
+        equivalent to build and build-attachment with --test support gone.
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py: Unused import
+        * Scripts/webkitpy/tool/commands/download.py:
+        (BuildAndTest):
+        (Land):
+        (LandCowhand):
+        (BuildAndTestAttachment):
+        (AbstractPatchLandingCommand):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_build_and_test):
+        (test_land):
+        (test_land_red_builders):
+        (test_land_no_close):
+        (test_land_no_comment):
+        (test_land_no_comment_no_close):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/runtests.py: Removed.
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py: Removed.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+        (StepsTest.test_runtests_debug_args):
+        (StepsTest.test_runtests_jsc):
+        (StepsTest.test_runtests_jsc_debug):
+
+
 2021-03-02  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use webkitscmpy when reporting results
