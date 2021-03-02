@@ -1,3 +1,14 @@
+2021-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r263094): [GTK][WPE] API test /webkit/WebKitWebContext/languages is failing
+        https://bugs.webkit.org/show_bug.cgi?id=188111
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextLanguages): Invalid locale is ignored now instead of throwing a exception.
+        * TestWebKitAPI/glib/TestExpectations.json: Remove test expectation now that it passes again.
+
 2021-03-02  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Enable grid view

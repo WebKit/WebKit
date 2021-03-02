@@ -47,7 +47,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
     ClearResourceLoadStatistics();
-    UserPreferredLanguagesChanged()
+    UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)

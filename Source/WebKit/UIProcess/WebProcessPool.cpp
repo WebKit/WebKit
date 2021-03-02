@@ -96,7 +96,6 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
@@ -305,8 +304,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     processPools().append(this);
 
-    addLanguageChangeObserver(this, languageChanged);
-
     resolvePathsForSandboxExtensions();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
@@ -335,8 +332,6 @@ WebProcessPool::~WebProcessPool()
 
     bool removed = processPools().removeFirst(this);
     ASSERT_UNUSED(removed, removed);
-
-    removeLanguageChangeObserver(this);
 
     m_messageReceiverMap.invalidate();
 
@@ -417,17 +412,14 @@ void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& cu
     m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
 }
 
-void WebProcessPool::languageChanged(void* context)
+void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
-    static_cast<WebProcessPool*>(context)->languageChanged();
-}
+    m_configuration->setOverrideLanguages(WTFMove(languages));
 
-void WebProcessPool::languageChanged()
-{
-    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged());
+    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()));
 #if USE(SOUP)
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(userPreferredLanguages()), 0);
+        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()), 0);
 #endif
 }
 

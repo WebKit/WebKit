@@ -1,3 +1,29 @@
+2021-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r263094): [GTK][WPE] API test /webkit/WebKitWebContext/languages is failing
+        https://bugs.webkit.org/show_bug.cgi?id=188111
+
+        Reviewed by Michael Catanzaro.
+
+        The GLib API allows to change the user preferred languages after the web process is created. Since r263094 we
+        are no loner sending the new overrides to the web process. Instead of calling overrideUserPreferredLanguages()
+        we now set the overrides in the WebProcessPool configuration, so that we can remove the language observer.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_preferred_languages): Use WebProcessPool::setOverrideLanguages() instead of
+        overrideUserPreferredLanguages().
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool) Remove the language observer registration.
+        (WebKit::WebProcessPool::~WebProcessPool): Remove the language observer unregistration.
+        (WebKit::WebProcessPool::setOverrideLanguages): Update the language overrides in the configuration and notify
+        all processes.
+        (WebKit::WebProcessPool::languageChanged): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::userPreferredLanguagesChanged const): Call overrideUserPreferredLanguages() again here.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2021-03-02  Youenn Fablet  <youenn@apple.com>
 
         Use capture settings after recovering capture from GPUProcess

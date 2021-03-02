@@ -682,9 +682,9 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
     WebCore::FontCascade::setShouldUseSmoothing(useFontSmoothing);
 }
 
-void WebProcess::userPreferredLanguagesChanged() const
+void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
-    WTF::languageDidChange();
+    overrideUserPreferredLanguages(languages);
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)

@@ -487,7 +487,9 @@ public:
 
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
-    
+
+    void setOverrideLanguages(Vector<String>&&);
+
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
     
     static void setUseSeparateServiceWorkerProcess(bool);
@@ -544,9 +546,6 @@ private:
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
-
-    static void languageChanged(void* context);
-    void languageChanged();
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 
