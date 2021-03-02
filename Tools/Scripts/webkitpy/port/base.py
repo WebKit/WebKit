@@ -42,6 +42,7 @@ import sys
 from collections import OrderedDict
 from functools import partial
 from webkitcorepy import string_utils, decorators
+from webkitscmpy import local
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
@@ -1511,31 +1512,31 @@ class Port(object):
     def commits_for_upload(self):
         from webkitpy.results.upload import Upload
 
-        self.host.initialize_scm()
         repos = {}
         if port_config.apple_additions() and getattr(port_config.apple_additions(), 'repos', False):
-            repos = port_config.apple_additions().repos()
-        repos['webkit'] = self.host.scm().checkout_root
+            repos = {
+                name: local.Scm.from_path(pth)
+                for name, pth in port_config.apple_additions().repos().items()
+            }
+
+        if 'webkit' not in repos:
+            try:
+                repos['webkit'] = local.Scm.from_path(self.host.filesystem.getcwd())
+            except OSError:
+                repos['webkit'] = local.Scm.from_path(self.host.filesystem.dirname(__file__))
+
         commits = []
-        for repo_id, path in repos.items():
-            scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(path)
+        for repo_id, repo in repos.items():
+            commit = repo.commit(include_log=False, include_identifier=False)
 
-            # If using git-svn for WebKit, prefer the SVN branch/revision.
-            svn_revision = scm.svn_revision(path)
-            if repo_id == 'webkit' and svn_revision:
-                used_revision = svn_revision
-            else:
-                used_revision = scm.native_revision(path)
-
-            svn_branch = scm.svn_branch(path)
-            if repo_id == 'webkit' and svn_branch:
-                used_branch = svn_branch
-            else:
-                used_branch = scm.native_branch(path)
+            # Special case for WebKit since we have multiple representations at the moment
+            branch = commit.branch
+            if repo_id == 'webkit' and branch in repo.DEFAULT_BRANCHES:
+                branch = 'trunk'
 
             commits.append(Upload.create_commit(
                 repository_id=repo_id,
-                id=used_revision,
-                branch=used_branch,
+                id=str(commit.revision or commit.hash),
+                branch=branch,
             ))
         return commits

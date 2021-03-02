@@ -35,6 +35,8 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.tool.mocktool import MockOptions
 
+from webkitscmpy import mocks
+
 
 def get_result(test_name, result_type=test_expectations.PASS, run_time=0):
     failures = []
@@ -160,9 +162,16 @@ class SummarizedResultsTest(unittest.TestCase):
         self.assertNotEquals(summary['revision'], '')
 
     def test_svn_revision(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-        self.assertEquals(summary['revision'], '2738499')
+        with mocks.local.Svn(path='/'), mocks.local.Git():
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
+            self.assertEquals(summary['revision'], '6')
+
+    def test_svn_revision_git(self):
+        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True):
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
+            self.assertEquals(summary['revision'], '9')
 
     def test_summarized_results_wontfix(self):
         self.port._options.builder_name = 'dummy builder'

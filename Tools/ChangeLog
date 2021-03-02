@@ -1,3 +1,24 @@
+2021-03-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Use webkitscmpy when reporting results
+        https://bugs.webkit.org/show_bug.cgi?id=222432
+        <rdar://problem/74755765>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): The root directory should be treated as if it does not exist.
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (SummarizedResultsTest.test_svn_revision): Use webkitscmpy's mock repository.
+        (SummarizedResultsTest.test_svn_revision_git): Added.
+        * Scripts/webkitpy/port/base.py:
+        (Port.commits_for_upload): Use webkitscmpy instead of webkitpy for repository manipulation.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_commits_for_upload): Use webkitscmpy's mock repository.
+        (PortTest.test_commits_for_upload_git_svn): Added.
+
 2021-03-02  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Support sending key modifiers after r272572

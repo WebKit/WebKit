@@ -64,7 +64,7 @@ class Git(mocks.Subprocess):
         self.tags = {}
 
         # If the directory provided actually exists, populate it
-        if os.path.isdir(self.path):
+        if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
                 os.mkdir(os.path.join(self.path, '.git'))
             with open(os.path.join(self.path, '.git', 'config'), 'w') as config:
