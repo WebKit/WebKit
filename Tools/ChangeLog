@@ -1,3 +1,35 @@
+2021-03-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add UUID
+        https://bugs.webkit.org/show_bug.cgi?id=222602
+        <rdar://problem/74931488>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit):
+        (Commit.Encoder.default): Add order member.
+        (Commit.__init__): Ditto.
+        (Commit.uuid): Compute UUID from timestamp and order.
+        (Commit.__cmp__): Use UUID instead of timestamp for comparison.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Compute commit order.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/git-repo.json: Add "order" to colliding commit.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Correct case where comparison fails.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.commit): Compute commit order.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.commit): Compute commit order.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_order): Added.
+        (TestGitHub.test_order): Added.
+        (TestBitBucket.test_order): Added.
+
 2021-03-02  Sam Sneddon  <gsnedders@apple.com>
 
         Remove the ability to run tests via webkit-patch

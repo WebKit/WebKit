@@ -267,8 +267,22 @@ class GitHub(Scm):
         matches = self.GIT_SVN_REVISION.findall(commit_data['commit']['message'])
         revision = int(matches[-1].split('@')[0]) if matches else None
 
-        date = datetime.strptime(commit_data['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ')
         email_match = self.EMAIL_RE.match(commit_data['commit']['author']['email'])
+        timestamp = int(calendar.timegm(datetime.strptime(
+            commit_data['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
+        ).timetuple()))
+
+        order = 0
+        while not identifier or order + 1 < identifier + (branch_point or 0):
+            response = self.request('commits/{}'.format('{}~{}'.format(commit_data['sha'], order + 1)))
+            if not response:
+                break
+            parent_timestamp = int(calendar.timegm(datetime.strptime(
+                response['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
+            ).timetuple()))
+            if parent_timestamp != timestamp:
+                break
+            order += 1
 
         return Commit(
             hash=commit_data['sha'],
@@ -276,7 +290,8 @@ class GitHub(Scm):
             branch_point=branch_point,
             identifier=identifier if include_identifier else None,
             branch=branch,
-            timestamp=int(calendar.timegm(date.timetuple())),
+            timestamp=timestamp,
+            order=order,
             author=self.contributors.create(
                 commit_data['commit']['author']['name'],
                 email_match.group('email') if email_match else None,

@@ -104,7 +104,7 @@ class GitHub(mocks.Requests):
         if delta < commit.identifier:
             return self.commits[commit.branch][commit.identifier - delta - 1]
         delta -= commit.identifier
-        if delta < commit.branch_point:
+        if commit.branch_point and delta < commit.branch_point:
             return self.commits[self.default_branch][commit.branch_point - delta - 1]
         return None
 

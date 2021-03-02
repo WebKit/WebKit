@@ -222,6 +222,7 @@ PRINTED
                 branch='main',
                 identifier='1@main',
                 timestamp=1000,
+                order=0,
                 author=dict(
                     name='Jonathan Bedard',
                     emails=['jbedard@apple.com'],
@@ -232,7 +233,7 @@ PRINTED
                 identifier='1@main',
                 timestamp=1000,
                 author=contributor,
-                message='Message'
+                message='Message',
             ), cls=Commit.Encoder))
         )
 

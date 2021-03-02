@@ -277,6 +277,12 @@ class TestGit(unittest.TestCase):
             with mock:
                 self.assertIsNone(local.Git(self.path).find('main', include_identifier=False).identifier)
 
+    def test_order(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                self.assertEqual(0, local.Git(self.path).commit(hash='bae5d1e90999').order)
+                self.assertEqual(1, local.Git(self.path).commit(hash='d8bce26fa65c').order)
+
 
 class TestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/webkit'
@@ -390,6 +396,11 @@ class TestGitHub(unittest.TestCase):
         with mocks.remote.GitHub():
             self.assertIsNone(remote.GitHub(self.remote).find('main', include_identifier=False).identifier)
 
+    def test_order(self):
+        with mocks.remote.GitHub():
+            self.assertEqual(0, remote.GitHub(self.remote).commit(hash='bae5d1e90999').order)
+            self.assertEqual(1, remote.GitHub(self.remote).commit(hash='d8bce26fa65c').order)
+
 
 class TestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -502,3 +513,8 @@ class TestBitBucket(unittest.TestCase):
     def test_no_identifier(self):
         with mocks.remote.BitBucket():
             self.assertIsNone(remote.BitBucket(self.remote).find('main', include_identifier=False).identifier)
+
+    def test_order(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual(0, remote.BitBucket(self.remote).commit(hash='bae5d1e90999').order)
+            self.assertEqual(1, remote.BitBucket(self.remote).commit(hash='d8bce26fa65c').order)

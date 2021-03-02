@@ -68,7 +68,8 @@
             "branch": "main", 
             "message": "Patch Series\n", 
             "identifier": "5@main", 
-            "revision": 9
+            "revision": 9,
+            "order": 1
         }
     ], 
     "branch-b": [

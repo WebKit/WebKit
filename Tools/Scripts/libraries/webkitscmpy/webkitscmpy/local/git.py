@@ -256,6 +256,19 @@ class Git(Scm):
         )
         if commit_time.returncode:
             raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
+        timestamp = int(commit_time.stdout.lstrip())
+
+        order = 0
+        while not identifier or order + 1 < identifier + (branch_point or 0):
+            commit_time = run(
+                [self.executable(), 'show', '-s', '--format=%ct', '{}~{}'.format(hash, order + 1)],
+                cwd=self.root_path, capture_output=True, encoding='utf-8',
+            )
+            if commit_time.returncode:
+                break
+            if int(commit_time.stdout.lstrip()) != timestamp:
+                break
+            order += 1
 
         return Commit(
             hash=hash,
@@ -263,7 +276,8 @@ class Git(Scm):
             identifier=identifier if include_identifier else None,
             branch_point=branch_point,
             branch=branch,
-            timestamp=int(commit_time.stdout.lstrip()),
+            timestamp=timestamp,
+            order=order,
             author=Contributor.from_scm_log(log.stdout.splitlines()[1], self.contributors),
             message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]) if include_log else None,
         )

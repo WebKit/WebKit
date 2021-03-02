@@ -179,6 +179,7 @@ Hash: 1abe25b443e9
                     name='Jonathan Bedard',
                     emails=['jbedard@apple.com'],
                 ), timestamp=1601663000,
+                order=0,
                 branch='main',
                 message='4th commit\nsvn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             ))
