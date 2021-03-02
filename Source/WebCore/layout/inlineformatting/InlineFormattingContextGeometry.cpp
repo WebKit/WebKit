@@ -329,7 +329,6 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         // FIXME: Add support for simple inline boxes too.
         // We can do simplified vertical alignment with non-atomic inline boxes as long as the line has no content.
         // e.g. <div><span></span><span></span></div> is still okay.
-        simplifiedVerticalAlignment.setEnabled(!lineHasContent);
         if (run.isInlineBoxStart()) {
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
@@ -342,6 +341,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            simplifiedVerticalAlignment.setEnabled(!lineHasContent);
             continue;
         }
         if (run.isInlineBoxEnd()) {
@@ -352,17 +352,20 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             auto marginEnd = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginEnd());
             auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth() - marginEnd;
             inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
+            simplifiedVerticalAlignment.setEnabled(!lineHasContent);
             continue;
         }
         if (run.isText() || run.isSoftLineBreak()) {
             // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
             lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
+            simplifiedVerticalAlignment.setEnabled(simplifiedVerticalAlignment.isEnabled() && &layoutBox.parent() == &rootBox());
             continue;
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
+            simplifiedVerticalAlignment.setEnabled(false);
             continue;
         }
         if (run.isWordBreakOpportunity()) {
