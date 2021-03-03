@@ -7258,6 +7258,20 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
     });
 }
 
+void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto elementToUpdate = elementForContext(context);
+    if (!is<HTMLElement>(elementToUpdate)) {
+        completionHandler(false);
+        return;
+    }
+
+    downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+
+    // FIXME: Hit-test with location and return whether or not there is overlay text at the given location.
+    completionHandler(true);
+}
+
 #endif // ENABLE(IMAGE_EXTRACTION)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

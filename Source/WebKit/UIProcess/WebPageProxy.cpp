@@ -8275,6 +8275,16 @@ void WebPageProxy::requestImageExtraction(const URL& imageURL, const ShareableBi
 {
     pageClient().requestImageExtraction(imageURL, imageData, WTFMove(completionHandler));
 }
+
+void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(false);
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::UpdateWithImageExtractionResult(WTFMove(results), context, location), WTFMove(completionHandler));
+}
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

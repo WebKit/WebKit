@@ -1377,6 +1377,7 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(WebCore::Element&);
+    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

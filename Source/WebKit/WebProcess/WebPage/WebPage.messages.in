@@ -633,4 +633,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
 
     LastNavigationWasAppBound() -> (bool wasAppBound) Async
+
+#if ENABLE(IMAGE_EXTRACTION)
+    UpdateWithImageExtractionResult(struct WebCore::ImageExtractionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (bool textExistsAtLocation) Async
+#endif
 }
