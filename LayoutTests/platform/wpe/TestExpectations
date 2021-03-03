@@ -584,9 +584,6 @@ webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-impl
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/tests/contentfiltering [ Skip ]
 
-webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html [ ImageOnlyFailure ]
-webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html [ ImageOnlyFailure ]
-
 webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]

@@ -1,3 +1,61 @@
+2021-03-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import latest WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=222651
+
+        Reviewed by Rob Buis.
+
+        Synced flex tests to 5b5efcee.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-flexbox/canvas-contain-size-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/canvas-contain-size.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column.html: Removed.
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/frameset-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-1-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-1.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-height-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-height.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-2-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-3-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-3.html: Added.
+        * web-platform-tests/css/css-flexbox/table-item-flex-percentage-min-width-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-item-flex-percentage-min-width.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-03-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus-visible implementation

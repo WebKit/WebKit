@@ -32,6 +32,7 @@
         "css/css-flexbox/flex-direction-row-reverse-002-visual.html",
         "css/css-flexbox/flex-shrink-large-value-crash.html",
         "css/css-flexbox/flexbox-order-from-lowest.html",
+        "css/css-flexbox/frameset-crash.html",
         "css/css-flexbox/inline-flex-editing-crash.html",
         "css/css-flexbox/inline-flex-editing-with-updating-text-crash.html",
         "css/css-flexbox/inline-flex-frameset-main-axis-crash.html",
