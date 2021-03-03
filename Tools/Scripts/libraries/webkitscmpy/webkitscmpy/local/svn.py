@@ -208,6 +208,8 @@ class Svn(Scm):
 
         if revision:
             if revision not in self._metadata_cache[branch]:
+                if 'branch' not in branch and branch != 'trunk':
+                    sys.stderr.write("Check if 'r{}' is a tag\n".format(revision))
                 raise self.Exception("Failed to find '{}' on '{}'".format(revision, branch))
             return bisect.bisect_left(self._metadata_cache[branch], int(revision))
         if branch == self.default_branch:
