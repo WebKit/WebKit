@@ -4836,6 +4836,12 @@
          "rhogan"
       ]
    },
+   "Robert Jenner" : {
+      "emails" : [
+         "jenner@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Robert Kroeger" : {
       "emails" : [
          "rjkroege@chromium.org"
