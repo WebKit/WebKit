@@ -113,8 +113,8 @@ Color semanticColorFromNSColor(NSColor *color)
 
 NSColor *nsColor(const Color& color)
 {
-    if (color.isInline()) {
-        switch (PackedColor::RGBA { color.asInline() }.value) {
+    if (auto srgb = color.tryGetAsSRGBABytes()) {
+        switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
             static NeverDestroyed<RetainPtr<NSColor>> clearColor = [NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0];
             return clearColor.get().get();

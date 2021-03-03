@@ -25,14 +25,17 @@
 
 #pragma once
 
+#include "ColorConversion.h"
 #include "ColorSpace.h"
 #include "ColorUtilities.h"
-#include "ExtendedColor.h"
+#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(CG)
@@ -71,8 +74,6 @@ public:
 
     Color(SRGBA<uint8_t>, OptionSet<Flags> = { });
     Color(Optional<SRGBA<uint8_t>>, OptionSet<Flags> = { });
-
-    Color(ColorComponents<float>, ColorSpace, OptionSet<Flags> = { });
     
     template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
     Color(const ColorType&, OptionSet<Flags> = { });
@@ -98,10 +99,12 @@ public:
     bool isSemantic() const;
     bool usesColorFunctionSerialization() const;
 
-    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asInline().alpha == 255; }
-    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asInline().alpha > 0; }
-    uint8_t alphaByte() const { return isExtended() ? convertFloatAlphaTo<uint8_t>(asExtended().alpha()) : asInline().alpha; }
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
+    ColorSpace colorSpace() const;
+
+    bool isOpaque() const { return isOutOfLine() ? asOutOfLine().alpha() == 1.0 : asInline().alpha == 255; }
+    bool isVisible() const { return isOutOfLine() ? asOutOfLine().alpha() > 0.0 : asInline().alpha > 0; }
+    uint8_t alphaByte() const { return isOutOfLine() ? convertFloatAlphaTo<uint8_t>(asOutOfLine().alpha()) : asInline().alpha; }
+    float alphaAsFloat() const { return isOutOfLine() ? asOutOfLine().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
 
     WEBCORE_EXPORT float luminance() const;
     WEBCORE_EXPORT float lightness() const; // FIXME: Replace remaining uses with luminance.
@@ -136,14 +139,16 @@ public:
 
     Color semanticColor() const;
 
+    // Returns the underlying color if its type is SRGBA<uint8_t>.
+    Optional<SRGBA<uint8_t>> tryGetAsSRGBABytes() const;
+
 #if PLATFORM(GTK)
     Color(const GdkRGBA&);
     operator GdkRGBA() const;
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT Color(CGColorRef);
-    WEBCORE_EXPORT Color(CGColorRef, OptionSet<Flags>);
+    WEBCORE_EXPORT Color(CGColorRef, OptionSet<Flags> = { });
 #endif
 
 #if PLATFORM(WIN)
@@ -167,44 +172,61 @@ public:
     static constexpr auto darkGreen = SRGBA<uint8_t> { 0, 128, 0 };
     static constexpr auto orange = SRGBA<uint8_t> { 255, 128, 0 };
 
-    bool isExtended() const;
-    bool isInline() const;
-
-    const ExtendedColor& asExtended() const;
-    SRGBA<uint8_t> asInline() const;
-
-    // Extended and non-extended colors will always be non-equal.
-    friend bool operator==(const Color& a, const Color& b);
-    friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
-    friend bool extendedColorsEqual(const Color&, const Color&);
-    friend bool extendedColorsEqualIgnoringSemanticColor(const Color&, const Color&);
-
     static bool isBlackColor(const Color&);
     static bool isWhiteColor(const Color&);
+
+    // Out of line and inline colors will always be non-equal.
+    friend bool operator==(const Color& a, const Color& b);
+    friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
+    friend bool outOfLineComponentssEqual(const Color&, const Color&);
+    friend bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    Color(Ref<ExtendedColor>&&, OptionSet<Flags> = { });
+    class OutOfLineComponents : public RefCounted<OutOfLineComponents> {
+    public:
+        static Ref<OutOfLineComponents> create(ColorComponents<float> components)
+        {
+            return adoptRef(*new OutOfLineComponents(components));
+        }
 
-    enum class FlagsIncludingPrivate : uint16_t {
-        Semantic                        = static_cast<uint16_t>(Flags::Semantic),
-        UseColorFunctionSerialization   = static_cast<uint16_t>(Flags::UseColorFunctionSerialization),
+        float alpha() const { return m_components[3]; }
+        ColorComponents<float> components() const { return m_components; }
+
+    private:
+        OutOfLineComponents(ColorComponents<float> components)
+            : m_components(components)
+        {
+        }
+
+        ColorComponents<float> m_components;
+    };
+    Color(Ref<OutOfLineComponents>&&, ColorSpace, OptionSet<Flags> = { });
+
+    enum class FlagsIncludingPrivate : uint8_t {
+        Semantic                        = static_cast<uint8_t>(Flags::Semantic),
+        UseColorFunctionSerialization   = static_cast<uint8_t>(Flags::UseColorFunctionSerialization),
         Valid                           = 1 << 2,
-        Extended                        = 1 << 3,
+        OutOfLine                       = 1 << 3,
         HashTableEmptyValue             = 1 << 4,
         HashTableDeletedValue           = 1 << 5,
     };
     static OptionSet<FlagsIncludingPrivate> toFlagsIncludingPrivate(OptionSet<Flags> flags) { return OptionSet<FlagsIncludingPrivate>::fromRaw(flags.toRaw()); }
 
     OptionSet<FlagsIncludingPrivate> flags() const;
+    bool isOutOfLine() const;
+    bool isInline() const;
 
     void setColor(SRGBA<uint8_t>, OptionSet<FlagsIncludingPrivate> = { });
-    void setExtendedColor(Ref<ExtendedColor>&&, OptionSet<FlagsIncludingPrivate> = { });
+    void setOutOfLineComponents(Ref<OutOfLineComponents>&&, ColorSpace, OptionSet<FlagsIncludingPrivate> = { });
 
+    SRGBA<uint8_t> asInline() const;
     PackedColor::RGBA asPackedInline() const;
-    Ref<ExtendedColor> asExtendedRef() const;
+
+    const OutOfLineComponents& asOutOfLine() const;
+    Ref<OutOfLineComponents> asOutOfLineRef() const;
 
 #if CPU(ADDRESS64)
     static constexpr unsigned maxNumberOfBitsInPointer = 48;
@@ -212,16 +234,23 @@ private:
     static constexpr unsigned maxNumberOfBitsInPointer = 32;
 #endif
     static constexpr uint64_t colorValueMask = (1ULL << maxNumberOfBitsInPointer) - 1;
+    static constexpr uint64_t flagsSize = sizeof(FlagsIncludingPrivate) * 8;
+    static constexpr uint64_t flagsShift = maxNumberOfBitsInPointer;
+    static constexpr uint64_t colorSpaceSize = sizeof(ColorSpace) * 8;
+    static constexpr uint64_t colorSpaceShift = flagsShift + flagsSize;
+    static_assert(flagsSize + colorSpaceSize + maxNumberOfBitsInPointer <= 64);
 
     static uint64_t encodedFlags(OptionSet<FlagsIncludingPrivate>);
+    static uint64_t encodedColorSpace(ColorSpace);
     static uint64_t encodedInlineColor(SRGBA<uint8_t>);
     static uint64_t encodedPackedInlineColor(PackedColor::RGBA);
-    static uint64_t encodedExtendedColor(Ref<ExtendedColor>&&);
+    static uint64_t encodedOutOfLineComponents(Ref<OutOfLineComponents>&&);
 
     static OptionSet<FlagsIncludingPrivate> decodedFlags(uint64_t);
+    static ColorSpace decodedColorSpace(uint64_t);
     static SRGBA<uint8_t> decodedInlineColor(uint64_t);
     static PackedColor::RGBA decodedPackedInlineColor(uint64_t);
-    static ExtendedColor& decodedExtendedColor(uint64_t);
+    static OutOfLineComponents& decodedOutOfLineComponents(uint64_t);
 
     static constexpr uint64_t invalidColorAndFlags = 0;
     uint64_t m_colorAndFlags { invalidColorAndFlags };
@@ -230,9 +259,9 @@ private:
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
-// One or both must be extended colors.
-bool extendedColorsEqual(const Color&, const Color&);
-bool extendedColorsEqualIgnoringSemanticColor(const Color&, const Color&);
+// One or both must be out of line colors.
+bool outOfLineComponentssEqual(const Color&, const Color&);
+bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
@@ -242,8 +271,8 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 inline bool operator==(const Color& a, const Color& b)
 {
-    if (a.isExtended() || b.isExtended())
-        return extendedColorsEqual(a, b);
+    if (a.isOutOfLine() || b.isOutOfLine())
+        return outOfLineComponentssEqual(a, b);
     return a.m_colorAndFlags == b.m_colorAndFlags;
 }
 
@@ -252,31 +281,31 @@ inline bool operator!=(const Color& a, const Color& b)
     return !(a == b);
 }
 
-inline bool extendedColorsEqual(const Color& a, const Color& b)
+inline bool outOfLineComponentssEqual(const Color& a, const Color& b)
 {
-    if (a.isExtended() && b.isExtended())
-        return a.asExtended() == b.asExtended() && a.flags() == b.flags();
+    if (a.isOutOfLine() && b.isOutOfLine())
+        return a.asOutOfLine().components() == b.asOutOfLine().components() && a.colorSpace() == b.colorSpace() && a.flags() == b.flags();
 
-    ASSERT(a.isExtended() || b.isExtended());
+    ASSERT(a.isOutOfLine() || b.isOutOfLine());
     return false;
 }
 
-inline bool extendedColorsEqualIgnoringSemanticColor(const Color& a, const Color& b)
+inline bool outOfLineComponentssEqualIgnoringSemanticColor(const Color& a, const Color& b)
 {
-    if (a.isExtended() && b.isExtended()) {
+    if (a.isOutOfLine() && b.isOutOfLine()) {
         auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
         auto bFlags = b.flags() - Color::FlagsIncludingPrivate::Semantic;
-        return a.asExtended() == b.asExtended() && aFlags == bFlags;
+        return a.asOutOfLine().components() == b.asOutOfLine().components() && a.colorSpace() == b.colorSpace() && aFlags == bFlags;
     }
 
-    ASSERT(a.isExtended() || b.isExtended());
+    ASSERT(a.isOutOfLine() || b.isOutOfLine());
     return false;
 }
 
 inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
 {
-    if (a.isExtended() || b.isExtended())
-        return extendedColorsEqualIgnoringSemanticColor(a, b);
+    if (a.isOutOfLine() || b.isOutOfLine())
+        return outOfLineComponentssEqualIgnoringSemanticColor(a, b);
 
     auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
     auto bFlags = b.flags() - Color::FlagsIncludingPrivate::Semantic;
@@ -294,27 +323,22 @@ inline Color::Color(Optional<SRGBA<uint8_t>> color, OptionSet<Flags> flags)
         setColor(*color, toFlagsIncludingPrivate(flags));
 }
 
-inline Color::Color(ColorComponents<float> components, ColorSpace colorSpace, OptionSet<Flags> flags)
-{
-    setExtendedColor(ExtendedColor::create(components, colorSpace), toFlagsIncludingPrivate(flags));
-}
-
 template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
 inline Color::Color(const ColorType& color, OptionSet<Flags> flags)
 {
-    setExtendedColor(ExtendedColor::create(color), toFlagsIncludingPrivate(flags));
+    setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(color)), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
 }
 
 template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
 inline Color::Color(const Optional<ColorType>& color, OptionSet<Flags> flags)
 {
     if (color)
-        setExtendedColor(ExtendedColor::create(*color), toFlagsIncludingPrivate(flags));
+        setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(*color)), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
 }
 
-inline Color::Color(Ref<ExtendedColor>&& extendedColor, OptionSet<Flags> flags)
+inline Color::Color(Ref<OutOfLineComponents>&& outOfLineComponents, ColorSpace colorSpace, OptionSet<Flags> flags)
 {
-    setExtendedColor(WTFMove(extendedColor), toFlagsIncludingPrivate(flags));
+    setOutOfLineComponents(WTFMove(outOfLineComponents), colorSpace, toFlagsIncludingPrivate(flags));
 }
 
 inline Color::Color(WTF::HashTableEmptyValueType)
@@ -334,14 +358,14 @@ inline bool Color::isHashTableDeletedValue() const
 
 inline Color::~Color()
 {
-    if (isExtended())
-        asExtended().deref();
+    if (isOutOfLine())
+        asOutOfLine().deref();
 }
 
 inline unsigned Color::hash() const
 {
-    if (isExtended())
-        return computeHash(asExtended().components(), asExtended().colorSpace(), flags().toRaw());
+    if (isOutOfLine())
+        return computeHash(asOutOfLine().components(), colorSpace(), flags().toRaw());
     return computeHash(asPackedInline().value, flags().toRaw());
 }
 
@@ -360,10 +384,15 @@ inline bool Color::usesColorFunctionSerialization() const
     return flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization);
 }
 
+inline ColorSpace Color::colorSpace() const
+{
+    return decodedColorSpace(m_colorAndFlags);
+}
+
 template<typename Functor> decltype(auto) Color::callOnUnderlyingType(Functor&& functor) const
 {
-    if (isExtended())
-        return asExtended().callOnUnderlyingType(std::forward<Functor>(functor));
+    if (isOutOfLine())
+        return callWithColorType(asOutOfLine().components(), colorSpace(), std::forward<Functor>(functor));
     return std::invoke(std::forward<Functor>(functor), asInline());
 }
 
@@ -399,26 +428,26 @@ inline OptionSet<Color::FlagsIncludingPrivate> Color::flags() const
     return decodedFlags(m_colorAndFlags);
 }
 
-inline bool Color::isExtended() const
+inline bool Color::isOutOfLine() const
 {
-    return flags().contains(FlagsIncludingPrivate::Extended);
+    return flags().contains(FlagsIncludingPrivate::OutOfLine);
 }
 
 inline bool Color::isInline() const
 {
-    return !flags().contains(FlagsIncludingPrivate::Extended);
+    return !flags().contains(FlagsIncludingPrivate::OutOfLine);
 }
 
-inline const ExtendedColor& Color::asExtended() const
+inline const Color::OutOfLineComponents& Color::asOutOfLine() const
 {
-    ASSERT(isExtended());
-    return decodedExtendedColor(m_colorAndFlags);
+    ASSERT(isOutOfLine());
+    return decodedOutOfLineComponents(m_colorAndFlags);
 }
 
-inline Ref<ExtendedColor> Color::asExtendedRef() const
+inline Ref<Color::OutOfLineComponents> Color::asOutOfLineRef() const
 {
-    ASSERT(isExtended());
-    return decodedExtendedColor(m_colorAndFlags);
+    ASSERT(isOutOfLine());
+    return decodedOutOfLineComponents(m_colorAndFlags);
 }
 
 inline SRGBA<uint8_t> Color::asInline() const
@@ -433,9 +462,21 @@ inline PackedColor::RGBA Color::asPackedInline() const
     return decodedPackedInlineColor(m_colorAndFlags);
 }
 
+inline Optional<SRGBA<uint8_t>> Color::tryGetAsSRGBABytes() const
+{
+    if (isInline())
+        return asInline();
+    return WTF::nullopt;
+}
+
 inline uint64_t Color::encodedFlags(OptionSet<FlagsIncludingPrivate> flags)
 {
-    return static_cast<uint64_t>(flags.toRaw()) << maxNumberOfBitsInPointer;
+    return static_cast<uint64_t>(flags.toRaw()) << flagsShift;
+}
+
+inline uint64_t Color::encodedColorSpace(ColorSpace colorSpace)
+{
+    return static_cast<uint64_t>(colorSpace) << colorSpaceShift;
 }
 
 inline uint64_t Color::encodedInlineColor(SRGBA<uint8_t> color)
@@ -448,18 +489,23 @@ inline uint64_t Color::encodedPackedInlineColor(PackedColor::RGBA color)
     return color.value;
 }
 
-inline uint64_t Color::encodedExtendedColor(Ref<ExtendedColor>&& extendedColor)
+inline uint64_t Color::encodedOutOfLineComponents(Ref<OutOfLineComponents>&& outOfLineComponents)
 {
 #if CPU(ADDRESS64)
-    return bitwise_cast<uint64_t>(&extendedColor.leakRef());
+    return bitwise_cast<uint64_t>(&outOfLineComponents.leakRef());
 #else
-    return bitwise_cast<uint32_t>(&extendedColor.leakRef());
+    return bitwise_cast<uint32_t>(&outOfLineComponents.leakRef());
 #endif
 }
 
 inline OptionSet<Color::FlagsIncludingPrivate> Color::decodedFlags(uint64_t value)
 {
-    return OptionSet<Color::FlagsIncludingPrivate>::fromRaw(static_cast<unsigned>(value >> maxNumberOfBitsInPointer));
+    return OptionSet<Color::FlagsIncludingPrivate>::fromRaw(static_cast<uint8_t>(value >> flagsShift));
+}
+
+inline ColorSpace Color::decodedColorSpace(uint64_t value)
+{
+    return static_cast<ColorSpace>(static_cast<uint8_t>(value >> colorSpaceShift));
 }
 
 inline SRGBA<uint8_t> Color::decodedInlineColor(uint64_t value)
@@ -472,27 +518,27 @@ inline PackedColor::RGBA Color::decodedPackedInlineColor(uint64_t value)
     return PackedColor::RGBA { static_cast<uint32_t>(value & colorValueMask) };
 }
 
-inline ExtendedColor& Color::decodedExtendedColor(uint64_t value)
+inline Color::OutOfLineComponents& Color::decodedOutOfLineComponents(uint64_t value)
 {
 #if CPU(ADDRESS64)
-    return *bitwise_cast<ExtendedColor*>(value & colorValueMask);
+    return *bitwise_cast<OutOfLineComponents*>(value & colorValueMask);
 #else
-    return *bitwise_cast<ExtendedColor*>(static_cast<uint32_t>(value & colorValueMask));
+    return *bitwise_cast<OutOfLineComponents*>(static_cast<uint32_t>(value & colorValueMask));
 #endif
 }
 
 inline void Color::setColor(SRGBA<uint8_t> color, OptionSet<FlagsIncludingPrivate> flags)
 {
     flags.add({ FlagsIncludingPrivate::Valid });
-    m_colorAndFlags = encodedInlineColor(color) | encodedFlags(flags);
+    m_colorAndFlags = encodedInlineColor(color) | encodedColorSpace(ColorSpace::SRGB) | encodedFlags(flags);
     ASSERT(isInline());
 }
 
-inline void Color::setExtendedColor(Ref<ExtendedColor>&& color, OptionSet<FlagsIncludingPrivate> flags)
+inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, ColorSpace colorSpace, OptionSet<FlagsIncludingPrivate> flags)
 {
-    flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::Extended });
-    m_colorAndFlags = encodedExtendedColor(WTFMove(color)) | encodedFlags(flags);
-    ASSERT(isExtended());
+    flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::OutOfLine });
+    m_colorAndFlags = encodedOutOfLineComponents(WTFMove(color)) | encodedColorSpace(colorSpace) | encodedFlags(flags);
+    ASSERT(isOutOfLine());
 }
 
 template<class Encoder> void Color::encode(Encoder& encoder) const
@@ -505,17 +551,17 @@ template<class Encoder> void Color::encode(Encoder& encoder) const
 
     encoder << flags().contains(FlagsIncludingPrivate::Semantic);
     encoder << flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization);
-
-    if (isExtended()) {
+    
+    if (isOutOfLine()) {
         encoder << true;
+        encoder << colorSpace();
 
-        auto& extendedColor = asExtended();
-        auto [c1, c2, c3, alpha] = extendedColor.components();
+        auto& outOfLineComponents = asOutOfLine();
+        auto [c1, c2, c3, alpha] = outOfLineComponents.components();
         encoder << c1;
         encoder << c2;
         encoder << c3;
         encoder << alpha;
-        encoder << extendedColor.colorSpace();
         return;
     }
     encoder << false;
@@ -548,27 +594,27 @@ template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
     if (usesColorFunctionSerialization)
         flags.add(Flags::UseColorFunctionSerialization);
 
-    bool isExtended;
-    if (!decoder.decode(isExtended))
+    bool isOutOfLine;
+    if (!decoder.decode(isOutOfLine))
         return WTF::nullopt;
 
-    if (isExtended) {
-        float c1;
-        float c2;
-        float c3;
-        float alpha;
+    if (isOutOfLine) {
         ColorSpace colorSpace;
-        if (!decoder.decode(c1))
-            return WTF::nullopt;
-        if (!decoder.decode(c2))
-            return WTF::nullopt;
-        if (!decoder.decode(c3))
-            return WTF::nullopt;
-        if (!decoder.decode(alpha))
-            return WTF::nullopt;
         if (!decoder.decode(colorSpace))
             return WTF::nullopt;
-        return Color { ExtendedColor::create({ c1, c2, c3, alpha }, colorSpace), flags };
+        float c1;
+        if (!decoder.decode(c1))
+            return WTF::nullopt;
+        float c2;
+        if (!decoder.decode(c2))
+            return WTF::nullopt;
+        float c3;
+        if (!decoder.decode(c3))
+            return WTF::nullopt;
+        float alpha;
+        if (!decoder.decode(alpha))
+            return WTF::nullopt;
+        return Color { OutOfLineComponents::create({ c1, c2, c3, alpha }), colorSpace, flags };
     }
 
     uint32_t value;

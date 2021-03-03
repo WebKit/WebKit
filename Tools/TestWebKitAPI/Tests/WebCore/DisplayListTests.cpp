@@ -152,7 +152,7 @@ TEST(DisplayListTests, AppendItems)
         EXPECT_TRUE(handle->is<FillRectWithColor>());
 
         auto& item = handle->get<FillRectWithColor>();
-        EXPECT_EQ(item.color().asInline(), Color::black);
+        EXPECT_EQ(*item.color().tryGetAsSRGBABytes(), Color::black);
         EXPECT_EQ(item.rect(), FloatRect(0, 0, 100, 100));
     }
 

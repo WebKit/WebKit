@@ -39,8 +39,8 @@ static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
 Color::Color(const Color& other)
     : m_colorAndFlags(other.m_colorAndFlags)
 {
-    if (isExtended())
-        asExtended().ref();
+    if (isOutOfLine())
+        asOutOfLine().ref();
 }
 
 Color::Color(Color&& other)
@@ -53,13 +53,13 @@ Color& Color::operator=(const Color& other)
     if (*this == other)
         return *this;
 
-    if (isExtended())
-        asExtended().deref();
+    if (isOutOfLine())
+        asOutOfLine().deref();
 
     m_colorAndFlags = other.m_colorAndFlags;
 
-    if (isExtended())
-        asExtended().ref();
+    if (isOutOfLine())
+        asOutOfLine().ref();
 
     return *this;
 }
@@ -69,8 +69,8 @@ Color& Color::operator=(Color&& other)
     if (*this == other)
         return *this;
 
-    if (isExtended())
-        asExtended().deref();
+    if (isOutOfLine())
+        asOutOfLine().deref();
 
     m_colorAndFlags = other.m_colorAndFlags;
     other.m_colorAndFlags = invalidColorAndFlags;
@@ -166,15 +166,15 @@ Color Color::semanticColor() const
     if (isSemantic())
         return *this;
     
-    if (isExtended())
-        return { asExtendedRef(), Flags::Semantic };
+    if (isOutOfLine())
+        return { asOutOfLineRef(), colorSpace(), Flags::Semantic };
     return { asInline(), Flags::Semantic };
 }
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
 {
-    if (isExtended())
-        return { asExtended().colorSpace(), asExtended().components() };
+    if (isOutOfLine())
+        return { colorSpace(), asOutOfLine().components() };
     return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline())) };
 }
 
