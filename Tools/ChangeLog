@@ -1,3 +1,16 @@
+2021-03-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add python 3 support - part 4
+        https://bugs.webkit.org/show_bug.cgi?id=222672
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/events.py:
+        (JSONProducer): Use implementer (python 3 compatible) instead of implements.
+        (JSONProducer.__init__): Encode data as utf-8 explicitly.
+        (Events):
+        (Events.sendData):
+
 2021-03-03  Robert Jenner  <jenner@apple.com>
 
         Adding myself as a committer in the contributors file. 

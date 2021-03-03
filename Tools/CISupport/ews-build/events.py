@@ -34,18 +34,18 @@ from twisted.python import log
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 from twisted.web.iweb import IBodyProducer
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(IBodyProducer)
 class JSONProducer(object):
     """
     Perform JSON asynchronously as to not lock the buildbot main event loop
     """
-    implements(IBodyProducer)
 
     def __init__(self, data):
         try:
-            self.body = json.dumps(data, default=self.json_serialize_datetime)
+            self.body = json.dumps(data, default=self.json_serialize_datetime).encode('utf-8')
         except TypeError:
             self.body = ''
         self.length = len(self.body)
@@ -73,7 +73,7 @@ class JSONProducer(object):
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = 'https://ews.webkit.org/results/'
+    EVENT_SERVER_ENDPOINT = b'https://ews.webkit.org/results/'
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
@@ -95,7 +95,7 @@ class Events(service.BuildbotService):
         agent = Agent(reactor)
         body = JSONProducer(data)
 
-        agent.request('POST', self.EVENT_SERVER_ENDPOINT, Headers({'Content-Type': ['application/json']}), body)
+        agent.request(b'POST', self.EVENT_SERVER_ENDPOINT, Headers({'Content-Type': ['application/json']}), body)
 
     def getBuilderName(self, build):
         if not (build and 'properties' in build):
