@@ -885,6 +885,18 @@ WebRTCMDNSICECandidatesEnabled:
     WebKit:
       default: true
 
+WindowObjectAlwaysInitializedWithSecurityOriginEnabled:
+  type: bool
+  humanReadableName: "Ensure Window object is initialized with a security origin"
+  humanReadableDescription: "Ensure Window object is initialized with a security origin"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 ZoomOnDoubleTapWhenRoot:
   type: bool
   condition: PLATFORM(IOS_FAMILY)

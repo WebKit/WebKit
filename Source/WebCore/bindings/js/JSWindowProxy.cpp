@@ -106,7 +106,7 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         auto& localWindow = downcast<DOMWindow>(domWindow);
         auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype);
         window = JSDOMWindow::create(vm, &windowStructure, localWindow, this);
-        if (!localWindow.document()->haveInitializedSecurityOrigin())
+        if (!localWindow.document()->haveInitializedSecurityOrigin() && localWindow.document()->settings().windowObjectAlwaysInitializedWithSecurityOriginEnabled())
             localWindow.setAsWrappedWithoutInitializedSecurityOrigin();
     }
 
