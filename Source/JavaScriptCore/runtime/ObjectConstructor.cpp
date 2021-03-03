@@ -493,11 +493,10 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     return JSValue::encode(values);
 }
 
-
-// ES6 6.2.4.5 ToPropertyDescriptor
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
 bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDescriptor& desc)
 {
+    ASSERT(desc.isEmpty());
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -715,12 +714,13 @@ bool setIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
         if (level == IntegrityLevel::Sealed)
             desc.setConfigurable(false);
         else {
-            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, desc);
+            PropertyDescriptor currentDesc;
+            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, currentDesc);
             RETURN_IF_EXCEPTION(scope, false);
             if (!hasPropertyDescriptor)
                 continue;
 
-            if (desc.isDataDescriptor())
+            if (!currentDesc.isAccessorDescriptor())
                 desc.setWritable(false);
 
             desc.setConfigurable(false);

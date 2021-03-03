@@ -2534,47 +2534,51 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 }
 #endif
 
-static WTF::Function<void (const String&, WebKit::CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
+static CompletionHandler<void(const String&)> toStringCallback(void* context, void(*callback)(WKStringRef, WKErrorRef, void*))
 {
-    return [context, callback](const String& returnValue, WebKit::CallbackBase::Error error) {
-        callback(toAPI(API::String::create(returnValue).ptr()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    return [context, callback] (const String& returnValue) {
+        callback(toAPI(API::String::create(returnValue).ptr()), nullptr, context);
     };
 }
 
 void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void* context, WKPageRenderTreeExternalRepresentationFunction callback)
 {
-    toImpl(pageRef)->getRenderTreeExternalRepresentation(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getRenderTreeExternalRepresentation(toStringCallback(context, callback));
 }
 
 void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* context, WKPageGetSourceForFrameFunction callback)
 {
-    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), toStringCallback(context, callback));
 }
 
 void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
-    toImpl(pageRef)->getContentsAsString(ContentAsStringIncludesChildFrames::No, toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getContentsAsString(ContentAsStringIncludesChildFrames::No, toStringCallback(context, callback));
 }
 
 void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecodeProfileFunction callback)
 {
-    toImpl(pageRef)->getBytecodeProfile(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getBytecodeProfile(toStringCallback(context, callback));
 }
 
 void WKPageGetSamplingProfilerOutput(WKPageRef pageRef, void* context, WKPageGetSamplingProfilerOutputFunction callback)
 {
-    toImpl(pageRef)->getSamplingProfilerOutput(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getSamplingProfilerOutput(toStringCallback(context, callback));
 }
 
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
-    toImpl(pageRef)->getSelectionAsWebArchiveData(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getSelectionAsWebArchiveData([context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 }
 
 void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
 {
 #if ENABLE(MHTML)
-    toImpl(pageRef)->getContentsAsMHTMLData(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getContentsAsMHTMLData([context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(context);
@@ -2643,18 +2647,20 @@ static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 
 void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
 {
-    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, const WebCore::FloatBoxExtent& computedPageMargin, WebKit::CallbackBase::Error error) {
+    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), [context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, const WebCore::FloatBoxExtent& computedPageMargin) {
         Vector<WKRect> wkRects(rects.size());
         for (size_t i = 0; i < rects.size(); ++i)
             wkRects[i] = toAPI(rects[i]);
-        callback(wkRects.data(), wkRects.size(), scaleFactor, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
-    }));
+        callback(wkRects.data(), wkRects.size(), scaleFactor, nullptr, context);
+    });
 }
 
 #if PLATFORM(COCOA)
 void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
 {
-    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataCallback::create(toGenericCallbackFunction(context, callback)));
+    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, [context, callback] (API::Data* data) {
+        callback(toAPI(data), nullptr, context);
+    });
 }
 #endif
 
@@ -2894,7 +2900,7 @@ ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block)
 {
 #if ENABLE(APPLICATION_MANIFEST)
-    toImpl(page)->getApplicationManifest([block](const Optional<WebCore::ApplicationManifest> &manifest, CallbackBase::Error) {
+    toImpl(page)->getApplicationManifest([block](const Optional<WebCore::ApplicationManifest>& manifest) {
         block();
     });
 #else // ENABLE(APPLICATION_MANIFEST)

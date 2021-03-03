@@ -454,8 +454,8 @@ void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element
     if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
 
-    style.setWidth(Length(sliderThumbSize, Fixed));
-    style.setHeight(Length(sliderThumbSize, Fixed));
+    style.setWidth(Length(sliderThumbSize, LengthType::Fixed));
+    style.setHeight(Length(sliderThumbSize, LengthType::Fixed));
 }
 
 bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -598,9 +598,9 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
 {
     // Add a margin to place the button at end of the input field.
     if (style.isLeftToRightDirection())
-        style.setMarginRight(Length(-2, Fixed));
+        style.setMarginRight(Length(-2, LengthType::Fixed));
     else
-        style.setMarginLeft(Length(-2, Fixed));
+        style.setMarginLeft(Length(-2, LengthType::Fixed));
 }
 #endif // ENABLE(DATALIST_ELEMENT)
 

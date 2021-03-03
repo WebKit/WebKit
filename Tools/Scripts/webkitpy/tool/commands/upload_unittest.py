@@ -32,6 +32,8 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
+from webkitscmpy import mocks, Commit
+
 
 class UploadCommandsTest(CommandsTest):
     def test_commit_message_for_current_diff(self):
@@ -200,11 +202,19 @@ MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
 MOCK comment
 
-Committed r9876: <https://trac.webkit.org/changeset/9876>
+Committed r9876 (5@main): <https://commits.webkit.org/5@main>
 --- End comment ---
 
 """
-        self.assert_execute_outputs(MarkBugFixed(), [], expected_logs=expected_logs, tool=tool, options=options)
+        with mocks.remote.Svn('svn.webkit.org/repository/webkit') as repo:
+            repo.commits['trunk'].append(Commit(
+                author=dict(name='Justin Garcia', emails=['justin.garcia@apple.com']),
+                identifier='5@trunk',
+                revision=9876,
+                timestamp=1601668000,
+                message='Patch by opendarwin.org@mitzpettel.com\n    Reviewed by darin and hyatt\n',
+            ))
+            self.assert_execute_outputs(MarkBugFixed(), [], expected_logs=expected_logs, tool=tool, options=options)
 
     def test_edit_changelog(self):
         self.assert_execute_outputs(EditChangeLogs(), [])

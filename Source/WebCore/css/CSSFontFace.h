@@ -53,16 +53,14 @@ class Document;
 class FontDescription;
 class Font;
 class FontFace;
+class ScriptExecutionContext;
 enum class ExternalResourceDownloadPolicy;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 class CSSFontFace final : public RefCounted<CSSFontFace> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSFontFace);
 public:
-    static Ref<CSSFontFace> create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection = nullptr, FontFace* wrapper = nullptr, bool isLocalFallback = false)
-    {
-        return adoptRef(*new CSSFontFace(fontSelector, cssConnection, wrapper, isLocalFallback));
-    }
+    static Ref<CSSFontFace> create(CSSFontSelector*, StyleRuleFontFace* cssConnection = nullptr, FontFace* wrapper = nullptr, bool isLocalFallback = false);
     virtual ~CSSFontFace();
 
     // FIXME: These functions don't need to have boolean return values.
@@ -111,7 +109,7 @@ public:
 
     bool computeFailureState() const;
 
-    void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
+    void opportunisticallyStartFontDataURLLoading(Document*);
 
     void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
     void sourcesPopulated() { m_sourcesPopulated = true; }
@@ -130,6 +128,7 @@ public:
         virtual void fontLoaded(CSSFontFace&) { }
         virtual void fontStateChanged(CSSFontFace&, Status /*oldState*/, Status /*newState*/) { }
         virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
+        virtual void fontStyleUpdateNeeded(CSSFontFace&) { }
         virtual void ref() = 0;
         virtual void deref() = 0;
     };
@@ -144,7 +143,7 @@ public:
     bool rangesMatchCodePoint(UChar32) const;
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
-    Ref<FontFace> wrapper();
+    Ref<FontFace> wrapper(ScriptExecutionContext*);
     void setWrapper(FontFace&);
     FontFace* existingWrapper();
 
@@ -164,10 +163,7 @@ public:
     bool hasSVGFontFaceSource() const;
     void setErrorState();
 
-    Document* document() const;
-
 private:
-    CSSFontFace(CSSFontSelector*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
     CSSFontFace(const Settings*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
 
     size_t pump(ExternalResourceDownloadPolicy);
@@ -179,6 +175,8 @@ private:
     void fontLoadEventOccurred();
     void timeoutFired();
 
+    Document* document();
+
     RefPtr<CSSValueList> m_families;
     Vector<UnicodeRange> m_ranges;
 
@@ -186,7 +184,6 @@ private:
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
-    WeakPtr<CSSFontSelector> m_fontSelector; // FIXME: Ideally this data member would go away (https://bugs.webkit.org/show_bug.cgi?id=208351).
     RefPtr<StyleRuleFontFace> m_cssConnection;
     HashSet<Client*> m_clients;
     WeakPtr<FontFace> m_wrapper;

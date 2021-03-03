@@ -53,21 +53,21 @@ class WebCoreDecompressionSession;
 
 class ImageDecoderAVFObjC : public ImageDecoder {
 public:
-    static RefPtr<ImageDecoderAVFObjC> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoderAVFObjC();
 
-    static bool supportsMediaType(MediaType);
+    WEBCORE_EXPORT static bool supportsMediaType(MediaType);
     static bool supportsContainerType(const String&);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
-    static bool canDecodeType(const String& mimeType);
+    WEBCORE_EXPORT static bool canDecodeType(const String& mimeType);
 
     const String& mimeType() const { return m_mimeType; }
 
-    void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) final;
+    WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
-    IntSize size() const final;
-    size_t frameCount() const final;
+    WEBCORE_EXPORT IntSize size() const final;
+    WEBCORE_EXPORT size_t frameCount() const final;
     RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final;
@@ -82,12 +82,15 @@ public:
     bool frameAllowSubsamplingAtIndex(size_t) const final;
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
 
-    PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
+    WEBCORE_EXPORT PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
-    void setExpectedContentSize(long long) final;
-    void setData(SharedBuffer&, bool allDataReceived) final;
+    WEBCORE_EXPORT void setExpectedContentSize(long long) final;
+    WEBCORE_EXPORT void setData(SharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final;
+
+    bool hasTrack() const { return !!m_track; }
+    WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
 
 private:
     ImageDecoderAVFObjC(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);

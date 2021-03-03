@@ -33,7 +33,7 @@ class WebPage;
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     NakedPtr<WebKit::WebPage> m_page;
     WebCore::PageIdentifier m_pageID;
-    id m_parent;
+    RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
 }
 

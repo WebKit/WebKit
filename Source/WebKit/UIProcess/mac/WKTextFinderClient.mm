@@ -196,8 +196,8 @@ private:
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.uncheckedAppend([(WKTextFinderMatch *)match index]);
     }
-    _page->replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements, auto error) {
-        collector(error == WebKit::CallbackBase::Error::None ? numberOfReplacements : 0);
+    _page->replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
+        collector(numberOfReplacements);
     });
 }
 
@@ -243,7 +243,7 @@ private:
 {
     void (^copiedCompletionHandler)(NSString *) = Block_copy(completionHandler);
 
-    _page->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string, WebKit::CallbackBase::Error) {
+    _page->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
         copiedCompletionHandler(string);
         Block_release(copiedCompletionHandler);
     });

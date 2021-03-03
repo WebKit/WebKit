@@ -64,7 +64,7 @@ static Optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(Platf
     return { };
 }
 
-std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
+std::unique_ptr<RemoteCommandListenerMac> RemoteCommandListenerMac::create(RemoteCommandListenerClient& client)
 {
     return makeUnique<RemoteCommandListenerMac>(client);
 }
@@ -102,12 +102,12 @@ void RemoteCommandListenerMac::updateSupportedCommands()
         return;
 
     auto& supportedCommands = !m_registeredCommands.isEmpty() ? m_registeredCommands : defaultCommands();
-    if (m_supportsSeeking == client().supportsSeeking() && m_currentCommands == supportedCommands)
+    if (m_currentCommands == supportedCommands)
         return;
 
     auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, supportedCommands.size(), &kCFTypeArrayCallBacks));
     for (auto platformCommand : supportedCommands) {
-        if (isSeekCommand(platformCommand) && !client().supportsSeeking())
+        if (isSeekCommand(platformCommand) && !m_supportsSeeking)
             continue;
 
         auto command = mediaRemoteCommandForPlatformCommand(platformCommand);
@@ -123,7 +123,6 @@ void RemoteCommandListenerMac::updateSupportedCommands()
 
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
     m_currentCommands = supportedCommands;
-    m_supportsSeeking = client().supportsSeeking();
 }
 
 RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
@@ -140,8 +139,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
         LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - received command %u", command);
 
         PlatformMediaSession::RemoteControlCommandType platformCommand { PlatformMediaSession::NoCommand };
-        PlatformMediaSession::RemoteCommandArgument argument { 0 };
-        PlatformMediaSession::RemoteCommandArgument* argumentPtr = nullptr;
+        PlatformMediaSession::RemoteCommandArgument argument;
         MRMediaRemoteCommandHandlerStatus status = MRMediaRemoteCommandHandlerStatusSuccess;
 
         switch (command) {
@@ -170,7 +168,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
             platformCommand = PlatformMediaSession::EndSeekingBackwardCommand;
             break;
         case MRMediaRemoteCommandSeekToPlaybackPosition: {
-            if (!client.supportsSeeking()) {
+            if (!m_supportsSeeking) {
                 status = MRMediaRemoteCommandHandlerStatusCommandFailed;
                 break;
             }
@@ -181,21 +179,23 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
                 break;
             }
 
-            CFNumberGetValue(positionRef, kCFNumberDoubleType, &argument.asDouble);
-            argumentPtr = &argument;
+            double position = 0;
+            CFNumberGetValue(positionRef, kCFNumberDoubleType, &position);
+            argument = position;
             platformCommand = PlatformMediaSession::SeekToPlaybackPositionCommand;
             break;
         }
         case MRMediaRemoteCommandSkipForward:
         case MRMediaRemoteCommandSkipBackward:
-            if (!client.supportsSeeking()) {
+            if (!m_supportsSeeking) {
                 status = MRMediaRemoteCommandHandlerStatusCommandFailed;
                 break;
             }
 
             if (auto positionRef = static_cast<CFNumberRef>(CFDictionaryGetValue(options, kMRMediaRemoteOptionSkipInterval))) {
-                CFNumberGetValue(positionRef, kCFNumberDoubleType, &argument.asDouble);
-                argumentPtr = &argument;
+                double position = 0;
+                CFNumberGetValue(positionRef, kCFNumberDoubleType, &position);
+                argument = position;
             }
 
             platformCommand = (command == MRMediaRemoteCommandSkipForward) ? PlatformMediaSession::SkipForwardCommand : PlatformMediaSession::SkipBackwardCommand;
@@ -212,7 +212,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
         };
 
         if (weakThis && status != MRMediaRemoteCommandHandlerStatusCommandFailed)
-            weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, argumentPtr);
+            weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, argument);
 
         completion((__bridge CFArrayRef)@[@(status)]);
     });

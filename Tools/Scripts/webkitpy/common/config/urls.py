@@ -35,7 +35,11 @@ def view_source_url(local_path):
 
 
 def view_revision_url(revision_number):
-    return "https://trac.webkit.org/changeset/%s" % revision_number
+    return 'https://commits.webkit.org/r{}'.format(revision_number)
+
+
+def view_identifier_url(identifier):
+    return "https://commits.webkit.org/{}".format(identifier)
 
 
 contribution_guidelines = "https://webkit.org/coding/contributing.html"

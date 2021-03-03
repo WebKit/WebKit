@@ -334,6 +334,16 @@ JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
     return createTypeError(globalObject, makeString("Cannot redefine existing private field"), defaultSourceAppender, TypeNothing);
 }
 
+JSObject* createPrivateMethodAccessError(JSGlobalObject* globalObject)
+{
+    return createTypeError(globalObject, makeString("Cannot access private method"_s), defaultSourceAppender, TypeNothing);
+}
+
+JSObject* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
+{
+    return createTypeError(globalObject, makeString("Cannot install same private methods on object more than once"_s), defaultSourceAppender, TypeNothing);
+}
+
 Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope)
 {
     return throwException(globalObject, scope, createOutOfMemoryError(globalObject));

@@ -1,0 +1,7 @@
+Target
+
+PASS Check sending Shift key
+PASS Check sending Control key
+PASS Check sending Alt key
+FAIL Check sending Meta key assert_equals: expected "Meta" but got "leftMeta"
+

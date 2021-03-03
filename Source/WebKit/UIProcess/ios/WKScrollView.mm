@@ -35,7 +35,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
 #endif
 
@@ -125,7 +125,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 @implementation WKScrollView {
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
-    WKScrollViewDelegateForwarder *_delegateForwarder;
+    RetainPtr<WKScrollViewDelegateForwarder> _delegateForwarder;
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -159,7 +159,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     [self _configureDigitalCrownScrolling];
 #endif
 
@@ -205,24 +205,16 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 - (void)_updateDelegate
 {
-    WKScrollViewDelegateForwarder *oldForwarder = _delegateForwarder;
-    _delegateForwarder = nil;
+    auto oldForwarder = std::exchange(_delegateForwarder, nil);
     auto externalDelegate = _externalDelegate.get();
     if (!externalDelegate)
         [super setDelegate:_internalDelegate];
     else if (!_internalDelegate)
         [super setDelegate:externalDelegate.get()];
     else {
-        _delegateForwarder = [[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()];
-        [super setDelegate:_delegateForwarder];
+        _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()]);
+        [super setDelegate:_delegateForwarder.get()];
     }
-    [oldForwarder release];
-}
-
-- (void)dealloc
-{
-    [_delegateForwarder release];
-    [super dealloc];
 }
 
 static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
@@ -429,6 +421,10 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         gestureRecognizer.allowedTouchTypes = @[];
 }
 
+#endif // PLATFORM(WATCHOS)
+
+#if HAVE(PEPPER_UI_CORE)
+
 - (void)_configureDigitalCrownScrolling
 {
     self.showsVerticalScrollIndicator = NO;
@@ -446,7 +442,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return targetOffset;
 }
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)
 
 @end
 

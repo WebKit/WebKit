@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFocusedFormControlView.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 asm(".linker_option \"-framework\", \"PepperUICore\"");
 
@@ -501,4 +501,4 @@ static NSDictionary *submitActionNameFontAttributes()
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

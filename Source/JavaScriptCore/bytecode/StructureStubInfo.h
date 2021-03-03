@@ -59,6 +59,8 @@ enum class AccessType : int8_t {
     DeleteByID,
     DeleteByVal,
     GetPrivateName,
+    CheckPrivateBrand,
+    SetPrivateBrand,
 };
 
 enum class CacheType : int8_t {
@@ -352,6 +354,7 @@ public:
         GPRReg thisGPR;
         GPRReg prototypeGPR;
         GPRReg propertyGPR;
+        GPRReg brandGPR;
     } regs;
 #if USE(JSVALUE32_64)
     GPRReg valueTagGPR;
@@ -361,6 +364,7 @@ public:
     union {
         GPRReg thisTagGPR;
         GPRReg propertyTagGPR;
+        GPRReg brandTagGPR;
     } v;
 #endif
 

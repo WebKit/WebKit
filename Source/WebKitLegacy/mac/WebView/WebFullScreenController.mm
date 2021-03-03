@@ -81,9 +81,8 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 - (id)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
-    NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskClosable backing:NSBackingStoreBuffered defer:NO];
-    self = [super initWithWindow:window];
-    [window release];
+    auto window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskClosable backing:NSBackingStoreBuffered defer:NO]);
+    self = [super initWithWindow:window.get()];
     if (!self)
         return nil;
     [self windowDidLoad];

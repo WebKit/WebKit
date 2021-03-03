@@ -91,7 +91,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 #endif
 }
 
-void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)
+void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)
 {
     bool hasActiveSession = false;
     String title = emptyString();
@@ -108,7 +108,7 @@ void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)
         registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
     }
 
-    send(Messages::WebPageProxy::NowPlayingInfoCallback(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier, callbackID));
+    completionHandler(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
 }
     
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)

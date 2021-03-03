@@ -176,8 +176,8 @@ Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisC
     // Column widths specified on <col> apply to the border box of the cell, see bug 8126.
     // FIXME: Why is border/padding ignored in the negative width case?
     if (colWidthSum > 0)
-        return Length(std::max<LayoutUnit>(0, colWidthSum - borderAndPaddingLogicalWidth()), Fixed);
-    return Length(colWidthSum, Fixed);
+        return Length(std::max<LayoutUnit>(0, colWidthSum - borderAndPaddingLogicalWidth()), LengthType::Fixed);
+    return Length(colWidthSum, LengthType::Fixed);
 }
 
 void RenderTableCell::computePreferredLogicalWidths()

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "WKQuickboardListViewController.h"
 
@@ -42,4 +42,4 @@
 
 @end
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)

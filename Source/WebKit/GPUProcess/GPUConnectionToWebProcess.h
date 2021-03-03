@@ -30,7 +30,9 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "MessageReceiverMap.h"
+#include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
+#include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 
 #include <WebCore/LibWebRTCEnumTraits.h>
@@ -50,16 +52,19 @@ namespace WebKit {
 class GPUProcess;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
+class RemoteAudioHardwareListenerProxy;
 class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
 class RemoteCDMFactoryProxy;
+class RemoteImageDecoderAVFProxy;
 class RemoteLegacyCDMFactoryProxy;
 class RemoteMediaEngineConfigurationFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteMediaSessionHelperProxy;
+class RemoteRemoteCommandListenerProxy;
 class RemoteRenderingBackend;
 class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
@@ -102,13 +107,16 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
-#if ENABLE(GPU_PROCESS)
+
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
-#endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return *m_remoteMediaPlayerManagerProxy; }
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
+#endif
+
+#if HAVE(AVASSETREADER)
+    RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
 
     void terminateWebProcess();
@@ -151,6 +159,11 @@ private:
     RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
     void ensureMediaSessionHelper();
 #endif
+
+    void createAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
+    void releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
+    void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
+    void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -221,9 +234,16 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
 #endif
-#if ENABLE(GPU_PROCESS)
-    std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+#if HAVE(AVASSETREADER)
+    std::unique_ptr<RemoteImageDecoderAVFProxy> m_imageDecoderAVFProxy;
 #endif
+
+    std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+
+    using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
+    RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
+    using RemoteRemoteCommandListenerMap = HashMap<RemoteRemoteCommandListenerIdentifier, std::unique_ptr<RemoteRemoteCommandListenerProxy>>;
+    RemoteRemoteCommandListenerMap m_remoteRemoteCommandListenerMap;
 };
 
 } // namespace WebKit

@@ -28,7 +28,9 @@
 
 #if ENABLE(WEBXR)
 
+#include "HTMLCanvasElement.h"
 #include "IntSize.h"
+#include "OffscreenCanvas.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 #if ENABLE(WEBGL2)
@@ -74,7 +76,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& se
             // 9. (see constructor except for the resources initialization step which is handled in the if block below)
             auto layer = adoptRef(*new WebXRWebGLLayer(WTFMove(session), WTFMove(context), init));
 
-            if (!layer->m_isCompositionDisabled) {
+            if (layer->m_isCompositionEnabled) {
                 // 9.4. Allocate and initialize resources compatible with session’s XR device, including GPU accessible memory buffers,
                 //      as required to support the compositing of layer.
                 // 9.5. If layer’s resources were unable to be created for any reason, throw an OperationError and abort these steps.
@@ -106,10 +108,10 @@ WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingCont
     // 8. Initialize layer's composition disabled boolean as follows:
     //  If session is an inline session -> Initialize layer's composition disabled to true
     //  Otherwise -> Initialize layer's composition disabled boolean to false
-    m_isCompositionDisabled = m_session->mode() == XRSessionMode::Inline;
+    m_isCompositionEnabled = m_session->mode() != XRSessionMode::Inline;
 
     // 9. If layer’s composition disabled boolean is false:
-    if (!m_isCompositionDisabled) {
+    if (m_isCompositionEnabled) {
         //  1. Initialize layer’s antialias to layerInit’s antialias value.
         m_antialias = init.antialias;
 
@@ -196,6 +198,19 @@ double WebXRWebGLLayer::getNativeFramebufferScaleFactor(const WebXRSession& sess
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!recommendedSize.isZero());
     return (nativeSize / recommendedSize).width();
+}
+
+HTMLCanvasElement* WebXRWebGLLayer::canvas() const
+{
+    return WTF::switchOn(m_context, [](const RefPtr<WebGLRenderingContextBase>& baseContext) {
+        auto canvas = baseContext->canvas();
+        return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& canvas) {
+            return canvas.get();
+        }, [](const RefPtr<OffscreenCanvas>) {
+            ASSERT_NOT_REACHED("baseLayer of a WebXRWebGLLayer must be an HTMLCanvasElement");
+            return nullptr;
+        });
+    });
 }
 
 } // namespace WebCore

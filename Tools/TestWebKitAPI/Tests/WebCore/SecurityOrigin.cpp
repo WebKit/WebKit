@@ -139,9 +139,9 @@ TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
     EXPECT_TRUE(tempFileOrigin->isSameSchemeHostPort(bangContainingOrigin.get()));
     EXPECT_TRUE(tempFileOrigin->isSameSchemeHostPort(quoteContainingOrigin.get()));
 
-    EXPECT_TRUE(tempFileOrigin->canAccess(spaceContainingOrigin.get()));
-    EXPECT_TRUE(tempFileOrigin->canAccess(bangContainingOrigin.get()));
-    EXPECT_TRUE(tempFileOrigin->canAccess(quoteContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameOriginDomain(spaceContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameOriginDomain(bangContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameOriginDomain(quoteContainingOrigin.get()));
 }
 
 TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)

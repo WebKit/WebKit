@@ -212,6 +212,8 @@ namespace JSC { namespace DFG {
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutPrivateName, NodeMustGenerate) \
     macro(PutPrivateNameById, NodeMustGenerate) \
+    macro(CheckPrivateBrand, NodeMustGenerate) \
+    macro(SetPrivateBrand, NodeMustGenerate) \
     macro(TryGetById, NodeResultJS) \
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \
@@ -544,6 +546,8 @@ namespace JSC { namespace DFG {
     macro(FilterInByIdStatus, NodeMustGenerate) \
     macro(FilterPutByIdStatus, NodeMustGenerate) \
     macro(FilterDeleteByStatus, NodeMustGenerate) \
+    macro(FilterCheckPrivateBrandStatus, NodeMustGenerate) \
+    macro(FilterSetPrivateBrandStatus, NodeMustGenerate) \
     /* Data view access */ \
     macro(DataViewGetInt, NodeMustGenerate | NodeResultJS) /* The gets are must generate for now because they do bounds checks */ \
     macro(DataViewGetFloat, NodeMustGenerate | NodeResultDouble) \

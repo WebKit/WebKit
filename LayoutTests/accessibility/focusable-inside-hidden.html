@@ -30,10 +30,19 @@
 
        setTimeout(function() {
            button = accessibilityController.focusedElement;
-           shouldBe("button.description", "'AXDescription: BUTTON'");
+           if (accessibilityController.platformName == "atk") {
+               shouldBe("button.title", "'AXTitle: BUTTON'");
+           } else {
+               shouldBe("button.description", "'AXDescription: BUTTON'");
+           }
 
            button = accessibilityController.accessibleElementById("button");
-           shouldBe("button.description", "'AXDescription: BUTTON'");
+
+           if (accessibilityController.platformName == "atk") {
+               shouldBe("button.title", "'AXTitle: BUTTON'");
+           } else {
+               shouldBe("button.description", "'AXDescription: BUTTON'");
+           }
 
            // Lose focus and this element should be hidden again.
            document.getElementById("otherbutton").focus();

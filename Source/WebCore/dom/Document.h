@@ -924,6 +924,7 @@ public:
     // Used by DOM bindings; no direction known.
     const String& title() const { return m_title.string; }
     WEBCORE_EXPORT void setTitle(const String&);
+    const StringWithDirection& titleWithDirection() const { return m_title; }
 
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
@@ -1325,6 +1326,8 @@ public:
     Document& ensureTemplateDocument();
     void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = makeWeakPtr(templateDocumentHost); }
     Document* templateDocumentHost() { return m_templateDocumentHost.get(); }
+
+    Ref<DocumentFragment> documentFragmentForInnerOuterHTML();
 
     void didAssociateFormControl(Element&);
     bool hasDisabledFieldsetElement() const { return m_disabledFieldsetElementsCount; }
@@ -1969,6 +1972,8 @@ private:
     RefPtr<Document> m_templateDocument;
     WeakPtr<Document> m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
 
+    RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
+
     Ref<CSSFontSelector> m_fontSelector;
 
     WeakHashSet<MediaProducer> m_audioProducers;
@@ -2117,6 +2122,8 @@ private:
 #if ASSERT_ENABLED
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
+
+    bool m_updateTitleTaskScheduled { false };
 
     OrientationNotifier m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;

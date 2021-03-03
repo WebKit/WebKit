@@ -1937,7 +1937,15 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     if (cachedImage->image()->isSVGImage())
         originClean = false;
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create(*cachedImage->imageForRenderer(imageElement.renderer()), repeatX, repeatY, originClean) };
+    auto* image = cachedImage->imageForRenderer(imageElement.renderer());
+    if (!image)
+        return Exception { InvalidStateError };
+
+    auto nativeImage = image->nativeImage();
+    if (!nativeImage)
+        return Exception { InvalidStateError };
+
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasBase& canvas, bool repeatX, bool repeatY)
@@ -1948,8 +1956,12 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
     if (!copiedImage)
         return Exception { InvalidStateError };
+    
+    auto nativeImage = copiedImage->nativeImage();
+    if (!nativeImage)
+        return Exception { InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create(*copiedImage, repeatX, repeatY, canvas.originClean()) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, canvas.originClean()) };
 }
     
 #if ENABLE(VIDEO)
@@ -1964,7 +1976,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
 #if USE(CG)
     if (auto nativeImage = videoElement.nativeImageForCurrentTime())
-        return RefPtr<CanvasPattern> { CanvasPattern::create(BitmapImage::create(WTFMove(nativeImage)), repeatX, repeatY, originClean) };
+        return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 #endif
 
     auto renderingMode = !drawingContext() || drawingContext()->isAcceleratedContext() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
@@ -1974,7 +1986,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
     videoElement.paintCurrentFrameInContext(imageBuffer->context(), FloatRect(FloatPoint(), size(videoElement)));
     
-    return RefPtr<CanvasPattern> { CanvasPattern::create(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer), PreserveResolution::Yes).releaseNonNull(), repeatX, repeatY, originClean) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create(ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer)).releaseNonNull(), repeatX, repeatY, originClean) };
 }
 
 #endif

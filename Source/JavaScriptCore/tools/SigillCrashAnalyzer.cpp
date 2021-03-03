@@ -157,7 +157,9 @@ public:
 static void installCrashHandler()
 {
 #if CPU(X86_64) || CPU(ARM64)
-    addSignalHandler(Signal::IllegalInstruction, [] (Signal, SigInfo&, PlatformRegisters& registers) {
+    addSignalHandler(Signal::IllegalInstruction, [] (Signal signal, SigInfo&, PlatformRegisters& registers) {
+        RELEASE_ASSERT(signal == Signal::IllegalInstruction);
+
         auto signalContext = SignalContext::tryCreate(registers);
         if (!signalContext)
             return SignalAction::NotHandled;

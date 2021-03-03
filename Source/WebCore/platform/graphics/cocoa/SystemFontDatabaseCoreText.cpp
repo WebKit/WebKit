@@ -80,7 +80,8 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFo
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const CascadeListParameters& parameters)
 {
-    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), parameters.locale.string().createCFString().get()));
+    RetainPtr<CFStringRef> localeString = parameters.locale.isEmpty() ? nullptr : parameters.locale.string().createCFString();
+    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), localeString.get()));
     // FIXME: Use createFontByApplyingWeightWidthItalicsAndFallbackBehavior().
     CTFontSymbolicTraits traits = (parameters.weight >= kCTFontWeightSemibold ? kCTFontTraitBold : 0)
 #if HAVE(LEVEL_2_SYSTEM_FONT_WIDTH_VALUES) || HAVE(LEVEL_3_SYSTEM_FONT_WIDTH_VALUES)
@@ -292,7 +293,7 @@ static String genericFamily(const String& locale, HashMap<String, String>& map, 
 {
     return map.ensure(locale, [&] {
         auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, locale.createCFString().get()));
-        auto value = adoptCF(dynamic_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
+        auto value = adoptCF(checked_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
         return String { value.get() };
     }).iterator->value;
 }

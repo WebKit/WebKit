@@ -2,6 +2,6 @@
 
 
 
-FAIL Submit event with a submit button promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'event.bubbles')"
-FAIL Submit event with no submit button promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'event.bubbles')"
+FAIL Submit event with a submit button promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SubmitEvent"
+FAIL Submit event with no submit button assert_equals: expected (object) null but got (undefined) undefined
 

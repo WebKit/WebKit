@@ -56,6 +56,7 @@ public:
 
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
     void updateRequestAfterRedirection(WebCore::ResourceRequest&) const;
+    void reprioritizeRequest(WebCore::ResourceLoadPriority);
 
     const NetworkLoadParameters& parameters() const { return m_parameters; }
     const URL& url() const { return parameters().request.url(); }

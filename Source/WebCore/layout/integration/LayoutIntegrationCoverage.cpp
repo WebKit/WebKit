@@ -445,9 +445,6 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
 
     for (unsigned i = 0; i < length; ++i) {
         auto character = text[i];
-        if (FontCascade::treatAsSpace(character))
-            continue;
-
         auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
         if (characterReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);

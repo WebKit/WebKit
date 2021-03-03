@@ -1907,6 +1907,8 @@ platform/encryptedmedia/CDMFactory.cpp
 platform/encryptedmedia/CDMLogging.cpp
 platform/encryptedmedia/CDMPrivate.cpp
 platform/encryptedmedia/CDMProxy.cpp
+platform/encryptedmedia/CDMUtilities.cpp
+platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp

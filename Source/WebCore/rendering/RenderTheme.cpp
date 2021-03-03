@@ -324,9 +324,9 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     switch (part) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return paintCheckbox(box, paintInfo, integralSnappedRect);
+        return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
     case RadioPart:
-        return paintRadio(box, paintInfo, integralSnappedRect);
+        return paintRadio(box, paintInfo, devicePixelSnappedRect);
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
         return paintColorWell(box, paintInfo, integralSnappedRect);

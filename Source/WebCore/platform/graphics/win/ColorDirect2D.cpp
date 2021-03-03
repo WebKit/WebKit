@@ -34,7 +34,7 @@
 namespace WebCore {
 
 Color::Color(D2D1_COLOR_F color)
-    : Color(convertColor<SRGBA<uint8_t>>(SRGBA { color.r, color.g, color.b, color.a }))
+    : Color(convertColor<SRGBA<uint8_t>>(SRGBA<float> { color.r, color.g, color.b, color.a }))
 {
 }
 

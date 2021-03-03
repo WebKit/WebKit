@@ -452,7 +452,7 @@ static void testWebKitSettingsJavaScriptMarkup(WebViewTest* test, gconstpointer)
         " </body>"
         "</html>";
     test->loadHtml(html, nullptr);
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "No JavaScript allowed");
     auto* jsResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('script').length", nullptr);

@@ -334,8 +334,8 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
 void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     intrinsicRatio = size();
-    intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
-    intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
+    intrinsicWidth = Length(intrinsicRatio.width(), LengthType::Fixed);
+    intrinsicHeight = Length(intrinsicRatio.height(), LengthType::Fixed);
 }
 
 void Image::startAnimationAsynchronously()

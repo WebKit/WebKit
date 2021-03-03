@@ -41,6 +41,7 @@
 #include "RTCRtpScriptTransformer.h"
 #include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
+#include "Worker.h"
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "WorkerAnimationController.h"
 #endif

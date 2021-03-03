@@ -30,6 +30,7 @@
 
 #import "DeprecatedGlobalSettings.h"
 #import "WebCoreThreadRun.h"
+#import <wtf/BlockPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPNetworkObserver.h>
@@ -42,7 +43,7 @@
 #endif
 
 @interface WebNetworkStateObserver : NSObject {
-    void (^block)();
+    BlockPtr<void()> block;
 }
 - (id)initWithBlock:(void (^)())block;
 @end
@@ -54,14 +55,8 @@
     if (!(self = [super init]))
         return nil;
     [[CPNetworkObserver sharedNetworkObserver] addNetworkReachableObserver:self selector:@selector(networkStateChanged:)];
-    block = [observerBlock copy];
+    block = makeBlockPtr(observerBlock);
     return self;
-}
-
-- (void)dealloc
-{
-    [block release];
-    [super dealloc];
 }
 
 - (void)networkStateChanged:(NSNotification *)unusedNotification

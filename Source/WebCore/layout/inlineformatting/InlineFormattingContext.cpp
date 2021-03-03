@@ -180,6 +180,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
         size_t overflowContentLength { 0 };
+        Optional<InlineLayoutUnit> overflowLogicalWidth;
     };
     Optional<PreviousLine> previousLine;
     auto& floatingState = formattingState.floatingState();
@@ -191,8 +192,9 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
+        auto leadingLogicalWidth = previousLine ? previousLine->overflowLogicalWidth : WTF::nullopt;
         auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, quirks().initialLineHeight() };
-        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
+        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
 
         auto lineContentRange = lineContent.inlineItemRange;
@@ -218,7 +220,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 }
             }
             needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
-            previousLine = PreviousLine { lineContentRange, lineContent.partialTrailingContentLength };
+            previousLine = PreviousLine { lineContentRange, lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
             continue;
         }
         // Floats prevented us placing any content on the line.
@@ -450,8 +452,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto& lineBoxLogicalRect = lineBox.logicalRect();
     if (!lineBox.hasContent()) {
         // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
-        ASSERT(!lineContent.contentLogicalWidth);
-        ASSERT(!lineBoxLogicalRect.width() && !lineBoxLogicalRect.height());
+        ASSERT(!lineBox.contentLogicalWidth() && !lineBoxLogicalRect.height());
         auto updateInlineBoxesGeometryIfApplicable = [&] {
             if (!lineBox.hasInlineBox())
                 return;
@@ -465,7 +466,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
             for (auto* layoutBox : layoutBoxList) {
                 auto& boxGeometry = formattingState.boxGeometry(*layoutBox);
-                auto inlineBoxLogicalHeight = LayoutUnit::fromFloatCeil(lineBox.logicalMarginRectForInlineLevelBox(*layoutBox, boxGeometry).height());
+                auto inlineBoxLogicalHeight = LayoutUnit::fromFloatCeil(lineBox.logicalRectForInlineBox(*layoutBox, boxGeometry).height());
                 boxGeometry.setContentBoxHeight(inlineBoxLogicalHeight);
                 boxGeometry.setContentBoxWidth({ });
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBoxLogicalRect.topLeft()));
@@ -491,25 +492,26 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             if (lineRun.isLineBreak()) {
-                auto lineBreakBoxRect = lineBox.logicalRectForTextRun(lineRun);
-                formattingState.addLineRun({ lineIndex, layoutBox, lineBreakBoxRect, lineRun.expansion(), lineRun.textContent() });
-
                 if (layoutBox.isLineBreakBox()) {
                     // Only hard linebreaks have associated layout boxes.
+                    auto lineBreakBoxRect = lineBox.logicalRectForLineBreakBox(layoutBox);
+                    formattingState.addLineRun({ lineIndex, layoutBox, lineBreakBoxRect, lineRun.expansion(), { } });
+
                     auto& boxGeometry = formattingState.boxGeometry(layoutBox);
                     lineBreakBoxRect.moveBy(lineBoxLogicalRect.topLeft());
                     boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
                     boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
-                }
+                } else 
+                    formattingState.addLineRun({ lineIndex, layoutBox, lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
                 continue;
             }
             if (lineRun.isBox()) {
                 ASSERT(layoutBox.isAtomicInlineLevelBox());
-                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                auto logicalMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+                auto logicalMarginRect = lineBox.logicalMarginRectForAtomicInlineLevelBox(layoutBox);
                 formattingState.addLineRun({ lineIndex, layoutBox, logicalMarginRect, lineRun.expansion(), { } });
 
                 auto borderBoxLogicalTopLeft = logicalMarginRect.topLeft();
+                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
                 borderBoxLogicalTopLeft.move(std::max(0_lu, boxGeometry.marginStart()), std::max(0_lu, boxGeometry.marginBefore()));
                 // Note that inline boxes are relative to the line and their top position can be negative.
                 borderBoxLogicalTopLeft.moveBy(lineBoxLogicalRect.topLeft());
@@ -526,13 +528,16 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
             if (lineRun.isInlineBoxStart()) {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                formattingState.addLineRun({ lineIndex, layoutBox, lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry), lineRun.expansion(), { } });
+                auto inlineBoxLogicalRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
+                formattingState.addLineRun({ lineIndex, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { } });
                 inlineBoxStartSet.add(&layoutBox);
-                // FIXME: Add enclosing top and bottom support.
+                enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, inlineBoxLogicalRect.top());
                 continue;
             }
             if (lineRun.isInlineBoxEnd()) {
                 inlineBoxEndSet.add(&layoutBox);
+                auto inlineBoxLogicalRect = lineBox.logicalRectForInlineBox(layoutBox, formattingState.boxGeometry(layoutBox));
+                enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, inlineBoxLogicalRect.bottom());
                 continue;
             }
             ASSERT(lineRun.isWordBreakOpportunity());
@@ -552,7 +557,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& layoutBox = inlineLevelBox->layoutBox();
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
-            auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+            auto inlineBoxMarginRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxMarginRect.width()), LayoutUnit::fromFloatCeil(inlineBoxMarginRect.height()) };
             auto logicalRect = Rect { LayoutPoint { inlineBoxMarginRect.topLeft() }, inlineBoxSize };
             logicalRect.moveBy(LayoutPoint { lineBoxLogicalRect.topLeft() });
@@ -560,8 +565,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 // This inline box showed up first on this line.
                 logicalRect.moveHorizontally(boxGeometry.marginStart());
                 boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
-                boxGeometry.setContentBoxHeight(logicalRect.height());
-                auto contentBoxWidth = logicalRect.width();
+                auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu));
+                boxGeometry.setContentBoxHeight(contentBoxHeight);
+                auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu));
                 if (inlineBoxEndSet.contains(&layoutBox)) {
                     // This is a single line inline box.
                     contentBoxWidth -= std::max(0_lu, boxGeometry.marginStart()) + std::max(0_lu, boxGeometry.marginEnd());
@@ -571,14 +577,16 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             // Middle or end of the inline box. Let's stretch the box as needed.
-            logicalRect.expandHorizontally(-std::max(0_lu, boxGeometry.marginEnd()));
+            if (inlineBoxEndSet.contains(&layoutBox)) {
+                // The inline box ends on this line e.g. <span>fist<br>middle<br>last line</span>
+                logicalRect.expandHorizontally(-std::max(0_lu, boxGeometry.marginEnd()));
+            }
+            auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
+            enclosingBorderBoxRect.expandToContain(logicalRect);
+            boxGeometry.setLogicalLeft(enclosingBorderBoxRect.left());
 
-            auto enclosingRect = Rect { BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
-            enclosingRect.expandToContain(logicalRect);
-
-            boxGeometry.setLogicalLeft(enclosingRect.left());
-            boxGeometry.setContentBoxHeight(enclosingRect.height());
-            boxGeometry.setContentBoxWidth(enclosingRect.width());
+            boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu)));
+            boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu)));
         }
     };
     updateBoxGeometryForInlineBoxes();

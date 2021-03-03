@@ -245,6 +245,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     finalizeInlineCaches(m_delByVals, linkBuffer);
     finalizeInlineCaches(m_inByIds, linkBuffer);
     finalizeInlineCaches(m_instanceOfs, linkBuffer);
+    finalizeInlineCaches(m_privateBrandAccesses, linkBuffer);
 
     auto linkCallThunk = FunctionPtr<NoPtrTag>(vm().getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
     for (auto& record : m_jsCalls) {

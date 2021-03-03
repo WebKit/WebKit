@@ -229,6 +229,7 @@ public:
     virtual void setDefaultCalendarType(JSStringRef, JSStringRef) { notImplemented(); }
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
     virtual void activateDataListSuggestion(unsigned, JSValueRef) { notImplemented(); }
+    virtual void setSelectedColorForColorPicker(double, double, double) { notImplemented(); }
 
     // Find in Page
 

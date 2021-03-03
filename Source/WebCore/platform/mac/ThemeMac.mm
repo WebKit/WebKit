@@ -155,9 +155,9 @@ static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const Lengt
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
     LengthSize result = zoomedSize;
     if (zoomedSize.width.isIntrinsicOrAuto() && controlSize.width() > 0)
-        result.width = { controlSize.width(), Fixed };
+        result.width = { controlSize.width(), LengthType::Fixed };
     if (zoomedSize.height.isIntrinsicOrAuto() && controlSize.height() > 0)
-        result.height = { controlSize.height(), Fixed };
+        result.height = { controlSize.height(), LengthType::Fixed };
     return result;
 }
 
@@ -836,11 +836,11 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& fon
 #endif
     case DefaultButtonPart:
     case ButtonPart:
-        return { { 0, Fixed }, { static_cast<int>(15 * zoomFactor), Fixed } };
+        return { { 0, LengthType::Fixed }, { static_cast<int>(15 * zoomFactor), LengthType::Fixed } };
     case InnerSpinButtonPart: {
         auto& base = stepperSizes()[NSControlSizeMini];
-        return { { static_cast<int>(base.width() * zoomFactor), Fixed },
-            { static_cast<int>(base.height() * zoomFactor), Fixed } };
+        return { { static_cast<int>(base.width() * zoomFactor), LengthType::Fixed },
+            { static_cast<int>(base.height() * zoomFactor), LengthType::Fixed } };
     }
     default:
         return Theme::minimumControlSize(part, font, zoomedSize, zoomFactor);

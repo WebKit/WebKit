@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceMessages.h"
 #include "RemoteCDMInstanceSessionProxy.h"

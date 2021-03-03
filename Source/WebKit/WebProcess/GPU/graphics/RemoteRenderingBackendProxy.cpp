@@ -30,7 +30,6 @@
 
 #include "DisplayListWriterHandle.h"
 #include "GPUConnectionToWebProcess.h"
-#include "ImageDataReference.h"
 #include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
@@ -147,9 +146,9 @@ RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplicati
 {
     sendDeferredWakeupMessageIfNeeded();
 
-    IPC::ImageDataReference imageDataReference;
-    sendSync(Messages::RemoteRenderingBackend::GetImageData(outputFormat, srcRect, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetImageData::Reply(imageDataReference), m_renderingBackendIdentifier, 1_s);
-    return imageDataReference.buffer();
+    RefPtr<ImageData> imageData;
+    sendSync(Messages::RemoteRenderingBackend::GetImageData(outputFormat, srcRect, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetImageData::Reply(imageData), m_renderingBackendIdentifier, 1_s);
+    return imageData;
 }
 
 String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)

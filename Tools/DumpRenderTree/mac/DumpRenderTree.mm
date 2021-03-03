@@ -735,21 +735,19 @@ WebView *createWebViewAndOffscreenWindow()
     uiWindowRect.origin.y += [UIApp statusBarHeight];
     UIWindow *uiWindow = [[[UIWindow alloc] initWithFrame:uiWindowRect] autorelease];
 
-    UIViewController *viewController = [[UIViewController alloc] init];
-    [uiWindow setRootViewController:viewController];
-    [viewController release];
+    auto viewController = adoptNS([[UIViewController alloc] init]);
+    [uiWindow setRootViewController:viewController.get()];
 
     // The UIWindow and UIWebBrowserView are released when the DumpRenderTreeWindow is closed.
     drtWindow.uiWindow = uiWindow;
     drtWindow.browserView = webBrowserView;
 
-    DumpRenderTreeWebScrollView *scrollView = [[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect];
+    auto scrollView = adoptNS([[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect]);
     [scrollView addSubview:webBrowserView];
 
-    [viewController.view addSubview:scrollView];
-    [scrollView release];
+    [[viewController view] addSubview:scrollView.get()];
 
-    adjustWebDocumentForStandardViewport(webBrowserView, scrollView);
+    adjustWebDocumentForStandardViewport(webBrowserView, scrollView.get());
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -791,9 +789,8 @@ static void destroyWebViewAndOffscreenWindow(WebView *webView)
 
     [window close]; // releases when closed
 #else
-    UIWindow *uiWindow = [gWebBrowserView window];
+    auto uiWindow = adoptNS([gWebBrowserView window]);
     [uiWindow removeFromSuperview];
-    [uiWindow release];
 #endif
 
     [webView release];
@@ -1454,16 +1451,14 @@ static NSData *dumpFrameAsPDF(WebFrame *frame)
     [printInfoDict setObject:NSPrintSaveJob forKey:NSPrintJobDisposition];
     [printInfoDict setObject:path forKey:NSPrintSavePath];
 
-    NSPrintInfo *printInfo = [[NSPrintInfo alloc] initWithDictionary:printInfoDict];
+    auto printInfo = adoptNS([[NSPrintInfo alloc] initWithDictionary:printInfoDict]);
     [printInfo setHorizontalPagination:NSAutoPagination];
     [printInfo setVerticalPagination:NSAutoPagination];
     [printInfo setVerticallyCentered:NO];
 
-    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:[frame frameView] printInfo:printInfo];
+    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:[frame frameView] printInfo:printInfo.get()];
     [printOperation setShowPanels:NO];
     [printOperation runOperation];
-
-    [printInfo release];
 
     NSData *pdfData = [NSData dataWithContentsOfFile:path];
     [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
@@ -1481,7 +1476,7 @@ static void dumpBackForwardListForWebView(WebView *view)
 
     // Print out all items in the list after prevTestBFItem, which was from the previous test
     // Gather items from the end of the list, the print them out from oldest to newest
-    NSMutableArray *itemsToPrint = [[NSMutableArray alloc] init];
+    auto itemsToPrint = adoptNS([[NSMutableArray alloc] init]);
     for (int i = [bfList forwardListCount]; i > 0; i--) {
         WebHistoryItem *item = [bfList itemAtIndex:i];
         // something is wrong if the item from the last test is in the forward part of the b/f list
@@ -1503,7 +1498,6 @@ static void dumpBackForwardListForWebView(WebView *view)
     for (int i = [itemsToPrint count]-1; i >= 0; i--)
         dumpHistoryItem([itemsToPrint objectAtIndex:i], 8, i == currentItemIndex);
 
-    [itemsToPrint release];
     printf("===============================================\n");
 }
 

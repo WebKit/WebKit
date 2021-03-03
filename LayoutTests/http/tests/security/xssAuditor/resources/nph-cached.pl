@@ -26,6 +26,6 @@ print "<!DOCTYPE html>\r\n";
 print "<html>\r\n";
 print "<body>\r\n";
 print "<input id=\"rand\" type=\"text\" value=\"$nonce\"/>\r\n";
-print "<script>alert(/XSS/);</script>\r\n";
+print "<script>console.log(/XSS/);</script>\r\n";
 print "</body>\r\n";
 print "</html>\r\n";

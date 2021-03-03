@@ -1202,9 +1202,10 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
 
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasPattern(const CanvasPattern& canvasPattern)
 {
-    Image& tileImage = canvasPattern.pattern().tileImage();
+    auto& tileImage = canvasPattern.pattern().tileImage();
+    FloatRect rect = { { }, tileImage.size() };
     auto imageBuffer = ImageBuffer::create(tileImage.size(), RenderingMode::Unaccelerated);
-    imageBuffer->context().drawImage(tileImage, FloatPoint(0, 0));
+    imageBuffer->context().drawNativeImage(tileImage, tileImage.size(), rect, rect);
 
     String repeat;
     bool repeatX = canvasPattern.pattern().repeatX();

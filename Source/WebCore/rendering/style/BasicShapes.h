@@ -112,7 +112,7 @@ private:
     void updateComputedLength();
 
     Direction m_direction { TopLeft };
-    Length m_length { Undefined };
+    Length m_length { LengthType::Undefined };
     Length m_computedLength;
 };
 
@@ -131,7 +131,7 @@ public:
         , m_type(Value)
     { }
     explicit BasicShapeRadius(Type t)
-        : m_value(Undefined)
+        : m_value(LengthType::Undefined)
         , m_type(t)
     { }
 
@@ -158,7 +158,7 @@ public:
     }
 
 private:
-    Length m_value { Undefined };
+    Length m_value { LengthType::Undefined };
     Type m_type { ClosestSide };
 };
 

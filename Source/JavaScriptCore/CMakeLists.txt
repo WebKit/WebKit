@@ -538,6 +538,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/CallLinkInfo.h
     bytecode/CallMode.h
     bytecode/CallVariant.h
+    bytecode/CheckPrivateBrandStatus.h
+    bytecode/CheckPrivateBrandVariant.h
     bytecode/CodeBlock.h
     bytecode/CodeBlockHash.h
     bytecode/CodeOrigin.h
@@ -560,6 +562,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Instruction.h
     bytecode/InstructionStream.h
     bytecode/InternalFunctionAllocationProfile.h
+    bytecode/IterationModeMetadata.h
     bytecode/JumpTable.h
     bytecode/LLIntCallLinkInfo.h
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
@@ -573,6 +576,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Operands.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
+    bytecode/SetPrivateBrandStatus.h
+    bytecode/SetPrivateBrandVariant.h
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h
     bytecode/SuperSampler.h
@@ -677,6 +682,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
     heap/RegisterState.h
+    heap/RootMarkReason.h
     heap/RunningScope.h
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
@@ -828,6 +834,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/BigUint64Array.h
     runtime/BooleanObject.h
     runtime/BooleanPrototype.h
+    runtime/BrandedStructure.h
     runtime/Butterfly.h
     runtime/ButterflyInlines.h
     runtime/BytecodeCacheError.h
@@ -922,6 +929,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSArrayBufferPrototype.h
     runtime/JSArrayBufferView.h
     runtime/JSArrayBufferViewInlines.h
+    runtime/JSArrayIterator.h
     runtime/JSBigInt.h
     runtime/JSCConfig.h
     runtime/JSCInlines.h

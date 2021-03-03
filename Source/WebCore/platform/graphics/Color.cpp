@@ -91,7 +91,7 @@ Color Color::lightened() const
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return convertColor<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
+    return convertColor<SRGBA<uint8_t>>(SRGBA<float> { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 Color Color::darkened() const
@@ -105,7 +105,7 @@ Color Color::darkened() const
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return convertColor<SRGBA<uint8_t>>(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
+    return convertColor<SRGBA<uint8_t>>(SRGBA<float> { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 float Color::lightness() const

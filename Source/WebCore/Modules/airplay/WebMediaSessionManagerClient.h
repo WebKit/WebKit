@@ -43,7 +43,8 @@ public:
     virtual void externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier, bool) = 0;
     virtual void setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier, bool) = 0;
     virtual void playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier) = 0;
-    virtual bool alwaysOnLoggingAllowed() { return false; }
+    virtual bool alwaysOnLoggingAllowed() const { return false; }
+    virtual bool useiTunesAVOutputContext() const { return true; }
     virtual PlatformView* platformView() const = 0;
 };
 

@@ -32,6 +32,10 @@ const char* description(MessageName name)
     switch (name) {
     case MessageName::TestWithIfMessage_LoadURL:
         return "TestWithIfMessage_LoadURL";
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return "TestWithImageData_ReceiveImageData";
+    case MessageName::TestWithImageData_SendImageData:
+        return "TestWithImageData_SendImageData";
     case MessageName::TestWithLegacyReceiver_AddEvent:
         return "TestWithLegacyReceiver_AddEvent";
     case MessageName::TestWithLegacyReceiver_Close:
@@ -164,6 +168,9 @@ ReceiverName receiverName(MessageName messageName)
     switch (messageName) {
     case MessageName::TestWithIfMessage_LoadURL:
         return ReceiverName::TestWithIfMessage;
+    case MessageName::TestWithImageData_ReceiveImageData:
+    case MessageName::TestWithImageData_SendImageData:
+        return ReceiverName::TestWithImageData;
     case MessageName::TestWithLegacyReceiver_AddEvent:
     case MessageName::TestWithLegacyReceiver_Close:
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
@@ -250,6 +257,10 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithIfMessage_LoadURL)
         return true;
 #endif
+    if (messageName == IPC::MessageName::TestWithImageData_ReceiveImageData)
+        return true;
+    if (messageName == IPC::MessageName::TestWithImageData_SendImageData)
+        return true;
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_AddEvent)
         return true;

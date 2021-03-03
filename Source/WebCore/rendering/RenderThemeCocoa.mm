@@ -30,7 +30,7 @@
 #import "HTMLInputElement.h"
 #import "RenderText.h"
 #import <algorithm>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 
 #if ENABLE(VIDEO)
 #import "LocalizedStrings.h"
@@ -69,14 +69,14 @@ static const auto applePayButtonMinimumHeight = 30;
 void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Element*) const
 {
     if (style.applePayButtonType() == ApplePayButtonType::Plain)
-        style.setMinWidth(Length(applePayButtonPlainMinimumWidth, Fixed));
+        style.setMinWidth(Length(applePayButtonPlainMinimumWidth, LengthType::Fixed));
     else
-        style.setMinWidth(Length(applePayButtonMinimumWidth, Fixed));
-    style.setMinHeight(Length(applePayButtonMinimumHeight, Fixed));
+        style.setMinWidth(Length(applePayButtonMinimumWidth, LengthType::Fixed));
+    style.setMinHeight(Length(applePayButtonMinimumHeight, LengthType::Fixed));
 
     if (!style.hasExplicitlySetBorderRadius()) {
         auto cornerRadius = PAL::get_PassKit_PKApplePayButtonDefaultCornerRadius();
-        style.setBorderRadius({ { cornerRadius, Fixed }, { cornerRadius, Fixed } });
+        style.setBorderRadius({ { cornerRadius, LengthType::Fixed }, { cornerRadius, LengthType::Fixed } });
     }
 }
 

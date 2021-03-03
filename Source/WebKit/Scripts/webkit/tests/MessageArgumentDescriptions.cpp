@@ -46,6 +46,7 @@
 #include "TestTwoStateEnum.h"
 #endif
 #include "TestWithIfMessageMessages.h"
+#include "TestWithImageDataMessages.h"
 #include "TestWithLegacyReceiverMessages.h"
 #include "TestWithSemaphoreMessages.h"
 #include "TestWithSuperclassMessages.h"
@@ -56,6 +57,7 @@
 #include "WebTouchEvent.h"
 #endif
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/ImageData.h>
 #if PLATFORM(MAC)
 #include <WebCore/KeyboardEvent.h>
 #endif
@@ -66,6 +68,7 @@
 #include <wtf/OptionSet.h>
 #endif
 #include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -222,6 +225,10 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
         return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
+    case MessageName::TestWithImageData_SendImageData:
+        return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, decoder);
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, decoder);
     default:
         break;
     }
@@ -528,6 +535,12 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
             {"s0", "IPC::Semaphore", nullptr, false},
         };
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithImageData_SendImageData:
+        return Vector<ArgumentDescription> {
+            {"s0", "RefPtr<WebCore::ImageData>", nullptr, false},
+        };
+    case MessageName::TestWithImageData_ReceiveImageData:
         return Vector<ArgumentDescription> { };
     default:
         break;

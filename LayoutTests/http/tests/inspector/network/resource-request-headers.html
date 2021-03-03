@@ -13,7 +13,7 @@ function triggerNetworkLoad() {
 
 function triggerNetworkLoadWithBasicAuthentication(username, password) {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/basic-auth.php?" + Math.random(), true, username, password);
+    xhr.open("GET", "resources/basic-auth.py?" + Math.random(), true, username, password);
     xhr.onload = xhr.onerror = () => { TestPage.dispatchEventToFrontend("LoadComplete"); };
     xhr.send();
 }

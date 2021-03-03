@@ -150,6 +150,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-attr-white-space-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-attr-white-space-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-case-sensitive-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-auto-direction-change-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-auto-direction-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-001.html

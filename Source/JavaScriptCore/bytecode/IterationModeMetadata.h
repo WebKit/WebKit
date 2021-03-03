@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumClassOperatorOverloads.h>
+
 namespace JSC {
 
 enum class IterationMode : uint8_t {

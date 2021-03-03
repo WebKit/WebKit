@@ -1,0 +1,24 @@
+
+FAIL .outer-column-flexbox > div 1 assert_equals:
+<div style="flex-basis: 100px; height: 200px;" data-expected-height="100">
+    <div style="height: 100%; background: green;" data-expected-height="100"></div>
+  </div>
+height expected 100 but got 200
+PASS .outer-column-flexbox > div 2
+FAIL .outer-column-flexbox > div 3 assert_equals:
+<div style="flex-basis: 100px; height: 200px;" data-expected-height="100">
+    <div style="display: grid; height: 100%; background: green" data-expected-height="100"></div>
+  </div>
+height expected 100 but got 200
+FAIL .outer-column-flexbox > div 4 assert_equals:
+<div style="flex-basis: 100px; height: 200px;" data-expected-height="100">
+    <table data-expected-height="100" style="height: 100%; width: 100%; background: green">
+      <tbody><tr><td>
+        <div style="height: 50px;"></div>
+      </td>
+    </tr></tbody></table>
+  </div>
+height expected 100 but got 200
+Test passes if there is a sequence of filled green squares.
+
+

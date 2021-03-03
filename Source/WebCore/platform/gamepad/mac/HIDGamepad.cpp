@@ -37,6 +37,7 @@
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDValue.h>
+#include <wtf/HexNumber.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 

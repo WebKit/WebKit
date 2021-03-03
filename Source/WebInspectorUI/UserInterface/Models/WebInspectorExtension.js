@@ -46,4 +46,5 @@ WI.WebInspectorExtension.ErrorCode = {
     InternalError: "InternalError",
     InvalidRequest: "InvalidRequest",
     RegistrationFailed: "RegistrationFailed",
+    NotImplemented: "NotImplemented",
 };

@@ -28,6 +28,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/Function.h>
+
 namespace WebCore {
 
 static inline bool isSliceNALU(uint8_t data)

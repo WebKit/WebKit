@@ -3162,9 +3162,7 @@ void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled,
 void WebViewImpl::startSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    m_page->getSelectionOrContentsAsString([](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    m_page->getSelectionOrContentsAsString([](const String& string) {
         if (!string)
             return;
 
@@ -5081,10 +5079,8 @@ void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHand
     });
 }
 
-void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandlerPtr)(NSUInteger))
+void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandler)(NSUInteger))
 {
-    auto completionHandler = adoptNS([completionHandlerPtr copy]);
-
     LOG(TextInput, "characterIndexForPoint:(%f, %f)", point.x, point.y);
 
     NSWindow *window = [m_view window];
@@ -5095,17 +5091,11 @@ void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandlerP
     ALLOW_DEPRECATED_DECLARATIONS_END
     point = [m_view convertPoint:point fromView:nil];  // the point is relative to the main frame
 
-    m_page->characterIndexForPointAsync(WebCore::IntPoint(point), [completionHandler](uint64_t result, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSUInteger) = (void (^)(NSUInteger))completionHandler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            LOG(TextInput, "    ...characterIndexForPoint failed.");
-            completionHandlerBlock(0);
-            return;
-        }
+    m_page->characterIndexForPointAsync(WebCore::IntPoint(point), [completionHandler = makeBlockPtr(completionHandler)](uint64_t result) {
         if (result == notFound)
             result = NSNotFound;
         LOG(TextInput, "    -> characterIndexForPoint returned %lu", result);
-        completionHandlerBlock(result);
+        completionHandler(result);
     });
 }
 

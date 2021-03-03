@@ -47,7 +47,7 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         "Blocked Bug's Description"
         http://bug.example.com/12345
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 '''
 
     _revert_entry_with_missing_bug_url_and_description = '''2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -58,7 +58,7 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         Reverted changeset:
 
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 '''
 
     _multiple_revert_entry = '''2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -71,15 +71,15 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         "r12345's Description"
         http://bug.example.com/12345
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 
         "r12346's Description"
         http://bug.example.com/12346
-        https://trac.webkit.org/changeset/12346
+        https://commits.webkit.org/r12346
 
         "r12347's Description"
         http://bug.example.com/12347
-        https://trac.webkit.org/changeset/12347
+        https://commits.webkit.org/r12347
 '''
 
     _multiple_revert_entry_with_missing_bug_urls_and_descriptions = '''2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -90,11 +90,11 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         Reverted changesets:
 
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 
-        https://trac.webkit.org/changeset/12346
+        https://commits.webkit.org/r12346
 
-        https://trac.webkit.org/changeset/12347
+        https://commits.webkit.org/r12347
 '''
 
     _multiple_revert_entry_with_a_missing_bug_url_and_description = '''2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -107,13 +107,13 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         "r12345's Description"
         http://bug.example.com/12345
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 
-        https://trac.webkit.org/changeset/12346
+        https://commits.webkit.org/r12346
 
         "r12347's Description"
         http://bug.example.com/12347
-        https://trac.webkit.org/changeset/12347
+        https://commits.webkit.org/r12347
 '''
 
     _revert_with_long_reason = """2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -130,7 +130,7 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         "Blocked Bug's Description"
         http://bug.example.com/12345
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 """
 
     _multiple_revert_entry_with_revert_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
@@ -144,15 +144,15 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
         "r12345's Description"
         http://bug.example.com/12345
-        https://trac.webkit.org/changeset/12345
+        https://commits.webkit.org/r12345
 
         "r12346's Description"
         http://bug.example.com/12346
-        https://trac.webkit.org/changeset/12346
+        https://commits.webkit.org/r12346
 
         "r12347's Description"
         http://bug.example.com/12347
-        https://trac.webkit.org/changeset/12347
+        https://commits.webkit.org/r12347
 '''
 
     def _assert_message_for_revert_output(self, args, expected_entry):

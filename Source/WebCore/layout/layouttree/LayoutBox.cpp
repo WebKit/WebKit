@@ -295,7 +295,12 @@ bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table || display == DisplayType::Flex;
+    return display == DisplayType::Block
+        || display == DisplayType::ListItem
+        || display == DisplayType::Table
+        || display == DisplayType::Flex
+        || display == DisplayType::Grid
+        || display == DisplayType::FlowRoot;
 }
 
 bool Box::isBlockBox() const
@@ -340,7 +345,12 @@ bool Box::isFlexItem() const
 bool Box::isBlockContainer() const
 {
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
+    return display == DisplayType::Block
+        || display == DisplayType::FlowRoot
+        || display == DisplayType::ListItem
+        || isInlineBlockBox()
+        || isTableCell()
+        || isTableCaption(); // TODO && !replaced element
 }
 
 const Box* Box::nextInFlowSibling() const

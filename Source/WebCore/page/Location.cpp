@@ -253,7 +253,7 @@ void Location::reload(DOMWindow& activeWindow)
     // FIXME: It's not clear this cross-origin security check is valuable.
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
-    if (!activeDocument.securityOrigin().canAccess(targetDocument.securityOrigin())) {
+    if (!activeDocument.securityOrigin().isSameOriginDomain(targetDocument.securityOrigin())) {
         auto& targetWindow = *targetDocument.domWindow();
         targetWindow.printErrorMessage(targetWindow.crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
         return;

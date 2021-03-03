@@ -23,9 +23,9 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 messages -> RemoteGraphicsContextGLProxy NotRefCounted {
-    void WasCreated(String availableExtensions, String requestableExtensions)
+    void WasCreated(bool didSucceed, String availableExtensions, String requestableExtensions)
     void WasLost()
-    void WasChanged();
+    void WasChanged()
 }
 
 #endif

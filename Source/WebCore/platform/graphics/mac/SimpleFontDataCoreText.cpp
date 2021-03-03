@@ -28,7 +28,7 @@
 #include "Font.h"
 
 #include <CoreText/CoreText.h>
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 
 namespace WebCore {
 

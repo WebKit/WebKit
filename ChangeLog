@@ -1,3 +1,63 @@
+2021-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
+        https://bugs.webkit.org/show_bug.cgi?id=221703
+
+        Reviewed by Michael Catanzaro.
+
+        After r272484 which added an additional test for TestJavaScriptCore the PlayStation build
+        began failing with an unresolved symbol in bmalloc. On PlayStation both WTF and bmalloc
+        are linked into JavaScriptCore. That library was building successfully which implied that
+        WTF was being erroniously linked into TestJavaScriptCore.
+
+        Inside _WEBKIT_EXECUTABLE_LINK_FRAMEWORK there was an invalid conditional which was causing
+        WTF to be linked. Fixed the logic to ensure that if the requested framework is linked into
+        another framework that is being linked then it is not added to the linker.
+
+        * Source/cmake/WebKitMacros.cmake:
+
+2021-02-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Enable hidden visibility on JSCOnly
+        https://bugs.webkit.org/show_bug.cgi?id=221726
+
+        Reviewed by Yusuke Suzuki.
+
+        Turn on hidden visibility for all *NIX ports of JSCOnly. To properly export the symbols
+        from WTF/bmalloc OBJECT libraries are used. This requires CMake 3.12 or later to
+        function properly.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
+2021-02-10  Christopher Reid  <chris.reid@sony.com>
+
+        [PlayStation] Add initial RESOURCE_USAGE implementation
+        https://bugs.webkit.org/show_bug.cgi?id=221706
+
+        Reviewed by Ross Kirsling.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2021-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Optionally build Cog as external project and replacement for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=221518
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsWPE.cmake: New variable for JSC forwarded headers path, useful
+        uninstalled builds of projects depending on JSC.
+
+2021-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        AX: introduction.md broken architecture.png link
+        https://bugs.webkit.org/show_bug.cgi?id=221607
+        <rdar://problem/74140397>
+
+        Reviewed by Sam Weinig.
+
+        * Introduction.md: webkit2-process-architecture.png Moved to resources.
+
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
         ConsoleMessage: Don't encode string JSONLogValue's as JSON

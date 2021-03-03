@@ -1,3 +1,1182 @@
+2021-02-15  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/svg convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221859
+        <rdar://problem/74298062>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/svg/cached-image-sizing.html:
+        * http/tests/svg/resources/delayCachedLoad.php: Removed.
+        * http/tests/svg/resources/delayCachedLoad.py: Added.
+        * imported/blink/http/tests/svg/svgload-vs-load.svg:
+
+2021-02-15  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/incremental convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221902
+        <rdar://problem/74348931>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/incremental/resources/delayed-css.php: Removed.
+        * http/tests/incremental/resources/delayed-css.py: Added.
+        * http/tests/incremental/stylesheet-body-incremental-rendering.html:
+
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Use page setting to expose or not registerRTCRtpScriptTransformer in workers
+        https://bugs.webkit.org/show_bug.cgi?id=221892
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/no-webrtc-transform-expected.txt: Added.
+        * http/wpt/webrtc/no-webrtc-transform.html: Added.
+        * http/wpt/webrtc/no-webrtc-transform.js: Added.
+
+2021-02-15  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/ssl convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221862
+        <rdar://problem/74298527>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/ssl/referer-301.html:
+        * http/tests/ssl/referer-303.html:
+        * http/tests/ssl/resources/ping-with-unsafe-redirect-frame.html:
+        * http/tests/ssl/resources/redirect-ping-to-http.php: Removed.
+        * http/tests/ssl/resources/redirect-ping-to-http.py: Added.
+        * http/tests/ssl/resources/referer-301-redir.php: Removed.
+        * http/tests/ssl/resources/referer-301-redir.py: Added.
+        * http/tests/ssl/resources/referer-303-redir.php: Removed.
+        * http/tests/ssl/resources/referer-303-redir.py: Added.
+        * http/tests/ssl/verify-ssl-enabled.php: Removed.
+        * http/tests/ssl/verify-ssl-enabled.py: Added.
+        * platform/win/TestExpectations:
+
+2021-02-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=221890
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestExpectations: Add test failure for :dir().
+
+2021-02-15  Frederic Wang  <fwang@igalia.com>
+
+        Crash in RetainPtr<CGImage*>::RetainPtr via ImageBufferCGBackend::toCFData
+        https://bugs.webkit.org/show_bug.cgi?id=221376
+
+        Reviewed by Said Abou-Hallawa.
+
+        * fast/canvas/resize-to-large-canvas-and-convert-to-blog-expected.txt: Added.
+        * fast/canvas/resize-to-large-canvas-and-convert-to-blog-expected.txt: Added.
+        * fast/canvas/resize-to-large-canvas-and-convert-to-blog.html: Added.
+
+2021-02-14  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Move UseGPUProcessForMediaEnabled from WebPreferencesInternal to WebPreferencesExperimental
+        https://bugs.webkit.org/show_bug.cgi?id=221310
+
+        Reviewed by Eric Carlson.
+
+        Update expectations of the tests which are affected by the "Media In GPUProcess" feature
+        (WebKitTestRunner will enable the feature by default). Also set "UseGPUProcessForMediaEnabled=false"
+        for some webrtc tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        * platform/wk2/TestExpectations:
+        * webrtc/captureCanvas-webrtc-software-h264-baseline.html:
+        * webrtc/captureCanvas-webrtc-software-h264-high.html:
+        * webrtc/captureCanvas-webrtc.html:
+        * webrtc/concurrentVideoPlayback2.html:
+        * webrtc/direction-change.html:
+        * webrtc/disable-encryption.html:
+        * webrtc/h264-baseline.html:
+        * webrtc/h264-high.html:
+        * webrtc/multi-audio.html:
+        * webrtc/multi-video.html:
+        * webrtc/peer-connection-track-end.html:
+        * webrtc/peerconnection-page-cache-long.html:
+        * webrtc/peerconnection-page-cache.html:
+        * webrtc/remove-track.html:
+        * webrtc/utf8-sdp.html:
+        * webrtc/video-addTrack.html:
+        * webrtc/video-addTransceiver.html:
+        * webrtc/video-autoplay.html:
+        * webrtc/video-disabled-black.html:
+        * webrtc/video-h264.html:
+        * webrtc/video-interruption.html:
+        * webrtc/video-mediastreamtrack-stats.html:
+        * webrtc/video-mute.html:
+        * webrtc/video-remote-mute.html:
+        * webrtc/video-replace-muted-track.html:
+        * webrtc/video-replace-track-to-null.html:
+        * webrtc/video-replace-track.html:
+        * webrtc/video-rotation-no-cvo.html:
+        * webrtc/video-rotation.html:
+        * webrtc/video-setDirection.html:
+        * webrtc/video-sframe.html:
+        * webrtc/video-stats.html:
+        * webrtc/video-unmute.html:
+        * webrtc/video-with-data-channel.html:
+        * webrtc/video.html:
+
+2021-02-13  Darin Adler  <darin@apple.com>
+
+        Crash calling replaceTrack on a sender that outlives its RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=221870
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection-expected.txt: Added.
+        * fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection.html: Added.
+
+2021-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Sound does not play on YouTube after switching back to foreground
+        https://bugs.webkit.org/show_bug.cgi?id=221858
+        <rdar://70602677>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/unmute-after-loading-expected.txt: Added.
+        * platform/mac/media/unmute-after-loading.html: Added.
+
+2021-02-12  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/mime convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221737
+	<rdar://problem/74219024>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/mime/quoted-charset.php: Removed.
+        * http/tests/mime/quoted-charset.py: Added.
+        * http/tests/mime/resources/style-with-charset.php: Removed.
+        * http/tests/mime/resources/style-with-charset.py: Added.
+        * http/tests/mime/resources/style-with-text-css-and-invalid-type.php: Removed.
+        * http/tests/mime/resources/style-with-text-css-and-invalid-type.py: Added.
+        * http/tests/mime/resources/style-with-text-plain.php: Removed.
+        * http/tests/mime/resources/style-with-text-plain.py: Added.
+        * http/tests/mime/resources/uppercase-mime-type.php: Removed.
+        * http/tests/mime/resources/uppercase-mime-type.py: Added.
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html:
+        * http/tests/mime/uppercase-mime-type-expected.txt:
+        * http/tests/mime/uppercase-mime-type.html:
+
+2021-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r272784): [macOS Release] fast/animation/request-animation-frame-throttling-lowPowerMode.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=221843
+
+        Reviewed by Chris Dumez.
+
+        Something about r272784 subtly changed timing, which caused there to be a little bit of a lag in RAF throttling.
+        I could reproduce it making the way this test measures frame rate go up to 35, but not 36.
+        This test is still good, though, because if you remove setLowPowerModeEnabled it spikes up to 60 or 61 frames per second.
+
+        * fast/animation/request-animation-frame-throttling-lowPowerMode-expected.txt:
+        * fast/animation/request-animation-frame-throttling-lowPowerMode.html:
+
+2021-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Unable to play WebM/Opus generated from Chrome MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=221808
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-bigsur/media/media-webm-no-duration-expected.txt: Added.
+        * platform/mac-bigsur/media/media-webm-no-duration.html: Added.
+
+2021-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=220552
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Skip the test for WK1.
+
+2021-02-12  Robert Jenner  <jenner@apple.com>
+
+        imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is timing out on Catalina wk1 debug EWS
+        https://bugs.webkit.org/show_bug.cgi?id=206503
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk1/TestExpectations: Changed expectation from Mojave to Catalina to suppress failure.
+
+2021-02-12  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/storageAccess convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221720
+        <rdar://problem/74207513>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-ephemeral.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html:
+        * http/tests/storageAccess/resources/echo-incoming-cookies-as-json.php: Removed.
+        * http/tests/storageAccess/resources/echo-incoming-cookies-as-json.py: Added.
+        * http/tests/storageAccess/resources/get-cookies.php: Removed.
+        * http/tests/storageAccess/resources/get-cookies.py: Added.
+        * http/tests/storageAccess/resources/has-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/set-cookie.php: Removed.
+        * http/tests/storageAccess/resources/set-cookie.py: Added.
+
+2021-02-12  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Make accessibility/aria-modal-in-aria-hidden.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=221812
+
+        Reviewed by Zalan Bujtas.
+
+        It is very dependent on exact interactions between the internal testing API and the DOM.
+        It also seems to be partially testing a wrong thing (probably as workaround for above).
+
+        * accessibility/aria-modal-in-aria-hidden-expected.txt:
+        * accessibility/aria-modal-in-aria-hidden.html:
+
+        Do rendering update between every mutation and check, not just the last one.
+        Fix the middle test to use isIgnored too.
+        (isValid() is not even a function, it is a property, so this relied on getting null to pass)
+
+2021-02-12  Amir Mark Jr  <amir_mark@apple.com>
+
+        REGRESSION (r272241) [MacOS wk1] imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html is flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=221347
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-02-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Another WPT test import
+        https://bugs.webkit.org/show_bug.cgi?id=221813
+
+        Reviewed by Youenn Fablet.
+
+        Imported the most recent changes in flexbox WPT tests. This implies deleting a local test that
+        was upstreamed to WPT, so it does not make sense to have a duplicate.
+
+        * TestExpectations: Removed a test that is currently passing. Adding a new expected failure.
+        * css3/flexbox/percentage-descendants-of-skipped-flex-item-expected.html: Removed.
+        * css3/flexbox/percentage-descendants-of-skipped-flex-item.html: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/radiobutton-min-size-expected.txt:
+        Updated expectations.
+
+2021-02-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart() from large scale
+        https://bugs.webkit.org/show_bug.cgi?id=221635
+
+        Reviewed by Darin Adler.
+
+        Add a test with a very large value of scale that tests that
+        we do not trigger the assertion here.
+        Thanks to Ryosuke Niwa for help in cleaning up the test
+        and making it more reliable.
+
+        * fast/rendering/searchfield-scale-crash-expected.txt: Added.
+        * fast/rendering/searchfield-scale-crash.html: Added.
+
+2021-02-12  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ] webgpu/whlsl/do-while-loop-break.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215606
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Switch expectation from Failure to ImageOnlyFailure.
+
+2021-02-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Crash in InsertTextCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=213514
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/insert-in-orphaned-selection-crash-expected.txt: Added.
+        * editing/deleting/insert-in-orphaned-selection-crash.html: Added.
+
+2021-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Make RemoteRealtimeVideoSource a RealtimeVideoCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=221747
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/resources/getDisplayMedia-utils.js:
+        (async waitForHeight):
+        (async waitForWidth):
+        Updated to fail instead of timing out.
+        * fast/mediastream/resources/getUserMedia-helper.js:
+        Removing no longer needed code that made it impossible to run the tests in browser.
+
+2021-02-12  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement SetState DisplayList item
+        https://bugs.webkit.org/show_bug.cgi?id=219468
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+        Unmark tests that are no longer crash.
+
+2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPE] event.ctrlKey and other are false in keydown event
+        https://bugs.webkit.org/show_bug.cgi?id=221760
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/wpe/TestExpectations: The test passes now.
+
+2021-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r272293) WebGL 1.0.2 test expectations say HTTPS
+        https://bugs.webkit.org/show_bug.cgi?id=221774
+        <rdar://problem/74149867>
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/contentextensions/make-https-expected.txt:
+        * http/tests/webgl/1.0.2/origin-clean-conformance-expected.txt:
+        * http/tests/webgl/1.0.2/readPixelsBadArgs-expected.txt:
+
+2021-02-11  Jonathan Bedard  <jbedard@apple.com>
+
+       [run-webkit-tests] Update PHP module configuration
+        https://bugs.webkit.org/show_bug.cgi?id=221776
+        <rdar://problem/74248860>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/conf/apache2.4-x-httpd.conf: Added.
+
+2021-02-11  Said Abou-Hallawa  <said@apple.com>
+
+        Unreviewed, reverting r270578.
+        https://bugs.webkit.org/show_bug.cgi?id=221110
+
+        Caused incorrect image layout inside a flexbox container.
+
+        * TestExpectations:
+
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new picker for <select multiple> elements
+        https://bugs.webkit.org/show_bug.cgi?id=221636
+        <rdar://problem/72399337>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test which selects options using the new multi-select picker.
+        Grouped, ungrouped, and disabled options are all tested.
+
+        * fast/forms/ios/form-control-refresh/select/select-multiple-picker-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/select-multiple-picker.html: Added.
+
+2021-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [GPUP] <audio> won't load when URL ends with .php causing some tests to time out
+        https://bugs.webkit.org/show_bug.cgi?id=221695
+
+        Reviewed by Eric Carlson.
+
+        Unskip tests that are no longer timing out.
+
+        * gpu-process/TestExpectations:
+
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Some checkboxes and radio buttons are clipped on top
+        https://bugs.webkit.org/show_bug.cgi?id=221736
+        <rdar://problem/73956812>
+
+        Reviewed by Simon Fraser.
+
+        Added reference mismatch tests to verify that the clipping no longer
+        occurs. The tests work by drawing an overlay smaller than the actual
+        size of the checkbox/radio input. If the input is clipped, only the
+        overlay will be visible, matching the "-expected-mismatch.html".
+        However, if the input is drawn correctly, the overlay will not cover
+        the entire input, and a mismatch will occur.
+
+        * fast/forms/ios/form-control-refresh/checkbox/subpixel-clipping-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/subpixel-clipping.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/subpixel-clipping-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/subpixel-clipping.html: Added.
+
+2021-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [ MacOS Debug wk2] imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=221731
+        <rdar://problem/74213595>
+
+        Unreviewed, skip animation & layout worklets tests since we do not support those and it is
+        causing those tests to be flaky.
+
+        * TestExpectations:
+
+2021-02-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Range inputs have an incorrect RTL appearance
+        https://bugs.webkit.org/show_bug.cgi?id=221758
+        <rdar://problem/74236993>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a reference mismatch test to verify that a range input with
+        dir="rtl" has a distinct appearance from a standard range input.
+
+        * fast/forms/ios/form-control-refresh/range/rtl-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/range/rtl-appearance.html: Added.
+
+2021-02-11  Sergio Villar Senin  <svillar@igalia.com> and Imanol Fernandez  <ifernandez@igalia.com>
+
+        Complete XRSession::requestAnimationFrame implementation
+        https://bugs.webkit.org/show_bug.cgi?id=220979
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wpe/TestExpectations:
+
+2021-02-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add more Selenium key codes for test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221674
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt.
+
+2021-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove GPUProcess flag in MediaRecorder tests
+        https://bugs.webkit.org/show_bug.cgi?id=221401
+
+        Reviewed by Eric Carlson.
+
+        We will remove http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html once rdar://problem/74043225 is fixed.
+
+        * http/wpt/mediarecorder/pause-recording.html:
+        Increase timer to cope with added latency introduced by IPC messaging.
+
+2021-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Replaced Failure by ImageOnlyFailure for a couple of tests I imported yesterday.
+
+2021-02-11  Rob Buis  <rbuis@igalia.com>
+
+        Handle min-width/min-height:auto for aspect-ratio
+        https://bugs.webkit.org/show_bug.cgi?id=220582
+
+        Reviewed by Antti Koivisto.
+
+        Enable tests that pass now.
+
+        * TestExpectations:
+
+2021-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove another use of FontSelector from within CSSFontFace
+        https://bugs.webkit.org/show_bug.cgi?id=221071
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-loading-multiple-documents-expected.html: Added.
+        * fast/text/font-loading-multiple-documents.html: Added.
+        * fast/text/font-loading-multiple-sets-expected.txt: Added.
+        * fast/text/font-loading-multiple-sets.html: Added.
+
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Use event loop to set title
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Reviewed by Darin Adler.
+
+        Adapt tests to make sure pending title change tasks
+        are processed before the test is done.
+
+        * TestExpectations:
+        * fast/dom/title-text-property-2.html:
+        * fast/dom/title-text-property-assigning-empty-string.html:
+        * fast/dom/title-text-property.html:
+        * http/tests/globalhistory/history-delegate-basic-title-expected.txt:
+        * http/tests/globalhistory/history-delegate-basic-title.html:
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html:
+        * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+        * http/tests/loading/redirect-with-no-location-crash.html:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt: Copied from LayoutTests/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt.
+        * platform/wk2/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+        * platform/wk2/http/tests/loading/redirect-with-no-location-crash-expected.txt:
+
+2021-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ Big Sur ] imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=221681
+
+        Unreviewed test gardening.
+
+        Consolidate test baselines for mac since the result is the same across configurations.
+
+        * platform/mac-catalina/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Renamed from LayoutTests/platform/mac-catalina-wk1/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt.
+
+2021-02-10  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS] animations/keyframe-pseudo-shadow.html is flakey failing.
+        https://bugs.webkit.org/show_bug.cgi?id=221491
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-02-10  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Reset expectations of media related tests
+        https://bugs.webkit.org/show_bug.cgi?id=221700
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Rename testcase to indicate hang
+        https://bugs.webkit.org/show_bug.cgi?id=221375
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename testcase to indicate hang rather than crash.
+
+        * plugins/embed-creation-hang-expected.txt: Renamed from LayoutTests/plugins/embed-creation-crash-expected.txt.
+        * plugins/embed-creation-hang.html: Renamed from LayoutTests/plugins/embed-creation-crash.html.
+
+2021-02-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Display all CSS grids on page in Layout panel
+        https://bugs.webkit.org/show_bug.cgi?id=221145
+        <rdar://problem/73764515>
+
+        Reviewed by Devin Rousso.
+
+        DOMNode.layoutContextType is null when not defined.
+        Update layout test and corresponding expected result.
+
+        * inspector/css/nodeLayoutContextTypeChanged-expected.txt:
+        * inspector/css/nodeLayoutContextTypeChanged.html:
+
+2021-02-10  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Paint invalidation for inline element style changes
+        https://bugs.webkit.org/show_bug.cgi?id=221669
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/repaint/inline-style-change-expected.txt: Added.
+        * fast/repaint/inline-style-change.html: Added.
+
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Enable `QuickboardControllerForTextInputEnabled`, on relevant versions of watchOS.
+
+        * fast/forms/watchos/delete-content-in-text-field.html:
+        * fast/forms/watchos/edit-text-field-calls-injected-bundle.html:
+        * fast/forms/watchos/form-control-label-text.html:
+        * fast/forms/watchos/time-picker-value-change.html:
+        * fast/forms/watchos/username-text-content-type.html:
+
+2021-02-10  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/css convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221511
+        <rdar://problem/74049585>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/css/font-face-src-loading.html:
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html:
+        * http/tests/css/resources/500.php: Removed.
+        * http/tests/css/resources/500.py: Added.
+        * http/tests/css/resources/webfont-request.php: Removed.
+        * http/tests/css/resources/webfont-request.py: Added.
+        (getRequestCount):
+        (setRequestCount):
+
+2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r263255): Text styles without an explicit language tag do not honor the system language
+        https://bugs.webkit.org/show_bug.cgi?id=221598
+        <rdar://problem/69194294>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/international/system-language/jp-circled-expected-mismatch.html: Added.
+        * fast/text/international/system-language/jp-circled.html: Added.
+
+2021-02-10  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add support for modifier keys in test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221465
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add specific -expected.txt file for Mac platform. Meta key is detected differently than in other platforms.
+
+        * platform/ios/TestExpectations: Skip test as it's timing out on iOS.
+        * platform/mac/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-expected.txt: Update expectations as it nows mostly passes.
+
+2021-02-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Pass in sane content width values to InlineContentBreaker
+        https://bugs.webkit.org/show_bug.cgi?id=221628
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/letter-spacing-produces-nan-width-expected.txt: Added.
+        * fast/text/letter-spacing-produces-nan-width.html: Added.
+
+2021-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGLProxy should support losing the context and should lose the context on timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=221396
+
+        Reviewed by Simon Fraser.
+
+        Fix the lose-context-on-status-failure.html. The test was using
+        an internal function to lose the context and then synchronously
+        checking that the context was lost. With GPU process this is not
+        possible, so check after normal Canvas webglcontextlost event.
+
+        Enable the test for --use-gpu-process.
+
+        * fast/canvas/webgl/lose-context-on-status-failure.html:
+        * gpu-process/TestExpectations:
+
+2021-02-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import & update latest WPT flexbox tests
+        https://bugs.webkit.org/show_bug.cgi?id=221484
+
+        Reviewed by Rob Buis.
+
+        Sync'ed our local copy to latest upstream data.
+
+        * TestExpectations: Added new failing tests with bugs.
+        * platform/glib/TestExpectations: Removed a couple of tests that are working fine after import.
+        * platform/ios/TestExpectations: Added new failing tests with bugs.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-012-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-012-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-013-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-013-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001-expected.txt: Added.
+        * platform/mac-catalina-wk1/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/css/css-flexbox/contain-size-layout-abspos-flex-container-crash-expected.txt: Added.
+        * platform/mac/TestExpectations: Added new failing tests with bugs.
+
+2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Some privateClickMeasurement might output the information in different order depending on platform
+        https://bugs.webkit.org/show_bug.cgi?id=221406
+
+        Reviewed by Michael Catanzaro.
+
+        The script conversionReport.php iterates the HTTP headers to show the information, but header's order can be
+        different for different platforms. We could just check every value we want to show to make sure we always
+        provide them in the same order.
+
+        * http/tests/privateClickMeasurement/resources/conversionReport.php:
+
+2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Do not schedule update on embed creation
+        https://bugs.webkit.org/show_bug.cgi?id=221375
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this.
+
+        * plugins/embed-creation-crash-expected.txt: Added.
+        * plugins/embed-creation-crash.html: Added.
+
+2021-02-10  Lauro Moura  <lmoura@igalia.com>
+
+        [ATK] Support focusable-inside-hidden test
+        https://bugs.webkit.org/show_bug.cgi?id=221646
+
+        Reviewed by Chris Fleizach.
+
+        ATK uses a different field for the description. (See r201216 and
+        r201072).
+
+        * accessibility/focusable-inside-hidden.html: Add check for ATK.
+        * platform/glib/accessibility/focusable-inside-hidden-expected.txt: Added.
+
+2021-02-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline table tests after r272100 and garden some a11 failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
+        Updates after r272100.
+        * platform/glib/fast/table/005-expected.txt: Renamed from LayoutTests/platform/gtk/fast/table/005-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1224-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1224-expected.txt.
+        * platform/wpe/fast/table/005-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1224-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/wpe/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+
+2021-02-09  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Add support for the language/subtitle tracks button using `UIMenu`
+        https://bugs.webkit.org/show_bug.cgi?id=221594
+        <rdar://problem/74129129>
+
+        Reviewed by Eric Carlson and Wenson Hsieh.
+
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (getTracksContextMenu): Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api.html: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api-expected.txt: Added.
+        Duplicate existing `TracksSupport` tests to test for similar results but using the new iOS path.
+
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-auto-text-track.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-auto-text-track-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-hidden-tracks.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-hidden-tracks-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-off-text-track.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-off-text-track-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api.html.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api-expected.txt.
+        * platform/mac/TestExpectations:
+        Moved existing `TracksSupport` tests to a `mac` subfolder so they can be skipped on iOS.
+
+2021-02-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Descendants of row and column headers should expose the aria-sort attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=221590
+
+        Reviewed by Chris Fleizach.
+
+        Expanded this test to include the case where the header contains a child
+        element that must also expose the aria-sort attribute inherited from its
+        parent.
+
+        * accessibility/aria-sort-expected.txt:
+        * accessibility/aria-sort.html:
+        * accessibility/ios-simulator/aria-sort-ios-expected.txt:
+        * accessibility/ios-simulator/aria-sort-ios.html:
+
+2021-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r272426.
+
+        Caused test failures / flakiness
+
+        Reverted changeset:
+
+        "Remove GPUProcess flag in MediaRecorder tests"
+        https://bugs.webkit.org/show_bug.cgi?id=221401
+        https://trac.webkit.org/changeset/272426
+
+2021-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Implement scroll-snap-stop for scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=197744
+        <rdar://problem/50708356>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+2021-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Convert xmlhttprequest php to Python (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=220995
+        <rdar://problem/73630008>
+
+        Unreviewed test fix.
+
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest.html: Lengthen timeouts, Python is slightly slower than PHP.
+        * http/tests/xmlhttprequest/resources/download-with-delay.py: Match iteration behavior to PHP script.
+
+2021-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Disallow alert/confirm/prompt in cross-origin-domain subframes
+        https://bugs.webkit.org/show_bug.cgi?id=221568
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage and update existing tests to stop using alert() in cross-origin iframes.
+
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame-expected.txt:
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame.html:
+        * fast/events/popup-when-select-change-expected.txt:
+        * fast/events/popup-when-select-change.html:
+        * fast/events/resize-subframe-expected.txt:
+        * fast/events/resize-subframe.html:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts-expected.txt:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts.html:
+        * fast/frames/resources/navigate-top-by-name-to-fail.html:
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-denied-expected.txt:
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+        * http/tests/history/cross-origin-replace-history-object-child-expected.txt:
+        * http/tests/history/cross-origin-replace-history-object-expected.txt:
+        * http/tests/history/resources/cross-origin-replaces-history-object-child-iframe.html:
+        * http/tests/history/resources/cross-origin-replaces-history-object-iframe.html:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/plugins/third-party-cookie-accept-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-inside-csp-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.html:
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.js:
+        (catch):
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.html:
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.js:
+        (catch):
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php:
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.php:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades-expected.txt:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrades-mixed-content-expected.txt:
+        * http/tests/security/cross-origin-js-prompt-forbidden-expected.txt: Added.
+        * http/tests/security/cross-origin-js-prompt-forbidden.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-websocket.html:
+        * http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt:
+        * http/tests/security/resources/cross-origin-js-prompt-forbidden.html: Added.
+        * http/tests/security/same-origin-different-domain-js-prompt-forbidden-expected.txt: Added.
+        * http/tests/security/same-origin-different-domain-js-prompt-forbidden.html: Added.
+        * http/tests/security/xssAuditor/base-href-control-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-direct-expected.txt:
+        * http/tests/security/xssAuditor/base-href-expected.txt:
+        * http/tests/security/xssAuditor/base-href-null-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe2-expected.txt:
+        * http/tests/security/xssAuditor/base-href-safe3-expected.txt:
+        * http/tests/security/xssAuditor/base-href-scheme-relative-expected.txt:
+        * http/tests/security/xssAuditor/cached-frame-expected.txt:
+        * http/tests/security/xssAuditor/cached-frame.html:
+        * http/tests/security/xssAuditor/cookie-injection-expected.txt:
+        * http/tests/security/xssAuditor/data-urls-work-expected.txt:
+        * http/tests/security/xssAuditor/data-urls-work.html:
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-innerHTML.html:
+        * http/tests/security/xssAuditor/form-action-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-button-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-input-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-safe-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-safe.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes.html:
+        * http/tests/security/xssAuditor/property-inject-expected.txt:
+        * http/tests/security/xssAuditor/property-inject.html:
+        * http/tests/security/xssAuditor/resources/base-href/really-safe-script.js:
+        * http/tests/security/xssAuditor/resources/base-href/safe-script.js:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/resources/javascript-link-safe.html:
+        * http/tests/security/xssAuditor/resources/nph-cached.pl:
+        * http/tests/security/xssAuditor/resources/safe-script-noquotes.js:
+        * http/tests/security/xssAuditor/resources/safe-script.js:
+        * http/tests/security/xssAuditor/resources/script-tag-safe2.html:
+        * http/tests/security/xssAuditor/script-tag-near-start-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-near-start.html:
+        * http/tests/security/xssAuditor/script-tag-safe2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-safe2.html:
+        * http/tests/security/xssAuditor/script-tag-safe3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-safe3.html:
+        * http/tests/security/xssAuditor/script-tag-src-redirect-safe-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment.html:
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades-expected.txt:
+
+2021-02-09  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Test media/track/audio-track-add-remove.html crashes on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=221595
+
+        Reviewed by Eric Carlson.
+
+        * gpu-process/TestExpectations:
+
+2021-02-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use UIColorPickerViewController for color inputs
+        https://bugs.webkit.org/show_bug.cgi?id=221572
+        <rdar://problem/72183130>
+
+        Reviewed by Sam Weinig.
+
+        Added a test which displays the new color picker and verifies that
+        selecting a color updates the corresponding input's value.
+
+        * fast/forms/color/color-input-activate-crash.html:
+
+        Replaced call to activateElementAndWaitForInputSession with
+        activateElement and ensurePresentationUpdate, since tapping on a
+        color input no longer presents a keyboard input view.
+
+        * fast/forms/ios/choose-color-from-color-picker-expected.txt: Added.
+        * fast/forms/ios/choose-color-from-color-picker.html: Added.
+        * resources/ui-helper.js:
+        (UIHelper.setSelectedColorForColorPicker):
+
+2021-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Unable to interact with page after long-pressing image on images.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=221584
+        <rdar://problem/74073581>
+
+        Reviewed by Andy Estes.
+
+        Add a new layout test that (sometimes) exercises the problem. Given the nature of the bug, it doesn't seem
+        possible to write a test that reproduces the bug 100% of the time. See WebKit ChangeLog for more details.
+
+        * fast/events/touch/ios/tap-after-long-press-on-image-expected.txt: Added.
+        * fast/events/touch/ios/tap-after-long-press-on-image.html: Added.
+        * resources/ui-helper.js:
+        (UIHelper.EventStreamBuilder.prototype.wait):
+
+        Add a helper to simply increment the time offset when building an event stream.
+
+2021-02-09  Youenn Fablet  <youenn@apple.com>
+
+        MediaStream-backed video elements should not compute the mediaType based on track muted states
+        https://bugs.webkit.org/show_bug.cgi?id=221601
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-enter-background-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-enter-background.html: Added.
+
+2021-02-09  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/inspector/ convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221140
+        <rdar://problem/73758592>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/inspector/network/beacon-type.html:
+        * http/tests/inspector/network/fetch-response-body-304.html:
+        * http/tests/inspector/network/fetch-response-body.html:
+        * http/tests/inspector/network/intercept-request-properties-expected.txt:
+        * http/tests/inspector/network/intercept-request-properties.html:
+        * http/tests/inspector/network/ping-type.html:
+        * http/tests/inspector/network/resource-mime-type.html:
+        * http/tests/inspector/network/resource-request-headers.html:
+        * http/tests/inspector/network/resource-sizes-network.html:
+        * http/tests/inspector/network/resource-timing.html:
+        * http/tests/inspector/network/resources/404.php: Removed.
+        * http/tests/inspector/network/resources/404.py: Added.
+        * http/tests/inspector/network/resources/basic-auth.php: Removed.
+        * http/tests/inspector/network/resources/basic-auth.py: Added.
+        * http/tests/inspector/network/resources/beacon.php: Removed.
+        * http/tests/inspector/network/resources/beacon.py: Added.
+        * http/tests/inspector/network/resources/delay.php: Removed.
+        * http/tests/inspector/network/resources/delay.py: Added.
+        * http/tests/inspector/network/resources/echo.php: Removed.
+        * http/tests/inspector/network/resources/echo.py: Added.
+        * http/tests/inspector/network/resources/fetch-cachable.php: Removed.
+        * http/tests/inspector/network/resources/fetch-cachable.py: Added.
+        * http/tests/inspector/network/resources/gzipped-lorem-no-content-length.php: Removed.
+        * http/tests/inspector/network/resources/gzipped-lorem-no-content-length.py: Added.
+        * http/tests/inspector/network/resources/gzipped-lorem.php: Removed.
+        * http/tests/inspector/network/resources/gzipped-lorem.py: Added.
+        * http/tests/inspector/network/resources/intercept-echo.php: Removed.
+        * http/tests/inspector/network/resources/intercept-echo.py: Added.
+        * http/tests/inspector/network/resources/json.php: Removed.
+        * http/tests/inspector/network/resources/json.py: Added.
+        * http/tests/inspector/network/resources/ping.php: Removed.
+        * http/tests/inspector/network/resources/ping.py: Added.
+        * http/tests/inspector/network/resources/redirect.php: Removed.
+        * http/tests/inspector/network/resources/redirect.py: Added.
+        * http/tests/inspector/network/resources/x-frame-options.php: Removed.
+        * http/tests/inspector/network/resources/x-frame-options.py: Added.
+        * http/tests/inspector/network/x-frame-options-expected.txt:
+        * http/tests/inspector/network/x-frame-options.html:
+        * http/tests/inspector/network/xhr-response-body.html:
+        * http/tests/inspector/page/get-cookies.html:
+        * http/tests/inspector/page/resources/set-cookie.php: Removed.
+        * http/tests/inspector/page/resources/set-cookie.py: Added.
+
+2021-02-09  Philippe Normand  <pnormand@igalia.com>
+
+        Permission request API for MediaKeySystem access support
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+
+        Reviewed by Jer Noble.
+
+        Add basic coverage support for overriding the MediaKeySystem permission answer and thus have
+        the promise rejection tested in this case.
+
+        * media/encrypted-media/mock-MediaKeySystemAccess-expected.txt:
+        * media/encrypted-media/mock-MediaKeySystemAccess.html:
+
+2021-02-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Allow sending modifier keys in test_driver.send_keys()
+        https://bugs.webkit.org/show_bug.cgi?id=221466
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add specific -expected.txt file for Mac platform. Meta key is detected differently than in other platforms,
+        also event.ctrlKey and other are not being set from the test (they work fine when checking that manually).
+
+        * platform/ios/TestExpectations: Skip test as it's timing out in iOS.
+        * platform/mac/imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-expected.txt: Added.
+
+2021-02-08  Rob Buis  <rbuis@igalia.com>
+
+        Make auto && <ratio> use content box-sizing
+        https://bugs.webkit.org/show_bug.cgi?id=221527
+
+        Reviewed by Simon Fraser.
+
+        Enable some tests that pass now.
+
+        * TestExpectations:
+
+2021-02-08  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r269458): yahoo.com social / comments bar shows as transparent when scrolling page
+        https://bugs.webkit.org/show_bug.cgi?id=221582
+
+        Reviewed by Tim Horton.
+
+        * scrollingcoordinator/fixed-node-reattach-expected.html: Added.
+        * scrollingcoordinator/fixed-node-reattach.html: Added.
+
+2021-02-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add `CSS.setLayoutContextTypeChangedMode` for getting information about all layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221449
+
+        Reviewed by Devin Rousso
+
+        Added layout tests for `CSS.setLayoutContextTypeChangedMode` command.
+
+        * inspector/css/setLayoutContextTypeChangedMode-expected.txt: Added.
+        * inspector/css/setLayoutContextTypeChangedMode.html: Added.
+
+2021-02-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r272480, r272481, and r272500.
+        https://bugs.webkit.org/show_bug.cgi?id=221586
+
+        Caused assertion failure seen with EME tests
+
+        Reverted changesets:
+
+        "Permission request API for MediaKeySystem access support"
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+        https://trac.webkit.org/changeset/272480
+
+        "Unreviewed, build fix after r272480"
+        https://trac.webkit.org/changeset/272481
+
+        "Permission request API for MediaKeySystem access support"
+        https://bugs.webkit.org/show_bug.cgi?id=221187
+        https://trac.webkit.org/changeset/272500
+
+2021-02-08  Rob Buis  <rbuis@igalia.com>
+
+        Make getStartEndListChildren check renderers
+        https://bugs.webkit.org/show_bug.cgi?id=221388
+
+        Reviewed by Alex Christensen.
+
+        Add test for this.
+
+        * editing/execCommand/insert-nested-lists-crash-expected.txt: Added.
+        * editing/execCommand/insert-nested-lists-crash.html: Added.
+
 2021-02-08  Said Abou-Hallawa  <said@apple.com>
 
         A Pattern with an SVG image is not rendered correctly

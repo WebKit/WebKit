@@ -4175,6 +4175,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapAlign:
         return consumeScrollSnapAlign(m_range);
+    case CSSPropertyScrollSnapStop:
+        return consumeIdent<CSSValueAlways, CSSValueNormal>(m_range);
     case CSSPropertyScrollSnapType:
         return consumeScrollSnapType(m_range);
 #endif

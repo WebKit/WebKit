@@ -89,7 +89,7 @@ void ItemHandle::apply(GraphicsContext& context)
         return;
     }
     case ItemType::SetState: {
-        get<SetState>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     }
     case ItemType::SetLineCap: {

@@ -1973,6 +1973,13 @@ private:
         }
 
 
+        case SetPrivateBrand: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
+            break;
+        }
+
+        case CheckPrivateBrand:
         case PutPrivateName: {
             fixEdge<SymbolUse>(node->child2());
             break;
@@ -2869,6 +2876,8 @@ private:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case FilterDeleteByStatus:
+        case FilterCheckPrivateBrandStatus:
+        case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
         case CreateArgumentsButterfly:
             break;

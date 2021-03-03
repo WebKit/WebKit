@@ -169,8 +169,8 @@ public:
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }
     static FillSize initialFillSize(FillLayerType) { return { }; }
-    static Length initialFillXPosition(FillLayerType) { return Length(0.0f, Percent); }
-    static Length initialFillYPosition(FillLayerType) { return Length(0.0f, Percent); }
+    static Length initialFillXPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
+    static Length initialFillYPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
     static StyleImage* initialFillImage(FillLayerType) { return nullptr; }
     static MaskSourceType initialFillMaskSourceType(FillLayerType) { return MaskSourceType::Alpha; }
 

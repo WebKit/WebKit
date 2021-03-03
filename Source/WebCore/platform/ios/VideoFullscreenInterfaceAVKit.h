@@ -36,6 +36,7 @@
 #include <objc/objc.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -147,8 +148,6 @@ public:
     void willStopPictureInPicture();
     void didStopPictureInPicture();
     void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
-    void exitFullscreenHandler(BOOL success, NSError *);
-    void enterFullscreenHandler(BOOL success, NSError *);
     bool isPlayingVideoInEnhancedFullscreen() const;
 
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode, bool shouldNotifyModel);
@@ -205,12 +204,9 @@ protected:
     bool m_returnToStandbyNeedsReturnVideoContentLayer { false };
     bool m_finalizeSetupNeedsReturnVideoContentLayer { false };
 
-    bool m_exitFullscreenNeedsExitFullscreen { false };
     bool m_exitFullscreenNeedsExitPictureInPicture { false };
     bool m_exitFullscreenNeedsReturnContentLayer { false };
 
-    bool m_enterFullscreenNeedsEnterFullscreen { false };
-    bool m_enterFullscreenNeedsExitFullscreen { false };
     bool m_enterFullscreenNeedsEnterPictureInPicture { false };
     bool m_enterFullscreenNeedsExitPictureInPicture { false };
 
@@ -228,6 +224,16 @@ protected:
     bool m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason { false };
     bool m_enteringPictureInPicture { false };
     bool m_exitingPictureInPicture { false };
+
+private:
+    enum class NextAction {
+        NeedsEnterFullScreen = 1 << 0,
+        NeedsExitFullScreen = 1 << 1,
+    };
+    using NextActions = OptionSet<NextAction>;
+
+    void exitFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
+    void enterFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
 };
 
 }

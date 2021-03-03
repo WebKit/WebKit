@@ -214,10 +214,10 @@ static RefPtr<TranslateTransformOperation> blendFunc(const CSSPropertyBlendingCl
 
     RefPtr<TranslateTransformOperation> identity;
     if (!from) {
-        identity = TranslateTransformOperation::create(Length(0, Fixed), Length(0, Fixed), Length(0, Fixed), to->type());
+        identity = TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), to->type());
         from = identity.get();
     } else if (!to) {
-        identity = TranslateTransformOperation::create(Length(0, Fixed), Length(0, Fixed), Length(0, Fixed), from->type());
+        identity = TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), from->type());
         to = identity.get();
     }
 

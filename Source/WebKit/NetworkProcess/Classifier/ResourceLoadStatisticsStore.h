@@ -211,7 +211,7 @@ public:
     virtual void clearPrivateClickMeasurement(Optional<RegistrableDomain>) = 0;
     virtual void clearExpiredPrivateClickMeasurement() = 0;
     virtual String privateClickMeasurementToString() = 0;
-    virtual void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) = 0;
+    virtual void clearSentAttribution(WebCore::PrivateClickMeasurement&&) = 0;
     virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting() = 0;
 
 protected:

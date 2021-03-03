@@ -1,0 +1,7 @@
+Target
+
+PASS Check sending "Shift + y" key combination
+PASS Check sending "Control + y" key combination
+PASS Check sending "Alt + y" key combination
+FAIL Check sending "Meta + y" key combination assert_equals: expected "y" but got "leftMeta"
+

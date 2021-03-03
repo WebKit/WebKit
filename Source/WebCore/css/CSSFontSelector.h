@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "CSSFontFace.h"
 #include "CSSFontFaceSet.h"
+#include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "Font.h"
 #include "FontSelector.h"
@@ -48,7 +49,7 @@ class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
+class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CachedFontClient, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -70,7 +71,6 @@ public:
 
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
 
-    void fontLoaded();
     void fontCacheInvalidated() final;
 
     bool isEmpty() const;
@@ -80,7 +80,7 @@ public:
 
     Document* document() const { return m_document.get(); }
 
-    void beginLoadingFontSoon(CachedFont&);
+    void willBeginLoadingFontSoon(CachedFont&);
     void suspendFontLoadingTimer();
 
     FontFaceSet* fontFaceSetIfExists();
@@ -91,6 +91,10 @@ public:
 
     void loadPendingFonts();
 
+    // CSSFontFace::Client needs to be able to be held in a RefPtr.
+    void ref() final { FontSelector::ref(); }
+    void deref() final { FontSelector::deref(); }
+
 private:
     explicit CSSFontSelector(Document&);
 
@@ -98,9 +102,16 @@ private:
 
     void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 
-    void fontModified();
+    // CSSFontFace::Client
+    void fontLoaded(CSSFontFace&) final;
+    void fontStyleUpdateNeeded(CSSFontFace&) final;
 
+    void fontModified();
     void fontLoadingTimerFired();
+
+    // CachedFontClient
+    using CachedFontClient::fontLoaded;
+    void fontRequested(CachedFont&) final;
 
     // ActiveDOMObject
     void stop() final;
@@ -119,6 +130,7 @@ private:
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 
+    HashSet<CachedFont*> m_fonts;
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

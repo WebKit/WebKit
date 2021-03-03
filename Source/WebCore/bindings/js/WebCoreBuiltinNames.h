@@ -263,6 +263,7 @@ namespace WebCore {
     macro(TextEncoderStream) \
     macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \
+    macro(TextTrackCueGeneric) \
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
     macro(UndoItem) \
@@ -414,6 +415,7 @@ namespace WebCore {
     macro(reader) \
     macro(readyPromise) \
     macro(readyPromiseCapability) \
+    macro(registerRTCRtpScriptTransformer) \
     macro(requestAnimationFrame) \
     macro(requestIdleCallback) \
     macro(response) \

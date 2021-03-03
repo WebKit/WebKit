@@ -315,7 +315,7 @@ struct ThirdPartyData {
     void clearPrivateClickMeasurementForRegistrableDomain(const WebCore::RegistrableDomain&);
     void clearExpiredPrivateClickMeasurement();
     void privateClickMeasurementToString(CompletionHandler<void(String)>&&);
-    void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&);
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&&);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 private:

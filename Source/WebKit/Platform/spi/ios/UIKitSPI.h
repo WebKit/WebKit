@@ -67,6 +67,7 @@
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
+#import <UIKit/UITableView_Private.h>
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextChecker_Private.h>
 #import <UIKit/UITextEffectsWindow.h>
@@ -93,6 +94,7 @@
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
+#import <UIKit/_UISheetPresentationController.h>
 
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
@@ -461,6 +463,10 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 
 #endif // HAVE(UI_HOVER_EVENT_RESPONDABLE)
 
+@interface UITableView ()
+@property (nonatomic, getter=_sectionContentInsetFollowsLayoutMargins, setter=_setSectionContentInsetFollowsLayoutMargins:) BOOL sectionContentInsetFollowsLayoutMargins;
+@end
+
 @interface UITapGestureRecognizer ()
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
@@ -802,6 +808,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface UIWebGeolocationPolicyDecider ()
 + (instancetype)sharedPolicyDecider;
 - (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id)listener;
+- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 @end
 
 typedef enum {
@@ -929,6 +936,17 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
+@end
+
+@interface _UISheetDetent : NSObject
+@property (class, nonatomic, readonly) _UISheetDetent *_mediumDetent;
+@property (class, nonatomic, readonly) _UISheetDetent *_largeDetent;
+@end
+
+@interface _UISheetPresentationController : UIPresentationController
+@property (nonatomic, copy, setter=_setDetents:) NSArray<_UISheetDetent *> *_detents;
+@property (nonatomic, setter=_setWantsBottomAttachedInCompactHeight:) BOOL _wantsBottomAttachedInCompactHeight;
+@property (nonatomic, setter=_setWidthFollowsPreferredContentSizeWhenBottomAttached:) BOOL _widthFollowsPreferredContentSizeWhenBottomAttached;
 @end
 
 @class BKSAnimationFenceHandle;
@@ -1304,8 +1322,8 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, readonly) NSInteger _gsModifierFlags;
 @end
 
-@interface UIWebGeolocationPolicyDecider (Staging_25963823)
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
+@interface UIWKTextInteractionAssistant (Staging_74209560)
+- (void)translate:(NSString *)text fromRect:(CGRect)presentationRect;
 @end
 
  @interface UIColor (IPI)
@@ -1397,6 +1415,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface UIDevice ()
 @property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;
+@end
+
+@interface UIColorPickerViewController ()
+@property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
 WTF_EXTERN_C_BEGIN

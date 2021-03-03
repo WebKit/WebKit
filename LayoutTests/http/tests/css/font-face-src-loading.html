@@ -2,7 +2,7 @@
 <style>
 @font-face {
     font-family: 'webfont';
-    src: url(http://localhost:8000/css/resources/webfont-request.php?mode=getFont&filename=webfontRequestCount.txt) format('truetype');
+    src: url(http://localhost:8000/css/resources/webfont-request.py?mode=getFont&filename=webfontRequestCount.txt) format('truetype');
 }
 </style>
 <script>
@@ -41,7 +41,7 @@ function getRequestCount() {
         if (xhr.readyState == xhr.DONE)
             checkRequestCount();
     };
-    xhr.open('GET', 'http://localhost:8000/css/resources/webfont-request.php?mode=getRequestCount&' + filename, true);
+    xhr.open('GET', 'http://localhost:8000/css/resources/webfont-request.py?mode=getRequestCount&' + filename, true);
     xhr.send();
 }
 

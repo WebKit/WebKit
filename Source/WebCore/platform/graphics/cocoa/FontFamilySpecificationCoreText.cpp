@@ -28,7 +28,7 @@
 
 #include "FontCache.h"
 #include "FontSelector.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 

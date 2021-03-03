@@ -27,7 +27,7 @@ class BenchmarkBuilder(object):
         self._driver = driver
 
     def __enter__(self):
-        self._web_root = tempfile.mkdtemp()
+        self._web_root = tempfile.mkdtemp(dir="/tmp")
         self._dest = os.path.join(self._web_root, self._name)
         if 'local_copy' in self._plan:
             self._copy_benchmark_to_temp_dir(self._plan['local_copy'])

@@ -77,8 +77,14 @@ void Gradient::createCGGradient()
         locations.uncheckedAppend(stop.offset);
     }
 
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+    auto extendedColorsGradientColorSpace = extendedSRGBColorSpaceRef();
+#else
+    auto extendedColorsGradientColorSpace = sRGBColorSpaceRef();
+#endif
+
     if (hasExtendedColors)
-        m_gradient = adoptCF(CGGradientCreateWithColors(extendedSRGBColorSpaceRef(), colorsArray.get(), locations.data()));
+        m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
     else
         m_gradient = adoptCF(CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), numStops));
 }

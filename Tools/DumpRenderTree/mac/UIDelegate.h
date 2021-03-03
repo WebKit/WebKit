@@ -35,11 +35,12 @@
 #endif
 
 #import <WebKit/WebUIDelegate.h>
+#import <wtf/RetainPtr.h>
 
 @interface UIDelegate : NSObject <WebUIDelegate> {
 @private
     NSPoint windowOrigin;
-    NSMutableSet *m_pendingGeolocationPermissionListeners;
+    RetainPtr<NSMutableSet> m_pendingGeolocationPermissionListeners;
     NSTimer *m_timer;
     BOOL m_enableDragDestinationActionLoad;
 }

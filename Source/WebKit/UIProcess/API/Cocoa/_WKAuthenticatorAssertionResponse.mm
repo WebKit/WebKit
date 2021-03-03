@@ -32,9 +32,9 @@
 
 @implementation _WKAuthenticatorAssertionResponse
 
-- (instancetype)initWithRawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions authenticatorData:(NSData *)authenticatorData signature:(NSData *)signature userHandle:(NSData *)userHandle
+- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions authenticatorData:(NSData *)authenticatorData signature:(NSData *)signature userHandle:(NSData *)userHandle
 {
-    if (!(self = [super initWithRawId:rawId extensions:WTFMove(extensions)]))
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTFMove(extensions)]))
         return nil;
 
     _authenticatorData = authenticatorData;

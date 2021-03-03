@@ -93,6 +93,7 @@
 #include <WebCore/InputMode.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
+#include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -187,6 +188,7 @@ namespace API {
 class Attachment;
 class ContentWorld;
 class ContextMenuClient;
+class Error;
 class FindClient;
 class FindMatchesClient;
 class FormClient;
@@ -378,17 +380,8 @@ enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
-typedef GenericCallback<API::Data*> DataCallback;
-typedef GenericCallback<uint64_t> UnsignedCallback;
-typedef GenericCallback<const String&> StringCallback;
-typedef GenericCallback<bool> BoolCallback;
-
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
-#endif
-
-#if PLATFORM(GTK)
-typedef GenericCallback<API::Error*> PrintFinishedCallback;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -400,15 +393,6 @@ struct QueuedTouchEvents {
     NativeWebTouchEvent forwardedEvent;
     Vector<NativeWebTouchEvent> deferredTouchEvents;
 };
-#endif
-
-#if ENABLE(APPLICATION_MANIFEST)
-typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
-#endif
-
-#if PLATFORM(COCOA)
-using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
-typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
@@ -774,11 +758,11 @@ public:
     void selectPositionAtPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint, WebCore::TextGranularity, WebCore::SelectionDirection, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity, WebCore::SelectionDirection, CompletionHandler<void()>&&);
-    void beginSelectionInDirection(WebCore::SelectionDirection, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
+    void beginSelectionInDirection(WebCore::SelectionDirection, CompletionHandler<void(bool)>&&);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
-    void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
@@ -885,7 +869,7 @@ public:
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
-    void characterIndexForPointAsync(const WebCore::IntPoint&, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);
+    void characterIndexForPointAsync(const WebCore::IntPoint&, CompletionHandler<void(uint64_t)>&&);
     void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
@@ -1118,7 +1102,7 @@ public:
     void didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
-    void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, Function<void(uint64_t, CallbackBase::Error)>&&);
+    void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setTextIndicator(const WebCore::TextIndicatorData&, uint64_t /* WebCore::TextIndicatorWindowLifetime */ lifetime = 0 /* Permanent */);
     void setTextIndicatorAnimationProgress(float);
@@ -1128,23 +1112,23 @@ public:
     void didFailToFindString(const String&);
     void didFindStringMatches(const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection);
 
-    void getContentsAsString(ContentAsStringIncludesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&&);
+    void getContentsAsString(ContentAsStringIncludesChildFrames, CompletionHandler<void(const String&)>&&);
 #if PLATFORM(COCOA)
     void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
-    void getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
+    void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
 
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&&);
 #endif
-    void getMainResourceDataOfFrame(WebFrameProxy*, Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getResourceDataFromFrame(WebFrameProxy*, API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSelectionOrContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getSelectionAsWebArchiveData(Function<void (API::Data*, CallbackBase::Error)>&&);
-    void getSourceForFrame(WebFrameProxy*, WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void getWebArchiveOfFrame(WebFrameProxy*, Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getMainResourceDataOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
+    void getResourceDataFromFrame(WebFrameProxy&, API::URL*, CompletionHandler<void(API::Data*)>&&);
+    void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
+    void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&&);
+    void getSourceForFrame(WebFrameProxy*, CompletionHandler<void(const String&)>&&);
+    void getWebArchiveOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
     void runJavaScriptInMainFrame(WebCore::RunJavaScriptParameters&&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, API::ContentWorld&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
@@ -1298,17 +1282,16 @@ public:
 
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
-    void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, Ref<ComputedPagesCallback>&&);
+    uint64_t computePagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
 #if PLATFORM(COCOA)
-    void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, Ref<ImageCallback>&&);
-    void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
-    void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, DrawToPDFCallback::CallbackFunction&&);
-    void drawToPDFCallback(const IPC::DataReference& pdfData, WebKit::CallbackID);
+    uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
+    uint64_t drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
+    void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(IOS_FAMILY)
-    uint32_t computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, DrawToPDFCallback::CallbackFunction&&);
+    std::pair<size_t, uint64_t> computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const IPC::DataReference&)>&&);
 #endif
 #elif PLATFORM(GTK)
-    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, Ref<PrintFinishedCallback>&&);
+    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(API::Error*)>&&);
 #endif
 
     PageLoadState& pageLoadState() { return m_pageLoadState; }
@@ -1435,7 +1418,7 @@ public:
 
     void signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&, CompletionHandler<void(String)>&&);
 
-    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, WTF::Function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>&&);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -1468,8 +1451,7 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&&);
-    void nowPlayingInfoCallback(bool, bool, const String&, double, double, uint64_t, CallbackID);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
 #endif
 
 #if PLATFORM(MAC)
@@ -1493,7 +1475,7 @@ public:
 
     bool scrollingUpdatesDisabledForTesting();
 
-    void installActivityStateChangeCompletionHandler(Function<void()>&&);
+    void installActivityStateChangeCompletionHandler(CompletionHandler<void()>&&);
 
 #if USE(UNIFIED_TEXT_CHECKING)
     void checkTextOfParagraph(const String& text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint, CompletionHandler<void(Vector<WebCore::TextCheckingResult>&&)>&&);
@@ -1544,8 +1526,10 @@ public:
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() final { return isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return isAlwaysOnLoggingAllowed(); }
+    bool useiTunesAVOutputContext() const final;
     PlatformView* platformView() const final;
+
 #endif
 
     void didChangeBackgroundColor();
@@ -1621,12 +1605,16 @@ public:
     void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
     static WebPageProxy* nonEphemeralWebPageProxy();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;
-    void insertAttachment(Ref<API::Attachment>&&, Function<void(CallbackBase::Error)>&&);
-    void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
+    void insertAttachment(Ref<API::Attachment>&&, CompletionHandler<void()>&&);
+    void updateAttachmentAttributes(const API::Attachment&, CompletionHandler<void()>&&);
     void serializedAttachmentDataForIdentifiers(const Vector<String>&, CompletionHandler<void(Vector<WebCore::SerializedAttachmentData>&&)>&&);
     void registerAttachmentIdentifier(const String&);
     void didInvalidateDataForAttachment(API::Attachment&);
@@ -1641,7 +1629,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void getApplicationManifest(Function<void(const Optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
+    void getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&&);
 #endif
 
     WebPreferencesStore preferencesStore() const;
@@ -1990,7 +1978,7 @@ private:
     bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const WebCore::ContactsRequestData&, CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&);
-    void printFrame(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+    void printFrame(WebCore::FrameIdentifier, const String&, CompletionHandler<void()>&&);
     void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuotaDelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuotaDelayedReply&&);
 
@@ -2142,6 +2130,9 @@ private:
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&);
 #endif
 
+    void stopMakingViewBlankDueToLackOfRenderingUpdate();
+    void makeViewBlankIfUnpaintedSinceLastLoadCommit();
+
     // Spelling and grammar.
     void checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&&);
     void checkGrammarOfString(const String& text, CompletionHandler<void(Vector<WebCore::GrammarDetail>&&, int32_t badGrammarLocation, int32_t badGrammarLength)>&&);
@@ -2160,19 +2151,8 @@ private:
     void discardQueuedMouseEvents();
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-
-    void voidCallback(CallbackID);
-    void dataCallback(const IPC::DataReference&, CallbackID);
-    void imageCallback(const ShareableBitmap::Handle&, CallbackID);
-    void boolCallback(bool result, CallbackID);
-    void stringCallback(const String&, CallbackID);
-    void invalidateStringCallback(CallbackID);
-    void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, CallbackID);
-    void unsignedCallback(uint64_t, CallbackID);
-#if ENABLE(APPLICATION_MANIFEST)
-    void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
-#endif
 #if PLATFORM(MAC)
+    void didUpdateRenderingAfterCommittingLoad();
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -2180,9 +2160,6 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
 
     void updateStringForFind(const String&);
-#endif
-#if PLATFORM(GTK)
-    void printFinishedCallback(const WebCore::ResourceError&, CallbackID);
 #endif
 
     void focusedFrameChanged(const Optional<WebCore::FrameIdentifier>&);
@@ -2249,8 +2226,6 @@ private:
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
-
-    void clearLoadDependentCallbacks();
 
     void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, SandboxExtension::HandleArray&&);
 
@@ -2469,11 +2444,13 @@ private:
     std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
 #endif
 
+#if PLATFORM(COCOA)
+    bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
+#endif
 #if PLATFORM(IOS_FAMILY)
     Optional<WebCore::InputMode> m_pendingInputModeChange;
     TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation { 0 };
-    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
@@ -2498,9 +2475,6 @@ private:
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_credentialsMessenger;
 #endif
-
-    CallbackMap m_callbacks;
-    HashSet<CallbackID> m_loadDependentStringCallbackIDs;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 
@@ -2779,7 +2753,7 @@ private:
 
     OptionSet<WebCore::ActivityState::Flag> m_potentiallyChangedActivityStateFlags;
     bool m_activityStateChangeWantsSynchronousReply { false };
-    Vector<CallbackID> m_nextActivityStateChangeCallbacks;
+    Vector<CompletionHandler<void()>> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
 

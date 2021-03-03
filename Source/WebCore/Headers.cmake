@@ -884,6 +884,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/GlobalWindowIdentifier.h
     page/LayoutMilestone.h
     page/MediaCanStartListener.h
+    page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
     page/MemoryRelease.h
     page/NavigatorIsLoggedIn.h

@@ -588,6 +588,28 @@ op :put_private_name,
         newStructureID: StructureID,
     }
 
+op :set_private_brand,
+    args: {
+        base: VirtualRegister,
+        brand: VirtualRegister,
+    },
+    metadata: {
+        oldStructureID: StructureID,
+        newStructureID: StructureID,
+        brand: WriteBarrier[JSCell],
+    }
+
+op :check_private_brand,
+    args: {
+        base: VirtualRegister,
+        brand: VirtualRegister,
+    },
+    metadata: {
+        structureID: StructureID,
+        brand: WriteBarrier[JSCell],
+    }
+    
+
 op :put_by_val,
     args: {
         base: VirtualRegister,
@@ -1467,7 +1489,8 @@ autogenerate_wasm_opcodes
 # Helpers
 
 op :throw_from_slow_path_trampoline
-op :throw_from_fault_handler_trampoline
+op :throw_from_fault_handler_trampoline_fastTLS
+op :throw_from_fault_handler_trampoline_reg_instance
 
 op :call_return_location
 op :call_no_tls_return_location

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,17 +62,17 @@ ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesTo
     return ScopeOffset(oldSize);
 }
 
-void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVisitor)
+void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, slotVisitor);
+    Base::visitChildren(thisObject, visitor);
     
     // FIXME: We could avoid locking here if SegmentedVector was lock-free. It could be made lock-free
     // relatively easily.
     auto locker = holdLock(thisObject->cellLock());
     for (unsigned i = thisObject->m_variables.size(); i--;)
-        slotVisitor.appendHidden(thisObject->m_variables[i]);
+        visitor.appendHidden(thisObject->m_variables[i]);
 }
 
 void JSSegmentedVariableObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

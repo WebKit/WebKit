@@ -289,7 +289,7 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
@@ -336,7 +336,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
@@ -359,6 +359,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_ecmaMode(ecmaMode)
     , m_derivedContextType(codeBlock->derivedContextType())
 {
+    pushPrivateAccessNames(parentPrivateNameEnvironment);
+
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = 0;
@@ -707,6 +709,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 case ConstructorKind::None:
                 case ConstructorKind::Base:
                     emitCreateThis(&m_thisRegister);
+                    if (Options::usePrivateMethods() && privateBrandRequirement() == PrivateBrandRequirement::Needed)
+                        emitInstallPrivateBrand(&m_thisRegister);
+
                     emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());
                     break;
                 case ConstructorKind::Extends:
@@ -838,7 +843,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
@@ -855,6 +860,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_derivedContextType(codeBlock->derivedContextType())
 {
     m_codeBlock->setNumParameters(1);
+
+    pushPrivateAccessNames(parentPrivateNameEnvironment);
 
     m_cachedParentTDZ = parentScopeTDZVariables;
 
@@ -901,7 +908,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
@@ -1893,8 +1900,10 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
 
             // FIXME: only do this if there is an eval() within a nested scope --- otherwise it isn't needed.
             // https://bugs.webkit.org/show_bug.cgi?id=206663
-            if (entry.value.isPrivateName())
-                symbolTable->addPrivateName(entry.key.get());
+            if (entry.value.isPrivateField())
+                symbolTable->addPrivateName(entry.key.get(), PrivateNameEntry(PrivateNameEntry::Traits::IsDeclared));
+            else if (entry.value.isPrivateMethod())
+                symbolTable->addPrivateName(entry.key.get(), PrivateNameEntry(PrivateNameEntry::Traits::IsDeclared | PrivateNameEntry::Traits::IsMethod));
         }
     }
     return hasCapturedVariables;
@@ -2714,7 +2723,7 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* thisVa
     return value;
 }
 
-RegisterID* BytecodeGenerator::emitDirectGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
+RegisterID* BytecodeGenerator::emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
     OpGetPrivateName::emit(this, dst, base, property);
     return dst;
@@ -2750,10 +2759,42 @@ RegisterID* BytecodeGenerator::emitDefinePrivateField(RegisterID* base, Register
     return value;
 }
 
+void BytecodeGenerator::emitCreatePrivateBrand(RegisterID* scope, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    RefPtr<RegisterID> createPrivateSymbol = moveLinkTimeConstant(nullptr, LinkTimeConstant::createPrivateSymbol);
+
+    CallArguments arguments(*this, nullptr, 0);
+    emitLoad(arguments.thisRegister(), jsUndefined());
+    RegisterID* newSymbol = emitCall(finalDestination(nullptr, createPrivateSymbol.get()), createPrivateSymbol.get(), NoExpectedFunction, arguments, divot, divotStart, divotEnd, DebuggableCall::No);
+
+    Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
+
+    emitPutToScope(scope, privateBrandVar, newSymbol, DoNotThrowIfNotFound, InitializationMode::Initialization);
+}
+
+void BytecodeGenerator::emitInstallPrivateBrand(RegisterID* target)
+{
+    Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
+    RefPtr<RegisterID> privateBrandVarScope = emitResolveScope(nullptr, privateBrandVar);
+    RegisterID* privateBrandSymbol = emitGetPrivateBrand(newTemporary(), privateBrandVarScope.get());
+    OpSetPrivateBrand::emit(this, target, privateBrandSymbol);
+}
+
+RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope)
+{
+    Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
+    return emitGetFromScope(dst, scope, privateBrandVar, ThrowIfNotFound);
+}
+
 RegisterID* BytecodeGenerator::emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     OpPutPrivateName::emit(this, base, property, value, PrivateFieldPutKind::set());
     return value;
+}
+
+void BytecodeGenerator::emitCheckPrivateBrand(RegisterID* base, RegisterID* brandSymbol)
+{
+    OpCheckPrivateBrand::emit(this, base, brandSymbol);
 }
 
 void BytecodeGenerator::emitSuperSamplerBegin()
@@ -2890,6 +2931,32 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
     }
 }
 
+bool BytecodeGenerator::isPrivateMethod(const Identifier& ident)
+{
+    for (unsigned i = m_privateNamesStack.size(); i--; ) {
+        auto& map = m_privateNamesStack[i];
+        auto it = map.find(ident.impl());
+        if (it != map.end())
+            return it->value.isMethod();
+    }
+
+    return false;
+}
+
+void BytecodeGenerator::pushPrivateAccessNames(const PrivateNameEnvironment* environment)
+{
+    if (!environment || !environment->size())
+        return;
+
+    m_privateNamesStack.append(*environment);
+}
+
+void BytecodeGenerator::popPrivateAccessNames()
+{
+    ASSERT(m_privateNamesStack.size());
+    m_privateNamesStack.removeLast();
+}
+
 void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment, TDZCheckOptimization optimization, TDZRequirement requirement)
 {
     if (!environment.size())
@@ -2909,6 +2976,28 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
         map.add(entry.key, entry.value.isFunction() ? TDZNecessityLevel::NotNeeded : level);
 
     m_TDZStack.append(TDZStackEntry { WTFMove(map), nullptr });
+}
+
+Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
+{
+    PrivateNameEnvironment result;
+    SmallPtrSet<UniquedStringImpl*, 16> excludedNames;
+    for (unsigned i = m_privateNamesStack.size(); i--; ) {
+        auto& map = m_privateNamesStack[i];
+        for (auto& entry : map)  {
+            if (entry.value.isPrivateMethodOrAcessor()) {
+                if (!excludedNames.contains(entry.key.get())) {
+                    result.add(entry.key, entry.value);
+                    excludedNames.add(entry.key.get());
+                }
+            } else
+                excludedNames.add(entry.key.get());
+        }
+    }
+
+    if (!result.size())
+        return WTF::nullopt;
+    return result;
 }
 
 RefPtr<TDZEnvironmentLink> BytecodeGenerator::getVariablesUnderTDZ()
@@ -3120,9 +3209,9 @@ RegisterID* BytecodeGenerator::emitNewMethodDefinition(RegisterID* dst, MethodDe
 }
 
 RegisterID* BytecodeGenerator::emitNewDefaultConstructor(RegisterID* dst, ConstructorKind constructorKind, const Identifier& name,
-    const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer needsClassFieldInitializer)
+    const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
 {
-    UnlinkedFunctionExecutable* executable = m_vm.builtinExecutables()->createDefaultConstructor(constructorKind, name, needsClassFieldInitializer);
+    UnlinkedFunctionExecutable* executable = m_vm.builtinExecutables()->createDefaultConstructor(constructorKind, name, needsClassFieldInitializer, privateBrandRequirement);
     executable->setInvalidTypeProfilingOffsets();
     executable->setEcmaName(ecmaName);
     executable->setClassSource(classSource);
@@ -3146,13 +3235,14 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
     }
 
     auto variablesUnderTDZ = getVariablesUnderTDZ();
+    Optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
     SourceParseMode parseMode = SourceParseMode::ClassFieldInitializerMode;
     ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
 
     const bool alwaysStrictInClass = true;
     FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, alwaysStrictInClass, ConstructorKind::None, superBinding, 0, parseMode, false);
     metadata.finishParsing(m_scopeNode->source(), Identifier(), FunctionMode::MethodDefinition);
-    auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(variablesUnderTDZ), newDerivedContextType, NeedsClassFieldInitializer::No);
+    auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(variablesUnderTDZ), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
     initializer->setClassFieldLocations(WTFMove(classFieldLocations));
 
     unsigned index = m_codeBlock->addFunctionExpr(initializer);

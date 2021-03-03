@@ -567,7 +567,7 @@ FillSource::FillSource(const GraphicsContextState& state)
         pattern.object = adoptRef(state.fillPattern->createPlatformPattern(AffineTransform()));
 
         auto& patternImage = state.fillPattern->tileImage();
-        pattern.size = FloatSize(patternImage.width(), patternImage.height());
+        pattern.size = patternImage.size();
         pattern.transform = state.fillPattern->patternSpaceTransform();
         pattern.repeatX = state.fillPattern->repeatX();
         pattern.repeatY = state.fillPattern->repeatY();

@@ -310,7 +310,7 @@
 #include "WebAutocorrectionContext.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -346,6 +346,9 @@
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMFactory.h"
+#endif
+#if HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVFManager.h"
 #endif
 #endif
 
@@ -520,7 +523,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
         WebSocketProvider::create(),
-        makeUniqueRef<WebKit::LibWebRTCProvider>(),
+        createLibWebRTCProvider(*this),
         WebProcess::singleton().cacheStorageProvider(),
         m_userContentController,
         WebBackForwardListProxy::create(*this),
@@ -528,7 +531,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebProgressTrackerClient>(*this),
         makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef()),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
-        makeUniqueRef<MediaRecorderProvider>()
+        makeUniqueRef<MediaRecorderProvider>(*this)
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
@@ -920,7 +923,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     if (m_activityState != parameters.activityState)
-        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
+        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
 
@@ -992,6 +995,13 @@ WebPage::~WebPage()
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
         completionHandler(false);
+    
+#if ENABLE(APPLICATION_MANIFEST)
+    for (auto& completionHandler : m_applicationManifestFetchCallbackMap.values()) {
+        if (completionHandler)
+            completionHandler(WTF::nullopt);
+    }
+#endif
 }
 
 IPC::Connection* WebPage::messageSenderConnection() const
@@ -2422,7 +2432,7 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CallbackID callbackID)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
     SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
     snapshotOptions |= SnapshotOptionsShareable;
@@ -2433,7 +2443,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
     if (image)
         image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
-    send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
+    completionHandler(handle);
 }
 
 RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
@@ -3067,13 +3077,14 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
+bool WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
-    handled = handleTouchEvent(touchEvent, m_page.get());
+    bool handled = handleTouchEvent(touchEvent, m_page.get());
     updatePotentialTapSecurityOrigin(touchEvent, handled);
+    return handled;
 }
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
@@ -3088,10 +3099,9 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<
 
     EventDispatcher::TouchEventQueue queuedEvents;
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
-    dispatchAsynchronousTouchEvents(queuedEvents);
+    dispatchAsynchronousTouchEvents(WTFMove(queuedEvents));
 
-    bool handled = true;
-    dispatchTouchEvent(touchEvent, handled);
+    bool handled = dispatchTouchEvent(touchEvent);
 
     if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
         reply(handled);
@@ -3352,7 +3362,7 @@ void WebPage::visibilityDidChange()
     }
 }
 
-void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& callbackIDs)
+void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
 
@@ -3371,7 +3381,7 @@ void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, Act
     for (auto* pluginView : m_pluginViews)
         pluginView->activityStateDidChange(changed);
 
-    m_drawingArea->activityStateDidChange(changed, activityStateChangeID, callbackIDs);
+    m_drawingArea->activityStateDidChange(changed, activityStateChangeID, WTFMove(callback));
     WebProcess::singleton().pageActivityStateDidChange(m_identifier, changed);
 
     if (changed & ActivityState::IsInWindow)
@@ -3598,12 +3608,12 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
     runJavaScript(webFrame, WTFMove(parameters), worldData.first, WTFMove(completionHandler));
 }
 
-void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CallbackID callbackID)
+void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
 {
     switch (includeChildFrames) {
     case ContentAsStringIncludesChildFrames::No: {
         String resultString = m_mainFrame->contentsAsString();
-        send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+        callback(resultString);
         break;
     }
     case ContentAsStringIncludesChildFrames::Yes: {
@@ -3617,23 +3627,22 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
             }
         }
 
-        send(Messages::WebPageProxy::StringCallback(builder.toString(), callbackID));
+        callback(builder.toString());
         break;
     }
     }
 }
 
 #if ENABLE(MHTML)
-void WebPage::getContentsAsMHTMLData(CallbackID callbackID)
+void WebPage::getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
-    send(Messages::WebPageProxy::DataCallback({ MHTMLArchive::generateMHTMLData(m_page.get()) }, callbackID));
+    callback({ MHTMLArchive::generateMHTMLData(m_page.get()) });
 }
 #endif
 
-void WebPage::getRenderTreeExternalRepresentation(CallbackID callbackID)
+void WebPage::getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&& callback)
 {
-    String resultString = renderTreeExternalRepresentation();
-    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+    callback(renderTreeExternalRepresentation());
 }
 
 static Frame* frameWithSelection(Page* page)
@@ -3646,7 +3655,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void WebPage::getSelectionAsWebArchiveData(CallbackID callbackID)
+void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3654,33 +3663,33 @@ void WebPage::getSelectionAsWebArchiveData(CallbackID callbackID)
         data = LegacyWebArchive::createFromSelection(frame)->rawDataRepresentation();
 #endif
 
-    IPC::SharedBufferDataReference dataReference;
+    IPC::DataReference dataReference;
 #if PLATFORM(COCOA)
     if (data)
         dataReference = { CFDataGetBytePtr(data.get()), static_cast<size_t>(CFDataGetLength(data.get())) };
 #endif
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
-void WebPage::getSelectionOrContentsAsString(CallbackID callbackID)
+void WebPage::getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&& callback)
 {
     WebFrame* focusedOrMainFrame = WebFrame::fromCoreFrame(m_page->focusController().focusedOrMainFrame());
     String resultString = focusedOrMainFrame->selectionAsString();
     if (resultString.isEmpty())
         resultString = focusedOrMainFrame->contentsAsString();
-    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+    callback(resultString);
 }
 
-void WebPage::getSourceForFrame(FrameIdentifier frameID, CallbackID callbackID)
+void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(const String&)>&& callback)
 {
     String resultString;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
        resultString = frame->source();
 
-    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+    callback(resultString);
 }
 
-void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CallbackID callbackID)
+void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3695,7 +3704,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CallbackID cal
     IPC::SharedBufferDataReference dataReference;
     if (buffer)
         dataReference = { *buffer };
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
 static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
@@ -3711,7 +3720,7 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CallbackID callbackID)
+void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3722,10 +3731,10 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     IPC::SharedBufferDataReference dataReference;
     if (buffer)
         dataReference = { *buffer };
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CallbackID callbackID)
+void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3735,12 +3744,12 @@ void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CallbackID callbackI
     UNUSED_PARAM(frameID);
 #endif
 
-    IPC::SharedBufferDataReference dataReference;
+    IPC::DataReference dataReference;
 #if PLATFORM(COCOA)
     if (data)
         dataReference = { CFDataGetBytePtr(data.get()), static_cast<size_t>(CFDataGetLength(data.get())) };
 #endif
-    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+    callback(dataReference);
 }
 
 void WebPage::forceRepaintWithoutCallback()
@@ -3849,6 +3858,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     // FIXME: useGPUProcessForMediaEnabled should be a RuntimeEnabledFeature since it's global.
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#if HAVE(AVASSETREADER)
+    WebProcess::singleton().supplement<RemoteImageDecoderAVFManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#endif
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType));
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
@@ -3876,6 +3888,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(VORBIS) && PLATFORM(MAC)
     PlatformMediaSessionManager::setVorbisDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled());
+#endif
+
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
 #endif
 }
 
@@ -4411,10 +4427,10 @@ void WebPage::countStringMatches(const String& string, OptionSet<FindOptions> op
     findController().countStringMatches(string, options, maxMatchCount);
 }
 
-void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)
+void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     auto numberOfReplacements = findController().replaceMatches(matchIndices, replacementText, selectionOnly);
-    send(Messages::WebPageProxy::UnsignedCallback(numberOfReplacements, callbackID));
+    completionHandler(numberOfReplacements);
 }
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
@@ -5068,13 +5084,13 @@ void WebPage::endPrinting()
     }
 }
 
-void WebPage::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CallbackID callbackID)
+void WebPage::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& completionHandler)
 {
     Vector<IntRect> resultPageRects;
     double resultTotalScaleFactorForPrinting = 1;
     auto computedPageMargin = printInfo.margin;
     computePagesForPrintingImpl(frameID, printInfo, resultPageRects, resultTotalScaleFactorForPrinting, computedPageMargin);
-    send(Messages::WebPageProxy::ComputedPagesCallback(resultPageRects, resultTotalScaleFactorForPrinting, computedPageMargin, callbackID));
+    completionHandler(resultPageRects, resultTotalScaleFactorForPrinting, computedPageMargin);
 }
 
 void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintInfo& printInfo, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting, FloatBoxExtent& computedPageMargin)
@@ -5100,7 +5116,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 }
 
 #if PLATFORM(COCOA)
-void WebPage::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect, CallbackID callbackID)
+void WebPage::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect, CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
     auto& frameView = *m_page->mainFrame().view();
     IntSize snapshotSize;
@@ -5125,10 +5141,10 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect
     frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
     frameView.setPaintBehavior(originalPaintBehavior);
 
-    send(Messages::WebPageProxy::DrawToPDFCallback(IPC::DataReference(CFDataGetBytePtr(pdfData.get()), CFDataGetLength(pdfData.get())), callbackID));
+    completionHandler(IPC::DataReference(CFDataGetBytePtr(pdfData.get()), CFDataGetLength(pdfData.get())));
 }
 
-void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CallbackID callbackID)
+void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
@@ -5146,7 +5162,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
         auto bitmap = ShareableBitmap::createShareable(imageSize, { });
         if (!bitmap) {
             ASSERT_NOT_REACHED();
-            return;
+            return completionHandler({ });
         }
         auto graphicsContext = bitmap->createGraphicsContext();
         if (graphicsContext) {
@@ -5175,14 +5191,14 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     if (image)
         image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
-    send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
+    completionHandler(handle);
 }
 
-void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CallbackID callbackID)
+void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
-    send(Messages::WebPageProxy::DataCallback({ CFDataGetBytePtr(pdfPageData.get()), static_cast<size_t>(CFDataGetLength(pdfPageData.get())) }, callbackID));
+    callback({ CFDataGetBytePtr(pdfPageData.get()), static_cast<size_t>(CFDataGetLength(pdfPageData.get())) });
 }
 
 void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)
@@ -5236,21 +5252,17 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 }
 
 #elif PLATFORM(GTK)
-void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CallbackID callbackID)
+void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler)
 {
     beginPrinting(frameID, printInfo);
     if (m_printContext && m_printOperation) {
-        m_printOperation->startPrint(m_printContext.get(), callbackID);
+        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (const WebCore::ResourceError& error) mutable {
+            m_printOperation = nullptr;
+            completionHandler(error);
+        });
         return;
     }
-
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
-}
-
-void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, CallbackID callbackID)
-{
-    send(Messages::WebPageProxy::PrintFinishedCallback(error, callbackID));
-    m_printOperation = nullptr;
+    completionHandler({ });
 }
 #endif
 
@@ -5587,14 +5599,14 @@ void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>
     completionHandler(EditingRange::fromRange(frame, frame.selection().selection().toNormalizedRange()));
 }
 
-void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
+void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent,  HitTestRequest::AllowChildFrameContent };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
     auto editingRange = EditingRange::fromRange(frame, range);
-    send(Messages::WebPageProxy::UnsignedCallback(editingRange.location, callbackID));
+    completionHandler(editingRange.location);
 }
 
 void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& completionHandler)
@@ -6120,6 +6132,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
+#if PLATFORM(MAC)
+    m_didUpdateRenderingAfterCommittingLoad = false;
+#endif
 #if PLATFORM(IOS_FAMILY)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
@@ -6133,7 +6148,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IOS_TOUCH_EVENTS)
     EventDispatcher::TouchEventQueue queuedEvents;
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
-    cancelAsynchronousTouchEvents(queuedEvents);
+    cancelAsynchronousTouchEvents(WTFMove(queuedEvents));
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -6426,33 +6441,29 @@ void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Fram
     }
 }
 
-void WebPage::getBytecodeProfile(CallbackID callbackID)
+void WebPage::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)
 {
-    if (LIKELY(!commonVM().m_perBytecodeProfiler)) {
-        send(Messages::WebPageProxy::StringCallback(String(), callbackID));
-        return;
-    }
+    if (LIKELY(!commonVM().m_perBytecodeProfiler))
+        return callback({ });
 
     String result = commonVM().m_perBytecodeProfiler->toJSON();
     ASSERT(result.length());
-    send(Messages::WebPageProxy::StringCallback(result, callbackID));
+    callback(result);
 }
 
-void WebPage::getSamplingProfilerOutput(CallbackID callbackID)
+void WebPage::getSamplingProfilerOutput(CompletionHandler<void(const String&)>&& callback)
 {
 #if ENABLE(SAMPLING_PROFILER)
     SamplingProfiler* samplingProfiler = commonVM().samplingProfiler();
-    if (!samplingProfiler) {
-        send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
-        return;
-    }
+    if (!samplingProfiler)
+        return callback({ });
 
     StringPrintStream result;
     samplingProfiler->reportTopFunctions(result);
     samplingProfiler->reportTopBytecodes(result);
-    send(Messages::WebPageProxy::StringCallback(result.toString(), callbackID));
+    callback(result.toString());
 #else
-    send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
+    callback({ });
 #endif
 }
 
@@ -6898,21 +6909,21 @@ void WebPage::voicesDidChange()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPage::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID callbackID)
+void WebPage::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&& callback)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().insertAttachment(identifier, WTFMove(fileSize), fileName, contentType);
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    callback();
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CallbackID callbackID)
+void WebPage::updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CompletionHandler<void()>&& callback)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
         attachment->updateAttributes(WTFMove(fileSize), contentType, fileName);
         attachment->updateEnclosingImageWithData(contentType, SharedBuffer::create(enclosingImageData.data(), enclosingImageData.size()));
     }
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    callback();
 }
 
 void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
@@ -6936,30 +6947,24 @@ RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const Str
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(APPLICATION_MANIFEST)
-void WebPage::getApplicationManifest(CallbackID callbackID)
+void WebPage::getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&& completionHandler)
 {
-    ASSERT(callbackID.isValid());
     Document* mainFrameDocument = m_mainFrame->coreFrame()->document();
     DocumentLoader* loader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
-
-    if (!loader) {
-        send(Messages::WebPageProxy::ApplicationManifestCallback(WTF::nullopt, callbackID));
-        return;
-    }
+    if (!loader)
+        return completionHandler(WTF::nullopt);
 
     auto coreCallbackID = loader->loadApplicationManifest();
-    if (!coreCallbackID) {
-        send(Messages::WebPageProxy::ApplicationManifestCallback(WTF::nullopt, callbackID));
-        return;
-    }
+    if (!coreCallbackID)
+        return completionHandler(WTF::nullopt);
 
-    m_applicationManifestFetchCallbackMap.add(coreCallbackID, callbackID.toInteger());
+    m_applicationManifestFetchCallbackMap.add(coreCallbackID, WTFMove(completionHandler));
 }
 
 void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const Optional<WebCore::ApplicationManifest>& manifest)
 {
-    auto callbackID = CallbackID::fromInteger(m_applicationManifestFetchCallbackMap.take(coreCallbackID));
-    send(Messages::WebPageProxy::ApplicationManifestCallback(manifest, callbackID));
+    if (auto callback = m_applicationManifestFetchCallbackMap.take(coreCallbackID))
+        callback(manifest);
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 
@@ -7182,6 +7187,13 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::ShowMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items)), completionHandler);
+}
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #if !PLATFORM(IOS_FAMILY)
 

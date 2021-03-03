@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ImageTransferSessionVT;
 
-class RealtimeVideoCaptureSource : public RealtimeMediaSource {
+class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource {
 public:
     virtual ~RealtimeVideoCaptureSource();
 
@@ -49,6 +49,7 @@ public:
     virtual MediaSample::VideoRotation sampleRotation() const { return MediaSample::VideoRotation::None; }
 
     double observedFrameRate() const { return m_observedFrameRate; }
+    Vector<VideoPresetData> presetsData();
 
 protected:
     RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt);
@@ -68,8 +69,6 @@ protected:
     bool frameRateRangeIncludesRate(const FrameRateRange&, double);
 
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
-
-    void setDefaultSize(const IntSize& size) { m_defaultSize = size; }
 
     void dispatchMediaSampleToObservers(MediaSample&);
     const Vector<IntSize>& standardVideoSizes();
@@ -91,7 +90,6 @@ private:
     Vector<Ref<VideoPreset>> m_presets;
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
-    IntSize m_defaultSize;
 };
 
 struct SizeAndFrameRate {

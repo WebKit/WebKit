@@ -102,6 +102,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
 #if ENABLE(INPUT_TYPE_COLOR)
+    encoder << colorValue;
     encoder << suggestedColors;
 #endif
 #endif
@@ -228,6 +229,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
 #if ENABLE(INPUT_TYPE_COLOR)
+    if (!decoder.decode(result.colorValue))
+        return false;
+
     if (!decoder.decode(result.suggestedColors))
         return false;
 #endif

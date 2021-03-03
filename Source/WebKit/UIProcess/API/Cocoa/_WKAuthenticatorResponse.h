@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAuthenticatorResponse : NSObject
 
+@property (nonatomic, readonly) NSData *clientDataJSON;
 @property (nonatomic, readonly) NSData *rawId;
 @property (nullable, nonatomic, readonly, strong) _WKAuthenticationExtensionsClientOutputs *extensions;
 

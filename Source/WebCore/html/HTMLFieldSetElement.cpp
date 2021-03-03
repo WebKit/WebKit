@@ -139,12 +139,12 @@ void HTMLFieldSetElement::didMoveToNewDocument(Document& oldDocument, Document& 
 
 bool HTMLFieldSetElement::matchesValidPseudoClass() const
 {
-    return m_invalidDescendants.isEmpty();
+    return m_invalidDescendants.computesEmpty();
 }
 
 bool HTMLFieldSetElement::matchesInvalidPseudoClass() const
 {
-    return !m_invalidDescendants.isEmpty();
+    return !m_invalidDescendants.computesEmpty();
 }
 
 bool HTMLFieldSetElement::supportsFocus() const
@@ -177,20 +177,20 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& inv
 {
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(invalidFormControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT(static_cast<const Element&>(invalidFormControlElement).matchesInvalidPseudoClass());
-    ASSERT_WITH_MESSAGE(!m_invalidDescendants.contains(&invalidFormControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
+    ASSERT_WITH_MESSAGE(!m_invalidDescendants.contains(invalidFormControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
-    if (m_invalidDescendants.isEmpty())
+    if (m_invalidDescendants.computesEmpty())
         invalidateStyleForSubtree();
-    m_invalidDescendants.add(&invalidFormControlElement);
+    m_invalidDescendants.add(invalidFormControlElement);
 }
 
 void HTMLFieldSetElement::removeInvalidDescendant(const HTMLFormControlElement& formControlElement)
 {
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
-    ASSERT_WITH_MESSAGE(m_invalidDescendants.contains(&formControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
+    ASSERT_WITH_MESSAGE(m_invalidDescendants.contains(formControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
-    m_invalidDescendants.remove(&formControlElement);
-    if (m_invalidDescendants.isEmpty())
+    m_invalidDescendants.remove(formControlElement);
+    if (m_invalidDescendants.computesEmpty())
         invalidateStyleForSubtree();
 }
 

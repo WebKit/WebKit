@@ -39,20 +39,20 @@ int intValueForLength(const Length& length, LayoutUnit maximumValue)
 LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
 {
     switch (length.type()) {
-    case Fixed:
-    case Percent:
-    case Calculated:
+    case LengthType::Fixed:
+    case LengthType::Percent:
+    case LengthType::Calculated:
         return minimumValueForLength(length, maximumValue);
-    case FillAvailable:
-    case Auto:
+    case LengthType::FillAvailable:
+    case LengthType::Auto:
         return maximumValue;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FitContent:
+    case LengthType::Undefined:
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -64,22 +64,22 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
 float floatValueForLength(const Length& length, LayoutUnit maximumValue)
 {
     switch (length.type()) {
-    case Fixed:
+    case LengthType::Fixed:
         return length.value();
-    case Percent:
+    case LengthType::Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
-    case FillAvailable:
-    case Auto:
+    case LengthType::FillAvailable:
+    case LengthType::Auto:
         return static_cast<float>(maximumValue);
-    case Calculated:
+    case LengthType::Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FitContent:
+    case LengthType::Undefined:
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -90,22 +90,22 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue)
 float floatValueForLength(const Length& length, float maximumValue)
 {
     switch (length.type()) {
-    case Fixed:
+    case LengthType::Fixed:
         return length.value();
-    case Percent:
+    case LengthType::Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
-    case FillAvailable:
-    case Auto:
+    case LengthType::FillAvailable:
+    case LengthType::Auto:
         return static_cast<float>(maximumValue);
-    case Calculated:
+    case LengthType::Calculated:
         return length.nonNanCalculatedValue(maximumValue);
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FitContent:
+    case LengthType::Undefined:
         ASSERT_NOT_REACHED();
         return 0;
     }

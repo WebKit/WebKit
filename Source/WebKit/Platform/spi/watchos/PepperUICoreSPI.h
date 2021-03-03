@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "UIKitSPI.h"
 
@@ -53,6 +53,11 @@
 
 #if HAVE(QUICKBOARD_COLLECTION_VIEWS)
 #import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>
+#endif
+
+#if HAVE(QUICKBOARD_CONTROLLER)
+#import <PepperUICore/PUICQuickboardController.h>
+#import <PepperUICore/PUICQuickboardRemoteViewController.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -303,4 +308,4 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

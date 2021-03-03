@@ -179,14 +179,7 @@ if (ENABLE_WEB_AUDIO)
 endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA)
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
-    )
-
     list(APPEND WebCore_SOURCES
-        platform/encryptedmedia/CDMProxy.cpp
-        platform/encryptedmedia/CDMUtilities.cpp
-        platform/encryptedmedia/clearkey/CDMClearKey.cpp
         platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp
         platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp
     )
@@ -200,10 +193,6 @@ if (ENABLE_ENCRYPTED_MEDIA)
     )
 
     if (ENABLE_THUNDER)
-        list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-            "${WEBCORE_DIR}/platform/encryptedmedia/opencdm"
-        )
-
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${THUNDER_INCLUDE_DIRS}
         )
@@ -218,7 +207,6 @@ if (ENABLE_ENCRYPTED_MEDIA)
             platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
         )
     endif ()
-
 endif ()
 
 if (USE_CAIRO)

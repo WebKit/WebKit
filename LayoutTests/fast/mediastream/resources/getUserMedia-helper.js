@@ -1,12 +1,4 @@
 function getUserMedia(permission, constraints, successCallback, errorCallback) {
-    if (window.testRunner)
-        testRunner.setUserMediaPermission(permission == "allow");
-    else {
-        debug("This test can not be run without the testRunner");
-        finishJSTest();
-        return;
-    }
-
     navigator.mediaDevices
                 .getUserMedia(constraints)
                 .then(successCallback, reject)

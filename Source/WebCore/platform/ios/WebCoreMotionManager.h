@@ -26,6 +26,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 #import <CoreLocation/CoreLocation.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/WeakHashSet.h>
 
 constexpr float kMotionUpdateInterval = 1.0f / 60.0f;
@@ -37,11 +38,11 @@ class MotionManagerClient;
 }
 
 WEBCORE_EXPORT @interface WebCoreMotionManager : NSObject {
-    CMMotionManager* m_motionManager;
-    CLLocationManager* m_locationManager;
+    RetainPtr<CMMotionManager> m_motionManager;
+    RetainPtr<CLLocationManager> m_locationManager;
     WeakHashSet<WebCore::MotionManagerClient> m_deviceMotionClients;
     WeakHashSet<WebCore::MotionManagerClient> m_deviceOrientationClients;
-    NSTimer* m_updateTimer;
+    RetainPtr<NSTimer> m_updateTimer;
     BOOL m_gyroAvailable;
     BOOL m_headingAvailable;
     BOOL m_initialized;

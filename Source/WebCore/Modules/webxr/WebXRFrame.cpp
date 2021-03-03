@@ -48,10 +48,6 @@ WebXRFrame::WebXRFrame(Ref<WebXRSession>&& session)
 
 WebXRFrame::~WebXRFrame() = default;
 
-const WebXRSession& WebXRFrame::session() const
-{
-    return m_session;
-}
 
 RefPtr<WebXRViewerPose> WebXRFrame::getViewerPose(const WebXRReferenceSpace&)
 {

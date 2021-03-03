@@ -43,7 +43,7 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 @interface WebPolicyDecisionListenerPrivate : NSObject
 {
 @public
-    id target;
+    RetainPtr<id> target;
     SEL action;
 }
 
@@ -58,15 +58,9 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     self = [super init];
     if (!self)
         return nil;
-    target = [t retain];
+    target = t;
     action = a;
     return self;
-}
-
-- (void)dealloc
-{
-    [target release];
-    [super dealloc];
 }
 
 @end
@@ -91,14 +85,12 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 - (void)_usePolicy:(PolicyAction)policy
 {
     if (_private->target)
-        wtfObjCMsgSend<void>(_private->target, _private->action, policy);
+        wtfObjCMsgSend<void>(_private->target.get(), _private->action, policy);
 }
 
 - (void)_invalidate
 {
-    id target = _private->target;
     _private->target = nil;
-    [target release];
 }
 
 // WebPolicyDecisionListener implementation

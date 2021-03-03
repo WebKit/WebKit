@@ -4,9 +4,9 @@ Tests for the CSS.nodeLayoutContextTypeChanged event.
 == Running test suite: CSS.nodeLayoutContextTypeChanged
 -- Running test case: CSS.nodeLayoutContextTypeChanged.GridToNonGrid
 PASS: Layout context should be `grid`.
-PASS: Layout context should now be `undefined`.
+PASS: Layout context should now be `null`.
 
 -- Running test case: CSS.nodeLayoutContextTypeChanged.NonGridToGrid
-PASS: Layout context should be `undefined`.
+PASS: Layout context should be `null`.
 PASS: Layout context should now be `grid`.
 

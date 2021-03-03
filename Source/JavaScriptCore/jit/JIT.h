@@ -563,6 +563,8 @@ namespace JSC {
         void emit_op_get_by_id_direct(const Instruction*);
         void emit_op_get_by_val(const Instruction*);
         void emit_op_get_private_name(const Instruction*);
+        void emit_op_set_private_brand(const Instruction*);
+        void emit_op_check_private_brand(const Instruction*);
         void emit_op_get_argument_by_val(const Instruction*);
         void emit_op_get_prototype_of(const Instruction*);
         void emit_op_in_by_id(const Instruction*);
@@ -695,6 +697,8 @@ namespace JSC {
         void emitSlow_op_get_by_id_direct(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_set_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_in_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -985,6 +989,7 @@ namespace JSC {
         Vector<JITDelByIdGenerator> m_delByIds;
         Vector<JITDelByValGenerator> m_delByVals;
         Vector<JITInstanceOfGenerator> m_instanceOfs;
+        Vector<JITPrivateBrandAccessGenerator> m_privateBrandAccesses;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
         Vector<JumpTable> m_jmpTable;
@@ -1008,6 +1013,7 @@ namespace JSC {
         unsigned m_delByValIndex { UINT_MAX };
         unsigned m_delByIdIndex { UINT_MAX };
         unsigned m_instanceOfIndex { UINT_MAX };
+        unsigned m_privateBrandAccessIndex { UINT_MAX };
         unsigned m_byValInstructionIndex { UINT_MAX };
         unsigned m_callLinkInfoIndex { UINT_MAX };
         unsigned m_bytecodeCountHavingSlowCase { 0 };

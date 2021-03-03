@@ -41,9 +41,9 @@ using namespace WTR;
     if (!self)
         return nil;
 
-    _draggedImage = [image retain];
-    _draggingPasteboard = [pasteboard retain];
-    _draggingSource = [source retain];
+    _draggedImage = image;
+    _draggingPasteboard = pasteboard;
+    _draggingSource = source;
     _offset = offset;
     
     return self;
@@ -51,9 +51,6 @@ using namespace WTR;
 
 - (void)dealloc
 {
-    [_draggedImage release];
-    [_draggingPasteboard release];
-    [_draggingSource release];
     [super dealloc];
 }
 
@@ -82,17 +79,17 @@ using namespace WTR;
 
 - (NSImage *)draggedImage
 {
-    return _draggedImage;
+    return _draggedImage.get();
 }
 
 - (NSPasteboard *)draggingPasteboard
 {
-    return _draggingPasteboard;
+    return _draggingPasteboard.get();
 }
 
 - (id)draggingSource
 {
-    return _draggingSource;
+    return _draggingSource.get();
 }
 
 - (int)draggingSequenceNumber

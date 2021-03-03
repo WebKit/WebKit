@@ -41,6 +41,8 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 
+#include <pal/cf/CoreMediaSoftLink.h>
+
 namespace WebKit {
 using namespace PAL;
 using namespace WebCore;

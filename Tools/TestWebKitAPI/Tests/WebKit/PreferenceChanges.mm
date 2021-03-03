@@ -50,7 +50,11 @@ static bool receivedPreferenceNotification = false;
 }
 @end
 
+// FIXME: Remove this pragma once webkit.org/b/221848 is resolved.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-const-variable"
 static const CFStringRef globalDomain = kCFPreferencesAnyApplication;
+#pragma clang diagnostic pop
 static const CFStringRef testDomain = CFSTR("com.apple.avfoundation");
 
 #define TEST_KEY() ((CFStringRef)[NSString stringWithFormat:@"TestWebKitAPI_TestKey_%s", ::testing::UnitTest::GetInstance()->current_test_info()->name()])
@@ -147,6 +151,8 @@ TEST(WebKit, PreferenceChanges)
     CLEAR_DEFAULTS();
 }
 
+// FIXME: Re-enable these tests once webkit.org/b/221848  is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
 {
     CLEAR_DEFAULTS();
@@ -188,8 +194,6 @@ TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
     CLEAR_DEFAULTS();
 }
 
-// FIXME: Re-enable this test once rdar://70966379 is resolved.
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(WebKit, PreferenceChangesArray)
 {
     CLEAR_DEFAULTS();

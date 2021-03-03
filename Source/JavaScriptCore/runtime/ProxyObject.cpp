@@ -164,6 +164,26 @@ bool ProxyObject::performGet(JSGlobalObject* globalObject, PropertyName property
     return true;
 }
 
+// https://tc39.es/ecma262/#sec-completepropertydescriptor
+static void completePropertyDescriptor(PropertyDescriptor& desc)
+{
+    if (desc.isAccessorDescriptor()) {
+        if (!desc.getter())
+            desc.setGetter(jsUndefined());
+        if (!desc.setter())
+            desc.setSetter(jsUndefined());
+    } else {
+        if (!desc.value())
+            desc.setValue(jsUndefined());
+        if (!desc.writablePresent())
+            desc.setWritable(false);
+    }
+    if (!desc.enumerablePresent())
+        desc.setEnumerable(false);
+    if (!desc.configurablePresent())
+        desc.setConfigurable(false);
+}
+
 bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     NO_TAIL_CALLS();
@@ -234,6 +254,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
     PropertyDescriptor trapResultAsDescriptor;
     toPropertyDescriptor(globalObject, trapResult, trapResultAsDescriptor);
     RETURN_IF_EXCEPTION(scope, false);
+    completePropertyDescriptor(trapResultAsDescriptor);
     bool throwException = false;
     bool valid = validateAndApplyPropertyDescriptor(globalObject, nullptr, propertyName, isExtensible,
         trapResultAsDescriptor, isTargetPropertyDescriptorDefined, targetPropertyDescriptor, throwException);

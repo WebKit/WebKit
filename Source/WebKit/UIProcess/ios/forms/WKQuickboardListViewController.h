@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "PepperUICoreSPI.h"
 
@@ -62,4 +62,4 @@
 
 void configureStatusBarForController(PUICQuickboardViewController *, id <WKQuickboardViewControllerDelegate>);
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)

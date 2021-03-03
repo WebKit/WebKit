@@ -1651,9 +1651,8 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_setIBCreatorID:(NSString *)string
 {
-    NSString *old = classIBCreatorID;
+    auto old = adoptNS(classIBCreatorID);
     classIBCreatorID = [string copy];
-    [old release];
 }
 
 - (BOOL)isDOMPasteAllowed

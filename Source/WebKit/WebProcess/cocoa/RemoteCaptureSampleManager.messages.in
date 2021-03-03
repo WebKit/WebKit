@@ -26,6 +26,7 @@
 messages -> RemoteCaptureSampleManager NotRefCounted {
     AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
     AudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier id, MediaTime time, uint64_t numberOfFrames)
+    VideoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RemoteVideoSample sample)
 }
 
 #endif

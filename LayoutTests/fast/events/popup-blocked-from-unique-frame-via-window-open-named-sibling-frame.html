@@ -11,6 +11,6 @@ if (window.testRunner) {
 </head>
 <body>
 <iframe name="A"></iframe>
-<iframe name="B" src="data:text/html,<script>alert(window.open('about:blank', 'A') ? 'FAIL' : 'PASS');</script>"></iframe>
+<iframe name="B" src="data:text/html,<script>console.log(window.open('about:blank', 'A') ? 'FAIL' : 'PASS');</script>"></iframe>
 </body>
 </html>

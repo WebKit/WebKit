@@ -22,21 +22,30 @@
     description("This tests that when something is aria-modal inside an aria-hidden it is ignored.");
     window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-        shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
-        
-        document.getElementById("box").setAttribute("aria-modal", "true");
+    async function test() {
+        if (window.accessibilityController) {
+            shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
 
-        var backgroundContent = accessibilityController.accessibleElementById('bgContent');
-        shouldBeTrue("!backgroundContent || !backgroundContent.isValid()");
+            await new Promise(requestAnimationFrame);
 
-        document.getElementById("container").setAttribute("aria-hidden", "true");
+            document.getElementById("box").setAttribute("aria-modal", "true");
 
-        setTimeout(function() {
+            await new Promise(requestAnimationFrame);
+
+            backgroundContent = accessibilityController.accessibleElementById('bgContent');
+            shouldBeTrue("!backgroundContent || backgroundContent.isIgnored");
+
+            await new Promise(requestAnimationFrame);
+
+            document.getElementById("container").setAttribute("aria-hidden", "true");
+
+            await new Promise(requestAnimationFrame);
+
             shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
             finishJSTest();
-        }, 0);
-    }    
+        }
+    }
+    test();
 
 </script>
 

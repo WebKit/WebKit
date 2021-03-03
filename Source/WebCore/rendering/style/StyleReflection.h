@@ -54,7 +54,7 @@ public:
 
 private:
     StyleReflection()
-        : m_offset(0, Fixed)
+        : m_offset(0, LengthType::Fixed)
         , m_mask(NinePieceImage::Type::Mask)
     {
     }

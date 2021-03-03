@@ -1435,8 +1435,8 @@ void RenderStyle::setPageScaleTransform(float scale)
     TransformOperations transform;
     transform.operations().append(ScaleTransformOperation::create(scale, scale, ScaleTransformOperation::SCALE));
     setTransform(transform);
-    setTransformOriginX(Length(0, Fixed));
-    setTransformOriginY(Length(0, Fixed));
+    setTransformOriginX(Length(0, LengthType::Fixed));
+    setTransformOriginY(Length(0, LengthType::Fixed));
 }
 
 void RenderStyle::setTextShadow(std::unique_ptr<ShadowData> shadowData, bool add)
@@ -1825,16 +1825,16 @@ void RenderStyle::setWordSpacing(Length&& value)
 {
     float fontWordSpacing;
     switch (value.type()) {
-    case Auto:
+    case LengthType::Auto:
         fontWordSpacing = 0;
         break;
-    case Percent:
+    case LengthType::Percent:
         fontWordSpacing = value.percent() * fontCascade().spaceWidth() / 100;
         break;
-    case Fixed:
+    case LengthType::Fixed:
         fontWordSpacing = value.value();
         break;
-    case Calculated:
+    case LengthType::Calculated:
         fontWordSpacing = value.nonNanCalculatedValue(maxValueForCssLength);
         break;
     default:
@@ -2498,6 +2498,11 @@ ScrollSnapAlign RenderStyle::initialScrollSnapAlign()
     return { };
 }
 
+ScrollSnapStop RenderStyle::initialScrollSnapStop()
+{
+    return ScrollSnapStop::Normal;
+}
+
 const ScrollSnapType RenderStyle::scrollSnapType() const
 {
     return m_rareNonInheritedData->scrollSnapType;
@@ -2508,6 +2513,11 @@ const ScrollSnapAlign& RenderStyle::scrollSnapAlign() const
     return m_rareNonInheritedData->scrollSnapAlign;
 }
 
+ScrollSnapStop RenderStyle::scrollSnapStop() const
+{
+    return m_rareNonInheritedData->scrollSnapStop;
+}
+
 void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 {
     SET_VAR(m_rareNonInheritedData, scrollSnapType, type);
@@ -2516,6 +2526,11 @@ void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
 {
     SET_VAR(m_rareNonInheritedData, scrollSnapAlign, alignment);
+}
+
+void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
+{
+    SET_VAR(m_rareNonInheritedData, scrollSnapStop, stop);
 }
 
 bool RenderStyle::hasSnapPosition() const

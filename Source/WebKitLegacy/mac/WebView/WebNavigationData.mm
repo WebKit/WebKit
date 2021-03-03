@@ -24,32 +24,22 @@
  */
 
 #import "WebNavigationData.h"
+#import <wtf/RetainPtr.h>
 
 @interface WebNavigationDataPrivate : NSObject
 {
 @public
-    NSString *url;
-    NSString *title;
-    NSURLRequest *originalRequest;
-    NSURLResponse *response;
+    RetainPtr<NSString> url;
+    RetainPtr<NSString> title;
+    RetainPtr<NSURLRequest> originalRequest;
+    RetainPtr<NSURLResponse> response;
     BOOL hasSubstituteData;
-    NSString *clientRedirectSource;
+    RetainPtr<NSString> clientRedirectSource;
 }
 
 @end
 
 @implementation WebNavigationDataPrivate
-
-- (void)dealloc
-{
-    [url release];
-    [title release];
-    [originalRequest release];
-    [response release];
-    [clientRedirectSource release];
-
-    [super dealloc];
-}
 
 @end
 
@@ -62,34 +52,34 @@
         return nil;
     _private = [[WebNavigationDataPrivate alloc] init];
     
-    _private->url = [url retain];
-    _private->title = [title retain];
-    _private->originalRequest = [request retain];
-    _private->response = [response retain];
+    _private->url = url;
+    _private->title = title;
+    _private->originalRequest = request;
+    _private->response = response;
     _private->hasSubstituteData = hasSubstituteData;
-    _private->clientRedirectSource = [redirectSource retain];
+    _private->clientRedirectSource = redirectSource;
     
     return self;
 }
 
 - (NSString *)url
 {
-    return _private->url;
+    return _private->url.get();
 }
 
 - (NSString *)title
 {
-    return _private->title;
+    return _private->title.get();
 }
 
 - (NSURLRequest *)originalRequest
 {
-    return _private->originalRequest;
+    return _private->originalRequest.get();
 }
 
 - (NSURLResponse *)response
 {
-    return _private->response;
+    return _private->response.get();
 }
 
 - (BOOL)hasSubstituteData
@@ -99,7 +89,7 @@
 
 - (NSString *)clientRedirectSource
 {
-    return _private->clientRedirectSource;
+    return _private->clientRedirectSource.get();
 }
 
 - (void)dealloc

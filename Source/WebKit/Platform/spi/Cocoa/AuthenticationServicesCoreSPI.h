@@ -155,7 +155,7 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
-- (instancetype)initWithUser:(NSString *)user identityToken:(NSData *)identityToken;
+- (instancetype)initWithUser:(NSString *)user identityToken:(nullable NSData *)identityToken state:(nullable NSString *)state;
 
 @property (nonatomic, readonly, copy) NSString *user;
 @property (nonatomic, readonly, copy, nullable) NSData *identityToken;

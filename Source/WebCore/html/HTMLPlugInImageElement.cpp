@@ -64,11 +64,6 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
 {
 }
 
-void HTMLPlugInImageElement::finishCreating()
-{
-    scheduleUpdateForAfterStyleResolution();
-}
-
 HTMLPlugInImageElement::~HTMLPlugInImageElement()
 {
     if (m_needsDocumentActivationCallbacks)
@@ -102,7 +97,7 @@ bool HTMLPlugInImageElement::canLoadURL(const URL& completeURL) const
 {
     if (completeURL.protocolIsJavaScript()) {
         RefPtr<Document> contentDocument = this->contentDocument();
-        if (contentDocument && !document().securityOrigin().canAccess(contentDocument->securityOrigin()))
+        if (contentDocument && !document().securityOrigin().isSameOriginDomain(contentDocument->securityOrigin()))
             return false;
     }
 

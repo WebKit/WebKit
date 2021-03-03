@@ -41,7 +41,6 @@ typedef signed long CMItemCount;
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct __CVBuffer *CVImageBufferRef;
 typedef UInt32 VTDecodeInfoFlags;
-typedef UInt32 VTDecodeInfoFlags;
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
 namespace WebCore {

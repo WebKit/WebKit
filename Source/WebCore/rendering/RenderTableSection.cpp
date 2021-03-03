@@ -71,16 +71,16 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     if (logicalHeight.isPositive() || (logicalHeight.isRelative() && logicalHeight.value() >= 0)) {
         Length cRowLogicalHeight = row.logicalHeight;
         switch (logicalHeight.type()) {
-        case Percent:
+        case LengthType::Percent:
             if (!cRowLogicalHeight.isPercent() || cRowLogicalHeight.percent() < logicalHeight.percent())
                 row.logicalHeight = logicalHeight;
             break;
-        case Fixed:
+        case LengthType::Fixed:
             if (cRowLogicalHeight.isAuto() || cRowLogicalHeight.isRelative()
                 || (cRowLogicalHeight.isFixed() && cRowLogicalHeight.value() < logicalHeight.value()))
                 row.logicalHeight = logicalHeight;
             break;
-        case Relative:
+        case LengthType::Relative:
         default:
             break;
         }

@@ -217,6 +217,16 @@ void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
     for (auto& trackReader : m_trackReaders)
         trackReader->finishParsing();
 
+    if (m_duration.isIndefinite()) {
+        MediaTime greatestPresentationTime { MediaTime::invalidTime() };
+        for (auto& trackReader : m_trackReaders) {
+            if (greatestPresentationTime.isInvalid() || trackReader->greatestPresentationTime() > greatestPresentationTime)
+                greatestPresentationTime = trackReader->greatestPresentationTime();
+        }
+        if (greatestPresentationTime.isValid())
+            m_duration = greatestPresentationTime;
+    }
+
     parser->setDidParseInitializationDataCallback(nullptr);
     parser->setDidEncounterErrorDuringParsingCallback(nullptr);
     parser->setDidProvideMediaDataCallback(nullptr);
@@ -231,6 +241,9 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
     });
 
     if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginFormatReaderProperty_Duration())) {
+        if (m_duration.isIndefinite())
+            return kCMBaseObjectError_ValueNotAvailable;
+
         if (auto leakedDuration = adoptCF(CMTimeCopyAsDictionary(PAL::toCMTime(m_duration), allocator)).leakRef()) {
             *reinterpret_cast<CFDictionaryRef*>(valueCopy) = leakedDuration;
             return noErr;

@@ -17,6 +17,9 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     editing/libwpe/EditorLibWPE.cpp
 
+    page/playstation/ResourceUsageOverlayPlayStation.cpp
+    page/playstation/ResourceUsageThreadPlayStation.cpp
+
     page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
     page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeFixedNode.cpp

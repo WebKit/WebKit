@@ -651,11 +651,7 @@ void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
         frame = kit(core([m_pluginView webFrame])->loader().findFrameForNavigation(frameName));
         if (!frame) {
             WebView *currentWebView = [m_pluginView webView];
-            NSDictionary *features = [[NSDictionary alloc] init];
-            WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView
-                                                        createWebViewWithRequest:nil
-                                                                  windowFeatures:features];
-            [features release];
+            WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView createWebViewWithRequest:nil windowFeatures:@{ }];
 
             if (!newWebView) {
                 _WKPHLoadURLNotify(m_pluginHostProxy->port(), m_pluginID, pluginRequest->requestID(), NPERR_GENERIC_ERROR);

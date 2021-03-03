@@ -28,7 +28,7 @@
 #import "FontCache.h"
 #import "FontCascade.h"
 #import <CoreText/CoreText.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 

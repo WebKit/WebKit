@@ -64,10 +64,10 @@ public:
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, CallbackID callbackID) override
+    void startPrint(WebCore::PrintContext* printContext, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler) override
     {
         m_printContext = printContext;
-        m_callbackID = callbackID;
+        m_completionHandler = WTFMove(completionHandler);
 
         RefPtr<PrinterListGtk> printerList = PrinterListGtk::getOrCreate();
         ASSERT(printerList);
@@ -188,11 +188,11 @@ public:
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, CallbackID callbackID) override
+    void startPrint(WebCore::PrintContext* printContext, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler) override
     {
         m_printContext = printContext;
-        m_callbackID = callbackID;
         notImplemented();
+        completionHandler({ });
     }
 
     void startPage(cairo_t* cr) override
@@ -719,8 +719,8 @@ void WebPrintOperationGtk::printDone(const WebCore::ResourceError& error)
     m_printPagesIdleId = 0;
 
     // Print finished or failed, notify the UI process that we are done if the page hasn't been closed.
-    if (m_webPage)
-        m_webPage->didFinishPrintOperation(error, m_callbackID);
+    if (m_completionHandler)
+        m_completionHandler(error);
 }
 
 void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double yDPI)

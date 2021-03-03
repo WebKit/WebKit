@@ -21,12 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 
-if USE_BUILDBOT_VERSION2:
-    from buildbot.worker import Worker
-else:
-    from buildbot.buildslave import BuildSlave
+from buildbot.worker import Worker
 from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
 from buildbot.schedulers.forcesched import FixedParameter, ForceScheduler, StringParameter, BooleanParameter
 from buildbot.schedulers.filter import ChangeFilter
@@ -62,10 +58,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
     config = json.load(open('config.json'))
-    if USE_BUILDBOT_VERSION2:
-        c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
-    else:
-        c['slaves'] = [BuildSlave(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
+    c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
 
     c['schedulers'] = []
     for scheduler in config['schedulers']:
@@ -79,23 +72,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
     builderNames = [str(builder['name']) for builder in config['builders']]
     reason = StringParameter(name='reason', default='', size=40)
     properties = [BooleanParameter(name='is_clean', label='Force Clean build')]
-    if USE_BUILDBOT_VERSION2:
-        forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, properties=properties)
-    else:
-        forceScheduler = ForceScheduler(
-            name='force',
-            builderNames=builderNames,
-            reason=reason,
-
-            # Validate SVN revision: number or empty string
-            revision=StringParameter(name="revision", default="", regex=re.compile(r'^(\d*)$')),
-
-            # Disable default enabled input fields: branch, repository, project, additional properties
-            branch=FixedParameter(name="branch"),
-            repository=FixedParameter(name="repository"),
-            project=FixedParameter(name="project"),
-            properties=properties
-        )
+    forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, properties=properties)
     c['schedulers'].append(forceScheduler)
 
     c['builders'] = []
@@ -109,8 +86,6 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
                     raise Exception('Builder {} is for platform {} but has worker {} for platform {}!'.format(builder['name'], builder['platform'], worker['name'], worker['platform']))
                 break
 
-        if not USE_BUILDBOT_VERSION2:
-            builder['slavenames'] = builder.pop('workernames')
         platform = builder['platform']
 
         factoryName = builder.pop('factory')
@@ -129,10 +104,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         if not buildbot_identifiers_re.match(builder_name):
             raise Exception('Builder name "{}" is not a valid buildbot identifier.'.format(builder_name))
         for step in builder["factory"].steps:
-            if USE_BUILDBOT_VERSION2:
-                step_name = step.buildStep().name
-            else:
-                step_name = step[0].name
+            step_name = step.buildStep().name
             if len(step_name) > STEP_NAME_LENGTH_LIMIT:
                 raise Exception('step name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(step_name, STEP_NAME_LENGTH_LIMIT))
             if not buildbot_identifiers_re.match(step_name):
@@ -158,10 +130,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         if (category in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
-        if USE_BUILDBOT_VERSION2:
-            builder['tags'] = getTagsForBuilder(builder)
-        else:
-            builder['category'] = category
+        builder['tags'] = getTagsForBuilder(builder)
         c['builders'].append(builder)
 
 

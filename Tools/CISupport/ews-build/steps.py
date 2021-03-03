@@ -334,23 +334,13 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     jsc_paths = [
+        '.*jsc.*',
+        '.*javascriptcore.*',
         'JSTests/',
-        'Source/JavaScriptCore/',
         'Source/WTF/',
         'Source/bmalloc/',
-        'Makefile',
-        'Makefile.shared',
-        'Source/Makefile',
-        'Source/Makefile.shared',
+        '.*Makefile.*',
         'Tools/Scripts/build-webkit',
-        'Tools/Scripts/build-jsc',
-        'Tools/Scripts/jsc-stress-test-helpers/',
-        'Tools/Scripts/run-jsc',
-        'Tools/Scripts/run-jsc-benchmarks',
-        'Tools/Scripts/run-jsc-stress-tests',
-        'Tools/Scripts/run-javascriptcore-tests',
-        'Tools/Scripts/run-layout-jsc',
-        'Tools/Scripts/update-javascriptcore-test-results',
         'Tools/Scripts/webkitdirs.pm',
     ]
 
@@ -1197,17 +1187,20 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
 
 
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
-    name = 'build-webkit-old-unit-tests'
+    name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
-    command = ['python', 'steps_unittest_old.py']
+    command = ['python3', 'runUnittests.py', 'build-webkit-org']
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, workdir='build/Tools/CISupport/build-webkit-org', timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunBuildWebKitOrgUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        return shell.ShellCommand.start(self)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed build.webkit.org old unit tests'}
-        return {u'step': u'Failed build.webkit.org old unit tests'}
+            return {u'step': u'Passed build.webkit.org unit tests'}
+        return {u'step': u'Failed build.webkit.org unit tests'}
 
 
 class RunEWSUnitTests(shell.ShellCommand):

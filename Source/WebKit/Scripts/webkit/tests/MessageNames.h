@@ -30,17 +30,20 @@ namespace IPC {
 
 enum class ReceiverName : uint8_t {
     TestWithIfMessage = 1
-    , TestWithLegacyReceiver = 2
-    , TestWithSemaphore = 3
-    , TestWithSuperclass = 4
-    , TestWithoutAttributes = 5
-    , IPC = 6
-    , AsyncReply = 7
-    , Invalid = 8
+    , TestWithImageData = 2
+    , TestWithLegacyReceiver = 3
+    , TestWithSemaphore = 4
+    , TestWithSuperclass = 5
+    , TestWithoutAttributes = 6
+    , IPC = 7
+    , AsyncReply = 8
+    , Invalid = 9
 };
 
 enum class MessageName : uint16_t {
     TestWithIfMessage_LoadURL
+    , TestWithImageData_ReceiveImageData
+    , TestWithImageData_SendImageData
     , TestWithLegacyReceiver_AddEvent
     , TestWithLegacyReceiver_Close
     , TestWithLegacyReceiver_CreatePlugin

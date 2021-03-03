@@ -70,6 +70,29 @@ inline static Optional<RenderingResourceIdentifier> applyNativeImageItem(Graphic
     return resourceIdentifier;
 }
 
+inline static Optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
+{
+    auto& setStateItem = item.get<SetState>();
+
+    NativeImage* strokePatternImage = nullptr;
+    NativeImage* fillPatternImage = nullptr;
+
+    if (auto resourceIdentifier = setStateItem.strokePatternImageIdentifier()) {
+        strokePatternImage = nativeImages.get(resourceIdentifier);
+        if (!strokePatternImage)
+            return resourceIdentifier;
+    }
+
+    if (auto resourceIdentifier = setStateItem.fillPatternImageIdentifier()) {
+        fillPatternImage = nativeImages.get(resourceIdentifier);
+        if (!fillPatternImage)
+            return resourceIdentifier;
+    }
+
+    setStateItem.apply(context, strokePatternImage, fillPatternImage);
+    return WTF::nullopt;
+}
+
 template<class T>
 inline static Optional<RenderingResourceIdentifier> applyFontItem(GraphicsContext& context, const FontRenderingResourceMap& fonts, ItemHandle item)
 {
@@ -113,6 +136,12 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<DrawPattern>()) {
         if (auto missingCachedResourceIdentifier = applyNativeImageItem<DrawPattern>(m_context, m_nativeImages, item))
+            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
+        return { WTF::nullopt, WTF::nullopt };
+    }
+
+    if (item.is<SetState>()) {
+        if (auto missingCachedResourceIdentifier = applySetStateItem(m_context, m_nativeImages, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { WTF::nullopt, WTF::nullopt };
     }

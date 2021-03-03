@@ -79,16 +79,16 @@ static void addIntrinsicMargins(RenderStyle& style)
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
     if (style.width().isIntrinsicOrAuto()) {
         if (style.marginLeft().hasQuirk())
-            style.setMarginLeft(Length(intrinsicMargin, Fixed));
+            style.setMarginLeft(Length(intrinsicMargin, LengthType::Fixed));
         if (style.marginRight().hasQuirk())
-            style.setMarginRight(Length(intrinsicMargin, Fixed));
+            style.setMarginRight(Length(intrinsicMargin, LengthType::Fixed));
     }
 
     if (style.height().isAuto()) {
         if (style.marginTop().hasQuirk())
-            style.setMarginTop(Length(intrinsicMargin, Fixed));
+            style.setMarginTop(Length(intrinsicMargin, LengthType::Fixed));
         if (style.marginBottom().hasQuirk())
-            style.setMarginBottom(Length(intrinsicMargin, Fixed));
+            style.setMarginBottom(Length(intrinsicMargin, LengthType::Fixed));
     }
 }
 
@@ -392,7 +392,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
-                style.setHeight(Length(200, Fixed));
+                style.setHeight(Length(200, LengthType::Fixed));
         }
     }
 
@@ -703,7 +703,7 @@ bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& elemen
         style.fontCascade().update(&element.document().fontSelector());
     }
     if (auto newLineHeight = adjustment.newLineHeight)
-        style.setLineHeight({ *newLineHeight, Fixed });
+        style.setLineHeight({ *newLineHeight, LengthType::Fixed });
     if (auto newStatus = adjustment.newStatus)
         style.setAutosizeStatus(*newStatus);
     return adjustment.newFontSize || adjustment.newLineHeight;

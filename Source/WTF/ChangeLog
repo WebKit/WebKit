@@ -1,3 +1,180 @@
+2021-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=221893
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-02-15  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r272842) [GStreamer] Layout tests exiting early due to crashes after GPUProcess for media enabled by default for WTR
+        https://bugs.webkit.org/show_bug.cgi?id=221883
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Disable
+        UseGPUProcessForMediaEnabled when using GStreamer for now.
+
+2021-02-14  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Move UseGPUProcessForMediaEnabled from WebPreferencesInternal to WebPreferencesExperimental
+        https://bugs.webkit.org/show_bug.cgi?id=221310
+
+        Reviewed by Eric Carlson.
+
+        Move UseGPUProcessForMediaEnabled from WebPreferencesInternal to WebPreferencesExperimental,
+        so that the WebKitTestRunner will turn it on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        Enable JIT_CAGE when macOS is 120000 or higher with ARM64E.
+
+        * wtf/PlatformEnable.h:
+
+2021-02-12  Michael Saboff  <msaboff@apple.com>
+
+        [ARM64e] Harden Mach exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=221841
+
+        Reviewed by Geoffrey Garen.
+
+        For Darwin ARM64e platforms, we check to make sure that all thread state besides the PC hasn't
+        been modified by an exception handler.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::hashThreadState):
+
+2021-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add Experimental Opus Codec support
+        https://bugs.webkit.org/show_bug.cgi?id=221745
+
+        Reviewed by Eric Carlson.
+
+        Add a new experimental feature setting, disabled by default, controlling whether to
+        enable parsing of Opus tracks from WebM files.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
+2021-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce string copies when converting from NSString/CFStringRef to WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=221766
+
+        Reviewed by Geoff Garen.
+
+        This reduces the string copies from two to one which should speed up many things.
+        The cost is that for non-Latin1-encodable strings of length less than 1024, we now do an allocation
+        and a reallocation, whereas before we were doing just one allocation.  I think even in this case, though,
+        the cost of a reallocation should be comparable to the cost of doing a double string copy,
+        and the benefit of reducing a string copy everywhere is compelling.
+
+        I also reduced duplicate code by combining the CF and NS implementations.
+
+        * wtf/text/WTFString.h:
+        * wtf/text/cf/StringCF.cpp:
+        (WTF::String::String):
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String): Deleted.
+
+2021-02-11  Sam Weinig  <weinig@apple.com>
+
+        Returning sRGB from CG color space functions on failure is too error prone
+        https://bugs.webkit.org/show_bug.cgi?id=221676
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+        Add specific macros for color spaces supported by Core Graphics.
+
+2021-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reduce the overhead of DocumentFragment in innerHTML & outerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=221535
+        <rdar://problem/73861015>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a helper function for writing assertions.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrFactory::isInitialized const): Added.
+
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use HAVE(PEPPER_UI_CORE) instead of PLATFORM(WATCHOS) to guard code that uses PepperUICore
+        https://bugs.webkit.org/show_bug.cgi?id=221679
+
+        Reviewed by Tim Horton.
+
+        Add the `HAVE(PEPPER_UI_CORE)` compile-time flag.
+
+        * wtf/PlatformHave.h:
+
+2021-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Adopt PUICQuickboardController for text input
+        https://bugs.webkit.org/show_bug.cgi?id=221649
+
+        Reviewed by Tim Horton.
+
+        Add a new internal setting. See other ChangeLogs for more detail.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-02-09  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Add support for the language/subtitle tracks button using `UIMenu`
+        https://bugs.webkit.org/show_bug.cgi?id=221594
+        <rdar://problem/74129129>
+
+        Reviewed by Eric Carlson and Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Create a `MediaControlsContextMenusEnabled` setting for guarding an IDL hook to WK2 only.
+
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r269017): Speedometer2 1% regression
+        https://bugs.webkit.org/show_bug.cgi?id=221640
+
+        Reviewed by Mark Lam.
+
+        Reverting r269017, r269478, and r272095 because of Speedometer2 ~1% regression.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        * wtf/HashTraits.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        * wtf/MetaAllocator.h:
+
+2021-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add internal preference to control how AVOutputContext is allocated
+        https://bugs.webkit.org/show_bug.cgi?id=221583
+        <rdar://73830632>
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs should have an opaque origin

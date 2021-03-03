@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-static const char* rootTypeToString(SlotVisitor::RootMarkReason);
+static const char* rootTypeToString(RootMarkReason);
 
 NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
@@ -99,7 +99,7 @@ void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
 
-void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason rootMarkReason)
+void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, RootMarkReason rootMarkReason)
 {
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
@@ -111,7 +111,7 @@ void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::Roo
     auto locker = holdLock(m_buildingEdgeMutex);
 
     if (m_snapshotType == SnapshotType::GCDebuggingSnapshot && !from) {
-        if (rootMarkReason == SlotVisitor::RootMarkReason::None && m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+        if (rootMarkReason == RootMarkReason::None && m_snapshotType == SnapshotType::GCDebuggingSnapshot)
             WTFLogAlways("Cell %p is a root but no root marking reason was supplied", to);
 
         m_rootData.ensure(to, [] () -> RootData {
@@ -305,36 +305,36 @@ static const char* snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
     return "Inspector";
 }
 
-static const char* rootTypeToString(SlotVisitor::RootMarkReason type)
+static const char* rootTypeToString(RootMarkReason type)
 {
     switch (type) {
-    case SlotVisitor::RootMarkReason::None:
+    case RootMarkReason::None:
         return "None";
-    case SlotVisitor::RootMarkReason::ConservativeScan:
+    case RootMarkReason::ConservativeScan:
         return "Conservative scan";
-    case SlotVisitor::RootMarkReason::StrongReferences:
+    case RootMarkReason::StrongReferences:
         return "Strong references";
-    case SlotVisitor::RootMarkReason::ProtectedValues:
+    case RootMarkReason::ProtectedValues:
         return "Protected values";
-    case SlotVisitor::RootMarkReason::MarkListSet:
+    case RootMarkReason::MarkListSet:
         return "Mark list set";
-    case SlotVisitor::RootMarkReason::VMExceptions:
+    case RootMarkReason::VMExceptions:
         return "VM exceptions";
-    case SlotVisitor::RootMarkReason::StrongHandles:
+    case RootMarkReason::StrongHandles:
         return "Strong handles";
-    case SlotVisitor::RootMarkReason::Debugger:
+    case RootMarkReason::Debugger:
         return "Debugger";
-    case SlotVisitor::RootMarkReason::JITStubRoutines:
+    case RootMarkReason::JITStubRoutines:
         return "JIT stub routines";
-    case SlotVisitor::RootMarkReason::WeakSets:
+    case RootMarkReason::WeakSets:
         return "Weak sets";
-    case SlotVisitor::RootMarkReason::Output:
+    case RootMarkReason::Output:
         return "Output";
-    case SlotVisitor::RootMarkReason::DFGWorkLists:
+    case RootMarkReason::DFGWorkLists:
         return "DFG work lists";
-    case SlotVisitor::RootMarkReason::CodeBlocks:
+    case RootMarkReason::CodeBlocks:
         return "Code blocks";
-    case SlotVisitor::RootMarkReason::DOMGCOutput:
+    case RootMarkReason::DOMGCOutput:
         return "DOM GC output";
     }
     ASSERT_NOT_REACHED();

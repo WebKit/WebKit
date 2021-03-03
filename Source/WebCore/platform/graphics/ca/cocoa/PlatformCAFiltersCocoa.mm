@@ -320,22 +320,22 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         if (operation)
             amount = downcast<BasicColorMatrixFilterOperation>(*operation).amount();
 
-        CIVector* rowVector = nullptr;
+        RetainPtr<CIVector> rowVector;
         switch (internalFilterPropertyIndex) {
-        case 0: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], amount)
+        case 0: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], amount)
             Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], amount) W:0];
+            Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], amount) W:0]);
             break; // inputRVector
-        case 1: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], amount)
+        case 1: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], amount)
             Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], amount) W:0];
+            Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], amount) W:0]);
             break; // inputGVector
-        case 2: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], amount)
+        case 2: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], amount)
             Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0];
+            Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0]);
             break; // inputBVector
         }
-        value = adoptNS(rowVector);
+        value = WTFMove(rowVector);
 #endif
         break;
     }
@@ -375,14 +375,14 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         // The color matrix animation for invert does a scale of each color component by a value that goes from 
         // 1 (when amount is 0) to -1 (when amount is 1). Then the color values are offset by amount. This has the
         // effect of performing the operation: c' = c * -1 + 1, which inverts the color.
-        CIVector* rowVector = 0;
+        RetainPtr<CIVector> rowVector;
         switch (internalFilterPropertyIndex) {
-        case 0: rowVector = [[CIVector alloc] initWithX:multiplier Y:0 Z:0 W:0]; break; // inputRVector
-        case 1: rowVector = [[CIVector alloc] initWithX:0 Y:multiplier Z:0 W:0]; break; // inputGVector
-        case 2: rowVector = [[CIVector alloc] initWithX:0 Y:0 Z:multiplier W:0]; break; // inputBVector
-        case 3: rowVector = [[CIVector alloc] initWithX:amount Y:amount Z:amount W:0]; break; // inputBiasVector
+        case 0: rowVector = adoptNS([[CIVector alloc] initWithX:multiplier Y:0 Z:0 W:0]); break; // inputRVector
+        case 1: rowVector = adoptNS([[CIVector alloc] initWithX:0 Y:multiplier Z:0 W:0]); break; // inputGVector
+        case 2: rowVector = adoptNS([[CIVector alloc] initWithX:0 Y:0 Z:multiplier W:0]); break; // inputBVector
+        case 3: rowVector = adoptNS([[CIVector alloc] initWithX:amount Y:amount Z:amount W:0]); break; // inputBiasVector
         }
-        value = adoptNS(rowVector);
+        value = WTFMove(rowVector);
 #endif
         break;
     }
@@ -414,13 +414,13 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         if (operation)
             amount = downcast<BasicComponentTransferFilterOperation>(*operation).amount();
         
-        CIVector* rowVector = nullptr;
+        RetainPtr<CIVector> rowVector;
         switch (internalFilterPropertyIndex) {
-        case 0: rowVector = [[CIVector alloc] initWithX:amount Y:0 Z:0 W:0]; break; // inputRVector
-        case 1: rowVector = [[CIVector alloc] initWithX:0 Y:amount Z:0 W:0]; break; // inputGVector
-        case 2: rowVector = [[CIVector alloc] initWithX:0 Y:0 Z:amount W:0]; break; // inputBVector
+        case 0: rowVector = adoptNS([[CIVector alloc] initWithX:amount Y:0 Z:0 W:0]); break; // inputRVector
+        case 1: rowVector = adoptNS([[CIVector alloc] initWithX:0 Y:amount Z:0 W:0]); break; // inputGVector
+        case 2: rowVector = adoptNS([[CIVector alloc] initWithX:0 Y:0 Z:amount W:0]); break; // inputBVector
         }
-        value = adoptNS(rowVector);
+        value = WTFMove(rowVector);
 #endif
         break;
     }

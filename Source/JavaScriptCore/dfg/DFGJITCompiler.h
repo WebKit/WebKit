@@ -212,6 +212,11 @@ public:
         m_inByIds.append(InlineCacheWrapper<JITInByIdGenerator>(gen, slowPath));
     }
 
+    void addPrivateBrandAccess(const JITPrivateBrandAccessGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
+    }
+
     void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo* info)
     {
         m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, info));
@@ -362,6 +367,7 @@ private:
     Vector<InlineCacheWrapper<JITDelByValGenerator>, 4> m_delByVals;
     Vector<InlineCacheWrapper<JITInByIdGenerator>, 4> m_inByIds;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
+    Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     Vector<JSDirectTailCallRecord, 4> m_jsDirectTailCalls;

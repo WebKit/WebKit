@@ -82,7 +82,7 @@ JSValue iteratorStep(JSGlobalObject* globalObject, IterationRecord iterationReco
     return result;
 }
 
-void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord)
+void iteratorClose(JSGlobalObject* globalObject, JSValue iterator)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -94,7 +94,7 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
         catchScope.clearException();
     }
 
-    JSValue returnFunction = iterationRecord.iterator.get(globalObject, vm.propertyNames->returnKeyword);
+    JSValue returnFunction = iterator.get(globalObject, vm.propertyNames->returnKeyword);
     if (UNLIKELY(throwScope.exception()) || returnFunction.isUndefinedOrNull()) {
         if (exception)
             throwException(globalObject, throwScope, exception);
@@ -112,7 +112,7 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
 
     MarkedArgumentBuffer returnFunctionArguments;
     ASSERT(!returnFunctionArguments.hasOverflowed());
-    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallData, iterationRecord.iterator, returnFunctionArguments);
+    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallData, iterator, returnFunctionArguments);
 
     if (exception) {
         throwException(globalObject, throwScope, exception);
@@ -231,6 +231,50 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
     RETURN_IF_EXCEPTION(scope, { });
 
     return { iterator, nextMethod };
+}
+
+IterationMode getIterationMode(VM& vm, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator)
+{
+    if (!iterable.inherits<JSArray>(vm))
+        return IterationMode::Generic;
+
+    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+        return IterationMode::Generic;
+
+    // This is correct because we just checked the watchpoint is still valid.
+    JSFunction* symbolIteratorFunction = jsDynamicCast<JSFunction*>(vm, symbolIterator);
+    if (!symbolIteratorFunction)
+        return IterationMode::Generic;
+
+    // We don't want to allocate the values function just to check if it's the same as our function so we use the concurrent accessor.
+    // FIXME: This only works for arrays from the same global object as ourselves but we should be able to support any pairing.
+    if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
+        return IterationMode::Generic;
+
+    return IterationMode::FastArray;
+}
+
+IterationMode getIterationMode(VM& vm, JSGlobalObject* globalObject, JSValue iterable)
+{
+    if (!iterable.inherits<JSArray>(vm))
+        return IterationMode::Generic;
+
+    JSArray* array = jsCast<JSArray*>(iterable);
+    Structure* structure = array->structure(vm);
+    // FIXME: We want to support broader JSArrays as long as array[@@iterator] is not defined.
+    if (!globalObject->isOriginalArrayStructure(structure))
+        return IterationMode::Generic;
+
+    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+        return IterationMode::Generic;
+
+    // Now, Array has original Array Structures and arrayIteratorProtocolWatchpointSet is not fired.
+    // This means,
+    // 1. Array.prototype is [[Prototype]].
+    // 2. array[@@iterator] is not overridden.
+    // 3. Array.prototype[@@iterator] is an expected one.
+    // So, we can say this will create an expected ArrayIterator.
+    return IterationMode::FastArray;
 }
 
 } // namespace JSC

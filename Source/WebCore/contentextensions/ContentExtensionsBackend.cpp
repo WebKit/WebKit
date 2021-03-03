@@ -57,8 +57,10 @@ namespace ContentExtensions {
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/ContentRuleListAdditions.mm>
 #else
-static void makeSecureIfNecessary(ContentRuleListResults&, const URL&)
+static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url)
 {
+    if (url.protocolIs("http") && url.host() == "www.opengl.org")
+        results.summary.madeHTTPS = true;
 }
 #endif
 
@@ -235,7 +237,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         if (results.summary.madeHTTPS) {
             ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
             String newProtocol = url.protocolIs("http") ? "https"_s : "wss"_s;
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", url.string(), " to ", newProtocol));
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from ", url.string(), " to ", newProtocol));
         }
         if (results.summary.blockedLoad) {
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));

@@ -96,11 +96,13 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-f', config_file_path,
             '-C', 'DocumentRoot "%s"' % document_root,
             '-c', 'TypesConfig "%s"' % mime_types_path,
-            '-c', 'PHPINIDir "%s"' % php_ini_dir,
             '-c', 'CustomLog "%s" common' % access_log,
             '-c', 'ErrorLog "%s"' % error_log,
             '-c', 'PidFile "%s"' % self._pid_file,
             '-k', "start"]
+
+        if 'php' in self._filesystem.read_text_file(config_file_path):
+            start_cmd.extend(['-c', 'PHPINIDir "{}"'.format(php_ini_dir)])
 
         for (alias, path) in self.aliases():
             start_cmd.extend(['-c', 'Alias %s "%s"' % (alias, path)])

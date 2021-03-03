@@ -57,7 +57,7 @@ public:
     template<typename T> SendSyncResult sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, Seconds timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
 
     enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
-    template<typename T, typename C> void sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    template<typename T, typename C> uint64_t sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
     
     template<typename T, typename U>
     bool send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { })
@@ -182,7 +182,7 @@ AuxiliaryProcessProxy::SendSyncResult AuxiliaryProcessProxy::sendSync(U&& messag
 }
 
 template<typename T, typename C>
-void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -196,6 +196,7 @@ void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandle
         else
             T::cancelReply(WTFMove(completionHandler));
     }, listenerID }}, shouldStartProcessThrottlerActivity);
+    return listenerID;
 }
     
 } // namespace WebKit

@@ -95,6 +95,21 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     auto layerContentsType = m_drawingArea->hasDebugIndicator() ? RemoteLayerBackingStore::LayerContentsType::IOSurface : RemoteLayerBackingStore::LayerContentsType::CAMachPort;
 #endif
     
+    for (auto& [layerID, propertiesPointer] : transaction.changedLayerProperties()) {
+        const RemoteLayerTreeTransaction::LayerProperties& properties = *propertiesPointer;
+
+        auto* node = nodeForID(layerID);
+        ASSERT(node);
+
+        if (!node) {
+            // We have evidence that this can still happen, but don't know how (see r241899 for one already-fixed cause).
+            RELEASE_LOG_IF_ALLOWED("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID);
+            continue;
+        }
+
+        RemoteLayerTreePropertyApplier::applyHierarchyUpdates(*node, properties, m_nodes);
+    }
+
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;
         const RemoteLayerTreeTransaction::LayerProperties& properties = *changedLayer.value;
@@ -243,11 +258,8 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
 #if !PLATFORM(IOS_FAMILY)
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    auto makeWithLayer = [&] (RetainPtr<CALayer> layer) {
+    auto makeWithLayer = [&] (RetainPtr<CALayer>&& layer) {
         return makeUnique<RemoteLayerTreeNode>(properties.layerID, WTFMove(layer));
-    };
-    auto makeAdoptingLayer = [&] (CALayer* layer) {
-        return makeWithLayer(adoptNS(layer));
     };
 
     switch (properties.type) {
@@ -262,13 +274,13 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeTransformLayer:
-        return makeAdoptingLayer([[CATransformLayer alloc] init]);
+        return makeWithLayer(adoptNS([[CATransformLayer alloc] init]));
 
     case PlatformCALayer::LayerTypeBackdropLayer:
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
 #if ENABLE(FILTERS_LEVEL_2)
-        return makeAdoptingLayer([[CABackdropLayer alloc] init]);
+        return makeWithLayer(adoptNS([[CABackdropLayer alloc] init]));
 #else
         ASSERT_NOT_REACHED();
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
@@ -281,7 +293,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeWithLayer([CALayer _web_renderLayerWithContextID:properties.hostingContextID]);
 
     case PlatformCALayer::LayerTypeShapeLayer:
-        return makeAdoptingLayer([[CAShapeLayer alloc] init]);
+        return makeWithLayer(adoptNS([[CAShapeLayer alloc] init]));
             
     default:
         ASSERT_NOT_REACHED();

@@ -239,11 +239,13 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 #if ENABLE(MEDIA_STREAM)
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID(), ", video: ", request.videoDevice().label(), ", audio: ", request.audioDevice().label());
 
+    if (request.requestType() == MediaStreamRequest::Type::UserMedia)
+        m_grantedRequests.append(makeRef(request));
+
     if (auto callback = request.decisionCompletionHandler()) {
         m_page.willStartCapture(request, [callback = WTFMove(callback)]() mutable {
             callback(true);
         });
-        m_grantedRequests.append(makeRef(request));
         return;
     }
 
@@ -272,11 +274,6 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         if (!weakThis)
             return;
 
-        auto& request = strongRequest.get();
-
-        if (request.requestType() == MediaStreamRequest::Type::UserMedia)
-            m_grantedRequests.append(makeRef(request));
-
         // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
         if (m_hasFilteredDeviceList)
             captureDevicesChanged(PermissionInfo::Granted);
@@ -292,6 +289,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         }
 #endif
 
+        auto& request = strongRequest.get();
         m_page.sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt(), handle }, [this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;

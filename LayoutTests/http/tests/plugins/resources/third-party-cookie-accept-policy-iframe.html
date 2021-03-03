@@ -22,8 +22,8 @@ plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?
 
 function trySetCookie()
 {
-   alert("Cookies should be clear, and are: '" + document.cookie + "'");
-   alert("About to set a cookie, but on localhost instead of 127.0.0.1, which is our main document domain - This should fail.");
+   console.log("Cookies should be clear, and are: '" + document.cookie + "'");
+   console.log("About to set a cookie, but on localhost instead of 127.0.0.1, which is our main document domain - This should fail.");
     if (window.testRunner)
         testRunner.setAlwaysAcceptCookies(false);
    plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie", null, "completeTest");
@@ -31,7 +31,7 @@ function trySetCookie()
 
 function completeTest()
 {
-   alert("Cookies should still be clear, and are: '" + document.cookie + "'");
+   console.log("Cookies should still be clear, and are: '" + document.cookie + "'");
    resetCookies();
    if (window.testRunner)
        testRunner.notifyDone();

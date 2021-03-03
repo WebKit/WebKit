@@ -75,7 +75,11 @@ namespace JSC {
     macro(OperationGetPrivateNameOptimize) \
     macro(OperationGetPrivateNameById) \
     macro(OperationGetPrivateNameByIdOptimize) \
-    macro(OperationGetPrivateNameByIdGeneric)
+    macro(OperationGetPrivateNameByIdGeneric) \
+    macro(CheckPrivateBrandAddAccessCase) \
+    macro(SetPrivateBrandAddAccessCase) \
+    macro(CheckPrivateBrandReplaceWithJump) \
+    macro(SetPrivateBrandReplaceWithJump)
 
 class ICEvent {
 public:

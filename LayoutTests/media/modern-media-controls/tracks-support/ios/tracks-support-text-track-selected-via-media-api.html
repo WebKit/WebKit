@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<script src="../../resources/media-controls-utils.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../../content/counting-subtitled.m4v" style="position: absolute; left: 0; top: 0; width: 300px;" controls autoplay muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description(`This test checks that setting an embedded text track as selected via the HTMLMediaElement JS APIs will correctly show this track as selected, and that selecting the 
+"Automatic (Recommended)" track will revert back to selecting that entry.`);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Setting mode to 'showing' for first text track via JavaScript...");
+            media.textTracks[0].mode = "showing";
+
+            {
+                debug("Tapping tracks button...");
+                let [contextmenu] = await Promise.all([
+                    getTracksContextMenu(),
+                    pressOnElement(shadowRoot.querySelector("button.tracks")),
+                ]);
+                debug(JSON.stringify(contextmenu, null, 2));
+
+                debug("Selecting first text track...");
+                await UIHelper.chooseMenuAction(contextmenu[0].children[1].title);
+                await UIHelper.waitForContextMenuToHide();
+            }
+
+            shouldBe("media.textTracks[0].mode", "'disabled'");
+            shouldBe("media.textTracks[1].mode", "'showing'");
+
+            {
+                debug("Tapping tracks button...");
+                let [contextmenu] = await Promise.all([
+                    getTracksContextMenu(),
+                    pressOnElement(shadowRoot.querySelector("button.tracks")),
+                ]);
+                debug(JSON.stringify(contextmenu, null, 2));
+            }
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

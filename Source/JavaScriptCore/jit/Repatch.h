@@ -53,6 +53,8 @@ void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, con
 void repatchPutByID(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, StructureStubInfo&, DelByKind, ECMAMode);
 void repatchInByID(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, StructureStubInfo&);
+void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, StructureStubInfo&);
+void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, StructureStubInfo&);
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
 void linkFor(VM&, CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
 void linkDirectFor(CallFrame*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
@@ -64,6 +66,8 @@ void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
 void resetInByID(CodeBlock*, StructureStubInfo&);
 void resetInstanceOf(StructureStubInfo&);
+void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
+void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
 MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM&, CodeSpecializationKind, JSObject* callee);
 

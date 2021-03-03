@@ -1445,14 +1445,12 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
 
     [[m_playerViewController view] layoutIfNeeded];
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
-        m_enterFullscreenNeedsEnterFullscreen = true;
         [m_window setHidden:NO];
         [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL success, NSError *error) {
-            enterFullscreenHandler(success, error);
+            enterFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         }];
         return;
     }
-    m_enterFullscreenNeedsEnterFullscreen = false;
 
     if (m_targetMode.hasPictureInPicture() && !m_currentMode.hasPictureInPicture()) {
         m_enterFullscreenNeedsEnterPictureInPicture = true;
@@ -1470,13 +1468,11 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
     m_enterFullscreenNeedsEnterPictureInPicture = false;
 
     if (!m_targetMode.hasFullscreen() && m_currentMode.hasFullscreen()) {
-        m_enterFullscreenNeedsExitFullscreen = true;
         [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
-            exitFullscreenHandler(success, error);
+            exitFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         }];
         return;
     }
-    m_enterFullscreenNeedsExitFullscreen = false;
 
     if (!m_targetMode.hasPictureInPicture() && m_currentMode.hasPictureInPicture()) {
         m_enterFullscreenNeedsExitPictureInPicture = true;
@@ -1514,13 +1510,11 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     m_exitFullscreenNeedInlineRect = false;
 
     if (m_currentMode.hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-        m_exitFullscreenNeedsExitFullscreen = true;
         [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
-            exitFullscreenHandler(success, error);
+            exitFullscreenHandler(success, error, NextAction::NeedsExitFullScreen);
         }];
         return;
     }
-    m_exitFullscreenNeedsExitFullscreen = false;
 
     if (m_currentMode.hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         m_exitFullscreenNeedsExitPictureInPicture = true;
@@ -1547,7 +1541,7 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     });
 }
 
-void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError* error)
+void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError* error, NextActions nextActions)
 {
     if (!success)
         WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
@@ -1567,28 +1561,31 @@ void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError*
         [CATransaction commit];
     }
 
-    if (m_enterFullscreenNeedsExitFullscreen)
+    if (nextActions.contains(NextAction::NeedsEnterFullScreen))
         doEnterFullscreen();
     
-    if (m_exitFullscreenNeedsExitFullscreen)
+    if (nextActions.contains(NextAction::NeedsExitFullScreen))
         doExitFullscreen();
 }
 
-void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError* error)
+void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError* error, NextActions nextActions)
 {
-    if (!success)
+    if (!success) {
         WTFLogAlways("-[AVPlayerViewController enterFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p)", this);
     if (!m_standby) {
-        setMode(HTMLMediaElementEnums::VideoFullscreenModeStandard, !m_enterFullscreenNeedsEnterFullscreen);
+        setMode(HTMLMediaElementEnums::VideoFullscreenModeStandard, !nextActions.contains(NextAction::NeedsEnterFullScreen));
         [m_playerViewController setShowsPlaybackControls:YES];
     } else
         [m_playerViewController setShowsPlaybackControls:NO];
 
     m_restoringFullscreenForPictureInPictureStop = false;
 
-    if (m_enterFullscreenNeedsEnterFullscreen)
+    if (nextActions.contains(NextAction::NeedsEnterFullScreen))
         doEnterFullscreen();
 }
 

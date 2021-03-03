@@ -104,13 +104,16 @@ private:
     bool isXRPermissionGranted(XRSessionMode, const XRSessionInit&, PlatformXR::Device*, JSC::JSGlobalObject&) const;
 
     // https://immersive-web.github.io/webxr/#default-inline-xr-device
-    class DummyInlineDevice final : public PlatformXR::Device {
+    class DummyInlineDevice final : public PlatformXR::Device, private ContextDestructionObserver {
     public:
-        DummyInlineDevice();
+        explicit DummyInlineDevice(ScriptExecutionContext&);
 
     private:
         void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
         void shutDownTrackingAndRendering() final { }
+        void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { };
+
+        void requestFrame(PlatformXR::Device::RequestFrameCallback&&) final;
     };
     DummyInlineDevice m_defaultInlineDevice;
 

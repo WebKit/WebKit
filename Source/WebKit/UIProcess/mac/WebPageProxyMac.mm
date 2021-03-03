@@ -49,6 +49,7 @@
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
+#import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
 #import <WebCore/DictionaryLookup.h>
@@ -649,6 +650,20 @@ void WebPageProxy::willPerformPasteCommand()
 PlatformView* WebPageProxy::platformView() const
 {
     return [pageClient().platformWindow() contentView];
+}
+
+bool WebPageProxy::useiTunesAVOutputContext() const
+{
+    return m_preferences->store().getBoolValueForKey(WebPreferencesKey::useiTunesAVOutputContextKey());
+}
+
+void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
+{
+    if (m_hasUpdatedRenderingAfterDidCommitLoad)
+        return;
+
+    m_hasUpdatedRenderingAfterDidCommitLoad = true;
+    stopMakingViewBlankDueToLackOfRenderingUpdate();
 }
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

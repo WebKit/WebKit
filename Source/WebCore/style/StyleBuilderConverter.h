@@ -111,6 +111,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
+    static ScrollSnapStop convertScrollSnapStop(BuilderState&, const CSSValue&);
 #endif
     static GridTrackSize convertGridTrackSize(BuilderState&, const CSSValue&);
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
@@ -207,19 +208,19 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
     }
 
     if (primitiveValue.isPercentage())
-        return Length(primitiveValue.doubleValue(), Percent);
+        return Length(primitiveValue.doubleValue(), LengthType::Percent);
 
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
 
     ASSERT_NOT_REACHED();
-    return Length(0, Fixed);
+    return Length(0, LengthType::Fixed);
 }
 
 inline Length BuilderConverter::convertLengthOrAuto(const BuilderState& builderState, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
-        return Length(Auto);
+        return Length(LengthType::Auto);
     return convertLength(builderState, value);
 }
 
@@ -230,22 +231,22 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
     case CSSValueInvalid:
         return convertLength(builderState, value);
     case CSSValueIntrinsic:
-        return Length(Intrinsic);
+        return Length(LengthType::Intrinsic);
     case CSSValueMinIntrinsic:
-        return Length(MinIntrinsic);
+        return Length(LengthType::MinIntrinsic);
     case CSSValueMinContent:
     case CSSValueWebkitMinContent:
-        return Length(MinContent);
+        return Length(LengthType::MinContent);
     case CSSValueMaxContent:
     case CSSValueWebkitMaxContent:
-        return Length(MaxContent);
+        return Length(LengthType::MaxContent);
     case CSSValueWebkitFillAvailable:
-        return Length(FillAvailable);
+        return Length(LengthType::FillAvailable);
     case CSSValueFitContent:
     case CSSValueWebkitFitContent:
-        return Length(FitContent);
+        return Length(LengthType::FitContent);
     case CSSValueAuto:
-        return Length(Auto);
+        return Length(LengthType::Auto);
     default:
         ASSERT_NOT_REACHED();
         return Length();
@@ -255,7 +256,7 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
 inline Length BuilderConverter::convertLengthMaxSizing(const BuilderState& builderState, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
-        return Length(Undefined);
+        return Length(LengthType::Undefined);
     return convertLengthSizing(builderState, value);
 }
 
@@ -319,7 +320,7 @@ inline float BuilderConverter::convertSpacing(BuilderState& builderState, const 
 inline Length BuilderConverter::convertToRadiusLength(CSSToLengthConversionData& conversionData, const CSSPrimitiveValue& value)
 {
     if (value.isPercentage())
-        return Length(value.doubleValue(), Percent);
+        return Length(value.doubleValue(), LengthType::Percent);
     if (value.isCalculatedPercentageWithLength())
         return Length(value.cssCalcValue()->createCalculationValue(conversionData));
     return value.computeLength<Length>(conversionData);
@@ -329,7 +330,7 @@ inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, co
 {
     auto* pair = downcast<CSSPrimitiveValue>(value).pairValue();
     if (!pair || !pair->first() || !pair->second())
-        return { { 0, Fixed }, { 0, Fixed } };
+        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 
     CSSToLengthConversionData conversionData = builderState.cssToLengthConversionData();
     LengthSize radius { convertToRadiusLength(conversionData, *pair->first()), convertToRadiusLength(conversionData, *pair->second()) };
@@ -337,7 +338,7 @@ inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, co
     ASSERT(!radius.width.isNegative());
     ASSERT(!radius.height.isNegative());
     if (radius.width.isZero() || radius.height.isZero())
-        return { { 0, Fixed }, { 0, Fixed } };
+        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 
     return radius;
 }
@@ -345,12 +346,12 @@ inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, co
 inline Length BuilderConverter::convertTo100PercentMinusLength(const Length& length)
 {
     if (length.isPercent())
-        return Length(100 - length.value(), Percent);
+        return Length(100 - length.value(), LengthType::Percent);
     
     // Turn this into a calc expression: calc(100% - length)
     Vector<std::unique_ptr<CalcExpressionNode>> lengths;
     lengths.reserveInitialCapacity(2);
-    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, Percent)));
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)));
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
@@ -384,11 +385,11 @@ inline Length BuilderConverter::convertPositionComponent(BuilderState& builderSt
     if (value.isValueID()) {
         switch (value.valueID()) {
         case cssValueFor0:
-            return Length(0, Percent);
+            return Length(0, LengthType::Percent);
         case cssValueFor100:
-            return Length(100, Percent);
+            return Length(100, LengthType::Percent);
         case CSSValueCenter:
-            return Length(50, Percent);
+            return Length(50, LengthType::Percent);
         default:
             ASSERT_NOT_REACHED();
         }
@@ -930,15 +931,21 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
     return alignment;
 }
 
+inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    return downcast<CSSPrimitiveValue>(value);
+}
+
 #endif
 
 inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveValue& primitiveValue, BuilderState& builderState)
 {
     if (primitiveValue.valueID() == CSSValueMinContent || primitiveValue.valueID() == CSSValueWebkitMinContent)
-        return Length(MinContent);
+        return Length(LengthType::MinContent);
 
     if (primitiveValue.valueID() == CSSValueMaxContent || primitiveValue.valueID() == CSSValueWebkitMaxContent)
-        return Length(MaxContent);
+        return Length(LengthType::MaxContent);
 
     // Fractional unit.
     if (primitiveValue.isFlex())
@@ -1208,9 +1215,9 @@ inline Optional<Length> BuilderConverter::convertWordSpacing(BuilderState& build
     else if (primitiveValue.isLength())
         wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(builderState));
     else if (primitiveValue.isPercentage())
-        wordSpacing = Length(clampTo<float>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
+        wordSpacing = Length(clampTo<float>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
     else if (primitiveValue.isNumber())
-        wordSpacing = Length(primitiveValue.doubleValue(), Fixed);
+        wordSpacing = Length(primitiveValue.doubleValue(), LengthType::Fixed);
 
     return wordSpacing;
 }
@@ -1535,7 +1542,7 @@ inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builde
         auto conversionData = builderState.cssToLengthConversionData().copyWithAdjustedZoomAndPropertyToCompute(zoomWithTextZoomFactor(builderState), CSSPropertyLineHeight);
         Length length = primitiveValue.computeLength<Length>(conversionData);
         if (multiplier != 1.f)
-            length = Length(length.value() * multiplier, Fixed);
+            length = Length(length.value() * multiplier, LengthType::Fixed);
         return length;
     }
 
@@ -1547,10 +1554,10 @@ inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builde
     // values and raw numbers to percentages.
     if (primitiveValue.isPercentage()) {
         // FIXME: percentage should not be restricted to an integer here.
-        return Length((builderState.style().computedFontSize() * primitiveValue.intValue()) / 100, Fixed);
+        return Length((builderState.style().computedFontSize() * primitiveValue.intValue()) / 100, LengthType::Fixed);
     }
     if (primitiveValue.isNumber())
-        return Length(primitiveValue.doubleValue() * 100.0, Percent);
+        return Length(primitiveValue.doubleValue() * 100.0, LengthType::Percent);
 
     // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
     // type of this function to return just a Length (and not an Optional).

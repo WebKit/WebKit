@@ -1168,8 +1168,13 @@ class Port(object):
 
     def _darwin_php_version(self):
         if self._is_darwin_php_version_7():
-            return "-php7"
-        return ""
+            return '-php7'
+        if self._filesystem.isdir('/usr/libexec/apache2'):
+            for file in self._filesystem.listdir('/usr/libexec/apache2'):
+                if 'php' in file:
+                    return ''
+            return '-x'
+        return ''
 
     def _fedora_php_version(self):
         if self._is_fedora_php_version_7():

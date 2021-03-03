@@ -31,13 +31,14 @@
 
 #include "Connection.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteAudioTrackProxyMessages.h"
+#include "RemoteMediaPlayerProxyMessages.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
 
-AudioTrackPrivateRemote::AudioTrackPrivateRemote(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+AudioTrackPrivateRemote::AudioTrackPrivateRemote(IPC::Connection& connection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
     : m_connection(connection)
+    , m_playerIdentifier(playerIdentifier)
     , m_idendifier(idendifier)
 {
     updateConfiguration(WTFMove(configuration));
@@ -46,7 +47,7 @@ AudioTrackPrivateRemote::AudioTrackPrivateRemote(IPC::Connection& connection, Tr
 void AudioTrackPrivateRemote::setEnabled(bool enabled)
 {
     if (enabled != this->enabled())
-        m_connection.send(Messages::RemoteAudioTrackProxy::SetEnabled(enabled), m_idendifier);
+        m_connection.send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_idendifier, enabled), m_playerIdentifier);
 
     AudioTrackPrivate::setEnabled(enabled);
 }

@@ -5,11 +5,11 @@
 <script src="../resources/inspector-test.js"></script>
 <script>
 function createFetchForPHP200() {
-    fetch("resources/fetch-cachable.php", { headers: { 'X-Status-Code-Needed': '200' } });
+    fetch("resources/fetch-cachable.py", { headers: { 'X-Status-Code-Needed': '200' } });
 }
 
 function createFetchForPHP304() {
-    fetch("resources/fetch-cachable.php", { headers: { 'X-Status-Code-Needed': '304' } });
+    fetch("resources/fetch-cachable.py", { headers: { 'X-Status-Code-Needed': '304' } });
 }
 
 function createFetchForFile200() {

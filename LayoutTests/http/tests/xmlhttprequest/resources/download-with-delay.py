@@ -21,7 +21,7 @@ print(iteration)
 print(delay)
 
 for i in range(iteration):
-    print(i)
+    print(i + 1)
     print('foobar')
     sys.stdout.flush()
     time.sleep(delay / 1000)

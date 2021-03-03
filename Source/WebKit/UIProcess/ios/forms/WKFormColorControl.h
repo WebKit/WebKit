@@ -33,4 +33,8 @@
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
+@interface WKFormColorControl (WKTesting)
+- (void)selectColor:(UIColor *)color;
+@end
+
 #endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)

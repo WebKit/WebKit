@@ -94,7 +94,6 @@ public:
     ExceptionOr<void> setWebGPUEnabled(bool);
     ExceptionOr<void> setFetchAPIKeepAliveEnabled(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
-    ExceptionOr<void> setWebRTCPlatformCodecsInGPUProcessEnabled(bool);
 
     bool vp9DecoderEnabled() const;
 

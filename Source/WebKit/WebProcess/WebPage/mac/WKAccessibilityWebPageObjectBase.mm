@@ -131,10 +131,7 @@ namespace ax = WebCore::Accessibility;
 - (void)setRemoteParent:(id)parent
 {
     ASSERT(isMainThread());
-    if (parent != m_parent) {
-        [m_parent release];
-        m_parent = [parent retain];
-    }
+    m_parent = parent;
 }
 
 - (id)accessibilityFocusedUIElement

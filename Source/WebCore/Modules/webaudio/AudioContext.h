@@ -115,7 +115,7 @@ private:
     void mayResumePlayback(bool shouldResume) override;
     void suspendPlayback() override;
     bool canReceiveRemoteControlCommands() const override { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override { }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) override { }
     bool supportsSeeking() const override { return false; }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
     bool canProduceAudio() const final { return true; }

@@ -259,11 +259,11 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         evalContextType = EvalContextType::None;
 
     TDZEnvironment variablesUnderTDZ;
-    VariableEnvironment privateNames;
-    JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ, privateNames);
+    PrivateNameEnvironment privateNameEnvironment;
+    JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
-    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNames, ecmaMode);
+    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

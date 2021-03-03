@@ -184,6 +184,8 @@ public:
     inline bool getPrivateField(JSGlobalObject*, PropertyName, PropertySlot&);
     inline void setPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     inline void definePrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    inline bool checkPrivateBrand(JSGlobalObject*, JSValue brand);
+    inline void setPrivateBrand(JSGlobalObject*, JSValue brand);
 
     unsigned getArrayLength() const
     {

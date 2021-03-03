@@ -176,6 +176,10 @@ public:
         m_impl = nullptr;
     }
 
+#if ASSERT_ENABLED
+    bool isInitialized() const { return m_impl; }
+#endif
+
 private:
     template<typename, typename> friend class WeakHashSet;
 

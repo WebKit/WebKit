@@ -28,7 +28,7 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(COCOA)
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #else
 #include <pal/spi/win/CoreTextSPIWin.h>
 #endif

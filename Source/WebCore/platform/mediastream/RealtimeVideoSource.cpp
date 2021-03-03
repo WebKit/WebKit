@@ -50,6 +50,17 @@ RealtimeVideoSource::~RealtimeVideoSource()
     m_source->removeObserver(*this);
 }
 
+void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
+{
+    m_source->whenReady([this, protectedThis = makeRef(*this), callback = WTFMove(callback)](auto message) mutable {
+        setName(String { m_source->name() });
+        m_currentSettings = m_source->settings();
+        setSize(m_source->size());
+        setFrameRate(m_source->frameRate());
+        callback(WTFMove(message));
+    });
+}
+
 void RealtimeVideoSource::startProducingData()
 {
     m_source->start();

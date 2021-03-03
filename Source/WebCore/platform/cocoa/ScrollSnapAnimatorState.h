@@ -52,7 +52,7 @@ enum class ScrollSnapState {
 class ScrollSnapAnimatorState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    const Vector<LayoutUnit>& snapOffsetsForAxis(ScrollEventAxis axis) const
+    const Vector<SnapOffset<LayoutUnit>>& snapOffsetsForAxis(ScrollEventAxis axis) const
     {
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsets : m_snapOffsetsInfo.verticalSnapOffsets;
     }
@@ -65,7 +65,7 @@ public:
     const ScrollSnapOffsetsInfo<LayoutUnit>& snapOffsetInfo() const { return m_snapOffsetsInfo; }
     void setSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>& newInfo) { m_snapOffsetsInfo = newInfo; }
 
-    void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
+    void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<SnapOffset<LayoutUnit>>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
     {
         if (axis == ScrollEventAxis::Horizontal) {
             m_snapOffsetsInfo.horizontalSnapOffsets = snapOffsets;

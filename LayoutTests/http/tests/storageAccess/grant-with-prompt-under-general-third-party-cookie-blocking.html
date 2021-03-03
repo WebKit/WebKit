@@ -69,7 +69,7 @@
             switch (document.location.hash) {
                 case "":
                     setEnableFeature(true, function() {
-                        document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?dummy=" + Math.random() + "&name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html#firstTest";
+                        document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.py?dummy=" + Math.random() + "&name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html#firstTest";
                     });
                     break;
                 case "#firstTest":

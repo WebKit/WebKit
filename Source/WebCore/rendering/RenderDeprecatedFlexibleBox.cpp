@@ -1133,9 +1133,9 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
             LayoutUnit width = contentWidthForChild(child);
             if (!child->style().maxWidth().isUndefined() && child->style().maxWidth().isFixed())
                 maxWidth = child->style().maxWidth().value();
-            else if (child->style().maxWidth().type() == Intrinsic)
+            else if (child->style().maxWidth().type() == LengthType::Intrinsic)
                 maxWidth = child->maxPreferredLogicalWidth();
-            else if (child->style().maxWidth().type() == MinIntrinsic)
+            else if (child->style().maxWidth().isMinIntrinsic())
                 maxWidth = child->minPreferredLogicalWidth();
             if (maxWidth == LayoutUnit::max())
                 return maxWidth;
@@ -1158,11 +1158,11 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
         LayoutUnit width = contentWidthForChild(child);
         if (child->style().minWidth().isFixed())
             minWidth = child->style().minWidth().value();
-        else if (child->style().minWidth().type() == Intrinsic)
+        else if (child->style().minWidth().type() == LengthType::Intrinsic)
             minWidth = child->maxPreferredLogicalWidth();
-        else if (child->style().minWidth().type() == MinIntrinsic)
+        else if (child->style().minWidth().isMinIntrinsic())
             minWidth = child->minPreferredLogicalWidth();
-        else if (child->style().minWidth().type() == Auto)
+        else if (child->style().minWidth().isAuto())
             minWidth = 0;
 
         LayoutUnit allowedShrinkage = std::min<LayoutUnit>(0, minWidth - width);

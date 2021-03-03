@@ -191,7 +191,11 @@ class Svn(Scm):
     @property
     @decorators.Memoize()
     def _cache_path(self):
-        return os.path.join(tempfile.gettempdir(), 'svn.{}'.format(self.URL_RE.match(self.url).group('host')), 'webkitscmpy-cache.json')
+        from webkitscmpy.mocks import remote
+        host = 'svn.{}'.format(self.URL_RE.match(self.url).group('host'))
+        if host in remote.Svn.remotes:
+            host = 'mock-{}'.format(host)
+        return os.path.join(tempfile.gettempdir(), host, 'webkitscmpy-cache.json')
 
     def _cache_lock(self):
         return fasteners.InterProcessLock(os.path.join(os.path.dirname(self._cache_path), 'cache.lock'))

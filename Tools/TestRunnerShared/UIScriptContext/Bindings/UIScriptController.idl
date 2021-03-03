@@ -235,6 +235,9 @@ interface UIScriptController {
     readonly attribute boolean isShowingDataListSuggestions;
     undefined activateDataListSuggestion(unsigned long index, object callback);
 
+    // <input type=color>
+    undefined setSelectedColorForColorPicker(double red, double green, double blue);
+
     undefined keyboardAccessoryBarNext();
     undefined keyboardAccessoryBarPrevious();
 

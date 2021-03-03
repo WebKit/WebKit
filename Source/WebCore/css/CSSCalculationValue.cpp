@@ -420,7 +420,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValueNode::createCalcExpress
     case CalculationCategory::Number:
         return makeUnique<CalcExpressionNumber>(m_value->floatValue());
     case CalculationCategory::Length:
-        return makeUnique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
+        return makeUnique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), LengthType::Fixed));
     case CalculationCategory::Percent:
     case CalculationCategory::PercentLength: {
         return makeUnique<CalcExpressionLength>(m_value->convertToLength<FixedFloatConversion | PercentConversion>(conversionData));
@@ -2027,20 +2027,20 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const RenderStyle& style)
 {
     switch (length.type()) {
-    case Percent:
-    case Fixed:
+    case LengthType::Percent:
+    case LengthType::Fixed:
         return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(length, style));
-    case Calculated:
+    case LengthType::Calculated:
         return createCSS(length.calculationValue().expression(), style);
-    case Auto:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FillAvailable:
-    case FitContent:
-    case Relative:
-    case Undefined:
+    case LengthType::Auto:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FillAvailable:
+    case LengthType::FitContent:
+    case LengthType::Relative:
+    case LengthType::Undefined:
         ASSERT_NOT_REACHED();
     }
     return nullptr;

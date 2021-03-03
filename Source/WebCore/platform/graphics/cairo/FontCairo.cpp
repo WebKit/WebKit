@@ -48,22 +48,19 @@
 
 namespace WebCore {
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer,
-    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBufferGlyph* glyphs,
+    const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point,
+    FontSmoothingMode fontSmoothingMode)
 {
     if (!font.platformData().size())
         return;
 
     auto xOffset = point.x();
-    Vector<cairo_glyph_t> glyphs(numGlyphs);
+    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
     {
-        ASSERT(from + numGlyphs <= glyphBuffer.size());
-        auto* glyphsData = glyphBuffer.glyphs(from);
-        auto* advances = glyphBuffer.advances(from);
-
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
-            glyphs[i] = { glyphsData[i], xOffset, yOffset };
+            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
             xOffset += advances[i].width();
             yOffset += advances[i].height();
         }
@@ -75,7 +72,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
     Cairo::drawGlyphs(*context.platformContext(), Cairo::FillSource(state), Cairo::StrokeSource(state),
-        Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,
+        Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
         state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
         fontSmoothingMode);
 }

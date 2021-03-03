@@ -156,12 +156,12 @@ void ResourceRequest::doUpdatePlatformRequest()
         return;
     }
 
-    NSMutableURLRequest *nsRequest = [m_nsRequest.get() mutableCopy];
+    auto nsRequest = adoptNS([m_nsRequest.get() mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
-        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
+        nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
     if (ResourceRequest::httpPipeliningEnabled())
         CFURLRequestSetShouldPipelineHTTP([nsRequest _CFURLRequest], true, true);
@@ -187,7 +187,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
-    [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, nsRequest.URL) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
+    [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, [nsRequest URL]) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
     [nsRequest _setProperty:m_isTopSite ? @YES : @NO forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
@@ -208,7 +208,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
         NSString *partitionValue = [NSString stringWithUTF8String:partition.utf8().data()];
-        [NSURLProtocol setProperty:partitionValue forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest];
+        [NSURLProtocol setProperty:partitionValue forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest.get()];
     }
 
 #if PLATFORM(MAC)
@@ -222,7 +222,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 #endif
 
-    m_nsRequest = adoptNS(nsRequest);
+    m_nsRequest = WTFMove(nsRequest);
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()
@@ -232,16 +232,16 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         return;
     }
 
-    NSMutableURLRequest *nsRequest = [m_nsRequest.get() mutableCopy];
+    auto nsRequest = adoptNS([m_nsRequest.get() mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
-        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
+        nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
     FormData* formData = httpBody();
     if (formData && !formData->isEmpty())
-        WebCore::setHTTPBody(nsRequest, formData);
+        WebCore::setHTTPBody(nsRequest.get(), formData);
 
     if (NSInputStream *bodyStream = [nsRequest HTTPBodyStream]) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
@@ -254,7 +254,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         }
     }
 
-    m_nsRequest = adoptNS(nsRequest);
+    m_nsRequest = WTFMove(nsRequest);
 }
 
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)

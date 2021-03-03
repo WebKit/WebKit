@@ -1,4 +1,4 @@
-ALERT: PASS
+CONSOLE MESSAGE: PASS
 
 
 --------

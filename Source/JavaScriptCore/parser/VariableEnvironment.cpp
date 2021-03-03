@@ -104,6 +104,40 @@ void VariableEnvironment::markVariableAsExported(const RefPtr<UniquedStringImpl>
     findResult->value.setIsExported();
 }
 
+bool VariableEnvironment::declarePrivateMethod(const RefPtr<UniquedStringImpl>& identifier)
+{
+    if (!m_rareData)
+        m_rareData = makeUnique<VariableEnvironment::RareData>();
+
+    auto findResult = m_rareData->m_privateNames.find(identifier);
+
+    if (findResult == m_rareData->m_privateNames.end()) {
+        PrivateNameEntry meta(PrivateNameEntry::Traits::IsDeclared | PrivateNameEntry::Traits::IsMethod);
+
+        auto entry = VariableEnvironmentEntry();
+        entry.setIsPrivateMethod();
+        entry.setIsConst();
+        entry.setIsCaptured();
+        m_map.add(identifier, entry);
+
+        auto addResult = m_rareData->m_privateNames.add(identifier, meta);
+        return addResult.isNewEntry;
+    }
+
+    if (findResult->value.isDeclared())
+        return false; // Error: declaring a duplicate private name.
+
+    auto entry = VariableEnvironmentEntry();
+    entry.setIsPrivateMethod();
+    entry.setIsConst();
+    entry.setIsCaptured();
+    m_map.add(identifier, entry);
+
+    // it was previously used, mark it as declared.
+    PrivateNameEntry meta(PrivateNameEntry::Traits::IsDeclared | PrivateNameEntry::Traits::IsUsed | PrivateNameEntry::Traits::IsMethod);
+    auto addResult = m_rareData->m_privateNames.set(identifier, meta);
+    return !addResult.isNewEntry;
+}
 
 void CompactTDZEnvironment::sortCompact(Compact& compact)
 {

@@ -37,20 +37,19 @@
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
-    _layers = [[NSMutableArray alloc] init];
+    _layers = adoptNS([[NSMutableArray alloc] init]);
     return self;
 }
 
 - (void)dealloc
 {
     [self _removeAllLayers];
-    [_layers release];
     [super dealloc];
 }
 
 - (void)_removeAllLayers
 {
-    for (CAShapeLayer *layer in _layers)
+    for (CAShapeLayer *layer in _layers.get())
         [layer removeFromSuperlayer];
     [_layers removeAllObjects];
 }
@@ -63,10 +62,9 @@
     [self _removeAllLayers];
 
     for (NSUInteger i = 0; i < numLayers; ++i) {
-        CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-        [_layers addObject:layer];
-        [self.layer addSublayer:layer];
-        [layer release];
+        auto layer = adoptNS([[CAShapeLayer alloc] init]);
+        [_layers addObject:layer.get()];
+        [self.layer addSublayer:layer.get()];
     }
 }
 

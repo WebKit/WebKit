@@ -58,6 +58,7 @@
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -78,6 +79,7 @@ class TextStream;
 namespace WebCore {
 class Color;
 class FloatQuad;
+class FloatRect;
 class IntSize;
 class SelectionRect;
 struct ContactInfo;
@@ -119,6 +121,13 @@ class WebPageProxy;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 
+#if HAVE(PEPPER_UI_CORE)
+@class PUICQuickboardViewController;
+#if HAVE(QUICKBOARD_CONTROLLER)
+@class PUICQuickboardController;
+#endif
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
 #endif
@@ -136,6 +145,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(_addShortcut) \
     M(_define) \
     M(_lookup) \
+    M(_translate) \
     M(_promptForReplace) \
     M(_share) \
     M(_showTextStyleOptions) \
@@ -448,14 +458,17 @@ private:
     BOOL _hasSetUpAppHighlightMenus;
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
-    RetainPtr<UIViewController> _presentedFullScreenInputViewController;
+#if HAVE(QUICKBOARD_CONTROLLER)
+    RetainPtr<PUICQuickboardController> _presentedQuickboardController;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+    RetainPtr<PUICQuickboardViewController> _presentedFullScreenInputViewController;
     RetainPtr<UINavigationController> _inputNavigationViewControllerForFullScreenInputs;
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
     BlockPtr<void()> _activeFocusedStateRetainBlock;
-#endif
+#endif // HAVE(PEPPER_UI_CORE)
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;
@@ -616,6 +629,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)accessoryDone;
 - (void)accessoryOpen;
 
+- (void)updateFocusedElementValueAsColor:(UIColor *)value;
 - (void)updateFocusedElementValueAsNumber:(double)value;
 - (void)updateFocusedElementValue:(NSString *)value;
 
@@ -672,6 +686,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+- (void)_showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 - (BOOL)_formControlRefreshEnabled;
 #endif
@@ -685,6 +703,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_simulateTextEntered:(NSString *)text;
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
+- (void)setSelectedColorForColorPicker:(UIColor *)color;
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (double)timePickerValueHour;
 - (double)timePickerValueMinute;

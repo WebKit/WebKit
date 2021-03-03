@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ void DOMGCOutputConstraint::executeImpl(SlotVisitor& visitor)
     m_clientData.forEachOutputConstraintSpace(
         [&] (Subspace& subspace) {
             auto func = [] (SlotVisitor& visitor, HeapCell* heapCell, HeapCell::Kind) {
-                SetRootMarkReasonScope rootScope(visitor, SlotVisitor::RootMarkReason::DOMGCOutput);
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::DOMGCOutput);
                 JSCell* cell = static_cast<JSCell*>(heapCell);
                 cell->methodTable(visitor.vm())->visitOutputConstraints(cell, visitor);
             };

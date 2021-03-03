@@ -93,8 +93,7 @@ private:
 #endif
 
     // RemoteCommandListenerClient
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument* argument) final { processDidReceiveRemoteControlCommand(type, argument); }
-    bool supportsSeeking() const final { return computeSupportsSeeking(); }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument) final { processDidReceiveRemoteControlCommand(type, argument); }
 
     // AudioHardwareListenerClient
     void audioHardwareDidBecomeActive() final { }

@@ -4557,18 +4557,18 @@ inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int length
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
     if (isFontRelativeLength() && convertingToLengthRequiresNonNullStyle(supported) && !conversionData.style())
-        return Length(Undefined);
+        return Length(LengthType::Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(conversionData);
     if ((supported & FixedFloatConversion) && isLength())
-        return Length(computeLength<double>(conversionData), Fixed);
+        return Length(computeLength<double>(conversionData), LengthType::Fixed);
     if ((supported & PercentConversion) && isPercentage())
-        return Length(doubleValue(), Percent);
+        return Length(doubleValue(), LengthType::Percent);
     if ((supported & AutoConversion) && valueID() == CSSValueAuto)
-        return Length(Auto);
+        return Length(LengthType::Auto);
     if ((supported & CalculatedConversion) && isCalculated())
         return Length(cssCalcValue()->createCalculationValue(conversionData));
-    return Length(Undefined);
+    return Length(LengthType::Undefined);
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BufferedRendering e)
@@ -5404,6 +5404,34 @@ template<> inline CSSPrimitiveValue::operator ScrollSnapAxisAlignType() const
     default:
         ASSERT_NOT_REACHED();
         return ScrollSnapAxisAlignType::None;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapStop snapStop)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (snapStop) {
+    case ScrollSnapStop::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case ScrollSnapStop::Always:
+        m_value.valueID = CSSValueAlways;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ScrollSnapStop() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return ScrollSnapStop::Normal;
+    case CSSValueAlways:
+        return ScrollSnapStop::Always;
+    default:
+        ASSERT_NOT_REACHED();
+        return ScrollSnapStop::Normal;
     }
 }
 

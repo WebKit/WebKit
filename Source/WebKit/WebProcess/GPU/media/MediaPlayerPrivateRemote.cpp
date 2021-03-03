@@ -468,7 +468,7 @@ FloatSize MediaPlayerPrivateRemote::naturalSize() const
 void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
     auto addResult = m_audioTracks.ensure(identifier, [&] {
-        return AudioTrackPrivateRemote::create(connection(), identifier, WTFMove(configuration));
+        return AudioTrackPrivateRemote::create(connection(), m_id, identifier, WTFMove(configuration));
     });
     ASSERT(addResult.isNewEntry);
 
@@ -504,7 +504,7 @@ void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivate
 void MediaPlayerPrivateRemote::addRemoteTextTrack(TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
 {
     auto addResult = m_textTracks.ensure(identifier, [&] {
-        return TextTrackPrivateRemote::create(connection(), identifier, WTFMove(configuration));
+        return TextTrackPrivateRemote::create(connection(), m_id, identifier, WTFMove(configuration));
     });
     ASSERT(addResult.isNewEntry);
 
@@ -622,7 +622,7 @@ void MediaPlayerPrivateRemote::removeGenericCue(TrackPrivateRemoteIdentifier ide
 void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
     auto addResult = m_videoTracks.ensure(identifier, [&] {
-        return VideoTrackPrivateRemote::create(connection(), identifier, WTFMove(configuration));
+        return VideoTrackPrivateRemote::create(connection(), m_id, identifier, WTFMove(configuration));
     });
     ASSERT(addResult.isNewEntry);
 

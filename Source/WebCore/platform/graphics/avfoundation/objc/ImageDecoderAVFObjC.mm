@@ -533,6 +533,20 @@ bool ImageDecoderAVFObjC::frameHasAlphaAtIndex(size_t index) const
     return sampleData ? sampleData->hasAlpha() : false;
 }
 
+Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
+{
+    if (m_sampleData.empty())
+        return { };
+
+    Vector<ImageDecoder::FrameInfo> infos;
+    for (auto& sample : m_sampleData.presentationOrder()) {
+        auto* imageSample = (ImageDecoderAVFObjCSample*)sample.second.get();
+        infos.append({ imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble())});
+    }
+
+    return infos;
+}
+
 bool ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex(size_t index) const
 {
     return index <= m_sampleData.size();
@@ -572,7 +586,6 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
         } while (--m_cursor != m_sampleData.decodeOrder().begin());
     }
 
-    RetainPtr<CGImageRef> image;
     while (true) {
         if (decodeTime < m_cursor->second->decodeTime())
             return nullptr;

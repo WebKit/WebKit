@@ -843,7 +843,7 @@ Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigi
 {
     GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
     for (auto& responseOrigin : m_origins) {
-        if (!origin.canAccess(*responseOrigin)) {
+        if (!origin.isSameOriginDomain(*responseOrigin)) {
             GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
             return true;
         }

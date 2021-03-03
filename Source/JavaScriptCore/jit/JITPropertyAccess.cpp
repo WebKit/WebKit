@@ -142,6 +142,79 @@ void JIT::emitSlow_op_get_private_name(const Instruction* currentInstruction, Ve
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
+void JIT::emit_op_set_private_brand(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpSetPrivateBrand>();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister brand = bytecode.m_brand;
+    GPRReg baseGPR = regT0;
+    GPRReg brandGPR = regT1;
+    emitGetVirtualRegister(base, baseGPR);
+    emitGetVirtualRegister(brand, brandGPR);
+
+    emitJumpSlowCaseIfNotJSCell(baseGPR, base);
+
+    JITPrivateBrandAccessGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(baseGPR), JSValueRegs(brandGPR));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_privateBrandAccesses.append(gen);
+
+    // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
+}
+
+void JIT::emitSlow_op_set_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    GPRReg baseGPR = regT0;
+    GPRReg brandGPR = regT1;
+
+    linkAllSlowCases(iter);
+
+    JITPrivateBrandAccessGenerator& gen = m_privateBrandAccesses[m_privateBrandAccessIndex];
+    ++m_privateBrandAccessIndex;
+    Label coldPathBegin = label();
+    Call call = callOperation(operationSetPrivateBrandOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), baseGPR, brandGPR);
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
+void JIT::emit_op_check_private_brand(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCheckPrivateBrand>();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister brand = bytecode.m_brand;
+
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(brand, regT1);
+
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
+
+    JITPrivateBrandAccessGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT0), JSValueRegs(regT1));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_privateBrandAccesses.append(gen);
+}
+
+void JIT::emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    GPRReg baseGPR = regT0;
+    GPRReg brandGPR = regT1;
+
+    linkAllSlowCases(iter);
+
+    JITPrivateBrandAccessGenerator& gen = m_privateBrandAccesses[m_privateBrandAccessIndex];
+    ++m_privateBrandAccessIndex;
+    Label coldPathBegin = label();
+    Call call = callOperation(operationCheckPrivateBrandOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), baseGPR, brandGPR);
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)
 {
     emit_op_put_by_val<OpPutByValDirect>(currentInstruction);

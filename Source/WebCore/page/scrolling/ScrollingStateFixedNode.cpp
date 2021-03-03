@@ -60,7 +60,7 @@ Ref<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adopt
 
 OptionSet<ScrollingStateNode::Property> ScrollingStateFixedNode::applicableProperties() const
 {
-    constexpr OptionSet<Property> nodeProperties = { Property::RelatedOverflowScrollingNodes, Property::LayoutConstraintData };
+    constexpr OptionSet<Property> nodeProperties = { Property::ViewportConstraints };
 
     auto properties = ScrollingStateNode::applicableProperties();
     properties.add(nodeProperties);

@@ -113,6 +113,7 @@
 - (void)_promptForReplace:(id)sender;
 - (void)_transliterateChinese:(id)sender;
 - (void)replace:(id)sender;
+- (void)_translate:(id)sender;
 
 - (void)_nextAccessoryTab:(id)sender;
 - (void)_previousAccessoryTab:(id)sender;

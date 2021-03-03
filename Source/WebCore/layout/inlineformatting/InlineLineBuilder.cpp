@@ -256,15 +256,15 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& initialLineLogicalRect, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> overflowLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine)
 {
     initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine));
 
-    auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength);
+    auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength, overflowLogicalWidth);
     auto committedRange = close(needsLayoutRange, committedContent);
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
-    return LineContent { committedRange, committedContent.partialTrailingContentLength, m_floats, m_contentIsConstrainedByFloat
+    return LineContent { committedRange, committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth, m_floats, m_contentIsConstrainedByFloat
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
@@ -275,7 +275,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
 {
     initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false });
-    auto committedContent = placeInlineContent(needsLayoutRange, { });
+    auto committedContent = placeInlineContent(needsLayoutRange, { }, { });
     auto committedRange = close(needsLayoutRange, committedContent);
     return { committedRange, m_line.contentLogicalWidth(), m_floats };
 }
@@ -291,7 +291,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 }
 
-LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength)
+LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> leadingLogicalWidth)
 {
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto inlineContentBreaker = InlineContentBreaker { };
@@ -303,7 +303,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, m_line.contentLogicalRight());
+        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, std::exchange(leadingLogicalWidth, WTF::nullopt), m_line.contentLogicalRight());
         // Now check if we can put this content on the current line.
         auto result = Result { };
         if (lineCandidate.floatItem) {
@@ -335,7 +335,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         }
         if (isEndOfLine) {
             // We can't place any more items on the current line.
-            return { committedInlineItemCount, result.partialTrailingContentLength };
+            return { committedInlineItemCount, result.partialTrailingContentLength, result.overflowLogicalWidth };
         }
         currentItemIndex = needsLayoutRange.start + committedInlineItemCount + m_floats.size();
         partialLeadingContentLength = { };
@@ -457,7 +457,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
     return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, lineIsConstrainedByFloat };
 }
 
-void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
+void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
     lineCandidate.reset();
@@ -472,7 +472,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         // Handle leading partial content first (overflowing text from the previous line).
         // Construct a partial leading inline item.
         m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(partialLeadingContentLength);
-        auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
+        auto itemWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, WTF::nullopt) : inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
         lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, itemWidth);
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
@@ -487,7 +487,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             continue;
         }
         if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isBox()) {
-            auto logicalWidth = inlineItemWidth(inlineItem, currentLogicalRight);
+            ASSERT(!leadingLogicalWidth || inlineItem.isText());
+            auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, WTF::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, logicalWidth);
             currentLogicalRight += logicalWidth;
             continue;
@@ -688,10 +689,26 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
+
+    auto eligibleOverflowWidthAsLeading = [&] () -> Optional<InlineLayoutUnit> {
+        // FIXME: Add support for other types of continuous content.
+        ASSERT(result.action == InlineContentBreaker::Result::Action::Wrap || result.action == InlineContentBreaker::Result::Action::Break);
+        if (candidateRuns.size() != 1 || !candidateRuns.first().inlineItem.isText())
+            return { };
+        auto& inlineTextItem = downcast<InlineTextItem>(candidateRuns.first().inlineItem);
+        if (inlineTextItem.isWhitespace())
+            return { };
+        if (result.action == InlineContentBreaker::Result::Action::Wrap)
+            return candidateRuns.first().logicalWidth;
+        if (result.action == InlineContentBreaker::Result::Action::Break && result.partialTrailingContent->partialRun)
+            return candidateRuns.first().logicalWidth - result.partialTrailingContent->partialRun->logicalWidth;
+        return { };
+    };
+
     if (result.action == InlineContentBreaker::Result::Action::Wrap) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
-        return { InlineContentBreaker::IsEndOfLine::Yes };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { }, { }, eligibleOverflowWidthAsLeading() };
     }
     if (result.action == InlineContentBreaker::Result::Action::WrapWithHyphen) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
@@ -728,7 +745,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         auto& trailingInlineTextItem = downcast<InlineTextItem>(candidateRuns[trailingRunIndex].inlineItem);
         ASSERT(partialRun.length < trailingInlineTextItem.length());
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
-        return { InlineContentBreaker::IsEndOfLine::Yes, { committedInlineItemCount, false }, overflowLength };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { committedInlineItemCount, false }, overflowLength, eligibleOverflowWidthAsLeading() };
     }
     ASSERT_NOT_REACHED();
     return { InlineContentBreaker::IsEndOfLine::No };

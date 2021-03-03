@@ -2553,18 +2553,25 @@ void AccessibilityObject::setFocused(bool focus)
 
 AccessibilitySortDirection AccessibilityObject::sortDirection() const
 {
-    AccessibilityRole role = roleValue();
-    if (role != AccessibilityRole::RowHeader && role != AccessibilityRole::ColumnHeader)
+    // Only objects that are descendant of column or row headers are allowed to have sort direction.
+    auto* header = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
+        auto role = object.roleValue();
+        return role == AccessibilityRole::ColumnHeader || role == AccessibilityRole::RowHeader;
+    });
+    if (!header)
         return AccessibilitySortDirection::Invalid;
 
-    const AtomString& sortAttribute = getAttribute(aria_sortAttr);
+    auto& sortAttribute = header->getAttribute(aria_sortAttr);
+    if (sortAttribute.isNull())
+        return AccessibilitySortDirection::None;
+
     if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
         return AccessibilitySortDirection::Ascending;
     if (equalLettersIgnoringASCIICase(sortAttribute, "descending"))
         return AccessibilitySortDirection::Descending;
     if (equalLettersIgnoringASCIICase(sortAttribute, "other"))
         return AccessibilitySortDirection::Other;
-    
+
     return AccessibilitySortDirection::None;
 }
 

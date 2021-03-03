@@ -203,34 +203,25 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionH
     return *m_activeListener;
 }
 
-void WebFrameProxy::getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebFrameProxy::getWebArchive(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    m_page->getWebArchiveOfFrame(this, WTFMove(callbackFunction));
+    if (!m_page)
+        return callback(nullptr);
+    m_page->getWebArchiveOfFrame(this, WTFMove(callback));
 }
 
-void WebFrameProxy::getMainResourceData(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebFrameProxy::getMainResourceData(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    m_page->getMainResourceDataOfFrame(this, WTFMove(callbackFunction));
+    if (!m_page)
+        return callback(nullptr);
+    m_page->getMainResourceDataOfFrame(this, WTFMove(callback));
 }
 
-void WebFrameProxy::getResourceData(API::URL* resourceURL, Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
+void WebFrameProxy::getResourceData(API::URL* resourceURL, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    m_page->getResourceDataFromFrame(this, resourceURL, WTFMove(callbackFunction));
+    if (!m_page)
+        return callback(nullptr);
+    m_page->getResourceDataFromFrame(*this, resourceURL, WTFMove(callback));
 }
 
 void WebFrameProxy::setUnreachableURL(const URL& unreachableURL)

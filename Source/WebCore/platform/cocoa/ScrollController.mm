@@ -881,7 +881,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     if (!snapOffsets.size())
         return;
 
-    LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapOffsets.first()), snapOffsets.last());
+    LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapOffsets.first().offset), snapOffsets.last().offset);
 
     unsigned activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, clampedOffset, 0).second;
     if (activeIndex == activeScrollSnapIndexForAxis(axis))

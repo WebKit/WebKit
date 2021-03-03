@@ -44,7 +44,7 @@ bool isLexerKeyword(const Identifier& identifier)
     return JSC::mainTable.entry(identifier);
 }
 
-enum CharacterType {
+enum CharacterType : uint8_t {
     // Types for the main switch
 
     // The first three types are fixed, and also used for identifying
@@ -95,7 +95,7 @@ enum CharacterType {
 };
 
 // 256 Latin-1 codes
-static constexpr const unsigned short typesOfLatin1Characters[256] = {
+static constexpr const CharacterType typesOfLatin1Characters[256] = {
 /*   0 - Null               */ CharacterInvalid,
 /*   1 - Start of Heading   */ CharacterInvalid,
 /*   2 - Start of Text      */ CharacterInvalid,

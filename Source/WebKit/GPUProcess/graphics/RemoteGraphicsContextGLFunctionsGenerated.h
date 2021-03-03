@@ -29,10 +29,6 @@
     {
         m_context->setFailNextGPUStatusCheck();
     }
-    void synthesizeGLError(uint32_t error)
-    {
-        m_context->synthesizeGLError(error);
-    }
     void moveErrorsToSyntheticErrorList(CompletionHandler<void(bool)>&& completionHandler)
     {
         bool returnValue = { };
@@ -320,12 +316,6 @@
         Vector<GCGLboolean, 4> value(static_cast<size_t>(valueSize), 0);
         m_context->getBooleanv(pname, value);
         completionHandler(IPC::ArrayReference<bool>(reinterpret_cast<bool*>(value.data()), value.size()));
-    }
-    void getError(CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        GCGLenum returnValue = { };
-        returnValue = m_context->getError();
-        completionHandler(returnValue);
     }
     void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
@@ -1181,5 +1171,11 @@
     void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& counts, uint32_t type, IPC::ArrayReference<int32_t>&& offsets, IPC::ArrayReference<int32_t>&& instanceCounts, int32_t drawcount)
     {
         m_context->multiDrawElementsInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
+    }
+    void paintRenderingResultsToImageData(CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
+    {
+        RefPtr<WebCore::ImageData> returnValue = { };
+        returnValue = m_context->paintRenderingResultsToImageData();
+        completionHandler(WTFMove(returnValue));
     }
 

@@ -329,7 +329,7 @@
 #if PLATFORM(COCOA)
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -4305,7 +4305,7 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
     else
         return Exception { InvalidAccessError };
 
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(command, &parameter);
+    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(command, parameter);
     return { };
 }
 
@@ -4637,7 +4637,7 @@ MockContentFilterSettings& Internals::mockContentFilterSettings()
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snapOffsets)
+static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
 {
     bool justStarting = true;
 
@@ -4648,7 +4648,10 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
         else
             justStarting = false;
 
-        builder.appendNumber(coordinate.toUnsigned());
+        builder.appendNumber(coordinate.offset.toUnsigned());
+        if (coordinate.stop == ScrollSnapStop::Always)
+            builder.appendLiteral(" (always)");
+
     }
     builder.appendLiteral(" }");
 }
@@ -4885,6 +4888,11 @@ bool Internals::userPrefersContrast() const
 double Internals::privatePlayerVolume(const HTMLMediaElement&)
 {
     return 0;
+}
+
+bool Internals::privatePlayerMuted(const HTMLMediaElement&)
+{
+    return false;
 }
 #endif
 

@@ -87,7 +87,7 @@ WebView *getWebView(WebFrame *webFrame);
 @interface WebFramePrivate : NSObject {
 @public
     NakedPtr<WebCore::Frame> coreFrame;
-    WebFrameView *webFrameView;
+    RetainPtr<WebFrameView> webFrameView;
     std::unique_ptr<WebScriptDebugger> scriptDebugger;
     id internalLoadDelegate;
     BOOL shouldCreateRenderers;

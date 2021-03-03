@@ -577,18 +577,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
 {
-    if (!metaDataAvailable())
-        return false;
-    
-    return m_mediaStreamPrivate->hasVideo();
+    return !m_videoTrackMap.isEmpty();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
 {
-    if (!metaDataAvailable())
-        return false;
-    
-    return m_mediaStreamPrivate->hasAudio();
+    return !m_audioTrackMap.isEmpty();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool visible)

@@ -37,9 +37,7 @@ id HistoryItem::viewState() const
 
 void HistoryItem::setViewState(id statePList)
 {
-    id newState = [statePList copy];
-    m_viewState = newState;
-    [newState release];
+    m_viewState = adoptNS([statePList copy]);
 }
 
 } // namespace WebCore

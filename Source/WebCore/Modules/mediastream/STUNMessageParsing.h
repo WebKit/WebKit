@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEB_RTC)

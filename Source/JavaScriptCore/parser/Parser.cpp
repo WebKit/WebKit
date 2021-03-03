@@ -230,8 +230,17 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
             parameters = parseFunctionParameters(context, functionInfo);
 
         if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !hasError()) {
-            // The only way we could have an error while reparsing is if we run out of stack space.
-            RELEASE_ASSERT(match(ARROWFUNCTION), m_token.m_type, static_cast<uint8_t>(parseMode), m_lexer->currentOffset(), m_lexer->codeLength());
+            // FIXME:
+            // Logically, this should be an assert, since we already successfully parsed the arrow
+            // function when syntax checking. So logically, we should see the arrow token here.
+            // But we're seeing crashes in the wild when making this an assert. Instead, we'll just
+            // handle it as an error in release builds, and an assert on debug builds, with the hopes
+            // of fixing it in the future.
+            // https://bugs.webkit.org/show_bug.cgi?id=221633
+            if (UNLIKELY(!match(ARROWFUNCTION))) {
+                ASSERT_NOT_REACHED();
+                return makeUnexpected("Parser error"_s);
+            }
             next();
             isArrowFunctionBodyExpression = !match(OPENBRACE);
         }
@@ -2870,6 +2879,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     classScope->setIsLexicalScope();
     classScope->preventVarDeclarations();
     classScope->setStrictMode();
+    bool declaresPrivateMethod = false;
     next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
@@ -2989,16 +2999,22 @@ parseMethod:
             break;
         case PRIVATENAME: {
             ASSERT(Options::usePrivateClassFields());
-            JSToken token = m_token;
             ident = m_token.m_data.ident;
             if (!Options::usePrivateStaticClassFields())
                 failIfTrue(tag == ClassElementTag::Static, "Static class element cannot be private");
             failIfTrue(isGetter || isSetter, "Cannot parse class method with private name");
             ASSERT(ident);
             next();
-            failIfTrue(matchAndUpdate(OPENPAREN, token), "Cannot parse class method with private name");
-            semanticFailIfTrue(classScope->declarePrivateName(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private field twice");
-            type = static_cast<PropertyNode::Type>(type | PropertyNode::Private);
+            if (Options::usePrivateMethods() && match(OPENPAREN)) {
+                semanticFailIfTrue(classScope->declarePrivateMethod(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
+                declaresPrivateMethod = true;
+                type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateMethod);
+                break;
+            }
+
+            failIfTrue(match(OPENPAREN), "Cannot parse class method with private name");
+            semanticFailIfTrue(classScope->declarePrivateField(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private field twice");
+            type = static_cast<PropertyNode::Type>(type | PropertyNode::PrivateField);
             break;
         }
         default:
@@ -3084,10 +3100,19 @@ parseMethod:
     info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
+    if (declaresPrivateMethod) {
+        Identifier privateBrandIdentifier = m_vm.propertyNames->builtinNames().privateBrandPrivateName();
+        DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateBrandIdentifier, true);
+        ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+        classScope->useVariable(&privateBrandIdentifier, false);
+        classScope->addClosedVariableCandidateUnconditionally(privateBrandIdentifier.impl());
+    }
+
     if (Options::usePrivateClassFields()) {
         // Fail if there are no parent private name scopes and any used-but-undeclared private names.
         semanticFailIfFalse(copyUndeclaredPrivateNamesToOuterScope(), "Cannot reference undeclared private names");
     }
+
     auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
@@ -5165,7 +5190,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
                     m_parserState.lastPrivateName = ident;
                     currentScope()->useVariable(ident, false);
-                    type = DotType::PrivateField;
+                    type = DotType::PrivateMember;
                     m_token.m_type = IDENT;
                 }
                 matchOrFail(IDENT, "Expected a property name after ", optionalChainBase ? "'?.'" : "'.'");

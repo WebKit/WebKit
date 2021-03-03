@@ -570,6 +570,11 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
     return SandboxExtension::HandleArray();
 }
 
+void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

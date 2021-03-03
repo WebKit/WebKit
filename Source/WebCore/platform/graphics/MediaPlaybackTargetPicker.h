@@ -53,7 +53,7 @@ public:
 
     virtual ~MediaPlaybackTargetPicker();
 
-    virtual void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance);
+    virtual void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext);
     virtual void startingMonitoringPlaybackTargets();
     virtual void stopMonitoringPlaybackTargets();
     virtual void invalidatePlaybackTargets();

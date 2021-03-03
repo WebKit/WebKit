@@ -38,8 +38,6 @@ public:
     // JavaScript document.open() call right now, or it should be ignored.
     virtual bool isExecutingScript() const { return false; }
 
-    virtual bool isWaitingForScripts() const = 0;
-
     virtual TextPosition textPosition() const = 0;
 
     virtual bool hasScriptsWaitingForStylesheets() const { return false; }

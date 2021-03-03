@@ -103,13 +103,24 @@ double Internals::privatePlayerVolume(const HTMLMediaElement& element)
         return 0;
     return [player volume];
 }
+
+bool Internals::privatePlayerMuted(const HTMLMediaElement& element)
+{
+    auto corePlayer = element.player();
+    if (!corePlayer)
+        return false;
+    auto player = corePlayer->objCAVFoundationAVPlayer();
+    if (!player)
+        return false;
+    return [player isMuted];
+}
 #endif
 
 String Internals::encodedPreferenceValue(const String& domain, const String& key)
 {
     auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain]);
     id value = [userDefaults objectForKey:key];
-    auto data = adoptNS([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:nullptr]);
+    auto data = retainPtr([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:nullptr]);
     return [data base64EncodedStringWithOptions:0];
 }
 

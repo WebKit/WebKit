@@ -43,9 +43,11 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
 #include "ProcessAssertion.h"
+#include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
+#include "RemoteRemoteCommandListener.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -121,6 +123,7 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RemoteCommandListener.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -198,6 +201,11 @@
 #include "AudioSessionRoutingArbitrator.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVF.h"
+#include <WebCore/ImageDecoder.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
@@ -271,6 +279,10 @@ WebProcess::WebProcess()
 
 #if ENABLE(GPU_PROCESS)
     addSupplement<RemoteMediaPlayerManager>();
+#endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+    addSupplement<RemoteImageDecoderAVFManager>();
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
@@ -1938,11 +1950,21 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     else
         LegacyCDM::resetFactories();
 #endif
-    
+
     if (useGPUProcessForMedia)
         ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
     else
         MediaEngineConfigurationFactory::resetFactories();
+
+    if (useGPUProcessForMedia)
+        WebCore::AudioHardwareListener::setCreationFunction([this] (WebCore::AudioHardwareListener::Client& client) { return RemoteAudioHardwareListener::create(client, *this); });
+    else
+        WebCore::AudioHardwareListener::resetCreationFunction();
+
+    if (useGPUProcessForMedia)
+        WebCore::RemoteCommandListener::setCreationFunction([this] (WebCore::RemoteCommandListenerClient& client) { return RemoteRemoteCommandListener::create(client, *this); });
+    else
+        WebCore::RemoteCommandListener::resetCreationFunction();
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

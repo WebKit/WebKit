@@ -114,10 +114,8 @@ public:
 
     virtual void suspendBuffering() { }
     virtual void resumeBuffering() { }
-    
-    typedef union {
-        double asDouble;
-    } RemoteCommandArgument;
+
+    using RemoteCommandArgument = Optional<double>;
 
     enum RemoteControlCommandType : uint8_t {
         NoCommand,
@@ -136,7 +134,7 @@ public:
         PreviousTrackCommand,
     };
     bool canReceiveRemoteControlCommands() const;
-    virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument* = nullptr);
+    virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument& = WTF::nullopt);
     bool supportsSeeking() const;
 
     enum DisplayType : uint8_t {
@@ -239,7 +237,7 @@ public:
     virtual void suspendPlayback() = 0;
 
     virtual bool canReceiveRemoteControlCommands() const = 0;
-    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) = 0;
+    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;
     virtual bool supportsSeeking() const = 0;
 
     virtual bool canProduceAudio() const { return false; }

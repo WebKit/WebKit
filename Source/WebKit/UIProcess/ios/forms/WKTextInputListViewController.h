@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "WKQuickboardListViewController.h"
 
@@ -63,4 +63,4 @@ typedef NS_ENUM(NSInteger, WKNumberPadInputMode) {
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

@@ -488,7 +488,7 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth, Optional<InlineLayoutUnit> collapsibleWidth)
 {
     m_runs.append({ inlineItem, logicalWidth });
-    m_logicalWidth += logicalWidth;
+    m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);
     if (!collapsibleWidth) {
         m_collapsibleLogicalWidth = { };
         return;

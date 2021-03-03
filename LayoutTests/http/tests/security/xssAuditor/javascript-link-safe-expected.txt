@@ -1,2 +1,2 @@
-ALERT: This is a safe script.
+CONSOLE MESSAGE: This is a safe script.
 

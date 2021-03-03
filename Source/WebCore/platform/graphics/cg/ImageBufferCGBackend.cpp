@@ -191,10 +191,16 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
 
         image = adoptCF(CGImageCreate(pixelArrayDimensions.width(), pixelArrayDimensions.height(), 8, 32, 4 * pixelArrayDimensions.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     } else if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
-        image = copyNativeImage(CopyBackingStore)->platformImage();
+        auto nativeImage = copyNativeImage(CopyBackingStore);
+        if (!nativeImage)
+            return nullptr;
+        image = nativeImage->platformImage();
         image = createCroppedImageIfNecessary(image.get(), backendSize());
     } else {
-        image = copyNativeImage(DontCopyBackingStore)->platformImage();
+        auto nativeImage = copyNativeImage(DontCopyBackingStore);
+        if (!nativeImage)
+            return nullptr;
+        image = nativeImage->platformImage();
         auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));

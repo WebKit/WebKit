@@ -67,7 +67,7 @@
         const statisticsUrl = "http://" + hostUnderTest;
         if (document.location.hash !== "#firstPartyCookieSet") {
             setEnableFeature(true, function() {
-                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html#firstPartyCookieSet";
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html#firstPartyCookieSet";
             });
         } else {
             // Set per-frame access since clearing access on cross-site navigation of the iframe requires per-frame access.

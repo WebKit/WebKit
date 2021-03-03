@@ -1,3 +1,117 @@
+2021-02-14  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le
+        https://bugs.webkit.org/show_bug.cgi?id=221557
+        <rdar://problem/74311603>
+
+        Unreviewed, unskip this test since it seems Yusuke has already fixed it.
+
+        * stress/copy-data-properties-fast-path.js:
+
+2021-02-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Proxy's [[GetOwnProperty]] should complete trap result descriptor before validation
+        https://bugs.webkit.org/show_bug.cgi?id=221772
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/proxy-get-own-property.js:
+        * stress/proxy-returning-incomplete-property-descriptor-error.js: Added.
+
+2021-02-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le
+        https://bugs.webkit.org/show_bug.cgi?id=221557
+
+        Reviewed by Saam Barati.
+
+        Skip the test on these architectures. I don't know what else to do with it.
+
+        * stress/copy-data-properties-fast-path.js:
+
+2021-02-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix stress/copy-data-properties-fast-path.js occasional failure
+
+        Wrap it with try-catch since stack-overflow RangeError in JS can happen.
+
+        * stress/copy-data-properties-fast-path.js:
+
+2021-02-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        SetIntegrityLevel should call [[DefineOwnProperty]] with partial descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=221497
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/arguments-define-property-throws-out-of-memory.js: Added.
+        * stress/freeze-invokes-out-of-memory.js: Removed.
+        * stress/object-freeze-with-arguments-no-oom-error.js: Added.
+        * stress/object-freeze-with-proxy-defineProperty.js: Added.
+
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] C++ iteration should support fast iterator protocol
+        https://bugs.webkit.org/show_bug.cgi?id=221526
+
+        Reviewed by Alexey Shvayka.
+
+        * microbenchmarks/map-constructor.js: Added.
+        (test):
+        * stress/map-constructor-hole-throw.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (values.__proto__.return):
+        (Map.prototype):
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
+        Fix warning introduced by r272580
+        https://bugs.webkit.org/show_bug.cgi?id=221612
+
+        Unreviewd, update test262/config.yaml
+
+        * test262/config.yaml:
+
+        Since `class-methods-private` also includes private accessors tests,
+        we should enable it only after https://bugs.webkit.org/show_bug.cgi?id=194435
+        gets closed.
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private methods
+        https://bugs.webkit.org/show_bug.cgi?id=194434
+
+        Reviewed by Filip Pizlo.
+
+        * stress/private-brand-installed-after-super-call-from-arrow-function.js: Added.
+        * stress/private-brand-installed-after-super-call-from-eval.js: Added.
+        * stress/private-method-brand-check.js: Added.
+        * stress/private-method-change-attribute-from-branded-structure.js: Added.
+        * stress/private-method-change-prototype-from-branded-structure.js: Added.
+        * stress/private-method-check-private-brand-ic.js: Added.
+        * stress/private-method-check-structure-miss.js: Added.
+        * stress/private-method-comparison.js: Added.
+        * stress/private-method-delete-property-from-branded-structure.js: Added.
+        * stress/private-method-extends-brand-check.js: Added.
+        * stress/private-method-get-and-call.js: Added.
+        * stress/private-method-invalid-multiple-brand-installation.js: Added.
+        * stress/private-method-invalidate-compiled-with-constant-symbol.js: Added.
+        * stress/private-method-nested-class.js: Added.
+        * stress/private-method-on-sealed-objects.js: Added.
+        * stress/private-method-on-uncacheable-dictionary.js: Added.
+        * stress/private-method-polymorphic-with-constant-symbol.js: Added.
+        * stress/private-method-set-brand-should-have-write-barrier.js: Added.
+        * stress/private-method-untyped-use.js: Added.
+        * stress/private-method-with-uncacheable-dictionary-transition.js: Added.
+        * stress/private-methods-inline-cache.js: Added.
+        * stress/private-methods-megamorphic-ic.js: Added.
+        * stress/private-methods-on-proxy.js: Added.
+        * stress/private-methods-poly-ic-multiple-classes.js: Added.
+        * stress/private-methods-poly-ic-single-class.js: Added.
+        * stress/private-names-available-on-direct-eval.js: Added.
+        * test262/config.yaml:
+
 2021-02-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r264574): Unchecked JS exception in validateAndApplyPropertyDescriptor()

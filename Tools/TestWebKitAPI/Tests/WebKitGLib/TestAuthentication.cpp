@@ -196,7 +196,7 @@ static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpoi
     webkit_authentication_request_authenticate(request, credential);
     webkit_credential_free(credential);
     // Expect authentication failed page.
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -214,7 +214,7 @@ static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gcon
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
     webkit_authentication_request_authenticate(request, 0);
     // Server doesn't ask for new credentials.
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -290,7 +290,7 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
     webkit_authentication_request_authenticate(request, credential);
     webkit_credential_free(credential);
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -304,6 +304,7 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     // There is no authentication challenge.
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -321,7 +322,7 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
     WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
     webkit_authentication_request_authenticate(request, credential);
     webkit_credential_free(credential);
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);

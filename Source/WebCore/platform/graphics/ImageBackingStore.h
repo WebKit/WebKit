@@ -169,7 +169,7 @@ public:
         b = fastDivideBy255(b * a + pixel.blue * d);
         a += fastDivideBy255(d * pixel.alpha);
 
-        auto result = SRGBA { r, g, b, a };
+        auto result = SRGBA<uint8_t> { r, g, b, a };
 
         if (!m_premultiplyAlpha)
             result = unpremultiplied(result);
@@ -226,7 +226,7 @@ private:
         if (m_premultiplyAlpha && !a)
             return 0;
 
-        auto result = SRGBA { r, g, b, a };
+        auto result = SRGBA<uint8_t> { r, g, b, a };
 
         if (m_premultiplyAlpha && a < 255)
             result = premultipliedFlooring(result);

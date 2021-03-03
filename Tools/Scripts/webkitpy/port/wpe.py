@@ -1,4 +1,5 @@
-# Copyright (C) 2014-2017 Igalia S.L.  All rights reserved.
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014-2021 Igalia S.L.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -143,14 +144,24 @@ class WPEPort(Port):
         return configuration
 
     def run_minibrowser(self, args):
-        miniBrowser = self._build_path('bin', 'MiniBrowser')
-        if not self._filesystem.isfile(miniBrowser):
-            print("%s not found... Did you run build-webkit?" % miniBrowser)
-            return 1
+        env = None
+        cog = self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', 'cog')
+        if self._filesystem.isfile(cog):
+            miniBrowser = cog
+            env = os.environ.copy()
+            env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
+                        'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
+            args = ['-P', 'fdo'] + args
+        else:
+            print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
+            miniBrowser = self._build_path('bin', 'MiniBrowser')
+            if not self._filesystem.isfile(miniBrowser):
+                print("%s not found... Did you run build-webkit?" % miniBrowser)
+                return 1
         command = [miniBrowser]
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
             command = shlex.split(os.environ["WEBKIT_MINI_BROWSER_PREFIX"]) + command
 
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
-        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False)
+        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=env)

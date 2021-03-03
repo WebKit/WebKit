@@ -326,9 +326,9 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
     PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView);
     g_object_ref(printOperation);
-    page.drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](API::Error* printError, CallbackBase::Error) {
+    page.drawPagesForPrinting(webFrame, printInfo, [printOperation](API::Error* printError) {
         drawPagesForPrintingCompleted(printError, adoptGRef(printOperation).get());
-    }));
+    });
 }
 
 WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)

@@ -103,6 +103,12 @@ template<> struct ArgumentCoder<ScrollSnapOffsetsInfo<float>> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, ScrollSnapOffsetsInfo<float>&);
 };
 
+template<> struct ArgumentCoder<SnapOffset<float>> {
+    static void encode(Encoder&, const SnapOffset<float>&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, SnapOffset<float>&);
+};
+
+
 } // namespace IPC
 
 namespace WTF {
@@ -521,6 +527,22 @@ bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrol
 
     return true;
 }
+
+void ArgumentCoder<SnapOffset<float>>::encode(Encoder& encoder, const SnapOffset<float>& offset)
+{
+    encoder << offset.offset;
+    encoder << offset.stop;
+}
+
+bool ArgumentCoder<SnapOffset<float>>::decode(Decoder& decoder, SnapOffset<float>& offset)
+{
+    if (!decoder.decode(offset.offset))
+        return false;
+    if (!decoder.decode(offset.stop))
+        return false;
+    return true;
+}
+
 
 void ArgumentCoder<ScrollSnapOffsetsInfo<float>>::encode(Encoder& encoder, const ScrollSnapOffsetsInfo<float>& info)
 {

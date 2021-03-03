@@ -198,8 +198,8 @@ private:
         NinePieceImageRule horizontalRule { NinePieceImageRule::Stretch };
         NinePieceImageRule verticalRule { NinePieceImageRule::Stretch };
         RefPtr<StyleImage> image;
-        LengthBox imageSlices { { 100, Percent }, { 100, Percent }, { 100, Percent }, { 100, Percent } };
-        LengthBox borderSlices { { 1, Relative }, { 1, Relative }, { 1, Relative }, { 1, Relative } };
+        LengthBox imageSlices { { 100, LengthType::Percent }, { 100, LengthType::Percent }, { 100, LengthType::Percent }, { 100, LengthType::Percent } };
+        LengthBox borderSlices { { 1, LengthType::Relative }, { 1, LengthType::Relative }, { 1, LengthType::Relative }, { 1, LengthType::Relative } };
         LengthBox outset { 0 };
 
     private:

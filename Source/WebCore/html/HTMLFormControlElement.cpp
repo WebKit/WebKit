@@ -215,7 +215,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
     }
 
     auto& document = element->document();
-    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().canAccess(document.securityOrigin())) {
+    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().isSameOriginDomain(document.securityOrigin())) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
         return false;
     }
@@ -595,11 +595,13 @@ void HTMLFormControlElement::updateValidity()
         invalidateStyleForSubtree();
 
         if (!m_isValid) {
-            addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+            if (isConnected())
+                addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
             if (HTMLFormElement* form = this->form())
                 form->registerInvalidAssociatedFormControl(*this);
         } else {
-            removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+            if (isConnected())
+                removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
             if (HTMLFormElement* form = this->form())
                 form->removeInvalidAssociatedFormControlIfNeeded(*this);
         }

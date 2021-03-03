@@ -1039,6 +1039,15 @@ TextStream& operator<<(TextStream& ts, ScrollSnapStrictness strictness)
     }
     return ts;
 }
+
+TextStream& operator<<(TextStream& ts, ScrollSnapStop stop)
+{
+    switch (stop) {
+    case ScrollSnapStop::Normal: ts << "normal"; break;
+    case ScrollSnapStop::Always: ts << "always"; break;
+    }
+    return ts;
+}
 #endif
 
 TextStream& operator<<(TextStream& ts, SpeakAs speakAs)

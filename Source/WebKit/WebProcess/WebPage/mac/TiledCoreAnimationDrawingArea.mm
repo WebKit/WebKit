@@ -102,6 +102,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
     invalidateRenderingUpdateRunLoopObserver();
+    for (auto& callback : m_nextActivityStateChangeCallbacks)
+        callback();
 }
 
 void TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded()
@@ -483,6 +485,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         }
 
         sendDidFirstLayerFlushIfNeeded();
+        m_webPage.didUpdateRendering();
         handleActivityStateChangeCallbacksIfNeeded();
         invalidateRenderingUpdateRunLoopObserver();
     }
@@ -497,9 +500,8 @@ void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacks()
     if (m_activityStateChangeID != ActivityStateChangeAsynchronous)
         m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
 
-    for (auto& callbackID : m_nextActivityStateChangeCallbackIDs)
-        m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
-    m_nextActivityStateChangeCallbackIDs.clear();
+    for (auto& callback : std::exchange(m_nextActivityStateChangeCallbacks, { }))
+        callback();
 
     m_activityStateChangeID = ActivityStateChangeAsynchronous;
 }
@@ -530,9 +532,9 @@ void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded()
     } forPhase:kCATransactionPhasePostCommit];
 }
 
-void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
+void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& nextActivityStateChangeCallback)
 {
-    m_nextActivityStateChangeCallbackIDs.appendVector(nextActivityStateChangeCallbackIDs);
+    m_nextActivityStateChangeCallbacks.append(WTFMove(nextActivityStateChangeCallback));
     m_activityStateChangeID = std::max(m_activityStateChangeID, activityStateChangeID);
 
     if (changed & ActivityState::IsVisible) {
@@ -542,7 +544,7 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivitySta
             suspendPainting();
     }
 
-    if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty()) {
+    if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty()) {
         m_shouldHandleActivityStateChangeCallbacks = true;
         triggerRenderingUpdate();
     }

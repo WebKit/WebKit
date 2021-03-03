@@ -40,7 +40,7 @@ Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperat
     if (from && !from->isSameType(*this))
         return *this;
 
-    Length zeroLength(0, Fixed);
+    Length zeroLength(0, LengthType::Fixed);
     if (blendToIdentity)
         return TranslateTransformOperation::create(WebCore::blend(m_x, zeroLength, progress), WebCore::blend(m_y, zeroLength, progress), WebCore::blend(m_z, zeroLength, progress), type());
 

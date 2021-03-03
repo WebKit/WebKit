@@ -71,9 +71,7 @@ inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Docume
 
 Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    auto result = adoptRef(*new HTMLObjectElement(tagName, document, form));
-    result->finishCreating();
-    return result;
+    return adoptRef(*new HTMLObjectElement(tagName, document, form));
 }
 
 HTMLObjectElement::~HTMLObjectElement()

@@ -1778,8 +1778,8 @@ void RenderListMarker::updateMargins()
         }
     }
 
-    mutableStyle().setMarginStart(Length(marginStart, Fixed));
-    mutableStyle().setMarginEnd(Length(marginEnd, Fixed));
+    mutableStyle().setMarginStart(Length(marginStart, LengthType::Fixed));
+    mutableStyle().setMarginEnd(Length(marginEnd, LengthType::Fixed));
 }
 
 LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

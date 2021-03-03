@@ -1,8 +1,9 @@
 <html>
 <head>
 <script>
-function runTests() {
+function startTest() {
     if (window.testRunner) {
+        testRunner.waitUntilDone();
         testRunner.dumpAsText();
         testRunner.dumpTitleChanges();
     }
@@ -10,11 +11,19 @@ function runTests() {
     console.log("Setting document.title to TITLE1");    
     document.title = 'TITLE1';
 
+    internals.queueTask("DOMManipulation", () => continueTest());
+}
+
+function continueTest() {
     title = document.getElementsByTagName('title').item(0);
     
     console.log("Setting title element's text to TITLE2");
     title.text = 'TITLE2';
     
+    internals.queueTask("DOMManipulation", () => endTest());
+}
+
+function endTest() {
     newTitle = document.createElement('title');
     console.log("Should not set title");
     newTitle.appendChild(document.createTextNode('FAIL'));
@@ -28,10 +37,12 @@ function runTests() {
         titleElement = titleElements[titleElements.length - 1];
         titleElement.parentNode.removeChild(titleElement);
     }
+
+    internals.queueTask("DOMManipulation", () => testRunner.notifyDone());
 }
 </script>
 <title>Initial title</title>
 </head> 
-<body onload="runTests();" >
+<body onload="startTest();" >
 </body>
 </html>

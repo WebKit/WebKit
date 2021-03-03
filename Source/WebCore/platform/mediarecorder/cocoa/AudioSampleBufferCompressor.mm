@@ -260,7 +260,7 @@ RetainPtr<NSNumber> AudioSampleBufferCompressor::gradualDecoderRefreshCount()
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioCodecPropertyDelayMode failed with %d", error);
         return nil;
     }
-    return adoptNS([NSNumber numberWithInt:(primeInfo.leadingFrames / m_destinationFormat.mFramesPerPacket)]);
+    return retainPtr([NSNumber numberWithInt:(primeInfo.leadingFrames / m_destinationFormat.mFramesPerPacket)]);
 }
 
 CMSampleBufferRef AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList fillBufferList)

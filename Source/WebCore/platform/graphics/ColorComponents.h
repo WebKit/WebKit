@@ -67,7 +67,7 @@ constexpr auto mapColorComponents(F&& function, T component, Ts... components) -
     static_assert(std::conjunction_v<std::bool_constant<Ts::Size == T::Size>...>, "All ColorComponents passed to mapColorComponents must have the same size");
 
     ColorComponents<decltype(function(component[0], components[0]...))> result;
-    for (size_t i = 0; i < T::Size; ++i)
+    for (std::remove_const_t<decltype(T::Size)> i = 0; i < T::Size; ++i)
         result[i] = function(component[i], components[i]...);
     return result;
 }

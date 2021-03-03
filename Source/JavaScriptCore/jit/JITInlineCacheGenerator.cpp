@@ -324,6 +324,37 @@ void JITGetByValGenerator::finalize(
         fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
 }
 
+JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs brand)
+    : Base(codeBlock, codeOrigin, callSiteIndex, accessType, usedRegisters)
+{
+    ASSERT(accessType == AccessType::CheckPrivateBrand || accessType == AccessType::SetPrivateBrand);
+    m_stubInfo->hasConstantIdentifier = false;
+
+    m_stubInfo->baseGPR = base.payloadGPR();
+    m_stubInfo->regs.brandGPR = brand.payloadGPR();
+    m_stubInfo->valueGPR = InvalidGPRReg;
+#if USE(JSVALUE32_64)
+    m_stubInfo->baseTagGPR = base.tagGPR();
+    m_stubInfo->v.brandTagGPR = brand.tagGPR();
+    m_stubInfo->valueTagGPR = InvalidGPRReg;
+#endif
+}
+
+void JITPrivateBrandAccessGenerator::generateFastPath(MacroAssembler& jit)
+{
+    m_start = jit.label();
+    m_slowPathJump = jit.patchableJump();
+    m_done = jit.label();
+}
+
+void JITPrivateBrandAccessGenerator::finalize(
+    LinkBuffer& fastPath, LinkBuffer& slowPath)
+{
+    ASSERT(m_start.isSet());
+    Base::finalize(
+        fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

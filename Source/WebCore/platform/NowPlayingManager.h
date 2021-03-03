@@ -40,8 +40,7 @@ public:
     NowPlayingManager();
     ~NowPlayingManager();
 
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) final;
-    bool supportsSeeking() const final;
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
 
     class Client : public CanMakeWeakPtr<Client> {
     public:

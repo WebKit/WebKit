@@ -101,6 +101,8 @@ public:
     virtual String colorInputStyleSheet(const Settings&) const;
 #endif
 
+    virtual LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect& paintRect) const { return paintRect; }
+
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
@@ -287,11 +289,11 @@ protected:
 #if !USE(NEW_THEME)
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(RenderStyle&, const Element*) const;
-    virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual void setCheckboxSize(RenderStyle&) const { }
 
     virtual void adjustRadioStyle(RenderStyle&, const Element*) const;
-    virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual void setRadioSize(RenderStyle&) const { }
 
     virtual void adjustButtonStyle(RenderStyle&, const Element*) const;

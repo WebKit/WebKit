@@ -49,6 +49,10 @@
 @end
 #endif
 
+#if HAVE(PEPPER_UI_CORE)
+#import "PepperUICoreSPI.h"
+#endif
+
 struct CustomMenuActionInfo {
     RetainPtr<NSString> name;
     BOOL dismissesAutomatically { NO };
@@ -523,6 +527,25 @@ IGNORE_WARNINGS_END
 - (UIView *)contentView
 {
     return [self valueForKeyPath:@"_currentContentView"];
+}
+
+static bool isQuickboardViewController(UIViewController *viewController)
+{
+#if HAVE(PEPPER_UI_CORE)
+    if ([viewController isKindOfClass:PUICQuickboardViewController.class])
+        return true;
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if ([viewController isKindOfClass:PUICQuickboardRemoteViewController.class])
+        return true;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+#endif // HAVE(PEPPER_UI_CORE)
+    return false;
+}
+
+- (void)_didPresentViewController:(UIViewController *)viewController
+{
+    if (isQuickboardViewController(viewController))
+        [self _invokeShowKeyboardCallbackIfNecessary];
 }
 
 #pragma mark - WKUIDelegatePrivate

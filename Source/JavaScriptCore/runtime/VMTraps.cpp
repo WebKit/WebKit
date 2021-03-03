@@ -202,7 +202,8 @@ public:
     {
         static std::once_flag once;
         std::call_once(once, [] {
-            addSignalHandler(Signal::AccessFault, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
+            addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
+                RELEASE_ASSERT(signal == Signal::AccessFault);
                 auto signalContext = SignalContext::tryCreate(registers);
                 if (!signalContext)
                     return SignalAction::NotHandled;

@@ -241,6 +241,7 @@ PASS scroll-padding-left
 PASS scroll-padding-right
 PASS scroll-padding-top
 PASS scroll-snap-align
+PASS scroll-snap-stop
 PASS scroll-snap-type
 PASS shape-image-threshold
 PASS shape-margin

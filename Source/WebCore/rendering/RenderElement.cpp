@@ -2047,15 +2047,8 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !theme().supportsFocusRing(styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
-#if PLATFORM(IOS_FAMILY)
-        // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
-        // FIXME: Consolidate this code with the same code in RenderBox::paintBoxDecorations(). See <https://bugs.webkit.org/show_bug.cgi?id=194781>.
-        if (style().appearance() == CheckboxPart || style().appearance() == RadioPart) {
-            int width = std::min(paintRect.width(), paintRect.height());
-            int height = width;
-            paintRectToUse = IntRect { paintRect.x(), paintRect.y() + (downcast<RenderBox>(*this).height() - height) / 2, width, height }; // Vertically center the checkbox, like on desktop
-        }
-#endif
+        if (is<RenderBox>(*this))
+            paintRectToUse = theme().adjustedPaintRect(downcast<RenderBox>(*this), paintRectToUse);
         addFocusRingRects(focusRingRects, paintRectToUse.location(), paintInfo.paintContainer);
         paintFocusRing(paintInfo, styleToUse, focusRingRects);
     }
@@ -2246,7 +2239,7 @@ void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
     const RenderStyle& style = renderer.style();
-    if (style.height().type() == Fixed) {
+    if (style.height().isFixed()) {
         if (is<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.

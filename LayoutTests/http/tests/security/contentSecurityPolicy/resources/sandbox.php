@@ -8,6 +8,6 @@ if ($_GET["report-only"]) {
 <!DOCTYPE html>
 <p>Ready</p>
 <script>
-alert("Script executed in iframe.");
+console.log("Script executed in iframe.");
 window.secret = "I am a secret";
 </script>

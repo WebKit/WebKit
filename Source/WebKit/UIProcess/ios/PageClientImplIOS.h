@@ -263,6 +263,10 @@ private:
 
     void setMouseEventPolicy(WebCore::MouseEventPolicy) final;
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&) final;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) final;
 #endif

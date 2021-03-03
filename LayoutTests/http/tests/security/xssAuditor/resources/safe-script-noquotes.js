@@ -1,1 +1,1 @@
-alert(/This is a safe script./);
+console.log(/This is a safe script./);

@@ -572,13 +572,12 @@ static void cancelOutstandingCheck(const void *item, void *context)
     else {
         // Cancel the load since this plug-in does its own loading.
         // FIXME: See <rdar://problem/4258008> for a problem with this.
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+        auto error = adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                         contentURL:[response URL]
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
-                                                          MIMEType:[response MIMEType]];
-        [_dataSource _documentLoader]->cancelMainResourceLoad(error);
-        [error release];
+                                                          MIMEType:[response MIMEType]]);
+        [_dataSource _documentLoader]->cancelMainResourceLoad(error.get());
     }        
 }
 

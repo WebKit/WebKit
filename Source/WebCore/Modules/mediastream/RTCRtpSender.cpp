@@ -103,6 +103,11 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
+    if (!m_connection) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
     m_connection->chainOperation(WTFMove(promise), [this, weakThis = makeWeakPtr(this), withTrack = WTFMove(withTrack)](auto&& promise) mutable {
         if (!weakThis)
             return;

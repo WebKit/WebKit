@@ -1911,13 +1911,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     NSView *hitView = [contentView hitTest:locationForHitTest];
     forceWebHTMLViewHitTest = NO;
     
-    WebHTMLView *view = nil;
-    if ([hitView isKindOfClass:[WebHTMLView class]])
-        view = (WebHTMLView *)hitView;    
-
-    if (view)
-        [view retain];
-
+    auto view = retainPtr(dynamic_objc_cast<WebHTMLView>(hitView));
     if (lastHitView != view && lastHitView && [lastHitView _frame]) {
         // If we are moving out of a view (or frame), let's pretend the mouse moved
         // all the way out of that view. But we have to account for scrolling, because
@@ -1938,7 +1932,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             lastHitCoreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
     }
 
-    lastHitView = view;
+    lastHitView = view.get();
 
     if (view) {
         if (auto* coreFrame = core([view _frame])) {
@@ -1955,8 +1949,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
                 coreFrame->eventHandler().passMouseMovedEventToScrollbars(event, [[self _webView] _pressureEvent]);
             }
         }
-
-        [view release];
     }
 }
 

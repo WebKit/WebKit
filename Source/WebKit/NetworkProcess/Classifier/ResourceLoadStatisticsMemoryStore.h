@@ -116,7 +116,7 @@ public:
     void clearPrivateClickMeasurement(Optional<RegistrableDomain>) override { };
     void clearExpiredPrivateClickMeasurement() override { };
     String privateClickMeasurementToString() override { return String(); };
-    void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) override { };
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&&) override { };
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override { };
 
 private:

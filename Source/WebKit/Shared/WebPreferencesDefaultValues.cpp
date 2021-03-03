@@ -203,11 +203,13 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if PLATFORM(MAC)
+    return true;
+#elif HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
-#endif
-
+#else
     return false;
+#endif
 }
 
 #endif // ENABLE(MEDIA_STREAM)

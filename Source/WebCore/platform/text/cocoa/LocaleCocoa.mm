@@ -51,13 +51,13 @@ std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
 {
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    auto formatter = adoptNS([[NSDateFormatter alloc] init]);
     [formatter setLocale:locale];
     [formatter setDateStyle:dateStyle];
     [formatter setTimeStyle:timeStyle];
     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     [formatter setCalendar:calendar];
-    return adoptNS(formatter);
+    return formatter;
 }
 
 LocaleCocoa::LocaleCocoa(const AtomString& locale)

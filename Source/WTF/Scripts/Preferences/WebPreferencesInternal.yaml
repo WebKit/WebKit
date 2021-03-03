@@ -599,6 +599,17 @@ PrefixedWebAudioEnabled:
     WebCore:
       default: false
 
+QuickboardControllerForTextInputEnabled:
+  type: bool
+  humanReadableName: "Quickboard controller"
+  humanReadableDescription: "Enable quickboard controller for text input"
+  condition: HAVE(QUICKBOARD_CONTROLLER)
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 ResourceLoadSchedulingEnabled:
   type: bool
   humanReadableName: "Resource Load Scheduling"
@@ -753,17 +764,6 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-UseGPUProcessForMediaEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Media"
-  humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: defaultUseGPUProcessForMediaEnabled()
-
 UseGPUProcessForWebGLEnabled:
   type: bool
   humanReadableName: "GPU Process: WebGL"
@@ -774,6 +774,17 @@ UseGPUProcessForWebGLEnabled:
   defaultValue:
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
+
+# FIXME: Remove once <rdar://73830961> has been fixed
+UseiTunesAVOutputContext:
+  type: bool
+  humanReadableName: "Use iTunes AVOutputContext"
+  humanReadableDescription: "Use iTunes AVOutputContext"
+  webcoreBinding: none
+  condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
+  defaultValue:
+    WebKit:
+      default: true
 
 WebAPIStatisticsEnabled:
   type: bool

@@ -500,11 +500,28 @@ public:
         m_lexicalVariables.usePrivateName(ident);
     }
 
-    DeclarationResultMask declarePrivateName(const Identifier& ident)
+    DeclarationResultMask declarePrivateMethod(const Identifier& ident)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
-        auto addResult = m_lexicalVariables.declarePrivateName(ident);
+        bool addResult = m_lexicalVariables.declarePrivateMethod(ident);
+
+        if (!addResult) {
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
+            return result;
+        }
+
+        useVariable(&ident, false);
+        addClosedVariableCandidateUnconditionally(ident.impl());
+
+        return result;
+    }
+
+    DeclarationResultMask declarePrivateField(const Identifier& ident)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        DeclarationResultMask result = DeclarationResult::Valid;
+        auto addResult = m_lexicalVariables.declarePrivateField(ident);
         if (!addResult.isNewEntry)
             result |= DeclarationResult::InvalidDuplicateDeclaration;
         return result;
@@ -944,7 +961,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const VariableEnvironment* = nullptr, const Vector<JSTextPosition>* = nullptr);
+    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const PrivateNameEnvironment* = nullptr, const Vector<JSTextPosition>* = nullptr);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
@@ -2080,7 +2097,7 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const VariableEnvironment* parentScopePrivateNames, const Vector<JSTextPosition>* classFieldLocations)
+std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const PrivateNameEnvironment* parentScopePrivateNames, const Vector<JSTextPosition>* classFieldLocations)
 {
     int errLine;
     String errMsg;
@@ -2096,9 +2113,9 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
     unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
-    if (isEvalNode<ParsedNode>() && parentScopePrivateNames && parentScopePrivateNames->privateNamesSize()) {
+    if (isEvalNode<ParsedNode>() && parentScopePrivateNames && parentScopePrivateNames->size()) {
         currentScope()->setIsPrivateNameScope();
-        parentScopePrivateNames->copyPrivateNamesTo(currentScope()->lexicalVariables());
+        currentScope()->lexicalVariables().addPrivateNamesFrom(parentScopePrivateNames);
     }
 
     auto parseResult = parseInner(calleeName, parsingContext, functionConstructorParametersEndPosition, classFieldLocations);
@@ -2185,7 +2202,7 @@ std::unique_ptr<ParsedNode> parse(
     DerivedContextType derivedContextType = DerivedContextType::None,
     EvalContextType evalContextType = EvalContextType::None,
     DebuggerParseData* debuggerParseData = nullptr,
-    const VariableEnvironment* parentScopePrivateNames = nullptr,
+    const PrivateNameEnvironment* parentScopePrivateNames = nullptr,
     const Vector<JSTextPosition>* classFieldLocations = nullptr,
     bool isInsideOrdinaryFunction = false)
 {

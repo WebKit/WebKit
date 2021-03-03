@@ -44,7 +44,9 @@ public:
     virtual MediaTime duration() const = 0;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
     virtual void seekToTime(const MediaTime&) = 0;
+#if USE(GSTREAMER)
     virtual void monitorSourceBuffers() = 0;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogIdentifier(const void*) = 0;

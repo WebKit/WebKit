@@ -114,7 +114,7 @@ void RenderMenuList::adjustInnerStyle()
     innerStyle.setFlexGrow(1);
     innerStyle.setFlexShrink(1);
     // min-width: 0; is needed for correct shrinking.
-    innerStyle.setMinWidth(Length(0, Fixed));
+    innerStyle.setMinWidth(Length(0, LengthType::Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     // But we only do that for the cases where html.css would otherwise use center.

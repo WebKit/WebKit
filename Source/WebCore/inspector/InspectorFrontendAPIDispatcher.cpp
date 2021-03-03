@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +28,19 @@
 
 #include "Frame.h"
 #include "InspectorController.h"
+#include "JSDOMPromise.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include <JavaScriptCore/FrameTracers.h>
+#include <JavaScriptCore/JSPromise.h>
 #include <wtf/RunLoop.h>
-
 
 namespace WebCore {
 
 using EvaluationError = InspectorFrontendAPIDispatcher::EvaluationError;
-using EvaluationResultHandler = CompletionHandler<Expected<JSC::JSValue, EvaluationError>>;
 
 InspectorFrontendAPIDispatcher::InspectorFrontendAPIDispatcher(Page& frontendPage)
     : m_frontendPage(makeWeakPtr(frontendPage))
@@ -50,6 +50,7 @@ InspectorFrontendAPIDispatcher::InspectorFrontendAPIDispatcher(Page& frontendPag
 InspectorFrontendAPIDispatcher::~InspectorFrontendAPIDispatcher()
 {
     invalidateQueuedExpressions();
+    invalidatePendingResponses();
 }
 
 void InspectorFrontendAPIDispatcher::reset()
@@ -58,6 +59,7 @@ void InspectorFrontendAPIDispatcher::reset()
     m_suspended = false;
 
     invalidateQueuedExpressions();
+    invalidatePendingResponses();
 }
 
 void InspectorFrontendAPIDispatcher::frontendLoaded()
@@ -101,7 +103,7 @@ void InspectorFrontendAPIDispatcher::unsuspend()
         evaluateQueuedExpressions();
 }
 
-JSC::JSGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
+JSDOMGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
 {
     if (!m_frontendPage)
         return nullptr;
@@ -166,8 +168,56 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
     }
 
     ValueOrException result = evaluateExpression(expression);
-    if (optionalResultHandler)
+    if (!optionalResultHandler)
+        return;
+
+    if (!result.has_value()) {
         optionalResultHandler(result);
+        return;
+    }
+
+    JSDOMGlobalObject* globalObject = frontendGlobalObject();
+    if (!globalObject) {
+        optionalResultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
+        return;
+    }
+        
+    auto& vm = globalObject->vm();
+    auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(vm, result.value());
+    if (!castedPromise) {
+        // Simple case: result is NOT a promise, just return the JSValue.
+        optionalResultHandler(result);
+        return;
+    }
+
+    // If the result is a promise, call the result handler when the promise settles.
+    Ref<DOMPromise> promise = DOMPromise::create(*globalObject, *castedPromise);
+    m_pendingResponses.set(promise.copyRef(), WTFMove(optionalResultHandler));
+    auto isRegistered = promise->whenSettled([promise = promise.copyRef(), weakThis = makeWeakPtr(*this)] {
+        // If `this` is cleared or the responses map is empty, then the promise settled
+        // beyond the time when we care about its result. Ignore late-settled promises.
+        // We clear out completion handlers for pending responses during teardown.
+        if (!weakThis)
+            return;
+
+        auto strongThis = makeRef(*weakThis);
+        if (!strongThis->m_pendingResponses.size())
+            return;
+
+        EvaluationResultHandler resultHandler = strongThis->m_pendingResponses.take(promise);
+        ASSERT(resultHandler);
+        
+        JSDOMGlobalObject* globalObject = strongThis->frontendGlobalObject();
+        if (!globalObject) {
+            resultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
+            return;
+        }
+
+        resultHandler({ promise->promise()->result(globalObject->vm()) });
+    });
+
+    if (isRegistered == DOMPromise::IsCallbackRegistered::No)
+        optionalResultHandler(makeUnexpected(EvaluationError::InternalError));
 }
 
 void InspectorFrontendAPIDispatcher::invalidateQueuedExpressions()
@@ -178,6 +228,16 @@ void InspectorFrontendAPIDispatcher::invalidateQueuedExpressions()
         if (resultHandler)
             resultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
     }
+}
+
+void InspectorFrontendAPIDispatcher::invalidatePendingResponses()
+{
+    auto pendingResponses = std::exchange(m_pendingResponses, { });
+    for (auto& callback : pendingResponses.values())
+        callback(makeUnexpected(EvaluationError::ContextDestroyed));
+
+    // No more pending responses should have been added while erroring out the callbacks.
+    ASSERT(m_pendingResponses.isEmpty());
 }
 
 void InspectorFrontendAPIDispatcher::evaluateQueuedExpressions()

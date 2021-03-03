@@ -278,7 +278,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
     _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    auto callback = WebKit::DataCallback::create([context](API::Data* data, WebKit::CallbackBase::Error) {
+    auto callback = [context](API::Data* data) {
         ASSERT(RunLoop::isMain());
 
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
@@ -293,13 +293,10 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
             view->_expectedPrintCallback = 0;
             view->_printingCallbackCondition.notifyOne();
         }
-    });
-    _expectedPrintCallback = callback->callbackID().toInteger();
-
+    };
+    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
-    context->callbackID = callback->callbackID().toInteger();
-
-    _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    context->callbackID = _expectedPrintCallback;
 }
 
 static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, IPCCallbackContext* context)
@@ -361,15 +358,14 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    auto callback = WebKit::ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, WebKit::CallbackBase::Error) {
+    auto callback = [context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin) {
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
-    });
-    _expectedComputedPagesCallback = callback->callbackID().toInteger();
+    };
+    _expectedComputedPagesCallback = _webFrame->page()->computePagesForPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
-    _webFrame->page()->computePagesForPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTFMove(callback));
     return YES;
 }
 
@@ -541,17 +537,15 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
                 _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                auto callback = WebKit::ImageCallback::create([context](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
+                auto callback = [context](const WebKit::ShareableBitmap::Handle& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(imageHandle, context);
-                });
-                _latestExpectedPreviewCallback = callback->callbackID().toInteger();
+                };
+                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
-                context->callbackID = callback->callbackID().toInteger();
-
-                _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                context->callbackID = _latestExpectedPreviewCallback;
                 return;
             }
         }

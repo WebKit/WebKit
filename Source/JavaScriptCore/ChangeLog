@@ -1,3 +1,862 @@
+2021-02-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Proxy's [[GetOwnProperty]] should complete trap result descriptor before validation
+        https://bugs.webkit.org/show_bug.cgi?id=221772
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements CompletePropertyDescriptor abstract op and utilizes it in
+        Proxy's [[GetOwnProperty]], right before IsCompatiblePropertyDescriptor check
+        as per spec [1].
+
+        This change tightens trap result validation rules for properties that are
+        non-configurable on [[ProxyTarget]], aligning JSC with V8 and SpiderMonkey.
+
+        It's impossible to prefill trap result descriptor: toPropertyDescriptor() throws
+        on malformed descriptors, thus it expects the argument to be an empty descriptor
+        (added an assert).
+
+        Property descriptors returned to userland are unaffected as they were implicitly
+        completed when filling PropertySlot (see PropertyDescriptor::defaultAttributes).
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p (step 14)
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/ProxyObject.cpp:
+        (JSC::completePropertyDescriptor):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+
+2021-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        We enable JITCage too on macOS if it is ARM64E.
+        We need to add this entitlement only when building it on macOS 120000 or higher version.
+        Otherwise, we cannot launch the process. This means that we need to dynamically generate entitlements file
+        because we must not attach this entitlement when building JSC for non 120000 macOS.
+
+        This patch follows r248164's way: we must not use CODE_SIGN_ENTITLEMENTS because XCode inserts implicit code-signing
+        and it breaks our pipeline. We need to disable this XCode's implicit behavior by setting CODE_SIGN_INJECT_BASE_ENTITLEMENTS.
+
+        And we also create TestAPI.xcconfig to apply generated entitlements only to testapi and jsc shell.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/TestAPI.xcconfig: Copied from Source/JavaScriptCore/Configurations/ToolExecutable.xcconfig.
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/process-entitlements.sh: Added.
+        * allow-jit-macOS.entitlements: Removed.
+        * testapi.entitlements: Removed.
+
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename `slotVisitor` variables to `visitor`.
+        https://bugs.webkit.org/show_bug.cgi?id=221866
+
+        Reviewed by Yusuke Suzuki.
+
+        In existing code, we sometimes name a SlotVisitor instance `slotVisitor` and
+        sometimes just `visitor`.  This patch makes it so that we use `visitor` consistently
+        everywhere.  This will also reduce the size of the GC verifier patch later.
+
+        Also fixed a few typos in comments.
+
+        This is a pure refactoring patch.  There are no behavior changes.
+
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSContextGroupAddMarkingConstraint):
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::visitAggregate):
+        (JSC::RecordedStatuses::markIfCheap):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::blocksInPostOrder):
+        * heap/Heap.cpp:
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runFixpointPhase):
+        (JSC::Heap::runConcurrentPhase):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::resumeThePeriphery):
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::performIncrement):
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachSlotVisitor):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::visit):
+
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unused methods in MarkedBlock and PreciseAllocation.
+        https://bugs.webkit.org/show_bug.cgi?id=221864
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::visitWeakSet): Deleted.
+        (JSC::MarkedBlock::Handle::reapWeakSet): Deleted.
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::shrink): Deleted.
+        (JSC::PreciseAllocation::visitWeakSet): Deleted.
+        (JSC::PreciseAllocation::reapWeakSet): Deleted.
+        * heap/PreciseAllocation.h:
+
+2021-02-12  Michael Saboff  <msaboff@apple.com>
+
+        [ARM64e] Harden Mach exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=221841
+
+        Reviewed by Geoffrey Garen.
+
+        Split wasm_throw_from_fault_handler_trampoline into two trampolines to eliminate the
+        need to pass a register argument to signify if we are using FastTLS.  With this change
+        we don't need to modify registers besides the PC when handling exceptions.
+        Added sanity checks to make sure handlers are being called for the exceptions they
+        were registered for.
+        
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * runtime/VMTraps.cpp:
+        * signal: Added.
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::installCrashHandler):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+
+2021-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Move RootMarkReason out of SlotVisitor.
+        https://bugs.webkit.org/show_bug.cgi?id=221831
+
+        Reviewed by Tadeu Zagallo.
+
+        This will lessen the amount of diff needed for the GC verifier later.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/HeapAnalyzer.h:
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::analyzeEdge):
+        (JSC::rootTypeToString):
+        * heap/HeapSnapshotBuilder.h:
+        * heap/RootMarkReason.h: Added.
+        * heap/SlotVisitor.h:
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        * inspector/JSInjectedScriptHost.cpp:
+
+2021-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: "Show Extended Gridlines" option for grid overlay does not work
+        https://bugs.webkit.org/show_bug.cgi?id=221775
+
+        Reviewed by Devin Rousso.
+
+        Replace all mentions of "Gridlines" with "GridLines" (camelcase).
+
+        * inspector/protocol/DOM.json:
+
+2021-02-11  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock::propagateTransitions() should also handle OpSetPrivateBrand's LLInt IC.
+        https://bugs.webkit.org/show_bug.cgi?id=221787
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+
+2021-02-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        SetIntegrityLevel should call [[DefineOwnProperty]] with partial descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=221497
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch prevents [[GetOwnProperty]] result descriptor from being reused for
+        [[DefineOwnProperty]]. Instead, partial descriptor with only [[Configurable]]
+        and (conditionally) [[Writable]] fields is passed, which is observable by
+        ProxyObject's "defineProperty" trap (and possibly any other opaque object).
+
+        Also, replaces isDataDescriptor() check with negated isAccessorDescriptor()
+        as per spec [1], which is equivalent in this case yet is false dichotomy
+        for partial descriptors.
+
+        Aligns JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-setintegritylevel (step 7.b.ii)
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::setIntegrityLevel):
+
+2021-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WEBKIT_EXECUTABLE can incorrectly link framework
+        https://bugs.webkit.org/show_bug.cgi?id=221703
+
+        Reviewed by Michael Catanzaro.
+
+        GTK compiles JavaScriptCore as a SHARED library but the symbols from WTF are not being
+        properly exposed from it. Workaround this by linking WTF directly until GTK turns on
+        hidden visibility and properly exports symbols.
+
+        * shell/PlatformGTK.cmake:
+
+2021-02-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early February 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=221701
+
+        Unreviewed non-unified build fixes.
+
+        * bytecode/IterationModeMetadata.h:
+        * bytecode/SetPrivateBrandStatus.h:
+
+2021-02-10  Mark Lam  <mark.lam@apple.com>
+
+        We should not static_assert on an ENABLE() macro.
+        https://bugs.webkit.org/show_bug.cgi?id=221714
+        rdar://74197896
+
+        Reviewed by Yusuke Suzuki.
+
+        This is because the ENABLE() macro reduces to a macro expression
+        `(defined ENABLE_##WTF_FEATURE && ENABLE_##WTF_FEATURE)` which is not a C++
+        expression that a static_assert can evaluate.
+
+        * llint/LLIntData.cpp:
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+
+2021-02-10  Saam Barati  <sbarati@apple.com>
+
+        Don't crash when reparsing an arrow function and the parsing invariant is broken
+        https://bugs.webkit.org/show_bug.cgi?id=221632
+        <rdar://71874091>
+
+        Reviewed by Tadeu Zagallo and Mark Lam.
+
+        We have code where we assert that when reparsing an arrow function,
+        we see the '=>' token after parsing the parameters. Since we already
+        parsed the arrow function before, this assertion makes sense. But somehow,
+        this is leading to crashes on real websites. We don't know why this invariant
+        is being broken. I'm changing this to a debug assert, and we're tracking
+        the full fix in:
+        https://bugs.webkit.org/show_bug.cgi?id=221633
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] C++ iteration should support fast iterator protocol
+        https://bugs.webkit.org/show_bug.cgi?id=221526
+
+        Reviewed by Alexey Shvayka.
+
+        This patch adds fast iteration protocol support in C++ iteration (forEachIterable).
+        In JS, we have op_iterator_open / op_iterator_next to iterate array quickly.
+        But we do not use this feature in C++ forEachIterable. In this patch we integrate
+        the same (or a bit more efficient since we can avoid creating JSArrayIterator) mechanism
+        so that iteration in C++ gets faster for normal arrays.
+
+        We observed 1.9x faster in Map creation with arrays.
+
+                                        ToT                     Patched
+
+            map-constructor       35.7446+-0.2354     ^     18.7516+-0.4534        ^ definitely 1.9062x faster
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iteratorOpenTryFastImpl):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorClose):
+        (JSC::prepareForFastArrayIteration):
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+        * runtime/JSArrayIterator.h:
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
+        Fix warning introduced by r272580
+        https://bugs.webkit.org/show_bug.cgi?id=221612
+
+        Unreviewed build fixes.
+
+        * bytecode/CheckPrivateBrandVariant.cpp:
+        * bytecode/CheckPrivateBrandVariant.h:
+        * bytecode/SetPrivateBrandVariant.cpp:
+        * bytecode/SetPrivateBrandVariant.h:
+
+2021-02-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private methods
+        https://bugs.webkit.org/show_bug.cgi?id=194434
+
+        Reviewed by Filip Pizlo.
+
+        This patch is adding support to private methods following the
+        specification on https://tc39.es/proposal-private-methods/.
+        This is introducing a new way to declare private methods on
+        class syntax. Private methods are only accessible within
+        classes they were declared, and only can be called from
+        objects that are instance of these classes.
+        To guarantee such rules, the proposal presents the concept of
+        Brand Check. During class evaluation, if a private method is present,
+        a `brand` is installed in this class. Every instance of such class
+        then gets this brand installed during `[[Construct]]` operation. It
+        means that an object can have multiple brands (e.g when there is also
+        private methods declared on super class). Before accessing a private
+        method, there is a check to validate if the target of the call has the
+        brand of callee method.
+        The brand check mechanism is implemented using a `@privateBrand`
+        stored on class scope. Here is a representation of how this mechanism
+        works:
+
+        ```
+        class C {
+            #m() { return 3; }
+            method() { return this.#m(); }
+        }
+
+        let c = new C();
+        console.log(c.method()); // prints 3
+        ```
+
+        Generated bytecode for the following representation:
+        ```
+        { // class lexical scope
+            const @privateBrand = @createPrivateSymbol();
+            const #m = function () { return 3; }
+            C.prototype.method = function() {
+                @check_private_brand(this, @privateBrand);
+                return #m.call(this);
+            }
+            C = function() {
+                @set_private_brand(this, @privateBrand);
+            }
+        }
+
+        let c = new C();
+        console.log(c.method()); // prints 3
+        ```
+
+        # Resolving correct brand to check
+
+        In the case of shadowing or nested scope, we need to emit brand
+        checks to the right private brand. See code below:
+
+        ```
+        class C {
+            #m() { return 3; }
+            method() { return this.#m();}
+
+            A = class {
+                #m2() { return 3; }
+                foo(o) { return o.#m(); }
+            }
+        }
+        ```
+
+        The call of "#m" in `foo` refers to "C::#m". In such case, we need to
+        check C's private brand, instead of A's private brand.
+        To perform the proper check, we first resolve scope of "#m" and then
+        check the private brand of this scope (the scope where the private
+        method and brand are stored is the same).
+        So the bytecode to lookup the right brand is:
+
+        ```
+        mov loc9, arg1
+        resolve_scope loc10, "#m"
+        get_from_scope loc11, loc10, "@privateBrand"
+        check_private_brand loc9, loc11
+        get_from_scope loc11, loc10, "#m"
+        // setup call frame
+        call loc11, ...
+        // ...
+        ```
+
+        # Brand check mechanism
+
+        We are introducing in this patch 2 new bytecodes to allow brand check
+        of objects: `op_set_brand` and `op_check_brand`.
+        `op_set_brand` sets a new brand in an object, so we can perform the brand
+        check later when accessing private methods. This operations throws when
+        trying to add the same brand twice in an Object.
+        `op_check_brand` checks if the given object contains the brand we are
+        looking for. It traverses the brand chain to verify if the brand is
+        present, and throws `TypeError` otherwise.
+
+        We are also introducing a subclass for Structure called BrandedStructure.
+        It is used to store brands and to allow brand check mechanism. BrandedStructure
+        stores a brand and a parent pointer to another BrandedStructure that allow
+        us traverse the brand chain. With `BrandedStructure`, we can then
+        infer that a given object has the brand we are looking for just
+        checking its structureId. This is a very good optimization, since we can
+        reduce most of brand checks to structure checks.
+
+        We created a new kind of transition called `SetBrand` that happens when
+        `op_set_brand` is executed. This allow us to cache such kind of
+        trasitions on trasition table using the key `<brand->uid, 0,
+        TransitionKind::SetBrand>`. During this transition, we take previous
+        structure and apply one of the following rules:
+
+            1. If it's a BrandedStructure, we then set it to `m_parentBrand`,
+            to allow proper brand chain check.
+        
+            2. If it's not a BrandedStructure, we set `m_parentBrand` to `nullptr`,
+            meaning that this is the first brand being added to the object
+            with this structure.
+        
+        For now, we are using the flag `isBrandedStructure` to identify that a
+        given Structure is a BrandedStructure. This is done to avoid changes
+        on places where we are checking for `vm.structureStructure()`.
+        However, if we ever need space on Structure, this flag is a good
+        candidate to be deleted and we can move to a solution that uses
+        `vm.brandedStructureStructure()`;
+
+         # JIT Support
+
+        This patch also includes initial JIT support for `set_private_brand`
+        and `check_private_brand`. On Baseline JIT, we are using
+        `JITPravateBrandAccessGenerator` to support IC for both operands.
+        On `DFGByteCodeParser` we are trying to inline brand access whenever
+        possible, and fallbacking to `SetPrivateBrand` and
+        `CheckPrivateBrand` otherwise. Those nodes are not being optimized at
+        their full potential, but the code generated by them is also relying on 
+        `JITPrivateBrandAccessGenerator` to have IC support for both DFG and
+        FTL. During DFG parsing, we try to reduce those access  to `CheckIsConstant`
+        and `CheckStructure` (with `PutStructure` for `set_private_brand` cases)
+        based on available profiled data. This is meant to make brand checks
+        almost free on DFG/FTL tiers when we have a single evaluation of a
+        class, since the `CheckIsConstant` can be eliminated by the constant-folded
+        scope load, and the `CheckStructure` is very likely to be redundant
+        to any other `CheckStructure` that can be performed on receiver
+        when we have a finite structure set.
+        For instance, when we have a brand check on a path-of-no-return to
+        a `GetByOffset` sequence on the same receiver, the `CheckStructure`
+        for the brand check will enable CSE of the `CheckStructure` that
+        would happen for that `GetByOffset`. Such design is possible because brand
+        checks supports polymorphic access very similr to what we have for
+        `GetByOffset` sequences.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        (JSC::BuiltinExecutables::createExecutable):
+        * builtins/BuiltinExecutables.h:
+
+        We are adding a new parameter `PrivateBrandRequirement` to propagate
+        when a default constructor needs to emit code to setup private brand
+        on instances.
+
+        * builtins/BuiltinNames.h:
+
+        Adding `@privateBrand` that  we use to store private brand on
+        class's scope.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::createCheckPrivateBrand):
+        (JSC::AccessCase::createSetPrivateBrand):
+        (JSC::AccessCase::requiresIdentifierNameMatch const):
+        (JSC::AccessCase::requiresInt32PropertyCheck const):
+        (JSC::AccessCase::needsScratchFPR const):
+        (JSC::AccessCase::forEachDependentCell const):
+        (JSC::AccessCase::doesCalls const):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::dump const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::structure const):
+        (JSC::AccessCase::newStructure const):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CheckPrivateBrandStatus.cpp: Added.
+        (JSC::CheckPrivateBrandStatus::appendVariant):
+        (JSC::CheckPrivateBrandStatus::computeForBaseline):
+        (JSC::CheckPrivateBrandStatus::CheckPrivateBrandStatus):
+        (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::CheckPrivateBrandStatus::computeFor):
+        (JSC::CheckPrivateBrandStatus::slowVersion const):
+        (JSC::CheckPrivateBrandStatus::merge):
+        (JSC::CheckPrivateBrandStatus::filter):
+        (JSC::CheckPrivateBrandStatus::singleIdentifier const):
+        (JSC::CheckPrivateBrandStatus::visitAggregate):
+        (JSC::CheckPrivateBrandStatus::markIfCheap):
+        (JSC::CheckPrivateBrandStatus::finalize):
+        (JSC::CheckPrivateBrandStatus::dump const):
+        * bytecode/CheckPrivateBrandStatus.h: Added.
+        * bytecode/CheckPrivateBrandVariant.cpp: Added.
+        (JSC::CheckPrivateBrandVariant::CheckPrivateBrandVariant):
+        (JSC::CheckPrivateBrandVariant::~CheckPrivateBrandVariant):
+        (JSC::CheckPrivateBrandVariant::attemptToMerge):
+        (JSC::CheckPrivateBrandVariant::markIfCheap):
+        (JSC::CheckPrivateBrandVariant::finalize):
+        (JSC::CheckPrivateBrandVariant::visitAggregate):
+        (JSC::CheckPrivateBrandVariant::dump const):
+        (JSC::CheckPrivateBrandVariant::dumpInContext const):
+        * bytecode/CheckPrivateBrandVariant.h: Added.
+        (JSC::CheckPrivateBrandVariant::structureSet const):
+        (JSC::CheckPrivateBrandVariant::structureSet):
+        (JSC::CheckPrivateBrandVariant::identifier const):
+        (JSC::CheckPrivateBrandVariant::overlaps):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::privateBrandRequirement const):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::operator=):
+        (JSC::RecordedStatuses::addCheckPrivateBrandStatus):
+        (JSC::RecordedStatuses::addSetPrivateBrandStatus):
+        (JSC::RecordedStatuses::visitAggregate):
+        (JSC::RecordedStatuses::markIfCheap):
+        * bytecode/RecordedStatuses.h:
+        (JSC::RecordedStatuses::forEachVector):
+        * bytecode/SetPrivateBrandStatus.cpp: Added.
+        (JSC::SetPrivateBrandStatus::appendVariant):
+        (JSC::SetPrivateBrandStatus::computeForBaseline):
+        (JSC::SetPrivateBrandStatus::SetPrivateBrandStatus):
+        (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::SetPrivateBrandStatus::computeFor):
+        (JSC::SetPrivateBrandStatus::slowVersion const):
+        (JSC::SetPrivateBrandStatus::merge):
+        (JSC::SetPrivateBrandStatus::filter):
+        (JSC::SetPrivateBrandStatus::singleIdentifier const):
+        (JSC::SetPrivateBrandStatus::visitAggregate):
+        (JSC::SetPrivateBrandStatus::markIfCheap):
+        (JSC::SetPrivateBrandStatus::finalize):
+        (JSC::SetPrivateBrandStatus::dump const):
+        * bytecode/SetPrivateBrandStatus.h: Added.
+        * bytecode/SetPrivateBrandVariant.cpp: Added.
+        (JSC::SetPrivateBrandVariant::SetPrivateBrandVariant):
+        (JSC::SetPrivateBrandVariant::~SetPrivateBrandVariant):
+        (JSC::SetPrivateBrandVariant::attemptToMerge):
+        (JSC::SetPrivateBrandVariant::markIfCheap):
+        (JSC::SetPrivateBrandVariant::finalize):
+        (JSC::SetPrivateBrandVariant::visitAggregate):
+        (JSC::SetPrivateBrandVariant::dump const):
+        (JSC::SetPrivateBrandVariant::dumpInContext const):
+        * bytecode/SetPrivateBrandVariant.h: Added.
+        (JSC::SetPrivateBrandVariant::oldStructure const):
+        (JSC::SetPrivateBrandVariant::newStructure const):
+        (JSC::SetPrivateBrandVariant::identifier const):
+        (JSC::SetPrivateBrandVariant::overlaps):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::privateBrandRequirement const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::privateBrandRequirement const):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+
+        We changed BytecodeGenerator for FunctionNode and EvalNode to
+        propagate parentScope PrivateNameEnvironment. These environments stores
+        private name entries that are visible into the scope of the
+        function/eval.
+        This is required to identify the kind of access a private name is
+        referring to, since it can be a private field or a private method.
+
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::emitGetPrivateName):
+        (JSC::BytecodeGenerator::emitCreatePrivateBrand):
+
+        The process to create a private brand is as follows:
+            1. Create a PrivateSymbol using `@createPrivateSymbol`.
+            2. Store this symbol into a given scope (i.e class lexical scope)
+               on `@privateBrand` variable.
+
+        (JSC::BytecodeGenerator::emitInstallPrivateBrand):
+        (JSC::BytecodeGenerator::emitGetPrivateBrand):
+
+        We added `m_privateNamesStack` to BytecodeGenerator to represent the
+        scope chain of available private names while generating bytecode.
+
+        (JSC::BytecodeGenerator::emitCheckPrivateBrand):
+        (JSC::BytecodeGenerator::isPrivateMethod):
+        (JSC::BytecodeGenerator::pushPrivateAccessNames):
+        (JSC::BytecodeGenerator::popPrivateAccessNames):
+        (JSC::BytecodeGenerator::getAvailablePrivateAccessNames):
+        (JSC::BytecodeGenerator::emitNewDefaultConstructor):
+        (JSC::BytecodeGenerator::emitNewClassFieldInitializerFunction):
+        (JSC::BytecodeGenerator::emitDirectGetByVal): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::privateBrandRequirement const):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::makeFunction):
+
+        This change is required to properly propagate PrivateBrandRequirement
+        to arrow functions that can potentially call `super()`.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitDeclarePrivateFieldNames):
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::BaseDotNode::emitGetPropertyValue):
+
+        Adding support to properly access private method. Since we store
+        private methods on class lexical scope, we need a different set of
+        instructions to access a private method.
+
+        (JSC::BaseDotNode::emitPutProperty):
+
+        In the case of we trying to write in a private method, we need to
+        throw a TypeError according to specification
+        (https://tc39.es/proposal-private-methods/#sec-privatefieldset).
+
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitDot):
+        (JSC::ClassExprNode::emitBytecode):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addPrivateBrandAccess):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCheckPrivateBrandStatus):
+        (JSC::DFG::Node::checkPrivateBrandStatus):
+        (JSC::DFG::Node::hasSetPrivateBrandStatus):
+        (JSC::DFG::Node::setPrivateBrandStatus):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckPrivateBrand):
+        (JSC::DFG::SpeculativeJIT::compileSetPrivateBrand):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePrivateBrandAccess):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckPrivateBrand):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetPrivateBrand):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator):
+        (JSC::JITPrivateBrandAccessGenerator::generateFastPath):
+        (JSC::JITPrivateBrandAccessGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator):
+        (JSC::JITPrivateBrandAccessGenerator::slowPathJump const):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        (JSC::getPrivateName):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheCheckPrivateBrand):
+        (JSC::repatchCheckPrivateBrand):
+        (JSC::tryCacheSetPrivateBrand):
+        (JSC::repatchSetPrivateBrand):
+        (JSC::resetCheckPrivateBrand):
+        (JSC::resetSetPrivateBrand):
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        * parser/Nodes.h:
+        (JSC::BaseDotNode::isPrivateMember const):
+        (JSC::BaseDotNode::isPrivateField const): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Scope::declarePrivateMethod):
+        (JSC::Scope::declarePrivateField):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::Scope::declarePrivateName): Deleted.
+        * parser/ParserModes.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createDotAccess):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironment::declarePrivateMethod):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isPrivateField const):
+        (JSC::VariableEnvironmentEntry::isPrivateMethod const):
+        (JSC::VariableEnvironmentEntry::setIsPrivateField):
+        (JSC::VariableEnvironmentEntry::setIsPrivateMethod):
+        (JSC::PrivateNameEntry::isMethod const):
+        (JSC::PrivateNameEntry::isPrivateMethodOrAcessor const):
+        (JSC::VariableEnvironment::addPrivateName):
+        (JSC::VariableEnvironment::declarePrivateField):
+        (JSC::VariableEnvironment::declarePrivateMethod):
+        (JSC::VariableEnvironment::privateNameEnvironment const):
+        (JSC::VariableEnvironment::hasPrivateMethodOrAccessor const):
+        (JSC::VariableEnvironment::addPrivateNamesFrom):
+        (JSC::VariableEnvironmentEntry::isPrivateName const): Deleted.
+        (JSC::VariableEnvironmentEntry::setIsPrivateName): Deleted.
+        (JSC::VariableEnvironment::declarePrivateName): Deleted.
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+        (JSC::CachedFunctionExecutableRareData::encode):
+        (JSC::CachedFunctionExecutableRareData::decode const):
+        (JSC::CachedFunctionExecutable::privateBrandRequirement const):
+        (JSC::CachedCodeBlock::derivedContextType const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::CachedCodeBlock::needsClassFieldInitializer const): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::generateUnlinkedCodeBlock):
+        (JSC::generateUnlinkedCodeBlockForDirectEval):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        (JSC::DirectEvalExecutable::DirectEvalExecutable):
+        * runtime/DirectEvalExecutable.h:
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::executableInfo const):
+        (JSC::EvalExecutable::privateBrandRequirement const):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInvalidPrivateNameError):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::IndirectEvalExecutable):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::checkPrivateBrand):
+        (JSC::JSObject::setPrivateBrand):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        * runtime/JSScope.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::BrandedStructure::BrandedStructure):
+        (JSC::BrandedStructure::create):
+        (JSC::BrandedStructure::checkBrand):
+        (JSC::Structure::setBrandTransitionFromExistingStructureImpl):
+        (JSC::Structure::setBrandTransitionFromExistingStructureConcurrently):
+        (JSC::Structure::setBrandTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::finishCreation):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+        (JSC::Structure::forEachPropertyConcurrently):
+        * runtime/StructureTransitionTable.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::cloneScopePart):
+        * runtime/SymbolTable.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
+2021-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make JSON.parse faster by using table for fast string parsing
+        https://bugs.webkit.org/show_bug.cgi?id=221593
+
+        Reviewed by Ryosuke Niwa and Geoffrey Garen.
+
+        We use Latin1 table for quickly checking whether a character is safe for the fast path string parsing in JSON.
+        This offers 1-3% improvement in Kraken json-parse-financial test.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser<CharType>::Lexer::lexString):
+        * runtime/LiteralParser.h:
+
+2021-02-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add `CSS.setLayoutContextTypeChangedMode` for getting information about all layout contexts
+        https://bugs.webkit.org/show_bug.cgi?id=221449
+
+        Reviewed by Devin Rousso.
+
+        Added `CSS.setLayoutContextTypeChangedMode` command and `CSS.LayoutContextTypeChangedMode` enum for controlling
+        if the frontend should be informed of all layout context type changes, or if only currently instrumented nodes
+        should be observed.
+
+        * inspector/protocol/CSS.json:
+
 2021-02-08  Alicia Boya García  <aboya@igalia.com>
 
         Add ConsoleMessage::toString()

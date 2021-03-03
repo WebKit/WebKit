@@ -70,6 +70,7 @@
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
+#import "Theme.h"
 #import "UTIUtilities.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -77,7 +78,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
 #import <objc/runtime.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -349,8 +350,8 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) con
         return;
 
     int size = std::max(style.computedFontPixelSize(), 10U);
-    style.setWidth({ size, Fixed });
-    style.setHeight({ size, Fixed });
+    style.setWidth({ size, LengthType::Fixed });
+    style.setHeight({ size, LengthType::Fixed });
 }
 
 static CGPoint shortened(CGPoint start, CGPoint end, float width)
@@ -452,6 +453,18 @@ void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
     }
 }
 
+LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
+{
+    // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
+    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart) {
+        float width = std::min(paintRect.width(), paintRect.height());
+        float height = width;
+        return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
+    }
+
+    return paintRect;
+}
+
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
     if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
@@ -479,8 +492,8 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
         return;
 
     int size = std::max(style.computedFontPixelSize(), 10U);
-    style.setWidth({ size, Fixed });
-    style.setHeight({ size, Fixed });
+    style.setWidth({ size, LengthType::Fixed });
+    style.setHeight({ size, LengthType::Fixed });
     style.setBorderRadius({ size / 2, size / 2 });
 }
 
@@ -603,7 +616,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
         return;
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, Fixed }, { box.height() / 2, Fixed } });
+    style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, LengthType::Fixed }, { box.height() / 2, LengthType::Fixed } });
 }
 
 static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
@@ -621,7 +634,7 @@ static void adjustSelectListButtonStyle(RenderStyle& style, const Element& eleme
     applyCommonButtonPaddingToStyle(style, element);
 
     // Enforce "line-height: normal".
-    style.setLineHeight(Length(-100.0, Percent));
+    style.setLineHeight(Length(-100.0, LengthType::Percent));
 }
     
 class RenderThemeMeasureTextClient : public MeasureTextClient {
@@ -664,7 +677,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     if (maximumWidth > 0) {
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
-        style.setWidth(Length(width, Fixed));
+        style.setWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
 }
@@ -673,9 +686,9 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 {
     // Set the min-height to be at least MenuListMinHeight.
     if (style.height().isAuto())
-        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), Fixed));
+        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
     else
-        style.setMinHeight(Length(MenuListMinHeight, Fixed));
+        style.setMinHeight(Length(MenuListMinHeight, LengthType::Fixed));
 
     if (!element)
         return;
@@ -825,7 +838,7 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     int radius = static_cast<int>(kTrackRadius);
-    style.setBorderRadius({ { radius, Fixed }, { radius, Fixed } });
+    style.setBorderRadius({ { radius, LengthType::Fixed }, { radius, LengthType::Fixed } });
 }
 
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -917,12 +930,12 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
         return;
 
     // Enforce "border-radius: 50%".
-    style.setBorderRadius({ { 50, Percent }, { 50, Percent } });
+    style.setBorderRadius({ { 50, LengthType::Percent }, { 50, LengthType::Percent } });
 
     // Enforce a 16x16 size if no size is provided.
     if (style.width().isIntrinsicOrAuto() || style.height().isAuto()) {
-        style.setWidth({ kDefaultSliderThumbSize, Fixed });
-        style.setHeight({ kDefaultSliderThumbSize, Fixed });
+        style.setWidth({ kDefaultSliderThumbSize, LengthType::Fixed });
+        style.setHeight({ kDefaultSliderThumbSize, LengthType::Fixed });
     }
 }
 
@@ -1074,7 +1087,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
     if (style.width().isIntrinsicOrAuto() || style.height().isAuto())
-        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), Fixed));
+        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (style.appearance() == ColorWellPart)
@@ -2049,7 +2062,7 @@ constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
 
 constexpr auto menulistButtonColor = SRGBA<uint8_t> { 97, 172, 255 };
 
-bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;
@@ -2107,7 +2120,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     return false;
 }
 
-bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;
@@ -2141,6 +2154,9 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
 // ensure a smooth animation, while trying to reduce the number of times the
 // progress bar is repainted.
 constexpr Seconds progressAnimationRepeatInterval = 33_ms;
+
+constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
+constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 
 Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress& renderProgress) const
 {
@@ -2176,6 +2192,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
 
     float barWidth;
     float barLeft = rect.x();
+    float alpha = 1.0f;
 
     if (renderProgress.isDeterminate()) {
         barWidth = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackRect.width();
@@ -2183,23 +2200,33 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
         if (!renderProgress.style().isLeftToRightDirection())
             barLeft = trackRect.maxX() - barWidth;
     } else {
-        barWidth = 0.25f * trackRect.width();
-
         Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
         float position = fmodf(elapsed.value(), 1.0f);
-        float offset = position * (trackRect.width() + barWidth);
-
         bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
-        if (reverseDirection)
-            barLeft = trackRect.maxX() - offset;
-        else
-            barLeft -= barWidth - offset;
 
-        context.clipRoundedRect(roundedTrackRect);
+        if (Theme::singleton().userPrefersReducedMotion()) {
+            barWidth = trackRect.width();
+
+            float difference = position * (reducedMotionProgressAnimationMaxOpacity - reducedMotionProgressAnimationMinOpacity);
+            if (reverseDirection)
+                alpha = reducedMotionProgressAnimationMaxOpacity - difference;
+            else
+                alpha = reducedMotionProgressAnimationMinOpacity + difference;
+        } else {
+            barWidth = 0.25f * trackRect.width();
+
+            float offset = position * (trackRect.width() + barWidth);
+            if (reverseDirection)
+                barLeft = trackRect.maxX() - offset;
+            else
+                barLeft -= barWidth - offset;
+
+            context.clipRoundedRect(roundedTrackRect);
+        }
     }
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor);
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor.colorWithAlphaByte(alpha * 255.0f));
 
     return false;
 }
@@ -2298,9 +2325,14 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     context.fillRoundedRect(innerBorder, controlBackgroundColor);
 
     double valueRatio = renderSlider.valueRatio();
-    if (isHorizontal)
-        trackClip.setWidth(trackClip.width() * valueRatio);
-    else {
+    if (isHorizontal) {
+        double newWidth = trackClip.width() * valueRatio;
+
+        if (!box.style().isLeftToRightDirection())
+            trackClip.move(trackClip.width() - newWidth, 0);
+
+        trackClip.setWidth(newWidth);
+    } else {
         float height = trackClip.height();
         trackClip.setHeight(height * valueRatio);
         trackClip.setY(trackClip.y() + height - trackClip.height());

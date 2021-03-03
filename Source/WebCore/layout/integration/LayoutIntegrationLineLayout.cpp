@@ -214,8 +214,10 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
+
     auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
-    inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
+    inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
     ASSERT(m_inlineContent);
 
     for (auto& run : m_inlineContent->runs) {
@@ -405,8 +407,13 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (m_inlineContent->runs.isEmpty())
         return { };
 
-    auto boxGeometry = m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline));
-    return { Layout::BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
+    return Layout::BoxGeometry::borderBoxRect(m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline)));
+}
+
+LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
+{
+    // FIXME: This doesn't contain overflow.
+    return enclosingBorderBoxRectFor(renderInline);
 }
 
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const

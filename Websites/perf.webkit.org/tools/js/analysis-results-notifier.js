@@ -2,6 +2,7 @@ global.CommonComponentBase = require('../../public/shared/common-component-base'
 global.MarkupPage = require('./markup-component.js').MarkupPage;
 global.MarkupComponentBase = require('./markup-component.js').MarkupComponentBase;
 
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -21,15 +22,15 @@ class AnalysisResultsNotifier {
 
     static _validateRules(rules)
     {
-        function isNonemptyArrayOfStrings(object) {
+        function isUnderfinedOrEmptyArrayOrArrayOfStrings(object) {
             if (!object)
-                return false;
+                return true;
             if (!Array.isArray(object))
                 return false;
             return object.every((entry) => entry instanceof String || typeof(entry) === 'string');
         }
         for (const rule of rules)
-            console.assert(isNonemptyArrayOfStrings(rule.platforms) || isNonemptyArrayOfStrings(rule.tests), 'Either tests or platforms should be an array of strings');
+            assert.ok(isUnderfinedOrEmptyArrayOrArrayOfStrings(rule.platforms) && isUnderfinedOrEmptyArrayOrArrayOfStrings(rule.tests), 'Either tests or platforms must be an undefined, empty array, or an array of strings');
     }
 
     async sendNotificationsForTestGroups(testGroups)
@@ -106,7 +107,7 @@ class AnalysisResultsNotifier {
         const updateType = typeof update;
         const supportedPrimitiveTypes = ["string", "number", "boolean"];
         const unsupportedPrimitiveTypes = ["symbol", "function", "undefined"];
-        console.assert(!unsupportedPrimitiveTypes.includes(messageType) && !unsupportedPrimitiveTypes.includes(updateType));
+        assert.ok(!unsupportedPrimitiveTypes.includes(messageType) && !unsupportedPrimitiveTypes.includes(updateType));
 
         if (supportedPrimitiveTypes.includes(messageType) || supportedPrimitiveTypes.includes(updateType))
             return [message, update];

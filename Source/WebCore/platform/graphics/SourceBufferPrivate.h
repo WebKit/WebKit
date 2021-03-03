@@ -75,26 +75,26 @@ public:
 
     virtual bool canSwitchToType(const ContentType&) { return false; }
 
-    virtual void setMediaSourceEnded(bool);
+    WEBCORE_EXPORT virtual void setMediaSourceEnded(bool);
     virtual void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
-    virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
-    virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
-    virtual void resetTrackBuffers();
-    virtual void clearTrackBuffers();
-    virtual void setAllTrackBuffersNeedRandomAccess();
+    WEBCORE_EXPORT virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
+    WEBCORE_EXPORT virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
+    WEBCORE_EXPORT virtual void resetTrackBuffers();
+    WEBCORE_EXPORT virtual void clearTrackBuffers();
+    WEBCORE_EXPORT virtual void setAllTrackBuffersNeedRandomAccess();
     virtual void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
-    virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& = [] { });
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
-    virtual void resetTimestampOffsetInTrackBuffers();
+    WEBCORE_EXPORT virtual void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
-    virtual void seekToTime(const MediaTime&);
-    virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
+    WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
+    WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }

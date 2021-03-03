@@ -162,6 +162,11 @@
     return [_contentView selectFormPopoverTitle];
 }
 
+- (void)setSelectedColorForColorPicker:(UIColor *)color
+{
+    [_contentView setSelectedColorForColorPicker:color];
+}
+
 - (NSString *)textContentTypeForTesting
 {
     return [_contentView textContentTypeForTesting];

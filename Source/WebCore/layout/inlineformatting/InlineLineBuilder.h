@@ -52,6 +52,7 @@ public:
     struct LineContent {
         InlineItemRange inlineItemRange;
         size_t partialTrailingContentLength { 0 };
+        Optional<InlineLayoutUnit> overflowLogicalWidth;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
@@ -60,7 +61,7 @@ public:
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const InlineRect& initialLineLogicalRect, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> leadingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -70,7 +71,7 @@ public:
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
 private:
-    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, InlineLayoutUnit currentLogicalRight);
+    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, Optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight);
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
     struct Result {
@@ -81,6 +82,7 @@ private:
         };
         CommittedContentCount committedCount { };
         size_t partialTrailingContentLength { 0 };
+        Optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     struct UsedConstraints {
         InlineRect logicalRect;
@@ -98,8 +100,9 @@ private:
     struct CommittedContent {
         size_t inlineItemCount { 0 };
         size_t partialTrailingContentLength { 0 };
+        Optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength);
+    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> overflowLogicalWidth);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;

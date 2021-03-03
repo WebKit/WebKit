@@ -78,10 +78,10 @@ static RenderStyle createFullScreenStyle()
     fullscreenStyle.setFlexDirection(FlexDirection::Column);
     
     fullscreenStyle.setPosition(PositionType::Fixed);
-    fullscreenStyle.setWidth(Length(100.0, Percent));
-    fullscreenStyle.setHeight(Length(100.0, Percent));
-    fullscreenStyle.setLeft(Length(0, WebCore::Fixed));
-    fullscreenStyle.setTop(Length(0, WebCore::Fixed));
+    fullscreenStyle.setWidth(Length(100.0, LengthType::Percent));
+    fullscreenStyle.setHeight(Length(100.0, LengthType::Percent));
+    fullscreenStyle.setLeft(Length(0, LengthType::Fixed));
+    fullscreenStyle.setTop(Length(0, LengthType::Fixed));
     
     fullscreenStyle.setBackgroundColor(Color::black);
 

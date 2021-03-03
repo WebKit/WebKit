@@ -28,6 +28,6 @@
     <script src="/js-test-resources/js-test-post.js"></script>
 </head>
 <body>
-    <iframe src="http://127.0.0.1:8000/security/xssAuditor/resources/nph-cached.pl?q=%3cscript%3ealert(/XSS/);%3c/script%3e" onload="frameLoaded()"></iframe>
+    <iframe src="http://127.0.0.1:8000/security/xssAuditor/resources/nph-cached.pl?q=%3cscript%3econsole.log(/XSS/);%3c/script%3e" onload="frameLoaded()"></iframe>
 </body>
 </html>

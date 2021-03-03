@@ -54,6 +54,7 @@
 - (void)immediatelyDismissContextMenuIfNeeded;
 - (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback;
 
+- (void)_didPresentViewController:(UIViewController *)viewController;
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)_didEndRotation;

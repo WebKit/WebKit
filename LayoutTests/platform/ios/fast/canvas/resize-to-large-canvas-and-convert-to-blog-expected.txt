@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 16777216).
+This test passes if it doesn't crash.
+
+

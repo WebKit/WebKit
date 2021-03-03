@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#include "Logging.h"
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <wtf/HexNumber.h>
 

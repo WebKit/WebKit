@@ -140,7 +140,7 @@ private:
 
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags, const String& toolTip, WebCore::TextDirection) final;
 
-    void print(WebCore::Frame&) final;
+    void print(WebCore::Frame&, const WebCore::StringWithDirection&) final;
 
     void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
 
@@ -417,6 +417,10 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(WebCore::Element&) final;
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&) final;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };

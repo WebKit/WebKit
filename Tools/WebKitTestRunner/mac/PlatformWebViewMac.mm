@@ -149,14 +149,13 @@ void PlatformWebView::didInitializeClients()
 
 void PlatformWebView::addChromeInputField()
 {
-    NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
-    textField.tag = 1;
-    [[m_window contentView] addSubview:textField];
-    [textField release];
+    auto textField = adoptNS([[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)]);
+    [textField setTag:1];
+    [[m_window contentView] addSubview:textField.get()];
 
     NSView *view = platformView();
     [textField setNextKeyView:view];
-    [view setNextKeyView:textField];
+    [view setNextKeyView:textField.get()];
 }
 
 void PlatformWebView::removeChromeInputField()

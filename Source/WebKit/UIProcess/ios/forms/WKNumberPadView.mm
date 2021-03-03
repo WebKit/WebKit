@@ -26,13 +26,13 @@
 #import "config.h"
 #import "WKNumberPadView.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "PepperUICoreSPI.h"
 #import "WKNumberPadViewController.h"
 
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -567,4 +567,4 @@ static WKNumberPadKey alternateKeyAtPosition(WKNumberPadButtonPosition position)
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

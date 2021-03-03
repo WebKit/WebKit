@@ -29,10 +29,16 @@
 
 #include "MediaControlsHost.h"
 
+#include "AudioTrackList.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CaptionUserPreferences.h"
+#include "FloatRect.h"
 #include "HTMLMediaElement.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
+#include "MediaControlsContextMenuItem.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderTheme.h"
@@ -40,6 +46,7 @@
 #include "TextTrackList.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -303,6 +310,122 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 {
     return RenderTheme::singleton().mediaControlsFormattedStringForDuration(durationInSeconds);
 }
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, ContextMenuOptions&& options)
+{
+    if (!m_mediaElement)
+        return;
+
+    auto& mediaElement = *m_mediaElement;
+
+    auto* page = mediaElement.document().page();
+    if (!page)
+        return;
+
+    using MenuTrackItem = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack>>;
+    HashMap<MediaControlsContextMenuItem::ID, MenuTrackItem> idMap;
+
+    Vector<MediaControlsContextMenuItem> items;
+
+    if (options.includeAudioTracks) {
+        if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
+            MediaControlsContextMenuItem audioTracksItem;
+            audioTracksItem.title = WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title");
+            audioTracksItem.icon = "globe"_s;
+            audioTracksItem.children.reserveCapacity(audioTracks->length());
+
+            auto& captionPreferences = page->group().captionPreferences();
+
+            for (auto& audioTrack : captionPreferences.sortedTrackListForMenu(audioTracks)) {
+                MediaControlsContextMenuItem audioTrackItem;
+                audioTrackItem.id = idMap.size() + 1;
+                audioTrackItem.title = captionPreferences.displayNameForTrack(audioTrack.get());
+                audioTrackItem.isChecked = audioTrack->enabled();
+
+                idMap.add(audioTrackItem.id, audioTrack);
+
+                audioTracksItem.children.append(WTFMove(audioTrackItem));
+            }
+
+            if (!audioTracksItem.children.isEmpty())
+                items.append(WTFMove(audioTracksItem));
+        }
+    }
+
+    if (options.includeTextTracks) {
+        if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
+            MediaControlsContextMenuItem textTracksItem;
+            textTracksItem.title = WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title");
+            textTracksItem.icon = "captions.bubble"_s;
+            textTracksItem.children.reserveCapacity(textTracks->length());
+
+            auto& captionPreferences = page->group().captionPreferences();
+            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks);
+            bool allTracksDisabled = notFound == sortedTextTracks.findMatching([] (const auto& textTrack) {
+                return textTrack->mode() == TextTrack::Mode::Showing;
+            });
+            bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::Automatic && allTracksDisabled;
+
+            for (auto& textTrack : sortedTextTracks) {
+                MediaControlsContextMenuItem textTrackItem;
+                textTrackItem.id = idMap.size() + 1;
+                textTrackItem.title = captionPreferences.displayNameForTrack(textTrack.get());
+                if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::Manual))
+                    textTrackItem.isChecked = true;
+                else if (usesAutomaticTrack && textTrack == &TextTrack::captionMenuAutomaticItem())
+                    textTrackItem.isChecked = true;
+                else if (!usesAutomaticTrack && textTrack->mode() == TextTrack::Mode::Showing)
+                    textTrackItem.isChecked = true;
+                else
+                    textTrackItem.isChecked = false;
+
+                idMap.add(textTrackItem.id, textTrack);
+
+                textTracksItem.children.append(WTFMove(textTrackItem));
+            }
+
+            if (!textTracksItem.children.isEmpty())
+                items.append(WTFMove(textTracksItem));
+        }
+    }
+
+    if (items.isEmpty())
+        return;
+
+    ASSERT(!idMap.isEmpty());
+
+    page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap)] (MediaControlsContextMenuItem::ID selectedItemID) {
+
+        if (selectedItemID == MediaControlsContextMenuItem::invalidID)
+            return;
+
+        if (!weakMediaElement)
+            return;
+
+        auto& mediaElement = *weakMediaElement;
+
+        auto selectedItem = idMap.get(selectedItemID);
+        WTF::switchOn(selectedItem,
+            [&] (RefPtr<AudioTrack>& selectedAudioTrack) {
+                for (auto& track : idMap.values()) {
+                    if (auto* audioTrack = WTF::get_if<RefPtr<AudioTrack>>(track))
+                        (*audioTrack)->setEnabled(*audioTrack == selectedAudioTrack);
+                }
+            },
+            [&] (RefPtr<TextTrack>& selectedTextTrack) {
+                for (auto& track : idMap.values()) {
+                    if (auto* textTrack = WTF::get_if<RefPtr<TextTrack>>(track))
+                        (*textTrack)->setMode(TextTrack::Mode::Disabled);
+                }
+                mediaElement.setSelectedTextTrack(selectedTextTrack.get());
+            }
+        );
+    });
+}
+
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 bool MediaControlsHost::compactMode() const
 {

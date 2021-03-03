@@ -33,6 +33,7 @@
 #include "ArgList.h"
 #include "BigIntObject.h"
 #include "BooleanObject.h"
+#include "BrandedStructure.h"
 #include "BuiltinExecutables.h"
 #include "BytecodeIntrinsicRegistry.h"
 #include "CheckpointOSRExitSideState.h"
@@ -369,6 +370,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , structureChainSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), StructureChain)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData) // Hash:0xaca4e62d
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure) // Hash:0x1f1bcdca
+    , brandedStructureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), BrandedStructure)
     , symbolTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SymbolTable) // Hash:0xc5215afd
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)

@@ -211,6 +211,8 @@ bytecode/CallLinkInfo.cpp
 bytecode/CallLinkStatus.cpp
 bytecode/CallMode.cpp
 bytecode/CallVariant.cpp
+bytecode/CheckPrivateBrandStatus.cpp
+bytecode/CheckPrivateBrandVariant.cpp
 bytecode/CodeBlock.cpp
 bytecode/CodeBlockHash.cpp
 bytecode/CodeBlockJettisoningWatchpoint.cpp
@@ -271,6 +273,8 @@ bytecode/PutByIdStatus.cpp
 bytecode/PutByIdVariant.cpp
 bytecode/RecordedStatuses.cpp
 bytecode/ReduceWhitespace.cpp
+bytecode/SetPrivateBrandStatus.cpp
+bytecode/SetPrivateBrandVariant.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
 bytecode/StructureStubClearingWatchpoint.cpp
@@ -734,6 +738,7 @@ runtime/BigIntPrototype.cpp
 runtime/BooleanConstructor.cpp
 runtime/BooleanObject.cpp
 runtime/BooleanPrototype.cpp
+runtime/BrandedStructure.cpp
 runtime/BytecodeCacheError.cpp
 runtime/CallData.cpp
 runtime/CachePayload.cpp

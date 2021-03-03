@@ -29,6 +29,7 @@
 #include "CallbackID.h"
 #include "PrintInfo.h"
 #include <WebCore/RefPtrCairo.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
@@ -75,7 +76,7 @@ public:
 
     void disconnectFromPage();
 
-    virtual void startPrint(WebCore::PrintContext*, CallbackID) = 0;
+    virtual void startPrint(WebCore::PrintContext*, CompletionHandler<void(const WebCore::ResourceError&)>&&) = 0;
 
 protected:
     WebPrintOperationGtk(WebPage*, const PrintInfo&);
@@ -103,7 +104,7 @@ protected:
     GRefPtr<GtkPageSetup> m_pageSetup;
     PrintInfo::PrintMode m_printMode;
     WebCore::PrintContext* m_printContext;
-    CallbackID m_callbackID;
+    CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
     RefPtr<cairo_t> m_cairoContext;
     double m_xDPI;
     double m_yDPI;

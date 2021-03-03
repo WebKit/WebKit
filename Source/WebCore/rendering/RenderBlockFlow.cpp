@@ -3843,7 +3843,7 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
     if (!renderer.isRenderBlock())
         return true;
     if (renderer.isListItem())
-        return renderer.style().height().type() != Fixed;
+        return renderer.style().height().type() != LengthType::Fixed;
     return false;
 }
 
@@ -4147,7 +4147,7 @@ RenderObject* InlineMinMaxIterator::next()
 
 static LayoutUnit getBPMWidth(LayoutUnit childValue, Length cssUnit)
 {
-    if (cssUnit.type() != Auto)
+    if (cssUnit.type() != LengthType::Auto)
         return (cssUnit.isFixed() ? LayoutUnit(cssUnit.value()) : childValue);
     return 0;
 }

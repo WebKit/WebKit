@@ -128,6 +128,7 @@ def function_parameter_type(type, kind):
         'int16_t',
         'int32_t',
         'int64_t',
+        'size_t',
     ])
 
     if type in builtin_types:
@@ -267,6 +268,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::FetchIdentifier',
         'WebCore::FrameIdentifier',
         'WebCore::GraphicsContextGLAttributes',
+        'WebCore::ImageDecoderIdentifier',
         'WebCore::LibWebRTCSocketIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::MediaPlayerIdentifier',
@@ -306,6 +308,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::PDFPluginIdentifier',
         'WebKit::PlaybackSessionContextIdentifier',
         'WebKit::RemoteAudioDestinationIdentifier',
+        'WebKit::RemoteAudioHardwareListenerIdentifier',
         'WebKit::RemoteAudioSessionIdentifier',
         'WebKit::RemoteCDMIdentifier',
         'WebKit::RemoteCDMInstanceIdentifier',
@@ -314,6 +317,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::RemoteLegacyCDMSessionIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
         'WebKit::RemoteMediaSourceIdentifier',
+        'WebKit::RemoteRemoteCommandListenerIdentifier',
         'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RenderingBackendIdentifier',
         'WebKit::RTCDecoderIdentifier',
@@ -585,6 +589,7 @@ def class_template_headers(template_string):
         'Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReference': {'headers': ['"ArrayReference.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
@@ -724,6 +729,7 @@ def headers_for_type(type):
         'WebCore::SameSiteStrictEnforcementEnabled': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::FirstPartyWebsiteDataRemovalMode': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
+        'WebCore::VideoPresetData': ['<WebCore/VideoPreset.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::WebGLLoadPolicy': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],

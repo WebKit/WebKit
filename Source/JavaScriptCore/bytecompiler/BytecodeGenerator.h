@@ -408,10 +408,10 @@ namespace JSC {
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
-        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
-        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
-        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
+        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
 
         ~BytecodeGenerator();
         
@@ -425,20 +425,21 @@ namespace JSC {
         bool needsToUpdateArrowFunctionContext() const { return m_needsToUpdateArrowFunctionContext; }
         bool usesEval() const { return m_scopeNode->usesEval(); }
         bool usesThis() const { return m_scopeNode->usesThis(); }
+        PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
         JSParserScriptMode scriptMode() const { return m_codeBlock->scriptMode(); }
         NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
 
         template<typename Node, typename UnlinkedCodeBlock>
-        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
+        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* privateNameEnvironment, ECMAMode ecmaMode)
         {
             MonotonicTime before;
             if (UNLIKELY(Options::reportBytecodeCompileTimes()))
                 before = MonotonicTime::now();
 
             DeferGC deferGC(vm.heap);
-            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, parentScopeTDZVariables, ecmaMode);
+            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, parentScopeTDZVariables, privateNameEnvironment, ecmaMode);
             auto result = bytecodeGenerator->generate();
 
             if (UNLIKELY(Options::reportBytecodeCompileTimes())) {
@@ -774,7 +775,7 @@ namespace JSC {
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionMetadataNode*);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode*);
-        RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name, const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer);
+        RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name, const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer, PrivateBrandRequirement);
         RegisterID* emitNewClassFieldInitializerFunction(RegisterID* dst, Vector<JSTextPosition>&& classFieldLocations, bool isDerived);
         RegisterID* emitNewArrowFunctionExpression(RegisterID*, ArrowFuncExprNode*);
         RegisterID* emitNewMethodDefinition(RegisterID* dst, MethodDefinitionNode*);
@@ -815,7 +816,6 @@ namespace JSC {
         RegisterID* emitDirectSetPrototypeOf(RegisterID* base, RegisterID* prototype);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
-        RegisterID* emitDirectGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
 
@@ -823,6 +823,12 @@ namespace JSC {
         RegisterID* emitPutInternalField(RegisterID* base, unsigned index, RegisterID* value);
         RegisterID* emitDefinePrivateField(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value);
+        RegisterID* emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property);
+
+        void emitCreatePrivateBrand(RegisterID* dst, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        void emitInstallPrivateBrand(RegisterID* target);
+        RegisterID* emitGetPrivateBrand(RegisterID* dst, RegisterID* scope);
+        void emitCheckPrivateBrand(RegisterID* base, RegisterID* brand);
 
         void emitSuperSamplerBegin();
         void emitSuperSamplerEnd();
@@ -1176,16 +1182,19 @@ namespace JSC {
             DerivedContextType newDerivedContextType = DerivedContextType::None;
 
             NeedsClassFieldInitializer needsClassFieldInitializer = metadata->isConstructorAndNeedsClassFieldInitializer() ? NeedsClassFieldInitializer::Yes : NeedsClassFieldInitializer::No;
+            PrivateBrandRequirement privateBrandRequirement = metadata->privateBrandRequirement();
             if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::AsyncArrowFunctionBodyMode).contains(metadata->parseMode())) {
                 if (constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext()) {
                     newDerivedContextType = DerivedContextType::DerivedConstructorContext;
                     needsClassFieldInitializer = m_codeBlock->needsClassFieldInitializer();
+                    privateBrandRequirement = m_codeBlock->privateBrandRequirement();
                 }
                 else if (m_codeBlock->isClassContext() || isDerivedClassContext())
                     newDerivedContextType = DerivedContextType::DerivedMethodContext;
             }
 
             auto optionalVariablesUnderTDZ = getVariablesUnderTDZ();
+            Optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
 
             // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
             // https://bugs.webkit.org/show_bug.cgi?id=151547
@@ -1194,10 +1203,11 @@ namespace JSC {
             if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() != ConstructorKind::None)
                 constructAbility = ConstructAbility::CanConstruct;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(optionalVariablesUnderTDZ), newDerivedContextType, needsClassFieldInitializer);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(optionalVariablesUnderTDZ), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, needsClassFieldInitializer, privateBrandRequirement);
         }
 
         RefPtr<TDZEnvironmentLink> getVariablesUnderTDZ();
+        Optional<PrivateNameEnvironment> getAvailablePrivateAccessNames();
 
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
         template<typename CallOp>
@@ -1253,6 +1263,11 @@ namespace JSC {
             m_lastInstruction = prevLastInstruction;
         }
 
+        bool isPrivateMethod(const Identifier&);
+
+        void pushPrivateAccessNames(const PrivateNameEnvironment*);
+        void popPrivateAccessNames();
+
     private:
         OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
@@ -1266,6 +1281,7 @@ namespace JSC {
 
         RefPtr<TDZEnvironmentLink> m_cachedParentTDZ;
         Vector<TDZStackEntry> m_TDZStack;
+        Vector<PrivateNameEnvironment> m_privateNamesStack;
         Optional<size_t> m_varScopeLexicalScopeStackIndex;
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTextInputListViewController.h"
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import "WKNumberPadViewController.h"
 #import <wtf/RetainPtr.h>
@@ -66,7 +66,9 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
     UIImage *numberPadButtonIcon = [PUICResources imageNamed:@"QuickboardAddPhoneNumber" inBundle:[NSBundle bundleWithIdentifier:@"com.apple.PepperUICore"] shouldCache:YES];
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto numberPadButton = adoptNS([[PUICQuickboardListTrayButton alloc] initWithFrame:CGRectZero tintColor:nil defaultHeight:self.specs.defaultButtonHeight]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [numberPadButton setImage:numberPadButtonIcon forState:UIControlStateNormal];
     [numberPadButton addTarget:self action:@selector(presentNumberPadViewController) forControlEvents:UIControlEventTouchUpInside];
     return @[ numberPadButton.get() ];
@@ -207,4 +209,4 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
 @end
 
-#endif // PLATFORM(WATCHOS)
+#endif // HAVE(PEPPER_UI_CORE)

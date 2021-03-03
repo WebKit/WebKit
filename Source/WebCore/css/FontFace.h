@@ -55,7 +55,7 @@ public:
     
     using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
     static Ref<FontFace> create(Document&, const String& family, Source&&, const Descriptors&);
-    static Ref<FontFace> create(CSSFontFace&);
+    static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();
 
     ExceptionOr<void> setFamily(Document&, const String&);
@@ -94,7 +94,7 @@ public:
 
 private:
     explicit FontFace(CSSFontSelector&);
-    explicit FontFace(CSSFontFace&);
+    explicit FontFace(ScriptExecutionContext*, CSSFontFace&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;

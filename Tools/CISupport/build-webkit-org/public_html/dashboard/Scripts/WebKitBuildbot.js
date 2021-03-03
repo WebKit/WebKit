@@ -95,7 +95,7 @@ WebKitBuildbot = function()
         }},
     };
 
-    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : false, "baseURLForResults": "https://s3-us-west-2.amazonaws.com/build.webkit.org-results/"});
+    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : false});
 };
 
 BaseObject.addConstructorFunctions(WebKitBuildbot);

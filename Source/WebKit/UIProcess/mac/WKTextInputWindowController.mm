@@ -46,7 +46,7 @@
 @end
 
 @interface WKTextInputPanel : WebPanel {
-    NSTextView *_inputTextView;
+    RetainPtr<NSTextView> _inputTextView;
 }
 
 - (NSTextInputContext *)_inputContext;
@@ -65,8 +65,6 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [_inputTextView release];
-    
     [super dealloc];
 }
 
@@ -82,13 +80,12 @@
      
     [self setFrame:frame display:NO];
         
-    _inputTextView = [[WKTextInputView alloc] initWithFrame:[(NSView *)self.contentView frame]];
-    _inputTextView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMinXMargin | NSViewMaxYMargin | NSViewMinYMargin;
+    _inputTextView = adoptNS([[WKTextInputView alloc] initWithFrame:[(NSView *)self.contentView frame]]);
+    [_inputTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMinXMargin | NSViewMaxYMargin | NSViewMinYMargin];
         
-    NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[(NSView *)self.contentView frame]];
-    scrollView.documentView = _inputTextView;
-    self.contentView = scrollView;
-    [scrollView release];
+    auto scrollView = adoptNS([[NSScrollView alloc] initWithFrame:[(NSView *)self.contentView frame]]);
+    [scrollView setDocumentView: _inputTextView.get()];
+    self.contentView = scrollView.get();
         
     [self setFloatingPanel:YES];
 

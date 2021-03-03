@@ -25,6 +25,7 @@
 
 #import "PDFPluginIdentifier.h"
 #import "SameDocumentNavigationType.h"
+#import "WKBlankOverlayView.h"
 #import "WKShareSheet.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewPrivate.h"
@@ -66,6 +67,7 @@ class Attachment;
 }
 
 namespace WebCore {
+struct ExceptionDetails;
 enum class WheelScrollGestureState : uint8_t;
 }
 
@@ -129,6 +131,8 @@ class ViewGestureController;
     _WKSelectionAttributes _selectionAttributes;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
+
+    RetainPtr<WKBlankOverlayView> _blankOverlayView;
 
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -278,6 +282,7 @@ class ViewGestureController;
 @end
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
+RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 @interface WKWebView (FullScreenAPI_Internal)

@@ -31,10 +31,13 @@
 # patches, etc.
 
 from webkitpy.common.config import urls
+from webkitscmpy import remote
 
 
 def bug_comment_from_svn_revision(svn_revision):
-    return "Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision))
+    repo = remote.Svn('https://svn.webkit.org/repository/webkit')
+    identifier = str(repo.commit(revision=svn_revision)).replace('trunk', 'main')
+    return 'Committed r{} ({}): <{}>'.format(svn_revision, identifier, urls.view_identifier_url(identifier))
 
 
 def bug_comment_from_commit_text(scm, commit_text):

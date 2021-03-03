@@ -28,6 +28,7 @@ GPUProcess/graphics/DisplayListReaderHandle.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
+GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
@@ -45,6 +46,7 @@ GPUProcess/media/RemoteMediaResource.cpp
 GPUProcess/media/RemoteMediaResourceLoader.cpp
 GPUProcess/media/RemoteMediaResourceManager.cpp
 GPUProcess/media/RemoteMediaSourceProxy.cpp
+GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
@@ -585,6 +587,7 @@ WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/MediaSourcePrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
+WebProcess/GPU/media/RemoteAudioHardwareListener.cpp
 WebProcess/GPU/media/RemoteAudioSession.cpp
 WebProcess/GPU/media/RemoteCDM.cpp
 WebProcess/GPU/media/RemoteCDMFactory.cpp
@@ -597,6 +600,7 @@ WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
+WebProcess/GPU/media/RemoteRemoteCommandListener.cpp
 WebProcess/GPU/media/SourceBufferPrivateRemote.cpp
 WebProcess/GPU/media/TextTrackPrivateRemote.cpp
 WebProcess/GPU/media/VideoTrackPrivateRemote.cpp

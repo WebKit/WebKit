@@ -42,6 +42,8 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
+#define PROCESS_BIDI_CONTENT 0
+
 struct LineLevelVisualAdjustmentsForRuns {
     bool needsIntegralPosition { false };
     // It's only 'text-overflow: ellipsis' for now.
@@ -60,6 +62,7 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutU
     return std::max(lineBoxLogicalWidth, lineContentLogicalWidth);
 }
 
+#if PROCESS_BIDI_CONTENT
 class Iterator {
 public:
     Iterator() = default;
@@ -145,6 +148,7 @@ BidiRun::BidiRun(unsigned start, unsigned end, BidiContext* context, UCharDirect
     else
         m_level = (direction == U_RIGHT_TO_LEFT) ? m_level + 1 : (direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 2 : m_level;
 }
+#endif
 
 InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow)
     : m_layoutState(layoutState)
@@ -152,12 +156,13 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 {
 }
 
-void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
+void InlineContentBuilder::build(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
+    auto& inlineFormattingState = inlineFormattingContext.formattingState();
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayNonRootInlineBoxes(inlineFormattingContext, inlineContent);
     createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayNonRootInlineBoxes(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
 InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
@@ -202,12 +207,14 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         return;
     auto& lines = inlineFormattingState.lines();
 
+#if PROCESS_BIDI_CONTENT
     BidiResolver<Iterator, BidiRun> bidiResolver;
     // FIXME: Add support for override.
     bidiResolver.setStatus(BidiStatus(m_layoutState.root().style().direction(), false));
     // FIXME: Grab the nested isolates from the previous line.
     bidiResolver.setPosition(Iterator(&runList, 0), 0);
     bidiResolver.createBidiRunsForLine(Iterator(&runList, runList.size()));
+#endif
 
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
 
@@ -287,25 +294,22 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         inlineContent.runs.append(displayRun);
     };
 
-    auto& bidiRuns = bidiResolver.runs();
-    if (bidiRuns.runCount() == 1) {
-        // Fast path for cases when there's no bidi boundary.
-        inlineContent.runs.reserveInitialCapacity(inlineFormattingState.lineRuns().size());
-        for (auto& lineRun : inlineFormattingState.lineRuns()) {
-            if (auto& text = lineRun.text())
-                createDisplayTextRunForRange(lineRun, text->start(), text->end());
-            else
-                createDisplayBoxRun(lineRun);
-        }
-    } else
-        ASSERT_NOT_IMPLEMENTED_YET();
+    inlineContent.runs.reserveInitialCapacity(inlineFormattingState.lineRuns().size());
+    for (auto& lineRun : inlineFormattingState.lineRuns()) {
+        if (auto& text = lineRun.text())
+            createDisplayTextRunForRange(lineRun, text->start(), text->end());
+        else
+            createDisplayBoxRun(lineRun);
+    }
 }
 
 void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
 {
     auto& lines = inlineFormattingState.lines();
     auto& runs = inlineContent.runs;
+    auto& nonRootInlineBoxes = inlineContent.nonRootInlineBoxes;
     size_t runIndex = 0;
+    size_t inlineBoxIndex = 0;
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -315,8 +319,16 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
+        // Collect ink overflow from runs.
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
+        // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
+        while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
+            auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
+            if (inlineBox.canContributeToLineOverflow())
+                scrollableOverflowRect.unite(inlineBox.rect());
+        }
+
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         auto enclosingTopAndBottom = line.enclosingTopAndBottom();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
@@ -329,8 +341,10 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
     }
 }
 
-void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList&) const
+void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
+    auto& inlineFormattingState = inlineFormattingContext.formattingState();
+    auto inlineQuirks = inlineFormattingContext.quirks();
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         auto& lineBoxLogicalRect = lineBox.logicalRect();
@@ -340,10 +354,10 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
                 continue;
             auto& layoutBox = inlineLevelBox->layoutBox();
             auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-            auto inlineBoxRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+            auto inlineBoxRect = lineBox.logicalRectForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect });
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox) });
         }
     }
 }

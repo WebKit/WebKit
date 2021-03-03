@@ -40,7 +40,9 @@ public:
 TEST(Signals, SignalsWorkOnExit)
 {
     static bool handlerRan = false;
-    addSignalHandler(Signal::Usr, [] (Signal, SigInfo&, PlatformRegisters&) -> SignalAction {
+    addSignalHandler(Signal::Usr, [] (Signal signal, SigInfo&, PlatformRegisters&) -> SignalAction {
+        RELEASE_ASSERT(signal == Signal::Usr);
+
         dataLogLn("here");
         handlerRan = true;
         return SignalAction::Handled;

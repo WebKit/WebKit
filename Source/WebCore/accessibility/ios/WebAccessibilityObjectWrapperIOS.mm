@@ -2361,16 +2361,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
 
                 if (!listMarkerText.isEmpty()) {
-                    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-                    AXAttributedStringAppendText(attrString, &node, listMarkerText);
-                    [array addObject:attrString];
-                    [attrString release];
+                    auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
+                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText);
+                    [array addObject:attrString.get()];
                 }
 
-                NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
-                AXAttributedStringAppendText(attrString, &node, it.text().createNSStringWithoutCopying().get());
-                [array addObject:attrString];
-                [attrString release];
+                auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
+                AXAttributedStringAppendText(attrString.get(), &node, it.text().createNSStringWithoutCopying().get());
+                [array addObject:attrString.get()];
             }
         } else {
             Node* replacedNode = it.node();

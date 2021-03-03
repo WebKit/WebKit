@@ -37,6 +37,7 @@
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
+#include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -47,6 +48,7 @@
 #include "RemoteMediaRecorderMessages.h"
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
+#include "RemoteRemoteCommandListenerProxy.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
@@ -104,6 +106,11 @@
 #include "RemoteLegacyCDMFactoryProxyMessages.h"
 #include "RemoteLegacyCDMProxyMessages.h"
 #include "RemoteLegacyCDMSessionProxyMessages.h"
+#endif
+
+#if HAVE(AVASSETREADER)
+#include "RemoteImageDecoderAVFProxy.h"
+#include "RemoteImageDecoderAVFProxyMessages.h"
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -295,6 +302,16 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 }
 #endif
 
+#if HAVE(AVASSETREADER)
+RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
+{
+    if (!m_imageDecoderAVFProxy)
+        m_imageDecoderAVFProxy = makeUnique<RemoteImageDecoderAVFProxy>(*this);
+
+    return *m_imageDecoderAVFProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
     auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&]() {
@@ -389,6 +406,34 @@ RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngi
 }
 #endif
 
+void GPUConnectionToWebProcess::createAudioHardwareListener(RemoteAudioHardwareListenerIdentifier identifier)
+{
+    auto addResult = m_remoteAudioHardwareListenerMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteAudioHardwareListenerProxy>(*this, WTFMove(identifier));
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier identifier)
+{
+    bool found = m_remoteAudioHardwareListenerMap.remove(identifier);
+    ASSERT_UNUSED(found, found);
+}
+
+void GPUConnectionToWebProcess::createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
+{
+    auto addResult = m_remoteRemoteCommandListenerMap.ensure(identifier, [&]() {
+        return makeUnique<RemoteRemoteCommandListenerProxy>(*this, WTFMove(identifier));
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
+{
+    bool found = m_remoteRemoteCommandListenerMap.remove(identifier);
+    ASSERT_UNUSED(found, found);
+}
+
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(WEB_AUDIO)
@@ -468,6 +513,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         mediaEngineConfigurationFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
+#if HAVE(AVASSETREADER)
+    if (decoder.messageReceiverName() == Messages::RemoteImageDecoderAVFProxy::messageReceiverName()) {
+        imageDecoderAVFProxy().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
@@ -518,6 +569,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
         legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+#if HAVE(AVASSETREADER)
+    if (decoder.messageReceiverName() == Messages::RemoteImageDecoderAVFProxy::messageReceiverName()) {
+        imageDecoderAVFProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }
 #endif

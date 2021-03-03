@@ -726,6 +726,7 @@ class WebkitFlatpak:
                 "--share=ipc",
                 "--share=network",
                 "--socket=pulseaudio",
+                "--socket=session-bus",
                 "--socket=system-bus",
                 "--socket=wayland",
                 "--socket=x11",
@@ -830,12 +831,16 @@ class WebkitFlatpak:
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
             toolchain_name = os.environ.get("CC", "gcc")
             try:
-                toolchain_path = self.icc_version[toolchain_name]
+                toolchain_path = os.environ.get("ICECC_VERSION_OVERRIDE", self.icc_version[toolchain_name])
             except KeyError:
                 Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r")
                 return 1
-            if not os.path.isfile(toolchain_path):
-                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", toolchain_path)
+            if "ICECC_VERSION_APPEND" in os.environ:
+                toolchain_path += ","
+                toolchain_path += os.environ["ICECC_VERSION_APPEND"]
+            native_toolchain = toolchain_path.split(",")[0]
+            if not os.path.isfile(native_toolchain):
+                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", native_toolchain)
                 return 1
             sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
@@ -870,20 +875,17 @@ class WebkitFlatpak:
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
 
-        env_file = os.path.join(self.build_root, 'flatpak-env.json')
-        if not os.path.exists(env_file):
-            with open(env_file, 'w') as f:
-                json.dump(dict(flatpak_env), f, indent=2)
+        pkg_config_path = flatpak_env.get("PKG_CONFIG_PATH")
+        if pkg_config_path:
+            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
         else:
-            env_file = None
+            pkg_config_path = self.build_path
+        flatpak_env["PKG_CONFIG_PATH"] = pkg_config_path
 
         try:
             return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
         except KeyboardInterrupt:
             return 0
-        finally:
-            if env_file is not None and os.path.exists(env_file):
-                os.remove(env_file)
 
         return 0
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(WATCHOS)
+#if HAVE(PEPPER_UI_CORE)
 
 #import <UIKit/UIKit.h>
 
@@ -80,4 +80,4 @@ typedef NS_ENUM(NSInteger, WKNumberPadKey) {
 - (instancetype)init NS_UNAVAILABLE;
 @end
 
-#endif
+#endif // HAVE(PEPPER_UI_CORE)

@@ -43,6 +43,10 @@ bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
 bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 #endif
 
+#if ENABLE(OPUS) && PLATFORM(MAC)
+bool PlatformMediaSessionManager::m_opusDecoderEnabled;
+#endif
+
 static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionManager()
 {
     static NeverDestroyed<std::unique_ptr<PlatformMediaSessionManager>> platformMediaSessionManager;
@@ -430,7 +434,7 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
     updateSessionState();
 }
 
-void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     PlatformMediaSession* activeSession = currentSession();
     if (!activeSession || !activeSession->canReceiveRemoteControlCommands())
@@ -650,6 +654,24 @@ void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
 {
 #if ENABLE(VORBIS) && PLATFORM(MAC)
     m_vorbisDecoderEnabled = enabled;
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+bool PlatformMediaSessionManager::opusDecoderEnabled()
+{
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    return m_opusDecoderEnabled;
+#else
+    return false;
+#endif
+}
+
+void PlatformMediaSessionManager::setOpusDecoderEnabled(bool enabled)
+{
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    m_opusDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);
 #endif

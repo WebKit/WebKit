@@ -1,0 +1,24 @@
+<style>
+ * { -webkit-appearance:default-button; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.addEventListener("DOMNodeRemoved",  function () {
+    document.designMode = document.designMode == "on" ? "off" : "on";
+    document.execCommand("SelectAll");
+});
+document.addEventListener("DOMFocusIn",  function () {
+    document.execCommand('InsertText');
+    console.log("The test PASS if it does not CRASH.");
+});
+window.onload = function() {
+    document.getElementsByTagName("div")[0].remove();
+};
+</script>
+<div>
+    <textarea></textarea>
+</div>
+<table frame="vsides">
+    <tr></tr>
+</table>

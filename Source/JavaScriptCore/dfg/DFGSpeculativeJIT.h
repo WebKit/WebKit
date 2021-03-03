@@ -1373,6 +1373,8 @@ public:
     void compileGetByValWithThis(Node*);
     void compilePutPrivateName(Node*);
     void compilePutPrivateNameById(Node*);
+    void compileCheckPrivateBrand(Node*);
+    void compileSetPrivateBrand(Node*);
     void compileGetByOffset(Node*);
     void compilePutByOffset(Node*);
     void compileMatchStructure(Node*);

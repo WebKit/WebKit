@@ -505,6 +505,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case FilterDeleteByStatus:
+    case FilterCheckPrivateBrandStatus:
+    case FilterSetPrivateBrandStatus:
         write(SideState);
         return;
         
@@ -677,6 +679,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutPrivateNameById:
     case GetPrivateName:
     case GetPrivateNameById:
+    // FIXME: We should have a better cloberize rule for both CheckPrivateBrand and SetPrivateBrand
+    // https://bugs.webkit.org/show_bug.cgi?id=221571
+    case CheckPrivateBrand:
+    case SetPrivateBrand:
     case DefineDataProperty:
     case DefineAccessorProperty:
     case DeleteById:

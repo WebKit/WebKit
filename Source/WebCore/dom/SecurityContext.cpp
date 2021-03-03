@@ -66,7 +66,7 @@ bool SecurityContext::isSecureTransitionTo(const URL& url) const
     if (!haveInitializedSecurityOrigin())
         return true;
 
-    return securityOriginPolicy()->origin().canAccess(SecurityOrigin::create(url).get());
+    return securityOriginPolicy()->origin().isSameOriginDomain(SecurityOrigin::create(url).get());
 }
 
 void SecurityContext::enforceSandboxFlags(SandboxFlags mask)

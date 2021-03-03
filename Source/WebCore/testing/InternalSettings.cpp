@@ -459,18 +459,6 @@ ExceptionOr<void> InternalSettings::setFetchAPIKeepAliveEnabled(bool enabled)
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setWebRTCPlatformCodecsInGPUProcessEnabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-#if ENABLE(WEB_RTC)
-    RuntimeEnabledFeatures::sharedFeatures().setWebRTCPlatformCodecsInGPUProcessEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-    return { };
-}
-
 bool InternalSettings::vp9DecoderEnabled() const
 {
 #if ENABLE(VP9)

@@ -109,7 +109,6 @@ class FixedPositionViewportConstraints;
 class Font;
 class FontPlatformData;
 class HTTPHeaderMap;
-class ImageHandle;
 class IntPoint;
 class IntRect;
 class IntSize;
@@ -416,11 +415,6 @@ template<> struct ArgumentCoder<Ref<WebCore::Font>> {
     static Optional<Ref<WebCore::Font>> decode(Decoder&);
     static void encodePlatformData(Encoder&, const Ref<WebCore::Font>&);
     static Optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ImageHandle> {
-    static void encode(Encoder&, const WebCore::ImageHandle&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ImageHandle&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

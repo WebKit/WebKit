@@ -73,6 +73,7 @@
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
+#include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
@@ -625,6 +626,8 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
+
+    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -742,15 +745,15 @@ public:
     void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, WebCore::TextGranularity, WebCore::SelectionDirection, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity, WebCore::SelectionDirection, CompletionHandler<void()>&&);
     void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
-    void beginSelectionInDirection(WebCore::SelectionDirection, CallbackID);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CallbackID);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CallbackID);
+    void beginSelectionInDirection(WebCore::SelectionDirection, CompletionHandler<void(bool)>&&);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
 
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply);
-    void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
+    void applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&&);
     void syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionContext();
     void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
@@ -796,8 +799,8 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-    void dispatchAsynchronousTouchEvents(const Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>& queue);
-    void cancelAsynchronousTouchEvents(const Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>& queue);
+    void dispatchAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>&&);
+    void cancelAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>&&);
 #endif
 
     bool hasRichlyEditableSelection() const;
@@ -893,7 +896,7 @@ public:
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
-    void characterIndexForPointAsync(const WebCore::IntPoint&, CallbackID);
+    void characterIndexForPointAsync(const WebCore::IntPoint&, CompletionHandler<void(uint64_t)>&&);
     void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
@@ -961,24 +964,24 @@ public:
 
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
     void endPrinting();
-    void computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
+    void computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void computePagesForPrintingImpl(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
 
 #if PLATFORM(COCOA)
-    void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CallbackID);
-    void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CallbackID);
+    void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
+    void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::DataReference&)>&&);
     void drawPagesToPDFImpl(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDFDelayedReply&&);
+    void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, Messages::WebPage::ComputePagesForPrintingiOSDelayedReply&&);
+    void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, Messages::WebPage::DrawToPDFiOSAsyncReply&&);
 #endif
 
-    void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CallbackID);
+    void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::DataReference&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CallbackID);
-    void didFinishPrintOperation(const WebCore::ResourceError&, CallbackID);
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
 #endif
 
     void addResourceRequest(unsigned long, const WebCore::ResourceRequest&);
@@ -1076,7 +1079,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
+    bool dispatchTouchEvent(const WebTouchEvent&);
 #endif
 
     bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&);
@@ -1146,8 +1149,8 @@ public:
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     void updateCachedDocumentLoader(WebDocumentLoader&, WebCore::Frame&);
 
-    void getBytecodeProfile(CallbackID);
-    void getSamplingProfilerOutput(CallbackID);
+    void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
+    void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
     
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
@@ -1250,13 +1253,13 @@ public:
     void showContactPicker(const WebCore::ContactsRequestData&, CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&);
     
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
-    void updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CallbackID);
+    void insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&&);
+    void updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::DataReference& enclosingImageData, CompletionHandler<void()>&&);
     void updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void getApplicationManifest(CallbackID);
+    void getApplicationManifest(CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>&&);
     void didFinishLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&);
 #endif
 
@@ -1375,6 +1378,10 @@ public:
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(WebCore::Element&);
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
@@ -1508,7 +1515,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
-    void setActivityState(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs);
+    void setActivityState(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&&);
     void validateCommand(const String&, CompletionHandler<void(bool, int32_t)>&&);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
@@ -1573,24 +1580,24 @@ private:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void getContentsAsString(ContentAsStringIncludesChildFrames, CallbackID);
+    void getContentsAsString(ContentAsStringIncludesChildFrames, CompletionHandler<void(const String&)>&&);
 #if PLATFORM(COCOA)
     void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(CallbackID);
+    void getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback);
 #endif
-    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CallbackID);
-    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CallbackID);
-    void getRenderTreeExternalRepresentation(CallbackID);
-    void getSelectionOrContentsAsString(CallbackID);
-    void getSelectionAsWebArchiveData(CallbackID);
-    void getSourceForFrame(WebCore::FrameIdentifier, CallbackID);
-    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CallbackID);
+    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
+    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
+    void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
+    void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&&);
+    void getSourceForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
+    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::DataReference&)>&&);
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
-    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CallbackID);
+    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
 
     void preferencesDidChange(const WebPreferencesStore&);
     void updatePreferences(const WebPreferencesStore&);
@@ -1647,7 +1654,7 @@ private:
     void indicateFindMatch(uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount);
-    void replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CallbackID);
+    void replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
 
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
@@ -1741,7 +1748,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(CallbackID);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
     RetainPtr<NSData> accessibilityRemoteTokenData() const;
     void accessibilityTransferRemoteToken(RetainPtr<NSData>);
 #endif
@@ -2122,6 +2129,9 @@ private:
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
     Optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
 #endif
+#if PLATFORM(MAC)
+    bool m_didUpdateRenderingAfterCommittingLoad { false };
+#endif
 
     WebCore::Timer m_layerVolatilityTimer;
     Vector<CompletionHandler<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
@@ -2180,7 +2190,7 @@ private:
     HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
+    HashMap<uint64_t, CompletionHandler<void(const Optional<WebCore::ApplicationManifest>&)>> m_applicationManifestFetchCallbackMap;
 #endif
 
     OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;

@@ -47,6 +47,7 @@ void TestLoadRequest::main()
         QSignalSpy loadChangedSignalSpy(m_view, SIGNAL(loadingChanged(WPEQtViewLoadRequest*)));
         m_view->setUrl(url);
         waitForLoadSucceeded(m_view);
+        waitForSignal(m_view, SIGNAL(titleChanged()));
         QVERIFY(!m_view->isLoading());
         QCOMPARE(m_view->loadProgress(), 100);
         QCOMPARE(m_view->title(), QStringLiteral("FooBar"));

@@ -2991,3 +2991,48 @@ end)
 op(fuzzer_return_early_from_loop_hint, macro ()
     notSupported()
 end)
+
+
+llintOpWithMetadata(op_check_private_brand, OpCheckPrivateBrand, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t2)
+    get(m_base, t3)
+    loadConstantOrVariablePayload(size, t3, CellTag, t0, .opCheckPrivateBrandSlow)
+    get(m_brand, t3)
+    loadConstantOrVariablePayload(size, t3, CellTag, t1, .opCheckPrivateBrandSlow)
+
+    loadi OpCheckPrivateBrand::Metadata::m_structureID[t5], t3
+    bineq JSCell::m_structureID[t0], t3, .opCheckPrivateBrandSlow
+
+    loadp OpCheckPrivateBrand::Metadata::m_brand[t5], t3
+    bpneq t3, t1, .opCheckPrivateBrandSlow
+    dispatch()
+
+.opCheckPrivateBrandSlow:
+    callSlowPath(_llint_slow_path_check_private_brand)
+    dispatch()
+end)
+
+
+llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t2)
+    get(m_base, t3)
+    loadConstantOrVariablePayload(size, t3, CellTag, t0, .opSetPrivateBrandSlow)
+    get(m_brand, t3)
+    loadConstantOrVariablePayload(size, t3, CellTag, t1, .opSetPrivateBrandSlow)
+
+    loadi OpSetPrivateBrand::Metadata::m_oldStructureID[t5], t2
+    bineq t2, JSCell::m_structureID[t0], .opSetPrivateBrandSlow
+
+    loadp OpSetPrivateBrand::Metadata::m_brand[t5], t3
+    bpneq t3, t1, .opSetPrivateBrandSlow
+
+    loadi OpSetPrivateBrand::Metadata::m_newStructureID[t5], t1
+    storei t1, JSCell::m_structureID[t0]
+    writeBarrierOnOperand(size, get, m_base)
+    dispatch()
+
+.opSetPrivateBrandSlow:
+    callSlowPath(_llint_slow_path_set_private_brand)
+    dispatch()
+end)
+

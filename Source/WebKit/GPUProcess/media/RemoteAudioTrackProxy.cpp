@@ -32,7 +32,6 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
-#include "RemoteAudioTrackProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
@@ -47,13 +46,11 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connecti
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(this);
-    m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteAudioTrackProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
 {
-    m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioTrackProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
 TrackPrivateRemoteConfiguration& RemoteAudioTrackProxy::configuration()

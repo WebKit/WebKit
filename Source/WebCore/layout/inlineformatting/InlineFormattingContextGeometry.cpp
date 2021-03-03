@@ -157,7 +157,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto& runs = lineContent.runs;
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
     auto contentLogicalWidth = lineContent.contentLogicalWidth;
-    auto lineBox = LineBox { lineContent.logicalTopLeft, contentLogicalWidth, runs.size() };
+    auto lineBox = LineBox { lineContent.logicalTopLeft, lineLogicalWidth, contentLogicalWidth, runs.size() };
 
     if (auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent))
         lineBox.setHorizontalAlignmentOffset(*horizontalAlignmentOffset);
@@ -212,7 +212,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { };
 
     auto createRootInlineBox = [&] {
-        auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
+        auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.contentLogicalWidth());
         setVerticalGeometryForInlineBox(*rootInlineBox);
         simplifiedVerticalAlignment = { { } , rootInlineBox->layoutBounds().height(), rootInlineBox->layoutBounds().ascent - rootInlineBox->baseline() };
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
@@ -248,7 +248,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         }
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, horizontalAligmentOffset, lineBox.logicalWidth());
+            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, horizontalAligmentOffset, lineBox.contentLogicalWidth());
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
@@ -335,7 +335,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // e.g. <div><span></span><span></span></div> is still okay.
         m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || lineHasContent;
         if (run.isInlineBoxStart()) {
-            auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
+            auto initialLogicalWidth = lineBox.contentLogicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);

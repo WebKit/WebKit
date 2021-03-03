@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include "FloatPoint3D.h"
 #include "IntSize.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
@@ -75,6 +76,31 @@ public:
     // If this method returns true, that means the device will notify TrackingAndRenderingClient
     // when the platform has completed all steps to shut down the XR session.
     virtual bool supportsSessionShutdownNotification() const { return false; }
+    virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
+
+    struct FrameData {
+        long predictedDisplayTime;
+        struct ViewData {
+            struct {
+                WebCore::FloatPoint3D position;
+                struct {
+                    float x;
+                    float y;
+                    float z;
+                    float w;
+                } orientation;
+            } pose;
+            struct {
+                float rUp;
+                float rDown;
+                float rLeft;
+                float rRight;
+            } fov;
+        };
+        Vector<ViewData> viewPoses;
+    };
+    using RequestFrameCallback = Function<void(FrameData&&)>;
+    virtual void requestFrame(RequestFrameCallback&&) = 0;
 
 protected:
     Device() = default;

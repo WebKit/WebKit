@@ -41,7 +41,7 @@ public:
     explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
     virtual ~MediaPlaybackTargetPickerMac();
 
-    void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
+    void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext) final;
     void startingMonitoringPlaybackTargets() final;
     void stopMonitoringPlaybackTargets() final;
     void invalidatePlaybackTargets() final;

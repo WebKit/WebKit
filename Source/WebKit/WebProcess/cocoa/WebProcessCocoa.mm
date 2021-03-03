@@ -358,6 +358,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     PlatformMediaSessionManager::setVorbisDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled());
 #endif
 
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
+#endif
+
     if (!parameters.mediaMIMETypes.isEmpty())
         setMediaMIMETypes(parameters.mediaMIMETypes);
     else {
@@ -1166,7 +1170,7 @@ void WebProcess::updatePageScreenProperties()
     }
 
     bool allPagesAreOnHDRScreens = allOf(m_pageMap.values(), [] (auto& page) {
-        return screenSupportsHighDynamicRange(page->mainFrameView());
+        return page && screenSupportsHighDynamicRange(page->mainFrameView());
     });
     setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
 #endif

@@ -245,10 +245,10 @@ class WPEFactory(Factory):
 class ServicesFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(RunBuildWebKitOrgUnitTests())
         self.addStep(RunEWSUnitTests())
         self.addStep(RunEWSBuildbotCheckConfig())
         self.addStep(RunResultsdbpyTests())
-        self.addStep(RunBuildWebKitOrgUnitTests())
 
 
 class CommitQueueFactory(factory.BuildFactory):

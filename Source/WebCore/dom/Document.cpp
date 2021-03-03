@@ -494,7 +494,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
             return true;
 
         const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin.canAccess(ancestorSecurityOrigin))
+        if (activeSecurityOrigin.isSameOriginDomain(ancestorSecurityOrigin))
             return true;
         
         // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
@@ -852,7 +852,9 @@ void Document::commonTeardown()
         accessSVGExtensions().pauseAnimations();
 
     clearScriptedAnimationController();
-    
+
+    m_documentFragmentForInnerOuterHTML = nullptr;
+
     if (m_highlightRegister)
         m_highlightRegister->clear();
 #if ENABLE(APP_HIGHLIGHTS)
@@ -1685,8 +1687,14 @@ void Document::updateTitle(const StringWithDirection& title)
     m_title.string = canonicalizedTitle(*this, title.string);
     m_title.direction = title.direction;
 
-    if (auto* loader = this->loader())
-        loader->setTitle(m_title);
+    if (!m_updateTitleTaskScheduled) {
+        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = makeRef(*this), this]() mutable {
+            m_updateTitleTaskScheduled = false;
+            if (auto documentLoader = makeRefPtr(loader()))
+                documentLoader->setTitle(m_title);
+        });
+        m_updateTitleTaskScheduled = true;
+    }
 }
 
 void Document::updateTitleFromTitleElement()
@@ -2258,7 +2266,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     bool isVertical = renderer && !renderer->isHorizontalWritingMode();
     bool checkingLogicalWidth = ((dimensionsCheck & WidthDimensionsCheck) && !isVertical) || ((dimensionsCheck & HeightDimensionsCheck) && isVertical);
     bool checkingLogicalHeight = ((dimensionsCheck & HeightDimensionsCheck) && !isVertical) || ((dimensionsCheck & WidthDimensionsCheck) && isVertical);
-    bool hasSpecifiedLogicalHeight = renderer && renderer->style().logicalMinHeight() == Length(0, Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
+    bool hasSpecifiedLogicalHeight = renderer && renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
     
     if (!requireFullLayout) {
         RenderBox* previousBox = nullptr;
@@ -3212,7 +3220,7 @@ bool Document::isLayoutTimerActive() const
 
 bool Document::supportsPaintTiming() const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled() && securityOrigin().canAccess(topOrigin());
+    return RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled() && securityOrigin().isSameOriginDomain(topOrigin());
 }
 
 // https://w3c.github.io/paint-timing/#ref-for-mark-paint-timing
@@ -3330,7 +3338,7 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
     if (Page* page = this->page())
         alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
 
-    if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+    if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
         alignmentInterval = std::max(alignmentInterval, DOMTimer::nonInteractedCrossOriginFrameAlignmentInterval());
 
     return alignmentInterval;
@@ -3620,7 +3628,7 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
 
     // Only prevent cross-site navigations.
     auto* targetDocument = targetFrame.document();
-    if (targetDocument && (targetDocument->securityOrigin().canAccess(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
+    if (targetDocument && (targetDocument->securityOrigin().isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
         return false;
 
     return true;
@@ -6178,7 +6186,7 @@ void Document::initContentSecurityPolicy()
     if (!isPluginDocument())
         return;
     auto* openerFrame = m_frame->loader().opener();
-    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().canAccess(securityOrigin()));
+    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().isSameOriginDomain(securityOrigin()));
     if (!shouldInhert)
         return;
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
@@ -6669,7 +6677,7 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
 
-        if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+        if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
             m_scriptedAnimationController->addThrottlingReason(ThrottlingReason::NonInteractedCrossOriginFrame);
     }
 
@@ -7251,6 +7259,16 @@ Document& Document::ensureTemplateDocument()
     return *m_templateDocument;
 }
 
+Ref<DocumentFragment> Document::documentFragmentForInnerOuterHTML()
+{
+    if (UNLIKELY(!m_documentFragmentForInnerOuterHTML)) {
+        m_documentFragmentForInnerOuterHTML = DocumentFragment::create(*this);
+        m_documentFragmentForInnerOuterHTML->setIsDocumentFragmentForInnerOuterHTML();
+    } else if (UNLIKELY(m_documentFragmentForInnerOuterHTML->hasChildNodes()))
+        m_documentFragmentForInnerOuterHTML->removeChildren();
+    return *m_documentFragmentForInnerOuterHTML;
+}
+
 Ref<FontFaceSet> Document::fonts()
 {
     updateStyleIfNeeded();
@@ -7805,7 +7823,7 @@ void Document::updateIntersectionObservations()
             ASSERT(index != notFound);
             auto& registration = targetRegistrations[index];
 
-            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().canAccess(securityOrigin());
+            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().isSameOriginDomain(securityOrigin());
             auto intersectionState = computeIntersectionState(*frameView, *observer, *target, isSameOriginObservation);
 
             float intersectionRatio = 0;

@@ -1,1 +1,1 @@
-alert(/XSS/);
+console.log(/XSS/);

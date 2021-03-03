@@ -70,7 +70,7 @@ messages -> WebPageProxy {
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
     ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (Optional<Vector<WebCore::ContactInfo>> info) Async
-    PrintFrame(WebCore::FrameIdentifier frameID) -> () Synchronous
+    PrintFrame(WebCore::FrameIdentifier frameID, String title) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
     RecommendedScrollbarStyleDidChange(int32_t newStyle)
@@ -162,18 +162,6 @@ messages -> WebPageProxy {
     # Forms messages
     WillSubmitForm(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier sourceFrameID, Vector<std::pair<String, String>> textFieldValues, uint64_t listenerID, WebKit::UserData userData)
 
-    # Callback messages
-    VoidCallback(WebKit::CallbackID callbackID)
-    DataCallback(IPC::SharedBufferDataReference resultData, WebKit::CallbackID callbackID)
-    ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
-    StringCallback(String resultString, WebKit::CallbackID callbackID)
-    BoolCallback(bool result, WebKit::CallbackID callbackID)
-    InvalidateStringCallback(WebKit::CallbackID callbackID)
-    ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin, WebKit::CallbackID callbackID)
-    UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
-#if ENABLE(APPLICATION_MANIFEST)
-    ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
-#endif
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
@@ -187,13 +175,6 @@ messages -> WebPageProxy {
 #endif
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
-#endif
-#if PLATFORM(GTK)
-    PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
-#endif
-#if PLATFORM(COCOA)
-    DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
-    NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
 #endif
 
     PageScaleFactorDidChange(double scaleFactor)
@@ -242,6 +223,10 @@ messages -> WebPageProxy {
 #if ENABLE(IMAGE_EXTRACTION)
     RequestImageExtraction(WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
 #endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    ShowMediaControlsContextMenu(WebCore::FloatRect targetFrame, Vector<WebCore::MediaControlsContextMenuItem> items) -> (WebCore::MediaControlsContextMenuItem::ID selectedItemID) Async
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #if HAVE(TOUCH_BAR)
     SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
@@ -385,6 +370,7 @@ messages -> WebPageProxy {
     RecordAutocorrectionResponse(int32_t response, String replacedString, String replacementString);
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
+    DidUpdateRenderingAfterCommittingLoad()
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)

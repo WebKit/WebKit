@@ -216,14 +216,14 @@ Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
                 return Optional<Length>(RenderStyle::initialLineHeight());
             return Optional<Length>(WTF::nullopt);
         }, [&] (double number) {
-            return Optional<Length>(Length(number * 100.0, Percent));
+            return Optional<Length>(Length(number * 100.0, LengthType::Percent));
         }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
             return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
                 auto parentStyle = getParentStyle();
                 CSSToLengthConversionData conversionData { parentStyle.get(), nullptr, parentStyle.get(), document.renderView(), 1.0f, CSSPropertyLineHeight };
-                return Optional<Length>(Length(clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, length.type, length.value), minValueForCssLength, maxValueForCssLength), Fixed));
+                return Optional<Length>(Length(clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, length.type, length.value), minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
             }, [&] (double percentage) {
-                return Optional<Length>(Length((fontDescription.computedSize() * static_cast<int>(percentage)) / 100, Fixed));
+                return Optional<Length>(Length((fontDescription.computedSize() * static_cast<int>(percentage)) / 100, LengthType::Fixed));
             });
         });
 

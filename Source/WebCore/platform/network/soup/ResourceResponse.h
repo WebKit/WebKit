@@ -29,84 +29,37 @@
 
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
 class ResourceResponse : public ResourceResponseBase {
 public:
-    ResourceResponse()
-        : ResourceResponseBase()
-        , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
-    {
-    }
+    ResourceResponse() = default;
 
     ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName)
-        , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
     {
     }
 
-    ResourceResponse(SoupMessage* soupMessage)
-        : ResourceResponseBase()
-        , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
-    {
-        updateFromSoupMessage(soupMessage);
-    }
+    ResourceResponse(SoupMessage*, const CString& sniffedContentType = CString());
 
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
-    void updateFromSoupMessage(SoupMessage*);
-    void updateFromSoupMessageHeaders(const SoupMessageHeaders*);
-
-    SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
-    void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
-
-    const String& sniffedContentType() const { return m_sniffedContentType; }
-    void setSniffedContentType(const String& value) { m_sniffedContentType = value; }
+    void updateFromSoupMessageHeaders(SoupMessageHeaders*);
 
     GTlsCertificate* soupMessageCertificate() const { return m_certificate.get(); }
-    void setSoupMessageCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
-
     GTlsCertificateFlags soupMessageTLSErrors() const { return m_tlsErrors; }
-    void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ResourceResponse&);
 
 private:
     friend class ResourceResponseBase;
 
-    SoupMessageFlags m_soupFlags;
     String m_sniffedContentType;
     GRefPtr<GTlsCertificate> m_certificate;
-    GTlsCertificateFlags m_tlsErrors;
+    GTlsCertificateFlags m_tlsErrors { static_cast<GTlsCertificateFlags>(0) };
 
     void doUpdateResourceResponse() { }
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo() const;
 };
-
-template<class Encoder>
-void ResourceResponse::encode(Encoder& encoder) const
-{
-    ResourceResponseBase::encode(encoder);
-    encoder << static_cast<uint64_t>(m_soupFlags);
-}
-
-template<class Decoder>
-bool ResourceResponse::decode(Decoder& decoder, ResourceResponse& response)
-{
-    if (!ResourceResponseBase::decode(decoder, response))
-        return false;
-    Optional<uint64_t> soupFlags;
-    decoder >> soupFlags;
-    if (!soupFlags)
-        return false;
-    // FIXME: Verify that this is a valid value for SoupMessageFlags.
-    response.m_soupFlags = static_cast<SoupMessageFlags>(*soupFlags);
-    return true;
-}
 
 } // namespace WebCore

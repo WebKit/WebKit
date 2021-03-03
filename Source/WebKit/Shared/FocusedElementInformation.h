@@ -136,6 +136,7 @@ struct FocusedElementInformation {
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions { false };
 #if ENABLE(INPUT_TYPE_COLOR)
+    WebCore::Color colorValue;
     Vector<WebCore::Color> suggestedColors;
 #endif
 #endif

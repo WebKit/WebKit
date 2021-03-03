@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+Redirecting...
+<script>
+
+async function redirect() {
+    const url = new URL(location.href);
+    const builderName = url.searchParams.get('builderName').replace(/ /g, '-').replace(/,/g, '_');
+
+    const response = await fetch(`/api/v2/builders/${builderName}?field=name&field=builderid`);
+    const buildersData = JSON.parse(await response.text());
+
+    const buildNumber = url.searchParams.get('buildNumber').split('-')[0];
+
+    if (buildersData.builders.length)
+        location.href = `/#/builders/${buildersData.builders[0].builderid}/builds/${buildNumber}`;
+    else    
+        alert(`Could not find the builder: ${builderName}`);
+}
+
+redirect().catch(() => alert('Failed to get the list of builders. Try reloading.'));
+
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "InspectorExtensionTypes.h"
 #include "WebInspectorUIExtensionControllerProxy.h"
+#include <WebCore/ExceptionDetails.h>
 
 namespace API {
 
@@ -52,6 +53,16 @@ void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& t
     }
 
     m_extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
+}
+
+void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(WebKit::InspectorExtensionEvaluationResult)>&& completionHandler)
+{
+    if (!m_extensionControllerProxy) {
+        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        return;
+    }
+
+    m_extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
 }
 
 } // namespace API

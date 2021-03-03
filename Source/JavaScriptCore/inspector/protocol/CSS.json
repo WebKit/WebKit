@@ -258,6 +258,12 @@
             "type": "string",
             "enum": ["grid"],
             "description": "The layout context type of a node."
+        },
+        {
+            "id": "LayoutContextTypeChangedMode",
+            "type": "string",
+            "enum": ["observed", "all"],
+            "description": "The mode for how layout context type changes are handled. <code>Observed</code> limits handling to those nodes already known to the frontend by other means (generally, this means the node is a visible item in the Elements tab). <code>All</code> informs the frontend of all layout context type changes and."
         }
     ],
     "commands": [
@@ -417,6 +423,13 @@
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },
                 { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
+            ]
+        },
+        {
+            "name": "setLayoutContextTypeChangedMode",
+            "description": "Change how layout context type changes are handled for nodes. When the new mode would observe nodes the frontend has not yet recieved, those nodes will be sent to the frontend immediately.",
+            "parameters": [
+                { "name": "mode", "$ref": "LayoutContextTypeChangedMode", "description": "The mode for how layout context type changes are handled." }
             ]
         }
     ],

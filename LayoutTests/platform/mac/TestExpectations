@@ -865,6 +865,13 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sou
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
+# webkit.org/b/221686
+imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
+media/media-source/media-source-resize.html [ Timeout ]
+
 # Requires WebM
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Skip ]
@@ -1262,6 +1269,7 @@ media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad [ Skip ]
+media/modern-media-controls/tracks-support/ios [ Skip ]
 
 # These tests are timing-related and can fail due to performance issues on bots
 webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
@@ -1277,7 +1285,7 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 # on iOS, and the bug it was created to regression-test was iOS-only, so there is no hurry to make it work on Mac.
 media/modern-media-controls/media-documents/background-color-and-centering.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
+webkit.org/b/169158 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -1840,7 +1848,7 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
-webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
+webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
 
 # Certain versions of macOS use different text security characters.
 webkit.org/b/209692 [ Mojave Catalina ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ ImageOnlyFailure ]
@@ -1855,7 +1863,11 @@ media/controls-styling.html [ Skip ]
 
 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Pass Failure ]
 
+# These tests fail due to slight differences in font rendering.
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-003.xhtml [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-004.xhtml [ ImageOnlyFailure ]
+webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ ImageOnlyFailure ]
 
 webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failure ]
 
@@ -2261,3 +2273,5 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 [ Catalina Mojave ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
+
+webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass Failure ]

@@ -1097,7 +1097,7 @@
 		539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 539930C722AD3B9A0051CDE2 /* WeakObjectRefConstructor.h */; };
 		539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */; };
 		539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */; };
-		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; };
+		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B601EC2034B8C5006BE667 /* JSCast.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B601EB2034B8C5006BE667 /* JSCast.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1242,10 +1242,15 @@
 		8612E4CD152389EC00C836BE /* MatchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8612E4CB1522918400C836BE /* MatchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86158AB3155C8B4000B45C9C /* PropertyName.h in Headers */ = {isa = PBXBuildFile; fileRef = 86158AB2155C8B3F00B45C9C /* PropertyName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		861816771FB7924200ECC4EC /* BigIntObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 861816761FB7922F00ECC4EC /* BigIntObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		861AF60725D18C9D000B63E1 /* BrandedStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 861AF60625D18C9D000B63E1 /* BrandedStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		862553D216136E1A009F17D0 /* JSProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 862553CF16136AA5009F17D0 /* JSProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */; };
+		86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */; };
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		863FBC5A25B093B900F6C930 /* WasmValueLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 863FBC5825B093B900F6C930 /* WasmValueLocation.h */; };
 		865A30F1135007E100CDB49E /* JSCJSValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 865A30F0135007E100CDB49E /* JSCJSValueInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		865DA0C525B8957400875772 /* SetPrivateBrandVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */; };
+		865DA0C825B8960C00875772 /* SetPrivateBrandStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */; };
 		866739D213BFDE710023D87C /* BigInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D013BFDE710023D87C /* BigInteger.h */; };
 		866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 866739D113BFDE710023D87C /* Uint16WithFraction.h */; };
 		86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B4112DB8A8100A9FE7B /* YarrSyntaxChecker.h */; };
@@ -1946,6 +1951,7 @@
 		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; };
 		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; };
 		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; };
+		FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE476FF4207E85D50093CA2D /* JITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FE476FF3207E85D40093CA2D /* JITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD4223245E8700F136D0 /* JSCConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3376,7 +3382,6 @@
 		144CA34F221F037900817789 /* CachedBytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedBytecode.h; sourceTree = "<group>"; };
 		1450FA1D2357BEC40093CD4D /* WasmLLIntTierUpCounter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmLLIntTierUpCounter.cpp; sourceTree = "<group>"; };
 		1450FA1E2357BEC40093CD4D /* WasmLLIntTierUpCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmLLIntTierUpCounter.h; sourceTree = "<group>"; };
-		145348572291737F00B1C2EB /* testapi.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = testapi.entitlements; sourceTree = "<group>"; };
 		145722851437E140005FDE26 /* StrongInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrongInlines.h; sourceTree = "<group>"; };
 		145C507F0D9DF63B0088F6B9 /* CallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallData.h; sourceTree = "<group>"; };
 		145FF2C6243BB99A00569E71 /* ECMAMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAMode.cpp; sourceTree = "<group>"; };
@@ -4090,7 +4095,6 @@
 		79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingProfiler.cpp; sourceTree = "<group>"; };
 		79D5CD591C1106A900CECA07 /* SamplingProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingProfiler.h; sourceTree = "<group>"; };
 		79D7B0E121152FD200FE7C64 /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
-		79D7B0E221152FD300FE7C64 /* allow-jit-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "allow-jit-macOS.entitlements"; sourceTree = "<group>"; };
 		79DAE2791E03C82200B526AA /* WasmExceptionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmExceptionType.h; sourceTree = "<group>"; };
 		79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasOwnPropertyCache.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
@@ -4140,8 +4144,13 @@
 		86158AB2155C8B3F00B45C9C /* PropertyName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyName.h; sourceTree = "<group>"; };
 		861816761FB7922F00ECC4EC /* BigIntObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigIntObject.h; sourceTree = "<group>"; };
 		861816781FB7931300ECC4EC /* BigIntObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BigIntObject.cpp; sourceTree = "<group>"; };
+		861AF60625D18C9D000B63E1 /* BrandedStructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrandedStructure.h; sourceTree = "<group>"; };
 		862553CE16136AA5009F17D0 /* JSProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProxy.cpp; sourceTree = "<group>"; };
 		862553CF16136AA5009F17D0 /* JSProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSProxy.h; sourceTree = "<group>"; };
+		86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandVariant.h; sourceTree = "<group>"; };
+		86281EF125B6165E00367004 /* CheckPrivateBrandVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckPrivateBrandVariant.cpp; sourceTree = "<group>"; };
+		86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandStatus.h; sourceTree = "<group>"; };
+		86281EF525B61B0600367004 /* CheckPrivateBrandStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckPrivateBrandStatus.cpp; sourceTree = "<group>"; };
 		863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerCodeRef.h; sourceTree = "<group>"; };
 		863C6D981521111200585E4E /* YarrCanonicalizeUCS2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrCanonicalizeUCS2.cpp; path = yarr/YarrCanonicalizeUCS2.cpp; sourceTree = "<group>"; };
 		863C6D991521111200585E4E /* YarrCanonicalize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrCanonicalize.h; path = yarr/YarrCanonicalize.h; sourceTree = "<group>"; };
@@ -4152,6 +4161,11 @@
 		8640923B156EED3B00566CC2 /* ARM64Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARM64Registers.h; sourceTree = "<group>"; };
 		8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM64.h; sourceTree = "<group>"; };
 		865A30F0135007E100CDB49E /* JSCJSValueInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCJSValueInlines.h; sourceTree = "<group>"; };
+		865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetPrivateBrandVariant.h; sourceTree = "<group>"; };
+		865DA0C625B8959E00875772 /* SetPrivateBrandVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetPrivateBrandVariant.cpp; sourceTree = "<group>"; };
+		865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetPrivateBrandStatus.h; sourceTree = "<group>"; };
+		865DA0C925B8962A00875772 /* SetPrivateBrandStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetPrivateBrandStatus.cpp; sourceTree = "<group>"; };
+		8664967A25D1DD1200516B36 /* BrandedStructure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BrandedStructure.cpp; sourceTree = "<group>"; };
 		866739D013BFDE710023D87C /* BigInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigInteger.h; sourceTree = "<group>"; };
 		866739D113BFDE710023D87C /* Uint16WithFraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint16WithFraction.h; sourceTree = "<group>"; };
 		86704B4012DB8A8100A9FE7B /* YarrSyntaxChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrSyntaxChecker.cpp; path = yarr/YarrSyntaxChecker.cpp; sourceTree = "<group>"; };
@@ -5146,8 +5160,10 @@
 		E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeRewriter.h; sourceTree = "<group>"; };
 		E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkedJSValueRefArray.h; sourceTree = "<group>"; };
 		E3D3515E241B89CF008DC16E /* MarkedJSValueRefArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedJSValueRefArray.cpp; sourceTree = "<group>"; };
+		E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestAPI.xcconfig; sourceTree = "<group>"; };
 		E3D877711E65C08900BE945A /* BytecodeDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeDumper.cpp; sourceTree = "<group>"; };
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
+		E3E9F8D525D7582F00F9F84B /* process-entitlements.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "process-entitlements.sh"; sourceTree = "<group>"; };
 		E3EE137421FBD43400D83C4B /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
 		E3EE137521FBD43400D83C4B /* ErrorType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorType.cpp; sourceTree = "<group>"; };
 		E3F2192F24C78829003AE453 /* IntlSegmentIteratorPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentIteratorPrototype.h; sourceTree = "<group>"; };
@@ -5275,6 +5291,7 @@
 		FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITLeftShiftGenerator.h; sourceTree = "<group>"; };
 		FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITRightShiftGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITRightShiftGenerator.h; sourceTree = "<group>"; };
+		FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootMarkReason.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
 		FE476FF3207E85D40093CA2D /* JITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCodeMap.h; sourceTree = "<group>"; };
 		FE48BD4223245E8700F136D0 /* JSCConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCConfig.h; sourceTree = "<group>"; };
@@ -5524,9 +5541,7 @@
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
-				79D7B0E221152FD300FE7C64 /* allow-jit-macOS.entitlements */,
 				79D7B0E121152FD200FE7C64 /* entitlements.plist */,
-				145348572291737F00B1C2EB /* testapi.entitlements */,
 				1432EBD70A34CAD400717B9F /* API */,
 				9688CB120ED12B4E001D649F /* assembler */,
 				0FEC84B21BDACD5E0080FF74 /* b3 */,
@@ -6411,6 +6426,7 @@
 				0FBB73B61DEF3AAC002C009E /* PreventCollectionScope.h */,
 				0FD0E5EF1E46BF230006AB08 /* RegisterState.h */,
 				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
+				FE3B642E25D6FB4C001ADDB4 /* RootMarkReason.h */,
 				0F2C63A91E4FA42C00C13839 /* RunningScope.h */,
 				0F4D8C761FCA3CF2001D32AC /* SimpleMarkingConstraint.cpp */,
 				0F4D8C771FCA3CF3001D32AC /* SimpleMarkingConstraint.h */,
@@ -6604,6 +6620,7 @@
 				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
 				5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */,
 				A1B89B88221E002A00EB4CEA /* SDKVariant.xcconfig */,
+				E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */,
 				BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */,
 				1C9051420BA9E8A70081E9D0 /* Version.xcconfig */,
 				37119A7720CCB5DC002C6DC9 /* WebKitTargetConditionals.xcconfig */,
@@ -7156,6 +7173,8 @@
 				704FD35305697E6D003DBED9 /* BooleanObject.h */,
 				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
 				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
+				8664967A25D1DD1200516B36 /* BrandedStructure.cpp */,
+				861AF60625D18C9D000B63E1 /* BrandedStructure.h */,
 				9E72940A190F0514001A91B5 /* BundlePath.h */,
 				9E729409190F0306001A91B5 /* BundlePath.mm */,
 				0FB7F38B15ED8E3800F167B2 /* Butterfly.h */,
@@ -8416,6 +8435,10 @@
 				627673221B680C1E00FD9F2E /* CallMode.h */,
 				0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */,
 				0F3B7E2519A11B8000D9BC56 /* CallVariant.h */,
+				86281EF525B61B0600367004 /* CheckPrivateBrandStatus.cpp */,
+				86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */,
+				86281EF125B6165E00367004 /* CheckPrivateBrandVariant.cpp */,
+				86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */,
@@ -8550,6 +8573,10 @@
 				0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */,
 				0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */,
 				0FF60AC016740F8100029779 /* ReduceWhitespace.h */,
+				865DA0C925B8962A00875772 /* SetPrivateBrandStatus.cpp */,
+				865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */,
+				865DA0C625B8959E00875772 /* SetPrivateBrandVariant.cpp */,
+				865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */,
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
 				0FB438A219270B1D00E1FBC9 /* StructureSet.cpp */,
@@ -8619,6 +8646,7 @@
 				9959E9291BD17FA0001AA413 /* jsmin.py */,
 				99DA00AD1BD5993E00F4575C /* lazywriter.py */,
 				A5EF13F71F0731B4000F0442 /* make-js-file-arrays.py */,
+				E3E9F8D525D7582F00F9F84B /* process-entitlements.sh */,
 				99DA00AE1BD5993E00F4575C /* UpdateContents.py */,
 				9959E92A1BD17FA0001AA413 /* xxd.pl */,
 			);
@@ -9276,6 +9304,7 @@
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				9B4694391F97439E00CCB3F9 /* BooleanPrototype.h in Headers */,
 				996B73191BDA068000331B84 /* BooleanPrototype.lut.h in Headers */,
+				861AF60725D18C9D000B63E1 /* BrandedStructure.h in Headers */,
 				FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */,
 				DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
@@ -9341,6 +9370,8 @@
 				FEC160322339E9F900A04CB8 /* CellSize.h in Headers */,
 				0F1C3DDA1BBCE09E00E523E4 /* CellState.h in Headers */,
 				5338E2A72396EFFB00C61BAD /* CheckpointOSRExitSideState.h in Headers */,
+				86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */,
+				86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				0FE050261AA9095600D33B33 /* ClonedArguments.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* CLoopStack.h in Headers */,
@@ -10369,6 +10400,7 @@
 				992F56B71E4E84B20035953B /* RemoteInspectorXPCConnection.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
+				FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */,
 				0F2C63AA1E4FA42E00C13839 /* RunningScope.h in Headers */,
 				70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
@@ -10392,6 +10424,8 @@
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
+				865DA0C825B8960C00875772 /* SetPrivateBrandStatus.h in Headers */,
+				865DA0C525B8957400875772 /* SetPrivateBrandVariant.h in Headers */,
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,
@@ -10753,6 +10787,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14BD59D60A3E8FC900BAF59C /* Build configuration list for PBXNativeTarget "testapi" */;
 			buildPhases = (
+				E3D6F6EE25D78CF600C20EB4 /* Generate Entitlements */,
 				14BD59BC0A3E8F9000BAF59C /* Sources */,
 				14BD59BD0A3E8F9000BAF59C /* Frameworks */,
 				5366FDB222D5485B00BF94AF /* Copy Support Scripts */,
@@ -10874,6 +10909,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C276708902AFE008A9EFC /* Build configuration list for PBXNativeTarget "jsc" */;
 			buildPhases = (
+				E3D6F6ED25D78C0100C20EB4 /* Generate Entitlements */,
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
 				5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */,
@@ -11295,6 +11331,46 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
+		};
+		E3D6F6ED25D78C0100C20EB4 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		E3D6F6EE25D78CF600C20EB4 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -12030,21 +12106,21 @@
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -12425,7 +12501,7 @@
 		};
 		A76148420E6402F700E357FA /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Profiling;

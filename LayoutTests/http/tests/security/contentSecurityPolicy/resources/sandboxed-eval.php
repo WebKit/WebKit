@@ -2,9 +2,9 @@
 header("Content-Security-Policy: sandbox allow-scripts allow-modals");
 ?>
 <script>
-alert('PASS (1/2): Script can execute');
+console.log('PASS (1/2): Script can execute');
 </script>
 <script>
-eval("alert('PASS (2/2): Eval works')");
+eval("console.log('PASS (2/2): Eval works')");
 </script>
 Done.

@@ -195,6 +195,7 @@ public:
     virtual bool isMockSource() const { return false; }
     virtual bool isCaptureSource() const { return false; }
     virtual CaptureDevice::DeviceType deviceType() const { return CaptureDevice::DeviceType::Unknown; }
+    virtual bool isVideoSource() const;
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
@@ -320,6 +321,11 @@ String convertEnumerationToString(RealtimeMediaSource::Type);
 inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
     callback({ });
+}
+
+inline bool RealtimeMediaSource::isVideoSource() const
+{
+    return false;
 }
 
 } // namespace WebCore

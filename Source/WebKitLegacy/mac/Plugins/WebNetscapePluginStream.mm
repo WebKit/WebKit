@@ -613,20 +613,18 @@ void WebNetscapePluginStream::didFinishLoading(NetscapePlugInStreamLoader*)
 
 void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
 {
-    NSData *data = [[NSData alloc] initWithBytesNoCopy:(void*)bytes length:length freeWhenDone:NO];
+    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)bytes length:length freeWhenDone:NO]);
 
     ASSERT([data length] > 0);
     
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
             m_deliveryData = adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
-        [m_deliveryData.get() appendData:data];
+        [m_deliveryData.get() appendData:data.get()];
         deliverData();
     }
     if (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)
-        deliverDataToFile(data);
-    
-    [data release];
+        deliverDataToFile(data.get());
 }
 
 #endif

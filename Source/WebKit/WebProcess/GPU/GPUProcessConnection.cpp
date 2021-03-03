@@ -67,6 +67,10 @@
 #include "UserMediaCaptureManagerMessages.h"
 #endif
 
+#if ENABLE(WEBGL)
+#include "RemoteGraphicsContextGLProxyMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -168,7 +172,16 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         return true;
     }
 #endif
-    return messageReceiverMap().dispatchMessage(connection, decoder);
+    if (messageReceiverMap().dispatchMessage(connection, decoder))
+        return true;
+
+    // Skip messages intended for already removed messageReceiverMap() destinations.
+#if ENABLE(WEBGL)
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName())
+        return true;
+#endif
+
+    return false;
 }
 
 bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
@@ -178,8 +191,7 @@ bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC:
 
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
 {
-    const PlatformMediaSession::RemoteCommandArgument value { argument ? *argument : 0 };
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument ? &value : nullptr);
+    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
 }
 
 void GPUProcessConnection::updateParameters(const WebPageCreationParameters& parameters)

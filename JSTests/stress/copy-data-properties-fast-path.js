@@ -4,4 +4,7 @@ function foo() {
   let { ...r } = { xx:0 };
   foo();
 }
-foo();
+
+try {
+    foo();
+} catch { }

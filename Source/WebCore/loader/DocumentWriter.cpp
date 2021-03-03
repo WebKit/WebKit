@@ -57,7 +57,7 @@ static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame
 {
     if (is<XMLDocument>(frame->document()))
         return false;
-    return parentFrame && parentFrame->document()->securityOrigin().canAccess(frame->document()->securityOrigin());
+    return parentFrame && parentFrame->document()->securityOrigin().isSameOriginDomain(frame->document()->securityOrigin());
 }
     
 // This is only called by ScriptController::executeIfJavaScriptURL

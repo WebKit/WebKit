@@ -4480,7 +4480,8 @@
       "nicks" : [
          "pgriffis",
          "TingPing"
-      ]
+      ],
+      "status": "committer"
    },
    "Paulo Matos" : {
       "emails" : [
@@ -5271,6 +5272,11 @@
       ],
       "nicks" : [
          "szledan"
+      ]
+   },
+   "Ruben Turcios" : {
+      "emails" : [
+	 "rubent_22@apple.com"
       ]
    },
    "Tab Atkins" : {

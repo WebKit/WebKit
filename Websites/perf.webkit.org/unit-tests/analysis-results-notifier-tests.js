@@ -82,15 +82,143 @@ describe('AnalysisResultsNotifier', () => {
             assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
             assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
         });
+
+        it('should match rule when platforms, tests, and userInitiated are undefined', () => {
+            const rule = {};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+        });
+
+        it('should match rule when platforms and tests are undefined and userInitiated set to true', () => {
+            const rule = {userInitiated: true};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+        });
+
+        it('should match rule when platforms and tests are undefined and userInitiated set to false', () => {
+            const rule = {userInitiated: false};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+
+        });
+
+        it('should not match rule when platforms, and tests are empty arrays and userInitiated is undefined', () => {
+            const rule = {tests: [], platforms: []};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+        });
+
+        it('should not match rule when platforms and tests are are empty arrays and userInitiated set to true', () => {
+            const rule = {tests: [], platforms: [], userInitiated: true};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+        });
+
+        it('should not match rule when platforms and tests are empty and userInitiated set to false', () => {
+            const rule = {tests: [], platforms: [], userInitiated: false};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+
+        });
+
+        it('should not match rule when platforms is empty, tests match, userInitiated is undefined', () => {
+            const rule = {platforms: [], tests: [speedometer2, jetStream]};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, false, rule));
+        });
+
+        it('should not match rule when tests is empty, platforms match, userInitiated is undefined', () => {
+            const rule = {tests: [], platforms: [trunkMacBook, trunkMacBookAir]};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, false, rule));
+        });
+
+        it('should not match rule when platforms is empty, tests match, userInitiated is true', () => {
+            const rule = {platforms: [], tests: [speedometer2, jetStream], userInitiated: true};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, false, rule));
+        });
+
+        it('should not match rule when platforms is empty, tests match, userInitiated is false', () => {
+            const rule = {platforms: [], tests: [speedometer2, jetStream], userInitiated: false};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, true, rule));
+        });
+
+        it('should not match rule when tests is empty, platforms match, userInitiated is true', () => {
+            const rule = {tests: [], platforms: [trunkMacBook, trunkMacBookAir], userInitiated: true};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, false, rule));
+        });
+
+        it('should not match rule when tests is empty, platforms match, userInitiated is false', () => {
+            const rule = {tests: [], platforms: [trunkMacBook, trunkMacBookAir], userInitiated: false};
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, speedometer, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, true, rule));
+        });
     });
 
     describe('_validateRules', () => {
-        it('should fail the validation for empty rule', () => {
-            assert.throws(() => AnalysisResultsNotifier._validateRules([{}]), /AssertionError \[ERR_ASSERTION\]/, 'Either tests or platforms should be an array of strings');
+        it('should pass the validation for empty rule', () => {
+            assert.doesNotThrow(() => AnalysisResultsNotifier._validateRules([{}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
         });
 
-        it('should fail the validation for platforms of a rule is not an array of string', () => {
-            assert.throws(() => AnalysisResultsNotifier._validateRules([{tests: [{}]}]), /AssertionError \[ERR_ASSERTION\]/, 'Either tests or platforms should be an array of strings');
+        it('should fail the validation for rule where `tests` is not an array of strings', () => {
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{tests: [{}]}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should fail the validation for rule where `platforms` is not an array of strings', () => {
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{platforms: [{}]}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should fail the validation for rule where `platforms` and `tests` are not an array of strings', () => {
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{platforms: [{}], tests: [9, 1, 1]}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should fail the validation for rule where `platforms` or `tests` is not an array of strings', () => {
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{platforms: ['System MacBookAir'], tests: [{}, 0]}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should fail the validation for rule where `platforms` or `tests` is not an array of strings', () => {
+            assert.throws(() => AnalysisResultsNotifier._validateRules([{platforms: ['Trunk MacBook', 5], tests: ['speedometer']}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should pass the validation for rule where `tests` is an empty array', () => {
+            assert.doesNotThrow(() => AnalysisResultsNotifier._validateRules([{tests: []}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
+        });
+
+        it('should pass the validation for rule where `platforms` is an empty arrays', () => {
+            assert.doesNotThrow(() => AnalysisResultsNotifier._validateRules([{platforms: []}]), /AssertionError \[ERR_ASSERTION\]: Either tests or platforms must be an undefined, empty array, or an array of strings/);
         });
 
         it('should pass the validation for if a rule only has tests specified', () => {

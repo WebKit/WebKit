@@ -136,8 +136,10 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 {
     auto& layoutBox = layoutBoxForRenderer(renderer);
     auto& style = renderer.style();
-
-    layoutBox.updateStyle(style);
+    if (&layoutBox == &rootLayoutBox())
+        layoutBox.updateStyle(rootBoxStyle(style));
+    else
+        layoutBox.updateStyle(style);
 
     if (is<Layout::ContainerBox>(layoutBox)) {
         for (auto* child = downcast<Layout::ContainerBox>(layoutBox).firstChild(); child; child = child->nextSibling()) {

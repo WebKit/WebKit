@@ -31,12 +31,13 @@
 
 #include "Connection.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteVideoTrackProxyMessages.h"
+#include "RemoteMediaPlayerProxyMessages.h"
 
 namespace WebKit {
 
-VideoTrackPrivateRemote::VideoTrackPrivateRemote(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+VideoTrackPrivateRemote::VideoTrackPrivateRemote(IPC::Connection& connection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
     : m_connection(connection)
+    , m_playerIdentifier(playerIdentifier)
     , m_idendifier(idendifier)
 {
     updateConfiguration(WTFMove(configuration));
@@ -45,7 +46,7 @@ VideoTrackPrivateRemote::VideoTrackPrivateRemote(IPC::Connection& connection, Tr
 void VideoTrackPrivateRemote::setSelected(bool selected)
 {
     if (selected != this->selected())
-        m_connection.send(Messages::RemoteVideoTrackProxy::SetSelected(selected), m_idendifier);
+        m_connection.send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_idendifier, selected), m_playerIdentifier);
 
     VideoTrackPrivate::setSelected(selected);
 }

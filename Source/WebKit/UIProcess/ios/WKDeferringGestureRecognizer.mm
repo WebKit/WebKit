@@ -55,6 +55,13 @@
     self.state = UIGestureRecognizerStateFailed;
 }
 
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesEnded:touches withEvent:event];
+
+    [_deferringGestureDelegate deferringGestureRecognizer:self didEndTouchesWithEvent:event];
+}
+
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesCancelled:touches withEvent:event];

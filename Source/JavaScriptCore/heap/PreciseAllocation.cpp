@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -193,21 +193,6 @@ void PreciseAllocation::lastChanceToFinalize()
     clearMarked();
     clearNewlyAllocated();
     sweep();
-}
-
-void PreciseAllocation::shrink()
-{
-    m_weakSet.shrink();
-}
-
-void PreciseAllocation::visitWeakSet(SlotVisitor& visitor)
-{
-    m_weakSet.visit(visitor);
-}
-
-void PreciseAllocation::reapWeakSet()
-{
-    return m_weakSet.reap();
 }
 
 void PreciseAllocation::flip()

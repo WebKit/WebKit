@@ -26,7 +26,7 @@
 
 #import "FontCacheCoreText.h"
 #import "SharedBuffer.h"
-#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)

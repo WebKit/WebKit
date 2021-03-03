@@ -469,7 +469,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     allocator.lock(state.baseGPR);
     if (state.u.thisGPR != InvalidGPRReg)
         allocator.lock(state.u.thisGPR);
-    allocator.lock(state.valueRegs);
+    if (state.valueRegs)
+        allocator.lock(state.valueRegs);
 #if USE(JSVALUE32_64)
     allocator.lock(stubInfo.baseTagGPR);
     if (stubInfo.v.thisTagGPR != InvalidGPRReg)
@@ -851,6 +852,12 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::InMiss:
         out.print("InMiss");
+        return;
+    case AccessCase::CheckPrivateBrand:
+        out.print("CheckPrivateBrand");
+        return;
+    case AccessCase::SetPrivateBrand:
+        out.print("SetPrivateBrand");
         return;
     case AccessCase::ArrayLength:
         out.print("ArrayLength");

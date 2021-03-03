@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -209,23 +209,29 @@ static TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
 }
 
 SetState::SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
-    : m_state(state, flags)
+    : m_stateChange(state, flags)
 {
 }
 
-SetState::SetState(const GraphicsContextStateChange& stateChange)
-    : m_state(stateChange)
+SetState::SetState(const GraphicsContextStateChange& stateChange, const PatternData& strokePattern, const PatternData& fillPattern)
+    : m_stateChange(stateChange)
+    , m_strokePattern(strokePattern)
+    , m_fillPattern(fillPattern)
 {
 }
 
-void SetState::apply(GraphicsContext& context) const
+void SetState::apply(GraphicsContext& context, NativeImage* strokePatternImage, NativeImage* fillPatternImage)
 {
-    m_state.apply(context);
+    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange) && strokePatternImage)
+        m_stateChange.m_state.strokePattern = Pattern::create(makeRef(*strokePatternImage), m_strokePattern.parameters);
+    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange) && fillPatternImage)
+        m_stateChange.m_state.fillPattern = Pattern::create(makeRef(*fillPatternImage), m_fillPattern.parameters);
+    m_stateChange.apply(context);
 }
 
 static TextStream& operator<<(TextStream& ts, const SetState& state)
 {
-    ts << state.state();
+    ts << state.stateChange();
     return ts;
 }
 
@@ -380,17 +386,9 @@ DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const G
     computeBounds(font);
 }
 
-inline GlyphBuffer DrawGlyphs::generateGlyphBuffer(const Font& font) const
-{
-    GlyphBuffer result;
-    for (size_t i = 0; i < m_glyphs.size(); ++i)
-        result.add(m_glyphs[i], font, m_advances[i], GlyphBuffer::noOffset);
-    return result;
-}
-
 void DrawGlyphs::apply(GraphicsContext& context, const Font& font) const
 {
-    context.drawGlyphs(font, generateGlyphBuffer(font), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
+    context.drawGlyphs(font, m_glyphs.data(), m_advances.data(), m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
 void DrawGlyphs::computeBounds(const Font& font)

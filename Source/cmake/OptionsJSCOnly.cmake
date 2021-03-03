@@ -2,6 +2,19 @@ find_package(Threads REQUIRED)
 
 if (MSVC)
     include(OptionsMSVC)
+else ()
+    # CMake uses OBJECT libraries as a cross platform way of doing --whole-archive which is needed
+    # when compiling bmalloc/WTF into JavaScriptCore. However they were extremely limited prior to
+    # CMake 3.12 <https://gitlab.kitware.com/cmake/cmake/-/issues/18010>
+    #
+    # FIXME: Remove when cmake_minimum_required is raised https://bugs.webkit.org/show_bug.cgi?id=221727
+    if (CMAKE_VERSION VERSION_LESS 3.12)
+        message(FATAL_ERROR "CMake 3.12 or greater is required to compile JSCOnly")
+    endif ()
+
+    set(CMAKE_C_VISIBILITY_PRESET hidden)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif ()
 
 add_definitions(-DBUILDING_JSCONLY__)
@@ -52,6 +65,8 @@ endif ()
 # https://bugs.webkit.org/show_bug.cgi?id=172862
 if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
     set(JavaScriptCore_LIBRARY_TYPE SHARED)
+    set(bmalloc_LIBRARY_TYPE OBJECT)
+    set(WTF_LIBRARY_TYPE OBJECT)
 endif ()
 
 if (WIN32)

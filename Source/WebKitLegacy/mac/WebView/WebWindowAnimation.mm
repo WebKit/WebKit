@@ -31,6 +31,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
+#import <wtf/RetainPtr.h>
 
 static const CGFloat slowMotionFactor = 10;
 
@@ -81,12 +82,6 @@ using WebCore::narrowPrecisionToFloat;
     _finalFrame = finalFrame;
     _realFrame = [window frame];
     return self;
-}
-
-- (void) dealloc
-{
-    [_subAnimation release];
-    [super dealloc];
 }
 
 - (void)setDuration:(NSTimeInterval)duration
@@ -178,9 +173,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (void)setSubAnimation:(NSAnimation *)animation
 {
-    id oldAnimation = _subAnimation;
-    _subAnimation = [animation retain];
-    [oldAnimation release];
+    _subAnimation = animation;
 }
 
 - (NSTimeInterval)additionalDurationNeededToReachFinalFrame

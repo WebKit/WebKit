@@ -26,25 +26,22 @@
 #pragma once
 
 #include "ColorTypes.h"
-#include "ColorUtilities.h"
 
 namespace WebCore {
 
-// All color types must at least implement the following conversions to and from their reference XYZ color space
+// All color types, other than XYZA or those inheriting from RGBType, must implement
+// the following conversions to and from their "Reference" color.
 //
-//    template<> struct ColorConversion<`ColorType`<float>::ReferenceXYZ, `ColorType`<float>> {
-//        WEBCORE_EXPORT static `ColorType`<float>::ReferenceXYZ convert(const `ColorType`<float>&);
+//    template<> struct ColorConversion<`ColorType`<float>::Reference, `ColorType`<float>> {
+//        WEBCORE_EXPORT static `ColorType`<float>::Reference convert(const `ColorType`<float>&);
 //    };
 //    
-//    template<> struct ColorConversion<`ColorType`<float>, `ColorType`<float>::ReferenceXYZ> {
-//        WEBCORE_EXPORT static `ColorType`<float> convert(const `ColorType`<float>::ReferenceXYZ&);
+//    template<> struct ColorConversion<`ColorType`<float>, `ColorType`<float>::Reference> {
+//        WEBCORE_EXPORT static `ColorType`<float> convert(const `ColorType`<float>::Reference&);
 //    };
 //
-// Any additional conversions can be thought of as optimizations, shortcutting unnecessary steps, though
-// some may be integral to the base conversion.
 
-
-template<typename Output, typename Input> struct ColorConversion;
+template<typename Output, typename Input, typename = void> struct ColorConversion;
 
 template<typename Output, typename Input> inline Output convertColor(const Input& color)
 {
@@ -52,270 +49,66 @@ template<typename Output, typename Input> inline Output convertColor(const Input
 }
 
 
-// A98RGB
-template<> struct ColorConversion<A98RGB<float>::ReferenceXYZ, A98RGB<float>> {
-    WEBCORE_EXPORT static A98RGB<float>::ReferenceXYZ convert(const A98RGB<float>&);
+// MARK: Chromatic Adaptation conversions.
+
+// http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+template<WhitePoint From, WhitePoint To> struct ChromaticAdapation;
+
+template<> struct ChromaticAdapation<WhitePoint::D65, WhitePoint::D50> {
+    static constexpr ColorMatrix<3, 3> matrix {
+         1.0478112f, 0.0228866f, -0.0501270f,
+         0.0295424f, 0.9904844f, -0.0170491f,
+        -0.0092345f, 0.0150436f,  0.7521316f
+    };
 };
 
-template<> struct ColorConversion<A98RGB<float>, A98RGB<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static A98RGB<float> convert(const A98RGB<float>::ReferenceXYZ&);
+template<> struct ChromaticAdapation<WhitePoint::D50, WhitePoint::D65> {
+    static constexpr ColorMatrix<3, 3> matrix {
+         0.9555766f, -0.0230393f, 0.0631636f,
+        -0.0282895f,  1.0099416f, 0.0210077f,
+         0.0122982f, -0.0204830f, 1.3299098f
+    };
 };
 
-// Additions
-template<> struct ColorConversion<LinearA98RGB<float>, A98RGB<float>> {
-    WEBCORE_EXPORT static LinearA98RGB<float> convert(const A98RGB<float>&);
-};
-
-
-// DisplayP3
-template<> struct ColorConversion<DisplayP3<float>::ReferenceXYZ, DisplayP3<float>> {
-    WEBCORE_EXPORT static DisplayP3<float>::ReferenceXYZ convert(const DisplayP3<float>&);
-};
-
-template<> struct ColorConversion<DisplayP3<float>, DisplayP3<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static DisplayP3<float> convert(const DisplayP3<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LinearDisplayP3<float>, DisplayP3<float>> {
-    WEBCORE_EXPORT static LinearDisplayP3<float> convert(const DisplayP3<float>&);
-};
-
-
-// ExtendedSRGBA
-template<> struct ColorConversion<ExtendedSRGBA<float>::ReferenceXYZ, ExtendedSRGBA<float>> {
-    WEBCORE_EXPORT static ExtendedSRGBA<float>::ReferenceXYZ convert(const ExtendedSRGBA<float>&);
-};
-
-template<> struct ColorConversion<ExtendedSRGBA<float>, ExtendedSRGBA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static ExtendedSRGBA<float> convert(const ExtendedSRGBA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LinearExtendedSRGBA<float>, ExtendedSRGBA<float>> {
-    WEBCORE_EXPORT static LinearExtendedSRGBA<float> convert(const ExtendedSRGBA<float>&);
-};
-
-
-// HSLA
-template<> struct ColorConversion<HSLA<float>::ReferenceXYZ, HSLA<float>> {
-    WEBCORE_EXPORT static HSLA<float>::ReferenceXYZ convert(const HSLA<float>&);
-};
-
-template<> struct ColorConversion<HSLA<float>, HSLA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static HSLA<float> convert(const HSLA<float>::ReferenceXYZ&);
-};
-
-// Additions
+// MARK: HSLA
 template<> struct ColorConversion<SRGBA<float>, HSLA<float>> {
     WEBCORE_EXPORT static SRGBA<float> convert(const HSLA<float>&);
 };
-
-
-// HWBA
-template<> struct ColorConversion<HWBA<float>::ReferenceXYZ, HWBA<float>> {
-    WEBCORE_EXPORT static HWBA<float>::ReferenceXYZ convert(const HWBA<float>&);
-};
-
-template<> struct ColorConversion<HWBA<float>, HWBA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static HWBA<float> convert(const HWBA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<SRGBA<float>, HWBA<float>> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const HWBA<float>&);
-};
-
-
-// LCHA
-template<> struct ColorConversion<LCHA<float>::ReferenceXYZ, LCHA<float>> {
-    WEBCORE_EXPORT static LCHA<float>::ReferenceXYZ convert(const LCHA<float>&);
-};
-
-template<> struct ColorConversion<LCHA<float>, LCHA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LCHA<float> convert(const LCHA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<Lab<float>, LCHA<float>> {
-    WEBCORE_EXPORT static Lab<float> convert(const LCHA<float>&);
-};
-
-
-// Lab
-template<> struct ColorConversion<Lab<float>::ReferenceXYZ, Lab<float>> {
-    WEBCORE_EXPORT static Lab<float>::ReferenceXYZ convert(const Lab<float>&);
-};
-
-template<> struct ColorConversion<Lab<float>, Lab<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static Lab<float> convert(const Lab<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LCHA<float>, Lab<float>> {
-    WEBCORE_EXPORT static LCHA<float> convert(const Lab<float>&);
-};
-
-
-// LinearA98RGB
-template<> struct ColorConversion<LinearA98RGB<float>::ReferenceXYZ, LinearA98RGB<float>> {
-    WEBCORE_EXPORT static LinearA98RGB<float>::ReferenceXYZ convert(const LinearA98RGB<float>&);
-};
-
-template<> struct ColorConversion<LinearA98RGB<float>, LinearA98RGB<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearA98RGB<float> convert(const LinearA98RGB<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<A98RGB<float>, LinearA98RGB<float>> {
-    WEBCORE_EXPORT static A98RGB<float> convert(const LinearA98RGB<float>&);
-};
-
-
-// LinearDisplayP3
-template<> struct ColorConversion<LinearDisplayP3<float>::ReferenceXYZ, LinearDisplayP3<float>> {
-    WEBCORE_EXPORT static LinearDisplayP3<float>::ReferenceXYZ convert(const LinearDisplayP3<float>&);
-};
-
-template<> struct ColorConversion<LinearDisplayP3<float>, LinearDisplayP3<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearDisplayP3<float> convert(const LinearDisplayP3<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<DisplayP3<float>, LinearDisplayP3<float>> {
-    WEBCORE_EXPORT static DisplayP3<float> convert(const LinearDisplayP3<float>&);
-};
-
-
-// LinearExtendedSRGBA
-template<> struct ColorConversion<LinearExtendedSRGBA<float>::ReferenceXYZ, LinearExtendedSRGBA<float>> {
-    WEBCORE_EXPORT static LinearExtendedSRGBA<float>::ReferenceXYZ convert(const LinearExtendedSRGBA<float>&);
-};
-
-template<> struct ColorConversion<LinearExtendedSRGBA<float>, LinearExtendedSRGBA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearExtendedSRGBA<float> convert(const LinearExtendedSRGBA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<ExtendedSRGBA<float>, LinearExtendedSRGBA<float>> {
-    WEBCORE_EXPORT static ExtendedSRGBA<float> convert(const LinearExtendedSRGBA<float>&);
-};
-
-
-// LinearProPhotoRGB
-template<> struct ColorConversion<LinearProPhotoRGB<float>::ReferenceXYZ, LinearProPhotoRGB<float>> {
-    WEBCORE_EXPORT static LinearProPhotoRGB<float>::ReferenceXYZ convert(const LinearProPhotoRGB<float>&);
-};
-
-template<> struct ColorConversion<LinearProPhotoRGB<float>, LinearProPhotoRGB<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearProPhotoRGB<float> convert(const LinearProPhotoRGB<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<ProPhotoRGB<float>, LinearProPhotoRGB<float>> {
-    WEBCORE_EXPORT static ProPhotoRGB<float> convert(const LinearProPhotoRGB<float>&);
-};
-
-
-// LinearRec2020
-template<> struct ColorConversion<LinearRec2020<float>::ReferenceXYZ, LinearRec2020<float>> {
-    WEBCORE_EXPORT static LinearRec2020<float>::ReferenceXYZ convert(const LinearRec2020<float>&);
-};
-
-template<> struct ColorConversion<LinearRec2020<float>, LinearRec2020<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearRec2020<float> convert(const LinearRec2020<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<Rec2020<float>, LinearRec2020<float>> {
-    WEBCORE_EXPORT static Rec2020<float> convert(const LinearRec2020<float>&);
-};
-
-
-// LinearSRGBA
-template<> struct ColorConversion<LinearSRGBA<float>::ReferenceXYZ, LinearSRGBA<float>> {
-    WEBCORE_EXPORT static LinearSRGBA<float>::ReferenceXYZ convert(const LinearSRGBA<float>&);
-};
-
-template<> struct ColorConversion<LinearSRGBA<float>, LinearSRGBA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static LinearSRGBA<float> convert(const LinearSRGBA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<SRGBA<float>, LinearSRGBA<float>> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const LinearSRGBA<float>&);
-};
-
-
-// ProPhotoRGB
-template<> struct ColorConversion<ProPhotoRGB<float>::ReferenceXYZ, ProPhotoRGB<float>> {
-    WEBCORE_EXPORT static ProPhotoRGB<float>::ReferenceXYZ convert(const ProPhotoRGB<float>&);
-};
-
-template<> struct ColorConversion<ProPhotoRGB<float>, ProPhotoRGB<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static ProPhotoRGB<float> convert(const ProPhotoRGB<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LinearProPhotoRGB<float>, ProPhotoRGB<float>> {
-    WEBCORE_EXPORT static LinearProPhotoRGB<float> convert(const ProPhotoRGB<float>&);
-};
-
-
-// Rec2020
-template<> struct ColorConversion<Rec2020<float>::ReferenceXYZ, Rec2020<float>> {
-    WEBCORE_EXPORT static Rec2020<float>::ReferenceXYZ convert(const Rec2020<float>&);
-};
-
-template<> struct ColorConversion<Rec2020<float>, Rec2020<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static Rec2020<float> convert(const Rec2020<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LinearRec2020<float>, Rec2020<float>> {
-    WEBCORE_EXPORT static LinearRec2020<float> convert(const Rec2020<float>&);
-};
-
-
-// SRGBA
-template<> struct ColorConversion<SRGBA<float>::ReferenceXYZ, SRGBA<float>> {
-    WEBCORE_EXPORT static SRGBA<float>::ReferenceXYZ convert(const SRGBA<float>&);
-};
-
-template<> struct ColorConversion<SRGBA<float>, SRGBA<float>::ReferenceXYZ> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const SRGBA<float>::ReferenceXYZ&);
-};
-
-// Additions
-template<> struct ColorConversion<LinearSRGBA<float>, SRGBA<float>> {
-    WEBCORE_EXPORT static LinearSRGBA<float> convert(const SRGBA<float>&);
-};
-
 template<> struct ColorConversion<HSLA<float>, SRGBA<float>> {
     WEBCORE_EXPORT static HSLA<float> convert(const SRGBA<float>&);
 };
 
+// MARK: HWBA
+template<> struct ColorConversion<SRGBA<float>, HWBA<float>> {
+    WEBCORE_EXPORT static SRGBA<float> convert(const HWBA<float>&);
+};
 template<> struct ColorConversion<HWBA<float>, SRGBA<float>> {
     WEBCORE_EXPORT static HWBA<float> convert(const SRGBA<float>&);
 };
 
-// Special cases for SRGBA<uint8_t>. Only sRGB supports non-floating point component types.
+// MARK: LCHA
+template<> struct ColorConversion<Lab<float>, LCHA<float>> {
+    WEBCORE_EXPORT static Lab<float> convert(const LCHA<float>&);
+};
+template<> struct ColorConversion<LCHA<float>, Lab<float>> {
+    WEBCORE_EXPORT static LCHA<float> convert(const Lab<float>&);
+};
+
+// MARK: Lab
+template<> struct ColorConversion<XYZA<float, WhitePoint::D50>, Lab<float>> {
+    WEBCORE_EXPORT static XYZA<float, WhitePoint::D50> convert(const Lab<float>&);
+};
+template<> struct ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>> {
+    WEBCORE_EXPORT static Lab<float> convert(const XYZA<float, WhitePoint::D50>&);
+};
+
+// MARK: SRGBA<uint8_t>
+// Only sRGB supports non-floating point component types.
 template<> struct ColorConversion<SRGBA<float>, SRGBA<uint8_t>> {
     WEBCORE_EXPORT static SRGBA<float> convert(const SRGBA<uint8_t>&);
 };
-
 template<> struct ColorConversion<SRGBA<uint8_t>, SRGBA<float>> {
     WEBCORE_EXPORT static SRGBA<uint8_t> convert(const SRGBA<float>&);
-};
-
-
-// XYZA Chromatic Adaptation conversions.
-template<> struct ColorConversion<XYZA<float, WhitePoint::D65>, XYZA<float, WhitePoint::D50>> {
-    WEBCORE_EXPORT static XYZA<float, WhitePoint::D65> convert(const XYZA<float, WhitePoint::D50>&);
-};
-
-template<> struct ColorConversion<XYZA<float, WhitePoint::D50>, XYZA<float, WhitePoint::D65>> {
-    WEBCORE_EXPORT static XYZA<float, WhitePoint::D50> convert(const XYZA<float, WhitePoint::D65>&);
 };
 
 
@@ -328,54 +121,174 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
     }
 };
 
-// Fallback conversion.
 
-// All types are required to have a conversion to their reference XYZ space, so this is guaranteed
-// to work if another specialization is not already provided.
+// Main conversion.
 
-// FIXME: Rather than always converting through reference XYZ color space
-// we should instead switch to computing the least common reference ancestor
-// type where each color type defines its reference type as the color it needs
-// to get one step closer to the reference XYZ color space. For instance,
-// the reference type of SRGBA is LinearSRGBA, and the reference type of LCHA
-// is Lab. Together, the color types make a tree with XYZ at the root. The
-// conversion should end up looking something like:
-//
-//   using LCA = LeastCommonAncestor<Output, Input>::Type;
-//   return convertColor<Output>(convertColor<LCA>(color));
-//
-// An example of where this would be more efficient is when converting from
-// HSLA<float> to HWBA<float>. LCA for this pair is SRGBA<float> so conversion
-// through XYZ is wasteful. This model would also allow us to remove the
-// combination conversions, reducing the number of things each new color type
-// requires.
-//
-// FIXME: Reduce total number of matrix tranforms by concatenating the matrices
-// of sequential matrix transforms at compile time. Take the conversion from
-// ProPhotoRGB<float> to SRGBA<float> as an example:
-//
-//   1. ProPhotoRGB<float> -> LinearProPhotoRGB<float>                  (transfer function transform, not matrix)
-//   2. LinearProPhotoRGB<float> -> XYZA<float, WhitePoint::D50>        MATRIX TRANSFORM
-//   3. XYZA<float, WhitePoint::D50> -> XYZA<float, WhitePoint::D65>    MATRIX TRANSFORM
-//   4. XYZA<float, WhitePoint::D65> -> LinearSRGBA<float>              MATRIX TRANSFORM
-//   5. LinearSRGBA<float> -> SRGBA<float>                              (transfer function transform, not matrix)
-//
-// Steps 2, 3, and 4 can be combined into one single matrix if we linearly
-// concatented the three matrices. To do this, we will have to tag which conversions
-// are matrix based, expose the matrices, add support for constexpr concatenting
-// of ColorMatrix and find a way to merge the conversions.
+//                ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+//                 Matrix Conversions    ┌───────────┐│┌───────────┐
+//                │                      │ XYZ (D50) │││ XYZ (D65) │                                                                                                                      │
+//                                       └─────▲─────┘│└─────▲─────┘
+//                │                            │      │      │                                                                                                                            │
+//       ┌─────────────────────────┬───────────┘      │      └───────────┬───────────────────────────────┬───────────────────────────────┬───────────────────────────────┐
+//       │        │                │                  │                  │                               │                               │                               │                │
+//       │                         │                  │                  │                               │                               │                               │
+//       │        │                │                  │                  │                               │                               │                               │                │
+//       │          ProPhotoRGB───────────────────┐   │   SRGB──────────────────────────┐ DisplayP3─────────────────────┐ A98RGB────────────────────────┐ Rec2020───────────────────────┐
+//       │        │ │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │
+//       │          ││ Linear │ │ LinearExtended ││   │   ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││
+//       │        │ │└────────┘ └────────────────┘│   │   │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │
+//       │         ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─
+// ┌───────────┐    │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│
+// │    Lab    │    ││ Gamma  │ │ GammaExtended  ││   │   ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││
+// └─────▲─────┘    │└────────┘ └────────────────┘│   │   │└────▲───┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│
+//       │          └─────────────────────────────┘   │   └─────┼───────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘
+//       │                                            │      ┌──┴──────────┬─────────────┐
+//       │                                            │      │             │             │
+// ┌───────────┐                                      │┌───────────┐ ┌───────────┐┌─────────────┐
+// │    LCH    │                                      ││    HSL    │ │    HWB    ││SRGB<uint8_t>│
+// └───────────┘                                      │└───────────┘ └───────────┘└─────────────┘
 
-template<typename Output, typename Input> struct ColorConversion {
-    static Output convert(const Input& color)
+template<typename Output, typename Input, typename> struct ColorConversion {
+public:
+    static constexpr Output convert(const Input& color)
     {
-        if constexpr (std::is_same_v<Input, SRGBA<uint8_t>>)
+        // 1. Handle the special case SRGBA<uint8_t> for Input and Output.
+        if constexpr (std::is_same_v<Input, SRGBA<uint8_t>> || std::is_same_v<Output, SRGBA<uint8_t>>)
             return convertColor<Output>(convertColor<SRGBA<float>>(color));
-        else if constexpr (std::is_same_v<Output, SRGBA<uint8_t>>)
-            return convertColor<SRGBA<uint8_t>>(convertColor<SRGBA<float>>(color));
-        else {
-            auto xyz1 = convertColor<typename Input::ReferenceXYZ>(color);
-            auto xyz2 = convertColor<typename Output::ReferenceXYZ>(xyz1);
-            return convertColor<Output>(xyz2);
+
+        // 2. Handle all color types that are not IsRGBType<T> or IsXYZA<T> for Input and Output. For all
+        //    these other color types, we can uncondtionally convert them to their "reference" color, as
+        //    either they have already been handled by a ColorConversion specialization or this will
+        //    get us closer to the final conversion.
+        else if constexpr (!IsRGBType<Input> && !IsXYZA<Input>)
+            return convertColor<Output>(convertColor<typename Input::Reference>(color));
+        else if constexpr (!IsRGBType<Output> && !IsXYZA<Output>)
+            return convertColor<Output>(convertColor<typename Output::Reference>(color));
+
+        // 3. Handle conversions within a RGBFamily (e.g. all have the same descriptor).
+        else if constexpr (IsSameRGBTypeFamily<Output, Input>)
+            return handleRGBFamilyConversion(color);
+
+        // 4. Handle any gamma conversions for the Input and Output.
+        else if constexpr (IsRGBGammaEncodedType<Input>)
+            return convertColor<Output>(convertColor<typename Input::LinearCounterpart>(color));
+        else if constexpr (IsRGBGammaEncodedType<Output>)
+            return convertColor<Output>(convertColor<typename Output::LinearCounterpart>(color));
+
+        // 5. At this point, Input and Output are each either Linear-RGB types (of different familes) or XYZA
+        //    and therefore all additional conversion can happen via matrix transformation.
+        else
+            return handleMatrixConversion(color);
+    }
+
+private:
+    template<typename ColorType> static inline constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
+    {
+        auto [c1, c2, c3, alpha] = color;
+        return { ColorType::TransferFunction::toLinear(c1), ColorType::TransferFunction::toLinear(c2), ColorType::TransferFunction::toLinear(c3), alpha };
+    }
+
+    template<typename ColorType> static inline constexpr auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
+    {
+        auto [c1, c2, c3, alpha] = color;
+        return { ColorType::TransferFunction::toGammaEncoded(c1), ColorType::TransferFunction::toGammaEncoded(c2), ColorType::TransferFunction::toGammaEncoded(c3), alpha };
+    }
+
+    template<typename ColorType> static inline constexpr auto toExtended(const ColorType& color) -> typename ColorType::ExtendedCounterpart
+    {
+        return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color));
+    }
+
+    template<typename ColorType> static inline constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
+    {
+        return makeFromComponentsClampingExceptAlpha<typename ColorType::BoundedCounterpart>(asColorComponents(color));
+    }
+
+    static inline constexpr Output handleRGBFamilyConversion(const Input& color)
+    {
+        static_assert(IsSameRGBTypeFamily<Output, Input>);
+
+        //  RGB Family────────────────────┐
+        //  │┌────────┐ ┌────────────────┐│
+        //  ││ Linear │ │ LinearExtended ││
+        //  │└────────┘ └────────────────┘│
+        //  │┌────────┐ ┌────────────────┐│
+        //  ││ Gamma  │ │ GammaExtended  ││
+        //  │└────────┘ └────────────────┘│
+        //  └─────────────────────────────┘
+
+        // This handles conversions between any two of these within the same family, so SRGBLinear -> SRGB, but not
+        // SRGBLinear -> A98RGB.
+
+        auto boundsConversion = [](auto color) {
+            if constexpr (IsRGBExtendedType<Output> && IsRGBBoundedType<Input>)
+                return toExtended(color);
+            else if constexpr (IsRGBBoundedType<Output> && IsRGBExtendedType<Input>)
+                return toBounded(color);
+            else
+                return color;
+        };
+
+        auto gammaConversion = [](auto color) {
+            if constexpr (IsRGBGammaEncodedType<Output> && IsRGBLinearEncodedType<Input>)
+                return toGammaEncoded(color);
+            else if constexpr (IsRGBLinearEncodedType<Output> && IsRGBGammaEncodedType<Input>)
+                return toLinearEncoded(color);
+            else
+                return color;
+        };
+
+        return boundsConversion(gammaConversion(color));
+    }
+
+    static inline constexpr Output handleMatrixConversion(const Input& color)
+    {
+        static_assert(IsRGBLinearEncodedType<Input> || IsXYZA<Input>);
+        static_assert(IsRGBLinearEncodedType<Output> || IsXYZA<Output>);
+
+        //  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+        //   Matrix Conversions    ┌───────────┐│┌───────────┐
+        //  │                      │ XYZ (D50) │││ XYZ (D65) │                                                                                                                      │
+        //                         └─────▲─────┘│└─────▲─────┘
+        //  │                            │      │      │                                                                                                                            │
+        //                   ┌───────────┘      │      └───────────┬───────────────────────────────┬───────────────────────────────┬───────────────────────────────┐
+        //  │                │                  │                  │                               │                               │                               │                │
+        //                   │                  │                  │                               │                               │                               │
+        //  │                │                  │                  │                               │                               │                               │                │
+        //    ProPhotoRGB───────────────────┐   │   SRGB──────────────────────────┐ DisplayP3─────────────────────┐ A98RGB────────────────────────┐ Rec2020───────────────────────┐
+        //  │ │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │
+        //    ││ Linear │ │ LinearExtended ││   │   ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││
+        //  │ │└────────┘ └────────────────┘│   │   │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │
+        //   ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─
+
+        // This handles conversions between linear color types that can be converted using pre-defined
+        // 3x3 matrices.
+        
+        // FIXME: Pre-compute (using constexpr) the concatenation of the matrices prior to applying them
+        // to reduce number of matrix multiplications to a minimum. This will likely give subtly different
+        // results (due to floating point effects) so if this optimization is considered we should ensure we
+        // have sufficient testing coverage to notice any adverse effects.
+
+        auto applyMatrices = [](const Input& color, auto... matrices) {
+            return makeFromComponentsClampingExceptAlpha<Output>(applyMatricesToColorComponents(asColorComponents(color), matrices...));
+        };
+
+        if constexpr (Input::whitePoint == Output::whitePoint) {
+            if constexpr (IsXYZA<Input>)
+                return applyMatrices(color, Output::xyzToLinear);
+            else if constexpr (IsXYZA<Output>)
+                return applyMatrices(color, Input::linearToXYZ);
+            else
+                return applyMatrices(color, Input::linearToXYZ, Output::xyzToLinear);
+        } else {
+            if constexpr (IsXYZA<Input> && IsXYZA<Output>)
+                return applyMatrices(color, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix);
+            else if constexpr (IsXYZA<Input>)
+                return applyMatrices(color, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
+            else if constexpr (IsXYZA<Output>)
+                return applyMatrices(color, Input::linearToXYZ, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix);
+            else
+                return applyMatrices(color, Input::linearToXYZ, ChromaticAdapation<Input::whitePoint, Output::whitePoint>::matrix, Output::xyzToLinear);
         }
     }
 };

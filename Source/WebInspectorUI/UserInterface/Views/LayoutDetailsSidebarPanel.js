@@ -80,10 +80,14 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         super.attached();
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
     }
 
     detached()
     {
+        WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         super.detached();
@@ -97,6 +101,15 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
         let boxModelSection = new WI.DetailsSection("layout-box-model", WI.UIString("Box Model"), [boxModelGroup]);
         this.contentView.element.appendChild(boxModelSection.element);
+
+        let cssGridRow = new WI.DetailsSectionRow;
+        let gridGroup = new WI.DetailsSectionGroup([cssGridRow]);
+        let gridSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
+        this.contentView.element.appendChild(gridSection.element);
+
+        let cssGridSection = new WI.CSSGridSection;
+        cssGridRow.element.appendChild(cssGridSection.element);
+        this.addSubview(cssGridSection);
     }
 
     layout()

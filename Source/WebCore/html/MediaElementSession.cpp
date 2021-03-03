@@ -128,7 +128,6 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     , m_logIdentifier(element.logIdentifier())
 #endif
 {
-    addedMediaUsageManagerSessionIfNecessary();
 }
 
 MediaElementSession::~MediaElementSession()
@@ -140,7 +139,7 @@ MediaElementSession::~MediaElementSession()
 #endif
 }
 
-void MediaElementSession::addedMediaUsageManagerSessionIfNecessary()
+void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
 {
 #if ENABLE(MEDIA_USAGE)
     if (m_haveAddedMediaUsageManagerSession)
@@ -221,7 +220,6 @@ void MediaElementSession::inActiveDocumentChanged()
 {
     m_elementIsHiddenBecauseItWasRemovedFromDOM = !m_element.inActiveDocument();
     scheduleClientDataBufferingCheck();
-    addedMediaUsageManagerSessionIfNecessary();
 }
 
 void MediaElementSession::scheduleClientDataBufferingCheck()
@@ -1028,7 +1026,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 }
 
 #if ENABLE(MEDIA_SESSION)
-void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument* argument)
+void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
     auto* window = m_element.document().domWindow();
     auto* session = window ? &NavigatorMediaSession::mediaSession(window->navigator()) : nullptr;
@@ -1058,16 +1056,16 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
         if (!argument)
             return;
         actionDetails.action = MediaSessionAction::Seekto;
-        actionDetails.seekTime = argument->asDouble;
+        actionDetails.seekTime = *argument;
         break;
     case SkipForwardCommand:
         if (argument)
-            actionDetails.seekOffset = argument->asDouble;
+            actionDetails.seekOffset = *argument;
         actionDetails.action = MediaSessionAction::Seekforward;
         break;
     case SkipBackwardCommand:
         if (argument)
-            actionDetails.seekOffset = argument->asDouble;
+            actionDetails.seekOffset = *argument;
         actionDetails.action = MediaSessionAction::Seekbackward;
         break;
     case NextTrackCommand:
@@ -1169,7 +1167,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     m_mediaUsageInfo = WTFMove(usage);
 
 #if ENABLE(MEDIA_USAGE)
-    ASSERT(m_haveAddedMediaUsageManagerSession);
+    addMediaUsageManagerSessionIfNecessary();
     page->chrome().client().updateMediaUsageManagerSessionState(mediaSessionIdentifier(), *m_mediaUsageInfo);
 #endif
 }

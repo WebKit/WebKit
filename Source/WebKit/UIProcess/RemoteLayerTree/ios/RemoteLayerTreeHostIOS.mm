@@ -40,11 +40,8 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    auto makeWithView = [&] (RetainPtr<UIView> view) {
+    auto makeWithView = [&] (RetainPtr<UIView>&& view) {
         return makeUnique<RemoteLayerTreeNode>(properties.layerID, WTFMove(view));
-    };
-    auto makeAdoptingView = [&] (UIView* view) {
-        return makeWithView(adoptNS(view));
     };
 
     switch (properties.type) {
@@ -54,22 +51,22 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
-        return makeAdoptingView([[WKCompositingView alloc] init]);
+        return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeBackdropLayer:
-        return makeAdoptingView([[WKSimpleBackdropView alloc] init]);
+        return makeWithView(adoptNS([[WKSimpleBackdropView alloc] init]));
 
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-        return makeAdoptingView([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]);
+        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]));
 
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-        return makeAdoptingView([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]);
+        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]));
 
     case PlatformCALayer::LayerTypeTransformLayer:
-        return makeAdoptingView([[WKTransformView alloc] init]);
+        return makeWithView(adoptNS([[WKTransformView alloc] init]));
 
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
@@ -84,16 +81,16 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
             }
             return makeWithView(WTFMove(view));
         }
-        return makeAdoptingView([[WKCompositingView alloc] init]);
+        return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerTypeShapeLayer:
-        return makeAdoptingView([[WKShapeView alloc] init]);
+        return makeWithView(adoptNS([[WKShapeView alloc] init]));
 
     case PlatformCALayer::LayerTypeScrollContainerLayer:
         if (!m_isDebugLayerTreeHost)
-            return makeAdoptingView([[WKChildScrollView alloc] init]);
+            return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
-        return makeAdoptingView([[UIView alloc] init]);
+        return makeWithView(adoptNS([[UIView alloc] init]));
 
     default:
         ASSERT_NOT_REACHED();

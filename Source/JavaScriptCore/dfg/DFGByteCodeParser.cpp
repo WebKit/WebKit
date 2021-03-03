@@ -37,6 +37,7 @@
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
+#include "CheckPrivateBrandStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "CommonSlowPaths.h"
@@ -74,6 +75,7 @@
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
 #include "RegExpPrototype.h"
+#include "SetPrivateBrandStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
 #include "StructureStubInfo.h"
@@ -6259,6 +6261,92 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Node::VarArg, PutByValWithThis, OpInfo(bytecode.m_ecmaMode), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val_with_this);
+        }
+
+        case op_check_private_brand: {
+            auto bytecode = currentInstruction->as<OpCheckPrivateBrand>();
+            Node* base = get(bytecode.m_base);
+            Node* brand = get(bytecode.m_brand);
+            bool compiledAsCheckStructure = false;
+
+            CheckPrivateBrandStatus checkStatus = CheckPrivateBrandStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
+                currentCodeOrigin());
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                if (CacheableIdentifier identifier = checkStatus.singleIdentifier()) {
+                    m_graph.identifiers().ensure(identifier.uid());
+                    ASSERT(identifier.isSymbol());
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                    addToGraph(CheckIsConstant, OpInfo(frozen), brand);
+
+                    if (checkStatus.isSimple() && checkStatus.variants().size() && Options::useAccessInlining()) {
+                        ASSERT(checkStatus.variants().size() == 1); // If we have single identifier, we should have only 1 variant.
+                        CheckPrivateBrandVariant variant = checkStatus.variants()[0];
+
+                        addToGraph(FilterCheckPrivateBrandStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCheckPrivateBrandStatus(currentCodeOrigin(), checkStatus)), base);
+                        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
+
+                        compiledAsCheckStructure = true;
+                    }
+                }
+            }
+
+            if (!compiledAsCheckStructure)
+                addToGraph(CheckPrivateBrand, base, brand);
+
+            NEXT_OPCODE(op_check_private_brand);
+        }
+
+        case op_set_private_brand: {
+            auto bytecode = currentInstruction->as<OpSetPrivateBrand>();
+            Node* base = get(bytecode.m_base);
+            Node* brand = get(bytecode.m_brand);
+
+            bool inlinedSetPrivateBrand = false;
+            SetPrivateBrandStatus setStatus = SetPrivateBrandStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
+                currentCodeOrigin());
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                if (CacheableIdentifier identifier = setStatus.singleIdentifier()) {
+                    ASSERT(identifier.isSymbol());
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                    addToGraph(CheckIsConstant, OpInfo(frozen), brand);
+
+
+                    // FIXME: We should include a MultiSetPrivateBrand to handle polymorphic cases
+                    // https://bugs.webkit.org/show_bug.cgi?id=221570
+                    if (setStatus.isSimple() && setStatus.variants().size() == 1 && Options::useAccessInlining()) {
+                        SetPrivateBrandVariant variant = setStatus.variants()[0];
+
+                        addToGraph(FilterSetPrivateBrandStatus, OpInfo(m_graph.m_plan.recordedStatuses().addSetPrivateBrandStatus(currentCodeOrigin(), setStatus)), base);
+                        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+                        ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
+                        ASSERT(variant.newStructure());
+
+                        Transition* transition = m_graph.m_transitions.add(
+                            m_graph.registerStructure(variant.oldStructure()), m_graph.registerStructure(variant.newStructure()));
+
+                        addToGraph(PutStructure, OpInfo(transition), base);
+
+                        inlinedSetPrivateBrand = true;
+                    }
+                }
+            }
+
+            if (!inlinedSetPrivateBrand)
+                addToGraph(SetPrivateBrand, base, brand);
+
+            NEXT_OPCODE(op_set_private_brand);
         }
 
         case op_put_private_name: {

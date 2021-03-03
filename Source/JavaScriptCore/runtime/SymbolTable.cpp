@@ -184,7 +184,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
 
         {
             for (auto name : m_rareData->m_privateNames)
-                result->m_rareData->m_privateNames.add(name);
+                result->m_rareData->m_privateNames.add(name.key, name.value);
         }
     }
     

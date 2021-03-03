@@ -121,13 +121,10 @@
     }
 
     WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
-    PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:data];
-    [view setPDFDocument:doc];
+    auto document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:data]);
+    [view setPDFDocument:document.get()];
 
-    NSArray *scripts = allScriptsInPDFDocument(doc);
-    [doc release];
-    doc = nil;
-
+    NSArray *scripts = allScriptsInPDFDocument(document.get());
     if (![scripts count])
         return;
 

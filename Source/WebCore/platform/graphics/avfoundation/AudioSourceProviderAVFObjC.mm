@@ -120,15 +120,22 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
 
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
 
-    size_t framesAvailable = static_cast<size_t>(endFrame - (m_readCount + writeAheadCount));
-    if (!framesAvailable) {
-        bus->zero();
-        return;
-    }
-
-    if (framesAvailable < framesToProcess) {
-        framesToProcess = framesAvailable;
-        bus->zero();
+    if (!m_readCount || m_readCount == seekTo) {
+        // We have not started rendering yet. If there aren't enough frames in the buffer, then output
+        // silence until there is.
+        if (endFrame <= m_readCount + writeAheadCount + framesToProcess) {
+            bus->zero();
+            return;
+        }
+    } else {
+        // We've started rendering. Don't output silence unless we really have to.
+        size_t framesAvailable = static_cast<size_t>(endFrame - m_readCount);
+        if (framesAvailable < framesToProcess) {
+            bus->zero();
+            if (!framesAvailable)
+                return;
+            framesToProcess = framesAvailable;
+        }
     }
 
     ASSERT(bus->numberOfChannels() == m_ringBuffer->channelCount());

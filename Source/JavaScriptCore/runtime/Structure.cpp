@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Structure.h"
 
+#include "BrandedStructure.h"
 #include "BuiltinNames.h"
 #include "DumpContext.h"
 #include "JSCInlines.h"
@@ -424,7 +425,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
 
     for (size_t i = structures.size(); i--;) {
         structure = structures[i];
-        if (!structure->m_transitionPropertyName)
+        if (!structure->m_transitionPropertyName || structure->transitionKind() == TransitionKind::SetBrand)
             continue;
         switch (structure->transitionKind()) {
         case TransitionKind::PropertyAddition: {
@@ -1494,6 +1495,54 @@ auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> Option
         }
     }
     return WTF::nullopt;
+}
+
+Structure* Structure::setBrandTransitionFromExistingStructureImpl(Structure* structure, UniquedStringImpl* brandID)
+{
+    ASSERT(structure->isObject());
+
+    if (structure->hasBeenDictionary())
+        return nullptr;
+
+    if (Structure* existingTransition = structure->m_transitionTable.get(brandID, 0, TransitionKind::SetBrand))
+        return existingTransition;
+
+    return nullptr;
+}
+
+Structure* Structure::setBrandTransitionFromExistingStructureConcurrently(Structure* structure, UniquedStringImpl* brandID)
+{
+    ConcurrentJSLocker locker(structure->m_lock);
+    return setBrandTransitionFromExistingStructureImpl(structure, brandID);
+}
+
+Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* brand, DeferredStructureTransitionWatchpointFire* deferred)
+{
+    Structure* existingTransition = setBrandTransitionFromExistingStructureImpl(structure, &brand->uid());
+    if (existingTransition) 
+        return existingTransition;
+
+    Structure* transition = BrandedStructure::create(vm, structure, &brand->uid(), deferred);
+    transition->setTransitionKind(TransitionKind::SetBrand);
+
+    transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory());
+    transition->m_transitionPropertyName = &brand->uid();
+    transition->setTransitionPropertyAttributes(0);
+    transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
+    transition->setMaxOffset(vm, structure->maxOffset());
+    checkOffset(transition->maxOffset(), transition->inlineCapacity());
+
+    if (structure->isDictionary()) {
+        PropertyTable* table = transition->ensurePropertyTable(vm);
+        transition->pin(holdLock(transition->m_lock), vm, table);
+    } else {
+        auto locker = holdLock(structure->m_lock);
+        structure->m_transitionTable.add(vm, transition);
+    }
+
+    transition->checkOffsetConsistency();
+    return transition;
 }
 
 } // namespace JSC

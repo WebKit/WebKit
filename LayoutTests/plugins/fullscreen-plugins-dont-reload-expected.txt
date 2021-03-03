@@ -1,4 +1,4 @@
-ALERT: Plugin Loaded!
+CONSOLE MESSAGE: Plugin Loaded!
 go fullscreen
 There should only be one ALERT. If there were two, the plugin was reloaded during the transition to fullscreen.
 

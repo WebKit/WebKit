@@ -181,6 +181,10 @@ public:
     void notifyTrackModeChanged();
     void tracksChanged();
 
+    void audioTrackSetEnabled(const TrackPrivateRemoteIdentifier&, bool);
+    void videoTrackSetSelected(const TrackPrivateRemoteIdentifier&, bool);
+    void textTrackSetMode(const TrackPrivateRemoteIdentifier&, WebCore::InbandTextTrackPrivate::Mode);
+
     void performTaskAtMediaTime(const MediaTime&, WallTime, CompletionHandler<void(Optional<MediaTime>)>&&);
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
     void setShouldUpdatePlaybackMetrics(bool);

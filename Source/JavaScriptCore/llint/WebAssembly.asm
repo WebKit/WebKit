@@ -533,17 +533,13 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     end
 end)
 
-op(wasm_throw_from_fault_handler_trampoline, macro ()
-    move wasmInstance, a2
-    btqz a1, .instanceReady # a1 is non-zero if FastTLS is enabled.
-    loadWasmInstanceFromTLSTo(a2)
-.instanceReady:
-    loadp Wasm::Instance::m_pointerToTopEntryFrame[a2], a0
+macro wasm_throw_from_fault_handler(instance)
+    # instance should be in a2 when we get here
+    loadp Wasm::Instance::m_pointerToTopEntryFrame[instance], a0
     loadp [a0], a0
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
 
     move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
-    # a2 is Wasm::Instance
     move 0, a1
     move cfr, a0
     cCall4(_slow_path_wasm_throw_exception)
@@ -555,6 +551,16 @@ op(wasm_throw_from_fault_handler_trampoline, macro ()
     else
         jmp r0, ExceptionHandlerPtrTag
     end
+end
+
+op(wasm_throw_from_fault_handler_trampoline_fastTLS, macro ()
+    loadWasmInstanceFromTLSTo(a2)
+    wasm_throw_from_fault_handler(a2)
+end)
+
+op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
+    move wasmInstance, a2
+    wasm_throw_from_fault_handler(a2)
 end)
 
 # Disable wide version of narrow-only opcodes

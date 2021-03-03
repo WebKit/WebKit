@@ -36,10 +36,10 @@ class BorderData {
 friend class RenderStyle;
 public:
     BorderData()
-        : m_topLeftRadius { { 0, Fixed }, { 0, Fixed } }
-        , m_topRightRadius { { 0, Fixed }, { 0, Fixed } }
-        , m_bottomLeftRadius { { 0, Fixed }, { 0, Fixed } }
-        , m_bottomRightRadius { { 0, Fixed }, { 0, Fixed } }
+        : m_topLeftRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
+        , m_topRightRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
+        , m_bottomLeftRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
+        , m_bottomRightRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
     {
     }
 

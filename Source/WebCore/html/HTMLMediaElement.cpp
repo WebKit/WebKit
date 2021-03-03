@@ -2898,6 +2898,7 @@ void HTMLMediaElement::seekInternal(const MediaTime& time)
 
 void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM)
 {
+    INFO_LOG(LOGIDENTIFIER, "time = ", inTime, ", negativeTolerance = ", negativeTolerance, ", positiveTolerance = ", positiveTolerance);
     // 4.8.10.9 Seeking
     MediaTime time = inTime;
 
@@ -5043,13 +5044,6 @@ void HTMLMediaElement::mediaPlayerEngineUpdated()
     m_droppedVideoFrames = 0;
 #endif
 
-#if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode) {
-        if (auto* provider = audioSourceProvider())
-            provider->setClient(m_audioSourceNode);
-    }
-#endif
-
     m_havePreparedToPlay = false;
 
     scheduleMediaEngineWasUpdated();
@@ -5069,8 +5063,12 @@ void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine()
 {
     ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode)
+    if (m_audioSourceNode) {
+        if (auto* provider = audioSourceProvider())
+            provider->setClient(m_audioSourceNode);
+
         m_audioSourceNode->processLock().unlock();
+    }
 #endif
 }
 
@@ -7156,7 +7154,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-#if ENGINEERING_BUILD || !defined(NDEBUG)
+#if !defined(NDEBUG)
         // Setting a scriptURL allows the source to be debuggable in the inspector.
         URL scriptURL = URL({ }, "mediaControlsScript"_s);
 #else
@@ -7514,7 +7512,7 @@ MediaSessionIdentifier HTMLMediaElement::mediaSessionUniqueIdentifier() const
     return m_mediaSession->mediaSessionIdentifier();
 }
 
-void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
@@ -7543,18 +7541,18 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
         break;
     case PlatformMediaSession::SkipForwardCommand:
         if (argument)
-            offset = argument->asDouble;
+            offset = *argument;
         handleSeekToPlaybackPosition(offset);
         break;
     case PlatformMediaSession::SkipBackwardCommand:
         if (argument)
-            offset = argument->asDouble;
+            offset = *argument;
         handleSeekToPlaybackPosition(0 - offset);
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument);
         if (argument)
-            handleSeekToPlaybackPosition(argument->asDouble);
+            handleSeekToPlaybackPosition(*argument);
         break;
     default:
         { } // Do nothing

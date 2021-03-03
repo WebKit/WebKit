@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,27 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+namespace API {
+class SerializedScriptValue;
+}
+
+namespace WebCore {
+struct ExceptionDetails;
+}
+
 namespace WebKit {
+enum class InspectorExtensionError : uint8_t;
 
 using InspectorExtensionTabID = WTF::String;
 using InspectorExtensionID = WTF::String;
+using InspectorExtensionEvaluationResult = Expected<Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>, InspectorExtensionError>;
 
 enum class InspectorExtensionError : uint8_t {
     ContextDestroyed,
     InternalError,
     InvalidRequest,
     RegistrationFailed,
+    NotImplemented,
 };
 
 WTF::String inspectorExtensionErrorToString(InspectorExtensionError);
@@ -53,7 +64,8 @@ template<> struct EnumTraits<WebKit::InspectorExtensionError> {
         WebKit::InspectorExtensionError::ContextDestroyed,
         WebKit::InspectorExtensionError::InternalError,
         WebKit::InspectorExtensionError::InvalidRequest,
-        WebKit::InspectorExtensionError::RegistrationFailed
+        WebKit::InspectorExtensionError::RegistrationFailed,
+        WebKit::InspectorExtensionError::NotImplemented
     >;
 };
 

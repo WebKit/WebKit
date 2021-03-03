@@ -315,14 +315,10 @@ id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, RefPtr<Synchron
 {
     ASSERT(!d->m_delegate);
 
-    id <NSURLConnectionDelegate> delegate;
     if (shouldUseCredentialStorage)
-        delegate = [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)];
+        d->m_delegate = adoptNS([[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)]);
     else
-        delegate = [[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)];
-
-    d->m_delegate = delegate;
-    [delegate release];
+        d->m_delegate = adoptNS([[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:WTFMove(queue)]);
 
     return d->m_delegate.get();
 }

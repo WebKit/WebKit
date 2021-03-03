@@ -115,7 +115,7 @@ public:
             Color gridColor;
             bool showLineNames;
             bool showLineNumbers;
-            bool showExtendedGridlines;
+            bool showExtendedGridLines;
             bool showTrackSizes;
             bool showAreaNames;
         };

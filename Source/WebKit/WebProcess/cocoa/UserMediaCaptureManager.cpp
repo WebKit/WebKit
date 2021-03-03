@@ -30,13 +30,15 @@
 
 #include "AudioMediaStreamTrackRenderer.h"
 #include "GPUProcessConnection.h"
-#include "RemoteRealtimeMediaSource.h"
+#include "RemoteRealtimeAudioSource.h"
+#include "RemoteRealtimeVideoSource.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/RealtimeVideoSource.h>
 #include <wtf/Assertions.h>
 
 namespace WebKit {
@@ -85,60 +87,73 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
         RealtimeMediaSourceCenter::singleton().setDisplayCaptureFactory(m_displayFactory);
 }
 
-void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeMediaSource>&& source)
+void UserMediaCaptureManager::addAudioSource(Ref<RemoteRealtimeAudioSource>&& source)
 {
-    if (source->type() == RealtimeMediaSource::Type::Audio)
-        m_remoteAudioCaptureSampleManager.addSource(source.copyRef());
-
     auto identifier = source->identifier();
-    ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, WTFMove(source));
+    ASSERT(!m_audioSources.contains(identifier));
+    m_audioSources.add(identifier, WTFMove(source));
 }
 
-void UserMediaCaptureManager::removeSource(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManager::removeAudioSource(RealtimeMediaSourceIdentifier identifier)
 {
-    m_sources.remove(id);
+    ASSERT(m_audioSources.contains(identifier));
+    m_audioSources.remove(identifier);
 }
 
-void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManager::addVideoSource(Ref<RemoteRealtimeVideoSource>&& source)
 {
-    if (auto source = m_sources.get(id))
+    auto identifier = source->identifier();
+    ASSERT(!m_videoSources.contains(identifier));
+    m_videoSources.add(identifier, WTFMove(source));
+}
+
+void UserMediaCaptureManager::removeVideoSource(RealtimeMediaSourceIdentifier identifier)
+{
+    ASSERT(m_videoSources.contains(identifier));
+    m_videoSources.remove(identifier);
+}
+
+void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier identifier)
+{
+    if (auto source = m_audioSources.get(identifier))
+        source->captureStopped();
+    else if (auto source = m_videoSources.get(identifier))
         source->captureStopped();
 }
 
 void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier id)
 {
-    if (auto source = m_sources.get(id))
+    if (auto source = m_audioSources.get(id))
+        source->captureFailed();
+    else if (auto source = m_videoSources.get(id))
         source->captureFailed();
 }
 
 void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier id, bool muted)
 {
-    if (auto source = m_sources.get(id))
+    if (auto source = m_audioSources.get(id))
+        source->setMuted(muted);
+    else if (auto source = m_videoSources.get(id))
         source->setMuted(muted);
 }
 
-void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier id, const RealtimeMediaSourceSettings& settings)
+void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)
 {
-    if (auto source = m_sources.get(id))
-        source->setSettings(RealtimeMediaSourceSettings(settings));
+    if (auto source = m_audioSources.get(id))
+        source->setSettings(WTFMove(settings));
+    else if (auto source = m_videoSources.get(id))
+        source->setSettings(WTFMove(settings));
 }
 
-void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier id, RemoteVideoSample&& sample)
+void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)
 {
-    if (auto source = m_sources.get(id))
-        source->remoteVideoSampleAvailable(WTFMove(sample));
-}
-
-void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier id, const RealtimeMediaSourceSettings& settings)
-{
-    if (auto source = m_sources.get(id))
-        source->applyConstraintsSucceeded(settings);
+    if (auto source = m_audioSources.get(id))
+        source->applyConstraintsSucceeded(WTFMove(settings));
 }
 
 void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier id, String&& failedConstraint, String&& message)
 {
-    if (auto source = m_sources.get(id))
+    if (auto source = m_audioSources.get(id))
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
@@ -155,7 +170,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+    return RemoteRealtimeAudioSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
 }
 
 void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool value)
@@ -170,25 +185,12 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
 }
-
-#if PLATFORM(IOS_FAMILY)
-void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&)
-{
-    // Muting is done by GPUProcess factory. We do not want to handle it here in case of track cloning.
-}
-#endif
 
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
 {
-    return RemoteRealtimeMediaSource::create(device, constraints, { }, { }, m_manager, false);
-}
-
-void UserMediaCaptureManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
-{
-    if (source.type() == RealtimeMediaSource::Type::Audio)
-        m_remoteAudioCaptureSampleManager.didUpdateSourceConnection(source);
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, { }, m_manager, false)));
 }
 
 }

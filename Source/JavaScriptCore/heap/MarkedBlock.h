@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -150,9 +150,6 @@ public:
         void unsweepWithNoNewlyAllocated();
         
         void shrink();
-            
-        void visitWeakSet(SlotVisitor&);
-        void reapWeakSet();
             
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
@@ -496,16 +493,6 @@ inline WeakSet& MarkedBlock::weakSet()
 inline void MarkedBlock::Handle::shrink()
 {
     m_weakSet.shrink();
-}
-
-inline void MarkedBlock::Handle::visitWeakSet(SlotVisitor& visitor)
-{
-    return m_weakSet.visit(visitor);
-}
-
-inline void MarkedBlock::Handle::reapWeakSet()
-{
-    m_weakSet.reap();
 }
 
 inline size_t MarkedBlock::Handle::cellSize()

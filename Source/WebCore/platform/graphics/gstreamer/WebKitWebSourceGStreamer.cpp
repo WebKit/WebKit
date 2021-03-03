@@ -1177,7 +1177,7 @@ bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
 
     auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(members->resource->client());
     for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
-        if (!origin.canAccess(*responseOrigin))
+        if (!origin.isSameOriginDomain(*responseOrigin))
             return true;
     }
     return false;

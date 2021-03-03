@@ -32,16 +32,17 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteTextTrackProxyMessages.h"
+#include "RemoteMediaPlayerProxyMessages.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-TextTrackPrivateRemote::TextTrackPrivateRemote(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+TextTrackPrivateRemote::TextTrackPrivateRemote(IPC::Connection& connection, MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)
     , m_connection(connection)
-    , m_idendifier(idendifier)
+    , m_playerIdentifier(playerIdentifier)
+    , m_identifier(idendifier)
 {
     updateConfiguration(WTFMove(configuration));
 }
@@ -49,7 +50,7 @@ TextTrackPrivateRemote::TextTrackPrivateRemote(IPC::Connection& connection, Trac
 void TextTrackPrivateRemote::setMode(TextTrackMode mode)
 {
     if (mode != m_mode)
-        m_connection.send(Messages::RemoteTextTrackProxy::SetMode(mode), m_idendifier);
+        m_connection.send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
 
     InbandTextTrackPrivate::setMode(mode);
 }

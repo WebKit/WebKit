@@ -18,9 +18,9 @@
         const resourcePath = "/storageAccess/resources";
         const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
         const firstPartyCookieName = "firstPartyCookie";
-        const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+        const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
         const returnUrl = "http://" + partitionHost + "/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html";
-        const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName;
+        const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName;
 
         function openIframe(url, onLoadHandler) {
             const element = document.createElement("iframe");

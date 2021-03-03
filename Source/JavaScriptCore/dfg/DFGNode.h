@@ -29,6 +29,7 @@
 
 #include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
+#include "CheckPrivateBrandVariant.h"
 #include "CodeBlock.h"
 #include "DFGAdjacencyList.h"
 #include "DFGArithMode.h"
@@ -54,6 +55,7 @@
 #include "Operands.h"
 #include "PrivateFieldPutKind.h"
 #include "PutByIdVariant.h"
+#include "SetPrivateBrandVariant.h"
 #include "SpeculatedType.h"
 #include "TypeLocation.h"
 #include "ValueProfile.h"
@@ -3138,6 +3140,28 @@ public:
     {
         ASSERT(hasDeleteByStatus());
         return m_opInfo.as<DeleteByStatus*>();
+    }
+
+    bool hasCheckPrivateBrandStatus()
+    {
+        return op() == FilterCheckPrivateBrandStatus;
+    }
+
+    CheckPrivateBrandStatus* checkPrivateBrandStatus()
+    {
+        ASSERT(hasCheckPrivateBrandStatus());
+        return m_opInfo.as<CheckPrivateBrandStatus*>();
+    }
+
+    bool hasSetPrivateBrandStatus()
+    {
+        return op() == FilterSetPrivateBrandStatus;
+    }
+
+    SetPrivateBrandStatus* setPrivateBrandStatus()
+    {
+        ASSERT(hasSetPrivateBrandStatus());
+        return m_opInfo.as<SetPrivateBrandStatus*>();
     }
 
     void dumpChildren(PrintStream& out)

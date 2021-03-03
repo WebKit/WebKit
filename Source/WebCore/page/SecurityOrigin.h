@@ -91,11 +91,13 @@ public:
     // Protocols like blob: and filesystem: fall into this latter category.
     static bool isSecure(const URL&);
 
+    // This method implements the "same origin-domain" algorithm from the HTML Standard:
+    // https://html.spec.whatwg.org/#same-origin-domain
     // Returns true if this SecurityOrigin can script objects in the given
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from
     // another SecurityOrigin.
-    WEBCORE_EXPORT bool canAccess(const SecurityOrigin&) const;
+    WEBCORE_EXPORT bool isSameOriginDomain(const SecurityOrigin&) const;
 
     // Returns true if this SecurityOrigin can read content retrieved from
     // the given URL. For example, call this function before issuing
@@ -189,7 +191,7 @@ public:
 
     // This method checks for equality between SecurityOrigins, not whether
     // one origin can access another. It is used for hash table keys.
-    // For access checks, use canAccess().
+    // For access checks, use isSameOriginDomain().
     // FIXME: If this method is really only useful for hash table keys, it
     // should be refactored into SecurityOriginHash.
     WEBCORE_EXPORT bool equal(const SecurityOrigin*) const;

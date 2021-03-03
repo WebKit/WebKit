@@ -1,3 +1,20 @@
+2021-02-11  Martin Robinson  <mrobinson@igalia.com>
+
+        scroll-snap demo should use new spec
+        https://bugs.webkit.org/show_bug.cgi?id=184046
+
+        Reviewed by Wenson Hsieh.
+
+        Update the scroll-snap demo to reflect the modern specification. This
+        demo isn't currently linked from the site, but if it's every linked again
+        it will now reflect the current specification.
+
+        This maintains the old CSS so that the demo continues to work with
+        old versions of Safari.
+
+        * demos/scroll-snap/index.html: Update the descriptions in the demo to reflect
+        the newest version of the specification.
+
 2021-01-29  Beth Dakin  <bdakin@apple.com>
 
         Remove non-inclusive language from webkit.org/blog-files/css-jit-introduction/html5-single-page-microbenchmark.html

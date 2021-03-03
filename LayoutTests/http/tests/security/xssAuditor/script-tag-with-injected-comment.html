@@ -8,7 +8,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?clutter=/*]]>*/&q=<script>/*<!CDATA[*/alert(/XSS/)&q2=</script>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?clutter=/*]]>*/&q=<script>/*<!CDATA[*/console.log(/XSS/)&q2=</script>">
 </iframe>
 </body>
 </html>

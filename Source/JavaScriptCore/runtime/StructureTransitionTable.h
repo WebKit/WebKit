@@ -55,7 +55,10 @@ enum class TransitionKind : uint8_t {
     AddIndexedAccessors,
     PreventExtensions,
     Seal,
-    Freeze
+    Freeze,
+
+    // Support for transitions related with private brand
+    SetBrand
 };
 
 static constexpr auto FirstNonPropertyTransitionKind = TransitionKind::AllocateUndecided;

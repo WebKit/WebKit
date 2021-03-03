@@ -338,9 +338,10 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     themeColorChanged(layerTreeTransaction.themeColor());
     pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
 
-    if (!m_hasReceivedLayerTreeTransactionAfterDidCommitLoad) {
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
-            m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = true;
+            m_hasUpdatedRenderingAfterDidCommitLoad = true;
+            stopMakingViewBlankDueToLackOfRenderingUpdate();
             m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
         }
     }
@@ -429,15 +430,9 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTFMove(callback));
 }
 
-void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(String(), CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::applyAutocorrection"_s));
-    m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::ApplyAutocorrection(correction, originalText), WTFMove(callback));
 }
 
 bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText)
@@ -495,39 +490,19 @@ void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isI
     });
 }
 
-void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection direction, WTF::Function<void (uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection direction, CompletionHandler<void(bool)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(0, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::beginSelectionInDirection"_s));
-    m_process->send(Messages::WebPage::BeginSelectionInDirection(direction, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::BeginSelectionInDirection(direction), WTFMove(callback));
 }
 
-void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, CompletionHandler<void(bool)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(0, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithExtentPoint"_s));
-    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithFocusedElement, respectSelectionAnchor, callbackID), m_webPageID);
-    
+    sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithFocusedElement, respectSelectionAnchor), WTFMove(callback));
 }
 
-void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(0, CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithExtentPointAndBoundary"_s));
-    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithFocusedElement, callbackID), m_webPageID);
-    
+    sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithFocusedElement), WTFMove(callback));
 }
 
 void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)
@@ -1046,17 +1021,22 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(uint64_t r
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel);
 }
 
-uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, DrawToPDFCallback::CallbackFunction&& callback)
+std::pair<size_t, uint64_t> WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
     if (!hasRunningProcess()) {
-        callback(IPC::DataReference(), CallbackBase::Error::OwnerWasInvalidated);
-        return 0;
+        callback({ });
+        return { 0, 0 };
     }
 
-    uint32_t pageCount = 0;
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::computePagesForPrintingAndDrawToPDF"_s));
-    sendSync(Messages::WebPage::ComputePagesForPrintingAndDrawToPDF(frameID, printInfo, callbackID), Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::Reply(pageCount), Seconds::infinity());
-    return pageCount;
+    size_t pageCount = 0;
+    if (printInfo.snapshotFirstPage)
+        pageCount = 1;
+    else
+        sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
+
+    auto callbackID = sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(callback));
+    
+    return { pageCount, callbackID };
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)

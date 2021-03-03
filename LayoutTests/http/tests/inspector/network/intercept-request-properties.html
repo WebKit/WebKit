@@ -82,7 +82,7 @@ function test()
             name,
             description,
             async test() {
-                let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php", WI.LocalResourceOverride.InterceptType.Request, override);
+                let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py", WI.LocalResourceOverride.InterceptType.Request, override);
                 WI.networkManager.addLocalResourceOverride(localResourceOverride);
 
                 InspectorTest.log("Triggering load...");
@@ -99,63 +99,63 @@ function test()
     addTestCase({
         name: "Network.interceptRequest.Method",
         description: "Tests request method interception",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestMethod: "POST" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodDelete",
         description: "Tests request method interception with DELETE",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestMethod: "DELETE" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodNonStandard",
         description: "Tests request method interception with NONSTANDARD",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestMethod: "NONSTANDARD" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodEmpty",
         description: "Tests request method interception with empty string",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestMethod: "" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URL",
         description: "Tests request method interception with different URL",
-        expression: "fetchData('resources/intercept-echo.php')",
-        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php?newURL=value" },
+        expression: "fetchData('resources/intercept-echo.py')",
+        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py?newURL=value" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URLFragment",
         description: "Tests request method interception with URL with fragment",
-        expression: "fetchData('resources/intercept-echo.php')",
-        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php#fragment" },
+        expression: "fetchData('resources/intercept-echo.py')",
+        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py#fragment" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URLEmpty",
         description: "Tests request method interception with empty URL",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestURL: "" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.Headers",
         description: "Tests request headers interception",
-        expression: "fetchData('resources/intercept-echo.php')",
+        expression: "fetchData('resources/intercept-echo.py')",
         override: { requestHeaders: { "X-Value": "overridden" } },
     });
 
     addTestCase({
         name: "Network.interceptRequest.PostData",
         description: "Tests request post data interception",
-        expression: "postData('resources/intercept-echo.php')",
+        expression: "postData('resources/intercept-echo.py')",
         override: {
             requestMethod: "POST",
             requestHeaders: {

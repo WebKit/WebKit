@@ -92,7 +92,7 @@
         const statisticsUrl = "http://" + hostUnderTest;
         if (document.location.hash !== "#firstPartyCookieSet" && document.location.hash !== "#elementActivated") {
             setEnableFeature(true, function() {
-                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
             });
         } else {
             // Set per-frame access since clearing access on detaching the iframe requires per-frame access.

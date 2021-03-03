@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "_WKInspectorExtensionInternal.h"
 
 #import "WKError.h"
+#import "WKWebViewInternal.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 
@@ -57,6 +58,27 @@
         }
 
         capturedBlock(nil, result.value());
+    });
+}
+
+- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError *, NSDictionary *))completionHandler
+{
+    Optional<URL> optionalFrameURL = frameURL ? makeOptional(URL(frameURL)) : WTF::nullopt;
+    Optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? makeOptional(URL(contextSecurityOrigin)) : WTF::nullopt;
+    _extension->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (WebKit::InspectorExtensionEvaluationResult&& result) mutable {
+        if (!result) {
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
+            return;
+        }
+        
+        auto valueOrException = result.value();
+        if (!valueOrException) {
+            capturedBlock(nsErrorFromExceptionDetails(valueOrException.error()).get(), nil);
+            return;
+        }
+
+        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation(), 0);
+        capturedBlock(nil, body);
     });
 }
 

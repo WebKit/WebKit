@@ -205,6 +205,34 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     return pageToViewMap().get(&page);
 }
 
+RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
+{
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+
+    WKErrorCode errorCode;
+    switch (details.type) {
+    case WebCore::ExceptionDetails::Type::InvalidTargetFrame:
+        errorCode = WKErrorJavaScriptInvalidFrameTarget;
+        break;
+    case WebCore::ExceptionDetails::Type::Script:
+        errorCode = WKErrorJavaScriptExceptionOccurred;
+        break;
+    case WebCore::ExceptionDetails::Type::AppBoundDomain:
+        errorCode = WKErrorJavaScriptAppBoundDomain;
+        break;
+    }
+
+    [userInfo setObject:localizedDescriptionForErrorCode(errorCode) forKey:NSLocalizedDescriptionKey];
+    [userInfo setObject:details.message forKey:_WKJavaScriptExceptionMessageErrorKey];
+    [userInfo setObject:@(details.lineNumber) forKey:_WKJavaScriptExceptionLineNumberErrorKey];
+    [userInfo setObject:@(details.columnNumber) forKey:_WKJavaScriptExceptionColumnNumberErrorKey];
+
+    if (!details.sourceURL.isEmpty())
+        [userInfo setObject:[NSURL _web_URLWithWTFString:details.sourceURL] forKey:_WKJavaScriptExceptionSourceURLErrorKey];
+
+    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
+}
+
 @implementation WKWebView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -840,26 +868,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page->stopLoading();
 }
 
-#if USE(APPKIT)
-static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
-{
-    switch (error) {
-    case WebKit::CallbackBase::Error::None:
-        ASSERT_NOT_REACHED();
-        return WKErrorUnknown;
-
-    case WebKit::CallbackBase::Error::Unknown:
-        return WKErrorUnknown;
-
-    case WebKit::CallbackBase::Error::ProcessExited:
-        return WKErrorWebContentProcessTerminated;
-
-    case WebKit::CallbackBase::Error::OwnerWasInvalidated:
-        return WKErrorWebViewInvalidated;
-    }
-}
-#endif
-
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
@@ -981,34 +989,6 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     });
 }
 
-static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
-{
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-
-    WKErrorCode errorCode;
-    switch (details.type) {
-    case WebCore::ExceptionDetails::Type::InvalidTargetFrame:
-        errorCode = WKErrorJavaScriptInvalidFrameTarget;
-        break;
-    case WebCore::ExceptionDetails::Type::Script:
-        errorCode = WKErrorJavaScriptExceptionOccurred;
-        break;
-    case WebCore::ExceptionDetails::Type::AppBoundDomain:
-        errorCode = WKErrorJavaScriptAppBoundDomain;
-        break;
-    }
-
-    [userInfo setObject:localizedDescriptionForErrorCode(errorCode) forKey:NSLocalizedDescriptionKey];
-    [userInfo setObject:details.message forKey:_WKJavaScriptExceptionMessageErrorKey];
-    [userInfo setObject:@(details.lineNumber) forKey:_WKJavaScriptExceptionLineNumberErrorKey];
-    [userInfo setObject:@(details.columnNumber) forKey:_WKJavaScriptExceptionColumnNumberErrorKey];
-
-    if (!details.sourceURL.isEmpty())
-        [userInfo setObject:[NSURL _web_URLWithWTFString:details.sourceURL] forKey:_WKJavaScriptExceptionSourceURLErrorKey];
-
-    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
-}
-
 - (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
@@ -1094,13 +1074,11 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
-    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error errorCode) {
-        if (errorCode != WebKit::CallbackBase::Error::None) {
-            auto error = createNSError(callbackErrorCode(errorCode));
-            handler(nil, error.get());
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle) {
+        if (imageHandle.isNull()) {
+            handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
-
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
@@ -1409,6 +1387,24 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+- (BOOL)_hasBlankOverlay
+{
+    return !!_blankOverlayView;
+}
+
+- (void)_setHasBlankOverlay:(BOOL)hasBlankOverlay
+{
+    if (!!_blankOverlayView == hasBlankOverlay)
+        return;
+
+    if (hasBlankOverlay) {
+        _blankOverlayView = adoptNS([[WKBlankOverlayView alloc] initWithFrame:[self bounds]]);
+        [self addSubview:_blankOverlayView.get()];
+    } else {
+        [_blankOverlayView removeFromSuperview];
+        _blankOverlayView = nullptr;
+    }
+}
 
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
@@ -1473,9 +1469,8 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
-    auto handler = makeBlockPtr(completionHandler);
-    _page->drawToPDF(frameID, floatRect, [retainedSelf = retainPtr(self), handler = WTFMove(handler)](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None) {
+    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::DataReference& pdfData) {
+        if (pdfData.isEmpty()) {
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
@@ -1487,15 +1482,8 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _page->getWebArchiveOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            completionHandlerBlock(wrapper(*data), nil);
+    _page->getWebArchiveOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        completionHandler(wrapper(data), nil);
     });
 }
 
@@ -2102,6 +2090,32 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     return wrapper(_page->loadRequest(request, policy));
 }
 
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, response.MIMEType, response.textEncodingName, request.URL.absoluteString));
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"];
+
+    return [self loadSimulatedRequest:request withResponse:response responseData:data];
+}
+
+- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
+{
+    auto URL = request.URL;
+
+    if (![URL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
+
+    if (![readAccessURL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
+
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
@@ -2299,9 +2313,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     auto identifier = createCanonicalUUIDString();
     auto attachment = API::Attachment::create(identifier, *_page);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
+    _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] {
         if (capturedHandler)
-            capturedHandler(error == WebKit::CallbackBase::Error::None);
+            capturedHandler(true);
     });
 #if HAVE(QUICKLOOK_THUMBNAILING)
     _page->requestThumbnailWithFileWrapper(fileWrapper, identifier);
@@ -2535,15 +2549,8 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _page->getMainResourceDataOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            completionHandlerBlock(wrapper(*data), nil);
+    _page->getMainResourceDataOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        completionHandler(wrapper(*data), nil);
     });
 }
 
@@ -2554,25 +2561,15 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
-    auto handler = makeBlockPtr(completionHandler);
-
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler](String string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            handler(string, nil);
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler)](String string) {
+        handler(string, nil);
     });
 }
 
 - (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
-    auto handler = makeBlockPtr(completionHandler);
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler](String string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            handler(nil);
-        else
-            handler(string);
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler = makeBlockPtr(completionHandler)](String string) {
+        handler(string);
     });
 }
 
@@ -2589,8 +2586,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler
 {
 #if ENABLE(APPLICATION_MANIFEST)
-    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest, WebKit::CallbackBase::Error error) {
-        UNUSED_PARAM(error);
+    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
             if (manifest) {
                 auto apiManifest = API::ApplicationManifest::create(*manifest);

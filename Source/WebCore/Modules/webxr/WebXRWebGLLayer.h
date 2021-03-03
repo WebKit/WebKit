@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class HTMLCanvasElement;
 class IntSize;
 class WebGLFramebuffer;
 class WebGLRenderingContext;
@@ -74,6 +75,10 @@ public:
 
     const WebXRSession& session() { return m_session; }
 
+    bool isCompositionEnabled() const { return m_isCompositionEnabled; }
+
+    HTMLCanvasElement* canvas() const;
+
 private:
     WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
 
@@ -84,7 +89,7 @@ private:
     WebXRRenderingContext m_context;
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };
-    bool m_isCompositionDisabled { false };
+    bool m_isCompositionEnabled { true };
 
     struct {
         RefPtr<WebGLFramebuffer> object;
