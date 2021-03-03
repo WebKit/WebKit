@@ -1,5 +1,26 @@
 2021-03-02  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/history convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222614
+        <rdar://problem/74946423>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/history/popstate-fires-with-pending-requests.html:
+        * http/tests/history/replacestate-post-to-get-2.html:
+        * http/tests/history/replacestate-post-to-get.html:
+        * http/tests/history/resources/replacestate-current.php: Removed.
+        * http/tests/history/resources/replacestate-current.py: Added.
+        * http/tests/history/resources/replacestate-forward-back.php: Removed.
+        * http/tests/history/resources/replacestate-forward-back.py: Added.
+        * http/tests/history/resources/slow-image.php: Removed.
+        * http/tests/history/resources/slow-image.py: Added.
+        * http/tests/inspector/page/resources/slow-test-page.html:
+        * http/tests/navigation/page-cache-pending-image-load-cache-partition.html:
+        * http/tests/navigation/page-cache-pending-image-load.html:
+
+2021-03-02  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/navigation convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=222418
         <rdar://problem/74744523>
