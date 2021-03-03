@@ -65,12 +65,12 @@ layer at (0,0) size 785x1205
         RenderInline {EM} at (0,0) size 21x19
           RenderText {#text} at (604,0) size 21x19
             text run at (604,0) width 21: "not"
-        RenderText {#text} at (625,0) size 85x19
-          text run at (625,0) width 85: " be overlined: "
-        RenderImage {IMG} at (710,0) size 15x15
-        RenderText {#text} at (725,0) size 756x39
-          text run at (725,0) width 8: ". "
-          text run at (733,0) width 23: "The"
+        RenderText {#text} at (625,0) size 81x19
+          text run at (625,0) width 81: " be overlined:"
+        RenderImage {IMG} at (706,0) size 15x15
+        RenderText {#text} at (721,0) size 752x39
+          text run at (721,0) width 8: ". "
+          text run at (729,0) width 23: "The"
           text run at (0,20) width 726: "underline of the parent element should hold true beneath the image, however, since text-decoration 'spans' child elements."
       RenderBlock {P} at (0,579) size 769x20 [color=#008000]
         RenderText {#text} at (0,0) size 95x19

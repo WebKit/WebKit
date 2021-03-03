@@ -1,3 +1,12 @@
+2021-03-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/text_properties/text_decoration-expected.txt:
+        * platform/wincairo/css1/text_properties/vertical_align-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+
 2021-03-02  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/download convert PHP to Python
