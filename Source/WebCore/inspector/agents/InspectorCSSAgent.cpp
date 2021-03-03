@@ -502,6 +502,9 @@ Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Protocol::CSS::RuleMatch
         if (!includePseudo || *includePseudo) {
             pseudoElements = JSON::ArrayOf<Protocol::CSS::PseudoIdMatches>::create();
             for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::AfterLastInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
+                // `*::marker` selectors are only applicable to elements with `display: list-item`.
+                if (pseudoId == PseudoId::Marker && element->computedStyle()->display() != DisplayType::ListItem)
+                    continue;
                 if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {
                     auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, Style::Resolver::AllCSSRules);
                     if (!matchedRules.isEmpty()) {
@@ -1089,11 +1092,7 @@ RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const Style
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(shadowRoot->styleScope());
 
     CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule);
-    if (!cssomWrapper)
-        return nullptr;
-
-    InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());
-    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(cssomWrapper) : nullptr;
+    return buildObjectForRule(cssomWrapper);
 }
 
 RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule)

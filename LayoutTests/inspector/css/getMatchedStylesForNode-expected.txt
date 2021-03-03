@@ -379,54 +379,6 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "marker",
-    "matches": [
-      {
-        "rule": {
-          "selectorList": {
-            "selectors": [
-              {
-                "text": "div::marker",
-                "specificity": [
-                  0,
-                  0,
-                  2
-                ]
-              }
-            ],
-            "text": "div::marker",
-            "range": "<filtered>"
-          },
-          "sourceLine": "<filtered>",
-          "origin": "author",
-          "style": {
-            "cssProperties": [
-              {
-                "name": "z-index",
-                "value": "3",
-                "text": "z-index: 3;",
-                "range": "<filtered>",
-                "implicit": false,
-                "status": "active"
-              }
-            ],
-            "shorthandEntries": [],
-            "styleId": "<filtered>",
-            "width": "",
-            "height": "",
-            "range": "<filtered>",
-            "cssText": " z-index: 3; "
-          },
-          "sourceURL": "<filtered>",
-          "ruleId": "<filtered>"
-        },
-        "matchingSelectors": [
-          0
-        ]
-      }
-    ]
-  },
-  {
     "pseudoId": "before",
     "matches": [
       {
