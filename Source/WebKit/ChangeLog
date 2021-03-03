@@ -1,3 +1,18 @@
+2021-03-02  Peng Liu  <peng.liu6@apple.com>
+
+        [ BigSur Debug Wk 2 ] ASSERT NOT REACHED in WebCore::DisplayList::PaintFrameForMedia::apply
+        https://bugs.webkit.org/show_bug.cgi?id=221989
+        <rdar://problem/74403030>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this will fix a crash on debug bots.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::applyMediaItem): When we cannot get the player, the player
+        with the given identifier must have been destroyed. This function can return true to indicate
+        that the item has been applied.
+
 2021-03-02  Ricky Mondello  <rmondello@apple.com>
 
         Unconditionally return information in _autofillContext SPI when a field is focused

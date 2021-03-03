@@ -124,7 +124,7 @@ bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, Graphi
     auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
     auto player = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaItem.identifier());
     if (!player)
-        return false;
+        return true;
 
     context.paintFrameForMedia(*player, mediaItem.destination());
     return true;
