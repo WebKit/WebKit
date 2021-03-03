@@ -1,3 +1,32 @@
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove ImpureProxyType
+        https://bugs.webkit.org/show_bug.cgi?id=222626
+
+        Reviewed by Alexey Shvayka.
+
+        ImpureProxyType is no longer used. This patch just removes it.
+
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        (testJSObjectGetProxyTarget):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::tryAdd):
+        * runtime/JSCast.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isProxy const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resetPrototype):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::createStructure):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/Structure.h:
+        (JSC::Structure::isProxy const):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-03-02  Saam Barati  <sbarati@apple.com>
 
         Improve logging of OSR availability analysis validation failures

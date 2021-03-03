@@ -60,7 +60,7 @@ int testJSObjectGetProxyTarget()
         JSLockHolder locker(vm);
         JSProxy* globalObjectProxyObject = jsCast<JSProxy*>(toJS(globalObjectProxy));
         globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
-        Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), PureForwardingProxyType);
+        Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype());
         globalObjectRef = toRef(jsCast<JSObject*>(globalObjectObject));
         jsProxyObject = JSProxy::create(vm, proxyStructure);
     }
