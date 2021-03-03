@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'cache-control: no-store\r\n'
+    'Content-Type: text/html\r\n\r\n'
+    '<script>\n'
+    '\n'
+    'function nextTest() {\n'
+    '    if (window.sessionStorage.https_in_page_cache_started)\n'
+    '        delete window.sessionStorage.https_in_page_cache_started;\n'
+    '    location = "https://127.0.0.1:8443/navigation/resources/https-in-page-cache-2.py";\n'
+    '}\n'
+    '\n'
+    'window.onpageshow = function(evt) {\n'
+    '    if (evt.persisted) {\n'
+    '        alert("The page was restored from the page cache. It should NOT have been. Running part 2 of the test.");\n'
+    '        nextTest();\n'
+    '    }\n'
+    '}\n'
+    '\n'
+    'window.onload = function() {\n'
+    '    if (window.sessionStorage.https_in_page_cache_started) {\n'
+    '        alert("The page was reloaded on back, not from the page cache. Good job. Running part 2 of the test.");\n'
+    '        nextTest();\n'
+    '        return;\n'
+    '    }\n'
+    '\n'
+    '    alert("This page is https and has the no-store cache-control directive. It should NOT go in to the page cache.");\n'
+    '    window.sessionStorage.https_in_page_cache_started = true;\n'
+    '    setTimeout(\'window.location = "go-back.html"\', 0);\n'
+    '\n'
+    '}\n'
+    '\n'
+    '</script>\n'
+)

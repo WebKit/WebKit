@@ -66,8 +66,8 @@ function waitForProvisionalNavigation(completionHandler)
         if (this.readyState === this.DONE)
             window.setTimeout(completionHandler, 0);
     };
-    xhr.open("GET", "resources/never-respond.php");
+    xhr.open("GET", "resources/never-respond.py");
     xhr.send();
 
-    window.location = "resources/never-respond.php";
+    window.location = "resources/never-respond.py";
 }

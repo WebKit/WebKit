@@ -1,3 +1,114 @@
+2021-03-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/navigation convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222418
+        <rdar://problem/74744523>
+
+        Reviewed by Jonathan Bedard.
+
+        * TestExpectations:
+        * http/tests/navigation/back-send-referrer.html:
+        * http/tests/navigation/https-in-page-cache.html:
+        * http/tests/navigation/page-cache-fragment-referrer.html:
+        * http/tests/navigation/post-goback-repost-policy-expected.txt:
+        * http/tests/navigation/post-goback-repost-policy.html:
+        * http/tests/navigation/post-goback-same-url-expected.txt:
+        * http/tests/navigation/post-goback-same-url.html:
+        * http/tests/navigation/post-redirect-get-reload-expected.txt:
+        * http/tests/navigation/post-redirect-get-reload.php: Removed.
+        * http/tests/navigation/post-redirect-get-reload.py: Added.
+        * http/tests/navigation/pushstate-at-unique-origin-denied.php: Removed.
+        * http/tests/navigation/pushstate-at-unique-origin-denied.py: Added.
+        * http/tests/navigation/redirect-on-back-updates-history-item.html:
+        * http/tests/navigation/redirect-on-reload-updates-history-item.html:
+        * http/tests/navigation/redirect-preserves-fragment-expected.txt:
+        * http/tests/navigation/redirect-preserves-fragment.html:
+        * http/tests/navigation/redirect-to-fragment-expected.txt:
+        * http/tests/navigation/redirect-to-fragment.html:
+        * http/tests/navigation/redirect-to-fragment2-expected.txt:
+        * http/tests/navigation/redirect-to-fragment2.html:
+        * http/tests/navigation/redirect-to-invalid-url-expected.txt:
+        * http/tests/navigation/redirect-to-invalid-url.html:
+        * http/tests/navigation/redirect-to-random-url-versus-memory-cache.html:
+        * http/tests/navigation/resources/back-send-referrer-helper.php: Removed.
+        * http/tests/navigation/resources/back-send-referrer-helper.py: Added.
+        * http/tests/navigation/resources/goback-with-policydelegate.php: Removed.
+        * http/tests/navigation/resources/goback-with-policydelegate.py: Added.
+        * http/tests/navigation/resources/https-in-page-cache-1.php: Removed.
+        * http/tests/navigation/resources/https-in-page-cache-1.py: Added.
+        * http/tests/navigation/resources/https-in-page-cache-2.php: Removed.
+        * http/tests/navigation/resources/https-in-page-cache-2.py: Added.
+        * http/tests/navigation/resources/https-no-store-subframe-in-page-cache.html:
+        * http/tests/navigation/resources/keyboard-events-test.js:
+        (waitForProvisionalNavigation):
+        * http/tests/navigation/resources/never-respond.php: Removed.
+        * http/tests/navigation/resources/never-respond.py: Added.
+        * http/tests/navigation/resources/no-store-frame.php: Removed.
+        * http/tests/navigation/resources/no-store-frame.py: Added.
+        * http/tests/navigation/resources/post-goback-same-url.php: Removed.
+        * http/tests/navigation/resources/post-goback-same-url.py: Added.
+        * http/tests/navigation/resources/post-target-policy-test.php: Removed.
+        * http/tests/navigation/resources/post-target-policy-test.py: Added.
+        * http/tests/navigation/resources/randomredirects/0.php: Removed.
+        * http/tests/navigation/resources/randomredirects/0.py: Added.
+        * http/tests/navigation/resources/randomredirects/1.php: Removed.
+        * http/tests/navigation/resources/randomredirects/1.py: Added.
+        * http/tests/navigation/resources/randomredirects/2.php: Removed.
+        * http/tests/navigation/resources/randomredirects/2.py: Added.
+        * http/tests/navigation/resources/randomredirects/3.php: Removed.
+        * http/tests/navigation/resources/randomredirects/3.py: Added.
+        * http/tests/navigation/resources/randomredirects/4.php: Removed.
+        * http/tests/navigation/resources/randomredirects/4.py: Added.
+        * http/tests/navigation/resources/randomredirects/5.php: Removed.
+        * http/tests/navigation/resources/randomredirects/5.py: Added.
+        * http/tests/navigation/resources/randomredirects/6.php: Removed.
+        * http/tests/navigation/resources/randomredirects/6.py: Added.
+        * http/tests/navigation/resources/randomredirects/7.php: Removed.
+        * http/tests/navigation/resources/randomredirects/7.py: Added.
+        * http/tests/navigation/resources/randomredirects/8.php: Removed.
+        * http/tests/navigation/resources/randomredirects/8.py: Added.
+        * http/tests/navigation/resources/randomredirects/9.php: Removed.
+        * http/tests/navigation/resources/randomredirects/9.py: Added.
+        * http/tests/navigation/resources/randomredirects/randomredirect.php: Removed.
+        * http/tests/navigation/resources/randomredirects/randomredirect.py: Added.
+        * http/tests/navigation/resources/redirect-on-back-updates-history-item.php: Removed.
+        * http/tests/navigation/resources/redirect-on-back-updates-history-item.py: Added.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item-statistics.php: Removed.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item-statistics.py: Added.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item.php: Removed.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item.py: Added.
+        * http/tests/navigation/resources/redirect-preserves-fragment.php: Removed.
+        * http/tests/navigation/resources/redirect-preserves-fragment.py: Added.
+        * http/tests/navigation/resources/redirect-to-cookie.php: Removed.
+        * http/tests/navigation/resources/redirect-to-cookie.py: Added.
+        * http/tests/navigation/resources/redirect-to-fragment.php: Removed.
+        * http/tests/navigation/resources/redirect-to-fragment.py: Added.
+        * http/tests/navigation/resources/redirect-to-fragment2.php: Removed.
+        * http/tests/navigation/resources/redirect-to-fragment2.py: Added.
+        * http/tests/navigation/resources/redirect-to-invalid-url-frame.php: Removed.
+        * http/tests/navigation/resources/redirect-to-invalid-url-frame.py: Added.
+        * http/tests/navigation/resources/referrer.php: Removed.
+        * http/tests/navigation/resources/referrer.py: Added.
+        * http/tests/navigation/resources/target-blank-opener-post-window.php: Removed.
+        * http/tests/navigation/resources/target-blank-opener-post-window.py: Added.
+        * http/tests/navigation/resources/target-blank-opener-window.php: Removed.
+        * http/tests/navigation/resources/target-blank-opener-window.py: Added.
+        * http/tests/navigation/resources/user-agent-script.php: Removed.
+        * http/tests/navigation/resources/user-agent-script.py: Added.
+        * http/tests/navigation/slow-loading-page-with-slow-script.php: Removed.
+        * http/tests/navigation/slow-loading-page-with-slow-script.py: Added.
+        * http/tests/navigation/statistics.html:
+        * http/tests/navigation/target-blank-opener-post.html:
+        * http/tests/navigation/target-blank-opener.html:
+        * http/tests/navigation/useragent-reload.php: Removed.
+        * http/tests/navigation/useragent-reload.py: Added.
+        * http/tests/navigation/useragent.php: Removed.
+        * http/tests/navigation/useragent.py: Added.
+        * platform/wk2/TestExpectations:
+        * platform/wk2/http/tests/navigation/redirect-preserves-fragment-expected.txt:
+        * platform/wk2/http/tests/navigation/redirect-to-fragment-expected.txt:
+        * platform/wk2/http/tests/navigation/redirect-to-invalid-url-expected.txt:
+
 2021-03-02  Said Abou-Hallawa  <said@apple.com>
 
         The layout of SVGImage should force the layout for its clients
