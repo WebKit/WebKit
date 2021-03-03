@@ -29,8 +29,13 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #import "RemoteAudioSourceProvider.h"
+#import "RemoteMediaPlayerProxyMessages.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/ColorSpaceCG.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/VideoLayerManagerObjC.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MachSendRight.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -56,6 +61,42 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
     return adoptNS([[CALayer alloc] init]);
 }
 #endif
+
+RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
+{
+    Optional<MachSendRight> sendRight;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime(), Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime::Reply(sendRight), m_id))
+        return nullptr;
+
+    if (!sendRight)
+        return nullptr;
+
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
+    if (!surface)
+        return nullptr;
+
+    auto platformImage = WebCore::IOSurface::sinkIntoImage(WTFMove(surface));
+    if (!platformImage)
+        return nullptr;
+
+    return NativeImage::create(WTFMove(platformImage));
+}
+
+RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
+{
+    Optional<MachSendRight> sendRight;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime(), Messages::RemoteMediaPlayerProxy::NativeImageForCurrentTime::Reply(sendRight), m_id))
+        return nullptr;
+
+    if (!sendRight)
+        return nullptr;
+
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), nullptr);
+    if (!surface)
+        return nullptr;
+
+    return surface->createPixelBuffer();
+}
 
 } // namespace WebKit
 

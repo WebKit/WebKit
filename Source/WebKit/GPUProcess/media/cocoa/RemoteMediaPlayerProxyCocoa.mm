@@ -31,6 +31,7 @@
 #import "LayerHostingContext.h"
 #import "MediaPlayerPrivateRemoteMessages.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/IntSize.h>
 #import <wtf/MachSendRight.h>
 
@@ -74,6 +75,60 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& si
 
     m_videoInlineSize = size;
     setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, size);
+}
+
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+{
+    if (!m_player) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    auto nativeImage = m_player->nativeImageForCurrentTime();
+    if (!nativeImage) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    auto platformImage = nativeImage->platformImage();
+    if (!platformImage) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    auto surface = WebCore::IOSurface::createFromImage(platformImage.get());
+    if (!surface) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    completionHandler(surface->createSendRight());
+}
+
+void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+{
+#if !USE(AVFOUNDATION)
+    completionHandler(WTF::nullopt);
+#else
+    if (!m_player) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    auto pixelBuffer = m_player->pixelBufferForCurrentTime();
+    if (!pixelBuffer) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    auto surface = WebCore::IOSurface::createFromPixelBuffer(pixelBuffer.get());
+    if (!surface) {
+        completionHandler(WTF::nullopt);
+        return;
+    }
+
+    completionHandler(surface->createSendRight());
+#endif
 }
 
 } // namespace WebKit

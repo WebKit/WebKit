@@ -1,5 +1,88 @@
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273568. rdar://problem/74952680
+
+    [GPUP] Allow painting of GPUP hosted video from the WebContent process
+    https://bugs.webkit.org/show_bug.cgi?id=222461
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    - Change the return type of pixelBufferForCurrentTime() to return a RetainPtr<>
+      rather than just a raw pointer.
+    
+    - Add utility methods on IOSurface to retrieve an IOSurface from a CVPixelBuffer
+      and to reconstitute a CVPixelBuffer from an IOSurface.
+    
+    * platform/cocoa/CoreVideoSoftLink.cpp:
+    * platform/cocoa/CoreVideoSoftLink.h:
+    * platform/graphics/MediaPlayer.cpp:
+    (WebCore::MediaPlayer::pixelBufferForCurrentTime):
+    * platform/graphics/MediaPlayer.h:
+    * platform/graphics/MediaPlayerPrivate.h:
+    (WebCore::MediaPlayerPrivateInterface::pixelBufferForCurrentTime):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime):
+    * platform/graphics/cocoa/IOSurface.h:
+    * platform/graphics/cocoa/IOSurface.mm:
+    (WebCore::IOSurface::createFromPixelBuffer):
+    (WebCore::IOSurface::createPixelBuffer):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::copyTextureFromMedia):
+    
+    Source/WebKit:
+    
+    Add Cocoa implementations for nativeImageForCurrentTime() and pixelBufferForCurrentTime().
+    Use those methods to implement paintCurrentFrameInContext().
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime):
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::paint):
+    (WebKit::MediaPlayerPrivateRemote::paintCurrentFrameInContext):
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+    (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime):
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273568 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Jer Noble  <jer.noble@apple.com>
+
+            [GPUP] Allow painting of GPUP hosted video from the WebContent process
+            https://bugs.webkit.org/show_bug.cgi?id=222461
+
+            Reviewed by Eric Carlson.
+
+            Add Cocoa implementations for nativeImageForCurrentTime() and pixelBufferForCurrentTime().
+            Use those methods to implement paintCurrentFrameInContext().
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+            (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime):
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::paint):
+            (WebKit::MediaPlayerPrivateRemote::paintCurrentFrameInContext):
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+            * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+            (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime):
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273304. rdar://problem/74953207
 
     [macOS] Crash under AuxiliaryProcess::initializeSandbox

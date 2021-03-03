@@ -35,6 +35,8 @@
 #define HAVE_IOSURFACE_RGB10 1
 #endif
 
+using CVPixelBufferRef = struct __CVBuffer*;
+
 namespace WTF {
 class MachSendRight;
 class TextStream;
@@ -104,6 +106,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, CGColorSpaceRef);
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, CGColorSpaceRef);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromPixelBuffer(CVPixelBufferRef);
     
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     static std::unique_ptr<IOSurface> createFromImageBuffer(RefPtr<ImageBuffer>);
@@ -122,6 +125,7 @@ public:
     // the surface, or an expensive GPU readback can result.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer();
 
 #ifdef __OBJC__
     id asLayerContents() const { return (__bridge id)m_surface.get(); }

@@ -286,6 +286,11 @@ private:
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 
+#if PLATFORM(COCOA)
+    void nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&&);
+    void pixelBufferForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&&);
+#endif
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }

@@ -1015,7 +1015,7 @@ bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, 
 
 #else
 
-CVPixelBufferRef MediaPlayer::pixelBufferForCurrentTime()
+RetainPtr<CVPixelBufferRef> MediaPlayer::pixelBufferForCurrentTime()
 {
     return m_private->pixelBufferForCurrentTime();
 }

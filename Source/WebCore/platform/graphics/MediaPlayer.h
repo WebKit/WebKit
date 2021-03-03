@@ -444,7 +444,7 @@ public:
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 #else
-    CVPixelBufferRef pixelBufferForCurrentTime();
+    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime();
 #endif
 
     RefPtr<NativeImage> nativeImageForCurrentTime();
