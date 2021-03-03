@@ -1,3 +1,13 @@
+2021-03-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add JSModuleNamespaceObject::deletePropertyByIndex() method
+        https://bugs.webkit.org/show_bug.cgi?id=222611
+
+        Reviewed by Yusuke Suzuki.
+
+        * modules/arbitrary-module-names-indexed.js: Added.
+        * modules/arbitrary-module-names/export-indexed.js: Added.
+
 2021-03-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         TypedArray's [[DefineOwnProperty]] should throw in case of failure
