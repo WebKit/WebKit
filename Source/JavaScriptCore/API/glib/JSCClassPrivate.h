@@ -19,17 +19,11 @@
 
 #pragma once
 
-#include <jsc/JSCClass.h>
-#include <jsc/JSCContext.h>
-#include <jsc/JSCValue.h>
+#include "APICast.h"
+#include "JSCClass.h"
+#include "JSCContext.h"
+#include "JSCValue.h"
 #include <wtf/glib/GRefPtr.h>
-
-namespace JSC {
-class JSObject;
-}
-
-typedef struct OpaqueJSClass* JSClassRef;
-typedef struct OpaqueJSContext* JSGlobalContextRef;
 
 GRefPtr<JSCClass> jscClassCreate(JSCContext*, const char*, JSCClass*, JSCClassVTable*, GDestroyNotify);
 JSClassRef jscClassGetJSClass(JSCClass*);

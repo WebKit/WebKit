@@ -29,7 +29,6 @@
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
 #include "JSCallbackObject.h"
-#include "JSContextRef.h"
 
 namespace JSC {
 

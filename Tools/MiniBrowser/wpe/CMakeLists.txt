@@ -4,11 +4,10 @@ set(MiniBrowser_SOURCES
 
 set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/DerivedSources/WPEToolingBackends
+    ${TOOLS_DIR}/wpe/backends/
     ${DERIVED_SOURCES_WPE_API_DIR}
     ${FORWARDING_HEADERS_WPE_DIR}
-    ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-    ${TOOLS_DIR}/wpe/backends/
+    ${CMAKE_BINARY_DIR}/DerivedSources/WPEToolingBackends
 )
 
 set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES

@@ -19,11 +19,9 @@
 
 #pragma once
 
-#include <jsc/JSCContext.h>
-#include <jsc/JSCVirtualMachine.h>
+#include "JSCContext.h"
+#include "JSCVirtualMachine.h"
 #include <wtf/glib/GRefPtr.h>
-
-typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
 
 GRefPtr<JSCVirtualMachine> jscVirtualMachineGetOrCreate(JSContextGroupRef);
 JSContextGroupRef jscVirtualMachineGetContextGroup(JSCVirtualMachine*);

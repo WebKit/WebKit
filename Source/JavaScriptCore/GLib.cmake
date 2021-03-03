@@ -1,3 +1,6 @@
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib)
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR})
+
 list(APPEND JavaScriptCore_SOURCES
     API/glib/JSAPIWrapperGlobalObject.cpp
     API/glib/JSAPIWrapperObjectGLib.cpp
@@ -13,60 +16,14 @@ list(APPEND JavaScriptCore_SOURCES
     API/glib/JSCWrapperMap.cpp
 )
 
-list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-    "${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}"
-)
-
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}"
+    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
+    "${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}"
     "${JAVASCRIPTCORE_DIR}/API/glib"
 )
 
-configure_file(API/glib/JSCVersion.h.in ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/JSCVersion.h)
-
-set(JavaScriptCoreGLib_FRAMEWORK_HEADERS
-    ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/JSCVersion.h
-
-    API/glib/JSCAutocleanups.h
-    API/glib/JSCClass.h
-    API/glib/JSCContext.h
-    API/glib/JSCDefines.h
-    API/glib/JSCException.h
-    API/glib/JSCOptions.h
-    API/glib/JSCValue.h
-    API/glib/JSCVirtualMachine.h
-    API/glib/JSCWeakValue.h
-    API/glib/jsc.h
-)
-
-WEBKIT_COPY_FILES(JavaScriptCoreGLib_CopyHeaders
-    DESTINATION ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}/jsc
-    FILES ${JavaScriptCoreGLib_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-list(APPEND JavaScriptCore_DEPENDENCIES JavaScriptCoreGLib_CopyHeaders)
-
-set(JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS
-    API/glib/JSCContextPrivate.h
-    API/glib/JSCValuePrivate.h
-)
-WEBKIT_COPY_FILES(JavaScriptCoreGLib_CopyPrivateHeaders
-    DESTINATION ${JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS_DIR}/jsc
-    FILES ${JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-
-list(APPEND JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
-    ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS_DIR}
-)
-list(APPEND JavaScriptCore_INTERFACE_DEPENDENCIES
-    JavaScriptCoreGLib_CopyHeaders
-    JavaScriptCoreGLib_CopyPrivateHeaders
-)
-
 set(JavaScriptCore_INSTALLED_HEADERS
-    ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/JSCVersion.h
+    ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}/JSCVersion.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCAutocleanups.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.h
@@ -77,4 +34,20 @@ set(JavaScriptCore_INSTALLED_HEADERS
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.h
     ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
+)
+
+configure_file(API/glib/JSCVersion.h.in ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}/JSCVersion.h)
+
+# These symbolic link allows includes like #include <jsc/jsc.h> which simulates installed headers.
+add_custom_command(
+    OUTPUT ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+    DEPENDS ${JAVASCRIPTCORE_DIR}/API/glib
+    COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+    VERBATIM
+)
+add_custom_target(JSC-fake-api-headers
+    DEPENDS ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+)
+set(JavaScriptCore_EXTRA_DEPENDENCIES
+    JSC-fake-api-headers
 )

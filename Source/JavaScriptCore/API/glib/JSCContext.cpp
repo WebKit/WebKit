@@ -20,7 +20,6 @@
 #include "config.h"
 #include "JSCContext.h"
 
-#include "APICast.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
 #include "JSCExceptionPrivate.h"
