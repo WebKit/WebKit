@@ -1,3 +1,13 @@
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Limit HashTable entry size to 500 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
 2021-03-03  Youenn Fablet  <youenn@apple.com>
 
         WebKitLegacy needs to keep JSDOMWindow even though it is used while its origin is not set
