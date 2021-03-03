@@ -219,10 +219,6 @@ http/tests/media/video-play-stall.html [ Failure ]
 # webkit.org/b/221697
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html [ Failure ]
 
-# webkit.org/b/221688
-media/W3C/video/networkState/networkState_during_loadstart.html [ Failure Pass ]
-media/W3C/video/readyState/readyState_during_loadedmetadata.html [ Crash Pass ]
-
 # webkit.org/b/221685
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Timeout Failure Pass ]
 media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Timeout Pass ]
